@@ -32,10 +32,10 @@ public abstract class BlockJsonCreatorHelper {
     public static final String DEFAULT_VALUE = "[10,\"\"]";
 
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
-                                                      String nextId, String parentId) {
+                                                      String nextId, String parentId, String opcode) {
 
         createField(jsonString, meta.getBlockId()).append("{");
-        createFieldValue(jsonString, OPCODE_KEY, meta.getOpcode()).append(",");
+        createFieldValue(jsonString, OPCODE_KEY, opcode).append(",");
         if (nextId == null) {
             createFieldValueNull(jsonString, NEXT_KEY).append(",");
         } else {
@@ -72,9 +72,9 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String createFixedBlock(NonDataBlockMetadata meta,
-                                          String nextId, String parentId) {
+                                          String nextId, String parentId, String opcode) {
         StringBuilder jsonString = new StringBuilder();
-        createBlockUpToParent(jsonString, meta, nextId, parentId).append(",");
+        createBlockUpToParent(jsonString, meta, nextId, parentId, opcode).append(",");
         createBlockInputFieldForFixed(jsonString).append(",");
         createBlockAfterFields(jsonString, meta).append("}");
         return jsonString.toString();
@@ -82,9 +82,9 @@ public abstract class BlockJsonCreatorHelper {
 
     private static StringBuilder createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
                                                    String inputsString,
-                                                   String fieldsString) {
+                                                   String fieldsString, String opcode) {
         StringBuilder jsonString = new StringBuilder();
-        createBlockUpToParent(jsonString, metadata, nextId, parentId).append(",");
+        createBlockUpToParent(jsonString, metadata, nextId, parentId, opcode).append(",");
         createField(jsonString, INPUTS_KEY).append(inputsString).append(",");
         createField(jsonString, FIELDS_KEY).append(fieldsString).append(",");
         createBlockAfterFields(jsonString, metadata);
@@ -93,8 +93,8 @@ public abstract class BlockJsonCreatorHelper {
 
     public static String createBlockWithMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
                                                        String inputsString,
-                                                       String fieldsString, String mutation) {
-        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString);
+                                                       String fieldsString, String mutation, String opcode) {
+        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString, opcode);
         jsonString.append(",");
         createField(jsonString, MUTATION_KEY).append(mutation);
         jsonString.append("}");
@@ -103,8 +103,8 @@ public abstract class BlockJsonCreatorHelper {
 
     public static String createBlockWithoutMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
                                                           String inputsString,
-                                                          String fieldsString) {
-        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString);
+                                                          String fieldsString, String opcode) {
+        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString, opcode);
         jsonString.append("}");
         return jsonString.toString();
     }

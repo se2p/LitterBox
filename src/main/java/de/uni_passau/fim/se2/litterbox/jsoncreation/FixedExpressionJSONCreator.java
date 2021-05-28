@@ -76,11 +76,13 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
+    private String dependantOpcode;
 
-    public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression) {
+    public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression, String dependantOpcode) {
         finishedJSONStrings = new ArrayList<>();
         topExpressionId = null;
         previousBlockId = parentId;
+        this.dependantOpcode = dependantOpcode;
         expression.accept(this);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
@@ -103,6 +105,8 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
             createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY, MOUSE);
         } else if (node.getParentNode() instanceof PointTowards) {
             createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOWARDS_KEY, MOUSE);
+        } else if (node.getParentNode() instanceof DistanceTo) {
+            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
         }
     }
 
@@ -144,7 +148,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     public void visit(WithExpr node) {
         if (node.getExpression() instanceof StrId) {
             if (node.getParentNode() instanceof AttributeOf) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), PROPERTY_FIELDS_KEY,
+                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), OBJECT_KEY,
                         ((StrId) node.getExpression()).getName());
             } else if (node.getParentNode() instanceof PlaySoundUntilDone || node.getParentNode() instanceof StartSound) {
                 createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), SOUND_MENU,
@@ -210,7 +214,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
 
         String fieldsString = createFields(fieldsName, fieldsValue, null);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
-                previousBlockId, EMPTY_VALUE, fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString, dependantOpcode));
     }
 
     //pen
