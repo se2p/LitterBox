@@ -24,11 +24,12 @@ public class MergeScriptsAfterUntil extends CloneVisitor implements Refactoring 
         this.script1 = Preconditions.checkNotNull(script1);
         this.script2 = Preconditions.checkNotNull(script2);
         Preconditions.checkArgument(script1.getEvent().equals(script2.getEvent()));
+        Preconditions.checkArgument(script2.getStmtList().getStatement(0) instanceof WaitUntil);
         this.untilStmt = Preconditions.checkNotNull(untilStmt);
 
         List<Stmt> mergedStatements = apply(script1.getStmtList()).getStmts();
         List<Stmt> script2Statements = apply(script2.getStmtList()).getStmts();
-        WaitUntil waitUntil = (WaitUntil) script2Statements.remove(0);
+        script2Statements.remove(0);
         mergedStatements.addAll(script2Statements);
 
         replacementScript = new Script(apply(script1.getEvent()), new StmtList(mergedStatements));
