@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,17 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.getKeyValue;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -39,6 +42,9 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
+    private boolean hasPositionMove;
+    private boolean hasRotation;
+    private int loopCount = 0;
 
     @Override
     public void visit(Script script) {
@@ -46,20 +52,96 @@ public class StutteringMovement extends AbstractIssueFinder {
             // Ignore unconnected blocks
             return;
         }
+        loopCount = 0;
         currentScript = script;
         currentProcedure = null;
+        visitChildren(script);
         if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
-            if (listOfStmt.size() == 1) {
+            if (listOfStmt.size() <= 2 && listOfStmt.size() > 0) {
                 Stmt stmt = listOfStmt.get(0);
-                if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
+                if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addIssue(stmt, keyPressed.getMetadata());
+                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                    Hint hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_KEY, key);
+                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
             }
         }
-        visitChildren(script);
+        hasPositionMove = false;
+        hasRotation = false;
         currentScript = null;
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        ASTNode firstNode = first.getCodeLocation();
+        ASTNode secondNode = other.getCodeLocation();
+
+        if ((firstNode instanceof TurnLeft || firstNode instanceof TurnRight) && (secondNode instanceof TurnLeft || secondNode instanceof TurnRight)) {
+            return true;
+        }
+        if (firstNode instanceof MoveSteps && secondNode instanceof MoveSteps) {
+            return true;
+        }
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override

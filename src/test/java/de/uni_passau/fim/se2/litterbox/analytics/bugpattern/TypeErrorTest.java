@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -43,7 +44,8 @@ public class TypeErrorTest implements JsonTest {
         Program stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(stringNumber);
-        Assertions.assertEquals(1, issues.size());
+        //must not find this, because this is part of ComparingLiterals
+        Assertions.assertEquals(0, issues.size());
     }
 
     @Test
@@ -67,7 +69,7 @@ public class TypeErrorTest implements JsonTest {
         Program complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexComparison.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(complex);
-        Assertions.assertEquals(2, issues.size());
+        Assertions.assertEquals(1, issues.size());
     }
 
     @Test
@@ -84,5 +86,16 @@ public class TypeErrorTest implements JsonTest {
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(booleanEquals);
         Assertions.assertEquals(1, issues.size());
+    }
+
+    @Test
+    public void testDistanceToWeirdCombination() throws IOException, ParsingException {
+        Program booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/distanceToWeirdCombination.json");
+        TypeError parameterName = new TypeError();
+        Set<Issue> issues = parameterName.check(booleanEquals);
+        Assertions.assertEquals(1, issues.size());
+        for (Issue issue : issues) {
+            Assertions.assertEquals((new Hint(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHint());
+        }
     }
 }

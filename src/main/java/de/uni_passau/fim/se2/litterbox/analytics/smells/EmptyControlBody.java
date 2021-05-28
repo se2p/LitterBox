@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,22 +19,30 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
  * Checks for empty if or else bodies.
  */
 public class EmptyControlBody extends AbstractIssueFinder {
     public static final String NAME = "empty_control_body";
+    private static final IssueSeverity severity = IssueSeverity.LOW;
 
     @Override
     public void visit(IfElseStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then ") + IssueTranslator.getInstance().getInfo("else"));
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then ") + IssueTranslator.getInstance().getInfo("else"));
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
     }
@@ -42,7 +50,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then "));
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
     }
@@ -50,7 +60,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("until") + " < > ");
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
     }
@@ -58,7 +70,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
     }
@@ -66,7 +80,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            Hint hint = new Hint(NAME);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
+            addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
     }

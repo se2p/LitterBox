@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -73,6 +73,8 @@ public class StmtParser {
                 return SetStmtParser.parse(blockId, current, blocks);
             } else if (PenOpcode.contains(opcode)) {
                 return PenStmtParser.parse(blockId, current, blocks);
+            } else if (TextToSpeechOpcode.contains(opcode)) {
+                return TextToSpeechParser.parse(blockId, current, blocks);
             } else if (ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
                     || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)) {
 

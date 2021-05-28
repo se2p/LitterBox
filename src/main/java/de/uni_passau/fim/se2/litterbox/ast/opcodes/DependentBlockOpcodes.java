@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,7 @@ public enum DependentBlockOpcodes {
     motion_goto_menu, motion_glideto_menu, motion_pointtowards_menu,
     looks_costume, looks_backdrops, sound_sounds_menu, control_create_clone_of_menu,
     sensing_distancetomenu, sensing_touchingobjectmenu, sensing_keyoptions,
-    sensing_of_object_menu, pen_menu_colorParam;
+    sensing_of_object_menu, pen_menu_colorParam, text2speech_menu_voices, text2speech_menu_languages;
 
     public static boolean contains(String opcode) {
         for (DependentBlockOpcodes value : DependentBlockOpcodes.values()) {

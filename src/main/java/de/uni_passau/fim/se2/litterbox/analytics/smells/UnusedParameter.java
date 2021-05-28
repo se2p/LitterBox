@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -43,7 +44,7 @@ public class UnusedParameter extends AbstractIssueFinder {
         List<ParameterDefinition> parameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition def : parameterDefinitions) {
             if (!usedParameterNames.contains(def.getIdent().getName())) {
-                addIssue(def, def.getMetadata());
+                addIssue(def, def.getMetadata(), IssueSeverity.LOW);
             }
         }
         insideProcedure = false;

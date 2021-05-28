@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import com.google.common.base.CharMatcher;
@@ -27,10 +26,17 @@ public class Hint {
     public final static char ESCAPE_CHARACTER = '%';
 
     public final static String HINT_SPRITE = "SPRITE";
-
+    public final static String HINT_SPRITES = "SPRITES";
     public final static String HINT_VARIABLE = "VARIABLE";
-
+    public final static String HINT_VARIABLE1 = "VARIABLE1";
+    public final static String HINT_VARIABLE2 = "VARIABLE2";
     public final static String HINT_MESSAGE = "MESSAGE";
+    public final static String HINT_KEY = "KEY";
+    public final static String HINT_SAY_THINK = "SAYTHINK";
+    public final static String THEN_ELSE = "THENELSE";
+    public final static String BLOCK_NAME = "BLOCKNAME";
+    public final static String EVENT_HANDLER = "EVENTHANDLER";
+    public static final String METHOD = "METHOD" ;
 
     private String hintKey;
     private String hintText;

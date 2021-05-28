@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,13 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class EmptyControlBodyTest implements JsonTest {
@@ -42,7 +46,16 @@ public class EmptyControlBodyTest implements JsonTest {
     public void testEmptyBodies() throws IOException, ParsingException {
         Program emptyBodies = getAST("./src/test/fixtures/smells/emptyBodies.json");
         EmptyControlBody parameterName = new EmptyControlBody();
-        Set<Issue> reports = parameterName.check(emptyBodies);
+        List<Issue> reports = new ArrayList<>(parameterName.check(emptyBodies));
         Assertions.assertEquals(6, reports.size());
+        Hint repeat = new Hint(parameterName.getName());
+        repeat.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
+        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHint());
+        Hint forever = new Hint(parameterName.getName());
+        forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
+        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHint());
+        Hint ifThen = new Hint(parameterName.getName());
+        ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then "));
+        Assertions.assertEquals(ifThen.getHintText(), reports.get(2).getHint());
     }
 }

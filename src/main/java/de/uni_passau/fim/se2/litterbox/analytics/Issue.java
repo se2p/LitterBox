@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -40,6 +40,9 @@ public class Issue {
     private Program program;
     private Metadata metaData;
     private Hint hint;
+    private int id;
+
+    private static int globalIssueCount = 0;
 
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
@@ -62,6 +65,7 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        this.id = globalIssueCount++;
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -88,6 +92,7 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        this.id = globalIssueCount++;
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -97,7 +102,9 @@ public class Issue {
         return finder;
     }
 
-    public IssueSeverity getSeverity() { return severity; }
+    public IssueSeverity getSeverity() {
+        return severity;
+    }
 
     public IssueType getIssueType() {
         return finder.getIssueType();
@@ -115,7 +122,9 @@ public class Issue {
         return procedure;
     }
 
-    public Program getProgram() { return program; }
+    public Program getProgram() {
+        return program;
+    }
 
     public String getActorName() {
         return actor.getIdent().getName();
@@ -153,8 +162,34 @@ public class Issue {
         return node;
     }
 
+    public boolean isCodeLocation(ASTNode node) {
+        return this.node == node;
+    }
+
+    public boolean hasMultipleBlocks() {
+        return false;
+    }
+
     public Metadata getCodeMetadata() {
         return metaData;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isSubsumedBy(Issue other) {
+        return finder.isSubsumedBy(this, other);
+    }
+
+    public boolean areCoupled(Issue other) {
+        return finder.areCoupled(this, other);
+    }
+
+    public boolean isDuplicateOf(Issue other) {
+        return finder.isDuplicateOf(this, other);
+    }
+
+    public double getDistanceTo(Issue other) { return finder.getDistanceTo(this, other); }
 
 }

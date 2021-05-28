@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +30,7 @@ import java.util.List;
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
-public class DotVisitor implements ScratchVisitor {
+public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
 
     List<String> edges = new LinkedList<>();
     long counter = 0;
@@ -52,20 +51,6 @@ public class DotVisitor implements ScratchVisitor {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
-        }
-    }
-
-    @Override
-    public void visit(PenDownStmt node) {
-        if (node != null) {
-            recordLeaf(node);
-        }
-    }
-
-    @Override
-    public void visit(PenUpStmt node) {
-        if (node != null) {
-            recordLeaf(node);
         }
     }
 
@@ -112,5 +97,29 @@ public class DotVisitor implements ScratchVisitor {
         }
         bw.write("}");
         bw.close();
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        if (node != null) {
+            recordLeaf(node);
+        }
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (node != null) {
+            recordLeaf(node);
+        }
     }
 }

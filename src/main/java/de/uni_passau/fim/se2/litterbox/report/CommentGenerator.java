@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,7 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -37,10 +39,10 @@ public class CommentGenerator implements ReportGenerator {
         for (Issue issue : issues) {
             ActorDefinition currentActor = issue.getActor();
             String hintText = issue.getHint();
-            hintText = hintText.replace("\"", "\\\"");
+            hintText = formatHintText(hintText);
             String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
-            if (metaData == null) {
+            if (metaData == null || metaData instanceof NoBlockMetadata) {
                 addLooseComment(currentActor, hintText, commentId);
             } else {
                 addBlockComment((NonDataBlockMetadata) metaData,
@@ -49,6 +51,26 @@ public class CommentGenerator implements ReportGenerator {
                         commentId);
             }
         }
+    }
+
+    private String formatHintText(String hintText) {
+        hintText= hintText.replace("[var]","'");
+        hintText= hintText.replace("[/var]","'");
+        hintText= hintText.replace("[/sbi]","'");
+        hintText= hintText.replace("[sbi]","'");
+        hintText= hintText.replace("[bc]","");
+        hintText= hintText.replace("[LEQ]","<");
+        hintText= hintText.replace("[GEQ]",">");
+        hintText= hintText.replace("[EQ]","=");
+        hintText= hintText.replace("[/bc]","");
+        hintText= hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
+        hintText= hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
+        hintText= hintText.replace("[","");
+        hintText= hintText.replace(" v]","");
+        hintText= hintText.replace(" ]","");
+        hintText= hintText.replace(" v)"," )");
+        hintText = hintText.replace("\"", "\\\"");
+        return hintText;
     }
 
     private void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,15 +37,51 @@ import java.util.stream.Collectors;
 public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
-            new BlockCount(),
-            new HatCount(),
-            new ProcedureCount(),
-            new ProgramUsingPen(),
-            new ScriptCount(),
-            new SpriteCount(),
-            new StatementCount(),
-            new WeightedMethodCount(),
-            new WeightedMethodCountStrict());
+            new AvgBlockStatementCount<Program>(),
+            new AvgScriptWidthCount<>(),
+            new AvgVariableLengthCount<>(),
+            new BackdropCount<>(),
+            new BlockCount<Program>(),
+            new ComputationalThinkingAverageScore(),
+            new ComputationalThinkingScore(),
+            new ComputationalThinkingScoreAbstraction(),
+            new ComputationalThinkingScoreDataRepresentation(),
+            new ComputationalThinkingScoreFlowControl(),
+            new ComputationalThinkingScoreLogic(),
+            new ComputationalThinkingScoreParallelization(),
+            new ComputationalThinkingScoreSynchronization(),
+            new ComputationalThinkingScoreUserInteractivity(),
+            new ControlBlockCount<Program>(),
+            new CostumeCount<>(),
+            new EventsBlockCount<Program>(),
+            new HalsteadDifficulty<Program>(),
+            new HalsteadEffort<Program>(),
+            new HalsteadLength<Program>(),
+            new HalsteadVocabulary<Program>(),
+            new HalsteadVolume<Program>(),
+            new HatCount<Program>(),
+            new InterproceduralCyclomaticComplexity<Program>(),
+            new LengthLongestScript<Program>(),
+            new LooksBlockCount<Program>(),
+            new MostComplexScript<Program>(),
+            new MotionBlockCount<Program>(),
+            new MyBlocksBlockCount<Program>(),
+            new NestedBlockCount<Program>(),
+            new OperatorsBlockCount<Program>(),
+            new PenBlockCount<Program>(),
+            new ProcedureCount<Program>(),
+            new ProgramUsingPen<Program>(),
+            new ScriptCount<Program>(),
+            new SensingBlockCount<Program>(),
+            new SoundBlockCount<Program>(),
+            new SpriteCount<Program>(),
+            new StackedStatementCount<Program>(),
+            new StatementCount<Program>(),
+            new TokenEntropy<Program>(),
+            new VariableCount<Program>(),
+            new VariablesBlockCount<Program>(),
+            new WeightedMethodCount<Program>(),
+            new WeightedMethodCountStrict<Program>());
 
     public List<String> getMetricNames() {
         return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());

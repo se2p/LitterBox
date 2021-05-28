@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,5 +23,6 @@ public class GroupConstants {
     public static final String CTSCORE = "ctscore";
     public static final String SMELLS = "smells";
     public static final String BUGS = "bugs";
+    public static final String PERFUMES = "perfumes";
     public static final String DEFAULT = "default";
 }

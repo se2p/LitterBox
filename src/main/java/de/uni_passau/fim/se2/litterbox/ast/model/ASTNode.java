@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,6 +27,8 @@ import java.util.List;
 public interface ASTNode extends Visitable<ASTNode> {
 
     List<? extends ASTNode> getChildren();
+
+    boolean hasChildren();
 
     ASTNode getParentNode();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -52,6 +52,39 @@ public class JSONReportGenerator implements ReportGenerator {
         this.outputStream = stream;
     }
 
+    private void addDuplicateIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.isDuplicateOf(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
+    private void addSubsumingIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.isSubsumedBy(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
+    private void addCoupledIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.areCoupled(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
+    private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.getFinder() == issue.getFinder())
+                .forEach(issue -> {
+                            JsonNode childNode = mapper.createObjectNode();
+                            ((ObjectNode) childNode).put("id", issue.getId());
+                            ((ObjectNode) childNode).put("distance", theIssue.getDistanceTo(issue));
+                            jsonNode.add(childNode);
+                        }
+                );
+    }
+
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -64,11 +97,25 @@ public class JSONReportGenerator implements ReportGenerator {
 
         for (Issue issue : issues) {
             JsonNode childNode = mapper.createObjectNode();
+            ((ObjectNode) childNode).put("id", issue.getId());
             ((ObjectNode) childNode).put("finder", issue.getFinderName());
             ((ObjectNode) childNode).put("name", issue.getTranslatedFinderName());
             ((ObjectNode) childNode).put("type", issue.getIssueType().toString());
             ((ObjectNode) childNode).put("severity", issue.getSeverity().getSeverityLevel());
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
+
+            ArrayNode duplicateNode = ((ObjectNode) childNode).putArray("duplicate-of");
+            addDuplicateIDs(duplicateNode, issue, issues);
+
+            ArrayNode subsumedNode  = ((ObjectNode) childNode).putArray("subsumed-by");
+            addSubsumingIssueIDs(subsumedNode, issue, issues);
+
+            ArrayNode coupledNode  = ((ObjectNode) childNode).putArray("coupled-to");
+            addCoupledIssueIDs(coupledNode, issue, issues);
+
+            ArrayNode similarNode  = ((ObjectNode) childNode).putArray("similar-to");
+            addSimilarIssueIDs(mapper, similarNode, issue, issues);
+
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
             ActorMetadata actorMetadata = issue.getActor().getActorMetadata();

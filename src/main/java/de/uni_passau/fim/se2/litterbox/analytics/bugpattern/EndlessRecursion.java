@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -84,7 +85,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -93,7 +94,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -103,7 +104,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                addIssue(node, node.getMetadata(), new Hint(PROCEDURE_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(PROCEDURE_HINT));
             }
         }
     }

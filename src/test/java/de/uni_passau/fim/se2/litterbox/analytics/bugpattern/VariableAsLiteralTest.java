@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -112,7 +115,6 @@ public class VariableAsLiteralTest implements JsonTest {
                 "say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
-
     }
 
     @Test
@@ -127,5 +129,29 @@ public class VariableAsLiteralTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugpattern/hideList.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testHint() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/happyNewYear.json");
+        VariableAsLiteral lit = new VariableAsLiteral();
+        Set<Issue> reports = lit.check(program);
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(lit.getName());
+        hint.setParameter(Hint.HINT_VARIABLE, "aktuelles Jahr");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
+    }
+
+    @Test
+    public void testSubsumptionByComparingLiterals() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsSubsumption.json");
+        List<Issue> reportsVariableAsLiteral = new ArrayList<>((new VariableAsLiteral()).check(program));
+        Assertions.assertEquals(2, reportsVariableAsLiteral.size());
+        List<Issue> reportsComparingLiterals = new ArrayList<>((new ComparingLiterals()).check(program));
+        Assertions.assertEquals(1, reportsComparingLiterals.size());
+        Assertions.assertFalse(reportsVariableAsLiteral.get(0).isSubsumedBy(reportsComparingLiterals.get(0)));
+        Assertions.assertTrue(reportsVariableAsLiteral.get(1).isSubsumedBy(reportsComparingLiterals.get(0)));
     }
 }

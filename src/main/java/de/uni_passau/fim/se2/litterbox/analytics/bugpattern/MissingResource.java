@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -66,7 +67,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -85,7 +86,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -95,7 +96,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getCostumeChoice() instanceof WithExpr && ((WithExpr) node.getCostumeChoice()).getExpression() instanceof StrId) {
             String costume = ((StrId) ((WithExpr) node.getCostumeChoice()).getExpression()).getName();
             if (!imageExists(costume, images)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -105,7 +106,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -115,7 +116,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }

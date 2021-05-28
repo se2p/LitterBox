@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -76,11 +73,11 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.HINT_VARIABLE, "\"" + node.getText() + "\"");
+            hint.setParameter(Hint.HINT_VARIABLE, node.getText());
             if (currentExpression != null) {
-                addIssue(currentExpression, currentMetadata);
+                addIssue(currentExpression, currentMetadata, IssueSeverity.HIGH, hint);
             } else {
-                addIssue(currentStatement, currentMetadata);
+                addIssue(currentStatement, currentMetadata,IssueSeverity.HIGH, hint);
             }
         }
     }
@@ -150,6 +147,21 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         }
         actor.getScripts().accept(this);
         actor.getProcedureDefinitionList().accept(this);
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof ComparingLiterals) {
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

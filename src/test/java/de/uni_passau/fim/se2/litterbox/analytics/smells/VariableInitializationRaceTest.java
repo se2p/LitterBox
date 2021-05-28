@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -122,6 +122,15 @@ public class VariableInitializationRaceTest implements JsonTest {
     @Test
     public void testVariableAfterInitialization() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
+
+        VariableInitializationRace finder = new VariableInitializationRace();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testNoVariableRace() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/variableInitialisationWithoutRace.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -28,9 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
  * This visitor calculates the weighted method count as a metric for Scratch projects.
  * It only includes Scripts that do have an Event and can be triggered.
  */
-public class WeightedMethodCountStrict extends WeightedMethodCount {
+public class WeightedMethodCountStrict<T extends ASTNode> extends WeightedMethodCount<T> {
     public static final String NAME = "weighted_method_count_strict";
-    private static boolean inScriptOrProcedure;
+    private boolean inScriptOrProcedure;
 
     @Override
     public String getName() {

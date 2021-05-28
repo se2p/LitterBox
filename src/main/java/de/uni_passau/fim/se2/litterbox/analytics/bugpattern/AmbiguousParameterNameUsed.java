@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -93,7 +94,7 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
         visitChildren(node);
 
         if (used) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.MEDIUM);
         }
 
         // TODO: This handling with used/found seems really error prone

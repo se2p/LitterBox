@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
-public interface MetricExtractor {
+public interface MetricExtractor<T extends ASTNode> {
 
-    double calculateMetric(Program program);
+    double calculateMetric(T node);
 
     String getName();
 }

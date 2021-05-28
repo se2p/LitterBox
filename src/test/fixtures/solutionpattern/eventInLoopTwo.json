@@ -1,0 +1,276 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "Ts?$ENlY^U?/xN5Q|J:f": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "/8~2DHpJ|;(0o=.#NVN_",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -179,
+                    "y": -372
+                },
+                "/8~2DHpJ|;(0o=.#NVN_": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "Ts?$ENlY^U?/xN5Q|J:f",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "u^PJ4O3X;j-ku[oVv]]m"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "u^PJ4O3X;j-ku[oVv]]m": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "/8~2DHpJ|;(0o=.#NVN_",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "yD:qGpcE9uK,sm?s!SJa"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ",}vg2+63![J^_[IME9L]"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "yD:qGpcE9uK,sm?s!SJa": {
+                    "opcode": "sensing_keypressed",
+                    "next": null,
+                    "parent": "u^PJ4O3X;j-ku[oVv]]m",
+                    "inputs": {
+                        "KEY_OPTION": [
+                            1,
+                            "L~|bHdptR|}4^9AGwy.w"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "L~|bHdptR|}4^9AGwy.w": {
+                    "opcode": "sensing_keyoptions",
+                    "next": null,
+                    "parent": "yD:qGpcE9uK,sm?s!SJa",
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "space",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                ",}vg2+63![J^_[IME9L]": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "u^PJ4O3X;j-ku[oVv]]m",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Bsml:XE=l}9Yk1b[8IX!": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "Va}M{n0!%=hrRBv~WAXY",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -347,
+                    "y": 12
+                },
+                "Va}M{n0!%=hrRBv~WAXY": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "Bsml:XE=l}9Yk1b[8IX!",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "P;a86?^PgqBh2DgYz;F^"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "P;a86?^PgqBh2DgYz;F^": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "Va}M{n0!%=hrRBv~WAXY",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "I.x[DAn`DRv}(3H7@1a0"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "s~2y-ReXB_bAIGC*jc6I"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "I.x[DAn`DRv}(3H7@1a0": {
+                    "opcode": "sensing_coloristouchingcolor",
+                    "next": null,
+                    "parent": "P;a86?^PgqBh2DgYz;F^",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#04119f"
+                            ]
+                        ],
+                        "COLOR2": [
+                            1,
+                            [
+                                9,
+                                "#c8fdbd"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "s~2y-ReXB_bAIGC*jc6I": {
+                    "opcode": "motion_turnright",
+                    "next": null,
+                    "parent": "P;a86?^PgqBh2DgYz;F^",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "15"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 230,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210324111836",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15"
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -36,6 +37,10 @@ public class LongScript extends TopBlockFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = node;
         localCount = 0;
         setHint = false;
@@ -64,7 +69,7 @@ public class LongScript extends TopBlockFinder {
         localCount++;
         visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.LOW);
         }
         currentProcedure = null;
     }

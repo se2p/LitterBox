@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,16 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
 /**
  * A sprite that uses pen down blocks but never a pen up may draw right away, when the project is
  * restarted. This might not be intended.
  */
-public class MissingPenUp extends AbstractIssueFinder {
+public class MissingPenUp extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "missing_pen_up";
 
@@ -51,25 +54,6 @@ public class MissingPenUp extends AbstractIssueFinder {
         }
     }
 
-    @Override
-    public void visit(PenDownStmt node) {
-        if (!addComment) {
-            penDownSet = true;
-            visitChildren(node);
-        } else if (getResult()) {
-            // TODO: Is this potentially added multiple times?
-            addIssue(node, node.getMetadata());
-        }
-    }
-
-    @Override
-    public void visit(PenUpStmt node) {
-        if (!addComment) {
-            penUpSet = true;
-            visitChildren(node);
-        }
-    }
-
     void reset() {
         penUpSet = false;
         penDownSet = false;
@@ -88,5 +72,35 @@ public class MissingPenUp extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        if (!addComment) {
+            penDownSet = true;
+            visitChildren(node);
+        } else if (getResult()) {
+            // TODO: Is this potentially added multiple times?
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        }
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (!addComment) {
+            penUpSet = true;
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }
