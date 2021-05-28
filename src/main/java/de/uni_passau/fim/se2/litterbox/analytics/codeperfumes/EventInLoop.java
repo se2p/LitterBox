@@ -113,7 +113,7 @@ public class EventInLoop extends AbstractIssueFinder {
             boolExpr.accept(this);
             inCondition = false;
         }
-        node.getStmtList().accept(this);
+        node.getThenStmts().accept(this);
         node.getElseStmts().accept(this);
     }
 

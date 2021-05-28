@@ -37,7 +37,7 @@ public class Search extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (inLoop) {
-            checkStmtList(node.getStmtList());
+            checkStmtList(node.getThenStmts());
         }
     }
 

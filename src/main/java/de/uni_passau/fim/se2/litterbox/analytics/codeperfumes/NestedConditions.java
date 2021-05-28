@@ -31,7 +31,7 @@ public class NestedConditions extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (!addedStmts.contains(node.getParentNode().getParentNode())
-                && (hasNested(node.getStmtList().getStmts()) || hasNested(node.getElseStmts().getStmts()))) {
+                && (hasNested(node.getThenStmts().getStmts()) || hasNested(node.getElseStmts().getStmts()))) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
             addedStmts.add(node);
         }
