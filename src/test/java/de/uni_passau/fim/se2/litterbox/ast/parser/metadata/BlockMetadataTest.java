@@ -71,7 +71,6 @@ public class BlockMetadataTest {
         Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
         Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
-        Assertions.assertEquals("procedures_definition", topNonDataBlockMetadata.getOpcode());
         Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
         Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
@@ -90,7 +89,6 @@ public class BlockMetadataTest {
         Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
         Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
-        Assertions.assertEquals("procedures_prototype", nonDataBlockMetadata.getOpcode());
         Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", nonDataBlockMetadata.getParent());
         Assertions.assertNull(nonDataBlockMetadata.getNext());
     }
