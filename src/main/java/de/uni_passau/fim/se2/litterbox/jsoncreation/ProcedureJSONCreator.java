@@ -77,7 +77,7 @@ public class ProcedureJSONCreator {
         List<String> inputs = new ArrayList<>();
         inputs.add(createReferenceInput(CUSTOM_BLOCK_KEY, INPUT_SAME_BLOCK_SHADOW, protoMetadata.getBlockId(), false));
         jsonString.append(createBlockWithoutMutationString(defMetadata, nextId,
-                null, createInputs(inputs), EMPTY_VALUE)).append(",");
+                null, createInputs(inputs), EMPTY_VALUE, definition.getOpcode())).append(",");
 
         //create prototype
         PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
@@ -130,7 +130,7 @@ public class ProcedureJSONCreator {
         String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(), procInfo.getName(),
                 argumentIds, parameterInfos, protoMutationMeta.isWarp());
         jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
-                createInputs(inputs), EMPTY_VALUE, mutationString));
+                createInputs(inputs), EMPTY_VALUE, mutationString, definition.getPrototypeOpcode()));
 
         if (stmtList.getStmts().size() > 0) {
             StmtListJSONCreator stmtListJSONCreator =
@@ -146,8 +146,8 @@ public class ProcedureJSONCreator {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
         jsonString.append(createBlockWithoutMutationString(metadata,
                 null,
-                prototypeId, EMPTY_VALUE, createFields(metadata.getFields().getList().get(0).getFieldsName(),
-                        parameterDefinition.getIdent().getName(), null)));
+                prototypeId, EMPTY_VALUE, createFields(VALUE_KEY,
+                        parameterDefinition.getIdent().getName(), null), parameterDefinition.getOpcode()));
         return new ParameterInfo(parameterDefinition.getIdent().getName(), metadata.getBlockId(),
                 parameterDefinition.getType());
     }

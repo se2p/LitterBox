@@ -128,7 +128,7 @@ public class JSONStringCreator {
         jsonString.append("{");
         createFieldValue(jsonString, ID_KEY, metadata.getId()).append(",");
         createFieldValue(jsonString, MODE_KEY, metadata.getMode()).append(",");
-        createFieldValue(jsonString, OPCODE_KEY, metadata.getOpcode()).append(",");
+        createFieldValue(jsonString, OPCODE_KEY, metadata.getMonitorOpcode()).append(",");
 
         createField(jsonString, PARAMS_KEY).append("{");
         List<MonitorParamMetadata> monitors = metadata.getParamsMetadata().getList();

@@ -47,7 +47,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode.sensing_of_object_menu;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getShadowIndicator;
 

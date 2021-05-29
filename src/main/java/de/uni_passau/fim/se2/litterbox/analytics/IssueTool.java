@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.ListUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.NestedConditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
@@ -83,6 +86,8 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateAllFinders() {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
+        allFinders.putAll(generatePerfumeFinders());
+
         return allFinders;
     }
 
@@ -124,6 +129,38 @@ public class IssueTool {
         return smellFinders;
     }
 
+    public static Map<String, IssueFinder> generatePerfumeFinders() {
+        Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
+
+        registerPerfumeFinder(new BackdropSwitchAndEvent(), perfumeFinders);
+        registerPerfumeFinder(new BoolExpression(), perfumeFinders);
+        registerPerfumeFinder(new Collision(), perfumeFinders);
+        registerPerfumeFinder(new Coordination(), perfumeFinders);
+        registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
+        registerPerfumeFinder(new Counter(), perfumeFinders);
+        registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
+        registerPerfumeFinder(new EventInLoop(), perfumeFinders);
+        registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
+        registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
+        registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
+        registerPerfumeFinder(new ListUsage(), perfumeFinders);
+        registerPerfumeFinder(new MouseFollower(), perfumeFinders);
+        registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
+        registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
+        registerPerfumeFinder(new NestedConditionInLoop(), perfumeFinders);
+        registerPerfumeFinder(new NestedConditions(), perfumeFinders);
+        registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
+        registerPerfumeFinder(new Parallelization(), perfumeFinders);
+        registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
+        registerPerfumeFinder(new Search(), perfumeFinders);
+        registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
+        registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
+
+        return perfumeFinders;
+    }
+
     public static List<IssueFinder> getFinders(String commandString) {
         List<IssueFinder> finders = new ArrayList<>();
 
@@ -136,6 +173,9 @@ public class IssueTool {
                 break;
             case SMELLS:
                 finders = new ArrayList<>(generateSmellFinders().values());
+                break;
+            case PERFUMES:
+                finders = new ArrayList<>(generatePerfumeFinders().values());
                 break;
             case DEFAULT:
                 finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
@@ -167,6 +207,10 @@ public class IssueTool {
         return Collections.unmodifiableSet(generateSmellFinders().keySet());
     }
 
+    public static Collection<String> getPerfumeFinderNames() {
+        return Collections.unmodifiableSet(generatePerfumeFinders().keySet());
+    }
+
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
         if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
@@ -184,5 +228,14 @@ public class IssueTool {
                     + " as Bug IssueFinder");
         }
         bugFinders.put(finder.getName(), finder);
+    }
+
+    static void registerPerfumeFinder(IssueFinder finder, Map<String, IssueFinder> perfumeFinders) {
+        if (finder.getIssueType() != IssueType.PERFUME) {
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Solution IssueFinder");
+        }
+        perfumeFinders.put(finder.getName(), finder);
     }
 }

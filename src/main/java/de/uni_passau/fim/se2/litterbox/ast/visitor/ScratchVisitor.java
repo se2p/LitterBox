@@ -32,6 +32,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -75,7 +78,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -124,45 +126,6 @@ public interface ScratchVisitor {
      */
     default void visit(ActorDefinition node) {
         visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for PenDownStmt.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node PenDownStmt of which the children will be iterated
-     */
-    default void visit(PenDownStmt node) {
-        visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for PenUpStmt.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node PenUpStmt of which the children will be iterated
-     */
-    default void visit(PenUpStmt node) {
-        visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for PenUpStmt.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node PenUpStmt of which the children will be iterated
-     */
-    default void visit(PenClearStmt node) {
-        visit((PenStmt) node);
     }
 
     /**
@@ -803,19 +766,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link SetPenColorToColorStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SetPenColorToColorStmt  Node of which the children will be iterated
-     */
-    default void visit(SetPenColorToColorStmt node) {
-        visit((PenStmt) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ColorTouchingColor}.
      *
      * <p>
@@ -852,45 +802,6 @@ public interface ScratchVisitor {
      */
     default void visit(Clicked node) {
         visit((Event) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link PenStampStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node PenStampStmt  Node of which the children will be iterated
-     */
-    default void visit(PenStampStmt node) {
-        visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ChangePenColorParamBy}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ChangePenColorParamBy  Node of which the children will be iterated
-     */
-    default void visit(ChangePenColorParamBy node) {
-        visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SetPenColorParamTo}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SetPenColorParamTo Node of which the children will be iterated
-     */
-    default void visit(SetPenColorParamTo node) {
-        visit((PenStmt) node);
     }
 
     /**
@@ -2077,19 +1988,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link PenStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node PenStmt  Node of which the children will be iterated
-     */
-    default void visit(PenStmt node) {
-        visit((Stmt) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link SpriteLookStmt}.
      *
      * <p>
@@ -2802,32 +2700,6 @@ public interface ScratchVisitor {
      */
     default void visit(LayerChoice node) {
         visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SetPenSizeTo}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SetPenSizeTo Node of which the children will be iterated
-     */
-    default void visit(SetPenSizeTo node) {
-        visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ChangePenSizeBy}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ChangePenSizeBy Node of which the children will be iterated
-     */
-    default void visit(ChangePenSizeBy node) {
-        visit((PenStmt) node);
     }
 
     /**
@@ -3724,5 +3596,48 @@ public interface ScratchVisitor {
      */
     default void visit(CloneOfMetadata node) {
         visit((BlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExtensionBlock}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExtensionBlock Node of which the children will
+     *             be iterated
+     */
+    default void visit(ExtensionBlock node) {
+        visit((ASTNode) node);
+    }
+
+    default void visit(PenStmt node) {
+        if (this instanceof PenExtensionVisitor) {
+            ((PenExtensionVisitor) this).visit(node);
+        } else {
+            visit((Stmt) node);
+        }
+    }
+
+    //all blocks are either Expressions, Stmts or Events, other Nodes that are for drop down menus are handled as ASTNodes
+    default void visitDefaultVisitor(ASTNode node) {
+        if (node instanceof Stmt) {
+            visit((Stmt) node);
+        } else if (node instanceof Expression) {
+            visit((Expression) node);
+        } else if (node instanceof Event) {
+            visit((Event) node);
+        } else {
+            visit(node);
+        }
+    }
+
+    default void visit(TextToSpeechBlock node) {
+        if (this instanceof TextToSpeechExtensionVisitor) {
+            ((TextToSpeechExtensionVisitor) this).visit(node);
+        } else {
+            visitDefaultVisitor(node);
+        }
     }
 }

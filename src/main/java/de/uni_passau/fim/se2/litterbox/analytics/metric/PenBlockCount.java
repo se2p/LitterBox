@@ -20,13 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, PenExtensionVisitor {
     public static final String NAME = "pen_block_count";
-
     private int count = 0;
 
     @Override
@@ -43,7 +43,13 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }
+
 }

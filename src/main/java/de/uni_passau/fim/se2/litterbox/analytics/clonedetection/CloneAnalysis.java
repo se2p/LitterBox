@@ -80,7 +80,7 @@ public class CloneAnalysis {
         List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
 
         // Comparison matrix on the normalized statements
-        boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2);
+        boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2, root1 == root2);
 
         // Return all clones identifiable in the matrix
         Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix);
@@ -113,13 +113,14 @@ public class CloneAnalysis {
 //        return statements.size() != statements1.size();
     }
 
-    private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
+    private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean isComparisonWithSelf) {
         int width = normalizedStatements1.size();
         int height = normalizedStatements2.size();
         boolean[][] matrix = new boolean[width][height];
 
         for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+            int start = isComparisonWithSelf ? i : 0;
+            for (int j = start; j < height; j++) {
                 matrix[i][j] = normalizedStatements1.get(i).equals(normalizedStatements2.get(j));
             }
         }
@@ -184,7 +185,7 @@ public class CloneAnalysis {
         boolean[][] coveredFields = new boolean[width][height];
 
         for (int i = 0; i < width; i++) {
-            for (int j = i; j < height; j++) {
+            for (int j = 0; j < height; j++) {
                 if (coveredFields[i][j]) {
                     continue;
                 }
