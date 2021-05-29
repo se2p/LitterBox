@@ -5,20 +5,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
+public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor, PenExtensionVisitor {
 
     private Stmt lastStmt;
     private Script refactoredScript;
@@ -82,6 +83,11 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
             addRefactoredScript();
         }
         lastStmt = penStmt;
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 
     @Override

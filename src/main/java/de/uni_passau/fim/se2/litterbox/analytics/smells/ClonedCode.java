@@ -24,10 +24,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class ClonedCode extends AbstractIssueFinder {
 
@@ -44,16 +46,33 @@ abstract class ClonedCode extends AbstractIssueFinder {
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-
-        List<Script> scripts = actor.getScripts().getScriptList();
+        List<Script> scripts;
+        if (ignoreLooseBlocks) {
+            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+        } else {
+            scripts = actor.getScripts().getScriptList();
+        }
         List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
-
         for (int i = 0; i < scripts.size(); i++) {
             checkScript(scripts.get(i), scripts.subList(i, scripts.size()), procedures);
         }
         for (int i = 0; i < procedures.size(); i++) {
             checkProcedure(procedures.get(i), procedures.subList(i, procedures.size()));
         }
+    }
+
+    protected void addIssue(MultiBlockIssue issue) {
+        for (Issue otherIssue : issues) {
+            if (otherIssue instanceof MultiBlockIssue) {
+                MultiBlockIssue otherMultiBlockIssue = (MultiBlockIssue) otherIssue;
+                if (issue.getCodeLocation() == otherMultiBlockIssue.getCodeLocation() &&
+                        issue.getScript() == otherMultiBlockIssue.getScript() &&
+                        issue.getNodes().equals(otherMultiBlockIssue.getNodes())) {
+                    return;
+                }
+            }
+        }
+        super.addIssue(issue);
     }
 
     private void checkScript(Script script, List<Script> otherScripts, List<ProcedureDefinition> otherProcedures) {
@@ -95,16 +114,16 @@ abstract class ClonedCode extends AbstractIssueFinder {
         return hintName;
     }
 
-    public Issue getFirstCloneIssue(CodeClone clone) {
+    public MultiBlockIssue getFirstCloneIssue(CodeClone clone) {
         if (clone.getFirstScript() instanceof Script)
-            return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script)clone.getFirstScript(), new ArrayList<>(clone.getFirstStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
+            return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script) clone.getFirstScript(), new ArrayList<>(clone.getFirstStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
         else
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (ProcedureDefinition) clone.getFirstScript(), new ArrayList<>(clone.getFirstStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
     }
 
-    public Issue getSecondCloneIssue(CodeClone clone) {
+    public MultiBlockIssue getSecondCloneIssue(CodeClone clone) {
         if (clone.getSecondScript() instanceof Script)
-            return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script)clone.getSecondScript(), new ArrayList<>(clone.getSecondStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
+            return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script) clone.getSecondScript(), new ArrayList<>(clone.getSecondStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
         else
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (ProcedureDefinition) clone.getSecondScript(), new ArrayList<>(clone.getSecondStatements()), clone.getSecondNode().getMetadata(), new Hint(hintName));
     }
@@ -124,8 +143,8 @@ abstract class ClonedCode extends AbstractIssueFinder {
             return false;
         }
 
-        MultiBlockIssue mbIssue1 = (MultiBlockIssue)first;
-        MultiBlockIssue mbIssue2 = (MultiBlockIssue)other;
+        MultiBlockIssue mbIssue1 = (MultiBlockIssue) first;
+        MultiBlockIssue mbIssue2 = (MultiBlockIssue) other;
 
         return compareNodes(mbIssue1.getNodes(), mbIssue2.getNodes());
     }
@@ -137,13 +156,13 @@ abstract class ClonedCode extends AbstractIssueFinder {
             if (!(node instanceof Stmt)) {
                 return false;
             }
-            statements1.add((Stmt)node);
+            statements1.add((Stmt) node);
         }
         for (ASTNode node : nodes2) {
             if (!(node instanceof Stmt)) {
                 return false;
             }
-            statements2.add((Stmt)node);
+            statements2.add((Stmt) node);
         }
 
         return compareStatements(statements1, statements2);

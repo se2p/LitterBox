@@ -1,0 +1,363 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "N*gU(@=Mb4I$Df2rH*ll": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 778,
+                    "y": 193
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Basketball",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "6b0b2aaa12d655e96b5b34e92d9fbd4f",
+                    "name": "basketball",
+                    "bitmapResolution": 1,
+                    "md5ext": "6b0b2aaa12d655e96b5b34e92d9fbd4f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 23,
+                    "rotationCenterY": 23
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                },
+                {
+                    "assetId": "1727f65b5f22d151685b8e5917456a60",
+                    "name": "basketball bounce",
+                    "dataFormat": "wav",
+                    "format": "adpcm",
+                    "rate": 22050,
+                    "sampleCount": 8129,
+                    "md5ext": "1727f65b5f22d151685b8e5917456a60.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 36,
+            "y": 42,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Bear-walking",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "6d4d06e3f4cd0c9455b777b9a40782b6",
+                    "name": "bear-walk-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "6d4d06e3f4cd0c9455b777b9a40782b6.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "7453709bef16e33e6f989aee14d7fc07",
+                    "name": "bear-walk-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "7453709bef16e33e6f989aee14d7fc07.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "6d50c5fe63ab5f77d10144a68ca535a6",
+                    "name": "bear-walk-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "6d50c5fe63ab5f77d10144a68ca535a6.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "e531b307381c2aa148be4ccc36db0333",
+                    "name": "bear-walk-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "e531b307381c2aa148be4ccc36db0333.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "0a38a860f2e573b8dc5b09f390d30fbd",
+                    "name": "bear-walk-e",
+                    "bitmapResolution": 1,
+                    "md5ext": "0a38a860f2e573b8dc5b09f390d30fbd.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "f36c80d2e731be95df7ec6d07f89fa00",
+                    "name": "bear-walk-f",
+                    "bitmapResolution": 1,
+                    "md5ext": "f36c80d2e731be95df7ec6d07f89fa00.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "d2a5f124f988def1d214e6d0813a48f3",
+                    "name": "bear-walk-g",
+                    "bitmapResolution": 1,
+                    "md5ext": "d2a5f124f988def1d214e6d0813a48f3.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                },
+                {
+                    "assetId": "36d06aa23c684fc996952adb0e76e6b4",
+                    "name": "bear-walk-h",
+                    "bitmapResolution": 1,
+                    "md5ext": "36d06aa23c684fc996952adb0e76e6b4.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 130,
+                    "rotationCenterY": 94
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": true,
+            "x": 66,
+            "y": -40,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Ball",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "3c6241985b581284ec191f9d1deffde8",
+                    "name": "ball-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "3c6241985b581284ec191f9d1deffde8.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 22,
+                    "rotationCenterY": 22
+                },
+                {
+                    "assetId": "ad7dc51cafd73e8279073e33b0eab335",
+                    "name": "ball-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "ad7dc51cafd73e8279073e33b0eab335.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 22,
+                    "rotationCenterY": 22
+                },
+                {
+                    "assetId": "f221a2edf87aff3615c0c003e616b31b",
+                    "name": "ball-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "f221a2edf87aff3615c0c003e616b31b.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 22,
+                    "rotationCenterY": 22
+                },
+                {
+                    "assetId": "db144b2a19f4f1ab31e30d58f00447dc",
+                    "name": "ball-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "db144b2a19f4f1ab31e30d58f00447dc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 22,
+                    "rotationCenterY": 22
+                },
+                {
+                    "assetId": "1c44b7494dec047371f74c705f1d99fc",
+                    "name": "ball-e",
+                    "bitmapResolution": 1,
+                    "md5ext": "1c44b7494dec047371f74c705f1d99fc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 22,
+                    "rotationCenterY": 22
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "53a3c2e27d1fb5fdb14aaf0cb41e7889",
+                    "name": "Boing",
+                    "dataFormat": "wav",
+                    "format": "adpcm",
+                    "rate": 22050,
+                    "sampleCount": 7113,
+                    "md5ext": "53a3c2e27d1fb5fdb14aaf0cb41e7889.wav"
+                },
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 4,
+            "visible": true,
+            "x": -10,
+            "y": 21,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210510162256",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0"
+    }
+}

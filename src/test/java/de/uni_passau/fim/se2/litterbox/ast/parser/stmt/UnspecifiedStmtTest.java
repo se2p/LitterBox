@@ -32,6 +32,7 @@ public class UnspecifiedStmtTest implements JsonTest {
     @Test
     public void parseTextToSpeechTest() throws IOException, ParsingException {
         Program unusedProc = getAST("./src/test/fixtures/stmtParser/textToSpeech.json");
-        Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
+        // isn't unspecified anymore
+        // Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
     }
 }

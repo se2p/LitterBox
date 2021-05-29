@@ -1,0 +1,232 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "pyF%vO=#@xA#WArtBg%5": {
+                    "opcode": "looks_show",
+                    "next": "=B_OvB2vk5DkaM1osYZ}",
+                    "parent": "(Aj$8OV9{f2;1.GOB`kd",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=B_OvB2vk5DkaM1osYZ}": {
+                    "opcode": "looks_hide",
+                    "next": "+OvfD!`d[nqJurEv=F!y",
+                    "parent": "pyF%vO=#@xA#WArtBg%5",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+OvfD!`d[nqJurEv=F!y": {
+                    "opcode": "looks_show",
+                    "next": "S|i[n?Q7J0%R(:f6%R9l",
+                    "parent": "=B_OvB2vk5DkaM1osYZ}",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S|i[n?Q7J0%R(:f6%R9l": {
+                    "opcode": "looks_hide",
+                    "next": null,
+                    "parent": "+OvfD!`d[nqJurEv=F!y",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "(Aj$8OV9{f2;1.GOB`kd": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "pyF%vO=#@xA#WArtBg%5",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 304,
+                    "y": 409
+                },
+                "1e.dVWwg~M^[jm24_9L3": {
+                    "opcode": "looks_show",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 606,
+                    "y": 508
+                },
+                "y:[+#~Ef|rE_t7@aKLZ{": {
+                    "opcode": "looks_hide",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 748,
+                    "y": 504
+                },
+                "!76!g+QenHc3c[cR8{(x": {
+                    "opcode": "looks_show",
+                    "next": null,
+                    "parent": "~w){yk^`~PzUK3@FZ?V9",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "BFvLeT_K*4m8Q7/AU%[z": {
+                    "opcode": "looks_hide",
+                    "next": null,
+                    "parent": "NC.vT1oAq@=:mP!N.gYN",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "~w){yk^`~PzUK3@FZ?V9": {
+                    "opcode": "looks_nextcostume",
+                    "next": "!76!g+QenHc3c[cR8{(x",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 385,
+                    "y": 832
+                },
+                "NC.vT1oAq@=:mP!N.gYN": {
+                    "opcode": "looks_switchcostumeto",
+                    "next": "BFvLeT_K*4m8Q7/AU%[z",
+                    "parent": null,
+                    "inputs": {
+                        "COSTUME": [
+                            1,
+                            "^rSI4tz~v,Ke9UA]x{(}"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 588,
+                    "y": 827
+                },
+                "^rSI4tz~v,Ke9UA]x{(}": {
+                    "opcode": "looks_costume",
+                    "next": null,
+                    "parent": "NC.vT1oAq@=:mP!N.gYN",
+                    "inputs": {},
+                    "fields": {
+                        "COSTUME": [
+                            "costume2",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "b7853f557e4426412e64bb3da6531a99",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20201016122132",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:82.0) Gecko/20100101 Firefox/82.0"
+    }
+}

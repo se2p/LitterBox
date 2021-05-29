@@ -20,11 +20,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, PenExtensionVisitor {
     public static final String NAME = "using_pen";
     private boolean found = false;
 
@@ -39,6 +40,11 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
         found = false;
         node.accept(this);
         return found ? 1 : 0;
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        found = true;
     }
 
     @Override
@@ -84,5 +90,10 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
     @Override
     public void visit(SetPenColorParamTo node) {
         found = true;
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }

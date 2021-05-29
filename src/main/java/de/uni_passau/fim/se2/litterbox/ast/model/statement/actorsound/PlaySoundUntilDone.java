@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -55,5 +58,14 @@ public class PlaySoundUntilDone extends AbstractNode implements ActorSoundStmt, 
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return ActorSoundStmtOpcode.sound_playuntildone;
+    }
+
+    public Opcode getSoundMenuOpcode() {
+        return DependentBlockOpcode.sound_sounds_menu;
     }
 }

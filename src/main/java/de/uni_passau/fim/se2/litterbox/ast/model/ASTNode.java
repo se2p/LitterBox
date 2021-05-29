@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NOPCode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.Visitable;
 
 import java.util.List;
@@ -42,5 +44,9 @@ public interface ASTNode extends Visitable<ASTNode> {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         this.accept(visitor);
         return visitor.getScratchBlocks();
+    }
+
+    default Opcode getOpcode() {
+        return new NOPCode();
     }
 }

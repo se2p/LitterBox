@@ -75,6 +75,13 @@ public class VariableAsLiteralTest implements JsonTest {
     }
 
     @Test
+    public void testRandomListEntry() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/randomListentry.json");
+        Set<Issue> reports = (new VariableAsLiteral()).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
     public void testScratchBlocksOutput() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/listAsLiteral.json");
         VariableAsLiteral finder = new VariableAsLiteral();

@@ -40,26 +40,33 @@ import java.util.stream.Collectors;
 public class FeatureTool {
 
     private List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
-            new AvgScriptWidthCount<>(),
             new AvgBlockStatementCount<>(),
-            new MaxBlockStatementCount<>(),
-            new BlockCount<>(),
-            new MaxScriptWidthCount<>(),
-            new NestedBlockCount<>(),
-            new StackedStatementCount<>(),
-            new StatementCount<>(),
-            new VariableCount<>(),
+            new AvgScriptWidthCount<>(),
             new AvgVariableLengthCount<>(),
+            new BlockCount<>(),
+            new ControlBlockCount<>(),
+            new EventsBlockCount<>(),
+            new HalsteadVolume<>(),
+            new HalsteadLength<>(),
+            new HalsteadVocabulary<>(),
+            new HalsteadDifficulty<>(),
+            new HalsteadEffort<>(),
+            new LooksBlockCount<>(),
+            new MaxBlockStatementCount<>(),
+            new MaxScriptWidthCount<>(),
             new MaxVariableLengthCount<>(),
             new MotionBlockCount<>(),
-            new LooksBlockCount<>(),
-            new SoundBlockCount<>(),
-            new EventsBlockCount<>(),
-            new ControlBlockCount<>(),
-            new SensingBlockCount<>(),
+            new MyBlocksBlockCount<>(),
+            new NestedBlockCount<>(),
             new OperatorsBlockCount<>(),
+            new SensingBlockCount<>(),
+            new SoundBlockCount<>(),
+            new StackedStatementCount<>(),
+            new StatementCount<>(),
+            new TokenEntropy<>(),
+            new VariableCount<>(),
             new VariablesBlockCount<>(),
-            new MyBlocksBlockCount<>()
+            new WeightedMethodCount<>()
     );
 
     public List<String> getMetricNames() {

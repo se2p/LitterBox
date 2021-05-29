@@ -24,13 +24,13 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
@@ -95,7 +95,7 @@ public class PenStmtParser {
             String reference = current.get(INPUTS_KEY).get(COLOR_PARAM_BIG_KEY).get(POS_INPUT_VALUE).asText();
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcodes.pen_menu_colorParam.name())) {
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.pen_menu_colorParam.name())) {
                 JsonNode colorParamNode = referredBlock.get(FIELDS_KEY).get(COLOR_PARAM_LITTLE_KEY);
                 Preconditions.checkArgument(colorParamNode.isArray());
                 String attribute = colorParamNode.get(FIELD_VALUE).asText();
@@ -119,7 +119,7 @@ public class PenStmtParser {
 
     private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
-        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, "SIZE",
+        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, SIZE_KEY_CAP,
                 allBlocks), metadata);
     }
 }

@@ -32,6 +32,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
@@ -68,7 +76,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -2024,6 +2031,62 @@ public class NodeReplacementVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(CloneOfMetadata node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Speak node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(ExprLanguage node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(FixedLanguage node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(SetLanguage node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(SetVoice node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(FixedVoice node) {
+        if (isTargetNode(node)) {
+            return replacement;
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(ExprVoice node) {
         if (isTargetNode(node)) {
             return replacement;
         }
