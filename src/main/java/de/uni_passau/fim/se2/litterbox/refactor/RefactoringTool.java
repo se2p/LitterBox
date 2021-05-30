@@ -52,6 +52,8 @@ public class RefactoringTool {
         registerRefactoring(new InlineLoopConditionFinder(), refactorings);
         registerRefactoring(new LoopUnrollingFinder(), refactorings);
         registerRefactoring(new MergeDoubleIfFinder(), refactorings);
+        registerRefactoring(new MergeLoopsFinder(), refactorings);
+        registerRefactoring(new MergeScriptsFinder(), refactorings);
         registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings);
         registerRefactoring(new SequenceToLoopFinder(), refactorings);
         registerRefactoring(new SplitIfFinder(), refactorings);
