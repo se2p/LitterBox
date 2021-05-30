@@ -115,7 +115,7 @@ public class SplitLoop extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Splitting" + System.lineSeparator() + script + " at " + splitPoint + System.lineSeparator() +
+        return NAME + System.lineSeparator() + "Splitting" + System.lineSeparator() + script.getScratchBlocks() + " at " + splitPoint.getScratchBlocks() + System.lineSeparator() +
                 "Script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator() +
                 "Script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
     }
