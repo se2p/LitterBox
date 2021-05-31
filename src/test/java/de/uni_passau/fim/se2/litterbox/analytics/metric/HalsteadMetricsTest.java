@@ -91,4 +91,12 @@ public class HalsteadMetricsTest implements JsonTest {
         assertThat(difficulty).isEqualTo(0);
     }
 
+    @Test
+    public void testVolume_EmptyProject() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/metrics/empty.json");
+        HalsteadVolume halsteadVolume = new HalsteadVolume();
+        double volume = halsteadVolume.calculateMetric(program);
+        assertThat(volume).isEqualTo(0);
+    }
+
 }
