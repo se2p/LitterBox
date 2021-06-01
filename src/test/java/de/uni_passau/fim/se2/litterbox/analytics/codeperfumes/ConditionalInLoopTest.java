@@ -12,29 +12,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ConditionInLoopTest implements JsonTest {
+public class ConditionalInLoopTest implements JsonTest {
 
     @Test
     public void testNestedConInLoop() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/nestedConInLoop.json");
-        ConditionInLoop conditionInLoop = new ConditionInLoop();
-        Set<Issue> reports = conditionInLoop.check(prog);
+        ConditionalInLoop conditionalInLoop = new ConditionalInLoop();
+        Set<Issue> reports = conditionalInLoop.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testNestedConInLoopTwoDifferent() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/nestedConInLoopTwo.json");
-        ConditionInLoop conditionInLoop = new ConditionInLoop();
-        Set<Issue> reports = conditionInLoop.check(prog);
+        ConditionalInLoop conditionalInLoop = new ConditionalInLoop();
+        Set<Issue> reports = conditionalInLoop.check(prog);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testNestedConInLoopDuplicates() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/multipleNestedConditionInLoop.json");
-        ConditionInLoop conditionInLoop = new ConditionInLoop();
-        List<Issue> reports = new ArrayList<>(conditionInLoop.check(prog));
+        ConditionalInLoop conditionalInLoop = new ConditionalInLoop();
+        List<Issue> reports = new ArrayList<>(conditionalInLoop.check(prog));
         Assertions.assertEquals(11, reports.size());
         for (int i = 0; i < reports.size(); i++) {
             for (int j = i + 1; j < reports.size(); j++) {

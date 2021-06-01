@@ -135,14 +135,14 @@ public class IssueTool {
         registerPerfumeFinder(new BackdropSwitchAndEvent(), perfumeFinders);
         registerPerfumeFinder(new BoolExpression(), perfumeFinders);
         registerPerfumeFinder(new Collision(), perfumeFinders);
-        registerPerfumeFinder(new ConditionInLoop(), perfumeFinders);
+        registerPerfumeFinder(new ConditionalInLoop(), perfumeFinders);
         registerPerfumeFinder(new Coordination(), perfumeFinders);
         registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
         registerPerfumeFinder(new Counter(), perfumeFinders);
         registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
         registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
         registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
-        registerPerfumeFinder(new GuardedMessageOrStop(), perfumeFinders);
+        registerPerfumeFinder(new ControlledBroadcastOrStop(), perfumeFinders);
         registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
         registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
         registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
@@ -154,7 +154,7 @@ public class IssueTool {
         registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
         registerPerfumeFinder(new Parallelization(), perfumeFinders);
         registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
-        registerPerfumeFinder(new SensingInLoop(), perfumeFinders);
+        registerPerfumeFinder(new LoopSensing(), perfumeFinders);
         registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
         registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
 
