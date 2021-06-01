@@ -37,6 +37,14 @@ public class ScriptList extends AbstractNode {
         return scriptList;
     }
 
+    public Script getScript(int num) {
+        return scriptList.get(num);
+    }
+
+    public int getSize() {
+        return scriptList.size();
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

@@ -44,12 +44,12 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         fitnessMap.put(f2, 3.11);
         fitnessMap.put(f3, 4.11);
 
-        Refactoring r1 = mock(MergeDoubleEvent.class);
-        Refactoring r2 = mock(MergeDoubleEvent.class);
+        Refactoring r1 = mock(SplitScript.class);
+        Refactoring r2 = mock(SplitScript.class);
         Refactoring r3 = mock(MergeDoubleIf.class);
 
-        when(r1.getName()).thenReturn("merge_double_event");
-        when(r2.getName()).thenReturn("merge_double_event");
+        when(r1.getName()).thenReturn("split_script");
+        when(r2.getName()).thenReturn("split_script");
         when(r3.getName()).thenReturn("merge_double_if");
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
@@ -93,12 +93,12 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         fitnessMap.put(f2, 3.11);
         fitnessMap.put(f3, 4.11);
 
-        Refactoring r1 = mock(MergeDoubleEvent.class);
-        Refactoring r2 = mock(MergeDoubleEvent.class);
+        Refactoring r1 = mock(SplitScript.class);
+        Refactoring r2 = mock(SplitScript.class);
         Refactoring r3 = mock(MergeDoubleIf.class);
 
-        when(r1.getName()).thenReturn("merge_double_event");
-        when(r2.getName()).thenReturn("merge_double_event");
+        when(r1.getName()).thenReturn("split_script");
+        when(r2.getName()).thenReturn("split_script");
         when(r3.getName()).thenReturn("merge_double_if");
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
