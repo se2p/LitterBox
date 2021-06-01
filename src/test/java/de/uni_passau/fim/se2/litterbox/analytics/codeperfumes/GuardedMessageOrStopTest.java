@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class SearchTest implements JsonTest {
+public class GuardedMessageOrStopTest implements JsonTest {
 
     @Test
     public void testSearchWithStop() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/searchWithStop.json");
-        Search search = new Search();
-        Set<Issue> reports = search.check(prog);
+        GuardedMessageOrStop guardedMessageOrStop = new GuardedMessageOrStop();
+        Set<Issue> reports = guardedMessageOrStop.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testSearchWithBroadcast() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/searchBroadcast.json");
-        Search search = new Search();
-        Set<Issue> reports = search.check(prog);
+        GuardedMessageOrStop guardedMessageOrStop = new GuardedMessageOrStop();
+        Set<Issue> reports = guardedMessageOrStop.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 }

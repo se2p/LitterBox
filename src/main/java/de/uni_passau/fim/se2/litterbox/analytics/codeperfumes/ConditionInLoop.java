@@ -12,9 +12,9 @@ import java.util.List;
 /**
  * Checks for an If-/IfElse block inside of a loop.
  */
-public class NestedConditionInLoop extends AbstractIssueFinder {
+public class ConditionInLoop extends AbstractIssueFinder {
 
-    public static final String NAME = "nested_condition_in_loop";
+    public static final String NAME = "condition_in_loop";
 
     @Override
     public void visit(RepeatForeverStmt node) {
