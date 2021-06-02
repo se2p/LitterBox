@@ -67,6 +67,7 @@ public class ObjectFollower extends AbstractIssueFinder {
     public void visit(MoveSteps node) {
         if (insideLoop && pointToObject) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            pointToObject = false;
         }
     }
 
