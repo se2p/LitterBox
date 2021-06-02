@@ -26,9 +26,9 @@ public class MergeEventHandler extends CloneVisitor implements Refactoring {
         this.scriptList = new ArrayList<>();
 
         Preconditions.checkNotNull(eventList);
-        for(Script script : eventList) {
-            scriptList.add(Preconditions.checkNotNull(script));
-        }
+        Preconditions.checkArgument(eventList.size()>0);
+
+        scriptList.addAll(eventList);
 
         // Create statement list with if then blocks for each event script.
         ArrayList<Stmt> ifThenArrayList = new ArrayList<>();
@@ -38,7 +38,7 @@ public class MergeEventHandler extends CloneVisitor implements Refactoring {
         StmtList ifThenStmts = new StmtList(ifThenArrayList);
 
         // Create forever loop.
-        StmtList foreverStmt = new StmtList(new Stmt[]{new RepeatForeverStmt(ifThenStmts, scriptList.get(0).getMetadata())});
+        StmtList foreverStmt = new StmtList(new RepeatForeverStmt(ifThenStmts, scriptList.get(0).getMetadata()));
 
         GreenFlag greenFlag = new GreenFlag(scriptList.get(0).getMetadata());
         replacement = new Script(greenFlag, foreverStmt);
@@ -51,8 +51,9 @@ public class MergeEventHandler extends CloneVisitor implements Refactoring {
             Key pressed = ((KeyPressed) script.getEvent()).getKey();
             e = new IsKeyPressed(pressed, script.getEvent().getMetadata());
             stmts.addAll(apply(script.getStmtList()).getStmts());
-        } else
+        } else {
             throw new IllegalArgumentException("Event called not implemented");
+        }
 
         return new IfThenStmt(e, new StmtList(stmts), script.getMetadata());
     }

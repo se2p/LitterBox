@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class MergeEventHandlerFinder extends AbstractRefactoringFinder {
 
-    ArrayList<Script> eventList = new ArrayList<>();
+    private ArrayList<Script> eventList = new ArrayList<>();
 
 
     @Override
