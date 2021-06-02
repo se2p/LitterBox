@@ -20,4 +20,14 @@ public class MergeEventHandlerTest implements JsonTest {
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
     }
+
+    @Test
+    public void testMergeEventHandler() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/mergeEventHandler.json");
+        MergeEventHandlerFinder finder = new MergeEventHandlerFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        for (Refactoring r : refactorings) {
+            r.apply(program);
+        }
+    }
 }
