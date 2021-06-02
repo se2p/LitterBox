@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.Collections;
+
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
@@ -88,5 +90,10 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    public static NonDataBlockMetadata emptyNonBlockMetadata() {
+        return new NonDataBlockMetadata("", CloneVisitor.generateUID(), new InputMetadataList(Collections.emptyList()),
+                new FieldsMetadataList(Collections.emptyList()), false, true, new NoMutationMetadata());
     }
 }
