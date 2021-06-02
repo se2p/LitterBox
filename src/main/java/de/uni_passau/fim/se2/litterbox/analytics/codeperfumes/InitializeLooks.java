@@ -35,6 +35,7 @@ public class InitializeLooks extends AbstractIssueFinder {
 
     @Override
     public void visit(ActorDefinition actor) {
+        initializedInBlock = false;
         customBlocks = new ArrayList<>();
         super.visit(actor);
     }
