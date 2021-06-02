@@ -56,17 +56,17 @@ public class JSONFileCreator {
         }
     }
 
-    public static void writeSb3FromProgram(Program program, String output, File file, String postfix) throws IOException {
+    public static void writeSb3FromProgram(Program program, String outputPath, File sourceSB3File, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        String destinationPath = Paths.get(output, program.getIdent().getName() + postfix + SB3).toString();
+        String destinationPath = Paths.get(outputPath, program.getIdent().getName() + postfix + SB3).toString();
         Path tmp = Files.createTempDirectory("litterbox_");
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
 
-        ZipFile zipFile = new ZipFile(file);
+        ZipFile zipFile = new ZipFile(sourceSB3File);
         zipFile.extractAll(String.valueOf(tmp));
 
         File tempProj = new File(tmp + "/project.json");
