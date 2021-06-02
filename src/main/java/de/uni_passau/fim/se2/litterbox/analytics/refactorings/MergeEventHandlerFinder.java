@@ -17,14 +17,17 @@ public class MergeEventHandlerFinder extends AbstractRefactoringFinder {
     public void visit(Program program) {
         visitChildren(program);
 
-        if(eventList.size() > 0)
+        if(eventList.size() > 1) {
             refactorings.add(new MergeEventHandler(eventList));
+        }
     }
 
 
     @Override
-    public void visit(KeyPressed keyPressed) {
-        eventList.add((Script) keyPressed.getParentNode());
+    public void visit(Script script) {
+        if (script.getEvent() instanceof KeyPressed && script.getStmtList().getNumberOfStatements() > 0) {
+            eventList.add(script);
+        }
     }
 
     // TODO add all other events to be able refactored
