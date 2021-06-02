@@ -35,6 +35,9 @@ public class InitializeLocation extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         customBlocks = new ArrayList<>();
+        initializedX = false;
+        initializedY = false;
+        initializedInBlock = false;
         super.visit(actor);
     }
 
