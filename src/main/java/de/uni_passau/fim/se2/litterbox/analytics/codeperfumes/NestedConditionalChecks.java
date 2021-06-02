@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Looks for nested if/else condition blocks.
  */
-public class NestedConditions extends AbstractIssueFinder {
+public class NestedConditionalChecks extends AbstractIssueFinder {
 
-    public static final String NAME = "nested_conditions";
+    public static final String NAME = "nested_conditional_checks";
     private List<ASTNode> addedStmts = new ArrayList<>();
 
     @Override

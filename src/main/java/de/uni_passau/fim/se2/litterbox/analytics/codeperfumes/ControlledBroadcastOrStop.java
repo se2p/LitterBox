@@ -15,12 +15,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 
 /**
- * The Search pattern means inside a loop a certain condition is checked (if-statement). If the condition
+ * The ControlledBroadcastOrStop pattern means inside a loop a certain condition is checked (if-statement). If the condition
  * is met, a stop-block or a broadcast is triggered.
  */
-public class Search extends AbstractIssueFinder {
+public class ControlledBroadcastOrStop extends AbstractIssueFinder {
 
-    public static final String NAME = "search";
+    public static final String NAME = "controlled_broadcast_or_stop";
     private boolean inLoop = false;
 
     @Override

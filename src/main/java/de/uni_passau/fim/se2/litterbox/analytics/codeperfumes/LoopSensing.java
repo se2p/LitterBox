@@ -24,9 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * the event to occur is necessary. So the check must be inside a forever or until loop (and not only in a conditional
  * construct). This is the solution pattern for the bug pattern "Missing Loop Sensing".
  */
-public class EventInLoop extends AbstractIssueFinder {
+public class LoopSensing extends AbstractIssueFinder {
 
-    public static final String NAME = "event_check_in_loop";
+    public static final String NAME = "loop_sensing";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
