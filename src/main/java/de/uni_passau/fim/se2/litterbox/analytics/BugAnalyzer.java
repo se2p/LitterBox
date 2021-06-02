@@ -40,10 +40,12 @@ public class BugAnalyzer extends Analyzer {
     private List<IssueFinder> issueFinders;
     private String annotationOutput;
     private boolean ignoreLooseBlocks;
+    private String detectors;
 
     public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
+        this.detectors= detectors;
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
@@ -59,6 +61,7 @@ public class BugAnalyzer extends Analyzer {
      * @param reportFileName the file in which to write the results
      */
     void check(File fileEntry, String reportFileName) {
+        issueFinders=IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message
