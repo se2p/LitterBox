@@ -4,11 +4,8 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeEventHandlerFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,12 +26,12 @@ public class MergeEventHandlerTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/mergeEventHandler.json");
         MergeEventHandlerFinder finder = new MergeEventHandlerFinder();
         List<Refactoring> refactorings = finder.check(program);
-        Program refactored;
         Refactoring r = refactorings.get(0);
-        refactored = r.apply(program);
+        Program refactored = r.apply(program);
         //System.out.println(r.toString());
         assertThat(program).isNotEqualTo(refactored);
     }
+
 
 //    @Test
 //    public void testMergeEventHandler2() throws ParsingException, IOException {

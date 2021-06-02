@@ -3,8 +3,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -23,47 +23,46 @@ public class MergeEventHandler extends CloneVisitor implements Refactoring {
     private Script replacement;
 
     public MergeEventHandler(ArrayList<Script> eventList) {
-        this.scriptList = new ArrayList<>();
-
         Preconditions.checkNotNull(eventList);
-        Preconditions.checkArgument(eventList.size()>0);
-
-        scriptList.addAll(eventList);
+        Preconditions.checkArgument(eventList.size() > 1);
+        this.scriptList = eventList;
 
         // Create statement list with if then blocks for each event script.
         ArrayList<Stmt> ifThenArrayList = new ArrayList<>();
         for (Script script : scriptList) {
             ifThenArrayList.add(getIfStmtFromEventScript(script));
         }
-        StmtList ifThenStmts = new StmtList(ifThenArrayList);
 
         // Create forever loop.
-        StmtList foreverStmt = new StmtList(new RepeatForeverStmt(ifThenStmts, scriptList.get(0).getMetadata()));
+        StmtList foreverStmt = new StmtList(new RepeatForeverStmt(new StmtList(ifThenArrayList),
+                apply(scriptList.get(0).getStmtList().getStatement(0).getMetadata())));
 
-        GreenFlag greenFlag = new GreenFlag(scriptList.get(0).getMetadata());
+        GreenFlag greenFlag = new GreenFlag(apply(scriptList.get(0).getEvent().getMetadata()));
         replacement = new Script(greenFlag, foreverStmt);
     }
 
     private Stmt getIfStmtFromEventScript(Script script) {
-        BoolExpr e;
-        List<Stmt> stmts = new ArrayList<>();
-        if(script.getEvent() instanceof KeyPressed) {
-            Key pressed = ((KeyPressed) script.getEvent()).getKey();
-            e = new IsKeyPressed(pressed, script.getEvent().getMetadata());
-            stmts.addAll(apply(script.getStmtList()).getStmts());
-        } else {
-            throw new IllegalArgumentException("Event called not implemented");
-        }
+        Preconditions.checkArgument(script.getEvent() instanceof KeyPressed);
+        Preconditions.checkArgument(script.getStmtList().getNumberOfStatements() > 0);
 
-        return new IfThenStmt(e, new StmtList(stmts), script.getMetadata());
+        Key pressed = ((KeyPressed) script.getEvent()).getKey();
+        NonDataBlockMetadata keyMetaData = NonDataBlockMetadata.emptyNonBlockMetadata();
+        IsKeyPressed expression = new IsKeyPressed(apply(pressed), keyMetaData);
+        List<Stmt> stmts = apply(script.getStmtList()).getStmts();
+
+        return new IfThenStmt(expression, new StmtList(stmts), apply(stmts.get(0).getMetadata()));
     }
 
     @Override
     public ASTNode visit(ScriptList node) {
         List<Script> scripts = new ArrayList<>();
+        boolean inserted = false;
         for (Script currentScript : node.getScriptList()) {
             if (scriptList.contains(currentScript)) {
-                scripts.add(replacement);
+                if (!inserted) {
+                    scripts.add(replacement);
+                    inserted = true;
+                }
             } else {
                 scripts.add(apply(currentScript));
             }
