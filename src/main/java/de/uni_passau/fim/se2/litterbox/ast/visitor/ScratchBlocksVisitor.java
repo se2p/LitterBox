@@ -2015,7 +2015,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                     }
                 } else {
                     List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
-                    if (node.equals(nodes.get(0))) {
+                    if (node == (nodes.get(0))) {
                         if (issue.getIssueType() == IssueType.PERFUME) {
                             issueNote.add(PERFUME_NOTE);
                         } else {
