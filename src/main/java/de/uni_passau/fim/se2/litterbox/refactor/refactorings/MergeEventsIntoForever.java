@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeEventHandler extends CloneVisitor implements Refactoring {
+public class MergeEventsIntoForever extends CloneVisitor implements Refactoring {
 
     public static final String NAME = "merge_event_handler";
     private ArrayList<Script> scriptList;
 
     private Script replacement;
 
-    public MergeEventHandler(ArrayList<Script> eventList) {
+    public MergeEventsIntoForever(ArrayList<Script> eventList) {
         Preconditions.checkNotNull(eventList);
-        Preconditions.checkArgument(eventList.size() > 1);
+        Preconditions.checkArgument(eventList.size() > 0);
         this.scriptList = eventList;
 
         // Create statement list with if then blocks for each event script.
@@ -83,12 +83,13 @@ public class MergeEventHandler extends CloneVisitor implements Refactoring {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MergeEventHandler)) return false;
-        MergeEventHandler that = (MergeEventHandler) o;
+        if (!(o instanceof MergeEventsIntoForever)) return false;
+        MergeEventsIntoForever that = (MergeEventsIntoForever) o;
         boolean equals = true;
 
-        if(this.scriptList.size() != that.scriptList.size())
+        if(this.scriptList.size() != that.scriptList.size()) {
             return false;
+        }
 
         for (int i = 0; i < this.scriptList.size(); i++) {
             if (this.scriptList.get(i).equals(that.scriptList.get(i)))

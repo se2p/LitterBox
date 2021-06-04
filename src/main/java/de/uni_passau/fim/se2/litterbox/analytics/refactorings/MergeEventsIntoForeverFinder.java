@@ -4,11 +4,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeEventHandler;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeEventsIntoForever;
 
 import java.util.ArrayList;
 
-public class MergeEventHandlerFinder extends AbstractRefactoringFinder {
+public class MergeEventsIntoForeverFinder extends AbstractRefactoringFinder {
 
     private ArrayList<Script> eventList = new ArrayList<>();
 
@@ -17,8 +17,8 @@ public class MergeEventHandlerFinder extends AbstractRefactoringFinder {
     public void visit(Program program) {
         visitChildren(program);
 
-        if(eventList.size() > 1) {
-            refactorings.add(new MergeEventHandler(eventList));
+        if(eventList.size() > 0) {
+            refactorings.add(new MergeEventsIntoForever(eventList));
         }
     }
 
@@ -34,6 +34,6 @@ public class MergeEventHandlerFinder extends AbstractRefactoringFinder {
 
     @Override
     public String getName() {
-        return MergeEventHandler.NAME;
+        return MergeEventsIntoForever.NAME;
     }
 }
