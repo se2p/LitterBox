@@ -18,6 +18,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ExtractEventsFromForever extends CloneVisitor implements Refactoring{
 
@@ -69,4 +70,41 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ExtractEventsFromForever)) return false;
+        ExtractEventsFromForever that = (ExtractEventsFromForever) o;
+        boolean equals = true;
+
+        if(this.eventScripts.size() != that.eventScripts.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < this.eventScripts.size(); i++) {
+            if (this.eventScripts.get(i).equals(that.eventScripts.get(i)))
+                equals = false;
+        }
+        return equals && Objects.equals(this.loop, that.loop) && Objects.equals(this.script, that.script);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(loop, eventScripts);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Script script : eventScripts) {
+            sb.append(System.lineSeparator());
+            sb.append(script.getScratchBlocks());
+            sb.append(" and ");
+        }
+        sb.delete(sb.length()-6 , sb.length()-1);
+        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator() +
+                " to:" + System.lineSeparator() + sb +  System.lineSeparator();
+    }
+
 }
