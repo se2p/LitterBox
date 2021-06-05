@@ -1,9 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -14,6 +11,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementDeletionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -27,6 +25,9 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
     private RepeatForeverStmt loop;
     private Script script;
     private ArrayList<Script> eventScripts = new ArrayList<>();
+    private boolean onlyIfThenStmts = false;
+    // The new ForeverLoop if not only IfThen Statements;
+    private RepeatForeverStmt replacement = null;
 
     public ExtractEventsFromForever(Script script, RepeatForeverStmt loop) {
         this.loop = Preconditions.checkNotNull(loop);
@@ -34,6 +35,7 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
 
 
         // New Script for each if then with KeyPressed Event
+        ArrayList<Stmt> replacementStmts = new ArrayList<>();
         for (Stmt stmt : this.loop.getStmtList().getStmts()) {
             if(stmt instanceof IfThenStmt) {
                 IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -44,7 +46,15 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
                     Script event = new Script(e, ifThenStmt.getThenStmts());
                     eventScripts.add(event);
                 }
+            } else {
+                replacementStmts.add(stmt);
             }
+        }
+
+        if (replacementStmts.size() > 0) {
+            replacement = new RepeatForeverStmt(new StmtList(replacementStmts), loop.getMetadata());
+        } else {
+            onlyIfThenStmts = true;
         }
     }
 
@@ -54,6 +64,8 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
         for (Script currentScript : node.getScriptList()) {
             scripts.add(apply(currentScript));
         }
+
+        // Add all scripts
         for(Script currentScript : eventScripts) {
             scripts.add(currentScript);
         }
@@ -62,7 +74,11 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
 
     @Override
     public Program apply(Program program) {
-        program = (Program) program.accept(new StatementDeletionVisitor(loop));
+        if(onlyIfThenStmts) {
+            program = (Program) program.accept(new StatementDeletionVisitor(loop));
+        } else {
+            program = (Program) program.accept(new StatementReplacementVisitor(loop, replacement));
+        }
         return (Program) program.accept(this);
     }
 

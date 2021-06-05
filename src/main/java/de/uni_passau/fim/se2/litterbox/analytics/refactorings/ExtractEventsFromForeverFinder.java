@@ -44,9 +44,6 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
                         if(expr instanceof IsKeyPressed) {
                             isValid = true;
                         }
-                    } else {
-                        // If there are other stmts than ifThen
-                        break;
                     }
                 }
                 if(isValid) {
