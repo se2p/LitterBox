@@ -19,6 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 public interface Stmt extends ASTNode {
+    default String getScratchBlocks() {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
+        this.accept(visitor);
+        return visitor.getScratchBlocks();
+    }
 }

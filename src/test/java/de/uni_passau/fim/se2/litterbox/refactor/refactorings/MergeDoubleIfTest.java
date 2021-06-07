@@ -108,18 +108,18 @@ class MergeDoubleIfTest implements JsonTest {
                 + "Replaced ifs:\n"
                 + "\n"
                 + "if <touching (edge v) ?> then\n"
-                + "move  steps\n"
+                + "move (5) steps\n"
                 + "end\n"
                 + "\n"
                 + "if <touching (edge v) ?> then\n"
-                + "move  steps\n"
+                + "move (2) steps\n"
                 + "end\n"
                 + "\n"
                 + "Replacement:\n"
                 + "\n"
                 + "if <touching (edge v) ?> then\n"
-                + "move  steps\n"
-                + "move  steps\n"
+                + "move (5) steps\n"
+                + "move (2) steps\n"
                 + "end\n");
     }
 
