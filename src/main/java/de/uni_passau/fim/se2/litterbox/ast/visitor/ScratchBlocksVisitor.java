@@ -126,7 +126,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
-    private boolean ignoreSingleBlocks = true;
+    private boolean requireScript = true;
 
     public ScratchBlocksVisitor() {
         super(null);
@@ -159,13 +159,20 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         }
     }
 
-    public ScratchBlocksVisitor(boolean ignoreSingleBlocks) {
+    /**
+     *
+     * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
+     *                      i.e., without their context in a script.
+     *                      This prevents certain blocks from not being printed as they have to be ignored if they
+     *                      occur outside of scripts when printing whole programs.
+     */
+    public ScratchBlocksVisitor(boolean requireScript) {
         this();
-        this.ignoreSingleBlocks = ignoreSingleBlocks;
+        this.requireScript = requireScript;
     }
 
     public boolean isIgnoredBlock() {
-        return !inScript && ignoreSingleBlocks;
+        return !inScript && requireScript;
     }
 
     public void setCurrentActor(ActorDefinition node) {
