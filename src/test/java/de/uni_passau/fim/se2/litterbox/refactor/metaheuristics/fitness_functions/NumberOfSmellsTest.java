@@ -24,7 +24,7 @@ class NumberOfSmellsTest {
     void testSizeEvaluation() {
         doNothing().when(mockedFinder).setIgnoreLooseBlocks(anyBoolean());
         when(mockedFinder.check(program)).thenReturn(Set.of(mock(Issue.class)));
-        MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, false);
+        MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(issueFinders, false);
         assertTrue(fitnessFunction.isMinimizing());
         RefactorSequence refactorSequence = mock(RefactorSequence.class);
         when(refactorSequence.getRefactoredProgram()).thenReturn(program);

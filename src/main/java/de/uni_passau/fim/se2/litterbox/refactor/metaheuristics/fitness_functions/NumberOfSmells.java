@@ -12,12 +12,10 @@ import java.util.Set;
 public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "number_of_smells_fitness";
 
-    private final Program program;
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
 
-    public NumberOfSmells(Program program, List<IssueFinder> issueFinders, boolean ignoreLooseBlocks) {
-        this.program = program;
+    public NumberOfSmells(List<IssueFinder> issueFinders, boolean ignoreLooseBlocks) {
         this.issueFinders = issueFinders;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }

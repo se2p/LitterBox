@@ -5,16 +5,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeDoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.MinimizingFitnessFunction;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import org.junit.jupiter.api.Test;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,15 +44,12 @@ class FastNonDominatedSortTest {
 
     @Test
     void testDominationCheck() {
-        FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
-        FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
+        MaximizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfHelloBlocks.class);
+        MinimizingFitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
+        when(function2.isMinimizing()).thenReturn(true);
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1, function2);
 
-        // mock f1 maximizing
-        when(function1.comparator()).thenReturn(Comparator.comparingDouble(c -> c.getFitness(function1)));
-        // mock f2 minimizing
-        when(function2.comparator()).thenReturn((c1, c2) -> Double.compare(c2.getFitness(function2), c1.getFitness(function2)));
-
+        // c3 dominates c2 and c1, c2 and c1 do not dominate each other
         RefactorSequence c1 = mock(RefactorSequence.class);
         RefactorSequence c2 = mock(RefactorSequence.class);
         RefactorSequence c3 = mock(RefactorSequence.class);
