@@ -33,7 +33,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         if (script.getEvent() instanceof Never) {
             return;
         }
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         script.accept(visitor);
         cfg = visitor.getControlFlowGraph();
         pdg = new ProgramDependenceGraph(cfg);
@@ -66,7 +66,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         List<Stmt> mergedStatements = new ArrayList<>(subScript1);
         mergedStatements.addAll(subScript2);
         Script mergedScript = new Script(script.getEvent(), new StmtList(mergedStatements));
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         mergedScript.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);

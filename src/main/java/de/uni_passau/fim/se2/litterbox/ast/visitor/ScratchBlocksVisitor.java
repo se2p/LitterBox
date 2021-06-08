@@ -32,9 +32,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
@@ -44,7 +46,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
@@ -52,7 +53,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -126,6 +126,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
+    private boolean requireScript = true;
+
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
@@ -155,6 +157,22 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             //       issues, as this is an implicit assumption here. Otherwise
             //       variables such as currentActor may not be initialised
         }
+    }
+
+    /**
+     *
+     * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
+     *                      i.e., without their context in a script.
+     *                      This prevents certain blocks from not being printed as they have to be ignored if they
+     *                      occur outside of scripts when printing whole programs.
+     */
+    public ScratchBlocksVisitor(boolean requireScript) {
+        this();
+        this.requireScript = requireScript;
+    }
+
+    public boolean isIgnoredBlock() {
+        return !inScript && requireScript;
     }
 
     public void setCurrentActor(ActorDefinition node) {
@@ -1079,7 +1097,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SetVariableTo node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace("set [");
@@ -1255,7 +1273,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(NumberLiteral number) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
 
@@ -1370,7 +1388,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(ScratchList node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1379,7 +1397,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Variable node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1403,7 +1421,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        if (inScript) {
+        if (!isIgnoredBlock()) {
             emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
             emitNoSpace("]");
@@ -1929,7 +1947,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StrId strId) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace(strId.getName());

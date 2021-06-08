@@ -1,5 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
@@ -12,6 +14,7 @@ import java.util.List;
 public abstract class AbstractRefactoringFinder implements RefactoringFinder, ScratchVisitor {
 
     protected List<Refactoring> refactorings;
+    protected ActorDefinition currentActor = null;
 
     /**
      * Checks the given program for a specific refactoring.
@@ -25,6 +28,12 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
         refactorings = new LinkedList<>();
         program.accept(this);
         return Collections.unmodifiableList(refactorings);
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        this.currentActor = node;
+        visit((ASTNode) node);
     }
 
 }
