@@ -12,7 +12,6 @@ import java.util.List;
 public abstract class AbstractRefactoringFinder implements RefactoringFinder, ScratchVisitor {
 
     protected List<Refactoring> refactorings;
-    protected boolean ignoreLooseBlocks = false;
 
     /**
      * Checks the given program for a specific refactoring.
@@ -28,8 +27,4 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
         return Collections.unmodifiableList(refactorings);
     }
 
-    @Override
-    public void setIgnoreLooseBlocks(boolean value) {
-        this.ignoreLooseBlocks = value;
-    }
 }

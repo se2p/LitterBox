@@ -158,11 +158,9 @@ public class Main {
         String outputPath = cmd.getOptionValue(OUTPUT);
         String refactoredPath = cmd.getOptionValue(REFACTORED_PROJECTS);
         String input = cmd.getOptionValue(PROJECTPATH);
-        String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
-        boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
         boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
 
-        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, detectors, ignoreLooseBlocks, delete);
+        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, delete);
 
 
 

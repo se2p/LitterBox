@@ -15,7 +15,5 @@ public interface RefactoringFinder {
      */
     List<Refactoring> check(Program program);
 
-    void setIgnoreLooseBlocks(boolean value);
-
     String getName();
 }
