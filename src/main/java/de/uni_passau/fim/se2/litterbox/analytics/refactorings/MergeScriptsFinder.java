@@ -42,7 +42,7 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
         MergeScripts refactoring = new MergeScripts(script1, script2);
         Script merged = refactoring.getMergedScript();
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         merged.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
