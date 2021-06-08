@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -14,6 +15,11 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
 
     @Override
     public void visit(Script script) {
+        if (script.getEvent() instanceof Never) {
+            // Unconnected blocks
+            return;
+        }
+
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         script.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
