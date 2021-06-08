@@ -14,7 +14,7 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
 
     @Override
     public void visit(Script script) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         script.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);

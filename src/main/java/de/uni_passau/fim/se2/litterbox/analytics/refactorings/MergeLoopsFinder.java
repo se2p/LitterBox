@@ -57,7 +57,7 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         merged.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 

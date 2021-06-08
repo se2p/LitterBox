@@ -37,7 +37,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         List<Stmt> mergedStatements = new ArrayList<>(subScript1);
         mergedStatements.addAll(subScript2);
         Script mergedScript = new Script(script.getEvent(), new StmtList(mergedStatements));
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
         mergedScript.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);

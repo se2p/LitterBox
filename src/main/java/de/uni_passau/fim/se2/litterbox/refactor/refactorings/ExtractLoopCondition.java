@@ -32,10 +32,10 @@ public class ExtractLoopCondition extends CloneVisitor implements Refactoring {
 
         List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).collect(Collectors.toList());
 
-        UntilStmt replacementLoop = new UntilStmt(apply(ifThenStmt.getBoolExpr()), new StmtList(remainingStmts), apply(foreverLoop.getMetadata()));
+        UntilStmt replacementLoop = new UntilStmt(apply(ifThenStmt.getBoolExpr()), new StmtList(applyList(remainingStmts)), apply(foreverLoop.getMetadata()));
         replacement.add(replacementLoop);
         if (!(stopStmt instanceof StopThisScript)) {
-            replacement.add(stopStmt);
+            replacement.add(apply(stopStmt));
         }
     }
 
