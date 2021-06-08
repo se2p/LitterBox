@@ -27,20 +27,25 @@ public class FastNonDominatedSort<C extends Solution<C>> {
      */
     @VisibleForTesting
     boolean dominates(C solution1, C solution2) {
-        int dominated = 0;
+        var dominatesAtLeastOne = false;
 
         for (FitnessFunction<C> fitnessFunction : fitnessFunctions) {
-            int compareResult = fitnessFunction.comparator().compare(solution1, solution2);
-
-            if (compareResult < 0) {
-                return false;
-            } else if (compareResult > 0) {
-                // not return yet in case it is worse than a later fitness function
-                dominated++;
-            }
+             if (solution2.getFitness(fitnessFunction) > solution1.getFitness(fitnessFunction)) {
+                 if (fitnessFunction.isMinimizing()) {
+                     dominatesAtLeastOne = true;
+                 } else {
+                     return false;
+                 }
+             } else if (solution1.getFitness(fitnessFunction) > solution2.getFitness(fitnessFunction)) {
+                 if (fitnessFunction.isMinimizing()) {
+                     return false;
+                 } else {
+                     dominatesAtLeastOne = true;
+                 }
+             }
         }
 
-        return dominated > 0;
+        return dominatesAtLeastOne;
     }
 
 
