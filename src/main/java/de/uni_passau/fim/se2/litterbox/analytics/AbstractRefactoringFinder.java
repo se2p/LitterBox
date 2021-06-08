@@ -3,6 +3,9 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -36,4 +39,17 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
         visit((ASTNode) node);
     }
 
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof Never) {
+            // Only refactor connected blocks
+            return;
+        }
+        visit((ASTNode) node);
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // ignore
+    }
 }
