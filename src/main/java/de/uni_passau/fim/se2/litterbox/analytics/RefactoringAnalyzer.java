@@ -20,6 +20,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -61,9 +64,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions, Program program, int iteration) {
         FitnessFunction<RefactorSequence> f1 = new CategoryEntropyFitness(program);
         FitnessFunction<RefactorSequence> f2 = new HalsteadDifficultyFitness(program);
-        double xr = 1;
-        double yr = 1;
-        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, xr, yr);
+        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, f1.getReferencePoint(), f2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions);
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
@@ -113,7 +114,6 @@ public class RefactoringAnalyzer extends Analyzer {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
             } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
-
                 CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
                 reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration);
                 reportGenerator.close();
@@ -127,6 +127,15 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) {
         String outputPath = refactoredPath == null ? fileEntry.getParent() : refactoredPath;
+        File folder = new File(outputPath);
+        if (!folder.exists()) {
+            try {
+                Path folderPath = Paths.get(outputPath);
+                Files.createDirectory(folderPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
                 JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
