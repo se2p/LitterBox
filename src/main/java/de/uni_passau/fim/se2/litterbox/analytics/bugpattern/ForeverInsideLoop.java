@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,40 +19,69 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+
+import java.util.List;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
- * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
+ * the statements preceding the inner loop are only executed once. Furthermore, the statements following the outer
  * loop can never be reached.
  */
 public class ForeverInsideLoop extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_loop";
     private int loopcounter;
+    private boolean blocksAfter;
+    private boolean blocksBefore;
+    private boolean insideIfElse;
 
     @Override
     public void visit(ActorDefinition actor) {
         loopcounter = 0;
+        blocksAfter = false;
+        blocksBefore = false;
         super.visit(actor);
     }
 
     @Override
     public void visit(UntilStmt node) {
         loopcounter++;
+        checkPosition(node);
         visitChildren(node);
         loopcounter--;
     }
 
+    private void checkPosition(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        assert parent instanceof StmtList;
+        List<Stmt> list = ((StmtList) parent).getStmts();
+        for (int i = 0; i < list.size(); i++) {
+            if (node == list.get(i)) {
+                //blocks before the first loop should not be counted because they would never be repeated and have already been executed
+                if (loopcounter >= 1 && i > 0) {
+                    blocksBefore = true;
+                }
+                if (i < list.size() - 1) {
+                    blocksAfter = true;
+                }
+                return;
+            }
+        }
+    }
+
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (loopcounter > 0) {
-            addIssue(node, node.getMetadata());
+        if (loopcounter > 0 && (blocksAfter || blocksBefore || insideIfElse)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         loopcounter++;
+        checkPosition(node);
         visitChildren(node);
         loopcounter--;
     }
@@ -60,8 +89,27 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         loopcounter++;
+        checkPosition(node);
         visitChildren(node);
         loopcounter--;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        if (loopcounter >= 1) {
+            checkPosition(node);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        insideIfElse = true;
+        if (loopcounter >= 1) {
+            checkPosition(node);
+        }
+        visitChildren(node);
+        insideIfElse = false;
     }
 
     @Override

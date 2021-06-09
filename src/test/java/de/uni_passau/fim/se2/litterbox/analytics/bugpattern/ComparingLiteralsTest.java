@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.ComparingLiteralsHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -38,14 +39,14 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);
-        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
-        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
-        trueHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
-        Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
-        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
-        falseHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
-        falseHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
+        Hint trueHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_WITHOUT_INFORMATION);
+        trueHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        trueHint.setParameter(Hint.HINT_VARIABLE, "");
+        trueHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT,IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.ADD_INFO_DICT_RESOURCE));
+        Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_WITHOUT_INFORMATION);
+        falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "");
+        falseHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT,"");
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
@@ -63,8 +64,9 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_TRUE);
-        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo("always"));
+        Hint trueHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_TRUE);
+        trueHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo("always"));
+        trueHint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }
@@ -76,8 +78,9 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint trueHint = new Hint(ComparingLiterals.WAIT_TRUE);
-        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
+        Hint trueHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_WITHOUT_INFORMATION);
+        trueHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        trueHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT,IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.ADD_INFO_DICT_RESOURCE));
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }
@@ -89,12 +92,32 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE_EXISTS);
-        falseHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.NEVER));
-        falseHint.setParameter(Hint.HINT_VARIABLE, "\"test\"");
-        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_EXISTS);
+        falseHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.NEVER));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "test");
+        falseHint.setParameter(Hint.THEN_ELSE,IssueTranslator.getInstance().getInfo("then"));
+        falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        falseHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT,"");
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
         }
+    }
+
+    @Test
+    public void testComparingLiteralsTwoStrings() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsStrings.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        /*
+        Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_EXISTS);
+        falseHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.NEVER));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "test");
+        falseHint.setParameter(Hint.THEN_ELSE,IssueTranslator.getInstance().getInfo("then"));
+        falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+        }
+        */
     }
 }

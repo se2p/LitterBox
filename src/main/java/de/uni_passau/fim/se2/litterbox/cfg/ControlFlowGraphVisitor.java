@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -45,6 +46,13 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     public ControlFlowGraph getControlFlowGraph() {
         return builder.getControlFlowGraph();
+    }
+
+    public ControlFlowGraphVisitor() {
+    }
+
+    public ControlFlowGraphVisitor(ActorDefinition actor) {
+        builder.setCurrentActor(actor);
     }
 
     @Override
@@ -155,6 +163,15 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     }
 
     @Override
+    public void visit(WaitUntil stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        // Edge to exit since condition may never be true
+        builder.addEdgeToExit();
+        builder.addEdge(node);
+    }
+
+    @Override
     public void visit(UntilStmt stmt) {
         CFGNode node = builder.addStatement(stmt);
 
@@ -169,7 +186,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         CFGNode node = builder.addStatement(stmt);
 
         // Then statements:
-        stmt.getStmtList().accept(this);
+        stmt.getThenStmts().accept(this);
         List<CFGNode> endOfThen = new ArrayList<>(builder.getCurrentStatements());
 
         // Go back to head so that else is attached to if

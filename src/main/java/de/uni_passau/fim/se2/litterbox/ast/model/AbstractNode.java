@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,6 +50,10 @@ public abstract class AbstractNode implements ASTNode {
 
     public List<? extends ASTNode> getChildren() {
         return children;
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
     }
 
     @Override

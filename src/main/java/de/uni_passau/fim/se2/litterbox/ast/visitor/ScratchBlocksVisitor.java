@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -28,16 +29,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
@@ -50,14 +58,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -66,11 +76,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /*
  * Documentation of syntax:
@@ -90,11 +103,12 @@ import java.util.*;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
+    public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
 
     private boolean inScript = false;
 
@@ -111,6 +125,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private final Set<Issue> issues = new LinkedHashSet<>();
 
     private final Set<String> issueNote = new LinkedHashSet<>();
+
+    private boolean requireScript = true;
 
     public ScratchBlocksVisitor() {
         super(null);
@@ -143,8 +159,28 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         }
     }
 
+    /**
+     *
+     * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
+     *                      i.e., without their context in a script.
+     *                      This prevents certain blocks from not being printed as they have to be ignored if they
+     *                      occur outside of scripts when printing whole programs.
+     */
+    public ScratchBlocksVisitor(boolean requireScript) {
+        this();
+        this.requireScript = requireScript;
+    }
+
+    public boolean isIgnoredBlock() {
+        return !inScript && requireScript;
+    }
+
     public void setCurrentActor(ActorDefinition node) {
         currentActor = node;
+    }
+
+    public void setProgram(Program program) {
+        this.program = program;
     }
 
     @Override
@@ -181,7 +217,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         this.program = program;
         super.visit(program);
     }
-
 
     @Override
     public void visit(Script script) {
@@ -418,7 +453,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(ifElseStmt);
         newLine();
         beginIndentation();
-        ifElseStmt.getStmtList().accept(this);
+        ifElseStmt.getThenStmts().accept(this);
         endIndentation();
         emitNoSpace("else");
         newLine();
@@ -822,6 +857,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     //---------------------------------------------------------------
     // Pen blocks
+
     @Override
     public void visit(PenClearStmt node) {
         emitNoSpace("erase all");
@@ -834,6 +870,16 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("stamp");
         storeNotesForIssue(node);
         newLine();
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node) {
+        visitDefaultVisitor(node);
     }
 
     @Override
@@ -910,11 +956,148 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     //---------------------------------------------------------------
+    // TextToSpeech blocks
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(FixedLanguage node) {
+        emitNoSpace("( ");
+        switch (node.getType()) {
+            case ARABIC:
+                emitNoSpace("Arabic");
+                break;
+            case CHINESE:
+                emitNoSpace("Chinese (Mandarin)");
+                break;
+            case DANISH:
+                emitNoSpace("Danish");
+                break;
+            case DUTCH:
+                emitNoSpace("Dutch");
+                break;
+            case ENGLISH:
+                emitNoSpace("English");
+                break;
+            case FRENCH:
+                emitNoSpace("French");
+                break;
+            case GERMAN:
+                emitNoSpace("German");
+                break;
+            case HINDI:
+                emitNoSpace("Hindi");
+                break;
+            case ICELANDIC:
+                emitNoSpace("Icelandic");
+                break;
+            case ITALIAN:
+                emitNoSpace("Italien");
+                break;
+            case JAPANESE:
+                emitNoSpace("Japanese");
+                break;
+            case KOREAN:
+                emitNoSpace("Korean");
+                break;
+            case NORWEGIAN:
+                emitNoSpace("Norwegian");
+                break;
+            case POLISH:
+                emitNoSpace("Polish");
+                break;
+            case PORTUGUESE_BR:
+                emitNoSpace("Portuguese (Brazilian)");
+                break;
+            case PORTUGUESE:
+                emitNoSpace("Portuguese");
+                break;
+            case ROMANIAN:
+                emitNoSpace("Romanian");
+                break;
+            case RUSSIAN:
+                emitNoSpace("Russian");
+                break;
+            case SPANISH:
+                emitNoSpace("Spanish");
+                break;
+            case SPANISH_419:
+                emitNoSpace("Spanish (Latin America)");
+                break;
+            case SWEDISH:
+                emitNoSpace("Swedish");
+                break;
+            case TURKISH:
+                emitNoSpace("Turkish");
+                break;
+            case WELSH:
+                emitNoSpace("Welsh");
+                break;
+            default:
+                //shouldn't be possible
+                emitNoSpace(" ");
+        }
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(ExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprVoice node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedVoice node) {
+        emitNoSpace("( ");
+        emitNoSpace(node.getType().getType());
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        emitNoSpace("set language to ");
+        node.getLanguage().accept((TextToSpeechExtensionVisitor) this);
+        storeNotesForIssue(node);
+        emitNoSpace(" :: tts");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetVoice node) {
+        emitNoSpace("set voice to ");
+        node.getVoice().accept((TextToSpeechExtensionVisitor) this);
+        storeNotesForIssue(node);
+        emitNoSpace(" :: tts");
+        newLine();
+    }
+
+    @Override
+    public void visit(Speak node) {
+        emitNoSpace("set voice to ");
+        node.getText().accept(this);
+        emitNoSpace(" :: tts");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    //---------------------------------------------------------------
     // Variables blocks
 
     @Override
     public void visit(SetVariableTo node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace("set [");
@@ -936,8 +1119,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber && !(((AsNumber)node.getExpr()).getOperand1() instanceof Qualified)) {
-            ((AsNumber)node.getExpr()).getOperand1().accept(this);
+        if (node.getExpr() instanceof AsNumber && !(((AsNumber) node.getExpr()).getOperand1() instanceof Qualified)) {
+            ((AsNumber) node.getExpr()).getOperand1().accept(this);
         } else {
             //
             node.getExpr().accept(this);
@@ -1090,7 +1273,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
 
@@ -1185,14 +1368,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(ExpressionStmt node) {
         if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
         node.getExpression().accept(this);
         if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
             } else if (dataExpr instanceof ScratchList) {
@@ -1205,7 +1388,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ScratchList node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1214,7 +1397,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Variable node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1238,7 +1421,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        if (inScript) {
+        if (!isIgnoredBlock()) {
             emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
             emitNoSpace("]");
@@ -1249,9 +1432,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(ColorLiteral colorLiteral) {
         emitNoSpace("[#");
-        emitNoSpace(Long.toHexString(colorLiteral.getRed()));
-        emitNoSpace(Long.toHexString(colorLiteral.getGreen()));
-        emitNoSpace(Long.toHexString(colorLiteral.getBlue()));
+        emitNoSpace(String.format("%02x", colorLiteral.getRed()));
+        emitNoSpace(String.format("%02x", colorLiteral.getGreen()));
+        emitNoSpace(String.format("%02x", colorLiteral.getBlue()));
         emitNoSpace("]");
         storeNotesForIssue(colorLiteral);
     }
@@ -1657,7 +1840,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SpriteTouchable node) {
         emitNoSpace("(");
         // TODO: Why is the signature a StringExpr if it is always set to a StringLiteral
-        StringLiteral literal = (StringLiteral)node.getStringExpr();
+        StringLiteral literal = (StringLiteral) node.getStringExpr();
         emitNoSpace(literal.getText());
         emitNoSpace(" v)");
     }
@@ -1748,15 +1931,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Parameter node) {
-        NonDataBlockMetadata metaData = (NonDataBlockMetadata)node.getMetadata();
-        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+        if (node.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean)) {
             emitNoSpace("<");
         } else {
             emitNoSpace("(");
         }
         visitChildren(node);
         storeNotesForIssue(node);
-        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+        if (node.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean)) {
             emitNoSpace(">");
         } else {
             emitNoSpace(")");
@@ -1765,7 +1947,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(StrId strId) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace(strId.getName());
@@ -1833,12 +2015,22 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private void storeNotesForIssue(ASTNode node) {
         boolean hasIssue = false;
         for (Issue issue : issues) {
-            if (issue.getCodeLocation() == node) {
+            if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
-                    emitNoSpace(":: #ff0000");
+                    if (issue.getIssueType() == IssueType.PERFUME) {
+                        emitNoSpace(":: #167700");
+                    } else {
+                        emitNoSpace(":: #ff0000");
+                    }
                 }
                 hasIssue = true;
-                issueNote.add(BUG_NOTE);
+                if (!issue.hasMultipleBlocks()) {
+                    if (issue.getIssueType() == IssueType.PERFUME) {
+                        issueNote.add(PERFUME_NOTE);
+                    } else {
+                        issueNote.add(BUG_NOTE);
+                    }
+                }
                 // TODO: In theory there could be multiple messages here...
                 // issueNote.add(issue.getTranslatedFinderName());
             }

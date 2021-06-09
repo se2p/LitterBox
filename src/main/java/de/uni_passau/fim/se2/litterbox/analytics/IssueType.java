@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,5 +19,5 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 public enum IssueType {
-    BUG, SMELL
+    BUG, SMELL, PERFUME
 }

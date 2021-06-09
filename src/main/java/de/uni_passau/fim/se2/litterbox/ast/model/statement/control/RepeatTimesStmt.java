@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,11 +23,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
+public class RepeatTimesStmt extends AbstractNode implements LoopStmt {
 
     private final NumExpr times;
     private final StmtList stmtList;
@@ -49,6 +51,7 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
         return times;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }
@@ -61,5 +64,10 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return ControlStmtOpcode.control_repeat;
     }
 }

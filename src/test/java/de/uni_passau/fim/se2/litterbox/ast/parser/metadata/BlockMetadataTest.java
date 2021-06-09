@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -71,9 +71,7 @@ public class BlockMetadataTest {
         Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
         Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
-        Assertions.assertEquals("procedures_definition", topNonDataBlockMetadata.getOpcode());
         Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
-        Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
 
     @Test
@@ -90,8 +88,5 @@ public class BlockMetadataTest {
         Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
         Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
-        Assertions.assertEquals("procedures_prototype", nonDataBlockMetadata.getOpcode());
-        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", nonDataBlockMetadata.getParent());
-        Assertions.assertNull(nonDataBlockMetadata.getNext());
     }
 }

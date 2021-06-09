@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,6 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -57,9 +64,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotat
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount implements MetricExtractor, ScratchVisitor {
+public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -68,14 +76,15 @@ public class BlockCount implements MetricExtractor, ScratchVisitor {
     private boolean fixedBlock = false;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         count = 0;
-        insideScript = false;
         insideProcedure = false;
         insideParameterList = false;
         fixedBlock = false;
-        program.accept(this);
+        insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
+        node.accept(this);
+        insideScript = false;
         return count;
     }
 
@@ -542,6 +551,42 @@ public class BlockCount implements MetricExtractor, ScratchVisitor {
             //only expression has to be counted since the list is an identifier
             node.getElement().accept(this);
         }
+    }
+
+    //TextToSpeechBlocks
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+    }
+
+    @Override
+    public void visit(FixedLanguage node) {
+        //do not count
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(ExprLanguage node) {
+        //only visit the children/the node that is inside the language block
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(FixedVoice node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(ExprVoice node) {
+        //only visit the children/the node that is inside the voice block
+        visitChildren(node);
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum CommonStmtOpcode {
+public enum CommonStmtOpcode implements Opcode {
 
     control_wait,            //"wait" NumExpr "seconds"
     control_wait_until,      //"wait" "until" BoolExpr
@@ -36,5 +36,10 @@ public enum CommonStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

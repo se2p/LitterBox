@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -169,11 +170,23 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 switchReceived.add(new Pair<>(actorName, msgName));
             } else if (notSentMessages.contains(msgName)) {
-                addIssue(event, event.getMetadata());
+                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
         visitChildren(node);
         currentScript = null;
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override

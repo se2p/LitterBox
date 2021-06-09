@@ -1,0 +1,219 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {
+                "kOIKOC[pd_m$9#D|mJmD": "Nachricht1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "BH6*`AwM4{tx^)8WLaB!": {
+                    "opcode": "control_repeat",
+                    "next": "!3m|8/je,W#:qD7{:.%c",
+                    "parent": "-H)2x:,W-k,qE}H{S0X[",
+                    "inputs": {
+                        "TIMES": [
+                            1,
+                            [
+                                6,
+                                "10"
+                            ]
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "bBl}F/{U!1qV9/r5JZ|r"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "-H)2x:,W-k,qE}H{S0X[": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "BH6*`AwM4{tx^)8WLaB!",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 682,
+                    "y": 321
+                },
+                "bBl}F/{U!1qV9/r5JZ|r": {
+                    "opcode": "motion_movesteps",
+                    "next": "!@GM/WIZTM,#D6`ICnK~",
+                    "parent": "BH6*`AwM4{tx^)8WLaB!",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!@GM/WIZTM,#D6`ICnK~": {
+                    "opcode": "motion_pointindirection",
+                    "next": null,
+                    "parent": "bBl}F/{U!1qV9/r5JZ|r",
+                    "inputs": {
+                        "DIRECTION": [
+                            1,
+                            [
+                                8,
+                                "90"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!3m|8/je,W#:qD7{:.%c": {
+                    "opcode": "sensing_askandwait",
+                    "next": null,
+                    "parent": "BH6*`AwM4{tx^)8WLaB!",
+                    "inputs": {
+                        "QUESTION": [
+                            1,
+                            [
+                                10,
+                                "Wie heißt du?"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "k+/)@u7;IdV,|d4#r_79": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "v^.A19D3Cdym(Rl*D``q",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                },
+                "v^.A19D3Cdym(Rl*D``q": {
+                    "opcode": "event_whenthisspriteclicked",
+                    "next": "k+/)@u7;IdV,|d4#r_79",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 165,
+                    "y": 381
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}

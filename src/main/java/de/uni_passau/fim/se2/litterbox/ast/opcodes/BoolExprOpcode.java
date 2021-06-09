@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum BoolExprOpcode {
+public enum BoolExprOpcode implements Opcode {
 
     sensing_touchingobject, sensing_touchingcolor, sensing_coloristouchingcolor,
     sensing_keypressed, sensing_mousedown, operator_gt, operator_lt, operator_equals,
@@ -32,4 +32,8 @@ public enum BoolExprOpcode {
         }
         return false;
     }
-}
+
+    @Override
+    public String getName() {
+        return name();
+    }}

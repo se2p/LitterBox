@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
@@ -36,15 +35,6 @@ public class BlockMetadataParser {
             if (blockNode.has(COMMENT_KEY)) {
                 commentId = blockNode.get(COMMENT_KEY).asText();
             }
-            String opcode = blockNode.get(OPCODE_KEY).asText();
-            String next = null;
-            if (blockNode.has(NEXT_KEY) && !(blockNode.get(NEXT_KEY) instanceof NullNode)) {
-                next = blockNode.get(NEXT_KEY).asText();
-            }
-            String parent = null;
-            if (blockNode.has(PARENT_KEY) && !(blockNode.get(PARENT_KEY) instanceof NullNode)) {
-                parent = blockNode.get(PARENT_KEY).asText();
-            }
             InputMetadataList inputMetadata = InputMetadataListParser.parse(blockNode.get(INPUTS_KEY));
             FieldsMetadataList fields = FieldsMetadataListParser.parse(blockNode.get(FIELDS_KEY));
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
@@ -56,14 +46,14 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+                return new NonDataBlockMetadata(commentId, blockId, inputMetadata, fields,
                         topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopNonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+            return new TopNonDataBlockMetadata(commentId, blockId, inputMetadata, fields,
                     topLevel,
                     shadow,
                     mutation, x, y);

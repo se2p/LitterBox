@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -313,4 +313,16 @@ public class Constants {
     public static final String BOOLEAN_DEFAULT = "false";
     public static final String STRING_NUMBER_DEFAULT = "";
     public static final String NUMBER_DEFAULT = "1";
+    public static final String CURRENT_YEAR_FIELD = "CURRENTMENU";
+    public static final String PROPERTY_FIELDS_KEY = "PROPERTY";
+    public static final String WHEN_GREATER_THAN_MENU = "WHENGREATERTHANMENU";
+    public static final String BROADCAST_OPTION = "BROADCAST_OPTION";
+    public static final String FRONT_BACK = "FRONT_BACK";
+    public static final String FORWARD_BACKWARD = "FORWARD_BACKWARD";
+    public static final String STOP_OPTION = "STOP_OPTION";
+    public static final String WORDS_KEY = "WORDS";
+    public static final String VOICE_INPUT_KEY = "VOICE";
+    public static final String VOICE_FIELDS_KEY = "voices";
+    public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
+    public static final String LANGUAGE_FIELDS_KEY = "languages";
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -30,16 +30,16 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * This visitor calculates the weighted method count as a metric for Scratch projects.
  */
-public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
+public class WeightedMethodCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
     int count = 0;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         this.count = 0;
 
-        program.accept(this);
+        node.accept(this);
         return count;
     }
 

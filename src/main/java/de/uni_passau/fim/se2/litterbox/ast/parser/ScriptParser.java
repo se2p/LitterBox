@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.StmtParser;
@@ -95,7 +95,7 @@ public class ScriptParser {
             while (current != null && !current.isNull()) {
                 try {
                     String opcode = blocks.get(blockId).get(OPCODE_KEY).asText();
-                    if (DependentBlockOpcodes.contains(opcode)
+                    if (DependentBlockOpcode.contains(opcode)
                             || ProcedureOpcode.procedures_definition.name().equals(opcode)
                             || ProcedureOpcode.procedures_prototype.name().equals(opcode)) {
                         // Don't parse these blocks (here)

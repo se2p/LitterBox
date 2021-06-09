@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,9 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
@@ -44,7 +42,7 @@ import java.util.Collection;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    static boolean inCondition;
+    private boolean inCondition;
 
     boolean checkEquals(Equals equals) {
         if (!checkOptions(equals.getOperand1())) {
@@ -81,7 +79,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         if (inCondition) {
             if (!checkEquals(node)) {
                 Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             }
         }
     }
@@ -107,8 +105,24 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         inCondition = true;
         node.getBoolExpr().accept(this);
         inCondition = false;
-        node.getStmtList().accept(this);
+        node.getThenStmts().accept(this);
         node.getElseStmts().accept(this);
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof TypeError) {
+            //need parent if 'distance to' is the subsumed node, because PEC has the boolean node as affected node and TypeError the distance node
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation()) || theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

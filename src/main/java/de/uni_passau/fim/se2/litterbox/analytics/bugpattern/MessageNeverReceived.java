@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -51,9 +48,12 @@ public class MessageNeverReceived extends AbstractIssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        issues = new LinkedHashSet<>();
         this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
+        notReceivedMessages = new LinkedHashSet<>();
+        addComment = false;
         program.accept(this);
         addComment = false;
         notReceivedMessages = new LinkedHashSet<>();
@@ -91,7 +91,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             } else if (notReceivedMessages.contains(msgName)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
         }
     }
@@ -106,7 +106,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             } else if (notReceivedMessages.contains(msgName)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
         }
     }
@@ -120,6 +120,18 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 messageReceived.add(new Pair<>(actorName, msgName));
             }
         }
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override

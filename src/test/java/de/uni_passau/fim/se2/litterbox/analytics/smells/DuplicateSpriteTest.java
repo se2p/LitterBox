@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -67,6 +67,14 @@ public class DuplicateSpriteTest implements JsonTest {
         Program duplicate2SpriteDifferentScript = getAST("./src/test/fixtures/smells/duplicatedSprite1DifferentScript.json");
         DuplicateSprite finder = new DuplicateSprite();
         Set<Issue> reports = finder.check(duplicate2SpriteDifferentScript);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testEmptyDuplicated() throws IOException, ParsingException {
+        Program duplicateEmpty = getAST("./src/test/fixtures/smells/doubleEmptySprite.json");
+        DuplicateSprite finder = new DuplicateSprite();
+        Set<Issue> reports = finder.check(duplicateEmpty);
         Assertions.assertEquals(0, reports.size());
     }
 

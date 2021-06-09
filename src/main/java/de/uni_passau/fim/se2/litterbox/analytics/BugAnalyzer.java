@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
@@ -29,9 +29,12 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 
 public class BugAnalyzer extends Analyzer {
 
@@ -55,7 +58,7 @@ public class BugAnalyzer extends Analyzer {
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
-     * @param fileEntry the file to analyze
+     * @param fileEntry      the file to analyze
      * @param reportFileName the file in which to write the results
      */
     void check(File fileEntry, String reportFileName) {
@@ -64,7 +67,6 @@ public class BugAnalyzer extends Analyzer {
             // Todo error message
             return;
         }
-
         Set<Issue> issues = runFinders(program);
         generateOutput(program, issues, reportFileName);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);
@@ -98,18 +100,17 @@ public class BugAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
-
     }
 
-    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath)  {
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath) {
         if (annotationOutput != null && !annotationOutput.isEmpty()) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);
-                if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-                    JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+                if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
+                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, "_annotated");
                 } else {
-                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, "_annotated");
                 }
             } catch (IOException e) {
                 log.warning(e.getMessage());

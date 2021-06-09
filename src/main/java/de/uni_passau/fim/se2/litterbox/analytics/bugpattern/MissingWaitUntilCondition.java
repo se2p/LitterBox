@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -35,7 +36,7 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
 

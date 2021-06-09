@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen implements MetricExtractor, ScratchVisitor {
+public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, PenExtensionVisitor {
     public static final String NAME = "using_pen";
     private boolean found = false;
 
@@ -34,11 +35,16 @@ public class ProgramUsingPen implements MetricExtractor, ScratchVisitor {
     }
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         found = false;
-        program.accept(this);
+        node.accept(this);
         return found ? 1 : 0;
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        found = true;
     }
 
     @Override
@@ -84,5 +90,10 @@ public class ProgramUsingPen implements MetricExtractor, ScratchVisitor {
     @Override
     public void visit(SetPenColorParamTo node) {
         found = true;
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }

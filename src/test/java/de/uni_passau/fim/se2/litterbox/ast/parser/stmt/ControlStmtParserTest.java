@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -30,15 +28,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
-import static junit.framework.TestCase.fail;
 
 public class ControlStmtParserTest implements JsonTest {
 

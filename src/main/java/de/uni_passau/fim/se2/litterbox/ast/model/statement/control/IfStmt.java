@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.control;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+
 public interface IfStmt extends ControlStmt {
+
+    BoolExpr getBoolExpr();
+
+    StmtList getThenStmts();
 
 }

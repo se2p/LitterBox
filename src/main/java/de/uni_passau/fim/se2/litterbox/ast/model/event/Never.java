@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -45,4 +45,5 @@ public class Never extends AbstractNode implements Event, ASTLeaf {
     public BlockMetadata getMetadata() {
         throw new RuntimeException("Never event has no metadata");
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -39,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
-public class MissingInitialization implements IssueFinder {
+public class MissingInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_initialization";
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum TerminationStmtOpcode {
+public enum TerminationStmtOpcode implements Opcode {
     control_stop,
     control_delete_this_clone;
 
@@ -29,5 +29,10 @@ public enum TerminationStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

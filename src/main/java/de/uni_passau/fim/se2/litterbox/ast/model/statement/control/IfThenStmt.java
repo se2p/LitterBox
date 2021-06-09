@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -45,10 +47,12 @@ public class IfThenStmt extends AbstractNode implements IfStmt {
         return metadata;
     }
 
+    @Override
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
+    @Override
     public StmtList getThenStmts() {
         return thenStmts;
     }
@@ -61,5 +65,10 @@ public class IfThenStmt extends AbstractNode implements IfStmt {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return ControlStmtOpcode.control_if;
     }
 }

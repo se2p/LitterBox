@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -64,6 +64,13 @@ public class BlockCountTest implements JsonTest {
     }
 
     @Test
+    public void testTTS() throws IOException, ParsingException {
+        Program fixedExpressions = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allTextToSpeech.json");
+        BlockCount parameterName = new BlockCount();
+        Assertions.assertEquals(3, parameterName.calculateMetric(fixedExpressions));
+    }
+
+    @Test
     public void testOnlyVariable() throws IOException, ParsingException {
         Program onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
         BlockCount parameterName = new BlockCount();
@@ -75,5 +82,12 @@ public class BlockCountTest implements JsonTest {
         Program halfFixedExpr = JsonTest.parseProgram("./src/test/fixtures/halfFixedExpressions.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(5, parameterName.calculateMetric(halfFixedExpr)); //TODO does an empty string have to be an UnspecifiedExpr?
+    }
+
+    @Test
+    public void testPenAndTTS() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
+        BlockCount parameterName = new BlockCount();
+        Assertions.assertEquals(4, parameterName.calculateMetric(program));
     }
 }

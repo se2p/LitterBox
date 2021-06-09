@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ControlStmtOpcode {
+public enum ControlStmtOpcode implements Opcode {
 
     control_if, // "if" BoolExpr "then" StmtList
     control_if_else, // "if" BoolExpr "then" StmtList "else" StmtList
@@ -33,5 +33,10 @@ public enum ControlStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NOPCode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.Visitable;
 
 import java.util.List;
@@ -28,6 +30,8 @@ public interface ASTNode extends Visitable<ASTNode> {
 
     List<? extends ASTNode> getChildren();
 
+    boolean hasChildren();
+
     ASTNode getParentNode();
 
     void setParentNode(ASTNode node);
@@ -35,4 +39,14 @@ public interface ASTNode extends Visitable<ASTNode> {
     String getUniqueName();
 
     BlockMetadata getMetadata();
+
+    default String getScratchBlocks() {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        this.accept(visitor);
+        return visitor.getScratchBlocks();
+    }
+
+    default Opcode getOpcode() {
+        return new NOPCode();
+    }
 }

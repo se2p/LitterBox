@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -44,7 +44,7 @@ public class DoubleIf extends AbstractIssueFinder {
                 BoolExpr condition = getCondition((IfStmt) s);
                 if (lastCondition != null) {
                     if (lastCondition.equals(condition)) {
-                        addIssue(s, getMetadata((IfStmt) s));
+                        addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
                     }
                 }
                 lastCondition = condition;

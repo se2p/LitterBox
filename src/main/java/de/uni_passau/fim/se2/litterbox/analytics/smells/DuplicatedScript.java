@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
@@ -27,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DuplicatedScript extends TopBlockFinder {
 
@@ -45,12 +47,13 @@ public class DuplicatedScript extends TopBlockFinder {
     @Override
     public void visit(ScriptList node) {
         Set<Script> checked = new HashSet<>();
-        List<Script> scripts = node.getScriptList();
+        List<Script> scripts;
+        if (ignoreLooseBlocks) {
+            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+        } else {
+            scripts = node.getScriptList();
+        }
         for (Script s : scripts) {
-            if (ignoreLooseBlocks && s.getEvent() instanceof Never) {
-                // Ignore unconnected blocks
-                return;
-            }
             setHint = false;
             currentScript = s;
 
@@ -64,9 +67,9 @@ public class DuplicatedScript extends TopBlockFinder {
                     setHint = true;
                     if (!(s.getEvent() instanceof Never)) {
                         Event event = s.getEvent();
-                        addIssue(event, event.getMetadata());
+                        addIssue(event, event.getMetadata(), IssueSeverity.LOW);
                     } else {
-                        s.getStmtList().accept(this);
+                        s.getStmtList().getStmts().get(0).accept(this);
                     }
 
                     break;

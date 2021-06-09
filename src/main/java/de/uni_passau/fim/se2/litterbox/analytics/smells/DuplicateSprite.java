@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -40,14 +40,17 @@ public class DuplicateSprite extends AbstractIssueFinder {
         ActorDefinitionList actors = node.getActorDefinitionList();
         for (ActorDefinition actor : actors.getDefinitions()) {
             for (ActorDefinition other : actors.getDefinitions()) {
-                if (actor == other || checked.contains(other)) {
-                    continue;
-                }
+                //empty sprite shouldn't be checked
+                if (!actor.getScripts().getScriptList().isEmpty() || !actor.getProcedureDefinitionList().getList().isEmpty()) {
+                    if (actor == other || checked.contains(other)) {
+                        continue;
+                    }
 
-                if (areActorsIdentical(actor, other)) {
-                    currentActor = actor;
-                    procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-                    addIssueWithLooseComment();
+                    if (areActorsIdentical(actor, other)) {
+                        currentActor = actor;
+                        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+                        addIssueWithLooseComment();
+                    }
                 }
             }
             checked.add(actor);
@@ -176,7 +179,7 @@ public class DuplicateSprite extends AbstractIssueFinder {
 
         if (node1 instanceof Qualified) {
             // Only compare variable name, not actor, such that local variables can be equal
-            return ((Qualified)node1).getSecond().equals(((Qualified)node2).getSecond());
+            return ((Qualified) node1).getSecond().equals(((Qualified) node2).getSecond());
         } else {
             // If the class of the nodes does not define its own equals method
             // use our own local method to visit children, such that we

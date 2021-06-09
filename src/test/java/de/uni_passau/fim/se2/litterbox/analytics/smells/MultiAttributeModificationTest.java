@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -53,5 +53,13 @@ public class MultiAttributeModificationTest implements JsonTest {
         MultiAttributeModification finder = new MultiAttributeModification();
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(22, reports.size());
+    }
+
+    @Test
+    public void testMultiHideShowModification() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/multipleShowHide.json");
+        MultiAttributeModification finder = new MultiAttributeModification();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(3, reports.size());
     }
 }

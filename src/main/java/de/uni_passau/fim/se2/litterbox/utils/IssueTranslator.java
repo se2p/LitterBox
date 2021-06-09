@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -68,9 +68,9 @@ public class IssueTranslator {
     public void setLanguage(String lang) {
         if (lang == null) {
             locale = Locale.ENGLISH;
+        } else {
+            locale = Locale.forLanguageTag(lang);
         }
-
-        locale = Locale.forLanguageTag(lang);
         loadResourceBundles();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ActorMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -83,7 +83,7 @@ public class ActorDefinitionParser {
         List<String> topLevelNodes = stream.filter(fieldName ->
                 (allBlocks.get(fieldName).has(TOPLEVEL_KEY)
                         && allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean())
-                        && !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
+                        && !DependentBlockOpcode.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
                         || allBlocks.get(fieldName) instanceof ArrayNode)
                 .collect(Collectors.toList());
 

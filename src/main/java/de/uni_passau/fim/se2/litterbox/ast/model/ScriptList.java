@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 LitterBox contributors
+ * Copyright (C) 2019-2021 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,6 +35,14 @@ public class ScriptList extends AbstractNode {
 
     public List<Script> getScriptList() {
         return scriptList;
+    }
+
+    public Script getScript(int num) {
+        return scriptList.get(num);
+    }
+
+    public int getSize() {
+        return scriptList.size();
     }
 
     @Override
