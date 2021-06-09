@@ -3596,11 +3596,11 @@ public class CloneVisitor {
     public static String generateUID() {
         int length = 20;
         int soupLength = BLOCKLY_SOUP.length();
-        String id = "";
+        StringBuilder id = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            id += BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength));
+            id.append(BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength)));
         }
-        return id;
+        return id.toString();
     };
 
     /**
