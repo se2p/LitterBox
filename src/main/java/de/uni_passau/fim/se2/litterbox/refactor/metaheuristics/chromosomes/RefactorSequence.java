@@ -161,8 +161,8 @@ public class RefactorSequence extends Solution<RefactorSequence> {
                 return true;
             }
             // calculate the executed refactorings for both objects for comparison
-            ((RefactorSequence) other).buildRefactoredProgram();
-            buildRefactoredProgram();
+            ((RefactorSequence) other).getRefactoredProgram();
+            getRefactoredProgram();
         }
         return ((RefactorSequence) other).getExecutedRefactorings().equals(getExecutedRefactorings());
     }
