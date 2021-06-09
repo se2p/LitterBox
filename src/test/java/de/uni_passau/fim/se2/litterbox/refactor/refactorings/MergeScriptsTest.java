@@ -26,6 +26,14 @@ public class MergeScriptsTest implements JsonTest {
     }
 
     @Test
+    public void testMergeScriptsFinder_Termination() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/mergeScripts_termination.json");
+        MergeScriptsFinder finder = new MergeScriptsFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testMergeScriptsFinder_OneWay() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/mergableOneWay.json");
         MergeScriptsFinder finder = new MergeScriptsFinder();

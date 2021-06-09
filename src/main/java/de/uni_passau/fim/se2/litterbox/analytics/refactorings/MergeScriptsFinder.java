@@ -26,6 +26,10 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
                     continue;
                 }
 
+                if (endsWithTerminationStatement(script1.getStmtList())) {
+                    continue;
+                }
+
                 if (!hasDependencies(script1, script2)) {
                     refactorings.add(new MergeScripts(script1, script2));
                 }

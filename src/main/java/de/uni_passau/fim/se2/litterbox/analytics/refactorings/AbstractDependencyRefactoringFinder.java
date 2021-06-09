@@ -4,6 +4,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ControlDependenceGraph;
@@ -14,6 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractDependencyRefactoringFinder extends AbstractRefactoringFinder {
+
+    protected boolean endsWithTerminationStatement(StmtList stmtList) {
+        int numStatements1 = stmtList.getNumberOfStatements();
+        if (numStatements1 > 0) {
+            Stmt lastStmt = stmtList.getStatement(numStatements1 - 1);
+            if (lastStmt instanceof RepeatForeverStmt ||
+                    lastStmt instanceof TerminationStmt) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected boolean hasControlDependency(ControlFlowGraph cfg, List<Stmt> subScript1, List<Stmt> subScript2) {
         ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
