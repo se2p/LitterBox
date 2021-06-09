@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class RefactoringAnalyzer extends Analyzer {
 
@@ -65,7 +66,7 @@ public class RefactoringAnalyzer extends Analyzer {
         FitnessFunction<RefactorSequence> f1 = new CategoryEntropyFitness(program);
         FitnessFunction<RefactorSequence> f2 = new HalsteadDifficultyFitness(program);
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, f1.getReferencePoint(), f2.getReferencePoint());
-        double hyperVolumeValue = hv.compute(solutions);
+        double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
             generateOutput(refactored, solutions.get(i), reportName, hyperVolumeValue, iteration);
