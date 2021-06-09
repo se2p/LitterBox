@@ -135,6 +135,7 @@ public class RefactoringAnalyzer extends Analyzer {
                 Files.createDirectory(folderPath);
             } catch (IOException e) {
                 e.printStackTrace();
+                outputPath = fileEntry.getParent();
             }
         }
         try {
