@@ -19,8 +19,9 @@ public class HalsteadDifficultyFitness implements MinimizingFitnessFunction<Refa
 
         HalsteadDifficulty difficulty = new HalsteadDifficulty();
         double fitness = difficulty.calculateMetric(refactoredProgram);
+        double normalizedFitness = fitness / (1 + fitness);
 
-        return fitness;
+        return normalizedFitness;
     }
 
     @Override

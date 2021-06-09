@@ -21,6 +21,8 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     private final FastNonDominatedSort<C> fastNonDominatedSort;
     private final CrowdingDistanceSort<C> crowdingDistanceSort;
 
+    private int iteration = 0;
+
     private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
     private static final int MAX_SECONDS = PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime");
 
@@ -43,7 +45,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     @Override
     public List<C> findSolution() {
         List<C> population = generateInitialPopulation();
-        var iteration = 0;
+        iteration = 0;
         long end = System.currentTimeMillis() + MAX_SECONDS * 1000L; // MAX_SECONDS seconds * 1000 ms/sec
         while (iteration < MAX_GEN && System.currentTimeMillis() < end) {
             log.log(Level.FINE, "### NSGA-II ITERATION {0} ###", iteration);
@@ -85,5 +87,9 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         }
         population.addAll(offspringGenerator.generateOffspring(population));
         return population;
+    }
+
+    public int getIteration() {
+        return iteration;
     }
 }
