@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class RefactorSequence extends Solution<RefactorSequence> {
 
@@ -25,6 +26,23 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     public List<Refactoring> getExecutedRefactorings() {
         return executedRefactorings;
+    }
+
+    public Program getOriginalProgram() {
+        return originalProgram;
+    }
+
+    /**
+     * Lazily build the refactored program, only if it was not previously already build.
+     */
+    private Supplier<Program> refactoredProgram = () -> {
+        var program = buildRefactoredProgram();
+        refactoredProgram = () -> program;
+        return program;
+    };
+
+    public Program getRefactoredProgram() {
+        return refactoredProgram.get();
     }
 
     /**
@@ -90,16 +108,12 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         this.executedRefactorings = new LinkedList<>();
     }
 
-    public Program getOriginalProgram() {
-        return originalProgram;
-    }
-
     /**
      * Apply the refactoring sequence to a given program, without modifying the original program.
      *
      * @return A deep copy of the original program after the refactorings were applied.
      */
-    public Program getRefactoredProgram() {
+    public Program buildRefactoredProgram() {
         executedRefactorings = new LinkedList<>();
         var current = originalProgram.deepCopy();
 
@@ -147,8 +161,8 @@ public class RefactorSequence extends Solution<RefactorSequence> {
                 return true;
             }
             // calculate the executed refactorings for both objects for comparison
-            ((RefactorSequence) other).getRefactoredProgram();
-            getRefactoredProgram();
+            ((RefactorSequence) other).buildRefactoredProgram();
+            buildRefactoredProgram();
         }
         return ((RefactorSequence) other).getExecutedRefactorings().equals(getExecutedRefactorings());
     }
@@ -156,7 +170,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     @Override
     public int hashCode() {
         if (executedRefactorings.isEmpty()) {
-            // calculate the executed refactorings for both objects for comparison
+            // internally calculates refactored program and sets executedRefactoring list
             getRefactoredProgram();
         }
         return getExecutedRefactorings().hashCode();
