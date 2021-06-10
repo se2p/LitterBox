@@ -31,9 +31,9 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         int iterations = 9;
         double hyperVolume = 2.0;
         Randomness.setSeed(132);
-        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness(program);
-        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness(program);
-        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness(program);
+        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
+        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
+        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
         Set<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedHashSet<>();
         fitnessFunctions.add(f1);
         fitnessFunctions.add(f2);
@@ -82,9 +82,9 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         int iterations = 9;
         double hyperVolume = 2.0;
         Randomness.setSeed(132);
-        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness(program);
-        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness(program);
-        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness(program);
+        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
+        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
+        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
         Set<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedHashSet<>();
         fitnessFunctions.add(f1);
         fitnessFunctions.add(f2);

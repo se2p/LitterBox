@@ -7,21 +7,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 public class HalsteadDifficultyFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "halstead_difficulty_fitness";
 
-    private Program program;
-
-    public HalsteadDifficultyFitness(Program program) {
-        this.program = program;
-    }
-
     @Override
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
         HalsteadDifficulty difficulty = new HalsteadDifficulty();
-        double fitness = difficulty.calculateMetric(refactoredProgram);
-        double normalizedFitness = fitness / (1 + fitness);
-
-        return normalizedFitness;
+        return difficulty.calculateMetric(refactoredProgram);
     }
 
     @Override
