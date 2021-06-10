@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -20,11 +21,17 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
     protected boolean endsWithTerminationStatement(StmtList stmtList) {
         int numStatements1 = stmtList.getNumberOfStatements();
         if (numStatements1 > 0) {
-            Stmt lastStmt = stmtList.getStatement(numStatements1 - 1);
-            if (lastStmt instanceof RepeatForeverStmt ||
-                    lastStmt instanceof TerminationStmt) {
+            if (isTerminationStatement(stmtList.getStatement(numStatements1 - 1))) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    protected boolean isTerminationStatement(ASTNode node) {
+        if (node instanceof RepeatForeverStmt ||
+                node instanceof TerminationStmt) {
+            return true;
         }
         return false;
     }
