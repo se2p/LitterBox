@@ -29,11 +29,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
     }
 
     protected boolean isTerminationStatement(ASTNode node) {
-        if (node instanceof RepeatForeverStmt ||
-                node instanceof TerminationStmt) {
-            return true;
-        }
-        return false;
+        return node instanceof RepeatForeverStmt || node instanceof TerminationStmt;
     }
 
     protected boolean hasControlDependency(ControlFlowGraph cfg, List<Stmt> subScript1, List<Stmt> subScript2) {
