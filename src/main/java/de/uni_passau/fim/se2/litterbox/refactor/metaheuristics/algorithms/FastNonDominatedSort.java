@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FastNonDominatedSort<C extends Solution<C>> {
@@ -120,5 +121,9 @@ public class FastNonDominatedSort<C extends Solution<C>> {
     @VisibleForTesting
     void calculateFitnessValuesForSolutions(List<C> solutions) {
         solutions.forEach(c -> fitnessFunctions.forEach(c::getFitness));
+    }
+
+    public List<FitnessFunction<C>> getFitnessFunctions() {
+        return Collections.unmodifiableList(this.fitnessFunctions);
     }
 }
