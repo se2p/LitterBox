@@ -133,14 +133,10 @@ public class RefactoringAnalyzer extends Analyzer {
                 Path folderPath = Paths.get(outputPath);
                 Files.createDirectory(folderPath);
         }
-        try {
-            if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
-            } else {
-                JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
-            }
-        } catch (IOException e) {
-            log.warning(e.getMessage());
+        if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
+            JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
+        } else {
+            JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
         }
     }
 }
