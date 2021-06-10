@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,14 +29,13 @@ class RefactorSequenceTest {
     List<RefactoringFinder> refactoringFinders;
     RefactorSequence refactorSequence;
 
-
     @BeforeEach
     void setupEnv() {
         program = mock(Program.class);
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
         productions = List.of(0, 1, 2);
-        refactoringFinder  = mock(MergeDoubleIfFinder.class);
+        refactoringFinder = mock(MergeDoubleIfFinder.class);
         refactoringFinders = List.of(refactoringFinder);
 
         refactorSequence = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
@@ -76,22 +76,25 @@ class RefactorSequenceTest {
     @Test
     void hashCodeChangesWithObject() {
         when(program.deepCopy()).thenReturn(program);
-        RefactorSequence copy = refactorSequence.copy();
+
+        Program other = mock(Program.class);
 
         Refactoring refactoring1 = mock(MergeDoubleIf.class);
-        when(refactoring1.apply(program)).thenReturn(program);
+        when(refactoring1.apply(any())).thenReturn(other);
         Refactoring refactoring2 = mock(MergeDoubleIf.class);
-        when(refactoring2.apply(program)).thenReturn(program);
-        when(program.deepCopy()).thenReturn(program);
+        when(refactoring2.apply(any())).thenReturn(other);
+        when(other.deepCopy()).thenReturn(other);
 
         List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
         when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);
 
-        assertEquals(refactorSequence, copy);
-        assertEquals(refactorSequence.hashCode(), copy.hashCode());
+        RefactorSequence emptySequence = refactorSequence.copy();
+        assertEquals(refactorSequence, emptySequence);
+        assertEquals(refactorSequence.hashCode(), emptySequence.hashCode());
 
-        copy.getProductions().clear();
-        copy.getExecutedRefactorings().clear();
-        assertNotEquals(refactorSequence.hashCode(), copy.hashCode());
+        emptySequence.getProductions().clear();
+        emptySequence.getExecutedRefactorings().clear();
+        emptySequence = emptySequence.copy(); // force re-creation of the refactoredProgram supplier
+        assertNotEquals(refactorSequence.hashCode(), emptySequence.hashCode());
     }
 }
