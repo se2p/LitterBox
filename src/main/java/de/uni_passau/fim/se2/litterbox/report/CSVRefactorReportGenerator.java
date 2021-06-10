@@ -40,6 +40,7 @@ public class CSVRefactorReportGenerator {
         headers.add("project");
         headers.add("population_size");
         headers.add("max_generations");
+        headers.add("executed_generations");
         headers.add("seed");
         headers.add("hypervolume");
         headers.addAll(refactorings);
@@ -47,15 +48,16 @@ public class CSVRefactorReportGenerator {
         printer = getNewPrinter(fileName, refactoredPath);
     }
 
-    public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen) throws IOException {
+    public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen,
+                               double hyperVolume, int iteration) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
         row.add(String.valueOf(populationSize));
         row.add(String.valueOf(maxGen));
+        row.add(String.valueOf(iteration));
         row.add(String.valueOf(Randomness.getSeed()));
-        // TODO: Add Hypervolume
-        row.add("0");
+        row.add(String.valueOf(hyperVolume));
 
         refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
                 .stream()
@@ -71,15 +73,19 @@ public class CSVRefactorReportGenerator {
     }
 
     protected CSVPrinter getNewPrinter(String name, String refactoredPath) throws IOException {
-        File folder = new File(refactoredPath);
-        Path filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
+        File folder;
+        Path filePath;
+        Path namePath = Paths.get(name);
+        if (namePath.isAbsolute()) {
+            filePath = namePath;
+            folder = new File(filePath.getParent().toString());
+        } else {
+            filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
+            folder = new File(refactoredPath);
+        }
 
         if (!folder.exists()) {
-            try {
                 Files.createDirectory(filePath.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
 
         if (filePath.toFile().length() > 0) {

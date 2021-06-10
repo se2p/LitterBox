@@ -25,10 +25,10 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
 
             CategoryEntropy entropy = new CategoryEntropy();
             double fitness = entropy.calculateMetric(refactoredProgram);
+            double normalizedFitness = fitness / (1 + fitness);
+            cache.put(refactorSequence, normalizedFitness);
 
-            cache.put(refactorSequence, fitness);
-
-            return fitness;
+            return normalizedFitness;
         }
     }
 

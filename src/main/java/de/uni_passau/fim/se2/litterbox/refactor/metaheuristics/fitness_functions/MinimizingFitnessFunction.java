@@ -17,4 +17,14 @@ public interface MinimizingFitnessFunction<C> extends FitnessFunction<C> {
     default boolean isMinimizing() {
         return true;
     }
+
+    /**
+     * Always returns {@code 1} as this is a minimizing fitness function.
+     *
+     * @return always {@code 1}
+     */
+    @Override
+    default double getReferencePoint() {
+        return 1;
+    }
 }

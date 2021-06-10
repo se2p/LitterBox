@@ -53,6 +53,14 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
     boolean isMinimizing();
 
     /**
+     * Returns the reference point of the fitness function for the hypervolume
+     *
+     * @return {@code 1} if this is a minimizing fitness function, {@code 0} if this is a
+     * maximizing fitness function
+     */
+    double getReferencePoint();
+
+    /**
      * <p>
      * Returns a comparator that compares two solutions by their fitness, taking into account
      * whether this is a maximizing or a minimizing fitness function. In other words, given two

@@ -14,14 +14,19 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.report.CSVRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
+import de.uni_passau.fim.se2.litterbox.utils.HyperVolume2D;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class RefactoringAnalyzer extends Analyzer {
 
@@ -39,39 +44,43 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, String reportName) {
+    void check(File fileEntry, String reportName) throws IOException {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message
             return;
         }
 
-        List<RefactorSequence> solutions = findRefactoring(program.deepCopy(), refactoringFinders);
+        NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
+
+        List<RefactorSequence> solutions = findRefactoring(nsgaii);
         if (!solutions.isEmpty()) {
-            generateProjectsFromParetoFront(fileEntry, reportName, solutions);
+            int iteration = nsgaii.getIteration();
+            generateProjectsFromParetoFront(fileEntry, reportName, solutions, program, iteration);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions) {
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions, Program program, int iteration) throws IOException {
+        FitnessFunction<RefactorSequence> f1 = new CategoryEntropyFitness(program);
+        FitnessFunction<RefactorSequence> f2 = new HalsteadDifficultyFitness(program);
+        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, f1.getReferencePoint(), f2.getReferencePoint());
+        double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
-            generateOutput(refactored, solutions.get(i), reportName);
+            generateOutput(refactored, solutions.get(i), reportName, hyperVolumeValue, iteration);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
 
     /**
-     * Initialize NSGA-II and call it to find a sequence of refactorings.
      * Execute the list of refactorings
      *
-     * @param program            The original flawed program to be refactored.
-     * @param refactoringFinders All refactoring finders considered.
+     * @param nsgaii initialized NSGA-II
      * @return A copy of the original program with the best sequence of refactorings found applied on it.
      */
-    private List<RefactorSequence> findRefactoring(Program program, List<RefactoringFinder> refactoringFinders) {
-        NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
+    private List<RefactorSequence> findRefactoring(NSGAII<RefactorSequence> nsgaii) {
         List<RefactorSequence> solution = nsgaii.findSolution();
         if (solution.isEmpty()) {
             return List.of();
@@ -92,7 +101,7 @@ public class RefactoringAnalyzer extends Analyzer {
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
         fitnessFunctions.add(new HalsteadDifficultyFitness(program));
-        fitnessFunctions.add(new NumberOfBlocksFitness(program));
+        //fitnessFunctions.add(new NumberOfBlocksFitness(program));
         fitnessFunctions.add(new CategoryEntropyFitness(program));
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
@@ -100,14 +109,14 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName) {
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
             } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
                 CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
-                reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN);
+                reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration);
                 reportGenerator.close();
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);
@@ -117,16 +126,17 @@ public class RefactoringAnalyzer extends Analyzer {
         }
     }
 
-    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) {
+    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) throws IOException {
         String outputPath = refactoredPath == null ? fileEntry.getParent() : refactoredPath;
-        try {
-            if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
-            } else {
-                JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
-            }
-        } catch (IOException e) {
-            log.warning(e.getMessage());
+        File folder = new File(outputPath);
+        if (!folder.exists()) {
+                Path folderPath = Paths.get(outputPath);
+                Files.createDirectory(folderPath);
+        }
+        if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
+            JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
+        } else {
+            JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
         }
     }
 }

@@ -150,7 +150,7 @@ public class Main {
         ));
     }
 
-    static void refactorPrograms(CommandLine cmd) throws ParseException {
+    static void refactorPrograms(CommandLine cmd) throws ParseException, IOException {
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
@@ -167,7 +167,7 @@ public class Main {
         runAnalysis(cmd, refactorer);
     }
 
-    static void checkPrograms(CommandLine cmd) throws ParseException {
+    static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
         String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
         String path;
@@ -219,7 +219,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    private static void featurePrograms(CommandLine cmd) throws ParseException {
+    private static void featurePrograms(CommandLine cmd) throws ParseException, IOException {
         if (!cmd.hasOption(OUTPUT)) {
             throw new ParseException("Output path option '" + OUTPUT + "' required");
         }
@@ -234,7 +234,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
+    static void runAnalysis(CommandLine cmd, Analyzer analyzer) throws IOException {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
             analyzer.analyzeSingle(projectId);
@@ -273,7 +273,7 @@ public class Main {
             System.err.println("Invalid option: " + parseException.getMessage());
             printHelp();
         } catch (IOException ioException) {
-            System.err.println("Error while trying to read project: " + ioException.getMessage());
+            System.err.println("Error while trying to read/write project: " + ioException.getMessage());
         } catch (ParsingException parseException) {
             System.err.println("Error while trying to parse project: " + parseException.getMessage());
         }

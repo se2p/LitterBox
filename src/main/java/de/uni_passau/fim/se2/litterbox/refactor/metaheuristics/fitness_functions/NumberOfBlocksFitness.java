@@ -19,8 +19,9 @@ public class NumberOfBlocksFitness implements MinimizingFitnessFunction<Refactor
 
         BlockCount blockCountMetric = new BlockCount();
         double fitness = blockCountMetric.calculateMetric(refactoredProgram);
+        double normalizedFitness = fitness / (1 + fitness);
 
-        return fitness;
+        return normalizedFitness;
     }
 
     @Override
