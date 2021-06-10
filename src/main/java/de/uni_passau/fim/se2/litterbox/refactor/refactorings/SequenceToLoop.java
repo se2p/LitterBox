@@ -3,6 +3,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -37,7 +39,8 @@ public class SequenceToLoop extends CloneVisitor implements Refactoring {
         }
 
         StmtList loopBody = new StmtList(repeatedStatements);
-        replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, apply(targetStatement.getMetadata()));
+        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata) ? apply(targetStatement.getMetadata()) : NonDataBlockMetadata.emptyNonBlockMetadata();
+        replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, metadata);
     }
 
     @Override
