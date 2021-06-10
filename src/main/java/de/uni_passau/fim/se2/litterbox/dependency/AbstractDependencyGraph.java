@@ -73,35 +73,27 @@ public abstract class AbstractDependencyGraph {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
 
-    public Set<CFGNode> getCFGNodes(Collection<? extends ASTNode> astNodes) {
-        return graph.nodes().stream().filter(n -> astNodes.contains(n.getASTNode())).collect(Collectors.toSet());
+    public Set<CFGNode> getCFGNodes(Collection<Stmt> astNodes) {
+        Set<Stmt> transitiveStatements = new LinkedHashSet<>();
+        astNodes.forEach(s -> transitiveStatements.addAll(getTransitiveStatements(s)));
+        return graph.nodes().stream().filter(n -> transitiveStatements.contains(n.getASTNode())).collect(Collectors.toSet());
     }
 
     public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
         Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
         Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
 
-        for (CFGNode node : targetCFGNodes) {
-            for (CFGNode pred : graph.predecessors(node)) {
-                if (sourceCFGNodes.contains(pred)) {
-                    return true;
-                }
-            }
-        }
-
-        Set<CFGNode> visitedNodes = new LinkedHashSet<CFGNode>();
-        Queue<CFGNode> queuedNodes = new ArrayDeque<CFGNode>();
-        queuedNodes.addAll(targetCFGNodes);
-        // Perform a breadth-first traversal rooted at the input node.
+        Set<CFGNode> visitedNodes = new LinkedHashSet<>();
+        Queue<CFGNode> queuedNodes = new ArrayDeque<>(targetCFGNodes);
         while (!queuedNodes.isEmpty()) {
             CFGNode currentNode = queuedNodes.remove();
             if (sourceCFGNodes.contains(currentNode)) {
                 return true;
             }
             visitedNodes.add(currentNode);
-            for (CFGNode successor : graph.successors(currentNode)) {
-                if (visitedNodes.add(successor)) {
-                    queuedNodes.add(successor);
+            for (CFGNode predecessor : graph.predecessors(currentNode)) {
+                if (!visitedNodes.contains(predecessor)) {
+                    queuedNodes.add(predecessor);
                 }
             }
         }

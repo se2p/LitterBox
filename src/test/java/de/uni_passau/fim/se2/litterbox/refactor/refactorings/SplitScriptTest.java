@@ -92,9 +92,8 @@ public class SplitScriptTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/splitScript3.json");
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
-        assertThat(refactorings).hasSize(2);
+        assertThat(refactorings).hasSize(1);
         assertThat(refactorings.get(0)).isInstanceOf(SplitScript.class);
-        assertThat(refactorings.get(1)).isInstanceOf(SplitScript.class);
     }
 
     @Test
