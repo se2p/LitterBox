@@ -21,7 +21,8 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
     protected boolean endsWithTerminationStatement(StmtList stmtList) {
         int numStatements1 = stmtList.getNumberOfStatements();
         if (numStatements1 > 0) {
-            if (isTerminationStatement(stmtList.getStatement(numStatements1 - 1))) {
+            Stmt lastStmt = stmtList.getStatement(numStatements1 - 1);
+            if (isTerminationStatement(lastStmt)) {
                 return true;
             }
         }
