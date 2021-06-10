@@ -126,7 +126,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
             executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
-        return current.deepCopy();
+        return current;
     }
 
     private Refactoring getExecutedRefactoring(Program program, Integer nthProduction) {
