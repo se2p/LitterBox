@@ -53,7 +53,7 @@ public abstract class Analyzer {
      * <p>If the input is a file it will be directly analyzed, if it is a director all files in the
      * directory will be analyzed one after another.</p>
      */
-    public void analyzeFile() {
+    public void analyzeFile() throws IOException {
         File file = input.toFile();
 
         if (file.exists() && file.isDirectory()) {
@@ -106,7 +106,7 @@ public abstract class Analyzer {
      *
      * @param pid is the id of the project that should be analyzed.
      */
-    public void analyzeSingle(String pid) {
+    public void analyzeSingle(String pid) throws IOException {
         Path path = Paths.get(input.toString(), pid + ".json");
         File projectFile = path.toFile();
         if (!projectFile.exists()) {
@@ -122,7 +122,7 @@ public abstract class Analyzer {
         deleteFile(projectFile);
     }
 
-    abstract void check(File fileEntry, String csv);
+    abstract void check(File fileEntry, String csv) throws IOException;
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.

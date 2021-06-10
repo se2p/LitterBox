@@ -85,12 +85,7 @@ public class CSVRefactorReportGenerator {
         }
 
         if (!folder.exists()) {
-            try {
                 Files.createDirectory(filePath.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
         }
 
         if (filePath.toFile().length() > 0) {

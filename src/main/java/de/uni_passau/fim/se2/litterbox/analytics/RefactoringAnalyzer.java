@@ -44,7 +44,7 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, String reportName) {
+    void check(File fileEntry, String reportName) throws IOException {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message
@@ -62,7 +62,7 @@ public class RefactoringAnalyzer extends Analyzer {
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions, Program program, int iteration) {
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions, Program program, int iteration) throws IOException {
         FitnessFunction<RefactorSequence> f1 = new CategoryEntropyFitness(program);
         FitnessFunction<RefactorSequence> f2 = new HalsteadDifficultyFitness(program);
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, f1.getReferencePoint(), f2.getReferencePoint());
@@ -126,17 +126,12 @@ public class RefactoringAnalyzer extends Analyzer {
         }
     }
 
-    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) {
+    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) throws IOException {
         String outputPath = refactoredPath == null ? fileEntry.getParent() : refactoredPath;
         File folder = new File(outputPath);
         if (!folder.exists()) {
-            try {
                 Path folderPath = Paths.get(outputPath);
                 Files.createDirectory(folderPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
         }
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {

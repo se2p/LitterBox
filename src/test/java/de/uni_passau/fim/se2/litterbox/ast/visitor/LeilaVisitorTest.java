@@ -217,7 +217,7 @@ public class LeilaVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testCheckFailsForFolder(@TempDir File tempFile) {
+    public void testCheckFailsForFolder(@TempDir File tempFile) throws IOException {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
         String outPath = tempFile.getAbsolutePath();
