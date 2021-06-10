@@ -73,18 +73,40 @@ public abstract class AbstractDependencyGraph {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
 
-    public Set<CFGNode> getCFGNodes(Set<ASTNode> astNodes) {
+    public Set<CFGNode> getCFGNodes(Collection<? extends ASTNode> astNodes) {
         return graph.nodes().stream().filter(n -> astNodes.contains(n.getASTNode())).collect(Collectors.toSet());
     }
 
     public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
-        Set<ASTNode> transitiveSourceNodes = new LinkedHashSet<>();
-        sourceNodes.forEach(s -> transitiveSourceNodes.addAll(getTransitiveStatements(s)));
+        Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
+        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
 
-        Set<ASTNode> transitiveTargetNodes = new LinkedHashSet<>();
-        targetNodes.forEach(s -> transitiveTargetNodes.addAll(getTransitiveStatements(s)));
+        for (CFGNode node : targetCFGNodes) {
+            for (CFGNode pred : graph.predecessors(node)) {
+                if (sourceCFGNodes.contains(pred)) {
+                    return true;
+                }
+            }
+        }
 
-        return hasAnyEdge(getCFGNodes(transitiveSourceNodes), getCFGNodes(transitiveTargetNodes));
+        Set<CFGNode> visitedNodes = new LinkedHashSet<CFGNode>();
+        Queue<CFGNode> queuedNodes = new ArrayDeque<CFGNode>();
+        queuedNodes.addAll(targetCFGNodes);
+        // Perform a breadth-first traversal rooted at the input node.
+        while (!queuedNodes.isEmpty()) {
+            CFGNode currentNode = queuedNodes.remove();
+            if (sourceCFGNodes.contains(currentNode)) {
+                return true;
+            }
+            visitedNodes.add(currentNode);
+            for (CFGNode successor : graph.successors(currentNode)) {
+                if (visitedNodes.add(successor)) {
+                    queuedNodes.add(successor);
+                }
+            }
+        }
+
+        return false;
     }
 
     private boolean hasAnyEdge(Set<CFGNode> sourceNodes, Set<CFGNode> targetNodes) {
