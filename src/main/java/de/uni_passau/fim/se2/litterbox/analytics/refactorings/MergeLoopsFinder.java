@@ -35,8 +35,8 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
                     continue;
                 }
 
-                if (!(stmtList1.getStatement(0) instanceof LoopStmt) ||
-                        !(stmtList2.getStatement(0) instanceof LoopStmt)) {
+                if (!stmtList1.getStatement(0).getClass().equals(stmtList2.getStatement(0)) ||
+                        !(stmtList1.getStatement(0) instanceof LoopStmt)) {
                     continue;
                 }
 
