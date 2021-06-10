@@ -28,6 +28,14 @@ public class SplitLoopTest implements JsonTest {
     }
 
     @Test
+    public void testSplitLoopFinder_ControlDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/dependencyInLoop.json");
+        SplitLoopFinder finder = new SplitLoopFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testSplitLoopRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splittableLoop.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);

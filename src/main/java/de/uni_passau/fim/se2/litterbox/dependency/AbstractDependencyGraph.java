@@ -73,18 +73,32 @@ public abstract class AbstractDependencyGraph {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
 
-    public Set<CFGNode> getCFGNodes(Set<ASTNode> astNodes) {
-        return graph.nodes().stream().filter(n -> astNodes.contains(n.getASTNode())).collect(Collectors.toSet());
+    public Set<CFGNode> getCFGNodes(Collection<Stmt> astNodes) {
+        Set<Stmt> transitiveStatements = new LinkedHashSet<>();
+        astNodes.forEach(s -> transitiveStatements.addAll(getTransitiveStatements(s)));
+        return graph.nodes().stream().filter(n -> transitiveStatements.contains(n.getASTNode())).collect(Collectors.toSet());
     }
 
     public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
-        Set<ASTNode> transitiveSourceNodes = new LinkedHashSet<>();
-        sourceNodes.forEach(s -> transitiveSourceNodes.addAll(getTransitiveStatements(s)));
+        Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
+        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
 
-        Set<ASTNode> transitiveTargetNodes = new LinkedHashSet<>();
-        targetNodes.forEach(s -> transitiveTargetNodes.addAll(getTransitiveStatements(s)));
+        Set<CFGNode> visitedNodes = new LinkedHashSet<>();
+        Queue<CFGNode> queuedNodes = new ArrayDeque<>(targetCFGNodes);
+        while (!queuedNodes.isEmpty()) {
+            CFGNode currentNode = queuedNodes.remove();
+            if (sourceCFGNodes.contains(currentNode)) {
+                return true;
+            }
+            visitedNodes.add(currentNode);
+            for (CFGNode predecessor : graph.predecessors(currentNode)) {
+                if (!visitedNodes.contains(predecessor)) {
+                    queuedNodes.add(predecessor);
+                }
+            }
+        }
 
-        return hasAnyEdge(getCFGNodes(transitiveSourceNodes), getCFGNodes(transitiveTargetNodes));
+        return false;
     }
 
     private boolean hasAnyEdge(Set<CFGNode> sourceNodes, Set<CFGNode> targetNodes) {
