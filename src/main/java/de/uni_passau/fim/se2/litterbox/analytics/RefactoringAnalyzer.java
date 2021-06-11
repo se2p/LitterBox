@@ -66,7 +66,7 @@ public class RefactoringAnalyzer extends Analyzer {
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
             generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration,
-                    programExtractionTime, refactoringSearchTime, program.deepCopy());
+                    programExtractionTime, refactoringSearchTime, program);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
@@ -106,7 +106,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private RefactorSequence createEmptyRefactorSequence(Program program) {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(List.of());
-        return new RefactorSequence(program.deepCopy(), mutation, crossover, List.of(), List.of());
+        return new RefactorSequence(program, mutation, crossover, List.of(), List.of());
     }
 
     /**
