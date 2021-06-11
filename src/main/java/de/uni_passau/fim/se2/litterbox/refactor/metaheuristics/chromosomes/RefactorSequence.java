@@ -148,6 +148,14 @@ public class RefactorSequence extends Solution<RefactorSequence> {
                 new ArrayList<>(productions), refactoringFinders);
     }
 
+    /*
+     * Attention! The following implementation of equals() compares the PHENOTYPE of two chromosomes, and not their
+     * GENOTYPE! This is fine when the population is organized as a List of chromosomes. But it might lead to problems
+     * when the population is a Set, since Sets use the equals() method for duplicate elimination. Two chromosomes
+     * with the same phenotype might still have different genotypes, and sometimes it might be desirable or advantageous
+     * for the search to evolve chromosomes with different genotypes but the same phenotype. The current implementation
+     * of equals() would prevent this!
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
