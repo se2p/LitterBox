@@ -7,14 +7,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Crowdi
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CategoryEntropyFitness;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.HalsteadDifficultyFitness;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfBlocksFitness;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.report.CSVRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.HyperVolume2D;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
@@ -57,16 +55,17 @@ public class RefactoringAnalyzer extends Analyzer {
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
-            generateProjectsFromParetoFront(fileEntry, reportName, solutions, program, iteration);
+            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions, Program program, int iteration) throws IOException {
-        FitnessFunction<RefactorSequence> f1 = new CategoryEntropyFitness(program);
-        FitnessFunction<RefactorSequence> f2 = new HalsteadDifficultyFitness(program);
-        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(f1, f2, f1.getReferencePoint(), f2.getReferencePoint());
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration) throws IOException {
+        Preconditions.checkArgument(fitnessFunctions.size() >= 2);
+        NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
+        NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
+        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
         for (int i = 0; i < solutions.size(); i++) {
             log.log(Level.FINE, "Refactoring " + i);
@@ -108,29 +107,30 @@ public class RefactoringAnalyzer extends Analyzer {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        fitnessFunctions.add(new HalsteadDifficultyFitness(program));
-        //fitnessFunctions.add(new NumberOfBlocksFitness(program));
-        fitnessFunctions.add(new CategoryEntropyFitness(program));
+        fitnessFunctions.add(new SumComplexityFitness());
+        fitnessFunctions.add(new SumEntropyFitness());
+        //fitnessFunctions.add(new AverageComplexityFitness());
+        //fitnessFunctions.add(new AverageEntropyFitness());
+
+        // fitnessFunctions.add(new HalsteadDifficultyFitness());
+        // fitnessFunctions.add(new NumberOfBlocksFitness(program));
+        // fitnessFunctions.add(new CategoryEntropyFitness());
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration) {
-        try {
-            if (reportFileName == null || reportFileName.isEmpty()) {
-                ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
-                reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
-            } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
-                CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
-                reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration);
-                reportGenerator.close();
-            } else {
-                throw new IllegalArgumentException("Unknown file type: " + reportFileName);
-            }
-        } catch (IOException e) {
-            log.warning(e.getMessage());
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration) throws IOException {
+        if (reportFileName == null || reportFileName.isEmpty()) {
+            ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
+            reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
+        } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
+            CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
+            reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration);
+            reportGenerator.close();
+        } else {
+            throw new IllegalArgumentException("Unknown file type: " + reportFileName);
         }
     }
 
@@ -138,8 +138,8 @@ public class RefactoringAnalyzer extends Analyzer {
         String outputPath = refactoredPath == null ? fileEntry.getParent() : refactoredPath;
         File folder = new File(outputPath);
         if (!folder.exists()) {
-                Path folderPath = Paths.get(outputPath);
-                Files.createDirectory(folderPath);
+            Path folderPath = Paths.get(outputPath);
+            Files.createDirectory(folderPath);
         }
         if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
             JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);

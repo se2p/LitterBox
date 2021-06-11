@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.List;
@@ -71,6 +72,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         List<List<C>> nonDominatedSortedSolution = fastNonDominatedSort.fastNonDominatedSort(population);
         population = Lists.newLinkedList();
 
+
         for (List<C> f : nonDominatedSortedSolution) {
             List<C> front = Lists.newArrayList(f);
             crowdingDistanceSort.calculateCrowdingDistanceAndSort(front);
@@ -91,5 +93,9 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
 
     public int getIteration() {
         return iteration;
+    }
+
+    public List<FitnessFunction<C>> getFitnessFunctions() {
+        return fastNonDominatedSort.getFitnessFunctions();
     }
 }
