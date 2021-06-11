@@ -14,6 +14,10 @@ import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.HyperVolume2D;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+
+import java.time.Duration;
+import java.time.Instant;
+
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -44,24 +48,33 @@ public class RefactoringAnalyzer extends Analyzer {
 
     @Override
     void check(File fileEntry, String reportName) throws IOException {
+        final Instant startProgramExtraction = Instant.now();
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message
             return;
         }
+        final Instant endProgramExtraction = Instant.now();
+        final long programExtractionTime = Duration.between(startProgramExtraction, endProgramExtraction).toMillis();
 
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
+        final Instant startRefactoringSearch = Instant.now();
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
+        final Instant endRefactoringSearch = Instant.now();
+        final long refactoringSearchTime = Duration.between(startRefactoringSearch, endRefactoringSearch).toMillis();
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
-            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration);
+            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration,
+                    programExtractionTime, refactoringSearchTime);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration) throws IOException {
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName,
+            List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration,
+            long programExtractionTime, long refactoringSearchTime) throws IOException {
         Preconditions.checkArgument(fitnessFunctions.size() >= 2);
         NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
         NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
@@ -76,7 +89,9 @@ public class RefactoringAnalyzer extends Analyzer {
             log.log(Level.FINE, "Refactored program");
             log.log(Level.FINE, solutions.get(i).getRefactoredProgram().getScratchBlocks());
             Program refactored = solutions.get(i).getRefactoredProgram();
-            generateOutput(refactored, solutions.get(i), reportName, hyperVolumeValue, iteration);
+            generateOutput(
+                    refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, programExtractionTime,
+                    refactoringSearchTime);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
@@ -121,13 +136,14 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration) throws IOException {
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration, long programExtractionTime, long refactoringSearchTime) throws IOException {
         if (reportFileName == null || reportFileName.isEmpty()) {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
             reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
         } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
             CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
-            reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration);
+            reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
+                    programExtractionTime, refactoringSearchTime);
             reportGenerator.close();
         } else {
             throw new IllegalArgumentException("Unknown file type: " + reportFileName);
