@@ -63,11 +63,9 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration) throws IOException {
         Preconditions.checkArgument(fitnessFunctions.size() >= 2);
-        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(
-                new NormalizingFitnessFunction<>(fitnessFunctions.get(0)),
-                new NormalizingFitnessFunction<>(fitnessFunctions.get(1)),
-                fitnessFunctions.get(0).getReferencePoint(),
-                fitnessFunctions.get(1).getReferencePoint());
+        NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
+        NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
+        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
         for (int i = 0; i < solutions.size(); i++) {
             log.log(Level.FINE, "Refactoring " + i);
