@@ -73,7 +73,7 @@ public class CSVRefactorReportGenerator {
                 .stream()
                 .filter(i -> i.getName().equals(refactoring))
                 .count()).mapToObj(Long::toString).forEach(row::add);
-        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(program)));
+        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(refactorSequence.getOriginalProgram())));
         row.add(String.valueOf(new BlockCount<Program>().calculateMetric(refactorSequence.getRefactoredProgram())));
         refactorSequence.getFitnessMap().values().stream().map(String::valueOf).forEach(row::add);
         row.addAll(fitnessValuesWithoutRefactoring);
