@@ -66,7 +66,7 @@ public class RefactoringAnalyzer extends Analyzer {
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
             generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration,
-                    programExtractionTime, refactoringSearchTime);
+                    programExtractionTime, refactoringSearchTime, program);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
@@ -74,12 +74,19 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private void generateProjectsFromParetoFront(File fileEntry, String reportName,
             List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration,
-            long programExtractionTime, long refactoringSearchTime) throws IOException {
+            long programExtractionTime, long refactoringSearchTime, Program originalProgram) throws IOException {
         Preconditions.checkArgument(fitnessFunctions.size() >= 2);
         NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
         NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
+
+        List<String> fitnessValuesWithoutRefactoring = new LinkedList<>();
+        RefactorSequence emptyRefactorSequence = createEmptyRefactorSequence(originalProgram);
+        for (FitnessFunction<RefactorSequence> fitnessFunction : solutions.get(0).getFitnessMap().keySet()) {
+            String fitnessValueWithoutRefactoring = String.valueOf(fitnessFunction.getFitness(emptyRefactorSequence));
+            fitnessValuesWithoutRefactoring.add(fitnessValueWithoutRefactoring);
+        }
         for (int i = 0; i < solutions.size(); i++) {
             log.log(Level.FINE, "Refactoring " + i);
             log.log(Level.FINE, "Original program");
@@ -91,9 +98,15 @@ public class RefactoringAnalyzer extends Analyzer {
             Program refactored = solutions.get(i).getRefactoredProgram();
             generateOutput(
                     refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, programExtractionTime,
-                    refactoringSearchTime);
+                    refactoringSearchTime, fitnessValuesWithoutRefactoring);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
+    }
+
+    private RefactorSequence createEmptyRefactorSequence(Program program) {
+        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(List.of());
+        return new RefactorSequence(program, mutation, crossover, List.of(), List.of());
     }
 
     /**
@@ -136,14 +149,14 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration, long programExtractionTime, long refactoringSearchTime) throws IOException {
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration, long programExtractionTime, long refactoringSearchTime, List<String> fitnessValuesWithoutRefactoring) throws IOException {
         if (reportFileName == null || reportFileName.isEmpty()) {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
             reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
         } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
             CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
             reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
-                    programExtractionTime, refactoringSearchTime);
+                    programExtractionTime, refactoringSearchTime, fitnessValuesWithoutRefactoring);
             reportGenerator.close();
         } else {
             throw new IllegalArgumentException("Unknown file type: " + reportFileName);

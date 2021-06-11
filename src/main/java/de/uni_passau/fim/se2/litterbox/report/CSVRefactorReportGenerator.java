@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
@@ -36,6 +37,7 @@ public class CSVRefactorReportGenerator {
      */
     public CSVRefactorReportGenerator(String fileName, String refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
         refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).collect(Collectors.toList());
+        List<String> fitnessFunctionsNamesWithoutRefactoring = fitnessFunctions.stream().map(fitnessFunction -> fitnessFunction.getName() + "_without_refactoring").collect(Collectors.toList());
         List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).collect(Collectors.toList());
         headers.add("project");
         headers.add("population_size");
@@ -46,13 +48,16 @@ public class CSVRefactorReportGenerator {
         headers.add("program_extraction_time");
         headers.add("refactoring_search_time");
         headers.addAll(refactorings);
+        headers.add("blocks_without_refactoring");
+        headers.add("blocks");
         headers.addAll(fitnessFunctionsNames);
+        headers.addAll(fitnessFunctionsNamesWithoutRefactoring);
         printer = getNewPrinter(fileName, refactoredPath);
     }
 
     public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen,
                                double hyperVolume, int iteration, long programExtractionTime,
-                               long refactoringSearchTime) throws IOException {
+                               long refactoringSearchTime, List<String> fitnessValuesWithoutRefactoring) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
@@ -68,7 +73,10 @@ public class CSVRefactorReportGenerator {
                 .stream()
                 .filter(i -> i.getName().equals(refactoring))
                 .count()).mapToObj(Long::toString).forEach(row::add);
+        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(refactorSequence.getOriginalProgram())));
+        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(refactorSequence.getRefactoredProgram())));
         refactorSequence.getFitnessMap().values().stream().map(String::valueOf).forEach(row::add);
+        row.addAll(fitnessValuesWithoutRefactoring);
         printer.printRecord(row);
         printer.flush();
     }
