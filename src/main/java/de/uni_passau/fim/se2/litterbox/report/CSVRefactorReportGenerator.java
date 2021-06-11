@@ -36,6 +36,7 @@ public class CSVRefactorReportGenerator {
      */
     public CSVRefactorReportGenerator(String fileName, String refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
         refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).collect(Collectors.toList());
+        List<String> fitnessFunctionsNamesWithoutRefactoring = fitnessFunctions.stream().map(fitnessFunction -> fitnessFunction.getName() + "_without_refactoring").collect(Collectors.toList());
         List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).collect(Collectors.toList());
         headers.add("project");
         headers.add("population_size");
@@ -47,12 +48,13 @@ public class CSVRefactorReportGenerator {
         headers.add("refactoring_search_time");
         headers.addAll(refactorings);
         headers.addAll(fitnessFunctionsNames);
+        headers.addAll(fitnessFunctionsNamesWithoutRefactoring);
         printer = getNewPrinter(fileName, refactoredPath);
     }
 
     public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen,
                                double hyperVolume, int iteration, long programExtractionTime,
-                               long refactoringSearchTime) throws IOException {
+                               long refactoringSearchTime, List<String> fitnessValuesWithoutRefactoring) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
@@ -69,6 +71,7 @@ public class CSVRefactorReportGenerator {
                 .filter(i -> i.getName().equals(refactoring))
                 .count()).mapToObj(Long::toString).forEach(row::add);
         refactorSequence.getFitnessMap().values().stream().map(String::valueOf).forEach(row::add);
+        row.addAll(fitnessValuesWithoutRefactoring);
         printer.printRecord(row);
         printer.flush();
     }
