@@ -156,24 +156,18 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         if (!(other instanceof RefactorSequence)) {
             return false;
         }
-        if (executedRefactorings.isEmpty()) {
-            if (((RefactorSequence) other).getProductions().equals(getProductions())) {
-                return true;
-            }
-            // calculate the executed refactorings for both objects for comparison
-            ((RefactorSequence) other).getRefactoredProgram();
-            getRefactoredProgram();
+        if (executedRefactorings.isEmpty()
+                && ((RefactorSequence) other).getProductions().equals(getProductions())) {
+            return true;
         }
-        return ((RefactorSequence) other).getExecutedRefactorings().equals(getExecutedRefactorings());
+        // calculate the executed refactorings for both objects for comparison
+        return ((RefactorSequence) other).getRefactoredProgram().equals(getRefactoredProgram());
     }
 
     @Override
     public int hashCode() {
-        if (executedRefactorings.isEmpty()) {
-            // internally calculates refactored program and sets executedRefactoring list
-            getRefactoredProgram();
-        }
-        return getExecutedRefactorings().hashCode();
+        // internally calculates refactored program and sets executedRefactoring list
+        return getRefactoredProgram().hashCode();
     }
 
     @Override
