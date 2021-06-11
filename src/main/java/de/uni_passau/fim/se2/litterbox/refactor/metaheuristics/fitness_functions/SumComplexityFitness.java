@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SumComplexityFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "sum_complexity_fitness";

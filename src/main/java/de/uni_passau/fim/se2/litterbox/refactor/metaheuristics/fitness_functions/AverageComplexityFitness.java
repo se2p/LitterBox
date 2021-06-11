@@ -9,6 +9,8 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.averagingDouble;
+
 public class AverageComplexityFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "average_complexity_fitness";
 
@@ -26,7 +28,7 @@ public class AverageComplexityFitness implements MinimizingFitnessFunction<Refac
             }
         });
 
-        return complexities.isEmpty() ? 0.0 : complexities.stream().mapToDouble(Number::doubleValue).average().getAsDouble();
+        return complexities.stream().collect(averagingDouble(Number::doubleValue));
     }
 
     @Override
