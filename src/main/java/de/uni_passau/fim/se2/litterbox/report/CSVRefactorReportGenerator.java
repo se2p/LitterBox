@@ -43,13 +43,16 @@ public class CSVRefactorReportGenerator {
         headers.add("executed_generations");
         headers.add("seed");
         headers.add("hypervolume");
+        headers.add("program_extraction_time");
+        headers.add("refactoring_search_time");
         headers.addAll(refactorings);
         headers.addAll(fitnessFunctionsNames);
         printer = getNewPrinter(fileName, refactoredPath);
     }
 
     public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen,
-                               double hyperVolume, int iteration) throws IOException {
+                               double hyperVolume, int iteration, long programExtractionTime,
+                               long refactoringSearchTime) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
@@ -58,6 +61,8 @@ public class CSVRefactorReportGenerator {
         row.add(String.valueOf(iteration));
         row.add(String.valueOf(Randomness.getSeed()));
         row.add(String.valueOf(hyperVolume));
+        row.add(String.valueOf(programExtractionTime));
+        row.add(String.valueOf(refactoringSearchTime));
 
         refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
                 .stream()
