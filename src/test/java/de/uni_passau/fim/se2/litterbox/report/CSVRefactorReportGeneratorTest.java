@@ -59,6 +59,7 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
         when(refactorSequence.getFitnessMap()).thenReturn((fitnessMap));
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
         String fileName = tmpFile.getFileName().toString();
@@ -115,6 +116,7 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
         when(refactorSequence.getFitnessMap()).thenReturn((fitnessMap));
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
         String fileName = tmpFile.getFileName().toString();

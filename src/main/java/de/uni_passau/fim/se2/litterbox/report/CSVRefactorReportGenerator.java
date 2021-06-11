@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
@@ -47,6 +48,8 @@ public class CSVRefactorReportGenerator {
         headers.add("program_extraction_time");
         headers.add("refactoring_search_time");
         headers.addAll(refactorings);
+        headers.add("blocks_without_refactoring");
+        headers.add("blocks");
         headers.addAll(fitnessFunctionsNames);
         headers.addAll(fitnessFunctionsNamesWithoutRefactoring);
         printer = getNewPrinter(fileName, refactoredPath);
@@ -70,6 +73,8 @@ public class CSVRefactorReportGenerator {
                 .stream()
                 .filter(i -> i.getName().equals(refactoring))
                 .count()).mapToObj(Long::toString).forEach(row::add);
+        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(program)));
+        row.add(String.valueOf(new BlockCount<Program>().calculateMetric(refactorSequence.getRefactoredProgram())));
         refactorSequence.getFitnessMap().values().stream().map(String::valueOf).forEach(row::add);
         row.addAll(fitnessValuesWithoutRefactoring);
         printer.printRecord(row);
