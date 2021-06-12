@@ -81,12 +81,6 @@ public class RefactoringAnalyzer extends Analyzer {
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
 
-        List<String> fitnessValuesWithoutRefactoring = new LinkedList<>();
-        RefactorSequence emptyRefactorSequence = createEmptyRefactorSequence(originalProgram);
-        for (FitnessFunction<RefactorSequence> fitnessFunction : solutions.get(0).getFitnessMap().keySet()) {
-            String fitnessValueWithoutRefactoring = String.valueOf(fitnessFunction.getFitness(emptyRefactorSequence));
-            fitnessValuesWithoutRefactoring.add(fitnessValueWithoutRefactoring);
-        }
         for (int i = 0; i < solutions.size(); i++) {
             log.log(Level.FINE, "Refactoring " + i);
             log.log(Level.FINE, "Original program");
@@ -96,18 +90,13 @@ public class RefactoringAnalyzer extends Analyzer {
             log.log(Level.FINE, "Refactored program");
             log.log(Level.FINE, solutions.get(i).getRefactoredProgram().getScratchBlocks());
             Program refactored = solutions.get(i).getRefactoredProgram();
-            generateOutput(
+            generateOutput(i,
                     refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, programExtractionTime,
-                    refactoringSearchTime, fitnessValuesWithoutRefactoring);
+                    refactoringSearchTime);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
 
-    private RefactorSequence createEmptyRefactorSequence(Program program) {
-        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(List.of());
-        return new RefactorSequence(program, mutation, crossover, List.of(), List.of());
-    }
 
     /**
      * Execute the list of refactorings
@@ -149,14 +138,14 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration, long programExtractionTime, long refactoringSearchTime, List<String> fitnessValuesWithoutRefactoring) throws IOException {
+    private void generateOutput(int index, Program program, RefactorSequence refactorSequence, String reportFileName, double hyperVolume, int iteration, long programExtractionTime, long refactoringSearchTime) throws IOException {
         if (reportFileName == null || reportFileName.isEmpty()) {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
             reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
         } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
             CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
-            reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
-                    programExtractionTime, refactoringSearchTime, fitnessValuesWithoutRefactoring);
+            reportGenerator.generateReport(index, program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
+                    programExtractionTime, refactoringSearchTime);
             reportGenerator.close();
         } else {
             throw new IllegalArgumentException("Unknown file type: " + reportFileName);
