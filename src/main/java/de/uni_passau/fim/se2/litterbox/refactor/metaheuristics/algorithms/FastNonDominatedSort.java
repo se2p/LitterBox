@@ -12,43 +12,17 @@ public class FastNonDominatedSort<C extends Solution<C>> {
 
     private final List<FitnessFunction<C>> fitnessFunctions;
 
+    private Dominance<C> dominance;
+
     public FastNonDominatedSort(List<FitnessFunction<C>> fitnessFunctions) {
         this.fitnessFunctions = fitnessFunctions;
+        this.dominance = new Dominance<>(fitnessFunctions);
     }
 
-    /**
-     * solution1 is said to dominate the other solution2 if both condition 1 and 2 below are true:
-     * Condition 1: solution1 is no worse than solution2 for all objectives
-     * Condition 2: solution1 is strictly better than solution2 in at least one objective
-     * <p>
-     *
-     * @param solution1 Chromosome 1, which is checked, whether it dominates the other chromosome
-     * @param solution2 Chromosome 2, which is checked, whether it is dominates by the other chromosome
-     * @return {@code true} if solution1 dominates solution2, {@code false} otherwise
-     */
-    @VisibleForTesting
-    boolean dominates(C solution1, C solution2) {
-        var dominatesAtLeastOne = false;
-
-        for (FitnessFunction<C> fitnessFunction : fitnessFunctions) {
-             if (solution2.getFitness(fitnessFunction) > solution1.getFitness(fitnessFunction)) {
-                 if (fitnessFunction.isMinimizing()) {
-                     dominatesAtLeastOne = true;
-                 } else {
-                     return false;
-                 }
-             } else if (solution1.getFitness(fitnessFunction) > solution2.getFitness(fitnessFunction)) {
-                 if (fitnessFunction.isMinimizing()) {
-                     return false;
-                 } else {
-                     dominatesAtLeastOne = true;
-                 }
-             }
-        }
-
-        return dominatesAtLeastOne;
+    public FastNonDominatedSort(List<FitnessFunction<C>> fitnessFunctions, Dominance<C> dominance) {
+        this.fitnessFunctions = fitnessFunctions;
+        this.dominance = dominance;
     }
-
 
     /**
      * Implements the fast dominated sort provided in the lecture slides.
@@ -77,9 +51,9 @@ public class FastNonDominatedSort<C extends Solution<C>> {
             dominatesList.set(p, Lists.newLinkedList());
             amountDominated[p] = 0;
             for (C q : solutions) {
-                if (dominates(solutions.get(p), q)) {
+                if (dominance.test(solutions.get(p), q)) {
                     dominatesList.get(p).add(q);
-                } else if (dominates(q, solutions.get(p))) {
+                } else if (dominance.test(q, solutions.get(p))) {
                     amountDominated[p]++;
                 }
             }

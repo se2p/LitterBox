@@ -12,11 +12,11 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FastNonDominatedSortTest {
@@ -63,14 +63,14 @@ class FastNonDominatedSortTest {
         when(c3.getFitness(function1)).thenReturn(0.7);
         when(c3.getFitness(function2)).thenReturn(0.8);
 
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
-        assertFalse(fastNonDominatedSort.dominates(c1, c2));
-        assertFalse(fastNonDominatedSort.dominates(c2, c1));
+        Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
+        assertFalse(dominance.test(c1, c2));
+        assertFalse(dominance.test(c2, c1));
 
-        assertTrue(fastNonDominatedSort.dominates(c3, c1));
-        assertTrue(fastNonDominatedSort.dominates(c3, c2));
+        assertTrue(dominance.test(c3, c1));
+        assertTrue(dominance.test(c3, c2));
 
-        assertFalse(fastNonDominatedSort.dominates(c3, c3));
+        assertFalse(dominance.test(c3, c3));
     }
 
     @Test
@@ -81,30 +81,28 @@ class FastNonDominatedSortTest {
         RefactorSequence c4 = mock(RefactorSequence.class);
         List<RefactorSequence> solutions = Lists.newArrayList(c1, c2, c3, c4);
 
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = mock(FastNonDominatedSort.class);
-        when(fastNonDominatedSort.dominates(c1, c1)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c2)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c4)).thenReturn(false);
+        Dominance<RefactorSequence> dominance = mock(Dominance.class);
 
-        when(fastNonDominatedSort.dominates(c2, c1)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c2)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c4)).thenReturn(false);
+        when(dominance.test(c1, c1)).thenReturn(false);
+        when(dominance.test(c1, c2)).thenReturn(false);
+        when(dominance.test(c1, c3)).thenReturn(false);
+        when(dominance.test(c1, c4)).thenReturn(false);
 
-        when(fastNonDominatedSort.dominates(c3, c1)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c3, c2)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c3, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c3, c4)).thenReturn(false);
+        when(dominance.test(c2, c1)).thenReturn(false);
+        when(dominance.test(c2, c2)).thenReturn(false);
+        when(dominance.test(c2, c3)).thenReturn(false);
+        when(dominance.test(c2, c4)).thenReturn(false);
 
-        when(fastNonDominatedSort.dominates(c4, c1)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c4, c2)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c4, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c4, c4)).thenReturn(false);
+        when(dominance.test(c3, c1)).thenReturn(true);
+        when(dominance.test(c3, c2)).thenReturn(true);
+        when(dominance.test(c3, c3)).thenReturn(false);
+        when(dominance.test(c3, c4)).thenReturn(false);
 
-        doNothing().when(fastNonDominatedSort).calculateFitnessValuesForSolutions(solutions);
-
-        when(fastNonDominatedSort.fastNonDominatedSort(any())).thenCallRealMethod();
+        when(dominance.test(c4, c1)).thenReturn(true);
+        when(dominance.test(c4, c2)).thenReturn(true);
+        when(dominance.test(c4, c3)).thenReturn(false);
+        when(dominance.test(c4, c4)).thenReturn(false);
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort(Collections.emptyList(), dominance);
 
         List<List<RefactorSequence>> fronts = fastNonDominatedSort.fastNonDominatedSort(solutions);
         assertEquals(2, fronts.size());
