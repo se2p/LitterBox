@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CallMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
@@ -86,8 +85,6 @@ public class MutationMetadataParser {
         if (mutationNode.has(ARGUMENTNAMES_KEY) && mutationNode.has(ARGUMENTNAMES_KEY)) {
             return new PrototypeMutationMetadata(tagName, children, procCode, argumentIdsList, warp,
                     argumentNames, argumentDefaults);
-        } else if (mutationNode.has(HAS_NEXT_KEY)) {
-            return new StopMutationMetadata(tagName, children, hasNext);
         } else {
             return new CallMutationMetadata(tagName, children, procCode, argumentIdsList, warp);
         }
