@@ -139,6 +139,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(NumberLiteral node) {
         DecimalFormat format = new DecimalFormat();
+        format.setGroupingUsed(false);
         format.setMinimumFractionDigits(0);
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                 format.format(node.getValue())));

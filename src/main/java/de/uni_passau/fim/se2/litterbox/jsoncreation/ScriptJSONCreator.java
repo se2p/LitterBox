@@ -68,6 +68,7 @@ public class ScriptJSONCreator {
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral) {
                     DecimalFormat format = new DecimalFormat();
+                    format.setGroupingUsed(false);
                     format.setMinimumFractionDigits(0);
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                             format.format(((NumberLiteral) numExpr).getValue())));
