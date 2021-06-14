@@ -36,6 +36,7 @@ public class BlockMetadataParser {
             if (blockNode.has(COMMENT_KEY)) {
                 commentId = blockNode.get(COMMENT_KEY).asText();
             }
+            String opcode = blockNode.get(OPCODE_KEY).asText();
             InputMetadataList inputMetadata = InputMetadataListParser.parse(blockNode.get(INPUTS_KEY));
             FieldsMetadataList fields = FieldsMetadataListParser.parse(blockNode.get(FIELDS_KEY));
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
