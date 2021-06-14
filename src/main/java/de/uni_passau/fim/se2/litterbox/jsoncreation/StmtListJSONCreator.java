@@ -987,6 +987,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof NumberLiteral) {
             DecimalFormat format = new DecimalFormat();
+            format.setGroupingUsed(false);
             format.setMinimumFractionDigits(0);
             return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
                     format.format(((NumberLiteral) numExpr).getValue()));
