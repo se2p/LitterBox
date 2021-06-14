@@ -66,7 +66,7 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         String fileName = tmpFile.getFileName().toString();
         String pathName = tmpFile.getParent().toString();
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime, fitnessValuesWithoutRefactoring);
+        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
@@ -74,11 +74,11 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).contains(
-                "project,population_size,max_generations,executed_generations,seed,hypervolume,"
+                "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
                         + "program_extraction_time,refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,10,10,9,132,2.0,23,42");
-        assertThat(lines.get(1)).contains("2.11,3.11,4.11,1.2,3.4,5.6");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(1)).contains("2.11,3.11,4.11");
     }
 
     @Test
@@ -91,7 +91,6 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         long programExtractionTime = 23;
         long refactoringSearchTime = 42;
         Randomness.setSeed(132);
-        List<String> fitnessValuesWithoutRefactoring = List.of("1.2", "3.4", "5.6");
         FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
         FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
         FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
@@ -125,11 +124,11 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         String pathName = tmpFile.getParent().toString();
 
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime, fitnessValuesWithoutRefactoring);
+        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator.close();
 
         CSVRefactorReportGenerator reportGenerator2 = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator2.generateReport(program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime, fitnessValuesWithoutRefactoring);
+        reportGenerator2.generateReport(1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator2.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
@@ -137,12 +136,12 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).contains(
-                "project,population_size,max_generations,executed_generations,seed,hypervolume,"
+                "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
                         + "program_extraction_time,refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,10,10,9,132,2.0,23,42");
-        assertThat(lines.get(1)).contains("2.11,3.11,4.11,1.2,3.4,5.6");
-        assertThat(lines.get(2)).contains("helloBlockHelloBlockWithinControl,10,10,9,132,2.0,23,42");
-        assertThat(lines.get(2)).contains("2.11,3.11,4.11,1.2,3.4,5.6");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(1)).contains("2.11,3.11,4.11");
+        assertThat(lines.get(2)).contains("helloBlockHelloBlockWithinControl,1,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(2)).contains("2.11,3.11,4.11");
     }
 }
