@@ -40,11 +40,11 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
         if (node instanceof ASTLeaf) {
             recordLeaf((ASTLeaf) node);
         } else {
-            String name = String.valueOf(node.hashCode()); //This should only be a workaround this is a hack
+            String name = String.valueOf(System.identityHashCode(node)); //This should only be a workaround this is a hack
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             edges.add(label);
             for (ASTNode child : node.getChildren()) {
-                String edge = name + " -> " + child.hashCode() + "";
+                String edge = name + " -> " + System.identityHashCode(child) + "";
                 edges.add(edge);
             }
 
@@ -55,7 +55,7 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     }
 
     public void recordLeaf(ASTLeaf node) {
-        String name = String.valueOf(node.hashCode());
+        String name = String.valueOf(System.identityHashCode(node));
         String label = name + " [label = \"" + node.getUniqueName() + "\"];";
         edges.add(label);
         String[] simpleStrings = node.toSimpleStringArray();

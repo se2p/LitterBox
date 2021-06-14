@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -2029,6 +2030,15 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                         issueNote.add(PERFUME_NOTE);
                     } else {
                         issueNote.add(BUG_NOTE);
+                    }
+                } else {
+                    List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
+                    if (node == (nodes.get(0))) {
+                        if (issue.getIssueType() == IssueType.PERFUME) {
+                            issueNote.add(PERFUME_NOTE);
+                        } else {
+                            issueNote.add(BUG_NOTE);
+                        }
                     }
                 }
                 // TODO: In theory there could be multiple messages here...

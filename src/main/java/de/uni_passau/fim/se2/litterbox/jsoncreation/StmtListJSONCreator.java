@@ -304,26 +304,23 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(StopAll node) {
         String fieldsString = createFields(STOP_OPTION, "all", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), false);
     }
 
     @Override
     public void visit(StopThisScript node) {
         String fieldsString = createFields(STOP_OPTION, "this script", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), false);
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         String fieldsString = createFields(STOP_OPTION, "other scripts in sprite", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(),true);
     }
 
-    private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata, Opcode opcode) {
-        MutationMetadata mutation = metadata.getMutation();
-        Preconditions.checkArgument(mutation instanceof StopMutationMetadata);
-        StopMutationMetadata stopMutationMetadata = (StopMutationMetadata) mutation;
-        String mutationString = createStopMetadata(stopMutationMetadata.getTagName(), stopMutationMetadata.isHasNext());
+    private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata, Opcode opcode, boolean hasNext) {
+        String mutationString = createStopMetadata(hasNext);
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString, opcode));
         previousBlockId = metadata.getBlockId();

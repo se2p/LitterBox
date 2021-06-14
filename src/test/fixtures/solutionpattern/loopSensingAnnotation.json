@@ -1,0 +1,203 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Unicorn",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "#3n(BD8jdgyMXG1QL~:b": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "#BK-U^({w@CJwFk_iKzW",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 292,
+                    "y": 254
+                },
+                "#BK-U^({w@CJwFk_iKzW": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "#3n(BD8jdgyMXG1QL~:b",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "Kh=F_/OuLO`X}HLr#~**"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$bxGE?};|aTCa%mMG9-*": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "Kh=F_/OuLO`X}HLr#~**",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "D_q:E`xN{j^P2:a}`#z#"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "m;Fd@lSb,k)@cZmL5if^"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "D_q:E`xN{j^P2:a}`#z#": {
+                    "opcode": "pen_stamp",
+                    "next": null,
+                    "parent": "$bxGE?};|aTCa%mMG9-*",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "m;Fd@lSb,k)@cZmL5if^": {
+                    "opcode": "sensing_mousedown",
+                    "next": null,
+                    "parent": "$bxGE?};|aTCa%mMG9-*",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Kh=F_/OuLO`X}HLr#~**": {
+                    "opcode": "motion_goto",
+                    "next": "$bxGE?};|aTCa%mMG9-*",
+                    "parent": "#BK-U^({w@CJwFk_iKzW",
+                    "inputs": {
+                        "TO": [
+                            1,
+                            "@N9,*APU-`|7$^;I6scD"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@N9,*APU-`|7$^;I6scD": {
+                    "opcode": "motion_goto_menu",
+                    "next": null,
+                    "parent": "Kh=F_/OuLO`X}HLr#~**",
+                    "inputs": {},
+                    "fields": {
+                        "TO": [
+                            "_mouse_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "dcbeac8e856c9ddd6c457376be6573c8",
+                    "name": "unicorn",
+                    "bitmapResolution": 1,
+                    "md5ext": "dcbeac8e856c9ddd6c457376be6573c8.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 75,
+                    "rotationCenterY": 75
+                },
+                {
+                    "assetId": "b8df58a480c1723b1ae44f20d7cbf881",
+                    "name": "Game Over",
+                    "bitmapResolution": 1,
+                    "md5ext": "b8df58a480c1723b1ae44f20d7cbf881.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 90.1,
+                    "rotationCenterY": 94.99191011189217
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "1cb60ecdb1075c8769cb346d5c2a22c7",
+                    "name": "magic spell",
+                    "dataFormat": "wav",
+                    "format": "adpcm",
+                    "rate": 22050,
+                    "sampleCount": 43689,
+                    "md5ext": "1cb60ecdb1075c8769cb346d5c2a22c7.wav"
+                },
+                {
+                    "assetId": "0f2aa4c395cb932512defb2d14dc1691",
+                    "name": "Pluck",
+                    "dataFormat": "wav",
+                    "rate": 22050,
+                    "sampleCount": 7113,
+                    "md5ext": "0f2aa4c395cb932512defb2d14dc1691.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 16,
+            "y": 42,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "pen"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210510162256",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0"
+    }
+}
