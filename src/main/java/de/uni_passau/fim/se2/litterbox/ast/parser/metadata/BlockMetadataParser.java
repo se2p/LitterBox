@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -40,7 +41,7 @@ public class BlockMetadataParser {
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
             boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
             MutationMetadata mutation;
-            if (blockNode.has(MUTATION_KEY)) {
+            if (blockNode.has(MUTATION_KEY) && !(opcode.equals(TerminationStmtOpcode.control_stop.getName()))) {
                 mutation = MutationMetadataParser.parse(blockNode.get(MUTATION_KEY));
             } else {
                 mutation = new NoMutationMetadata();

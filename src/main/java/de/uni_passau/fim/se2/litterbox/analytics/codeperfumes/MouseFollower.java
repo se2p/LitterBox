@@ -62,6 +62,7 @@ public class MouseFollower extends AbstractIssueFinder {
     public void visit(MoveSteps node) {
         if (insideLoop && pointToMouse) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            pointToMouse = false;
         }
         visitChildren(node);
     }

@@ -125,10 +125,10 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createStopMetadata(String tagName, boolean hasNext) {
+    public static String createStopMetadata(boolean hasNext) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, HAS_NEXT_KEY, hasNext);
         jsonString.append("}");
