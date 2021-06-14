@@ -53,6 +53,14 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.SIZE);
     }
 
+    public static Attribute visibilityOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VISIBILITY);
+    }
+
+    public LocalIdentifier getActorIdentifier() {
+        return actorIdentifier;
+    }
+
     public AttributeType getAttributeType() {
         return attribute;
     }
@@ -76,8 +84,8 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
-        // VISIBILITY, LAYER, EFFECT
+        POSITION, ROTATION, COSTUME, SIZE, VISIBILITY //, BACKDROP // VOLUME?
+        // LAYER, EFFECT
     }
 
     //public static Attribute backdropOf(ActorDefinition actor) {

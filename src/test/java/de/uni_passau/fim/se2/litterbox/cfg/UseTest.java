@@ -159,7 +159,7 @@ public class UseTest implements JsonTest {
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
         for (CFGNode node : nodes) {
             assertThat(node.getDefinitions()).isEmpty();
-            assertThat(node.getUses()).isEmpty();
+            assertThat(node.getUses()).hasSize(1); // Visibility for say
         }
     }
 
