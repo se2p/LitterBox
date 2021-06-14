@@ -34,6 +34,7 @@ public class IssueTranslator {
     public static final String POSITION = "position";
     public static final String COSTUME = "costume";
     public static final String ROTATION = "rotation";
+    public static final String VISIBILITY = "visibility";
     public static final String VARIABLE = "variable";
     public static final String LIST = "list";
     public static final String ATTRIBUTE = "attribute";

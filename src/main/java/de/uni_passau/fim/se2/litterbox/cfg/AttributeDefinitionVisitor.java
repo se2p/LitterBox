@@ -20,10 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.LinkedHashSet;
@@ -48,6 +45,18 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     @Override
     public void visit(ControlStmt node) {
         // Don't visit child statements
+    }
+
+    //---------------------------------------------------------------
+    // Visibility
+    @Override
+    public void visit(Hide node) {
+        definitions.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Show node) {
+        definitions.add(Attribute.visibilityOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------

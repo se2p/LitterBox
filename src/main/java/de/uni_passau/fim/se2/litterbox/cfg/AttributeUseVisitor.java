@@ -28,10 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -75,6 +76,41 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(UntilStmt node) {
         node.getBoolExpr().accept(this);
     }
+
+    @Override
+    public void visit(Hide node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Show node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SpriteTouchable sprite) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(sprite);
+    }
+
+    @Override
+    public void visit(AskAndWait node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Say node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SayForSecs node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
 
     @Override
     public void visit(ChangeXBy node) {
