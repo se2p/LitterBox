@@ -42,6 +42,22 @@ public class SplitScriptTest implements JsonTest {
     }
 
     @Test
+    public void testSplitScriptFinder_Clone() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitScriptClone.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_Broadcast() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitScriptBroadcast.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testSplitScriptFinder_DoNotSplitTimeDependency() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_time_dependency.json");
         SplitScriptFinder finder = new SplitScriptFinder();

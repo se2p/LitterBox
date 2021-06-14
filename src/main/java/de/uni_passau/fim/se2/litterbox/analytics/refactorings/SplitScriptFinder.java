@@ -1,25 +1,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
-import de.uni_passau.fim.se2.litterbox.dependency.ControlDependenceGraph;
-import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
-import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
-import de.uni_passau.fim.se2.litterbox.dependency.TimeDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitScript;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /*
 on event:
@@ -43,9 +32,7 @@ public class SplitScriptFinder extends AbstractDependencyRefactoringFinder {
             return;
         }
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
-        script.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = getControlFlowGraphForScript(script);
 
         StmtList stmts = script.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {
