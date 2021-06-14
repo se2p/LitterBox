@@ -3299,21 +3299,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link StopMutationMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node StopMutationMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(StopMutationMetadata node) {
-        return new StopMutationMetadata(node.getTagName(), new ArrayList<>(node.getChild()), node.isHasNext());
-    }
-
-    /**
      * Default implementation of visit method for {@link StageMetadata}.
      *
      * <p>
