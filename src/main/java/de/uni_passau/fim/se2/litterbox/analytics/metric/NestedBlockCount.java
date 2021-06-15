@@ -25,14 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
 
     public static final String NAME = "nested_block_count";
 
-    private int count = 0;
     private int maxNestedDepth = 0;
     private int currentNestedDepth = 0;
 

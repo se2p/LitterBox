@@ -39,7 +39,7 @@ import java.util.Collection;
 
 public class JSONReportGenerator implements ReportGenerator {
 
-    private OutputStream outputStream = null;
+    private OutputStream outputStream;
 
     private boolean closeStream = false;
 
@@ -48,7 +48,7 @@ public class JSONReportGenerator implements ReportGenerator {
         closeStream = true;
     }
 
-    public JSONReportGenerator(OutputStream stream) throws IOException {
+    public JSONReportGenerator(OutputStream stream) {
         this.outputStream = stream;
     }
 

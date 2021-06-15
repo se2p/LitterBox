@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
 public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
-    private final String NAME = "inappropriate_handler_delete_clone";
+    private final static String NAME = "inappropriate_handler_delete_clone";
     private boolean hasDeleteClone;
 
     @Override

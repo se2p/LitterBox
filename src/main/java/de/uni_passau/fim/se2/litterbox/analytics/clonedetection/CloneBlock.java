@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CloneBlock {
 

@@ -16,8 +16,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,8 +101,7 @@ public class InitializeLooks extends AbstractIssueFinder {
 
             // Initialization should not be in a control- or if- statement
             node.getStmts().forEach(stmt -> {
-                if (stmt instanceof ControlStmt || stmt instanceof IfStmt) {
-                } else {
+                if (!(stmt instanceof ControlStmt || stmt instanceof IfStmt)) {
                     stmt.accept(this);
                 }
             });

@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
@@ -33,16 +32,13 @@ public class CloneAnalysis {
     private int minSize = MIN_SIZE;
     private int maxGap = MAX_GAP;
 
-    private ActorDefinition actor;
     private ASTNode root1;
     private ASTNode root2;
 
-    public CloneAnalysis(ActorDefinition actor) {
-        this.actor = actor;
+    public CloneAnalysis() {
     }
 
-    public CloneAnalysis(ActorDefinition actor, int minSize, int maxGap) {
-        this.actor = actor;
+    public CloneAnalysis(int minSize, int maxGap) {
         this.minSize = minSize;
         this.maxGap = maxGap;
     }
@@ -135,7 +131,7 @@ public class CloneAnalysis {
         for (CloneBlock block : blocks) {
             // Type 1/2
             if (block.size() >= minSize) {
-                CodeClone clone = new CodeClone(actor, root1, root2);
+                CodeClone clone = new CodeClone(root1, root2);
                 block.fillClone(clone, statements1, statements2);
                 if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
                     clone.setType(CodeClone.CloneType.TYPE2);
@@ -145,7 +141,7 @@ public class CloneAnalysis {
 
             // Type 3
             for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks)) {
-                CodeClone clone = new CodeClone(actor, root1, root2);
+                CodeClone clone = new CodeClone(root1, root2);
                 clone.setType(CodeClone.CloneType.TYPE3);
                 block.fillClone(clone, statements1, statements2);
                 otherBlock.fillClone(clone, statements1, statements2);
@@ -162,8 +158,9 @@ public class CloneAnalysis {
         Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
 
         for (CloneBlock otherBlock : otherBlocks) {
-            if (otherBlock == block)
+            if (otherBlock == block) {
                 continue;
+            }
 
             if (otherBlock.extendsWithGap(block, maxGap)) {
                 cloneBlocks.add(otherBlock);

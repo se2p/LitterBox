@@ -34,6 +34,7 @@ public abstract class DataExpr extends AbstractNode implements Expression {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

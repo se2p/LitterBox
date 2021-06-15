@@ -59,7 +59,7 @@ public class JSONStringCreator {
         for (int i = 0; i < ext.size() - 1; i++) {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
         }
-        if (ext.size() > 0) {
+        if (!ext.isEmpty()) {
             jsonString.append("\"").append(ext.get(ext.size() - 1)).append("\"");
         }
         jsonString.append("]");
@@ -106,7 +106,7 @@ public class JSONStringCreator {
         for (int i = 0; i < monitorMetadataList.size() - 1; i++) {
             createMonitorJSONString(jsonString, monitorMetadataList.get(i)).append(",");
         }
-        if (monitorMetadataList.size() > 0) {
+        if (!monitorMetadataList.isEmpty()) {
             createMonitorJSONString(jsonString,
                     monitorMetadataList.get(monitorMetadataList.size() - 1));
         }
@@ -135,7 +135,7 @@ public class JSONStringCreator {
         for (int i = 0; i < monitors.size() - 1; i++) {
             createFieldValue(jsonString, monitors.get(i).getInputName(), monitors.get(i).getInputValue()).append(",");
         }
-        if (monitors.size() > 0) {
+        if (!monitors.isEmpty()) {
             createFieldValue(jsonString, monitors.get(monitors.size() - 1).getInputName(),
                     monitors.get(monitors.size() - 1).getInputValue());
         }
@@ -157,7 +157,7 @@ public class JSONStringCreator {
             for (int i = 0; i < values.size() - 1; i++) {
                 jsonString.append("\"").append(values.get(i)).append("\"").append(",");
             }
-            if (values.size() > 0) {
+            if (!values.isEmpty()) {
                 jsonString.append("\"").append(values.get(values.size() - 1)).append("\"");
             }
             jsonString.append("]");

@@ -49,7 +49,7 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
  * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like gliding.
  */
 public class InterruptedLoopSensing extends AbstractIssueFinder {
-    private final String NAME = "interrupted_loop_sensing";
+    private final static String NAME = "interrupted_loop_sensing";
     private boolean inCondition = false;
     private boolean insideEquals = false;
     private boolean sensingCollision = false;
