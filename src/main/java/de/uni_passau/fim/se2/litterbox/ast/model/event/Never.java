@@ -27,10 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Never extends AbstractNode implements Event, ASTLeaf {
 
-    public Never() {
-        super();
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

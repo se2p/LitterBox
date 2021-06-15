@@ -66,4 +66,5 @@ public class StartSound extends AbstractNode implements ActorSoundStmt {
 
     public Opcode getSoundMenuOpcode() {
         return DependentBlockOpcode.sound_sounds_menu;
-    }}
+    }
+}

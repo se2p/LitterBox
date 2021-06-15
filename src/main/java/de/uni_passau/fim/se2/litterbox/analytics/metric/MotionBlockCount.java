@@ -51,17 +51,17 @@ public class MotionBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public void visit(PositionX node){
+    public void visit(PositionX node) {
         count++;
     }
 
     @Override
-    public void visit(PositionY node){
+    public void visit(PositionY node) {
         count++;
     }
 
     @Override
-    public void visit(Direction node){
+    public void visit(Direction node) {
         count++;
     }
 

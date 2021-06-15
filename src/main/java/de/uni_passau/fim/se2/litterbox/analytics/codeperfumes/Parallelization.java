@@ -5,9 +5,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 
 import java.util.ArrayList;
@@ -72,7 +70,7 @@ public class Parallelization extends AbstractIssueFinder {
 
     private void checkEvents(AbstractNode event) {
         for (Event e : events) {
-            if (e.equals(event)){
+            if (e.equals(event)) {
                 addIssue(event, event.getMetadata(), IssueSeverity.HIGH);
                 break;
             }

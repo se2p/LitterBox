@@ -20,11 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

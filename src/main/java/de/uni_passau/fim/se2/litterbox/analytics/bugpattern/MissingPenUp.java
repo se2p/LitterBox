@@ -100,7 +100,7 @@ public class MissingPenUp extends AbstractIssueFinder implements PenExtensionVis
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 }

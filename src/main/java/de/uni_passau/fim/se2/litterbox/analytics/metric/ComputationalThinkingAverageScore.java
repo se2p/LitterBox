@@ -32,8 +32,8 @@ public class ComputationalThinkingAverageScore  implements MetricExtractor<Progr
         double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program);
         double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program);
 
-        return (abstractionScore + dataRepresentationScore + flowControlScore +
-                logicScore + parallelizationScore + synchronizationScore + userInteractivityScore) / 7.0;
+        return (abstractionScore + dataRepresentationScore + flowControlScore
+                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore) / 7.0;
     }
 
     @Override

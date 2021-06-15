@@ -30,6 +30,7 @@ public class ListDefinitionVisitor implements DefinableCollector<ListVariable> {
 
     private Set<ListVariable> definitions = new LinkedHashSet<>();
 
+    @Override
     public Set<ListVariable> getDefineables() {
         return definitions;
     }

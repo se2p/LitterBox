@@ -462,14 +462,14 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 
     //Text to Speech
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

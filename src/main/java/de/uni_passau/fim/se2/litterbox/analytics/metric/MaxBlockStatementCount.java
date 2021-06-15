@@ -59,8 +59,8 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     }
 
     @Override
-    public void visit(Event node){
-        if(!(node instanceof Never)){
+    public void visit(Event node) {
+        if (!(node instanceof Never)) {
             this.getBlockCount(node, false);
         }
     }
@@ -96,11 +96,11 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
         }
     }
 
-    public void getBlockCount(ASTNode node, boolean increment){
+    public void getBlockCount(ASTNode node, boolean increment) {
         this.currentNumberOfBlocks = 0;
         if (increment) {
             this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node);
-        }else{
+        } else {
             this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node) + 1;
         }
 

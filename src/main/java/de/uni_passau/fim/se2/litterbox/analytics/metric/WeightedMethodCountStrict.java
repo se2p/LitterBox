@@ -38,6 +38,7 @@ public class WeightedMethodCountStrict<T extends ASTNode> extends WeightedMethod
         return NAME;
     }
 
+    @Override
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
             inScriptOrProcedure = true;

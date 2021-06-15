@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -32,8 +32,8 @@ public class ComputationalThinkingScore  implements MetricExtractor<Program> {
         double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program);
         double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program);
 
-        return abstractionScore + dataRepresentationScore + flowControlScore +
-                logicScore + parallelizationScore + synchronizationScore + userInteractivityScore;
+        return abstractionScore + dataRepresentationScore + flowControlScore
+                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore;
     }
 
     @Override

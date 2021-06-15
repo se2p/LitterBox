@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 

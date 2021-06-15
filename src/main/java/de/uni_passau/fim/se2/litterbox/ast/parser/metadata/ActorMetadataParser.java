@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 

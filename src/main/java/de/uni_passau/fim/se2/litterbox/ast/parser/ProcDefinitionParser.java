@@ -86,7 +86,7 @@ public class ProcDefinitionParser {
 
         //each definition needs the prototype block because it holds the name of the procedure
         Preconditions.checkArgument(protoBlock.size() == defBlock.size());
-        if (defBlock.size() == 0) {
+        if (defBlock.isEmpty()) {
             return new ProcedureDefinitionList(new ArrayList<>());
         }
 

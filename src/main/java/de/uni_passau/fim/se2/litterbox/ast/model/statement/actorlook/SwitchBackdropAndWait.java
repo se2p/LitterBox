@@ -64,5 +64,7 @@ public class SwitchBackdropAndWait extends AbstractNode implements ActorLookStmt
         return ActorLookStmtOpcode.looks_switchbackdroptoandwait;
     }
 
-    public Opcode getBackdropMenuOpcode(){return DependentBlockOpcode.looks_backdrops;}
+    public Opcode getBackdropMenuOpcode() {
+        return DependentBlockOpcode.looks_backdrops;
+    }
 }
