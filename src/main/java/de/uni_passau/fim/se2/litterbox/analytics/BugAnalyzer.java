@@ -63,6 +63,7 @@ public class BugAnalyzer extends Analyzer {
      * @param fileEntry      the file to analyze
      * @param reportFileName the file in which to write the results
      */
+    @Override
     void check(File fileEntry, String reportFileName) {
         issueFinders = IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);

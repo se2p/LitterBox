@@ -64,7 +64,7 @@ public class CreateCloneOf extends AbstractNode implements CommonStmt {
         return CommonStmtOpcode.control_create_clone_of;
     }
 
-    public Opcode getCloneMenuOpcode(){
+    public Opcode getCloneMenuOpcode() {
         return DependentBlockOpcode.control_create_clone_of_menu;
     }
 }

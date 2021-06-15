@@ -29,9 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -83,7 +81,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
-        if (finishedJSONStrings.size() > 0) {
+        if (!finishedJSONStrings.isEmpty()) {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
@@ -701,7 +699,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

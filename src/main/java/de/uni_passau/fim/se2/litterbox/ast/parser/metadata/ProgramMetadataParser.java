@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ExtensionMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 
 import java.util.ArrayList;
 

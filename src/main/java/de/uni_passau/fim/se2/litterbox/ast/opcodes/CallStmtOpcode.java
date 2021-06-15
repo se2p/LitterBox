@@ -33,4 +33,5 @@ public enum CallStmtOpcode implements Opcode {
     @Override
     public String getName() {
         return name();
-    }}
+    }
+}

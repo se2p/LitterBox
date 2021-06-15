@@ -100,8 +100,7 @@ public class InitializeLocation extends AbstractIssueFinder {
 
             // Initialization should not be in a control- or if- statement
             node.getStmts().forEach(stmt -> {
-                if (stmt instanceof ControlStmt || stmt instanceof IfStmt) {
-                } else {
+                if (!(stmt instanceof ControlStmt || stmt instanceof IfStmt)) {
                     stmt.accept(this);
                 }
             });

@@ -33,6 +33,7 @@ public class StatementDeletionVisitor extends CloneVisitor {
         this.targetStatement = targetStatement;
     }
 
+    @Override
     public ASTNode visit(StmtList node) {
         List<Stmt> statements = new ArrayList<>();
         for (Stmt stmt : node.getStmts()) {

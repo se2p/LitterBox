@@ -153,7 +153,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         Hint hint;
         if (deleteCloneSpritesAndMessages.containsKey(actorName)) {
             Set<String> messages = deleteCloneSpritesAndMessages.get(actorName);
-            if (messages.size() > 0) {
+            if (!messages.isEmpty()) {
                 Set<String> events = new LinkedHashSet<>();
                 for (String message : messages) {
                     if (actorMessageWithEvent.containsKey(actorName + message)) {

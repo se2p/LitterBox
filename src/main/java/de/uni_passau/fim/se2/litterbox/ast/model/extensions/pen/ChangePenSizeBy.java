@@ -60,7 +60,7 @@ public class ChangePenSizeBy extends AbstractNode implements PenStmt {
 
     @Override
     public void accept(PenExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

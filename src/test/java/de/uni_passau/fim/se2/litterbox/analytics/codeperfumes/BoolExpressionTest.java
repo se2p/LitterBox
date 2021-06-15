@@ -1,10 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
-import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverReceived;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.BoolExpression;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;

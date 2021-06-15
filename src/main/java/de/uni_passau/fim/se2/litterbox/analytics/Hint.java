@@ -36,7 +36,7 @@ public class Hint {
     public final static String THEN_ELSE = "THENELSE";
     public final static String BLOCK_NAME = "BLOCKNAME";
     public final static String EVENT_HANDLER = "EVENTHANDLER";
-    public static final String METHOD = "METHOD" ;
+    public static final String METHOD = "METHOD";
 
     private String hintKey;
     private String hintText;

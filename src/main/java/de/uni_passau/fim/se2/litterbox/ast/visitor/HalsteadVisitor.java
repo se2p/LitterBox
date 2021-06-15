@@ -73,7 +73,7 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Program program) {
-        for(ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
             visit(actor.getScripts());
             visit(actor.getProcedureDefinitionList());
         }

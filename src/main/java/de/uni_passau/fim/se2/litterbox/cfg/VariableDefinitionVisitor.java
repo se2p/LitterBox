@@ -31,6 +31,7 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
 
     private Set<Variable> definitions = new LinkedHashSet<>();
 
+    @Override
     public Set<Variable> getDefineables() {
         return definitions;
     }

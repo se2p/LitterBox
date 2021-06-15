@@ -46,12 +46,15 @@ public abstract class AbstractNode implements ASTNode {
                 .build();
     }
 
+    @Override
     public abstract void accept(ScratchVisitor visitor);
 
+    @Override
     public List<? extends ASTNode> getChildren() {
         return children;
     }
 
+    @Override
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -66,6 +69,7 @@ public abstract class AbstractNode implements ASTNode {
         this.parent = parent;
     }
 
+    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }

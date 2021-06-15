@@ -57,7 +57,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < variables.size() - 1; i++) {
             addVariable(jsonString, variables.get(i)).append(",");
         }
-        if (variables.size() > 0) {
+        if (!variables.isEmpty()) {
             addVariable(jsonString, variables.get(variables.size() - 1));
         }
         jsonString.append("},");
@@ -68,7 +68,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < lists.size() - 1; i++) {
             addList(jsonString, lists.get(i)).append(",");
         }
-        if (lists.size() > 0) {
+        if (!lists.isEmpty()) {
             addList(jsonString, lists.get(lists.size() - 1));
         }
         jsonString.append("},");
@@ -84,7 +84,7 @@ public class ActorJSONCreator {
                     current.getBroadcastName()
             ).append(",");
         }
-        if (broadcasts.size() > 0) {
+        if (!broadcasts.isEmpty()) {
             BroadcastMetadata current = broadcasts.get(broadcasts.size() - 1);
             JSONStringCreator.createFieldValue(jsonString, current.getBroadcastID(), current.getBroadcastName());
         }
@@ -98,17 +98,17 @@ public class ActorJSONCreator {
             jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(i),
                     actor.getIdent().getName(), symbol, procDefNameMapping)).append(",");
         }
-        if (procedures.size() > 0) {
+        if (!procedures.isEmpty()) {
             jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(procedures.size() - 1),
                     actor.getIdent().getName(), symbol, procDefNameMapping));
-            if (scripts.size() > 0) {
+            if (!scripts.isEmpty()) {
                 jsonString.append(",");
             }
         }
         for (int i = 0; i < scripts.size() - 1; i++) {
             jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(i), symbol)).append(",");
         }
-        if (scripts.size() > 0) {
+        if (!scripts.isEmpty()) {
             jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(scripts.size() - 1), symbol));
         }
         jsonString.append("},");
@@ -119,7 +119,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < comments.size() - 1; i++) {
             addComment(jsonString, comments.get(i)).append(",");
         }
-        if (comments.size() > 0) {
+        if (!comments.isEmpty()) {
             addComment(jsonString, comments.get(comments.size() - 1));
         }
         jsonString.append("},");
@@ -132,7 +132,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < images.size() - 1; i++) {
             addImage(jsonString, images.get(i)).append(",");
         }
-        if (images.size() > 0) {
+        if (!images.isEmpty()) {
             addImage(jsonString, images.get(images.size() - 1));
         }
         jsonString.append("],");
@@ -143,7 +143,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < sounds.size() - 1; i++) {
             addSound(jsonString, sounds.get(i)).append(",");
         }
-        if (sounds.size() > 0) {
+        if (!sounds.isEmpty()) {
             addSound(jsonString, sounds.get(sounds.size() - 1));
         }
         jsonString.append("],");
@@ -218,7 +218,7 @@ public class ActorJSONCreator {
         for (int i = 0; i < values.size() - 1; i++) {
             jsonString.append("\"").append(values.get(i)).append("\",");
         }
-        if (values.size() > 0) {
+        if (!values.isEmpty()) {
             jsonString.append("\"").append(values.get(values.size() - 1)).append("\"");
         }
         jsonString.append("]]");

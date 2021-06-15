@@ -53,7 +53,7 @@ public class PenStampStmt extends AbstractNode implements PenStmt, ASTLeaf {
 
     @Override
     public void accept(PenExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

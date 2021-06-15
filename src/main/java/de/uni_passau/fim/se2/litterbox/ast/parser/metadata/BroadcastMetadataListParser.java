@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.BroadcastMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.BroadcastMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.BroadcastMetadataList;
 
 import java.util.ArrayList;
 import java.util.Iterator;

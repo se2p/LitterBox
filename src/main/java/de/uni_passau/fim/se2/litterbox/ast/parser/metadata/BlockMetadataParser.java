@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
