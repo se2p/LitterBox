@@ -7,7 +7,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeLoops;
 
 import java.util.ArrayList;
@@ -57,10 +56,7 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
         MergeLoops refactoring = new MergeLoops(script1, script2);
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();
-
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
-        merged.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
 
         List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
         List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(script1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));

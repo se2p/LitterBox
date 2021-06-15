@@ -6,7 +6,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitLoop;
 
 import java.util.ArrayList;
@@ -44,9 +43,7 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
 
         LoopStmt loop = (LoopStmt) script.getStmtList().getStatement(0);
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
-        script.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = getControlFlowGraphForScript(script);
 
         StmtList stmts = loop.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {

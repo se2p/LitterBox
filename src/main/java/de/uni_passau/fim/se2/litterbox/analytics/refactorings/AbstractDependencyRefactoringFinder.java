@@ -4,9 +4,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
+import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ControlDependenceGraph;
@@ -31,6 +35,26 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
 
     protected boolean isTerminationStatement(ASTNode node) {
         return node instanceof RepeatForeverStmt || node instanceof TerminationStmt;
+    }
+
+    protected ControlFlowGraph getControlFlowGraphForScript(Script script) {
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
+        script.accept(visitor);
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+
+        // "When I start as clone" usually has no edge from entry
+        // as it is called by an interprocedural edge. Since this
+        // is not an interprocedural CFG, we need to add the missing edge
+        // TODO: Create a builder for intraprocedural CFGs
+        if (script.getEvent() instanceof StartedAsClone) {
+            CFGNode head = cfg.getNodes().stream().filter(n -> n instanceof CloneEventNode).findFirst().get();
+            cfg.addEdgeFromEntry(head);
+        } else if (script.getEvent() instanceof ReceptionOfMessage) {
+            ReceptionOfMessage reception = (ReceptionOfMessage) script.getEvent();
+            CFGNode head = cfg.getNode(reception.getMsg()).get();
+            cfg.addEdgeFromEntry(head);
+        }
+        return cfg;
     }
 
     protected boolean hasControlDependency(ControlFlowGraph cfg, List<Stmt> subScript1, List<Stmt> subScript2) {
