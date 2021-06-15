@@ -54,7 +54,7 @@ public class Speak extends AbstractNode implements TextToSpeechStmt {
 
     @Override
     public void accept(TextToSpeechExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

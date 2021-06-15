@@ -64,5 +64,7 @@ public class SwitchBackdrop extends AbstractNode implements ActorLookStmt {
         return ActorLookStmtOpcode.looks_switchbackdropto;
     }
 
-    public Opcode getBackdropMenuOpcode(){return DependentBlockOpcode.looks_backdrops;}
+    public Opcode getBackdropMenuOpcode() {
+        return DependentBlockOpcode.looks_backdrops;
+    }
 }

@@ -695,7 +695,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

@@ -126,8 +126,8 @@ public class JSONReportGenerator implements ReportGenerator {
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
             if (location == null) {
-                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator() +
-                        ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
+                        + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
                 ((ObjectNode) childNode).put("code", emptyScript);
             } else {
                 ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);

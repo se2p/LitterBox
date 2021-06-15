@@ -30,22 +30,22 @@ public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
     private boolean hasDeleteClone;
 
     @Override
-    public void visit(Script node){
-        hasDeleteClone=false;
-        if (node.getEvent() instanceof GreenFlag){
+    public void visit(Script node) {
+        hasDeleteClone = false;
+        if (node.getEvent() instanceof GreenFlag) {
             super.visit(node);
-            if (hasDeleteClone){
+            if (hasDeleteClone) {
                 addIssue(node.getEvent(),node.getEvent().getMetadata(), IssueSeverity.LOW);
             }
-            hasDeleteClone=false;
-        }else{
+            hasDeleteClone = false;
+        } else {
             super.visit(node);
         }
     }
 
     @Override
-    public void visit(DeleteClone node){
-        hasDeleteClone=true;
+    public void visit(DeleteClone node) {
+        hasDeleteClone = true;
     }
 
     @Override

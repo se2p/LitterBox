@@ -97,13 +97,12 @@ public class FeatureTool {
                 List<String> row = new ArrayList<>();
                 row.add(program.getIdent().getName());
                 String uniqueID = "";
-                if(target instanceof Script){
-                    scriptCount =scriptCount + 1;
-                    uniqueID = "ACTOR"+actorCount+"_"+"SCRIPT"+scriptCount;
-                }
-                else if(target instanceof ProcedureDefinition){
+                if (target instanceof Script) {
+                    scriptCount = scriptCount + 1;
+                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
-                    uniqueID = "ACTOR"+actorCount+"_"+"PROCEDUREDEFINITION"+procedureDefCount;
+                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
                 }
 
                 row.add(uniqueID);
@@ -121,7 +120,7 @@ public class FeatureTool {
 
     private String getScratchBlockCode(ASTNode target, Program program,ActorDefinition actorDefinition) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(target instanceof ProcedureDefinition) {
+        if (target instanceof ProcedureDefinition) {
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

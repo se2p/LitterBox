@@ -93,7 +93,7 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 }

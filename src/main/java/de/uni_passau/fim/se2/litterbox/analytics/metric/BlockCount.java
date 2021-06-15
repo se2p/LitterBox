@@ -274,7 +274,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     public void visit(ParameterDefinitionList node) {
         visitChildren(node);
     }
-    
+
     @Override
     public void visit(ExpressionList node) {
         visitChildren(node);
@@ -562,7 +562,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

@@ -132,9 +132,9 @@ public class DataExprParser {
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(exprArray.get(POS_BLOCK_ID).asText(), paramBlock);
         Type type;
-        if(paramBlock.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())){
+        if (paramBlock.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())) {
             type = new BooleanType();
-        }else{
+        } else {
             type = new StringType();
         }
         return new Parameter(new StrId(name), type, metadata);
@@ -152,9 +152,9 @@ public class DataExprParser {
         String name = paramNode.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, paramNode);
         Type type;
-        if(paramNode.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())){
+        if (paramNode.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())) {
             type = new BooleanType();
-        }else{
+        } else {
             type = new StringType();
         }
         return new Parameter(new StrId(name), type, metadata);

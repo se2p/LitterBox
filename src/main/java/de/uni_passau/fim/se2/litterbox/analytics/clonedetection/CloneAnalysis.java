@@ -54,7 +54,7 @@ public class CloneAnalysis {
     }
 
     /**
-     * Check a pair of ASTs for clones
+     * Check a pair of ASTs for clones.
      *
      * @param root1 first tree
      * @param root2 second tree

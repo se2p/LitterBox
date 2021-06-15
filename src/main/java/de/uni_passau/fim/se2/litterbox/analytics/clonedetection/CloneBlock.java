@@ -62,8 +62,8 @@ public class CloneBlock {
         int diffX = getFirstX() - other.getLastX() - 1;
         int diffY = getFirstY() - other.getLastY() - 1;
 
-        if (diffX >= 0 && diffX <= gapSize &&
-                Math.abs(diffY) <= gapSize) {
+        if (diffX >= 0 && diffX <= gapSize
+                && Math.abs(diffY) <= gapSize) {
             return true;
         }
 

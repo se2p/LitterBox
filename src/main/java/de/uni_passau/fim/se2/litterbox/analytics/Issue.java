@@ -190,6 +190,7 @@ public class Issue {
         return finder.isDuplicateOf(this, other);
     }
 
-    public double getDistanceTo(Issue other) { return finder.getDistanceTo(this, other); }
-
+    public double getDistanceTo(Issue other) {
+        return finder.getDistanceTo(this, other);
+    }
 }

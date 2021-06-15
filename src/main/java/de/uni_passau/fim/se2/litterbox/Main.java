@@ -237,8 +237,7 @@ public class Main {
                 translatePrograms(cmd);
             } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
-            }
-            else {
+            } else {
                 printHelp();
             }
         } catch (ParseException parseException) {

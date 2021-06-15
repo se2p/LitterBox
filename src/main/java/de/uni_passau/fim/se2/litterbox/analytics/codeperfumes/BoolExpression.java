@@ -67,7 +67,7 @@ public class BoolExpression extends AbstractIssueFinder {
     }
 
     private boolean isLiteral(ASTNode node) {
-       return (node instanceof NumberLiteral || node instanceof StringLiteral);
+        return (node instanceof NumberLiteral || node instanceof StringLiteral);
     }
 
     @Override

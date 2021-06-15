@@ -92,7 +92,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
     }
 
     private boolean searchSubStmtsForStop(List<Stmt> subStmts) {
-        if(subStmts.isEmpty()){
+        if (subStmts.isEmpty()) {
             return false;
         }
         if (subStmts.get(subStmts.size() - 1) instanceof StopAll || subStmts.get(subStmts.size() - 1) instanceof StopThisScript) {
@@ -102,7 +102,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
             if (subStmt instanceof IfElseStmt) {
                 if (searchSubStmtsForStop(((IfElseStmt) subStmt).getStmtList().getStmts())) {
                     if (searchSubStmtsForStop(((IfElseStmt) subStmt).getElseStmts().getStmts())) {
-                            return true;
+                        return true;
                     }
                 }
             }

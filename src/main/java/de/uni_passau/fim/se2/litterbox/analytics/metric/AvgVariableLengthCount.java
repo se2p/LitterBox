@@ -56,15 +56,14 @@ public class AvgVariableLengthCount<T extends ASTNode> implements ScratchVisitor
         for (String var : variables) { // loop through the list of strings
             wordLength = wordLength + var.length(); // store the individual length of each string
         }
-        double varLen = 0;
-        if (!variables.isEmpty()) {
-            varLen = (float) wordLength / variables.size();
-        } else {
-            varLen = 0;
-        }
 
-        return varLen;
+        if (!variables.isEmpty()) {
+            return (float) wordLength / variables.size();
+        } else {
+            return 0;
+        }
     }
+
     @Override
     public void visit(Variable node) {
         if (insideScript || insideProcedure) {
@@ -78,6 +77,7 @@ public class AvgVariableLengthCount<T extends ASTNode> implements ScratchVisitor
             this.variables.add(node.getName().getName());
         }
     }
+
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;

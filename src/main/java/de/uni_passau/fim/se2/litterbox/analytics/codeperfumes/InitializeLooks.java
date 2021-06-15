@@ -51,9 +51,9 @@ public class InitializeLooks extends AbstractIssueFinder {
                     if (stmt instanceof CallStmt) {
                         if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
                             Hint hint;
-                            if (currentActor.isStage()){
+                            if (currentActor.isStage()) {
                                 hint = new Hint(HINT_STAGE);
-                            }else{
+                            } else {
                                 hint = new Hint(HINT_SPRITE);
                             }
                             addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM, hint);
@@ -88,8 +88,8 @@ public class InitializeLooks extends AbstractIssueFinder {
                 ProcedureDefinition parent = (ProcedureDefinition) node.getParentNode();
 
                 for (Stmt stmt : node.getStmts()) {
-                    if (stmt instanceof SetSizeTo || stmt instanceof SwitchCostumeTo || stmt instanceof Show ||
-                            stmt instanceof Hide || stmt instanceof ClearGraphicEffects
+                    if (stmt instanceof SetSizeTo || stmt instanceof SwitchCostumeTo || stmt instanceof Show
+                            || stmt instanceof Hide || stmt instanceof ClearGraphicEffects
                             || stmt instanceof SetGraphicEffectTo || stmt instanceof SwitchBackdrop) {
                         customBlocks.add(procMap.get(parent.getIdent()).getName());
                         stmt.accept(this);

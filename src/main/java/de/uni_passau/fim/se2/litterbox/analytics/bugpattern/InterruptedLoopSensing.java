@@ -171,7 +171,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             sensingCollision = false;
             sensingOther = false;
         }
-        hasStop=false;
+        hasStop = false;
     }
 
     @Override

@@ -39,7 +39,7 @@ public interface ASTNode extends Visitable<ASTNode> {
 
     BlockMetadata getMetadata();
 
-    default Opcode getOpcode(){
+    default Opcode getOpcode() {
         return new NOPCode();
     }
 }

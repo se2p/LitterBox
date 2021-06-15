@@ -32,15 +32,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    private double count = 0;
     public static final String NAME = "avg_script_width_count";
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        count = 0;
-        count = countScriptWidthCount(node);
-        return count;
+        return countScriptWidthCount(node);
     }
 
     private double countScriptWidthCount(T node) {
@@ -60,9 +57,9 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
 
     private String getScriptString(T node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(node instanceof ProcedureDefinition){
-            ActorDefinition actorDefinition= (ActorDefinition) node.getParentNode().getParentNode();
-            Program program= (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
+        if (node instanceof ProcedureDefinition) {
+            ActorDefinition actorDefinition = (ActorDefinition) node.getParentNode().getParentNode();
+            Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

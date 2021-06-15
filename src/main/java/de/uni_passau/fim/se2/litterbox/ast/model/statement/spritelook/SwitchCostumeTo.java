@@ -64,7 +64,7 @@ public class SwitchCostumeTo extends AbstractNode implements SpriteLookStmt {
         return SpriteLookStmtOpcode.looks_switchcostumeto;
     }
 
-    public Opcode getCostumeMenuOpcode(){
+    public Opcode getCostumeMenuOpcode() {
         return DependentBlockOpcode.looks_costume;
     }
 }
