@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -113,7 +112,7 @@ public class DataExprParser {
             } else if (isList) {
                 return parseScratchList(exprArray);
             } else {
-                throw new ParsingException("Variable / List ID not specified in JSON");
+                throw new ParsingException("Variable / List ID not specified in JSON.");
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");

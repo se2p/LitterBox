@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
@@ -93,7 +92,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
-            return new AddTo(expr, new UnspecifiedId(), metadata);
+            throw new ParsingException("Variable / List ID not specified in JSON.");
         }
         return new AddTo(expr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
@@ -124,18 +123,18 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
-            return new DeleteOf(expr, new UnspecifiedId(), metadata);
+            throw new ParsingException("Variable / List ID not specified in JSON.");
         }
         return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
 
-    private static ListStmt parseDeleteAllOfList(JsonNode current, BlockMetadata metadata) {
+    private static ListStmt parseDeleteAllOfList(JsonNode current, BlockMetadata metadata) throws ParsingException {
         Preconditions.checkNotNull(current);
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
-            return new DeleteAllOf(new UnspecifiedId(), metadata);
+            throw new ParsingException("Variable / List ID not specified in JSON.");
         }
         return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
@@ -150,7 +149,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
-            return new InsertAt(stringExpr, numExpr, new UnspecifiedId(), metadata);
+            throw new ParsingException("Variable / List ID not specified in JSON.");
         }
         return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
@@ -165,7 +164,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
-            return new ReplaceItem(stringExpr, numExpr, new UnspecifiedId(), metadata);
+            throw new ParsingException("Variable / List ID not specified in JSON.");
         }
         return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);

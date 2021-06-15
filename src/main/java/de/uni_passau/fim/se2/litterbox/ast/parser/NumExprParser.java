@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -184,7 +183,7 @@ public class NumExprParser {
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON.");
                 }
                 return new LengthOfVar(var, metadata);
             case sensing_current:
@@ -222,7 +221,7 @@ public class NumExprParser {
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON.");
                 }
                 return new IndexOf(item, var, metadata);
             default:

@@ -1101,20 +1101,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link UnspecifiedId}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node UnspecifiedId  Node which will be copied
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(UnspecifiedId node) {
-        return new UnspecifiedId();
-    }
-
-    /**
      * Default implementation of visit method for {@link StringContains}.
      *
      * <p>

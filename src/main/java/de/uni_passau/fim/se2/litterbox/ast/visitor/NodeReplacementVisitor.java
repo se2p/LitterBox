@@ -42,7 +42,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.E
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -655,14 +654,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(UnspecifiedExpression node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(UnspecifiedId node) {
         if (isTargetNode(node)) {
             return replacement;
         }

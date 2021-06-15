@@ -111,7 +111,7 @@ public class CommonStmtParser {
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-            var = new UnspecifiedId();
+            throw new ParsingException("Variable / List ID not specified in JSON");
         } else {
             VariableInfo variableInfo
                     = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
