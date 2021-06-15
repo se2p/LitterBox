@@ -7,6 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
 import java.util.ArrayList;
@@ -39,6 +40,16 @@ public class LoopSensing extends AbstractIssueFinder {
         inCondition = false;
         super.visit(node);
         insideGreenFlagClone = false;
+    }
+
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        loops = new ArrayList<>();
+        insideLoop = false;
+        inCondition = false;
+        insideGreenFlagClone = false;
+        super.visit(node);
     }
 
     @Override
