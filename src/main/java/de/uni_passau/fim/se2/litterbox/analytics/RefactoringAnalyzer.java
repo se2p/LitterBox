@@ -124,10 +124,10 @@ public class RefactoringAnalyzer extends Analyzer {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        fitnessFunctions.add(new SumComplexityFitness());
-        fitnessFunctions.add(new SumEntropyFitness());
-        //fitnessFunctions.add(new AverageComplexityFitness());
-        //fitnessFunctions.add(new AverageEntropyFitness());
+        // fitnessFunctions.add(new SumComplexityFitness());
+        // fitnessFunctions.add(new SumEntropyFitness());
+        fitnessFunctions.add(new AverageComplexityFitness());
+        fitnessFunctions.add(new AverageEntropyFitness());
 
         // fitnessFunctions.add(new HalsteadDifficultyFitness());
         // fitnessFunctions.add(new NumberOfBlocksFitness(program));
