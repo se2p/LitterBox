@@ -65,8 +65,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -847,8 +849,11 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private void createVariableWithInputBlock(NonDataBlockMetadata metadata, Identifier identifier, Expression expr, Opcode opcode) {
         List<String> inputs = new ArrayList<>();
         if (expr instanceof NumberLiteral) {
+            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+            format.setGroupingUsed(false);
+            format.setMinimumFractionDigits(0);
             inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                    String.valueOf((float) ((NumberLiteral) expr).getValue())));
+                    format.format(((NumberLiteral) expr).getValue())));
         } else {
             inputs.add(createExpr(metadata, VALUE_KEY, expr));
         }
@@ -986,7 +991,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof NumberLiteral) {
-            DecimalFormat format = new DecimalFormat();
+            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
             format.setGroupingUsed(false);
             format.setMinimumFractionDigits(0);
             return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
