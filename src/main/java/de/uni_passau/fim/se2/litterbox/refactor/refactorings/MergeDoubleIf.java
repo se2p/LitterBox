@@ -55,7 +55,7 @@ public class MergeDoubleIf extends CloneVisitor implements Refactoring {
         String if1ScratchBlocks = if1.getScratchBlocks();
         String if2ScratchBlocks = if2.getScratchBlocks();
         String replacementScratchBlocks = replacement.getScratchBlocks();
-        return NAME + "\nReplaced ifs:\n\n" + if1ScratchBlocks + "\n" + if2ScratchBlocks + "\nReplacement:\n\n" + replacementScratchBlocks;
+        return NAME + System.lineSeparator()+"Replaced ifs:"+System.lineSeparator()+System.lineSeparator() + if1ScratchBlocks + System.lineSeparator() + if2ScratchBlocks + System.lineSeparator()+"Replacement:"+System.lineSeparator()+System.lineSeparator() + replacementScratchBlocks;
     }
 
     @Override

@@ -31,19 +31,16 @@ import java.util.Collections;
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
-    private InputMetadataList inputMetadata;
     private FieldsMetadataList fields;
     private boolean topLevel;
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public NonDataBlockMetadata(String commentId, String blockId,
-                                InputMetadataList inputMetadata, FieldsMetadataList fields, boolean topLevel,
+    public NonDataBlockMetadata(String commentId, String blockId, FieldsMetadataList fields, boolean topLevel,
                                 boolean shadow, MutationMetadata mutation) {
-        super(inputMetadata, fields, mutation);
+        super( fields, mutation);
         this.commentId = commentId;
         this.blockId = blockId;
-        this.inputMetadata = inputMetadata;
         this.fields = fields;
         this.topLevel = topLevel;
         this.shadow = shadow;
@@ -60,10 +57,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public String getBlockId() {
         return blockId;
-    }
-
-    public InputMetadataList getInputMetadata() {
-        return inputMetadata;
     }
 
     public FieldsMetadataList getFields() {
@@ -93,7 +86,7 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     }
 
     public static NonDataBlockMetadata emptyNonBlockMetadata() {
-        return new NonDataBlockMetadata("", CloneVisitor.generateUID(), new InputMetadataList(Collections.emptyList()),
+        return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
                 new FieldsMetadataList(Collections.emptyList()), false, true, new NoMutationMetadata());
     }
 }

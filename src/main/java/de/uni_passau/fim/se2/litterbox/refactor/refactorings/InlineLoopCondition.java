@@ -38,7 +38,6 @@ public class InlineLoopCondition extends CloneVisitor implements Refactoring {
         if (terminationStmt == null) {
             // TODO: Find a way to do this without all the metadata handling
             BlockMetadata blockMetadata = new NonDataBlockMetadata(null, CloneVisitor.generateUID(),
-                    new InputMetadataList(Collections.emptyList()),
                     new FieldsMetadataList(Arrays.asList(new FieldsMetadata(TerminationStmtParser.STOP_OPTION, TerminationStmtParser.STOP_THIS, null))), false, false, new NoMutationMetadata());
             this.terminationStmt = new StopThisScript(blockMetadata);
         } else {

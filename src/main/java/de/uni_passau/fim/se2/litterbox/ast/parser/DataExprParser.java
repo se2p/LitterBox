@@ -113,7 +113,7 @@ public class DataExprParser {
             } else if (isList) {
                 return parseScratchList(exprArray);
             } else {
-                return new UnspecifiedId();
+                throw new ParsingException("Variable / List ID not specified in JSON");
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");

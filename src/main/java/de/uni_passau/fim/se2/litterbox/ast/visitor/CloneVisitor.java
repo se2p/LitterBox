@@ -3215,8 +3215,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(NonDataBlockMetadata node) {
         return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getInputMetadata()), apply(node.getFields()),
-                node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
+                apply(node.getFields()), node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
     }
 
     /**
@@ -3232,7 +3231,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
         return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getInputMetadata()), apply(node.getFields()),
+                apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
     }
@@ -3576,6 +3575,7 @@ public class CloneVisitor {
     /**
      * Generate a unique ID.  This should be globally unique.
      * 87 characters ^ 20 length > 128 bits (better than a UUID).
+     *
      * @return {string} A globally unique ID string.
      */
     public static String generateUID() {
@@ -3586,7 +3586,9 @@ public class CloneVisitor {
             id.append(BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength)));
         }
         return id.toString();
-    };
+    }
+
+    ;
 
     /**
      * Default implementation of visit method for {@link Speak}.
