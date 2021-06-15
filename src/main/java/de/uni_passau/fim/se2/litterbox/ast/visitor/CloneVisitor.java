@@ -43,9 +43,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
@@ -3129,51 +3126,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ReferenceInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ReferenceInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ReferenceInputMetadata node) {
-        return new ReferenceInputMetadata(node.getInputName(), node.getReference());
-    }
-
-    /**
-     * Default implementation of visit method for {@link TypeInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node TypeInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(TypeInputMetadata node) {
-        return new TypeInputMetadata(node.getInputName(), node.getType(), node.getValue());
-    }
-
-    /**
-     * Default implementation of visit method for {@link DataInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node DataInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(DataInputMetadata node) {
-        return new DataInputMetadata(node.getInputName(), node.getDataType(), node.getDataName(), node.getDataReference());
-    }
-
-    /**
      * Default implementation of visit method for {@link DataBlockMetadata}.
      *
      * <p>
@@ -3201,7 +3153,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(NonDataBlockMetadata node) {
         return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getFields()), node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
+                node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
     }
 
     /**
@@ -3217,24 +3169,8 @@ public class CloneVisitor {
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
         return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
-    }
-
-    /**
-     * Default implementation of visit method for {@link FieldsMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node FieldsMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(FieldsMetadata node) {
-        return new FieldsMetadata(node.getFieldsName(), node.getFieldsValue(), node.getFieldsReference());
     }
 
     /**
@@ -3359,21 +3295,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link FieldsMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node FieldsMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(FieldsMetadataList node) {
-        return new FieldsMetadataList(applyList(node.getList()));
-    }
-
-    /**
      * Default implementation of visit method for {@link ImageMetadataList}.
      *
      * <p>
@@ -3386,21 +3307,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(ImageMetadataList node) {
         return new ImageMetadataList(applyList(node.getList()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link InputMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node InputMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(InputMetadataList node) {
-        return new InputMetadataList(applyList(node.getList()));
     }
 
     /**

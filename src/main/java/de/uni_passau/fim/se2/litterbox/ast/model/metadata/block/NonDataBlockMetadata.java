@@ -20,27 +20,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
-import java.util.Collections;
 
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
-    private FieldsMetadataList fields;
     private boolean topLevel;
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public NonDataBlockMetadata(String commentId, String blockId, FieldsMetadataList fields, boolean topLevel,
+    public NonDataBlockMetadata(String commentId, String blockId, boolean topLevel,
                                 boolean shadow, MutationMetadata mutation) {
-        super( fields, mutation);
+        super(mutation);
         this.commentId = commentId;
         this.blockId = blockId;
-        this.fields = fields;
         this.topLevel = topLevel;
         this.shadow = shadow;
         this.mutation = mutation;
@@ -56,10 +50,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public String getBlockId() {
         return blockId;
-    }
-
-    public FieldsMetadataList getFields() {
-        return fields;
     }
 
     public boolean isTopLevel() {
@@ -86,6 +76,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public static NonDataBlockMetadata emptyNonBlockMetadata() {
         return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
-                new FieldsMetadataList(Collections.emptyList()), false, true, new NoMutationMetadata());
+                false, true, new NoMutationMetadata());
     }
 }

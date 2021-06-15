@@ -51,9 +51,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
@@ -1805,30 +1802,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(ReferenceInputMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(TypeInputMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(DataInputMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(DataBlockMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
@@ -1846,14 +1819,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(TopNonDataBlockMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(FieldsMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }
@@ -1917,23 +1882,7 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(FieldsMetadataList node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(ImageMetadataList node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(InputMetadataList node) {
         if (isTargetNode(node)) {
             return replacement;
         }

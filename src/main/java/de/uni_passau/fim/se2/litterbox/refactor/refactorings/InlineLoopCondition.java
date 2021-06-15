@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -35,8 +34,7 @@ public class InlineLoopCondition extends CloneVisitor implements Refactoring {
         this.untilLoop = Preconditions.checkNotNull(untilLoop);
         if (terminationStmt == null) {
             // TODO: Find a way to do this without all the metadata handling
-            BlockMetadata blockMetadata = new NonDataBlockMetadata(null, CloneVisitor.generateUID(),
-                    new FieldsMetadataList(Arrays.asList(new FieldsMetadata(TerminationStmtParser.STOP_OPTION, TerminationStmtParser.STOP_THIS, null))), false, false, new NoMutationMetadata());
+            BlockMetadata blockMetadata = new NonDataBlockMetadata(null, CloneVisitor.generateUID(), false, false, new NoMutationMetadata());
             this.terminationStmt = new StopThisScript(blockMetadata);
         } else {
             this.terminationStmt = apply(terminationStmt);

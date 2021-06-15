@@ -49,10 +49,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
@@ -3166,62 +3162,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link InputMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node InputMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(InputMetadata node) {
-        visit((Metadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ReferenceInputMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ReferenceInputMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(ReferenceInputMetadata node) {
-        visit((InputMetadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link TypeInputMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node TypeInputMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(TypeInputMetadata node) {
-        visit((InputMetadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link DataInputMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node DataInputMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(DataInputMetadata node) {
-        visit((InputMetadata) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link BlockMetadata}.
      *
      * <p>
@@ -3275,20 +3215,6 @@ public interface ScratchVisitor {
      */
     default void visit(TopNonDataBlockMetadata node) {
         visit((NonDataBlockMetadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link FieldsMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node FieldsMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(FieldsMetadata node) {
-        visit((Metadata) node);
     }
 
     /**
@@ -3418,20 +3344,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link FieldsMetadataList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node FieldsMetadataList Node of which the children will
-     *             be iterated
-     */
-    default void visit(FieldsMetadataList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ImageMetadataList}.
      *
      * <p>
@@ -3445,19 +3357,6 @@ public interface ScratchVisitor {
         visit((ASTNode) node);
     }
 
-    /**
-     * Default implementation of visit method for {@link InputMetadataList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node InputMetadataList Node of which the children will
-     *             be iterated
-     */
-    default void visit(InputMetadataList node) {
-        visit((ASTNode) node);
-    }
 
     /**
      * Default implementation of visit method for {@link ListMetadataList}.

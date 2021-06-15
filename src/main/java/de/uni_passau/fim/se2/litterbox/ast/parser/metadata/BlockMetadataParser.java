@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -36,7 +35,6 @@ public class BlockMetadataParser {
                 commentId = blockNode.get(COMMENT_KEY).asText();
             }
             String opcode = blockNode.get(OPCODE_KEY).asText();
-            FieldsMetadataList fields = FieldsMetadataListParser.parse(blockNode.get(FIELDS_KEY));
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
             boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
             MutationMetadata mutation;
@@ -46,14 +44,14 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId, fields,
+                return new NonDataBlockMetadata(commentId, blockId,
                         topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopNonDataBlockMetadata(commentId, blockId, fields,
+            return new TopNonDataBlockMetadata(commentId, blockId,
                     topLevel,
                     shadow,
                     mutation, x, y);

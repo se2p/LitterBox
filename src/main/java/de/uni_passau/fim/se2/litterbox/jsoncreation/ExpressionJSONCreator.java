@@ -257,24 +257,19 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
-        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString,node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 
-    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        if (identifier instanceof Qualified) {
-            //Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+    private String getListDataFields(Identifier identifier) {
+            Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
             Qualified qual = (Qualified) identifier;
             Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
             ScratchList list = (ScratchList) qual.getSecond();
             String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
             return createFields(LIST_KEY, list.getName().getName(), id);
-        } else {
-            return createFields(LIST_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
-        }
     }
 
     @Override
@@ -643,7 +638,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         }
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, expr, inputName, true));
-        String fieldsString = getListDataFields(metadata, identifier);
+        String fieldsString = getListDataFields(identifier);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString, opcode));
         previousBlockId = metadata.getBlockId();

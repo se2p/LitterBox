@@ -62,7 +62,6 @@ public class BlockMetadataTest {
                         "X)N~xB@[E,i0S}Vwwtjm"));
         Assertions.assertTrue(blockMetadata instanceof TopNonDataBlockMetadata);
         TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(0, topNonDataBlockMetadata.getFields().getList().size());
         Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
         Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
         Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
@@ -80,7 +79,6 @@ public class BlockMetadataTest {
                         "Vr$zTl8mo1W,U?+q6,T{"));
         Assertions.assertTrue(blockMetadata instanceof NonDataBlockMetadata);
         NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(0, nonDataBlockMetadata.getFields().getList().size());
         Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
         Assertions.assertNull(nonDataBlockMetadata.getCommentId());
         Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
