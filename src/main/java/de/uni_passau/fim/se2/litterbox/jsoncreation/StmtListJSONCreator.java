@@ -755,18 +755,18 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(CallStmt node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        CallMutationMetadata mutationMetadata = (CallMutationMetadata) metadata.getMutation();
-        List<String> argumentIds = mutationMetadata.getArgumentIds();
+        ProcedureMutationMetadata mutationMetadata = (ProcedureMutationMetadata) metadata.getMutation();
+        List<String> argumentIds = new ArrayList<>();
 
         StrId name = (StrId) node.getIdent();
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
         List<Expression> expressionList = node.getExpressions().getExpressions();
-        Preconditions.checkArgument(argumentIds.size() >= expressionList.size(), "Number of parameters is not equal "
-                + "to the number of argument ids");
 
         for (int i = 0; i < expressionList.size(); i++) {
             Expression current = expressionList.get(i);
+            String argumentId = name.getName().replace(" ","_") + "_argument_" + i;
+            argumentIds.add(argumentId);
             if (current instanceof UnspecifiedBoolExpr) {
                 inputs.add(createReferenceJSON(null, argumentIds.get(i), false));
             } else if (current instanceof BoolExpr) {
@@ -774,27 +774,27 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
                         current, symbolTable);
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.getJsonString());
                     inputs.add(jsonString.toString());
                 } else {
                     finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), false));
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, false));
                 }
             } else {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.getJsonString());
                     inputs.add(jsonString.toString());
                 } else {
                     finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), true));
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, true));
                 }
             }
         }
 
-        String mutationString = createCallMetadata(mutationMetadata.getTagName(), name.getName(), argumentIds,
+        String mutationString = createCallMetadata(name.getName(), argumentIds,
                 mutationMetadata.isWarp());
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, mutationString, node.getOpcode()));

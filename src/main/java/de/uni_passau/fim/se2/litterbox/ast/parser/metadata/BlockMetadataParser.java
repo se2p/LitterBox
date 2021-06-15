@@ -62,11 +62,9 @@ public class BlockMetadataParser {
             Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
                     + "top level data block. ID: " + blockId);
             int type = data.get(POS_INPUT_TYPE).asInt();
-            String dataName = data.get(DATA_INPUT_NAME_POS).asText();
-            String dataReference = data.get(DATA_INPUT_IDENTIFIER_POS).asText();
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
-            return new DataBlockMetadata(blockId, type, dataName, dataReference, x, y);
+            return new DataBlockMetadata(blockId, type, x, y);
         }
     }
 }

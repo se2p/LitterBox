@@ -77,11 +77,7 @@ public class TopLevelMetadataTest implements JsonTest {
         Assertions.assertEquals(184, defMet.getYPos());
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
-        Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());
-        PrototypeMutationMetadata mutationMetadata = (PrototypeMutationMetadata) protoMet.getMutation();
-        Assertions.assertEquals("TestMethod %s", mutationMetadata.getProcCode());
-        List<String> list = new ArrayList<>();
-        list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list, mutationMetadata.getArgumentIds());
+        Assertions.assertEquals(ProcedureMutationMetadata.class, protoMet.getMutation().getClass());
+        ProcedureMutationMetadata mutationMetadata = (ProcedureMutationMetadata) protoMet.getMutation();
     }
 }

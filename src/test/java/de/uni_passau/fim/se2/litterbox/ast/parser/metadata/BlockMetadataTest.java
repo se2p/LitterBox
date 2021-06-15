@@ -49,8 +49,6 @@ public class BlockMetadataTest {
         Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
         DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
         Assertions.assertEquals(VAR_PRIMITIVE, dataBlock.getDataType());
-        Assertions.assertEquals("my variable", dataBlock.getDataName());
-        Assertions.assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", dataBlock.getDataReference());
         Assertions.assertEquals(471, dataBlock.getX());
         Assertions.assertEquals(383, dataBlock.getY());
     }
@@ -81,7 +79,7 @@ public class BlockMetadataTest {
         NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
         Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
         Assertions.assertNull(nonDataBlockMetadata.getCommentId());
-        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
+        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
         Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
     }

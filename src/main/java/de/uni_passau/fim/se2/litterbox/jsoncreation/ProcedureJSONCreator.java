@@ -18,22 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
@@ -80,8 +75,8 @@ public class ProcedureJSONCreator {
                 null, createInputs(inputs), EMPTY_VALUE, definition.getOpcode())).append(",");
 
         //create prototype
-        PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
-        List<String> argumentIds = protoMutationMeta.getArgumentIds();
+        ProcedureMutationMetadata protoMutationMeta = (ProcedureMutationMetadata) protoMetadata.getMutation();
+        List<String> argumentIds = new ArrayList<>();
         inputs = new ArrayList<>();
 
         //create parameters
@@ -92,42 +87,16 @@ public class ProcedureJSONCreator {
         for (ParameterDefinition parameterDefinition : parameterDefinitions) {
             if (!(parameterDefinition.getMetadata() instanceof NoBlockMetadata)) {
                 parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
+                String argumentId = procInfo.getName().replace(" ","_") + "_argument_" + i;
+                argumentIds.add(argumentId);
                 jsonString.append(",");
-                inputs.add(createReferenceInput(argumentIds.get(i),
+                inputs.add(createReferenceInput(argumentId,
                         INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(), false));
             }
             i++;
         }
 
-        if (parameterInfos.size() < argumentIds.size()) {
-            ObjectMapper mapper = new ObjectMapper();
-            ArrayNode argumentNamesNode = null;
-            try {
-                argumentNamesNode = (ArrayNode) mapper.readTree(protoMutationMeta.getArgumentNames());
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-
-            ArrayNode argumentDefaultsNode = null;
-            try {
-                argumentDefaultsNode = (ArrayNode) mapper.readTree(protoMutationMeta.getArgumentDefaults());
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-
-            while (i < argumentIds.size()) {
-                if (argumentDefaultsNode.get(i).asText().equals(BOOLEAN_DEFAULT)) {
-                    parameterInfos.add(new ParameterInfo(argumentNamesNode.get(i).asText(),
-                            argumentIds.get(i), new BooleanType()));
-                } else {
-                    parameterInfos.add(new ParameterInfo(argumentNamesNode.get(i).asText(),
-                            argumentIds.get(i), new StringType()));
-                }
-                i++;
-            }
-        }
-
-        String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(), procInfo.getName(),
+        String mutationString = createPrototypeMetadata(procInfo.getName(),
                 argumentIds, parameterInfos, protoMutationMeta.isWarp());
         jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
                 createInputs(inputs), EMPTY_VALUE, mutationString, definition.getPrototypeOpcode()));

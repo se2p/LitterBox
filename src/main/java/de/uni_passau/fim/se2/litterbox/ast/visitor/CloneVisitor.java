@@ -3137,7 +3137,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getDataType(), node.getDataName(), node.getDataReference(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getDataType(), node.getX(), node.getY());
     }
 
     /**
@@ -3189,7 +3189,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CallMutationMetadata}.
+     * Default implementation of visit method for {@link ProcedureMutationMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3199,25 +3199,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(CallMutationMetadata node) {
-        return new CallMutationMetadata(node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link PrototypeMutationMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ExistingPrototypeMutationMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(PrototypeMutationMetadata node) {
-        return new PrototypeMutationMetadata(node.getTagName(), new ArrayList<>(node.getChild()),
-                node.getProcCode(), new ArrayList<>(node.getArgumentIds()),
-                node.isWarp(), node.getArgumentNames(), node.getArgumentDefaults());
+    public ASTNode visit(ProcedureMutationMetadata node) {
+        return new ProcedureMutationMetadata(node);
     }
 
     /**

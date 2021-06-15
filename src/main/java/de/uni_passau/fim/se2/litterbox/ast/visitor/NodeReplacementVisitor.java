@@ -1834,15 +1834,7 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(CallMutationMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(PrototypeMutationMetadata node) {
+    public ASTNode visit(ProcedureMutationMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }
