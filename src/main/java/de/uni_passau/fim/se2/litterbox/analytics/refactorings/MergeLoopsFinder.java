@@ -56,10 +56,19 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
         MergeLoops refactoring = new MergeLoops(script1, script2);
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();
+
+        LoopStmt loop1 = (LoopStmt) script1.getStmtList().getStatement(0);
+        LoopStmt loop2 = (LoopStmt) script2.getStmtList().getStatement(0);
+
+        if (!loop1.getStmtList().hasStatements() || !loop2.getStmtList().hasStatements()) {
+            // If one of the loops is empty, merging is always possible
+            return false;
+        }
+
         ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
 
-        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(script1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
+        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements()));
+        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(loop1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
 
         if (hasControlDependency(cfg, stmtScript1, stmtScript2) ||
                 hasDataDependency(cfg, stmtScript1, stmtScript2) ||
