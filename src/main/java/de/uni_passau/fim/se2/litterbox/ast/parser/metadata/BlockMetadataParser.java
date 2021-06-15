@@ -45,14 +45,12 @@ public class BlockMetadataParser {
             }
             if (!topLevel) {
                 return new NonDataBlockMetadata(commentId, blockId,
-                        topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
             return new TopNonDataBlockMetadata(commentId, blockId,
-                    topLevel,
                     shadow,
                     mutation, x, y);
         } else {
@@ -61,10 +59,9 @@ public class BlockMetadataParser {
             ArrayNode data = (ArrayNode) blockNode;
             Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
                     + "top level data block. ID: " + blockId);
-            int type = data.get(POS_INPUT_TYPE).asInt();
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
-            return new DataBlockMetadata(blockId, type, x, y);
+            return new DataBlockMetadata(blockId, x, y);
         }
     }
 }

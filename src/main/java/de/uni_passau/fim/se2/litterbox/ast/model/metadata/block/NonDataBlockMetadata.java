@@ -26,16 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
-    private boolean topLevel;
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public NonDataBlockMetadata(String commentId, String blockId, boolean topLevel,
+    public NonDataBlockMetadata(String commentId, String blockId,
                                 boolean shadow, MutationMetadata mutation) {
         super(mutation);
         this.commentId = commentId;
         this.blockId = blockId;
-        this.topLevel = topLevel;
         this.shadow = shadow;
         this.mutation = mutation;
     }
@@ -50,10 +48,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public String getBlockId() {
         return blockId;
-    }
-
-    public boolean isTopLevel() {
-        return topLevel;
     }
 
     public boolean isShadow() {
@@ -76,6 +70,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public static NonDataBlockMetadata emptyNonBlockMetadata() {
         return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
-                false, true, new NoMutationMetadata());
+                false,  new NoMutationMetadata());
     }
 }

@@ -26,11 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class MutationMetadataParser {
-    public static MutationMetadata parse(JsonNode mutationNode) throws ParsingException {
+    public static MutationMetadata parse(JsonNode mutationNode) {
         boolean warp = false;
         if (mutationNode.has(WARP_KEY)) {
             warp = mutationNode.get(WARP_KEY).asBoolean();
         }
-            return new ProcedureMutationMetadata(warp);
+        return new ProcedureMutationMetadata(warp);
     }
 }

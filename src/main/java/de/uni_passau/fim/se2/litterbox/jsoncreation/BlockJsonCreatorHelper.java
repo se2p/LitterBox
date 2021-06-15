@@ -58,7 +58,7 @@ public abstract class BlockJsonCreatorHelper {
 
     public static StringBuilder createBlockAfterFields(StringBuilder jsonString, NonDataBlockMetadata meta) {
         createFieldValue(jsonString, SHADOW_KEY, meta.isShadow()).append(",");
-        createFieldValue(jsonString, TOPLEVEL_KEY, meta.isTopLevel());
+        createFieldValue(jsonString, TOPLEVEL_KEY, meta instanceof TopNonDataBlockMetadata);
         if (meta.getCommentId() != null) {
             jsonString.append(",");
             createFieldValue(jsonString, COMMENT_KEY, meta.getCommentId());

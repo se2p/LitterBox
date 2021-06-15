@@ -765,13 +765,15 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
         for (int i = 0; i < expressionList.size(); i++) {
             Expression current = expressionList.get(i);
-            String argumentId = name.getName().replace(" ","_") + "_argument_" + i;
+            String argumentId = name.getName().replace(" ", "_") + "_argument_" + i;
             argumentIds.add(argumentId);
+
             if (current instanceof UnspecifiedBoolExpr) {
                 inputs.add(createReferenceJSON(null, argumentIds.get(i), false));
             } else if (current instanceof BoolExpr) {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
+
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
                     createField(jsonString, argumentId).append(tuple.getJsonString());
@@ -783,6 +785,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
             } else {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
+
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
                     createField(jsonString, argumentId).append(tuple.getJsonString());

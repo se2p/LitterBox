@@ -48,7 +48,6 @@ public class BlockMetadataTest {
                         "GKr#[hOQWwm(reaPtK%R"));
         Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
         DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(VAR_PRIMITIVE, dataBlock.getDataType());
         Assertions.assertEquals(471, dataBlock.getX());
         Assertions.assertEquals(383, dataBlock.getY());
     }

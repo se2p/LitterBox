@@ -26,20 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class DataBlockMetadata extends AbstractNode implements BlockMetadata, ASTLeaf {
     private String blockId;
-    private int dataType;
     private double x;
     private double y;
 
-    public DataBlockMetadata(String blockId, int dataType, double x, double y) {
+    public DataBlockMetadata(String blockId,  double x, double y) {
         super();
         this.blockId = blockId;
-        this.dataType = dataType;
         this.x = x;
         this.y = y;
-    }
-
-    public int getDataType() {
-        return dataType;
     }
 
     public double getX() {

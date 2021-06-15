@@ -3137,7 +3137,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getDataType(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getX(), node.getY());
     }
 
     /**
@@ -3153,7 +3153,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(NonDataBlockMetadata node) {
         return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
-                node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
+                node.isShadow(), apply(node.getMutation()));
     }
 
     /**
@@ -3169,7 +3169,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
         return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
-                node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
+                node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
     }
 

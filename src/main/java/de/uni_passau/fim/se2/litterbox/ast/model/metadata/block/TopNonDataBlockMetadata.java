@@ -26,9 +26,9 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     private double xPos;
     private double yPos;
 
-    public TopNonDataBlockMetadata(String commentId, String blockId, boolean topLevel, boolean shadow,
+    public TopNonDataBlockMetadata(String commentId, String blockId, boolean shadow,
                                    MutationMetadata mutation, double xPos, double yPos) {
-        super(commentId, blockId, topLevel, shadow, mutation);
+        super(commentId, blockId, shadow, mutation);
         this.xPos = xPos;
         this.yPos = yPos;
     }

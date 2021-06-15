@@ -20,17 +20,14 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -45,7 +42,7 @@ public class MutationMetadataTest {
     }
 
     @Test
-    public void testProtoMutation() throws ParsingException {
+    public void testProtoMutation() {
         MutationMetadata mutationMetadata = MutationMetadataParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
                 "Vr$zTl8mo1W,U?+q6,T{").get(MUTATION_KEY));
         Assertions.assertTrue(mutationMetadata instanceof ProcedureMutationMetadata);
@@ -54,7 +51,7 @@ public class MutationMetadataTest {
     }
 
     @Test
-    public void testCallMutation() throws ParsingException {
+    public void testCallMutation() {
         MutationMetadata mutationMetadata = MutationMetadataParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
                 "O3bG_[t(B3p}k0KF:.,|").get(MUTATION_KEY));
         Assertions.assertTrue(mutationMetadata instanceof ProcedureMutationMetadata);

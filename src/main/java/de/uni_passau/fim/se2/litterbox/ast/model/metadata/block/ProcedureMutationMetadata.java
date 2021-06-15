@@ -27,8 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class ProcedureMutationMetadata extends AbstractNode implements MutationMetadata, ASTLeaf {
     private boolean warp;
 
-    public ProcedureMutationMetadata(
-                                boolean warp) {
+    public ProcedureMutationMetadata(boolean warp) {
         super();
         this.warp = warp;
     }

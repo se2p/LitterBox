@@ -36,7 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
@@ -62,7 +61,6 @@ public class TopLevelMetadataTest implements JsonTest {
         DataBlockMetadata meta = (DataBlockMetadata) data.getMetadata();
         Assertions.assertEquals(471, meta.getX());
         Assertions.assertEquals(383, meta.getY());
-        Assertions.assertEquals(VAR_PRIMITIVE, meta.getDataType());
     }
 
     @Test
@@ -78,6 +76,5 @@ public class TopLevelMetadataTest implements JsonTest {
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
         Assertions.assertEquals(ProcedureMutationMetadata.class, protoMet.getMutation().getClass());
-        ProcedureMutationMetadata mutationMetadata = (ProcedureMutationMetadata) protoMet.getMutation();
     }
 }
