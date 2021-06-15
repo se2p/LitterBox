@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -53,16 +54,22 @@ public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
         this.if2 = Preconditions.checkNotNull(if2);
 
         Preconditions.checkArgument(if1.getThenStmts().equals(if2.getThenStmts()));
-        Preconditions.checkArgument(!if1.getBoolExpr().equals(if2.getBoolExpr()));
 
-        Or disjunction = new Or(
-                apply(if1.getBoolExpr()),
-                apply(if2.getBoolExpr()),
-                apply(if2.getMetadata()));
+        if (if1.getBoolExpr().equals(if2.getBoolExpr())) {
+            // Silly, but actually observed in practice
+            replacement = new IfThenStmt(apply(if1.getBoolExpr())   ,
+                    apply(if1.getThenStmts()),
+                    apply(if1.getMetadata()));
+        } else {
+            Or disjunction = new Or(
+                    apply(if1.getBoolExpr()),
+                    apply(if2.getBoolExpr()),
+                    apply(if2.getMetadata()));
 
-        replacement = new IfThenStmt(disjunction,
-                apply(if1.getThenStmts()),
-                apply(if1.getMetadata()));
+            replacement = new IfThenStmt(disjunction,
+                    apply(if1.getThenStmts()),
+                    apply(if1.getMetadata()));
+        }
     }
 
     @Override
