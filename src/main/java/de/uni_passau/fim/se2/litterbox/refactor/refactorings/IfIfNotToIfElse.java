@@ -3,7 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -23,7 +23,7 @@ If A:
 Else:
   C:
  */
-public class IfIfNotToIfElse extends CloneVisitor implements Refactoring {
+public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "ififnot_to_ifelse";
 

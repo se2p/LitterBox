@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class StatementReplacementVisitor extends CloneVisitor {
+public class StatementReplacementVisitor extends OnlyCodeCloneVisitor {
 
     private final Stmt target;
     private final Set<Stmt> otherTargets = Sets.newIdentityHashSet();

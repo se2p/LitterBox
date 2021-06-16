@@ -33,7 +33,6 @@ public class Program extends AbstractNode {
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procedureMapping;
     private final ProgramMetadata metadata;
-    private final CloneVisitor cloneVisitor;
 
     public Program(LocalIdentifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
                    ProcedureDefinitionNameMapping procedureMapping, ProgramMetadata metadata) {
@@ -43,7 +42,6 @@ public class Program extends AbstractNode {
         this.procedureMapping = procedureMapping;
         this.symbolTable = symbolTable;
         this.metadata = metadata;
-        this.cloneVisitor = new CloneVisitor();
     }
 
     public ProgramMetadata getProgramMetadata() {
@@ -74,10 +72,5 @@ public class Program extends AbstractNode {
 
     public ProcedureDefinitionNameMapping getProcedureMapping() {
         return procedureMapping;
-    }
-
-    // TODO test
-    public Program deepCopy() {
-        return (Program) cloneVisitor.visit(this);
     }
 }

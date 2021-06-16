@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatementDeletionVisitor extends CloneVisitor {
+public class StatementDeletionVisitor extends OnlyCodeCloneVisitor {
 
     private Stmt targetStatement;
 

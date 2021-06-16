@@ -4,7 +4,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -23,7 +23,7 @@ if A:
   B
   C
  */
-public class MergeDoubleIf extends CloneVisitor implements Refactoring {
+public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
 
     private final IfThenStmt if1;
     private final IfThenStmt if2;
