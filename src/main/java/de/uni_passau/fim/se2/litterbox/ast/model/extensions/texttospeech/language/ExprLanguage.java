@@ -50,7 +50,7 @@ public class ExprLanguage extends AbstractNode implements Language {
 
     @Override
     public void accept(TextToSpeechExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

@@ -31,7 +31,7 @@ public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
         double entropyValue = 0.0;
         for(ASTNode token : visitor.getUniqueTokens()) {
             double p = ((double)visitor.getTokenCount(token)) / (double)visitor.getTotalTokenCount();
-            double tokenEntropy = p * (Math.log(p)/Math.log(2.0));
+            double tokenEntropy = p * (Math.log(p) / Math.log(2.0));
             entropyValue += tokenEntropy;
         }
         return(-entropyValue);

@@ -124,10 +124,12 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 hint));
     }
 
+    @Override
     public void setIgnoreLooseBlocks(boolean value) {
         ignoreLooseBlocks = value;
     }
 
+    @Override
     public abstract IssueType getIssueType();
 
     @Override

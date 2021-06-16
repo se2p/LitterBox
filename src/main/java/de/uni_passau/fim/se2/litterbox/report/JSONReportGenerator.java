@@ -39,7 +39,7 @@ import java.util.Collection;
 
 public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
 
-    private OutputStream outputStream = null;
+    private OutputStream outputStream;
 
     private boolean closeStream = false;
 
@@ -48,7 +48,7 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         closeStream = true;
     }
 
-    public JSONReportGenerator(OutputStream stream) throws IOException {
+    public JSONReportGenerator(OutputStream stream) {
         this.outputStream = stream;
     }
 
@@ -126,8 +126,8 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
             if (location == null) {
-                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator() +
-                        ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
+                        + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
                 ((ObjectNode) childNode).put("code", emptyScript);
             } else {
                 ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);

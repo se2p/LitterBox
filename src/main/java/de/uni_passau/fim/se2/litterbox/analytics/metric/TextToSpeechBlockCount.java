@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -27,7 +26,7 @@ public class TextToSpeechBlockCount<T extends ASTNode> implements MetricExtracto
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

@@ -39,6 +39,7 @@ public class FeatureAnalyzer extends Analyzer {
      *
      * @param fileEntry the file to analyze
      */
+    @Override
     void check(File fileEntry, String csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {

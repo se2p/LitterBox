@@ -65,9 +65,9 @@ abstract class ClonedCode extends AbstractIssueFinder {
         for (Issue otherIssue : issues) {
             if (otherIssue instanceof MultiBlockIssue) {
                 MultiBlockIssue otherMultiBlockIssue = (MultiBlockIssue) otherIssue;
-                if (issue.getCodeLocation() == otherMultiBlockIssue.getCodeLocation() &&
-                        issue.getScript() == otherMultiBlockIssue.getScript() &&
-                        issue.getNodes().equals(otherMultiBlockIssue.getNodes())) {
+                if (issue.getCodeLocation() == otherMultiBlockIssue.getCodeLocation()
+                        && issue.getScript() == otherMultiBlockIssue.getScript()
+                        && issue.getNodes().equals(otherMultiBlockIssue.getNodes())) {
                     return;
                 }
             }
@@ -76,7 +76,7 @@ abstract class ClonedCode extends AbstractIssueFinder {
     }
 
     private void checkScript(Script script, List<Script> otherScripts, List<ProcedureDefinition> otherProcedures) {
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         for (Script otherScript : otherScripts) {
             Set<CodeClone> clones = cloneAnalysis.check(script, otherScript, targetType);
             for (CodeClone clone : clones) {
@@ -94,7 +94,7 @@ abstract class ClonedCode extends AbstractIssueFinder {
     }
 
     private void checkProcedure(ProcedureDefinition procedure, List<ProcedureDefinition> otherProcedures) {
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         for (ProcedureDefinition otherProcedure : otherProcedures) {
             Set<CodeClone> clones = cloneAnalysis.check(procedure, otherProcedure, targetType);
             for (CodeClone clone : clones) {
@@ -115,17 +115,19 @@ abstract class ClonedCode extends AbstractIssueFinder {
     }
 
     public MultiBlockIssue getFirstCloneIssue(CodeClone clone) {
-        if (clone.getFirstScript() instanceof Script)
+        if (clone.getFirstScript() instanceof Script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script) clone.getFirstScript(), new ArrayList<>(clone.getFirstStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
-        else
+        } else {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (ProcedureDefinition) clone.getFirstScript(), new ArrayList<>(clone.getFirstStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
+        }
     }
 
     public MultiBlockIssue getSecondCloneIssue(CodeClone clone) {
-        if (clone.getSecondScript() instanceof Script)
+        if (clone.getSecondScript() instanceof Script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (Script) clone.getSecondScript(), new ArrayList<>(clone.getSecondStatements()), clone.getFirstNode().getMetadata(), new Hint(hintName));
-        else
+        } else {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, (ProcedureDefinition) clone.getSecondScript(), new ArrayList<>(clone.getSecondStatements()), clone.getSecondNode().getMetadata(), new Hint(hintName));
+        }
     }
 
     @Override

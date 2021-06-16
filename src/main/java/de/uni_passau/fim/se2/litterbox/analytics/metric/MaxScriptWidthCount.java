@@ -59,9 +59,9 @@ public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
 
     private String getScriptString(T node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(node instanceof ProcedureDefinition){
-            ActorDefinition actorDefinition= (ActorDefinition) node.getParentNode().getParentNode();
-            Program program= (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
+        if (node instanceof ProcedureDefinition) {
+            ActorDefinition actorDefinition = (ActorDefinition) node.getParentNode().getParentNode();
+            Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

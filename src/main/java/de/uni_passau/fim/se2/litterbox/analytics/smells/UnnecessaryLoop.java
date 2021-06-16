@@ -32,16 +32,16 @@ import java.util.List;
  */
 public class UnnecessaryLoop extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_loop";
-    public static final String ONE_HINT= "loop_one";
+    public static final String ONE_HINT = "loop_one";
     public static final String ZERO_HINT = "loop_zero";
 
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getTimes() instanceof NumberLiteral) {
-            if(((NumberLiteral) node.getTimes()).getValue() == 1){
+            if (((NumberLiteral) node.getTimes()).getValue() == 1) {
                 Hint hint = new Hint(ONE_HINT);
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            }else if(((NumberLiteral) node.getTimes()).getValue() == 0){
+            } else if (((NumberLiteral) node.getTimes()).getValue() == 0) {
                 Hint hint = new Hint(ZERO_HINT);
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }

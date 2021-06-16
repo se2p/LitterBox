@@ -74,10 +74,6 @@ public class MutationMetadataParser {
         if (mutationNode.has(ARGUMENT_DEFAULTS_KEY)) {
             argumentDefaults = mutationNode.get(ARGUMENT_DEFAULTS_KEY).asText();
         }
-        boolean hasNext = false;
-        if (mutationNode.has(HAS_NEXT_KEY)) {
-            hasNext = mutationNode.get(HAS_NEXT_KEY).asBoolean();
-        }
         boolean warp = false;
         if (mutationNode.has(WARP_KEY)) {
             warp = mutationNode.get(WARP_KEY).asBoolean();

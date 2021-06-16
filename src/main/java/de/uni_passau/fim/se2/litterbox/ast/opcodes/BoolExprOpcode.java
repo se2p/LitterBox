@@ -36,4 +36,5 @@ public enum BoolExprOpcode implements Opcode {
     @Override
     public String getName() {
         return name();
-    }}
+    }
+}

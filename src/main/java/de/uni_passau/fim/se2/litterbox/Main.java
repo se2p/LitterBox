@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -265,8 +264,7 @@ public class Main {
                 translatePrograms(cmd);
             } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
-            }
-            else {
+            } else {
                 printHelp();
             }
         } catch (ParseException parseException) {

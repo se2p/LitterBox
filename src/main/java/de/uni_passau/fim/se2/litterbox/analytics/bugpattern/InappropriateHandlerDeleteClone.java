@@ -26,26 +26,26 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
 public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
-    private final String NAME = "inappropriate_handler_delete_clone";
+    private final static String NAME = "inappropriate_handler_delete_clone";
     private boolean hasDeleteClone;
 
     @Override
-    public void visit(Script node){
-        hasDeleteClone=false;
-        if (node.getEvent() instanceof GreenFlag){
+    public void visit(Script node) {
+        hasDeleteClone = false;
+        if (node.getEvent() instanceof GreenFlag) {
             super.visit(node);
-            if (hasDeleteClone){
+            if (hasDeleteClone) {
                 addIssue(node.getEvent(),node.getEvent().getMetadata(), IssueSeverity.LOW);
             }
-            hasDeleteClone=false;
-        }else{
+            hasDeleteClone = false;
+        } else {
             super.visit(node);
         }
     }
 
     @Override
-    public void visit(DeleteClone node){
-        hasDeleteClone=true;
+    public void visit(DeleteClone node) {
+        hasDeleteClone = true;
     }
 
     @Override

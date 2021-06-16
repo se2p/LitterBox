@@ -59,7 +59,7 @@ public class TypeError extends AbstractIssueFinder {
 
     private Type type = null;
 
-    private enum Type {BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION}
+    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
 
     @Override
     public void visit(LessThan node) {
