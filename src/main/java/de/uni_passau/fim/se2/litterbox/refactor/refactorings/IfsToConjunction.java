@@ -3,7 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -17,7 +17,7 @@ to
 If A && B:
   C
  */
-public class IfsToConjunction extends CloneVisitor implements Refactoring {
+public class IfsToConjunction extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "ifs_to_conjunction";
 

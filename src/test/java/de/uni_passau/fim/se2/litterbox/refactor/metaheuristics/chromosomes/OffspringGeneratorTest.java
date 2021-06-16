@@ -43,8 +43,6 @@ class OffspringGeneratorTest {
         mockedRandomness = Mockito.mockStatic(Randomness.class);
 
         program = mock(Program.class);
-        when(program.deepCopy()).thenReturn(program);
-
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
 

@@ -8,14 +8,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeEventsIntoForever extends CloneVisitor implements Refactoring {
+public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "merge_event_handler";
     private ArrayList<Script> scriptList;

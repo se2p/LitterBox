@@ -47,7 +47,6 @@ class RefactorSequenceTest {
         when(refactoring1.apply(program)).thenReturn(program);
         Refactoring refactoring2 = mock(MergeDoubleIf.class);
         when(refactoring2.apply(program)).thenReturn(program);
-        when(program.deepCopy()).thenReturn(program);
 
         List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
         when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);
@@ -75,15 +74,12 @@ class RefactorSequenceTest {
 
     @Test
     void hashCodeChangesWithObject() {
-        when(program.deepCopy()).thenReturn(program);
-
         Program other = mock(Program.class);
 
         Refactoring refactoring1 = mock(MergeDoubleIf.class);
         when(refactoring1.apply(any())).thenReturn(other);
         Refactoring refactoring2 = mock(MergeDoubleIf.class);
         when(refactoring2.apply(any())).thenReturn(other);
-        when(other.deepCopy()).thenReturn(other);
 
         List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
         when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);

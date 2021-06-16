@@ -95,7 +95,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
-public class NodeReplacementVisitor extends CloneVisitor {
+public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
 
     private ASTNode target;
     private ASTNode replacement;

@@ -118,7 +118,7 @@ public class RefactoringAnalyzer extends Analyzer {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactoringFinders);
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program.deepCopy(), mutation, crossover, refactoringFinders);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program, mutation, crossover, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);

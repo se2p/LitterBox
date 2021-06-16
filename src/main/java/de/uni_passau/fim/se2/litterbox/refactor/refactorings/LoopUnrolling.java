@@ -3,7 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LoopUnrolling extends CloneVisitor implements Refactoring {
+public class LoopUnrolling extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "loop_unrolling";
 
