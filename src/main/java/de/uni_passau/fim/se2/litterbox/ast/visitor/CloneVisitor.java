@@ -2955,21 +2955,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ListMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ListMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ListMetadata node) {
-        return new ListMetadata(node.getListId(), node.getListName(), new ArrayList<>(node.getValues()));
-    }
-
-    /**
      * Default implementation of visit method for {@link ExtensionMetadata}.
      *
      * <p>
@@ -3215,8 +3200,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(StageMetadata node) {
-        return new StageMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
-                apply(node.getLists()),
+        return new StageMetadata(apply(node.getCommentsMetadata()),
                 apply(node.getBroadcasts()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
@@ -3237,8 +3221,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(SpriteMetadata node) {
-        return new SpriteMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
-                apply(node.getLists()),
+        return new SpriteMetadata(apply(node.getCommentsMetadata()),
                 apply(node.getBroadcasts()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
@@ -3293,21 +3276,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ListMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ListMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ListMetadataList node) {
-        return new ListMetadataList(applyList(node.getList()));
-    }
-
-    /**
      * Default implementation of visit method for {@link MonitorMetadataList}.
      *
      * <p>
@@ -3350,21 +3318,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(SoundMetadataList node) {
         return new SoundMetadataList(applyList(node.getList()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link VariableMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node VariableMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(VariableMetadataList node) {
-        return new VariableMetadataList(applyList(node.getList()));
     }
 
     /**

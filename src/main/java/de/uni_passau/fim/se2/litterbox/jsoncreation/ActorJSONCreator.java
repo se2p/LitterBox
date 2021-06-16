@@ -20,19 +20,28 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.BroadcastMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ListMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.VariableMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -53,23 +62,36 @@ public class ActorJSONCreator {
 
         //variables
         JSONStringCreator.createField(jsonString, VARIABLES_KEY).append("{");
-        List<VariableMetadata> variables = meta.getVariables().getList();
-        for (int i = 0; i < variables.size() - 1; i++) {
-            addVariable(jsonString, variables.get(i)).append(",");
+        List<SetStmt> setStmts = actor.getSetStmtList().getStmts();
+        List<SetVariableTo> variableSetStmts = new ArrayList<>();
+        List<SetVariableTo> listSetStmts = new ArrayList<>();
+        for (SetStmt setStmt : setStmts) {
+            if (setStmt instanceof SetVariableTo) {
+                SetVariableTo setVariableTo = (SetVariableTo) setStmt;
+                Qualified qualified = (Qualified) setVariableTo.getIdentifier();
+                if (qualified.getSecond() instanceof Variable) {
+                    variableSetStmts.add(setVariableTo);
+                } else if (qualified.getSecond() instanceof ScratchList) {
+                    listSetStmts.add(setVariableTo);
+                }
+            }
         }
-        if (!variables.isEmpty()) {
-            addVariable(jsonString, variables.get(variables.size() - 1));
+
+        for (int i = 0; i < variableSetStmts.size() - 1; i++) {
+            addVariable(jsonString, variableSetStmts.get(i), symbol).append(",");
+        }
+        if (!variableSetStmts.isEmpty()) {
+            addVariable(jsonString, variableSetStmts.get(variableSetStmts.size() - 1), symbol);
         }
         jsonString.append("},");
 
         //lists
         JSONStringCreator.createField(jsonString, LISTS_KEY).append("{");
-        List<ListMetadata> lists = meta.getLists().getList();
-        for (int i = 0; i < lists.size() - 1; i++) {
-            addList(jsonString, lists.get(i)).append(",");
+        for (int i = 0; i < listSetStmts.size() - 1; i++) {
+            addList(jsonString, listSetStmts.get(i), symbol).append(",");
         }
-        if (!lists.isEmpty()) {
-            addList(jsonString, lists.get(lists.size() - 1));
+        if (!listSetStmts.isEmpty()) {
+            addList(jsonString, listSetStmts.get(listSetStmts.size() - 1), symbol);
         }
         jsonString.append("},");
 
@@ -205,21 +227,44 @@ public class ActorJSONCreator {
         return jsonString;
     }
 
-    private static StringBuilder addVariable(StringBuilder jsonString, VariableMetadata meta) {
-        JSONStringCreator.createField(jsonString, meta.getVariableId()).append("[");
-        jsonString.append("\"").append(meta.getVariableName()).append("\", \"").append(meta.getValue()).append("\"]");
+    private static StringBuilder addVariable(StringBuilder jsonString, SetVariableTo node, SymbolTable symbol) {
+        Qualified qualified = (Qualified) node.getIdentifier();
+        Variable variable = (Variable) qualified.getSecond();
+        String id = symbol.getVariableIdentifierFromActorAndName(qualified.getFirst().getName(), variable.getName().getName());
+        JSONStringCreator.createField(jsonString, id).append("[");
+        Expression expr = node.getExpr();
+        if (expr instanceof StringLiteral) {
+            jsonString.append("\"").append(variable.getName().getName()).append("\", \"").append(((StringLiteral) expr).getText()).append("\"]");
+        } else if (expr instanceof NumberLiteral) {
+            jsonString.append("\"").append(variable.getName().getName()).append("\", ").append(((NumberLiteral) expr).getValue()).append("]");
+        }
         return jsonString;
     }
 
-    private static StringBuilder addList(StringBuilder jsonString, ListMetadata meta) {
-        JSONStringCreator.createField(jsonString, meta.getListId()).append("[");
-        jsonString.append("\"").append(meta.getListName()).append("\", [");
-        List<String> values = meta.getValues();
-        for (int i = 0; i < values.size() - 1; i++) {
-            jsonString.append("\"").append(values.get(i)).append("\",");
+    private static StringBuilder addList(StringBuilder jsonString, SetVariableTo node, SymbolTable symbol) {
+        Qualified qualified = (Qualified) node.getIdentifier();
+        ScratchList list = (ScratchList) qualified.getSecond();
+        String id = symbol.getListIdentifierFromActorAndName(qualified.getFirst().getName(), list.getName().getName());
+        JSONStringCreator.createField(jsonString, id).append("[");
+        jsonString.append("\"").append(list.getName().getName()).append("\", [");
+        Expression expression = node.getExpr();
+        Preconditions.checkArgument(expression instanceof ExpressionList);
+        List<Expression> expressionList = ((ExpressionList) expression).getExpressions();
+        for (int i = 0; i < expressionList.size() - 1; i++) {
+            Expression expr = expressionList.get(i);
+            if (expr instanceof StringLiteral) {
+                jsonString.append("\"").append(((StringLiteral) expr).getText()).append("\",");
+            } else if (expr instanceof NumberLiteral) {
+                jsonString.append(((NumberLiteral) expr).getValue()).append(",");
+            }
         }
-        if (!values.isEmpty()) {
-            jsonString.append("\"").append(values.get(values.size() - 1)).append("\"");
+        if (!expressionList.isEmpty()) {
+            Expression expr = expressionList.get(expressionList.size() - 1);
+            if (expr instanceof StringLiteral) {
+                jsonString.append("\"").append(((StringLiteral) expr).getText()).append("\"");
+            } else if (expr instanceof NumberLiteral) {
+                jsonString.append(((NumberLiteral) expr).getValue());
+            }
         }
         jsonString.append("]]");
         return jsonString;

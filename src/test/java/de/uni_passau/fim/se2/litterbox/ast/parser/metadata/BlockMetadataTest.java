@@ -64,7 +64,6 @@ public class BlockMetadataTest {
         Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
         Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
         Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
-        Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
         Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
     }
@@ -79,7 +78,6 @@ public class BlockMetadataTest {
         Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
         Assertions.assertNull(nonDataBlockMetadata.getCommentId());
         Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
-        Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
     }
 }

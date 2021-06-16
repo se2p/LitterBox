@@ -29,12 +29,12 @@ public class StageMetadata extends ActorMetadata {
     private String videoState;
     private String textToSpeechLanguage;
 
-    public StageMetadata(CommentMetadataList commentsMetadata, VariableMetadataList variables, ListMetadataList lists,
-                         BroadcastMetadataList broadcasts, int currentCostume, ImageMetadataList costumes,
+    public StageMetadata(CommentMetadataList commentsMetadata, BroadcastMetadataList broadcasts,
+                         int currentCostume, ImageMetadataList costumes,
                          SoundMetadataList sounds, double volume, int layerOrder, double tempo,
                          double videoTransparency,
                          String videoState, String textToSpeechLanguage) {
-        super(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
+        super(commentsMetadata, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
         this.tempo = tempo;
         this.videoTransparency = videoTransparency;
         this.videoState = videoState;

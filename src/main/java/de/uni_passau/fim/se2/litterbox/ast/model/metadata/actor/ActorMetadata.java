@@ -26,8 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public abstract class ActorMetadata extends AbstractNode implements Metadata {
     private CommentMetadataList commentsMetadata;
-    private VariableMetadataList variables;
-    private ListMetadataList lists;
     private BroadcastMetadataList broadcasts;
     private int currentCostume;
     private ImageMetadataList costumes;
@@ -35,14 +33,11 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
     private double volume;
     private int layerOrder;
 
-    public ActorMetadata(CommentMetadataList commentsMetadata,
-                         VariableMetadataList variables, ListMetadataList lists, BroadcastMetadataList broadcasts,
+    public ActorMetadata(CommentMetadataList commentsMetadata, BroadcastMetadataList broadcasts,
                          int currentCostume, ImageMetadataList costumes, SoundMetadataList sounds, double volume,
                          int layerOrder) {
-        super(commentsMetadata, variables, lists, broadcasts, costumes, sounds);
+        super(commentsMetadata, broadcasts, costumes, sounds);
         this.commentsMetadata = commentsMetadata;
-        this.variables = variables;
-        this.lists = lists;
         this.broadcasts = broadcasts;
         this.currentCostume = currentCostume;
         this.costumes = costumes;
@@ -53,14 +48,6 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
 
     public CommentMetadataList getCommentsMetadata() {
         return commentsMetadata;
-    }
-
-    public VariableMetadataList getVariables() {
-        return variables;
-    }
-
-    public ListMetadataList getLists() {
-        return lists;
     }
 
     public BroadcastMetadataList getBroadcasts() {

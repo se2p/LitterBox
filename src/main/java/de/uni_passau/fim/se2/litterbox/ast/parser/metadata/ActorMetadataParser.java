@@ -23,7 +23,10 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.BroadcastMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -33,14 +36,6 @@ public class ActorMetadataParser {
         CommentMetadataList commentsMetadata = null;
         if (actorNode.has(COMMENTS_KEY)) {
             commentsMetadata = CommentMetadataListParser.parse(actorNode.get(COMMENTS_KEY));
-        }
-        VariableMetadataList variables = null;
-        if (actorNode.has(VARIABLES_KEY)) {
-            variables = VariableMetadataListParser.parse(actorNode.get(VARIABLES_KEY));
-        }
-        ListMetadataList lists = null;
-        if (actorNode.has(LISTS_KEY)) {
-            lists = ListMetadataListParser.parse(actorNode.get(LISTS_KEY));
         }
         BroadcastMetadataList broadcasts = null;
         if (actorNode.has(BROADCASTS_KEY)) {
@@ -83,7 +78,7 @@ public class ActorMetadataParser {
             if (actorNode.has(TEXT_TO_SPEECH_KEY) && !(actorNode.get(TEXT_TO_SPEECH_KEY) instanceof NullNode)) {
                 textToSpeechLanguage = actorNode.get(TEXT_TO_SPEECH_KEY).asText();
             }
-            return new StageMetadata(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds,
+            return new StageMetadata(commentsMetadata, broadcasts, currentCostume, costumes, sounds,
                     volume, layerOrder, tempo, videoTransparency, videoState, textToSpeechLanguage);
         } else {
             boolean visible = false;
@@ -114,7 +109,7 @@ public class ActorMetadataParser {
             if (actorNode.has(ROTATIONSTYLE_KEY)) {
                 rotationStyle = actorNode.get(ROTATIONSTYLE_KEY).asText();
             }
-            return new SpriteMetadata(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds,
+            return new SpriteMetadata(commentsMetadata, broadcasts, currentCostume, costumes, sounds,
                     volume, layerOrder, visible, x, y, size, direction, draggable, rotationStyle);
         }
     }

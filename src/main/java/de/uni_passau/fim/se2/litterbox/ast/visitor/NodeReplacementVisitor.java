@@ -1714,14 +1714,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(ListMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(ExtensionMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
@@ -1882,14 +1874,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(ListMetadataList node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(MonitorMetadataList node) {
         if (isTargetNode(node)) {
             return replacement;
@@ -1907,14 +1891,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(SoundMetadataList node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(VariableMetadataList node) {
         if (isTargetNode(node)) {
             return replacement;
         }

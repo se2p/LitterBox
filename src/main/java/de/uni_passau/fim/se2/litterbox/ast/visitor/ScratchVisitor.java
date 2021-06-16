@@ -2994,20 +2994,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ListMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ListMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(ListMetadata node) {
-        visit((Metadata) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ExtensionMetadata}.
      *
      * <p>
@@ -3343,21 +3329,6 @@ public interface ScratchVisitor {
         visit((ASTNode) node);
     }
 
-
-    /**
-     * Default implementation of visit method for {@link ListMetadataList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ListMetadataList Node of which the children will
-     *             be iterated
-     */
-    default void visit(ListMetadataList node) {
-        visit((ASTNode) node);
-    }
-
     /**
      * Default implementation of visit method for {@link MonitorMetadataList}.
      *
@@ -3397,20 +3368,6 @@ public interface ScratchVisitor {
      *             be iterated
      */
     default void visit(SoundMetadataList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link VariableMetadataList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node VariableMetadataList Node of which the children will
-     *             be iterated
-     */
-    default void visit(VariableMetadataList node) {
         visit((ASTNode) node);
     }
 

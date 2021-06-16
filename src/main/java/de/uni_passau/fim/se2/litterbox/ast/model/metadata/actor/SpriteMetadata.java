@@ -32,12 +32,11 @@ public class SpriteMetadata extends ActorMetadata {
     private boolean draggable;
     private String rotationStyle;
 
-    public SpriteMetadata(CommentMetadataList commentsMetadata, VariableMetadataList variables,
-                          ListMetadataList lists, BroadcastMetadataList broadcasts, int currentCostume,
+    public SpriteMetadata(CommentMetadataList commentsMetadata, BroadcastMetadataList broadcasts, int currentCostume,
                           ImageMetadataList costumes, SoundMetadataList sounds, double volume, int layerOrder,
                           boolean visible, double x, double y, double size, double direction, boolean draggable,
                           String rotationStyle) {
-        super(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
+        super(commentsMetadata, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
         this.visible = visible;
         this.x = x;
         this.y = y;

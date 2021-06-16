@@ -49,8 +49,6 @@ public class ActorMetadataTest {
         Assertions.assertNotNull(stage.getSounds());
         Assertions.assertNotNull(stage.getCommentsMetadata());
         Assertions.assertNotNull(stage.getBroadcasts());
-        Assertions.assertNotNull(stage.getVariables());
-        Assertions.assertNotNull(stage.getLists());
         Assertions.assertNull(stage.getTextToSpeechLanguage());
         Assertions.assertEquals("on", stage.getVideoState());
         Assertions.assertEquals(0, stage.getCurrentCostume());
