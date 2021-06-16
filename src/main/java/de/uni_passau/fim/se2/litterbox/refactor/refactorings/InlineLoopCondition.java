@@ -2,8 +2,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
