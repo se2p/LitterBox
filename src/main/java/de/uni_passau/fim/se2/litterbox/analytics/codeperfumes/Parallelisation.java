@@ -17,8 +17,8 @@ import java.util.Set;
 /**
  * This checks for starting of two scripts or more on the same event.
  */
-public class Parallelization extends AbstractIssueFinder {
-    public static final String NAME = "parallelization";
+public class Parallelisation extends AbstractIssueFinder {
+    public static final String NAME = "parallelisation";
     private List<Event> events = new ArrayList<>();
 
     @Override

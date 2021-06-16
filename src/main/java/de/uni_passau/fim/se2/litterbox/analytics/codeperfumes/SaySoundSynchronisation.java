@@ -13,9 +13,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
  * Checks if at the same time a speech bubble appears a sound file plays of. And as soon as the sound ends, the
  * speech bubble is removed.
  */
-public class SaySoundSynchronization extends AbstractIssueFinder {
+public class SaySoundSynchronisation extends AbstractIssueFinder {
 
-    public static final String NAME = "say_sound_synchronization";
+    public static final String NAME = "say_sound_synchronisation";
     private boolean saySomething = false;
     private boolean afterSound = false;
 

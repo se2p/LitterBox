@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.ListUsage;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.NestedConditionalChecks;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -132,29 +133,29 @@ public class IssueTool {
     public static Map<String, IssueFinder> generatePerfumeFinders() {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
-        registerPerfumeFinder(new BackdropSwitchAndEvent(), perfumeFinders);
+        registerPerfumeFinder(new BackdropSwitch(), perfumeFinders);
         registerPerfumeFinder(new BoolExpression(), perfumeFinders);
         registerPerfumeFinder(new Collision(), perfumeFinders);
-        registerPerfumeFinder(new ConditionalInLoop(), perfumeFinders);
+        registerPerfumeFinder(new ConditionalInsideLoop(), perfumeFinders);
         registerPerfumeFinder(new ControlledBroadcastOrStop(), perfumeFinders);
         registerPerfumeFinder(new Coordination(), perfumeFinders);
         registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
-        registerPerfumeFinder(new Counter(), perfumeFinders);
         registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
         registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
         registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
-        registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
-        registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
-        registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
+        registerPerfumeFinder(new InitialisationOfLooks(), perfumeFinders);
+        registerPerfumeFinder(new InitialisationOfPosition(), perfumeFinders);
         registerPerfumeFinder(new ListUsage(), perfumeFinders);
         registerPerfumeFinder(new LoopSensing(), perfumeFinders);
+        registerPerfumeFinder(new MatchingParameter(), perfumeFinders);
         registerPerfumeFinder(new MouseFollower(), perfumeFinders);
         registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
         registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
         registerPerfumeFinder(new NestedConditionalChecks(), perfumeFinders);
         registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
-        registerPerfumeFinder(new Parallelization(), perfumeFinders);
-        registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
+        registerPerfumeFinder(new Parallelisation(), perfumeFinders);
+        registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
+        registerPerfumeFinder(new Timer(), perfumeFinders);
         registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
         registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
 

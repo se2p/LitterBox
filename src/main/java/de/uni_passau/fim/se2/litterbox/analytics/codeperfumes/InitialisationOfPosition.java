@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  * This checks for an initialization for the sprite location. This initialization should usually happen in a
  * GreenFlag script or a CustomBlock. As initial position for the sprite we set X = 0, Y = 0.
  */
-public class InitializeLocation extends AbstractIssueFinder {
-    public static final String NAME = "initialize_location";
+public class InitialisationOfPosition extends AbstractIssueFinder {
+    public static final String NAME = "initialisation_of_position";
     private boolean initializedX = false;
     private boolean initializedY = false;
     private boolean inCustomBlock = false;

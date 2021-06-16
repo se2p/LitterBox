@@ -18,8 +18,8 @@ import java.util.List;
  * block. The program only works as intended as long as the parameter is initialized. This is the solution pattern for
  * the bug pattern "Orphaned Parameter".
  */
-public class InitializedParameter extends AbstractIssueFinder {
-    public static final String NAME = "initialized_parameter";
+public class MatchingParameter extends AbstractIssueFinder {
+    public static final String NAME = "matching_parameter";
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
     private List<String> checkedList;
