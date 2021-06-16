@@ -25,18 +25,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.BroadcastMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.MessageInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -65,6 +65,7 @@ public class ActorJSONCreator {
         List<SetStmt> setStmts = actor.getSetStmtList().getStmts();
         List<SetVariableTo> variableSetStmts = new ArrayList<>();
         List<SetVariableTo> listSetStmts = new ArrayList<>();
+        List<SetAttributeTo> attributeToStmts = new ArrayList<>();
         for (SetStmt setStmt : setStmts) {
             if (setStmt instanceof SetVariableTo) {
                 SetVariableTo setVariableTo = (SetVariableTo) setStmt;
@@ -74,6 +75,8 @@ public class ActorJSONCreator {
                 } else if (qualified.getSecond() instanceof ScratchList) {
                     listSetStmts.add(setVariableTo);
                 }
+            } else if (setStmt instanceof SetAttributeTo) {
+                attributeToStmts.add((SetAttributeTo) setStmt);
             }
         }
 
@@ -97,19 +100,30 @@ public class ActorJSONCreator {
 
         //broadcasts
         JSONStringCreator.createField(jsonString, BROADCASTS_KEY).append("{");
-        List<BroadcastMetadata> broadcasts = meta.getBroadcasts().getList();
-        for (int i = 0; i < broadcasts.size() - 1; i++) {
-            BroadcastMetadata current = broadcasts.get(i);
+        List<MessageInfo> messages = new ArrayList<>(symbol.getMessages().values());
+        List<MessageInfo> currentMessages = new ArrayList<>();
+        for (MessageInfo message : messages) {
+            if (message.getActor().equals(actor.getIdent().getName())) {
+                currentMessages.add(message);
+            }
+        }
+        for (int i = 0; i < currentMessages.size() - 1; i++) {
+            MessageInfo info = currentMessages.get(i);
             JSONStringCreator.createFieldValue(
                     jsonString,
-                    current.getBroadcastID(),
-                    current.getBroadcastName()
+                    info.getIdentifier(),
+                    ((StringLiteral) info.getMessage().getMessage()).getText()
             ).append(",");
         }
-        if (!broadcasts.isEmpty()) {
-            BroadcastMetadata current = broadcasts.get(broadcasts.size() - 1);
-            JSONStringCreator.createFieldValue(jsonString, current.getBroadcastID(), current.getBroadcastName());
+        if (!currentMessages.isEmpty()) {
+            MessageInfo info = currentMessages.get(currentMessages.size() - 1);
+            JSONStringCreator.createFieldValue(
+                    jsonString,
+                    info.getIdentifier(),
+                    ((StringLiteral) info.getMessage().getMessage()).getText()
+            );
         }
+
         jsonString.append("},");
 
         //scripts and procedures
@@ -170,31 +184,36 @@ public class ActorJSONCreator {
         }
         jsonString.append("],");
 
-        JSONStringCreator.createFieldValue(jsonString, VOLUME_KEY, meta.getVolume()).append(",");
-        JSONStringCreator.createFieldValue(jsonString, LAYERORDER_KEY, meta.getLayerOrder()).append(",");
+        //attributes
+        for (int i = 0; i < attributeToStmts.size() - 1; i++) {
+            SetAttributeTo attributeTo = attributeToStmts.get(i);
+            String attribute = ((StringLiteral) attributeTo.getStringExpr()).getText();
+            if (attributeTo.getExpr() instanceof StringLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, ((StringLiteral) attributeTo.getExpr()).getText()).append(",");
+            } else if (attributeTo.getExpr() instanceof NumberLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, ((NumberLiteral) attributeTo.getExpr()).getValue()).append(",");
+            }
+        }
+        if (!attributeToStmts.isEmpty()) {
+            SetAttributeTo attributeTo = attributeToStmts.get(attributeToStmts.size() - 1);
+            String attribute = ((StringLiteral) attributeTo.getStringExpr()).getText();
+            if (attributeTo.getExpr() instanceof StringLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, ((StringLiteral) attributeTo.getExpr()).getText());
+            } else if (attributeTo.getExpr() instanceof NumberLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, ((NumberLiteral) attributeTo.getExpr()).getValue());
+            }
+        }
 
-        //attributes that are only in stage or sprite
+        //attributes that are only in stage
         if (isStage) {
+            jsonString.append(",");
             StageMetadata stageMetadata = (StageMetadata) meta;
-            JSONStringCreator.createFieldValue(jsonString, TEMPO_KEY, stageMetadata.getTempo()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, VIDTRANSPARENCY_KEY, stageMetadata.getVideoTransparency())
-                    .append(",");
-            JSONStringCreator.createFieldValue(jsonString, VIDSTATE_KEY, stageMetadata.getVideoState()).append(",");
             if (stageMetadata.getTextToSpeechLanguage() == null) {
                 JSONStringCreator.createFieldValueNull(jsonString, TEXT_TO_SPEECH_KEY);
             } else {
                 JSONStringCreator.createFieldValue(jsonString, TEXT_TO_SPEECH_KEY,
                         stageMetadata.getTextToSpeechLanguage());
             }
-        } else {
-            SpriteMetadata spriteMetadata = (SpriteMetadata) meta;
-            JSONStringCreator.createFieldValue(jsonString, VISIBLE_KEY, spriteMetadata.isVisible()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, X_KEY, spriteMetadata.getX()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, Y_KEY, spriteMetadata.getY()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, SIZE_KEY, spriteMetadata.getSize()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, DIRECTION_KEY, spriteMetadata.getDirection()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, DRAG_KEY, spriteMetadata.isDraggable()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, ROTATIONSTYLE_KEY, spriteMetadata.getRotationStyle());
         }
         jsonString.append("}");
         return jsonString.toString();

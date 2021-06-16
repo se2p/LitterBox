@@ -24,33 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class StageMetadata extends ActorMetadata {
-    private double tempo;
-    private double videoTransparency;
-    private String videoState;
     private String textToSpeechLanguage;
 
-    public StageMetadata(CommentMetadataList commentsMetadata, BroadcastMetadataList broadcasts,
-                         int currentCostume, ImageMetadataList costumes,
-                         SoundMetadataList sounds, double volume, int layerOrder, double tempo,
-                         double videoTransparency,
-                         String videoState, String textToSpeechLanguage) {
-        super(commentsMetadata, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
-        this.tempo = tempo;
-        this.videoTransparency = videoTransparency;
-        this.videoState = videoState;
+    public StageMetadata(CommentMetadataList commentsMetadata, int currentCostume, ImageMetadataList costumes,
+                         SoundMetadataList sounds, String textToSpeechLanguage) {
+        super(commentsMetadata, currentCostume, costumes, sounds);
         this.textToSpeechLanguage = textToSpeechLanguage;
-    }
-
-    public double getTempo() {
-        return tempo;
-    }
-
-    public double getVideoTransparency() {
-        return videoTransparency;
-    }
-
-    public String getVideoState() {
-        return videoState;
     }
 
     public String getTextToSpeechLanguage() {

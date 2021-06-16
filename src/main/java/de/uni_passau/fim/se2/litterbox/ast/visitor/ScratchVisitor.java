@@ -45,7 +45,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -2966,20 +2965,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link VariableMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node VariableMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(VariableMetadata node) {
-        visit((Metadata) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link MetaMetadata}.
      *
      * <p>
@@ -3032,20 +3017,6 @@ public interface ScratchVisitor {
      *             be iterated
      */
     default void visit(ProgramMetadata node) {
-        visit((Metadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node BroadcastMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(BroadcastMetadata node) {
         visit((Metadata) node);
     }
 
@@ -3271,34 +3242,6 @@ public interface ScratchVisitor {
      */
     default void visit(StageMetadata node) {
         visit((ActorMetadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SpriteMetadata}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SpriteMetadata Node of which the children will
-     *             be iterated
-     */
-    default void visit(SpriteMetadata node) {
-        visit((ActorMetadata) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadataList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node BroadcastMetadataList Node of which the children will
-     *             be iterated
-     */
-    default void visit(BroadcastMetadataList node) {
-        visit((ASTNode) node);
     }
 
     /**

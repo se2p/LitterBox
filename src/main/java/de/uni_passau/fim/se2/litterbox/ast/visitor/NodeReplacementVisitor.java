@@ -47,7 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -1698,14 +1698,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(VariableMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(MetaMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
@@ -1739,14 +1731,6 @@ public class NodeReplacementVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(ProgramMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(BroadcastMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }
@@ -1842,15 +1826,7 @@ public class NodeReplacementVisitor extends CloneVisitor {
     }
 
     @Override
-    public ASTNode visit(SpriteMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(BroadcastMetadataList node) {
+    public ASTNode visit(ActorMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }

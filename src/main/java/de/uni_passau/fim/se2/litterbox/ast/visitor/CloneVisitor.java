@@ -39,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -2925,21 +2925,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link VariableMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node VariableMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(VariableMetadata node) {
-        return new VariableMetadata(node.getVariableId(), node.getVariableName(), node.getValue());
-    }
-
-    /**
      * Default implementation of visit method for {@link MetaMetadata}.
      *
      * <p>
@@ -3012,21 +2997,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(ProgramMetadata node) {
         return new ProgramMetadata(apply(node.getMonitor()), apply(node.getExtension()), apply(node.getMeta()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node BroadcastMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(BroadcastMetadata node) {
-        return new BroadcastMetadata(node.getBroadcastID(), node.getBroadcastName());
     }
 
     /**
@@ -3201,16 +3171,14 @@ public class CloneVisitor {
      */
     public ASTNode visit(StageMetadata node) {
         return new StageMetadata(apply(node.getCommentsMetadata()),
-                apply(node.getBroadcasts()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
                 apply(node.getSounds()),
-                node.getVolume(), node.getLayerOrder(), node.getTempo(), node.getVideoTransparency(),
-                node.getVideoState(), node.getTextToSpeechLanguage());
+                node.getTextToSpeechLanguage());
     }
 
     /**
-     * Default implementation of visit method for {@link SpriteMetadata}.
+     * Default implementation of visit method for {@link ActorMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3220,29 +3188,11 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(SpriteMetadata node) {
-        return new SpriteMetadata(apply(node.getCommentsMetadata()),
-                apply(node.getBroadcasts()),
+    public ASTNode visit(ActorMetadata node) {
+        return new ActorMetadata(apply(node.getCommentsMetadata()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
-                apply(node.getSounds()),
-                node.getVolume(), node.getLayerOrder(), node.isVisible(), node.getX(), node.getY(), node.getSize(),
-                node.getDirection(), node.isDraggable(), node.getRotationStyle());
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node BroadcastMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(BroadcastMetadataList node) {
-        return new BroadcastMetadataList(applyList(node.getList()));
+                apply(node.getSounds()));
     }
 
     /**

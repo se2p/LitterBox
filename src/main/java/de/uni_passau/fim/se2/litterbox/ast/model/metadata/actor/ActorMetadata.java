@@ -18,40 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public abstract class ActorMetadata extends AbstractNode implements Metadata {
+public class ActorMetadata extends AbstractNode implements Metadata {
     private CommentMetadataList commentsMetadata;
-    private BroadcastMetadataList broadcasts;
     private int currentCostume;
     private ImageMetadataList costumes;
     private SoundMetadataList sounds;
-    private double volume;
-    private int layerOrder;
 
-    public ActorMetadata(CommentMetadataList commentsMetadata, BroadcastMetadataList broadcasts,
-                         int currentCostume, ImageMetadataList costumes, SoundMetadataList sounds, double volume,
-                         int layerOrder) {
-        super(commentsMetadata, broadcasts, costumes, sounds);
+    public ActorMetadata(CommentMetadataList commentsMetadata, int currentCostume, ImageMetadataList costumes,
+                         SoundMetadataList sounds) {
+        super(commentsMetadata, costumes, sounds);
         this.commentsMetadata = commentsMetadata;
-        this.broadcasts = broadcasts;
         this.currentCostume = currentCostume;
         this.costumes = costumes;
         this.sounds = sounds;
-        this.volume = volume;
-        this.layerOrder = layerOrder;
     }
 
     public CommentMetadataList getCommentsMetadata() {
         return commentsMetadata;
-    }
-
-    public BroadcastMetadataList getBroadcasts() {
-        return broadcasts;
     }
 
     public int getCurrentCostume() {
@@ -66,14 +57,6 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
         return sounds;
     }
 
-    public double getVolume() {
-        return volume;
-    }
-
-    public int getLayerOrder() {
-        return layerOrder;
-    }
-
     public void addComment(CommentMetadata comment) {
         commentsMetadata.getList().add(comment);
     }
@@ -81,6 +64,11 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }
 
