@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.LongScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
@@ -60,6 +61,8 @@ public class CSVRefactorReportGenerator {
         headers.add("blocks");
         headers.addAll(fitnessFunctionsNames);
         headers.addAll(fitnessFunctionsNamesWithoutRefactoring);
+        headers.add("long_scripts_without_refactoring");
+        headers.add("long_scripts");
         headers.add("dominated");
         printer = getNewPrinter(fileName, refactoredPath);
         this.fitnessFunctions = fitnessFunctions;
@@ -95,6 +98,10 @@ public class CSVRefactorReportGenerator {
         }
 
         row.addAll(fitnessValuesWithoutRefactoring);
+
+        LongScript longScript = new LongScript();
+        row.add(String.valueOf(longScript.check(refactorSequence.getOriginalProgram()).size()));
+        row.add(String.valueOf(longScript.check(refactorSequence.getRefactoredProgram()).size()));
 
         Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
         row.add(dominance.test(refactorSequence, emptyRefactorSequence) ? "1" : "0");
