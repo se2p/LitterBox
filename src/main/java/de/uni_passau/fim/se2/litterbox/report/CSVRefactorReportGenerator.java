@@ -2,6 +2,8 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.WeightedMethodCountStrict;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.LongScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
@@ -63,6 +65,10 @@ public class CSVRefactorReportGenerator {
         headers.addAll(fitnessFunctionsNamesWithoutRefactoring);
         headers.add("long_scripts_without_refactoring");
         headers.add("long_scripts");
+        headers.add("scripts_without_refactoring");
+        headers.add("scripts");
+        headers.add("wmc_without_refactoring");
+        headers.add("wmc");
         headers.add("dominated");
         printer = getNewPrinter(fileName, refactoredPath);
         this.fitnessFunctions = fitnessFunctions;
@@ -102,6 +108,14 @@ public class CSVRefactorReportGenerator {
         LongScript longScript = new LongScript();
         row.add(String.valueOf(longScript.check(refactorSequence.getOriginalProgram()).size()));
         row.add(String.valueOf(longScript.check(refactorSequence.getRefactoredProgram()).size()));
+
+        ScriptCount<Program> scriptCount = new ScriptCount<>();
+        row.add(String.valueOf(scriptCount.calculateMetric(refactorSequence.getOriginalProgram())));
+        row.add(String.valueOf(scriptCount.calculateMetric(refactorSequence.getRefactoredProgram())));
+
+        WeightedMethodCountStrict<Program> wmc = new WeightedMethodCountStrict<>();
+        row.add(String.valueOf(wmc.calculateMetric(refactorSequence.getOriginalProgram())));
+        row.add(String.valueOf(wmc.calculateMetric(refactorSequence.getRefactoredProgram())));
 
         Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
         row.add(dominance.test(refactorSequence, emptyRefactorSequence) ? "1" : "0");
