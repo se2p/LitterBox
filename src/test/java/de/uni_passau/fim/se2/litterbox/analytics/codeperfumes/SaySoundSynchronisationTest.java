@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class SaySoundSynchronizationTest implements JsonTest {
+public class SaySoundSynchronisationTest implements JsonTest {
 
     @Test
     public void testSaySoundSync() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/saysoundsync.json");
-        SaySoundSynchronization saySoundSynchronization = new SaySoundSynchronization();
-        Set<Issue> reports = saySoundSynchronization.check(prog);
+        SaySoundSynchronisation saySoundSynchronisation = new SaySoundSynchronisation();
+        Set<Issue> reports = saySoundSynchronisation.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testIgnoreWrongSync() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/saysoundTwoFaked.json");
-        SaySoundSynchronization saySoundSynchronization = new SaySoundSynchronization();
-        Set<Issue> reports = saySoundSynchronization.check(prog);
+        SaySoundSynchronisation saySoundSynchronisation = new SaySoundSynchronisation();
+        Set<Issue> reports = saySoundSynchronisation.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 }

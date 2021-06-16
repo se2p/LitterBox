@@ -22,11 +22,11 @@ import java.util.Set;
 
 /**
  * If an initialized variable is changed repeatedly (in a RepeatForever) after
- * a WaitSeconds block, it is seen as a counter.
+ * a WaitSeconds block, it is seen as a timer.
  */
-public class Counter extends AbstractIssueFinder {
+public class Timer extends AbstractIssueFinder {
 
-    public static final String NAME = "counter";
+    public static final String NAME = "timer";
     private boolean insideLoop = false;
     private boolean waitSec = false;
     private List<Qualified> setVariables = new ArrayList<>();

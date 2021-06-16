@@ -28,9 +28,9 @@ import java.util.Set;
  * Checks if for a backdrop switch event there is a according backdrop switch
  * or a switch to next, previous or random.
  */
-public class BackdropSwitchAndEvent extends AbstractIssueFinder {
+public class BackdropSwitch extends AbstractIssueFinder {
 
-    public static final String NAME = "backdrop_switch_and_event";
+    public static final String NAME = "backdrop_switch";
     private List<Pair<String>> switched = new ArrayList<>();
     private List<Pair<String>> switchReceived = new ArrayList<>();
     private boolean nextRandPrev = false;

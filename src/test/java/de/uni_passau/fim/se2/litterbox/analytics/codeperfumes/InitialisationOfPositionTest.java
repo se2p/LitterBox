@@ -10,29 +10,29 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class InitializeLocationTest implements JsonTest {
+public class InitialisationOfPositionTest implements JsonTest {
 
     @Test
     public void testInitLocXandY() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLocSetxSetY.json");
-        InitializeLocation initializeLocation = new InitializeLocation();
-        Set<Issue> reports = initializeLocation.check(prog);
+        InitialisationOfPosition initialisationOfPosition = new InitialisationOfPosition();
+        Set<Issue> reports = initialisationOfPosition.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testInitLocInCustomBlock() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLocInBlock.json");
-        InitializeLocation initializeLocation = new InitializeLocation();
-        Set<Issue> reports = initializeLocation.check(prog);
+        InitialisationOfPosition initialisationOfPosition = new InitialisationOfPosition();
+        Set<Issue> reports = initialisationOfPosition.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testInitInBoth() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLocInBoth.json");
-        InitializeLocation initializeLocation = new InitializeLocation();
-        Set<Issue> reports = initializeLocation.check(prog);
+        InitialisationOfPosition initialisationOfPosition = new InitialisationOfPosition();
+        Set<Issue> reports = initialisationOfPosition.check(prog);
         Assertions.assertEquals(2, reports.size());
     }
 }

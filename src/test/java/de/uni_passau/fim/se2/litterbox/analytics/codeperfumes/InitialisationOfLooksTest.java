@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class InitializeLooksTest implements JsonTest {
+public class InitialisationOfLooksTest implements JsonTest {
 
     @Test
     public void testInitLooksInBlock() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLooksInBlock.json");
-        InitializeLooks initializeLooks = new InitializeLooks();
-        Set<Issue> reports = initializeLooks.check(prog);
+        InitialisationOfLooks initialisationOfLooks = new InitialisationOfLooks();
+        Set<Issue> reports = initialisationOfLooks.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 }
