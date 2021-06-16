@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.ArrayList;
@@ -35,13 +34,10 @@ public class CodeClone {
     private List<Stmt> copy1 = new ArrayList<>();
     private List<Stmt> copy2 = new ArrayList<>();
 
-    private ActorDefinition actor;
-
     private ASTNode firstRoot;
     private ASTNode secondRoot;
 
-    public CodeClone(ActorDefinition actor, ASTNode root1, ASTNode root2) {
-        this.actor = actor;
+    public CodeClone(ASTNode root1, ASTNode root2) {
         this.firstRoot = root1;
         this.secondRoot = root2;
     }

@@ -26,10 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class UnspecifiedExpression extends AbstractNode implements Expression, ASTLeaf {
 
-    public UnspecifiedExpression() {
-        super();
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

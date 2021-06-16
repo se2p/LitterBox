@@ -40,6 +40,6 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
         for (int i = 0; i < numberOfProductions; i++) {
             productions.add(Randomness.nextInt(MAX_PRODUCTION_NUMBER));
         }
-        return new RefactorSequence(originalProgram.deepCopy(), mutation, crossover, productions, refactoringFinders);
+        return new RefactorSequence(originalProgram, mutation, crossover, productions, refactoringFinders);
     }
 }

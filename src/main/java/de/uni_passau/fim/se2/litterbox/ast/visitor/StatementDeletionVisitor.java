@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatementDeletionVisitor extends CloneVisitor {
+public class StatementDeletionVisitor extends OnlyCodeCloneVisitor {
 
     private Stmt targetStatement;
 
@@ -33,6 +33,7 @@ public class StatementDeletionVisitor extends CloneVisitor {
         this.targetStatement = targetStatement;
     }
 
+    @Override
     public ASTNode visit(StmtList node) {
         List<Stmt> statements = new ArrayList<>();
         for (Stmt stmt : node.getStmts()) {

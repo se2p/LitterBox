@@ -32,7 +32,6 @@ class FastNonDominatedSortTest {
         List<RefactoringFinder> refactoringFinders = List.of(new MergeDoubleIfFinder());
 
         Program program = mock(Program.class);
-        when(program.deepCopy()).thenReturn(program);
 
         RefactorSequence solution = new RefactorSequence(program, mutation, crossover, new LinkedList<>(), refactoringFinders);
         when(function1.getFitness(solution)).thenReturn(1.0);

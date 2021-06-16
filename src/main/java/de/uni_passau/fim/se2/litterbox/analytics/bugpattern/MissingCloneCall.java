@@ -113,7 +113,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
             return false;
         }
 
-        if (!first.getActor().equals(other.getActor())){
+        if (!first.getActor().equals(other.getActor())) {
             return false;
         }
 

@@ -304,6 +304,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void visit(BackdropSwitchTo backdrop) {
         emitNoSpace("when backdrop switches to [");
         backdrop.getBackdrop().accept(this);
@@ -312,6 +313,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void visit(AttributeAboveValue node) {
         emitNoSpace("when [");
         node.getAttribute().accept(this);
@@ -1971,12 +1973,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void begin() {
         emitNoSpace(SCRATCHBLOCKS_START);
         newLine();
         lineWrapped = true;
     }
 
+    @Override
     public void end() {
         if (!lineWrapped) {
             newLine();
@@ -1986,6 +1990,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         lineWrapped = true;
     }
 
+    @Override
     protected void emitNoSpace(String string) {
         printStream.append(string);
         lineWrapped = false;
@@ -1999,6 +2004,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         return byteStream.toString();
     }
 
+    @Override
     protected void newLine() {
         if (issueNote.size() == 1) {
             emitNoSpace(" // ");

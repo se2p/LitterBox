@@ -6,7 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -27,7 +27,7 @@ If A:
   Else:
     D
  */
-public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
+public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "conjunction_to_ifelse";
 

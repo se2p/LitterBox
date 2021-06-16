@@ -34,9 +34,17 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
     }
 
     @Override
+    public void visit(Program program) {
+        // Refactorings are applied only to the code
+        visit(program.getActorDefinitionList());
+    }
+
+    @Override
     public void visit(ActorDefinition node) {
         this.currentActor = node;
-        visit((ASTNode) node);
+        // Refactorings are applied only to the code
+        visit(node.getScripts());
+        visit(node.getProcedureDefinitionList());
     }
 
     @Override

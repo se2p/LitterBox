@@ -114,7 +114,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
-        if (finishedJSONStrings.size() > 0) {
+        if (!finishedJSONStrings.isEmpty()) {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return jsonString.toString();

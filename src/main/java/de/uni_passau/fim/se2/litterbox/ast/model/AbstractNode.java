@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +34,10 @@ public abstract class AbstractNode implements ASTNode {
     protected final List<? extends ASTNode> children;
 
     protected ASTNode parent;
+
+    public AbstractNode() {
+        this(Collections.EMPTY_LIST);
+    }
 
     public AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
@@ -46,12 +51,15 @@ public abstract class AbstractNode implements ASTNode {
                 .build();
     }
 
+    @Override
     public abstract void accept(ScratchVisitor visitor);
 
+    @Override
     public List<? extends ASTNode> getChildren() {
         return children;
     }
 
+    @Override
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -66,6 +74,7 @@ public abstract class AbstractNode implements ASTNode {
         this.parent = parent;
     }
 
+    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }

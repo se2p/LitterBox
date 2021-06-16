@@ -20,9 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 

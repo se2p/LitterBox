@@ -115,7 +115,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     public Program buildRefactoredProgram() {
         executedRefactorings = new LinkedList<>();
-        var current = originalProgram.deepCopy();
+        var current = originalProgram;
 
         for (Integer nthProduction : productions) {
 

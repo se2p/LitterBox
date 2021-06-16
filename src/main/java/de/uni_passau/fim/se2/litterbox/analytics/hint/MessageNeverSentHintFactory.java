@@ -31,34 +31,31 @@ public abstract class MessageNeverSentHintFactory {
     public static Hint generateHint(String messageText, Map<String, Set<String>> sayText, Map<String, Set<String>> thinkText, Map<String, Set<String>> touchingSprites) {
         Hint hint;
 
-        Set<String> keys = sayText.keySet();
-        for (String key : keys) {
-            if (key.contains(messageText)) {
+        for (Map.Entry<String, Set<String>> entry : sayText.entrySet()) {
+            if (entry.getKey().contains(messageText)) {
                 hint = new Hint(MESSAGE_IN_SAY_OR_THINK);
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
-                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(sayText.get(key)));
+                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
                 return hint;
             }
         }
 
-        keys = thinkText.keySet();
-        for (String key : keys) {
-            if (key.contains(messageText)) {
+        for (Map.Entry<String, Set<String>> entry : thinkText.entrySet()) {
+            if (entry.getKey().contains(messageText)) {
                 hint = new Hint(MESSAGE_IN_SAY_OR_THINK);
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
-                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(thinkText.get(key)));
+                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
                 return hint;
             }
         }
 
-        keys = touchingSprites.keySet();
-        for (String key : keys) {
-            if (messageText.contains(key)) {
+        for (Map.Entry<String, Set<String>> entry : touchingSprites.entrySet()) {
+            if (messageText.contains(entry.getKey())) {
                 hint = new Hint(TOUCHING_USED);
-                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(touchingSprites.get(key)));
-                hint.setParameter(Hint.HINT_SPRITE, key);
+                hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
+                hint.setParameter(Hint.HINT_SPRITE, entry.getKey());
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
                 return hint;
             }

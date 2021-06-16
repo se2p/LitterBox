@@ -173,7 +173,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < parameterInfos.size() - 1; i++) {
             jsonString.append(parameterInfos.get(i).getDefaultValue()).append(",");
         }
-        if (parameterInfos.size() > 0) {
+        if (!parameterInfos.isEmpty()) {
             jsonString.append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue());
         }
         jsonString.append("]\"");
@@ -185,7 +185,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < parameterInfos.size() - 1; i++) {
             jsonString.append("\\\"").append(parameterInfos.get(i).getName()).append("\\\"").append(",");
         }
-        if (parameterInfos.size() > 0) {
+        if (!parameterInfos.isEmpty()) {
             jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getName()).append("\\\"");
         }
         jsonString.append("]\"");
@@ -197,7 +197,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < argumentId.size() - 1; i++) {
             jsonString.append("\\\"").append(argumentId.get(i)).append("\\\"").append(",");
         }
-        if (argumentId.size() > 0) {
+        if (!argumentId.isEmpty()) {
             jsonString.append("\\\"").append(argumentId.get(argumentId.size() - 1)).append("\\\"");
         }
         jsonString.append("]\"");
@@ -254,7 +254,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < inputsList.size() - 1; i++) {
             jsonString.append(inputsList.get(i)).append(",");
         }
-        if (inputsList.size() > 0) {
+        if (!inputsList.isEmpty()) {
             jsonString.append(inputsList.get(inputsList.size() - 1));
         }
         jsonString.append("}");

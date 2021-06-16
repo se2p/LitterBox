@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TextToSpeechOpcode;
@@ -55,7 +54,7 @@ public class Speak extends AbstractNode implements TextToSpeechStmt {
 
     @Override
     public void accept(TextToSpeechExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

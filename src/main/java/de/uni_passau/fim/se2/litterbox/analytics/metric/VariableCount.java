@@ -43,18 +43,16 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        double count = 0;
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        count = getVariableCount();
-        return count;
+        return getVariableCount();
     }
 
     private double getVariableCount() {
         List<String> allVariables = getVariables();
-        Set<String> variables = new HashSet<String>(allVariables);
+        Set<String> variables = new HashSet<>(allVariables);
         return variables.size();
     }
     @Override

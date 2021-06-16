@@ -39,7 +39,8 @@ public class SaySoundSynchronization extends AbstractIssueFinder {
         if (saySomething && afterSound) {
             if (node.getString() instanceof StringLiteral) {
                 if (((StringLiteral) node.getString()).getText().isEmpty()) {
-                addIssue(node, node.getMetadata(), IssueSeverity.HIGH);}
+                    addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
+                }
             }
             saySomething = false;
             afterSound = false;
