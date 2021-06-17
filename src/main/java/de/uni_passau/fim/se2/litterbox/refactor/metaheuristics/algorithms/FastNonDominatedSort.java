@@ -67,14 +67,27 @@ public class FastNonDominatedSort<C extends Solution<C>> {
         return fronts;
     }
 
+    private static int indexOfById(List<?> list, Object searchedObject) {
+        int i = 0;
+        for (Object o : list) {
+            if (o == searchedObject) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+
     private void fillFronts(List<C> solutions, List<List<C>> fronts, List<List<C>> dominatesList, int[] amountDominated) {
         int i = 0;
         while (!fronts.get(i).isEmpty()) {
             List<C> nextFront = Lists.newLinkedList();
             for (C p : fronts.get(i)) {
-                for (C q : dominatesList.get(solutions.indexOf(p))) {
-                    amountDominated[solutions.indexOf(q)]--;
-                    if (amountDominated[solutions.indexOf(q)] == 0) {
+                int ip = indexOfById(solutions, p);
+                for (C q : dominatesList.get(ip)) {
+                    int iq = indexOfById(solutions, q);
+                    amountDominated[iq]--;
+                    if (amountDominated[iq] == 0) {
                         nextFront.add(q);
                         q.setRank(i + 1);
                     }
