@@ -35,6 +35,7 @@ public class EmptyScript extends AbstractIssueFinder {
     @Override
     public void visit(Script node) {
         currentScript = node;
+        currentProcedure = null;
         isEmpty = false;
         if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() == 0) {
             isEmpty = true;
