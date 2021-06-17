@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -31,6 +32,8 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     public Program getOriginalProgram() {
         return originalProgram;
     }
+
+    private static final int MAX_PRODUCTION_NUMBER = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
     /**
      * Lazily build the refactored program, only if it was not previously already build.
@@ -137,6 +140,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         if (possibleProductions.isEmpty()) {
             return null;
         }
+        assert (possibleProductions.size() <= MAX_PRODUCTION_NUMBER) : "Number of productions is larger than codon range";
 
         int executedProduction = nthProduction % possibleProductions.size();
         return possibleProductions.get(executedProduction);
