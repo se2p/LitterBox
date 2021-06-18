@@ -93,7 +93,7 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
 
         for (int i = 0; i < this.scriptList.size(); i++) {
             if (this.scriptList.get(i).equals(that.scriptList.get(i)))
-                    equals = false;
+                equals = false;
         }
         return equals && Objects.equals(this.replacement, that.replacement);
     }
@@ -112,8 +112,8 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
             sb.append(" and ");
         }
         sb.delete(sb.length()-6 , sb.length()-1);
-        return NAME + System.lineSeparator() + "Merging" + sb +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Merging" + sb +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
     }
 
 }
