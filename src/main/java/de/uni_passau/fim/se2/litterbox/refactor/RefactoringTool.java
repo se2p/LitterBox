@@ -42,6 +42,7 @@ public class RefactoringTool {
         registerRefactoring(new ConjunctionToIfElseFinder(), refactorings);
         registerRefactoring(new DisjunctionToIfElseFinder(), refactorings);
         registerRefactoring(new ExtractLoopConditionFinder(), refactorings);
+        registerRefactoring(new ExtractEventsFromForeverFinder(), refactorings);
         registerRefactoring(new ForeverIfToWaitUntilFinder(), refactorings);
         registerRefactoring(new ForeverWaitToForeverIfFinder(), refactorings);
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
@@ -52,6 +53,7 @@ public class RefactoringTool {
         registerRefactoring(new InlineLoopConditionFinder(), refactorings);
         registerRefactoring(new LoopUnrollingFinder(), refactorings);
         registerRefactoring(new MergeDoubleIfFinder(), refactorings);
+        registerRefactoring(new MergeEventsIntoForeverFinder(), refactorings);
         registerRefactoring(new MergeLoopsFinder(), refactorings);
         registerRefactoring(new MergeScriptsFinder(), refactorings);
         registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings);

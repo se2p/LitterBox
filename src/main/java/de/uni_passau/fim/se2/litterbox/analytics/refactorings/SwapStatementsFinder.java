@@ -67,6 +67,6 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
 
     @Override
     public String getName() {
-        return SplitSlice.NAME;
+        return SwapStatements.NAME;
     }
 }
