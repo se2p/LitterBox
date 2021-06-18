@@ -73,12 +73,16 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     }
 
     @Override
-    public Program apply(Program program) {
+    public ASTNode visit(Script node) {
         if(onlyIfThenStmts) {
-            program = (Program) program.accept(new StatementDeletionVisitor(loop));
+            return node.accept(new StatementDeletionVisitor(loop));
         } else {
-            program = (Program) program.accept(new StatementReplacementVisitor(loop, replacement));
+            return node.accept(new StatementReplacementVisitor(loop, replacement));
         }
+    }
+
+    @Override
+    public Program apply(Program program) {
         return (Program) program.accept(this);
     }
 
