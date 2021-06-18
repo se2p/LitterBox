@@ -130,7 +130,7 @@ public class RefactoringAnalyzer extends Analyzer {
         fitnessFunctions.add(new AverageEntropyFitness());
 
         // fitnessFunctions.add(new HalsteadDifficultyFitness());
-        // fitnessFunctions.add(new NumberOfBlocksFitness(program));
+        fitnessFunctions.add(new NumberOfBlocksFitness());
         // fitnessFunctions.add(new CategoryEntropyFitness());
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
