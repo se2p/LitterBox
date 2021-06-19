@@ -38,7 +38,6 @@ public class RepeatForeverStmt extends AbstractNode implements LoopStmt {
         super(stmtList, metadata);
         this.stmtList = Preconditions.checkNotNull(stmtList);
         this.metadata = metadata;
-        Preconditions.checkArgument(metadata instanceof NonDataBlockMetadata);
     }
 
     @Override
