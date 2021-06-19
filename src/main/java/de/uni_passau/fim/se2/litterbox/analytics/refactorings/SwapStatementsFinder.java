@@ -36,6 +36,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         inScript = false;
         currentScript = null;
     }
+
     @Override
     public void visit(StmtList stmtList) {
         if (!inScript) {

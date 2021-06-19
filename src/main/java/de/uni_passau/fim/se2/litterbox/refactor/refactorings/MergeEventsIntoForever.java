@@ -34,8 +34,9 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         }
 
         // Create forever loop.
+        // TODO: Reuse stmts.get(0).getMetadata()?
         StmtList foreverStmt = new StmtList(new RepeatForeverStmt(new StmtList(ifThenArrayList),
-                apply(scriptList.get(0).getStmtList().getStatement(0).getMetadata())));
+                NonDataBlockMetadata.emptyNonBlockMetadata()));
 
         GreenFlag greenFlag = new GreenFlag(apply(scriptList.get(0).getEvent().getMetadata()));
         replacement = new Script(greenFlag, foreverStmt);
@@ -50,7 +51,8 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         IsKeyPressed expression = new IsKeyPressed(apply(pressed), keyMetaData);
         List<Stmt> stmts = apply(script.getStmtList()).getStmts();
 
-        return new IfThenStmt(expression, new StmtList(stmts), apply(stmts.get(0).getMetadata()));
+        // TODO: Reuse stmts.get(0).getMetadata()?
+        return new IfThenStmt(expression, new StmtList(stmts), NonDataBlockMetadata.emptyNonBlockMetadata());
     }
 
     @Override
