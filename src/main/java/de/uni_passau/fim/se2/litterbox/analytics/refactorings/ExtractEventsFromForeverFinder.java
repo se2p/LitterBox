@@ -50,6 +50,10 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
 
         RepeatForeverStmt repeatForeverStmt = (RepeatForeverStmt) statements.getStatement(0);
 
+        if (!repeatForeverStmt.getStmtList().hasStatements()) {
+            return;
+        }
+
         for(Stmt stmtForever : repeatForeverStmt.getStmtList().getStmts()) {
             // Check for ifThen statement.
             if (stmtForever instanceof IfThenStmt) {
