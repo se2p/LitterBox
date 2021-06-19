@@ -6,6 +6,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.ControlDependenceGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.TimeDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitLoop;
 
 import java.util.ArrayList;
@@ -44,6 +47,9 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
         LoopStmt loop = (LoopStmt) script.getStmtList().getStatement(0);
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(script);
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        TimeDependenceGraph tdg = new TimeDependenceGraph(cfg);
+        DataDependenceGraph ddg = new DataDependenceGraph(cfg);
 
         StmtList stmts = loop.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {
@@ -53,13 +59,13 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
             List<Stmt> stmts2 = new ArrayList<>(stmts.getStmts().subList(i, stmts.getNumberOfStatements()));
 
             // Dependencies can exist in both directions since this is within a loop
-            if (!hasControlDependency(cfg, stmts1, stmts2) &&
-                    !hasControlDependency(cfg, stmts2, stmts1) &&
-                    !hasTimeDependency(cfg, stmts1, stmts2) &&
-                    !hasTimeDependency(cfg, stmts2, stmts1) &&
-                    !hasDataDependency(cfg, stmts1, stmts2) &
-                    !hasDataDependency(cfg, stmts2, stmts1) &
-                    !wouldCreateDataDependency(script, stmts2, stmts1)) {
+            if (!cdg.hasDependencyEdge(stmts1, stmts2)
+                    && !cdg.hasDependencyEdge(stmts2, stmts1)
+                    && !tdg.hasDependencyEdge(stmts1, stmts2)
+                    && !tdg.hasDependencyEdge(stmts2, stmts1)
+                    && !ddg.hasDependencyEdge(stmts1, stmts2)
+                    && !ddg.hasDependencyEdge(stmts2, stmts1)
+                    && !wouldCreateDataDependency(script, stmts2, stmts1)) {
                 refactorings.add(new SplitLoop(script, loop, splitPoint));
             }
         }

@@ -18,11 +18,11 @@ import java.util.Objects;
 public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "merge_event_handler";
-    private ArrayList<Script> scriptList;
+    private List<Script> scriptList;
 
     private Script replacement;
 
-    public MergeEventsIntoForever(ArrayList<Script> eventList) {
+    public MergeEventsIntoForever(List<Script> eventList) {
         Preconditions.checkNotNull(eventList);
         Preconditions.checkArgument(eventList.size() > 0);
         this.scriptList = eventList;
