@@ -2,15 +2,16 @@ package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.ExtractEventsFromForever;
+
 
 /*
     forever
@@ -30,9 +31,14 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.ExtractEventsFromFo
 
 public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
 
-
     @Override
-    public void visit(Script script) {
+    public void visit(ScriptList scriptList) {
+        for (Script script : scriptList.getScriptList()) {
+            checkScript(scriptList, script);
+        }
+    }
+
+    private void checkScript(ScriptList scriptList, Script script) {
         if (!(script.getEvent() instanceof GreenFlag)) {
             return;
         }
@@ -58,7 +64,7 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
             }
         }
 
-        refactorings.add(new ExtractEventsFromForever(script, repeatForeverStmt));
+        refactorings.add(new ExtractEventsFromForever(scriptList, script, repeatForeverStmt));
     }
 
     @Override

@@ -41,9 +41,8 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         List<Refactoring> refactorings = finder.check(program);
         Refactoring r = refactorings.get(0);
         Program refactored = r.apply(program);
-        Script refactoredScriptGreenFlag = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
-        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
-        Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(2);
+        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertTrue(refactoredScriptEvent1.getEvent() instanceof KeyPressed);
         assertTrue(refactoredScriptEvent2.getEvent() instanceof KeyPressed);
     }
