@@ -5,7 +5,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -41,8 +40,7 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
                 IfThenStmt ifThenStmt = (IfThenStmt) stmt;
                 BoolExpr expr = ifThenStmt.getBoolExpr();
                 if(expr instanceof IsKeyPressed) {
-                    NonDataBlockMetadata keyMetaData = NonDataBlockMetadata.emptyNonBlockMetadata();
-                    Event e = new KeyPressed(((IsKeyPressed) expr).getKey(), keyMetaData);
+                    Event e = new KeyPressed(((IsKeyPressed) expr).getKey(), apply(script.getEvent().getMetadata()));
                     Script event = new Script(e, ifThenStmt.getThenStmts());
                     eventScripts.add(event);
                 }
