@@ -69,6 +69,15 @@ public abstract class AbstractDependencyGraph {
         return graph.edges().size();
     }
 
+    public void removeNode(CFGNode node) {
+        graph.removeNode(node);
+    }
+
+    public void removeNode(ASTNode node) {
+        CFGNode cfgNode = getNode(node).get(); // Rely on exception if this doesn't exist
+        graph.removeNode(cfgNode);
+    }
+
     public Optional<CFGNode> getNode(ASTNode node) {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
