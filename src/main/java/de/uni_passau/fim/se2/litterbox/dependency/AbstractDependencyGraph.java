@@ -5,8 +5,11 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
 import java.util.*;
@@ -74,8 +77,18 @@ public abstract class AbstractDependencyGraph {
     }
 
     public void removeNode(ASTNode node) {
-        CFGNode cfgNode = getNode(node).get(); // Rely on exception if this doesn't exist
-        graph.removeNode(cfgNode);
+        if (node instanceof ReceptionOfMessage) {
+            // Rely on exception if this doesn't exist
+            CFGNode cfgNode = getNode(((ReceptionOfMessage) node).getMsg()).get();
+            graph.removeNode(cfgNode);
+        } else if (node instanceof StartedAsClone) {
+            // Rely on exception if this doesn't exist
+            CFGNode cfgNode = cfg.stream().filter(n -> n instanceof CloneEventNode).findFirst().get();
+            graph.removeNode(cfgNode);
+        } else {
+            CFGNode cfgNode = getNode(node).get();
+            graph.removeNode(cfgNode);
+        }
     }
 
     public Optional<CFGNode> getNode(ASTNode node) {
