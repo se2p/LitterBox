@@ -56,6 +56,27 @@ public abstract class AbstractDependencyGraph {
         return Graphs.reachableNodes(graph, node);
     }
 
+    public Set<CFGNode> getGraphComponentOf(CFGNode node) {
+        Set<CFGNode> nodes = new LinkedHashSet<>();
+        Queue<CFGNode> toVisit = new ArrayDeque<>();
+        toVisit.add(node);
+
+        while (!toVisit.isEmpty()) {
+            CFGNode current = toVisit.remove();
+            if (!nodes.add(current)) {
+                continue;
+            }
+
+            for (CFGNode neighbour : graph.adjacentNodes(current)) {
+                if (!nodes.contains(neighbour)) {
+                    toVisit.add(neighbour);
+                }
+            }
+        }
+
+        return nodes;
+    }
+
     public Set<CFGNode> getNodes() {
         return Collections.unmodifiableSet(graph.nodes());
     }
