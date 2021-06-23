@@ -41,6 +41,14 @@ public class SplitSlicesTest implements JsonTest {
     }
 
     @Test
+    public void testSplitSliceFinder_DependencyEdges() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitSlice2.json");
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testSplitSliceRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/sliceable.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);

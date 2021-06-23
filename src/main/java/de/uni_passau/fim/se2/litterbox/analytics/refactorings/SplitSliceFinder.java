@@ -38,7 +38,7 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
             if (coveredNodes.contains(node)) {
                 continue;
             }
-            Set<CFGNode> reachableNodes = pdg.getTransitiveSuccessors(node);
+            Set<CFGNode> reachableNodes = pdg.getGraphComponentOf(node);
             coveredNodes.addAll(reachableNodes);
 
             // Some fuffing around necessary to ensure statements are in order
