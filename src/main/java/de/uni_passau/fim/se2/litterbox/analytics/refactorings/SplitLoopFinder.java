@@ -51,6 +51,11 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
         TimeDependenceGraph tdg = new TimeDependenceGraph(cfg);
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
 
+        // If the loop execution depends on its content we can never split
+        if (cdg.hasDependencyEdge(loop.getStmtList().getStmts(), loop)) {
+            return;
+        }
+
         StmtList stmts = loop.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {
             Stmt splitPoint = stmts.getStmts().get(i);
@@ -58,13 +63,9 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
             List<Stmt> stmts1 = new ArrayList<>(stmts.getStmts().subList(0, i));
             List<Stmt> stmts2 = new ArrayList<>(stmts.getStmts().subList(i, stmts.getNumberOfStatements()));
 
-            // Dependencies can exist in both directions since this is within a loop
             if (!cdg.hasDependencyEdge(stmts1, stmts2)
-                    && !cdg.hasDependencyEdge(stmts2, stmts1)
                     && !tdg.hasDependencyEdge(stmts1, stmts2)
-                    && !tdg.hasDependencyEdge(stmts2, stmts1)
                     && !ddg.hasDependencyEdge(stmts1, stmts2)
-                    && !ddg.hasDependencyEdge(stmts2, stmts1)
                     && !wouldCreateDataDependency(script, stmts2, stmts1)) {
                 refactorings.add(new SplitLoop(script, loop, splitPoint));
             }
