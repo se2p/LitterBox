@@ -126,7 +126,8 @@ public class RefactoringAnalyzer extends Analyzer {
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
         // fitnessFunctions.add(new SumComplexityFitness());
         // fitnessFunctions.add(new SumEntropyFitness());
-        fitnessFunctions.add(new AverageComplexityFitness());
+        //fitnessFunctions.add(new AverageComplexityFitness());
+        fitnessFunctions.add(new AverageHalsteadVolumeFitness());
         fitnessFunctions.add(new AverageEntropyFitness());
 
         // fitnessFunctions.add(new HalsteadDifficultyFitness());
