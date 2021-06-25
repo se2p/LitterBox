@@ -122,34 +122,32 @@ public abstract class AbstractDependencyGraph {
         return graph.nodes().stream().filter(n -> transitiveStatements.contains(n.getASTNode())).collect(Collectors.toSet());
     }
 
-    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
+    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Stmt targetNode) {
         Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
-        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
+        CFGNode targetCFGNode = getNode(targetNode).get();
 
-        Set<CFGNode> visitedNodes = new LinkedHashSet<>();
-        Queue<CFGNode> queuedNodes = new ArrayDeque<>(targetCFGNodes);
-        while (!queuedNodes.isEmpty()) {
-            CFGNode currentNode = queuedNodes.remove();
-            if (sourceCFGNodes.contains(currentNode)) {
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
+            if (sourceCFGNodes.contains(edge.nodeU()) && targetCFGNode == edge.nodeV()) {
                 return true;
-            }
-            visitedNodes.add(currentNode);
-            for (CFGNode predecessor : graph.predecessors(currentNode)) {
-                if (!visitedNodes.contains(predecessor)) {
-                    queuedNodes.add(predecessor);
-                }
             }
         }
 
         return false;
     }
 
-    private boolean hasAnyEdge(Set<CFGNode> sourceNodes, Set<CFGNode> targetNodes) {
-        for (EndpointPair<CFGNode> edge : getEdges()) {
-            if (sourceNodes.contains(edge.nodeU()) && targetNodes.contains(edge.nodeV())) {
+    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
+        Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
+        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
+
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
+            if (sourceCFGNodes.contains(edge.nodeU()) && targetCFGNodes.contains(edge.nodeV())) {
+                return true;
+            }
+            if (sourceCFGNodes.contains(edge.nodeV()) && targetCFGNodes.contains(edge.nodeU())) {
                 return true;
             }
         }
+
         return false;
     }
 

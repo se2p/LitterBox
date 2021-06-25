@@ -24,6 +24,14 @@ public class MergeLoopsTest implements JsonTest {
     }
 
     @Test
+    public void testMergeLoopsFinder_Dependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/mergeLoopsDependencies.json");
+        MergeLoopsFinder finder = new MergeLoopsFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testMergeLoopsFinder_Oneway() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/unmergeableLoops.json");
         MergeLoopsFinder finder = new MergeLoopsFinder();
