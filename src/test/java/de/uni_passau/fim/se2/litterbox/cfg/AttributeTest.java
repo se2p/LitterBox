@@ -131,7 +131,7 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
-            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
+            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(APPEARANCE);
         }
     }
 
@@ -147,7 +147,7 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses.size()).isAtLeast(1);
-            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(COSTUME)).count()).isEqualTo(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(APPEARANCE)).count()).isEqualTo(1);
         }
     }
 

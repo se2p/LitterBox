@@ -19,6 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -58,6 +62,61 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     public void visit(Show node) {
         definitions.add(Attribute.visibilityOf(currentActor.getIdent()));
     }
+
+    //---------------------------------------------------------------
+    // Effect
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ClearGraphicEffects node) {
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ClearSoundEffects node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetVolumeTo node) {
+        definitions.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        definitions.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(ChangeLayerBy node) {
+        definitions.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GoToLayer node) {
+        definitions.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
 
     //---------------------------------------------------------------
     // Position
@@ -134,12 +193,12 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     @Override
     public void visit(NextCostume node) {
-        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
