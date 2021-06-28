@@ -67,17 +67,17 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
-        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     @Override
@@ -193,12 +193,12 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     @Override
     public void visit(NextCostume node) {
-        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
+        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
