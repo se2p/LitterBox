@@ -29,6 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -158,8 +161,30 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     //---------------------------------------------------------------
-    // Costume
+    // Effect
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        uses.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
 
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        uses.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        uses.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Volume node) {
+        uses.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+
+    //---------------------------------------------------------------
+    // Costume
     @Override
     public void visit(NextCostume node) {
         uses.add(Attribute.costumeOf(currentActor.getIdent()));
@@ -169,6 +194,14 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(Costume node) {
         uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(ChangeLayerBy node) {
+        uses.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
 
     //---------------------------------------------------------------
     // Size

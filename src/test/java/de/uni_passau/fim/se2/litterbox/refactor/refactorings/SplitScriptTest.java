@@ -34,6 +34,14 @@ public class SplitScriptTest implements JsonTest {
     }
 
     @Test
+    public void testSplitScriptFinder_DoNotSplitEffectDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitGraphicDependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testSplitScriptFinder_DoNotSplitDataDependency_WhenMerged() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_data_dependency_merged.json");
         SplitScriptFinder finder = new SplitScriptFinder();
