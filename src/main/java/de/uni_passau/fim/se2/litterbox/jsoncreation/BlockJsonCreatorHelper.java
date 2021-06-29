@@ -328,7 +328,6 @@ public abstract class BlockJsonCreatorHelper {
         jsString = jsString.replace("\n", "\\n");
         jsString = jsString.replace("\r", "\\r");
         jsString = jsString.replace("\t", "\\t");
-        jsString = jsString.replace("/", "\\/");
         return jsString;
     }
 }
