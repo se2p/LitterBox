@@ -81,11 +81,7 @@ public class JSONStringCreator {
     }
 
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
-        if (fieldValue.contains("\\\"")) {
-            fieldValue = fieldValue.replace("\\\"", "\\\"\\\"");
-        } else if (fieldValue.contains("\"")) {
-            fieldValue = fieldValue.replace("\"", "\\\"");
-        }
+        fieldValue = BlockJsonCreatorHelper.escape(fieldValue);
         return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
     }
 
