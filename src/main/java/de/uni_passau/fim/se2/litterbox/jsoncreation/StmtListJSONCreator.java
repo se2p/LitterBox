@@ -315,7 +315,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         String fieldsString = createFields(STOP_OPTION, "other scripts in sprite", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(),true);
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), true);
     }
 
     private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata, Opcode opcode, boolean hasNext) {

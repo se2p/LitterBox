@@ -292,9 +292,9 @@ public abstract class BlockJsonCreatorHelper {
     public static String createReferenceType(int shadowIndicator, int typeNumber,
                                              String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
-        if(value.contains("\\\"")){
+        if (value.contains("\\\"")) {
             value = value.replace("\\\"", "\\\"\\\"");
-        }else if (value.contains("\"")) {
+        } else if (value.contains("\"")) {
             value = value.replace("\"", "\\\"");
         }
         jsonString.append("[").append(shadowIndicator)
