@@ -237,7 +237,9 @@ public class ActorJSONCreator {
         JSONStringCreator.createFieldValue(jsonString, WIDTH_KEY, meta.getWidth()).append(",");
         JSONStringCreator.createFieldValue(jsonString, HEIGHT_KEY, meta.getHeight()).append(",");
         JSONStringCreator.createFieldValue(jsonString, MINIMIZED_KEY, meta.isMinimized()).append(",");
-        JSONStringCreator.createFieldValue(jsonString, TEXT_KEY, meta.getText());
+        String text = meta.getText();
+        text = text.replace("\"","\\\"");
+        JSONStringCreator.createFieldValue(jsonString, TEXT_KEY, text);
         jsonString.append("}");
         return jsonString;
     }
