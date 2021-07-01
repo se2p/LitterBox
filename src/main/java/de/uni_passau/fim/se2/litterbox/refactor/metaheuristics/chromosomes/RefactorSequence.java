@@ -2,13 +2,15 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class RefactorSequence extends Solution<RefactorSequence> {
@@ -26,6 +28,9 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     }
 
     public List<Refactoring> getExecutedRefactorings() {
+        if (executedRefactorings == null) {
+            buildRefactoredProgram(); // this method initialises the executedRefactoring list
+        }
         return executedRefactorings;
     }
 
@@ -52,30 +57,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
      * creation.
      *
-     * @param originalProgram      the original program without any refactorings applied
-     * @param mutation             a strategy that tells how to perform mutation, not {@code null}
-     * @param crossover            a strategy that tells how to perform crossover, not {@code null}
-     * @param productions          a list of executed refactorings within the sequence, not {@code null}
-     * @param refactoringFinders   used refactoringFinders in the run, not {@code null}
-     * @param fitnessMap           A map of fitness functions and their value stored inside the solution, not {@code null}
-     * @param executedRefactorings A list of the concrete refactorings produced by the given list of productions, not {@code null}
-     * @throws NullPointerException if an argument is {@code null}
-     */
-    public RefactorSequence(Program originalProgram, Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
-                            List<Integer> productions, List<RefactoringFinder> refactoringFinders,
-                            Map<FitnessFunction<RefactorSequence>, Double> fitnessMap,
-                            List<Refactoring> executedRefactorings) throws NullPointerException {
-        super(mutation, crossover, fitnessMap);
-        this.originalProgram = originalProgram;
-        this.productions = Objects.requireNonNull(productions);
-        this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
-        this.executedRefactorings = Objects.requireNonNull(executedRefactorings);
-    }
-
-    /**
-     * Constructs a new chromosome, using the given mutation and crossover operators for offspring
-     * creation.
-     *
      * @param originalProgram    the original program without any refactorings applied
      * @param mutation           a strategy that tells how to perform mutation, not {@code null}
      * @param crossover          a strategy that tells how to perform crossover, not {@code null}
@@ -89,7 +70,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         this.originalProgram = originalProgram;
         this.productions = Objects.requireNonNull(productions);
         this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
-        this.executedRefactorings = new LinkedList<>();
     }
 
     /**
@@ -108,7 +88,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         this.originalProgram = originalProgram;
         this.productions = new LinkedList<>();
         this.refactoringFinders = refactoringFinders;
-        this.executedRefactorings = new LinkedList<>();
     }
 
     /**
@@ -168,7 +147,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         if (!(other instanceof RefactorSequence)) {
             return false;
         }
-        if (executedRefactorings.isEmpty()
+        if (executedRefactorings == null
                 && ((RefactorSequence) other).getProductions().equals(getProductions())) {
             return true;
         }
