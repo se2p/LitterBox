@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,16 +36,20 @@ class RefactorSequenceGeneratorTest {
 
     @Test
     void generateNewRefactorSequence() {
+
+        final int initialProductionsPerSolution = PropertyLoader.getSystemIntProperty("nsga-ii.initialProductionsPerSolution");
+        final int maxProductionNumber = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
+
         Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
         Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
 
         List<Integer> expectedProductions = List.of(1, 2);
 
         // returning 1 means 2 ints will be included since the formula uses (1 + random Number) to avoid 0
-        mockedRandomness.when(() -> Randomness.nextInt(10)).thenReturn(1);
+        mockedRandomness.when(() -> Randomness.nextInt(initialProductionsPerSolution)).thenReturn(1);
 
         // include the integers 1 and 2
-        mockedRandomness.when(() -> Randomness.nextInt(255)).thenReturn(1).thenReturn(2);
+        mockedRandomness.when(() -> Randomness.nextInt(maxProductionNumber)).thenReturn(1).thenReturn(2);
 
         RefactorSequenceGenerator generator = new RefactorSequenceGenerator(program, mutation, crossover, List.of());
         RefactorSequence generated = generator.get();
