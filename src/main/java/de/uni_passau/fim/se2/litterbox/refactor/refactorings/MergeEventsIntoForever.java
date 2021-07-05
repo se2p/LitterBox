@@ -18,11 +18,11 @@ import java.util.Objects;
 public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "merge_event_handler";
-    private ArrayList<Script> scriptList;
+    private List<Script> scriptList;
 
     private Script replacement;
 
-    public MergeEventsIntoForever(ArrayList<Script> eventList) {
+    public MergeEventsIntoForever(List<Script> eventList) {
         Preconditions.checkNotNull(eventList);
         Preconditions.checkArgument(eventList.size() > 0);
         this.scriptList = eventList;
@@ -34,8 +34,9 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         }
 
         // Create forever loop.
+        // TODO: Reuse stmts.get(0).getMetadata()?
         StmtList foreverStmt = new StmtList(new RepeatForeverStmt(new StmtList(ifThenArrayList),
-                apply(scriptList.get(0).getStmtList().getStatement(0).getMetadata())));
+                NonDataBlockMetadata.emptyNonBlockMetadata()));
 
         GreenFlag greenFlag = new GreenFlag(apply(scriptList.get(0).getEvent().getMetadata()));
         replacement = new Script(greenFlag, foreverStmt);
@@ -50,7 +51,8 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         IsKeyPressed expression = new IsKeyPressed(apply(pressed), keyMetaData);
         List<Stmt> stmts = apply(script.getStmtList()).getStmts();
 
-        return new IfThenStmt(expression, new StmtList(stmts), apply(stmts.get(0).getMetadata()));
+        // TODO: Reuse stmts.get(0).getMetadata()?
+        return new IfThenStmt(expression, new StmtList(stmts), NonDataBlockMetadata.emptyNonBlockMetadata());
     }
 
     @Override
@@ -93,7 +95,7 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
 
         for (int i = 0; i < this.scriptList.size(); i++) {
             if (this.scriptList.get(i).equals(that.scriptList.get(i)))
-                    equals = false;
+                equals = false;
         }
         return equals && Objects.equals(this.replacement, that.replacement);
     }
@@ -112,8 +114,8 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
             sb.append(" and ");
         }
         sb.delete(sb.length()-6 , sb.length()-1);
-        return NAME + System.lineSeparator() + "Merging" + sb +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Merging" + sb +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
     }
 
 }

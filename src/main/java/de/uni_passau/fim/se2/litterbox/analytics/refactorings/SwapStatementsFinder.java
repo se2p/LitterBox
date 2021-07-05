@@ -36,6 +36,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         inScript = false;
         currentScript = null;
     }
+
     @Override
     public void visit(StmtList stmtList) {
         if (!inScript) {
@@ -67,6 +68,6 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
 
     @Override
     public String getName() {
-        return SplitSlice.NAME;
+        return SwapStatements.NAME;
     }
 }

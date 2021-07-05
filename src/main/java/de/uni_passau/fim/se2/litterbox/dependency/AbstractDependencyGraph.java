@@ -5,8 +5,11 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
 import java.util.*;
@@ -53,6 +56,27 @@ public abstract class AbstractDependencyGraph {
         return Graphs.reachableNodes(graph, node);
     }
 
+    public Set<CFGNode> getGraphComponentOf(CFGNode node) {
+        Set<CFGNode> nodes = new LinkedHashSet<>();
+        Queue<CFGNode> toVisit = new ArrayDeque<>();
+        toVisit.add(node);
+
+        while (!toVisit.isEmpty()) {
+            CFGNode current = toVisit.remove();
+            if (!nodes.add(current)) {
+                continue;
+            }
+
+            for (CFGNode neighbour : graph.adjacentNodes(current)) {
+                if (!nodes.contains(neighbour)) {
+                    toVisit.add(neighbour);
+                }
+            }
+        }
+
+        return nodes;
+    }
+
     public Set<CFGNode> getNodes() {
         return Collections.unmodifiableSet(graph.nodes());
     }
@@ -69,6 +93,25 @@ public abstract class AbstractDependencyGraph {
         return graph.edges().size();
     }
 
+    public void removeNode(CFGNode node) {
+        graph.removeNode(node);
+    }
+
+    public void removeNode(ASTNode node) {
+        if (node instanceof ReceptionOfMessage) {
+            // Rely on exception if this doesn't exist
+            CFGNode cfgNode = getNode(((ReceptionOfMessage) node).getMsg()).get();
+            graph.removeNode(cfgNode);
+        } else if (node instanceof StartedAsClone) {
+            // Rely on exception if this doesn't exist
+            CFGNode cfgNode = cfg.stream().filter(n -> n instanceof CloneEventNode).findFirst().get();
+            graph.removeNode(cfgNode);
+        } else {
+            CFGNode cfgNode = getNode(node).get();
+            graph.removeNode(cfgNode);
+        }
+    }
+
     public Optional<CFGNode> getNode(ASTNode node) {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
@@ -79,34 +122,32 @@ public abstract class AbstractDependencyGraph {
         return graph.nodes().stream().filter(n -> transitiveStatements.contains(n.getASTNode())).collect(Collectors.toSet());
     }
 
-    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
+    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Stmt targetNode) {
         Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
-        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
+        CFGNode targetCFGNode = getNode(targetNode).get();
 
-        Set<CFGNode> visitedNodes = new LinkedHashSet<>();
-        Queue<CFGNode> queuedNodes = new ArrayDeque<>(targetCFGNodes);
-        while (!queuedNodes.isEmpty()) {
-            CFGNode currentNode = queuedNodes.remove();
-            if (sourceCFGNodes.contains(currentNode)) {
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
+            if (sourceCFGNodes.contains(edge.nodeU()) && targetCFGNode == edge.nodeV()) {
                 return true;
-            }
-            visitedNodes.add(currentNode);
-            for (CFGNode predecessor : graph.predecessors(currentNode)) {
-                if (!visitedNodes.contains(predecessor)) {
-                    queuedNodes.add(predecessor);
-                }
             }
         }
 
         return false;
     }
 
-    private boolean hasAnyEdge(Set<CFGNode> sourceNodes, Set<CFGNode> targetNodes) {
-        for (EndpointPair<CFGNode> edge : getEdges()) {
-            if (sourceNodes.contains(edge.nodeU()) && targetNodes.contains(edge.nodeV())) {
+    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
+        Set<CFGNode> sourceCFGNodes = getCFGNodes(sourceNodes);
+        Set<CFGNode> targetCFGNodes = getCFGNodes(targetNodes);
+
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
+            if (sourceCFGNodes.contains(edge.nodeU()) && targetCFGNodes.contains(edge.nodeV())) {
+                return true;
+            }
+            if (sourceCFGNodes.contains(edge.nodeV()) && targetCFGNodes.contains(edge.nodeU())) {
                 return true;
             }
         }
+
         return false;
     }
 

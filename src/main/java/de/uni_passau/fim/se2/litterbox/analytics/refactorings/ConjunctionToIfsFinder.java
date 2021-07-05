@@ -30,6 +30,6 @@ public class ConjunctionToIfsFinder extends AbstractRefactoringFinder {
 
     @Override
     public String getName() {
-        return IfsToConjunction.NAME;
+        return ConjunctionToIfs.NAME;
     }
 }

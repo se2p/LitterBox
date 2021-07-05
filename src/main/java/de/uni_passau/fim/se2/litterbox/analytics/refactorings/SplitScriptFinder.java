@@ -5,6 +5,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.ControlDependenceGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
+import de.uni_passau.fim.se2.litterbox.dependency.TimeDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitScript;
 
 import java.util.ArrayList;
@@ -33,6 +36,9 @@ public class SplitScriptFinder extends AbstractDependencyRefactoringFinder {
         }
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(script);
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        TimeDependenceGraph tdg = new TimeDependenceGraph(cfg);
+        DataDependenceGraph ddg = new DataDependenceGraph(cfg);
 
         StmtList stmts = script.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {
@@ -41,9 +47,9 @@ public class SplitScriptFinder extends AbstractDependencyRefactoringFinder {
             List<Stmt> stmts1 = new ArrayList<>(stmts.getStmts().subList(0, i));
             List<Stmt> stmts2 = new ArrayList<>(stmts.getStmts().subList(i, stmts.getNumberOfStatements()));
 
-            if (!hasControlDependency(cfg, stmts1, stmts2) &&
-                    !hasTimeDependency(cfg, stmts1, stmts2) &&
-                    !hasDataDependency(cfg, stmts1, stmts2) &&
+            if (!cdg.hasDependencyEdge(stmts1, stmts2) &&
+                    !tdg.hasDependencyEdge(stmts1, stmts2) &&
+                    !ddg.hasDependencyEdge(stmts1, stmts2) &&
                     !wouldCreateDataDependency(script, stmts2, stmts1)) {
                 refactorings.add(new SplitScript(script, splitPoint));
             }

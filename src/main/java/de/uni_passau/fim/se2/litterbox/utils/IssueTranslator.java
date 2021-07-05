@@ -38,6 +38,9 @@ public class IssueTranslator {
     public static final String VARIABLE = "variable";
     public static final String LIST = "list";
     public static final String ATTRIBUTE = "attribute";
+    public static final String LAYER = "layer";
+    public static final String VOLUME = "volume";
+    public static final String SOUND_EFFECT = "sound_effect";
 
     /**
      * Private constructor to avoid instatiation of singleton.
