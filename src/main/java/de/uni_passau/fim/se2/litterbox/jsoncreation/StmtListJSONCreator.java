@@ -707,7 +707,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(CreateCloneOf node) {
-        CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+        TopNonDataBlockWithParamMetadata metadata = (TopNonDataBlockWithParamMetadata) node.getMetadata();
         NonDataBlockMetadata cloneBlockMetadata = (NonDataBlockMetadata) metadata.getCloneBlockMetadata();
         List<String> inputs = new ArrayList<>();
         StringExpr stringExpr = node.getStringExpr();
@@ -806,7 +806,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createPenWithParamStmt(PenWithParamMetadata metadata, StringExpr stringExpr,
+    private void createPenWithParamStmt(NonDataBlockWithParamMetadata metadata, StringExpr stringExpr,
                                         NumExpr numExpr, Stmt node, Opcode opcode, Opcode dependentOpcode) {
         NonDataBlockMetadata penBlockMetadata = (NonDataBlockMetadata) metadata.getPenBlockMetadata();
         List<String> inputs = new ArrayList<>();
@@ -1078,13 +1078,13 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 

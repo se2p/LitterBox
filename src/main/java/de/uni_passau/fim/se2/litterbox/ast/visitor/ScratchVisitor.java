@@ -3370,7 +3370,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CloneOfMetadata}.
+     * Default implementation of visit method for {@link TopNonDataBlockWithParamMetadata}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -3379,7 +3379,7 @@ public interface ScratchVisitor {
      * @param node CloneOfMetadata Node of which the children will
      *             be iterated
      */
-    default void visit(CloneOfMetadata node) {
+    default void visit(TopNonDataBlockWithParamMetadata node) {
         visit((BlockMetadata) node);
     }
 

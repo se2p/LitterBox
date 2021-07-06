@@ -24,9 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -53,7 +53,7 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(CreateCloneOf node) {
-        CloneOfMetadata meta = (CloneOfMetadata) node.getMetadata();
+        TopNonDataBlockWithParamMetadata meta = (TopNonDataBlockWithParamMetadata) node.getMetadata();
         id = ((NonDataBlockMetadata) meta.getCloneBlockMetadata()).getBlockId();
     }
 
@@ -451,13 +451,13 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockWithParamMetadata meta = (NonDataBlockWithParamMetadata) node.getMetadata();
         id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockWithParamMetadata meta = (NonDataBlockWithParamMetadata) node.getMetadata();
         id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
     }
 

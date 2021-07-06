@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -158,10 +158,10 @@ public class CommonStmtParser {
             BlockMetadata cloneMenuMetadata = BlockMetadataParser.parse(cloneOptionMenu, optionBlock);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             LocalIdentifier ident = new StrId(cloneValue);
-            return new CreateCloneOf(new AsString(ident), new CloneOfMetadata(metadata, cloneMenuMetadata));
+            return new CreateCloneOf(new AsString(ident), new TopNonDataBlockWithParamMetadata(metadata, cloneMenuMetadata));
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
-            return new CreateCloneOf(stringExpr, new CloneOfMetadata(metadata, new NoBlockMetadata()));
+            return new CreateCloneOf(stringExpr, new TopNonDataBlockWithParamMetadata(metadata, new NoBlockMetadata()));
         }
     }
 

@@ -2970,7 +2970,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link PenWithParamMetadata}.
+     * Default implementation of visit method for {@link NonDataBlockWithParamMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -2980,8 +2980,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(PenWithParamMetadata node) {
-        return new PenWithParamMetadata(apply(node.getPenBlockMetadata()), apply(node.getParamMetadata()));
+    public ASTNode visit(NonDataBlockWithParamMetadata node) {
+        return new NonDataBlockWithParamMetadata(apply(node.getPenBlockMetadata()), apply(node.getParamMetadata()));
     }
 
     /**
@@ -3330,7 +3330,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CloneOfMetadata}.
+     * Default implementation of visit method for {@link TopNonDataBlockWithParamMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3340,8 +3340,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(CloneOfMetadata node) {
-        return new CloneOfMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
+    public ASTNode visit(TopNonDataBlockWithParamMetadata node) {
+        return new TopNonDataBlockWithParamMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
     }
 
     /*

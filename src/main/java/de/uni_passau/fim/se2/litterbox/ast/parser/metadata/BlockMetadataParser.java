@@ -64,4 +64,30 @@ public class BlockMetadataParser {
             return new DataBlockMetadata(blockId, x, y);
         }
     }
+
+    public static BlockMetadata parseParamBlock(String blockId, JsonNode blockNode, BlockMetadata paramMetadata) {
+        String commentId = null;
+        if (blockNode.has(COMMENT_KEY)) {
+            commentId = blockNode.get(COMMENT_KEY).asText();
+        }
+        String opcode = blockNode.get(OPCODE_KEY).asText();
+        boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
+        boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
+        MutationMetadata mutation;
+        if (blockNode.has(MUTATION_KEY) && !(opcode.equals(TerminationStmtOpcode.control_stop.getName()))) {
+            mutation = MutationMetadataParser.parse(blockNode.get(MUTATION_KEY));
+        } else {
+            mutation = new NoMutationMetadata();
+        }
+        if (!topLevel) {
+            return new NonDataBlockWithParamMetadata(commentId, blockId,
+                    shadow,
+                    mutation, paramMetadata);
+        }
+        double x = blockNode.get(X_KEY).asDouble();
+        double y = blockNode.get(Y_KEY).asDouble();
+        return new TopNonDataBlockWithParamMetadata(commentId, blockId,
+                shadow,
+                mutation, x, y, paramMetadata);
+    }
 }

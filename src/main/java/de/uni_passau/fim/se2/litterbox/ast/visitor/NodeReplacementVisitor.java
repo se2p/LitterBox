@@ -1722,7 +1722,7 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     }
 
     @Override
-    public ASTNode visit(PenWithParamMetadata node) {
+    public ASTNode visit(NonDataBlockWithParamMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }
@@ -1906,7 +1906,7 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     }
 
     @Override
-    public ASTNode visit(CloneOfMetadata node) {
+    public ASTNode visit(TopNonDataBlockWithParamMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }

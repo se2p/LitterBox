@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
@@ -82,7 +82,7 @@ public class RecursiveCloning extends AbstractIssueFinder {
                 final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
 
                 if (spriteName.equals("_myself_") && !foundDelete) {
-                    CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+                    TopNonDataBlockWithParamMetadata metadata = (TopNonDataBlockWithParamMetadata) node.getMetadata();
                     addIssue(node, metadata.getCloneBlockMetadata(), IssueSeverity.LOW);
                 }
             }

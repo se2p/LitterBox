@@ -37,9 +37,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.F
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -167,7 +167,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getStringExpr();
         if (stringExpr instanceof AsString && ((AsString) stringExpr).getOperand1() instanceof StrId) {
             StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
-            CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+            TopNonDataBlockWithParamMetadata metadata = (TopNonDataBlockWithParamMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(), CLONE_OPTION,
                     strid.getName());
         }
@@ -228,7 +228,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
@@ -244,7 +244,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
                     strid);
         }

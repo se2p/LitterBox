@@ -19,27 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class CloneOfMetadata extends AbstractNode implements BlockMetadata {
+public class NonDataBlockWithParamMetadata extends NonDataBlockMetadata {
+    private final BlockMetadata paramMetadata;
 
-    private final BlockMetadata cloneBlockMetadata;
-    private final BlockMetadata cloneMenuMetadata;
-
-    public CloneOfMetadata(BlockMetadata cloneBlockMetadata, BlockMetadata cloneMenuMetadata) {
-        super(cloneBlockMetadata, cloneMenuMetadata);
-        this.cloneBlockMetadata = cloneBlockMetadata;
-        this.cloneMenuMetadata = cloneMenuMetadata;
+    public NonDataBlockWithParamMetadata(String commentId, String blockId,
+                                         boolean shadow, MutationMetadata mutation, BlockMetadata paramMetadata) {
+        super(commentId, blockId, shadow, mutation);
+        this.paramMetadata = paramMetadata;
     }
 
-    public BlockMetadata getCloneBlockMetadata() {
-        return cloneBlockMetadata;
-    }
-
-    public BlockMetadata getCloneMenuMetadata() {
-        return cloneMenuMetadata;
+    public BlockMetadata getParamMetadata() {
+        return paramMetadata;
     }
 
     @Override
