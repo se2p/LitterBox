@@ -28,13 +28,21 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class InitializeLooksTest implements JsonTest {
+public class MatchingParameterTest implements JsonTest {
 
     @Test
-    public void testInitLooksInBlock() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLooksInBlock.json");
-        InitializeLooks initializeLooks = new InitializeLooks();
-        Set<Issue> reports = initializeLooks.check(prog);
+    public void testInizializedParameter() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/initializedParameter.json");
+        MatchingParameter matchingParameter = new MatchingParameter();
+        Set<Issue> reports = matchingParameter.check(prog);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testOrphanedParameter() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/orphanedParameter.json");
+        MatchingParameter matchingParameter = new MatchingParameter();
+        Set<Issue> reports = matchingParameter.check(prog);
+        Assertions.assertEquals(0, reports.size());
     }
 }

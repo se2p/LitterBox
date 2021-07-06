@@ -18,41 +18,44 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class InitializeLooks extends AbstractIssueFinder {
-
-    public static final String NAME = "initialize_looks";
-    public static final String HINT_STAGE = "initialize_looks_stage";
-    public static final String HINT_SPRITE = "initialize_looks_sprite";
-    private boolean inGreenFlag = false;
+/**
+ * This checks for an initialization for the sprite location. This initialization should usually happen in a
+ * GreenFlag script or a CustomBlock. As initial position for the sprite we set X = 0, Y = 0.
+ */
+public class InitialisationOfPosition extends AbstractIssueFinder {
+    public static final String NAME = "initialisation_of_position";
+    private boolean initializedX = false;
+    private boolean initializedY = false;
     private boolean inCustomBlock = false;
-    private List<String> customBlocks = new ArrayList<>();
+    private boolean inGreenFlag = false;
     private boolean initializedInBlock = false;
+    private List<String> customBlocks = new ArrayList<>();
 
     @Override
     public void visit(ActorDefinition actor) {
-        initializedInBlock = false;
         customBlocks = new ArrayList<>();
+        initializedX = false;
+        initializedY = false;
+        initializedInBlock = false;
         super.visit(actor);
     }
 
@@ -67,14 +70,13 @@ public class InitializeLooks extends AbstractIssueFinder {
             if (initializedInBlock) {
                 node.getStmtList().getStmts().forEach(stmt -> {
                     if (stmt instanceof CallStmt) {
+
+                        // Remove duplicates from custom block list
+                        customBlocks = customBlocks.stream().distinct().collect(Collectors.toList());
+
                         if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
-                            Hint hint;
-                            if (currentActor.isStage()) {
-                                hint = new Hint(HINT_STAGE);
-                            } else {
-                                hint = new Hint(HINT_SPRITE);
-                            }
-                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM, hint);
+
+                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
                             initializedInBlock = false;
                             customBlocks.remove(((CallStmt) stmt).getIdent().getName());
                         }
@@ -106,12 +108,9 @@ public class InitializeLooks extends AbstractIssueFinder {
                 ProcedureDefinition parent = (ProcedureDefinition) node.getParentNode();
 
                 for (Stmt stmt : node.getStmts()) {
-                    if (stmt instanceof SetSizeTo || stmt instanceof SwitchCostumeTo || stmt instanceof Show
-                            || stmt instanceof Hide || stmt instanceof ClearGraphicEffects
-                            || stmt instanceof SetGraphicEffectTo || stmt instanceof SwitchBackdrop) {
+                    if (stmt instanceof GoToPosXY || stmt instanceof SetXTo || stmt instanceof SetYTo) {
                         customBlocks.add(procMap.get(parent.getIdent()).getName());
                         stmt.accept(this);
-                        break;
                     }
                 }
             }
@@ -127,49 +126,40 @@ public class InitializeLooks extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(SwitchCostumeTo node) {
-        check(node);
+    public void visit(SetXTo stmt) {
+        if (stmt.getNum() instanceof NumberLiteral) {
+            initializedX = true;
+            if (initializedX && initializedY) {
+                check(stmt);
+                initializedX = false;
+                initializedY = false;
+            }
+        }
     }
 
     @Override
-    public void visit(SetSizeTo node) {
-        check(node);
+    public void visit(SetYTo stmt) {
+        if (stmt.getNum() instanceof NumberLiteral) {
+            initializedY = true;
+            if (initializedX && initializedY) {
+                check(stmt);
+                initializedX = false;
+                initializedY = false;
+            }
+        }
     }
 
     @Override
-    public void visit(Show node) {
-        check(node);
-    }
-
-    @Override
-    public void visit(Hide node) {
-        check(node);
-    }
-
-    @Override
-    public void visit(ClearGraphicEffects node) {
-        check(node);
-    }
-
-    @Override
-    public void visit(SetGraphicEffectTo node) {
-        check(node);
-    }
-
-    @Override
-    public void visit(SwitchBackdrop node) {
-        check(node);
+    public void visit(GoToPosXY stmt) {
+        if (stmt.getX() instanceof NumberLiteral
+                && stmt.getY() instanceof NumberLiteral) {
+            check(stmt);
+        }
     }
 
     private void check(AbstractNode node) {
         if (inGreenFlag) {
-            Hint hint;
-            if (currentActor.isStage() || node instanceof SwitchBackdrop) {
-                hint = new Hint(HINT_STAGE);
-            } else {
-                hint = new Hint(HINT_SPRITE);
-            }
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         } else if (inCustomBlock) {
             initializedInBlock = true;
         }
@@ -194,13 +184,5 @@ public class InitializeLooks extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.PERFUME;
-    }
-
-    @Override
-    public Collection<String> getHintKeys() {
-        List<String> keys = new ArrayList<>();
-        keys.add(HINT_STAGE);
-        keys.add(HINT_SPRITE);
-        return keys;
     }
 }

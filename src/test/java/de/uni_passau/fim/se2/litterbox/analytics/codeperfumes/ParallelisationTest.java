@@ -28,21 +28,29 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class InitializedParameterTest implements JsonTest {
+public class ParallelisationTest implements JsonTest {
 
     @Test
-    public void testInizializedParameter() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/initializedParameter.json");
-        InitializedParameter initializedParameter = new InitializedParameter();
-        Set<Issue> reports = initializedParameter.check(prog);
+    public void testTwoParallelization() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/parallelFlagAndKey.json");
+        Parallelisation parallelisation = new Parallelisation();
+        Set<Issue> reports = parallelisation.check(prog);
+        Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testIgnoreWrongParallelization() throws  IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/oneFakeParallel.json");
+        Parallelisation parallelisation = new Parallelisation();
+        Set<Issue> reports = parallelisation.check(prog);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testOrphanedParameter() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/orphanedParameter.json");
-        InitializedParameter initializedParameter = new InitializedParameter();
-        Set<Issue> reports = initializedParameter.check(prog);
-        Assertions.assertEquals(0, reports.size());
+    public void testSixParallelization() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/sixParallelThreeFake.json");
+        Parallelisation parallelisation = new Parallelisation();
+        Set<Issue> reports = parallelisation.check(prog);
+        Assertions.assertEquals(6, reports.size());
     }
 }

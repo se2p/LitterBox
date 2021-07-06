@@ -292,6 +292,7 @@ public abstract class BlockJsonCreatorHelper {
     public static String createReferenceType(int shadowIndicator, int typeNumber,
                                              String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
+        value = escape(value);
         jsonString.append("[").append(shadowIndicator)
                 .append(",")
                 .append("[")
@@ -317,5 +318,16 @@ public abstract class BlockJsonCreatorHelper {
             return createReferenceInput(inputName, INPUT_DIFF_BLOCK_SHADOW,
                     blockId, withDefault);
         }
+    }
+
+    public static String escape(String jsString) {
+        jsString = jsString.replace("\\", "\\\\");
+        jsString = jsString.replace("\"", "\\\"");
+        jsString = jsString.replace("\b", "\\b");
+        jsString = jsString.replace("\f", "\\f");
+        jsString = jsString.replace("\n", "\\n");
+        jsString = jsString.replace("\r", "\\r");
+        jsString = jsString.replace("\t", "\\t");
+        return jsString;
     }
 }

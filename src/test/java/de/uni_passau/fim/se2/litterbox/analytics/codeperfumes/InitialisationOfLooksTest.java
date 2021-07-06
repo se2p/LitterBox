@@ -28,29 +28,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class ParallelizationTest implements JsonTest {
+public class InitialisationOfLooksTest implements JsonTest {
 
     @Test
-    public void testTwoParallelization() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/parallelFlagAndKey.json");
-        Parallelization parallelization = new Parallelization();
-        Set<Issue> reports = parallelization.check(prog);
-        Assertions.assertEquals(2, reports.size());
-    }
-
-    @Test
-    public void testIgnoreWrongParallelization() throws  IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/oneFakeParallel.json");
-        Parallelization parallelization = new Parallelization();
-        Set<Issue> reports = parallelization.check(prog);
+    public void testInitLooksInBlock() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/initLooksInBlock.json");
+        InitialisationOfLooks initialisationOfLooks = new InitialisationOfLooks();
+        Set<Issue> reports = initialisationOfLooks.check(prog);
         Assertions.assertEquals(1, reports.size());
-    }
-
-    @Test
-    public void testSixParallelization() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/sixParallelThreeFake.json");
-        Parallelization parallelization = new Parallelization();
-        Set<Issue> reports = parallelization.check(prog);
-        Assertions.assertEquals(6, reports.size());
     }
 }
