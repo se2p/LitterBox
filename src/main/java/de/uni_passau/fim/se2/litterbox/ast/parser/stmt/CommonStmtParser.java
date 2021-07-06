@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -83,7 +82,7 @@ public class CommonStmtParser {
                 return parseControlStop(current, metadata);
 
             case control_create_clone_of:
-                return parseCreateCloneOf(current, allBlocks, metadata);
+                return parseCreateCloneOf(current, allBlocks, blockId);
 
             case event_broadcast:
                 return parseBroadcast(current, allBlocks, metadata);
@@ -111,7 +110,7 @@ public class CommonStmtParser {
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-            var = new UnspecifiedId();
+            throw new ParsingException("Variable / List ID not specified in JSON");
         } else {
             VariableInfo variableInfo
                     = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
@@ -146,7 +145,7 @@ public class CommonStmtParser {
         return broadcast;
     }
 
-    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, String blockId)
             throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         List<JsonNode> inputsList = new ArrayList<>();
@@ -158,10 +157,12 @@ public class CommonStmtParser {
             BlockMetadata cloneMenuMetadata = BlockMetadataParser.parse(cloneOptionMenu, optionBlock);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             LocalIdentifier ident = new StrId(cloneValue);
-            return new CreateCloneOf(new AsString(ident), new CloneOfMetadata(metadata, cloneMenuMetadata));
+            BlockMetadata metadata = BlockMetadataParser.parseParamBlock(blockId, current, cloneMenuMetadata);
+            return new CreateCloneOf(new AsString(ident), metadata);
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
-            return new CreateCloneOf(stringExpr, new CloneOfMetadata(metadata, new NoBlockMetadata()));
+            BlockMetadata metadata = BlockMetadataParser.parseParamBlock(blockId, current, new NoBlockMetadata());
+            return new CreateCloneOf(stringExpr, metadata);
         }
     }
 

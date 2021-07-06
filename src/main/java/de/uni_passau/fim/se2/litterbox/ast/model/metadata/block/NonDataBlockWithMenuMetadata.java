@@ -16,26 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.VariableMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.List;
+public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
+    private final BlockMetadata menuMetadata;
 
-public class VariableMetadataList extends AbstractNode {
-    private List<VariableMetadata> list;
-
-    public VariableMetadataList(List<VariableMetadata> list) {
-        super(list);
-        this.list = list;
+    public NonDataBlockWithMenuMetadata(String commentId, String blockId,
+                                        boolean shadow, MutationMetadata mutation, BlockMetadata menuMetadata) {
+        super(commentId, blockId, shadow, mutation);
+        this.menuMetadata = menuMetadata;
     }
 
-    public List<VariableMetadata> getList() {
-        return list;
+    public BlockMetadata getMenuMetadata() {
+        return menuMetadata;
     }
 
     @Override

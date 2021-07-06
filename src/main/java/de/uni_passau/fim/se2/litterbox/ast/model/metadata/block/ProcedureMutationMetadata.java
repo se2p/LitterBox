@@ -16,26 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.BroadcastMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.List;
+public class ProcedureMutationMetadata extends AbstractNode implements MutationMetadata, ASTLeaf {
+    private boolean warp;
 
-public class BroadcastMetadataList extends AbstractNode {
-    private List<BroadcastMetadata> list;
-
-    public BroadcastMetadataList(List<BroadcastMetadata> list) {
-        super(list);
-        this.list = list;
+    public ProcedureMutationMetadata(boolean warp) {
+        super();
+        this.warp = warp;
     }
 
-    public List<BroadcastMetadata> getList() {
-        return list;
+    public ProcedureMutationMetadata(ProcedureMutationMetadata orig) {
+        this(orig.warp);
+    }
+
+    public boolean isWarp() {
+        return warp;
     }
 
     @Override

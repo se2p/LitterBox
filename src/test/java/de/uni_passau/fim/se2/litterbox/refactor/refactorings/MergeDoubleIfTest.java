@@ -55,7 +55,7 @@ class MergeDoubleIfTest implements JsonTest {
         List<Stmt> stmtList = script.getStmtList().getStmts();
         IfThenStmt if1 = null;
         IfThenStmt if2 = null;
-        for (Stmt stmt :stmtList) {
+        for (Stmt stmt : stmtList) {
             if (stmt instanceof IfThenStmt) {
                 if (if1 == null) {
                     if1 = (IfThenStmt) stmt;
@@ -85,16 +85,16 @@ class MergeDoubleIfTest implements JsonTest {
         refactored.accept(scratchBlocksVisitor);
         String scratchBlocks = scratchBlocksVisitor.getScratchBlocks();
         assertThat(scratchBlocks).isEqualTo(
-                "when green flag clicked\n"
-                        + "forever \n"
-                        + "if <touching (mouse-pointer v) ?> then\n"
-                        + "move (10) steps\n"
-                        + "end\n"
-                        + "if <touching (edge v) ?> then\n"
-                        + "move (5) steps\n"
-                        + "move (2) steps\n"
-                        + "end\n"
-                        + "end\n");
+                "when green flag clicked" + System.lineSeparator()
+                        + "forever " + System.lineSeparator()
+                        + "if <touching (mouse-pointer v) ?> then" + System.lineSeparator()
+                        + "move (10) steps" + System.lineSeparator()
+                        + "end" + System.lineSeparator()
+                        + "if <touching (edge v) ?> then" + System.lineSeparator()
+                        + "move (5) steps" + System.lineSeparator()
+                        + "move (2) steps" + System.lineSeparator()
+                        + "end" + System.lineSeparator()
+                        + "end" + System.lineSeparator());
     }
 
     @Test
@@ -104,23 +104,23 @@ class MergeDoubleIfTest implements JsonTest {
 
     @Test
     void toStringTest() {
-        assertThat(refactoring.toString()).isEqualTo("merge_double_if\n"
-                + "Replaced ifs:\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (5) steps\n"
-                + "end\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (2) steps\n"
-                + "end\n"
-                + "\n"
-                + "Replacement:\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (5) steps\n"
-                + "move (2) steps\n"
-                + "end\n");
+        assertThat(refactoring.toString()).isEqualTo("merge_double_if" + System.lineSeparator()
+                + "Replaced ifs:" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (5) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (2) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator()
+                + System.lineSeparator()
+                + "Replacement:" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (5) steps" + System.lineSeparator()
+                + "move (2) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator());
     }
 
     @Test

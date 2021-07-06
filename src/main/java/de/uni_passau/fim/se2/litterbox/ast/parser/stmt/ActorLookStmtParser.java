@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
@@ -94,7 +93,7 @@ public class ActorLookStmtParser {
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON");
                 } else {
                     variableInfo
                             = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
@@ -107,7 +106,7 @@ public class ActorLookStmtParser {
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON");
                 } else {
                     variableInfo
                             = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
@@ -121,7 +120,7 @@ public class ActorLookStmtParser {
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON");
                 } else {
                     expressionListInfo
                             = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
@@ -134,7 +133,7 @@ public class ActorLookStmtParser {
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON");
                 } else {
                     expressionListInfo
                             = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();

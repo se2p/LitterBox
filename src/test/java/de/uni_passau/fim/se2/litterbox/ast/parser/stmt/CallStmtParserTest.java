@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CallMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -54,7 +54,7 @@ public class CallStmtParserTest implements JsonTest {
                 CallStmt callStmt = (CallStmt) stmt;
                 List<Expression> expressions = callStmt.getExpressions().getExpressions();
                 assertTrue(callStmt.getMetadata() instanceof TopNonDataBlockMetadata);
-                assertTrue(((TopNonDataBlockMetadata) callStmt.getMetadata()).getMutation() instanceof CallMutationMetadata);
+                assertTrue(((TopNonDataBlockMetadata) callStmt.getMetadata()).getMutation() instanceof ProcedureMutationMetadata);
                 assertTrue(expressions.get(0) instanceof Volume);
                 assertTrue(((Volume) expressions.get(0)).getMetadata() instanceof NonDataBlockMetadata);
                 Expression biggerThan = expressions.get(1);
