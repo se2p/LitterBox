@@ -37,9 +37,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.F
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -167,8 +168,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getStringExpr();
         if (stringExpr instanceof AsString && ((AsString) stringExpr).getOperand1() instanceof StrId) {
             StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
-            TopNonDataBlockWithParamMetadata metadata = (TopNonDataBlockWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(), CLONE_OPTION,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, CLONE_OPTION,
                     strid.getName());
         }
     }
@@ -228,8 +236,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
     }
@@ -244,8 +259,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
     }

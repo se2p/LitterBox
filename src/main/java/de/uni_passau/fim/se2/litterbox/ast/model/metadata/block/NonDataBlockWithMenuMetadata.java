@@ -22,17 +22,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class NonDataBlockWithParamMetadata extends NonDataBlockMetadata {
-    private final BlockMetadata paramMetadata;
+public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
+    private final BlockMetadata menuMetadata;
 
-    public NonDataBlockWithParamMetadata(String commentId, String blockId,
-                                         boolean shadow, MutationMetadata mutation, BlockMetadata paramMetadata) {
+    public NonDataBlockWithMenuMetadata(String commentId, String blockId,
+                                        boolean shadow, MutationMetadata mutation, BlockMetadata menuMetadata) {
         super(commentId, blockId, shadow, mutation);
-        this.paramMetadata = paramMetadata;
+        this.menuMetadata = menuMetadata;
     }
 
-    public BlockMetadata getParamMetadata() {
-        return paramMetadata;
+    public BlockMetadata getMenuMetadata() {
+        return menuMetadata;
     }
 
     @Override

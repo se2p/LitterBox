@@ -25,7 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithMenuMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
@@ -63,7 +64,7 @@ public class CommonStmtParserTest implements JsonTest {
         Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(StopOtherScriptsInSprite.class);
         Truth.assertThat(((StopOtherScriptsInSprite) listOfStmt.get(2)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
         Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(CreateCloneOf.class);
-        Truth.assertThat(((CreateCloneOf) listOfStmt.get(3)).getMetadata().getClass()).isEqualTo(TopNonDataBlockWithParamMetadata.class);
+        Truth.assertThat(((CreateCloneOf) listOfStmt.get(3)).getMetadata().getClass()).isEqualTo(NonDataBlockWithMenuMetadata.class);
         Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(Broadcast.class);
         Truth.assertThat(((Broadcast) listOfStmt.get(4)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
         Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(BroadcastAndWait.class);

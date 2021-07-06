@@ -707,23 +707,29 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(CreateCloneOf node) {
-        TopNonDataBlockWithParamMetadata metadata = (TopNonDataBlockWithParamMetadata) node.getMetadata();
-        NonDataBlockMetadata cloneBlockMetadata = (NonDataBlockMetadata) metadata.getCloneBlockMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         StringExpr stringExpr = node.getStringExpr();
         IdJsonStringTuple tuple;
-
-        if (!(metadata.getCloneMenuMetadata() instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(cloneBlockMetadata.getBlockId(), node, node.getCloneMenuOpcode());
+        BlockMetadata menuMetadata;
+        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
+            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        } else {
+            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        }
+        if (!(menuMetadata instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, node.getCloneMenuOpcode());
             inputs.add(createReferenceInput(CLONE_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr(cloneBlockMetadata, CLONE_OPTION, stringExpr));
+            inputs.add(createExpr(metadata, CLONE_OPTION, stringExpr));
         }
-        finishedJSONStrings.add(createBlockWithoutMutationString(cloneBlockMetadata, getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
 
-        previousBlockId = cloneBlockMetadata.getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -806,26 +812,33 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createPenWithParamStmt(NonDataBlockWithParamMetadata metadata, StringExpr stringExpr,
+    private void createPenWithParamStmt(NonDataBlockMetadata metadata, StringExpr stringExpr,
                                         NumExpr numExpr, Stmt node, Opcode opcode, Opcode dependentOpcode) {
-        NonDataBlockMetadata penBlockMetadata = (NonDataBlockMetadata) metadata.getPenBlockMetadata();
+
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
-
-        if (!(metadata.getParamMetadata() instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(penBlockMetadata.getBlockId(), node, dependentOpcode);
+        BlockMetadata menuMetadata;
+        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
+            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        } else {
+            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        }
+        if (!(menuMetadata instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, dependentOpcode);
             inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr(penBlockMetadata, COLOR_PARAM_BIG_KEY, stringExpr));
+            inputs.add(createExpr(metadata, COLOR_PARAM_BIG_KEY, stringExpr));
         }
 
-        inputs.add(createNumExpr(penBlockMetadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(metadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
 
-        finishedJSONStrings.add(createBlockWithoutMutationString(penBlockMetadata, getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, opcode));
 
-        previousBlockId = penBlockMetadata.getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -1078,13 +1091,13 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        NonDataBlockWithParamMetadata metadata = (NonDataBlockWithParamMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
