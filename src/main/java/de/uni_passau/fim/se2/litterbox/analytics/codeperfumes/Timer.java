@@ -88,21 +88,25 @@ public class Timer extends AbstractIssueFinder {
             node.getStmts().forEach(stmt -> {
                 if (stmt instanceof WaitSeconds) {
                     waitSec = true;
-                } else if (stmt instanceof ChangeVariableBy) {
-                    if (waitSec) {
-                        if (((ChangeVariableBy) stmt).getIdentifier() instanceof Qualified) {
-                            Qualified changedVariable = (Qualified) ((ChangeVariableBy) stmt).getIdentifier();
-                            for (Qualified var : setVariables) {
-                                if (changedVariable.equals(var)) {
-                                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
-                                    waitSec = false;
-                                    break;
+                }
+            });
+            node.getStmts().forEach(stmt -> {
+                        if (stmt instanceof ChangeVariableBy) {
+                            if (waitSec) {
+                                if (((ChangeVariableBy) stmt).getIdentifier() instanceof Qualified) {
+                                    Qualified changedVariable = (Qualified) ((ChangeVariableBy) stmt).getIdentifier();
+                                    for (Qualified var : setVariables) {
+                                        if (changedVariable.equals(var)) {
+                                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                );
+            waitSec = false;
         } else {
             visitChildren(node);
         }
