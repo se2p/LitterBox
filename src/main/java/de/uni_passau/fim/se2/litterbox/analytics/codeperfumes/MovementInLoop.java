@@ -101,6 +101,14 @@ public class MovementInLoop extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(PointInDirection node) {
+        if (hasKeyPressed && !subsequentMovement) {
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            subsequentMovement = true;
+        }
+    }
+
+    @Override
     public void visit(TurnRight node) {
         if (hasKeyPressed && !subsequentMovement) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
