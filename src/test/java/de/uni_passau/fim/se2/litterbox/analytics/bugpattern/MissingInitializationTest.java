@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MissingInitializationTest implements JsonTest {
@@ -160,5 +163,16 @@ public class MissingInitializationTest implements JsonTest {
         MissingInitialization initialization = new MissingInitialization();
         Set<Issue> reports = (initialization).check(program);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testMissingInitializationCostumeInCloneScript() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingInitClone.json");
+        MissingInitialization initialization = new MissingInitialization();
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(MissingInitialization.NAME_CLONE);
+        hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
     }
 }

@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -38,6 +39,7 @@ import java.util.*;
 public class MissingInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_initialization";
+    public static final String NAME_CLONE = "missing_initialization_clone";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -78,21 +80,28 @@ public class MissingInitialization extends AbstractIssueFinder {
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
                             != use.getUseTarget().getScriptOrProcedure())) {
 
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                Hint hint;
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script) {
+                    if (((Script) containingScript).getEvent() instanceof StartedAsClone) {
+                        hint = new Hint(NAME_CLONE);
+                    } else {
+                        hint = new Hint(getName());
+                    }
+                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null,  // TODO: Where is the relevant metadata?
+                            use.getUseTarget().getASTNode().getMetadata(),
                             hint));
                 } else {
+                    hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null, // TODO: Where is the relevant metadata
+                            use.getUseTarget().getASTNode().getMetadata(),
                             hint));
                 }
             }
@@ -106,29 +115,27 @@ public class MissingInitialization extends AbstractIssueFinder {
         if (def instanceof Variable) {
             result = IssueTranslator.getInstance().getInfo(IssueTranslator.VARIABLE);
             result += " \"";
-            Variable var = (Variable)def;
+            Variable var = (Variable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier)var.getIdentifier()).getName();
+                result += ((LocalIdentifier) var.getIdentifier()).getName();
             } else {
-                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
+                result += ((Qualified) var.getIdentifier()).getSecond().getName().getName();
             }
             result += "\"";
-
         } else if (def instanceof ListVariable) {
             result = IssueTranslator.getInstance().getInfo(IssueTranslator.LIST);
             result += " \"";
-            ListVariable var = (ListVariable)def;
+            ListVariable var = (ListVariable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier)var.getIdentifier()).getName();
+                result += ((LocalIdentifier) var.getIdentifier()).getName();
             } else {
-                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
+                result += ((Qualified) var.getIdentifier()).getSecond().getName().getName();
             }
             result += "\"";
-
         } else if (def instanceof Attribute) {
             result = IssueTranslator.getInstance().getInfo(IssueTranslator.ATTRIBUTE);
             result += " \"";
-            Attribute attr = (Attribute)def;
+            Attribute attr = (Attribute) def;
             switch (attr.getAttributeType()) {
                 case SIZE:
                     result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
@@ -156,7 +163,6 @@ public class MissingInitialization extends AbstractIssueFinder {
                     break;
             }
             result += "\"";
-
         }
         return result;
     }
@@ -178,7 +184,9 @@ public class MissingInitialization extends AbstractIssueFinder {
 
     @Override
     public Collection<String> getHintKeys() {
-        // Default: Only one key with the name of the finder
-        return Arrays.asList(getName());
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(NAME_CLONE);
+        return keys;
     }
 }
