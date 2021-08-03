@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -169,7 +168,7 @@ public class StringExprParser {
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {
-                    var = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON.");
                 }
                 return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:

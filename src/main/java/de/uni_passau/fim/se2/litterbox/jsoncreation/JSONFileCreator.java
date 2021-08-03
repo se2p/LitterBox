@@ -34,37 +34,43 @@ import java.util.Arrays;
 
 public class JSONFileCreator {
 
-    public static void writeJsonFromProgram(Program program) throws FileNotFoundException {
+    private JSONFileCreator() {
+    }
+
+    private static final String JSON = ".json";
+    private static final String SB3 = ".sb3";
+
+    public static void writeJsonFromProgram(Program program, String postfix) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-        try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
+        try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
     }
 
-    public static void writeJsonFromProgram(Program program, String output) throws FileNotFoundException {
+    public static void writeJsonFromProgram(Program program, String output, String postfix) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        Path outPath = Paths.get(output, program.getIdent().getName() + "_annotated.json");
+        Path outPath = Paths.get(output, program.getIdent().getName() + postfix + JSON);
         try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
         }
     }
 
-    public static void writeSb3FromProgram(Program program, String output, File file) throws IOException {
+    public static void writeSb3FromProgram(Program program, String outputPath, File sourceSB3File, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        String destinationPath = Paths.get(output, program.getIdent().getName() + "_annotated.sb3").toString();
+        String destinationPath = Paths.get(outputPath, program.getIdent().getName() + postfix + SB3).toString();
         Path tmp = Files.createTempDirectory("litterbox_");
 
-        try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
+        try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
 
-        ZipFile zipFile = new ZipFile(file);
+        ZipFile zipFile = new ZipFile(sourceSB3File);
         zipFile.extractAll(String.valueOf(tmp));
 
         File tempProj = new File(tmp + "/project.json");
-        File annotatedJson = new File(program.getIdent().getName() + "_annotated.json");
+        File annotatedJson = new File(program.getIdent().getName() + postfix + JSON);
 
         Files.copy(annotatedJson.toPath(), tempProj.toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.delete(annotatedJson.toPath());

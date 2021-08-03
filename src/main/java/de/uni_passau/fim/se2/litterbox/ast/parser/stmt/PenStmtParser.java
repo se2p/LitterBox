@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
@@ -56,29 +55,38 @@ public class PenStmtParser {
                             + " a statement. Opcode is " + opCodeString);
         }
         final PenOpcode opcode = PenOpcode.valueOf(opCodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
+        BlockMetadata metadata;
         switch (opcode) {
             case pen_clear:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new PenClearStmt(metadata);
             case pen_penDown:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new PenDownStmt(metadata);
             case pen_penUp:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new PenUpStmt(metadata);
             case pen_stamp:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new PenStampStmt(metadata);
             case pen_setPenColorToColor:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new SetPenColorToColorStmt(ColorParser.parseColor(current, COLOR_KEY, blocks), metadata);
             case pen_changePenColorParamBy:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
                 StringExpr param = parseParam(current, blocks);
-                return new ChangePenColorParamBy(numExpr, param, new PenWithParamMetadata(metadata, paramMetadata));
+                metadata = BlockMetadataParser.parseParamBlock(blockId, current, paramMetadata);
+                return new ChangePenColorParamBy(numExpr, param, metadata);
             case pen_setPenColorParamTo:
                 numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
                 param = parseParam(current, blocks);
-                return new SetPenColorParamTo(numExpr, param, new PenWithParamMetadata(metadata, paramMetadata));
+                metadata = BlockMetadataParser.parseParamBlock(blockId, current, paramMetadata);
+                return new SetPenColorParamTo(numExpr, param, metadata);
             case pen_setPenSizeTo:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return parseSetPenSizeTo(current, blocks, metadata);
             case pen_changePenSizeBy:
+                metadata = BlockMetadataParser.parse(blockId, current);
                 return new ChangePenSizeBy(NumExprParser.parseNumExpr(current, SIZE_KEY_CAP,
                         blocks), metadata);
             default:

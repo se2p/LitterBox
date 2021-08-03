@@ -37,7 +37,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 
-public class JSONReportGenerator implements ReportGenerator {
+public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
 
     private OutputStream outputStream;
 
@@ -146,15 +146,6 @@ public class JSONReportGenerator implements ReportGenerator {
         printStream.print(jsonString);
         if (closeStream) {
             outputStream.close();
-        }
-    }
-
-    private void addMetrics(ObjectNode metricsNode, Program program) {
-        MetricTool tool = new MetricTool();
-
-        for (MetricExtractor metric : tool.getAnalyzers()) {
-            double value = metric.calculateMetric(program);
-            metricsNode.put(metric.getName(), value);
         }
     }
 }

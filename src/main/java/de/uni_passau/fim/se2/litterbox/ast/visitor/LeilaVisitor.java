@@ -984,7 +984,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitNoSpace("if (");
         ifElseStmt.getBoolExpr().accept(this);
         emitNoSpace(") then");
-        ifElseStmt.getStmtList().accept(this);
+        ifElseStmt.getThenStmts().accept(this);
 
         emitNoSpace("else");
         ifElseStmt.getElseStmts().accept(this);

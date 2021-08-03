@@ -22,6 +22,7 @@ import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -30,6 +31,8 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
+    private static final String REFACTOR = "refactor";
+    private static final String REFACTOR_SHORT = "r";
     private static final String CHECK = "check";
     private static final String CHECK_SHORT = "c";
     private static final String LEILA = "leila";
@@ -58,6 +61,8 @@ public class Main {
     private static final String OUTPUT_SHORT = "o";
     private static final String ANNOTATE = "annotate";
     private static final String ANNOTATE_SHORT = "a";
+    private static final String REFACTORED_PROJECTS = "refactored-projects";
+    private static final String REFACTORED_PROJECTS_SHORT = "e"; // rEfactored
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
     private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
@@ -70,6 +75,7 @@ public class Main {
 
         // Operation mode
         OptionGroup mainMode = new OptionGroup();
+        mainMode.addOption(new Option(REFACTOR_SHORT, REFACTOR, false, "Refactor specified Scratch projects"));
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
@@ -103,6 +109,7 @@ public class Main {
                         + "(file will be created if not existing yet, path has to exist)");
         options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should"
                 + " be created");
+        options.addOption(REFACTORED_PROJECTS_SHORT, REFACTORED_PROJECTS, true, "path where the refactored scratch projects should be created");
 
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
@@ -127,6 +134,7 @@ public class Main {
         System.out.println("Example for Leila intermediate language output: "
                 + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path "
                 + "~/path/to/json/project/or/folder/with/projects \n");
+        System.out.println("Example for refactoring: java -jar Litterbox-1.0.jar -r -p ~/path/to/project -e /path/to/output/folder");
 
         System.out.println("Detectors:");
         IssueTranslator messages = IssueTranslator.getInstance();
@@ -141,7 +149,24 @@ public class Main {
         ));
     }
 
-    static void checkPrograms(CommandLine cmd) throws ParseException {
+    static void refactorPrograms(CommandLine cmd) throws ParseException, IOException {
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+        String outputPath = cmd.getOptionValue(OUTPUT);
+        String refactoredPath = cmd.getOptionValue(REFACTORED_PROJECTS);
+        String input = cmd.getOptionValue(PROJECTPATH);
+        boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
+
+        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, delete);
+
+
+
+        runAnalysis(cmd, refactorer);
+    }
+
+    static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
         String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
         String path;
@@ -193,7 +218,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    private static void featurePrograms(CommandLine cmd) throws ParseException {
+    private static void featurePrograms(CommandLine cmd) throws ParseException, IOException {
         if (!cmd.hasOption(OUTPUT)) {
             throw new ParseException("Output path option '" + OUTPUT + "' required");
         }
@@ -208,7 +233,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
+    static void runAnalysis(CommandLine cmd, Analyzer analyzer) throws IOException {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
             analyzer.analyzeSingle(projectId);
@@ -229,7 +254,9 @@ public class Main {
             String lang = cmd.getOptionValue(OUTPUT_LANG, "en");
             IssueTranslator.getInstance().setLanguage(lang);
 
-            if (cmd.hasOption(CHECK)) {
+            if (cmd.hasOption(REFACTOR)) {
+                refactorPrograms(cmd);
+            } else if (cmd.hasOption(CHECK)) {
                 checkPrograms(cmd);
             } else if (cmd.hasOption(STATS)) {
                 statsPrograms(cmd);
@@ -244,11 +271,13 @@ public class Main {
             System.err.println("Invalid option: " + parseException.getMessage());
             printHelp();
         } catch (IOException ioException) {
-            System.err.println("Error while trying to read project: " + ioException.getMessage());
+            System.err.println("Error while trying to read/write project: " + ioException.getMessage());
         } catch (ParsingException parseException) {
             System.err.println("Error while trying to parse project: " + parseException.getMessage());
         }
     }
+
+
 
     /**
      * Entry point to LitterBox where the arguments are parsed and the selected functionality is called.
@@ -256,6 +285,8 @@ public class Main {
      * @param args Arguments that are parsed as options.
      */
     public static void main(String[] args) {
+        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
+        PropertyLoader.setGlobalLoggingLevelFromEnvironment();
         parseCommandLine(args);
     }
 }

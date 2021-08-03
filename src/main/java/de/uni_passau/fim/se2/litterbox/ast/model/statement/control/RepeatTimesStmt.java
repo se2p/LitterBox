@@ -23,13 +23,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
+public class RepeatTimesStmt extends AbstractNode implements LoopStmt {
 
     private final NumExpr times;
     private final StmtList stmtList;
@@ -40,6 +41,7 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
         this.times = Preconditions.checkNotNull(times);
         this.stmtList = Preconditions.checkNotNull(stmtList);
         this.metadata = metadata;
+        Preconditions.checkArgument(metadata instanceof NonDataBlockMetadata);
     }
 
     @Override
@@ -51,6 +53,7 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
         return times;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }

@@ -127,6 +127,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
+    private boolean requireScript = true;
+
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
@@ -156,6 +158,22 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             //       issues, as this is an implicit assumption here. Otherwise
             //       variables such as currentActor may not be initialised
         }
+    }
+
+    /**
+     *
+     * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
+     *                      i.e., without their context in a script.
+     *                      This prevents certain blocks from not being printed as they have to be ignored if they
+     *                      occur outside of scripts when printing whole programs.
+     */
+    public ScratchBlocksVisitor(boolean requireScript) {
+        this();
+        this.requireScript = requireScript;
+    }
+
+    public boolean isIgnoredBlock() {
+        return !inScript && requireScript;
     }
 
     public void setCurrentActor(ActorDefinition node) {
@@ -438,7 +456,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         storeNotesForIssue(ifElseStmt);
         newLine();
         beginIndentation();
-        ifElseStmt.getStmtList().accept(this);
+        ifElseStmt.getThenStmts().accept(this);
         endIndentation();
         emitNoSpace("else");
         newLine();
@@ -1082,7 +1100,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SetVariableTo node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace("set [");
@@ -1258,7 +1276,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(NumberLiteral number) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
 
@@ -1373,7 +1391,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(ScratchList node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1382,7 +1400,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Variable node) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         node.getName().accept(this);
@@ -1406,7 +1424,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        if (inScript) {
+        if (!isIgnoredBlock()) {
             emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
             emitNoSpace("]");
@@ -1932,7 +1950,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StrId strId) {
-        if (!inScript) {
+        if (isIgnoredBlock()) {
             return;
         }
         emitNoSpace(strId.getName());

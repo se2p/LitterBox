@@ -47,10 +47,12 @@ public class IfThenStmt extends AbstractNode implements IfStmt {
         return metadata;
     }
 
+    @Override
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
+    @Override
     public StmtList getThenStmts() {
         return thenStmts;
     }

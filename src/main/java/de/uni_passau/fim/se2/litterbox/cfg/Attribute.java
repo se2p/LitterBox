@@ -45,12 +45,32 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.ROTATION);
     }
 
-    public static Attribute costumeOf(LocalIdentifier actorIdentifier) {
-        return new Attribute(actorIdentifier, AttributeType.COSTUME);
-    }
-
     public static Attribute sizeOf(LocalIdentifier actorIdentifier) {
         return new Attribute(actorIdentifier, AttributeType.SIZE);
+    }
+
+    public static Attribute visibilityOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VISIBILITY);
+    }
+
+    public static Attribute soundEffectOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.SOUND_EFFECT);
+    }
+
+    public static Attribute volumeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VOLUME);
+    }
+
+    public static Attribute layerOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.LAYER);
+    }
+
+    public static Attribute appearanceOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.APPEARANCE);
+    }
+
+    public LocalIdentifier getActorIdentifier() {
+        return actorIdentifier;
     }
 
     public AttributeType getAttributeType() {
@@ -76,8 +96,7 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
-        // VISIBILITY, LAYER, EFFECT
+        POSITION, ROTATION, SIZE, VISIBILITY, SOUND_EFFECT, VOLUME, LAYER, APPEARANCE //, BUBBLESTATE //, BACKDROP
     }
 
     //public static Attribute backdropOf(ActorDefinition actor) {

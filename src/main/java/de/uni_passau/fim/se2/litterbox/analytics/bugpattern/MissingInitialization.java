@@ -65,6 +65,15 @@ public class MissingInitialization extends AbstractIssueFinder {
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         for (Use use : initialUses) {
+
+            if (use.getDefinable() instanceof Attribute) {
+                if (((Attribute)use.getDefinable()).getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
+                    // TODO: Handle visibility properly in a way that does not produce too many false positives
+                    // e.g. only report this if there is a hide statement?
+                    continue;
+                }
+            }
+
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
             if (initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
@@ -131,7 +140,7 @@ public class MissingInitialization extends AbstractIssueFinder {
                 case SIZE:
                     result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
                     break;
-                case COSTUME:
+                case APPEARANCE:
                     result += IssueTranslator.getInstance().getInfo(IssueTranslator.COSTUME);
                     break;
                 case POSITION:
@@ -139,6 +148,18 @@ public class MissingInitialization extends AbstractIssueFinder {
                     break;
                 case ROTATION:
                     result += IssueTranslator.getInstance().getInfo(IssueTranslator.ROTATION);
+                    break;
+                case VISIBILITY:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VISIBILITY);
+                    break;
+                case VOLUME:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VOLUME);
+                    break;
+                case SOUND_EFFECT:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SOUND_EFFECT);
+                    break;
+                case LAYER:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.LAYER);
                     break;
             }
             result += "\"";

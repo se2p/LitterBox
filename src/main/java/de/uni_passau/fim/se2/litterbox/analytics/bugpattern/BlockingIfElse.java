@@ -75,7 +75,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
             if ((loopCounter > 0 || i < stmts.size() - 1) && stmts.get(i) instanceof IfElseStmt) {
                 IfElseStmt ifElse = (IfElseStmt) stmts.get(i);
 
-                if (searchSubStmtsForStop(ifElse.getStmtList().getStmts())) {
+                if (searchSubStmtsForStop(ifElse.getThenStmts().getStmts())) {
                     if (searchSubStmtsForStop(ifElse.getElseStmts().getStmts())) {
                         Hint hint;
                         if (i < stmts.size() - 1) {
@@ -100,7 +100,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
         }
         for (Stmt subStmt : subStmts) {
             if (subStmt instanceof IfElseStmt) {
-                if (searchSubStmtsForStop(((IfElseStmt) subStmt).getStmtList().getStmts())) {
+                if (searchSubStmtsForStop(((IfElseStmt) subStmt).getThenStmts().getStmts())) {
                     if (searchSubStmtsForStop(((IfElseStmt) subStmt).getElseStmts().getStmts())) {
                         return true;
                     }

@@ -42,6 +42,8 @@ public class MetricTool {
             new AvgVariableLengthCount<>(),
             new BackdropCount<>(),
             new BlockCount<Program>(),
+            new CategoryEntropy<Program>(),
+            new Cohesion<Program>(),
             new ComputationalThinkingAverageScore(),
             new ComputationalThinkingScore(),
             new ComputationalThinkingScoreAbstraction(),

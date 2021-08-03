@@ -20,33 +20,20 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
-    private String next;
-    private String parent;
-    private InputMetadataList inputMetadata;
-    private FieldsMetadataList fields;
-    private boolean topLevel;
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public NonDataBlockMetadata(String commentId, String blockId, String next, String parent,
-                                InputMetadataList inputMetadata, FieldsMetadataList fields, boolean topLevel,
+    public NonDataBlockMetadata(String commentId, String blockId,
                                 boolean shadow, MutationMetadata mutation) {
-        super(inputMetadata, fields, mutation);
+        super(mutation);
         this.commentId = commentId;
         this.blockId = blockId;
-        this.next = next;
-        this.parent = parent;
-        this.inputMetadata = inputMetadata;
-        this.fields = fields;
-        this.topLevel = topLevel;
         this.shadow = shadow;
         this.mutation = mutation;
     }
@@ -61,26 +48,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public String getBlockId() {
         return blockId;
-    }
-
-    public String getNext() {
-        return next;
-    }
-
-    public String getParent() {
-        return parent;
-    }
-
-    public InputMetadataList getInputMetadata() {
-        return inputMetadata;
-    }
-
-    public FieldsMetadataList getFields() {
-        return fields;
-    }
-
-    public boolean isTopLevel() {
-        return topLevel;
     }
 
     public boolean isShadow() {
@@ -99,5 +66,10 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    public static NonDataBlockMetadata emptyNonBlockMetadata() {
+        return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
+                false,  new NoMutationMetadata());
     }
 }

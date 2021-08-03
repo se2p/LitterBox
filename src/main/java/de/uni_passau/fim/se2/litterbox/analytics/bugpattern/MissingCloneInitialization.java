@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -118,10 +118,10 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                 }
             } else if (notClonedActor.contains(spriteName)) {
                 Hint hint = generateHint(spriteName);
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
                 Hint hint = generateHint(currentActor.getIdent().getName());
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

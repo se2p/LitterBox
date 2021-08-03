@@ -49,11 +49,13 @@ public class IfElseStmt extends AbstractNode implements IfStmt {
         return metadata;
     }
 
+    @Override
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
-    public StmtList getStmtList() {
+    @Override
+    public StmtList getThenStmts() {
         return stmtList;
     }
 

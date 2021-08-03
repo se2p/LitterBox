@@ -53,8 +53,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -135,8 +138,11 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(NumberLiteral node) {
+        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+        format.setGroupingUsed(false);
+        format.setMinimumFractionDigits(0);
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                String.valueOf((float) node.getValue())));
+                format.format(node.getValue())));
     }
 
     @Override
@@ -253,24 +259,19 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
-        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString,node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 
-    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        if (identifier instanceof Qualified) {
-            //Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+    private String getListDataFields(Identifier identifier) {
+            Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
             Qualified qual = (Qualified) identifier;
             Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
             ScratchList list = (ScratchList) qual.getSecond();
             String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
             return createFields(LIST_KEY, list.getName().getName(), id);
-        } else {
-            return createFields(LIST_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
-        }
     }
 
     @Override
@@ -639,7 +640,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         }
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, expr, inputName, true));
-        String fieldsString = getListDataFields(metadata, identifier);
+        String fieldsString = getListDataFields(identifier);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString, opcode));
         previousBlockId = metadata.getBlockId();

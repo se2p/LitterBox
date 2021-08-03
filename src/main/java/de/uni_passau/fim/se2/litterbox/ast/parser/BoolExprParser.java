@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
@@ -258,7 +257,7 @@ public class BoolExprParser {
                     containingVar = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {
-                    containingVar = new UnspecifiedId();
+                    throw new ParsingException("Variable / List ID not specified in JSON.");
                 }
                 contained = StringExprParser.parseStringExpr(exprBlock, ITEM_KEY, allBlocks);
                 return new ListContains(containingVar, contained, metadata);

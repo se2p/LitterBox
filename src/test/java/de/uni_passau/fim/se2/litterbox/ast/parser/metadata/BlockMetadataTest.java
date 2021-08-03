@@ -48,9 +48,6 @@ public class BlockMetadataTest {
                         "GKr#[hOQWwm(reaPtK%R"));
         Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
         DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(VAR_PRIMITIVE, dataBlock.getDataType());
-        Assertions.assertEquals("my variable", dataBlock.getDataName());
-        Assertions.assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", dataBlock.getDataReference());
         Assertions.assertEquals(471, dataBlock.getX());
         Assertions.assertEquals(383, dataBlock.getY());
     }
@@ -62,17 +59,13 @@ public class BlockMetadataTest {
                         "X)N~xB@[E,i0S}Vwwtjm"));
         Assertions.assertTrue(blockMetadata instanceof TopNonDataBlockMetadata);
         TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(0, topNonDataBlockMetadata.getFields().getList().size());
-        Assertions.assertEquals(1, topNonDataBlockMetadata.getInputMetadata().getList().size());
         Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
         Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
         Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
         Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
         Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
-        Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
         Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
-        Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
 
     @Test
@@ -82,14 +75,9 @@ public class BlockMetadataTest {
                         "Vr$zTl8mo1W,U?+q6,T{"));
         Assertions.assertTrue(blockMetadata instanceof NonDataBlockMetadata);
         NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(0, nonDataBlockMetadata.getFields().getList().size());
-        Assertions.assertEquals(1, nonDataBlockMetadata.getInputMetadata().getList().size());
         Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
         Assertions.assertNull(nonDataBlockMetadata.getCommentId());
-        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
-        Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
+        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
-        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", nonDataBlockMetadata.getParent());
-        Assertions.assertNull(nonDataBlockMetadata.getNext());
     }
 }

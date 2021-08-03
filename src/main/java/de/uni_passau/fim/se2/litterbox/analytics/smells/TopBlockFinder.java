@@ -26,8 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLang
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
@@ -50,7 +49,7 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     @Override
     public void visit(CreateCloneOf node) {
         if (setHint) {
-            addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
+            addIssue(node, node.getMetadata());
         } else {
             visitChildren(node);
         }
@@ -849,7 +848,7 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     @Override
     public void visit(ChangePenColorParamBy node) {
         if (setHint) {
-            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+            addIssue(node, node.getMetadata());
         } else {
             visitChildren(node);
         }
@@ -858,7 +857,7 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     @Override
     public void visit(SetPenColorParamTo node) {
         if (setHint) {
-            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+            addIssue(node, node.getMetadata());
         } else {
             visitChildren(node);
         }

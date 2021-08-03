@@ -20,10 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.FieldsMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -38,16 +35,6 @@ public class BlockMetadataParser {
                 commentId = blockNode.get(COMMENT_KEY).asText();
             }
             String opcode = blockNode.get(OPCODE_KEY).asText();
-            String next = null;
-            if (blockNode.has(NEXT_KEY) && !(blockNode.get(NEXT_KEY) instanceof NullNode)) {
-                next = blockNode.get(NEXT_KEY).asText();
-            }
-            String parent = null;
-            if (blockNode.has(PARENT_KEY) && !(blockNode.get(PARENT_KEY) instanceof NullNode)) {
-                parent = blockNode.get(PARENT_KEY).asText();
-            }
-            InputMetadataList inputMetadata = InputMetadataListParser.parse(blockNode.get(INPUTS_KEY));
-            FieldsMetadataList fields = FieldsMetadataListParser.parse(blockNode.get(FIELDS_KEY));
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
             boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
             MutationMetadata mutation;
@@ -57,15 +44,13 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId, next, parent, inputMetadata, fields,
-                        topLevel,
+                return new NonDataBlockMetadata(commentId, blockId,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopNonDataBlockMetadata(commentId, blockId, next, parent, inputMetadata, fields,
-                    topLevel,
+            return new TopNonDataBlockMetadata(commentId, blockId,
                     shadow,
                     mutation, x, y);
         } else {
@@ -74,12 +59,35 @@ public class BlockMetadataParser {
             ArrayNode data = (ArrayNode) blockNode;
             Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
                     + "top level data block. ID: " + blockId);
-            int type = data.get(POS_INPUT_TYPE).asInt();
-            String dataName = data.get(DATA_INPUT_NAME_POS).asText();
-            String dataReference = data.get(DATA_INPUT_IDENTIFIER_POS).asText();
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
-            return new DataBlockMetadata(blockId, type, dataName, dataReference, x, y);
+            return new DataBlockMetadata(blockId, x, y);
         }
+    }
+
+    public static BlockMetadata parseParamBlock(String blockId, JsonNode blockNode, BlockMetadata paramMetadata) {
+        String commentId = null;
+        if (blockNode.has(COMMENT_KEY)) {
+            commentId = blockNode.get(COMMENT_KEY).asText();
+        }
+        String opcode = blockNode.get(OPCODE_KEY).asText();
+        boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
+        boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
+        MutationMetadata mutation;
+        if (blockNode.has(MUTATION_KEY) && !(opcode.equals(TerminationStmtOpcode.control_stop.getName()))) {
+            mutation = MutationMetadataParser.parse(blockNode.get(MUTATION_KEY));
+        } else {
+            mutation = new NoMutationMetadata();
+        }
+        if (!topLevel) {
+            return new NonDataBlockWithMenuMetadata(commentId, blockId,
+                    shadow,
+                    mutation, paramMetadata);
+        }
+        double x = blockNode.get(X_KEY).asDouble();
+        double y = blockNode.get(Y_KEY).asDouble();
+        return new TopNonDataBlockWithMenuMetadata(commentId, blockId,
+                shadow,
+                mutation, x, y, paramMetadata);
     }
 }

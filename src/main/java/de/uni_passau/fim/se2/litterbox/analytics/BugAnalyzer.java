@@ -29,9 +29,12 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 
 public class BugAnalyzer extends Analyzer {
 
@@ -108,10 +111,10 @@ public class BugAnalyzer extends Analyzer {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);
-                if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-                    JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+                if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
+                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, "_annotated");
                 } else {
-                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, "_annotated");
                 }
             } catch (IOException e) {
                 log.warning(e.getMessage());

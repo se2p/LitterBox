@@ -58,7 +58,7 @@ public abstract class BlockJsonCreatorHelper {
 
     public static StringBuilder createBlockAfterFields(StringBuilder jsonString, NonDataBlockMetadata meta) {
         createFieldValue(jsonString, SHADOW_KEY, meta.isShadow()).append(",");
-        createFieldValue(jsonString, TOPLEVEL_KEY, meta.isTopLevel());
+        createFieldValue(jsonString, TOPLEVEL_KEY, meta instanceof TopNonDataBlockMetadata);
         if (meta.getCommentId() != null) {
             jsonString.append(",");
             createFieldValue(jsonString, COMMENT_KEY, meta.getCommentId());
@@ -135,12 +135,12 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createPrototypeMetadata(String tagName, String proccode, List<String> argumentId,
+    public static String createPrototypeMetadata(String proccode, List<String> argumentId,
                                                  List<ParameterInfo> parameterInfos,
                                                  boolean warp) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
         createField(jsonString, ARGUMENTIDS_KEY);
@@ -154,11 +154,11 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createCallMetadata(String tagName, String proccode, List<String> argumentId,
+    public static String createCallMetadata(String proccode, List<String> argumentId,
                                             boolean warp) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
         createField(jsonString, ARGUMENTIDS_KEY);

@@ -21,7 +21,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -29,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -95,8 +99,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(POSITION);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(POSITION)).count()).isEqualTo(1);
         }
     }
 
@@ -110,8 +114,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(ROTATION);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(ROTATION)).count()).isEqualTo(1);
         }
     }
 
@@ -127,7 +131,7 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
-            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
+            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(APPEARANCE);
         }
     }
 
@@ -142,8 +146,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(APPEARANCE)).count()).isEqualTo(1);
         }
     }
 
@@ -174,8 +178,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(SIZE);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(SIZE)).count()).isEqualTo(1);
         }
     }
 
@@ -217,6 +221,70 @@ public class AttributeTest implements JsonTest {
         assertThat(defVisitor.getDefineables()).hasSize(1);
     }
 
+
+    @Test
+    public void testVisibilityDefAndUse() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/visibility.json");
+
+        CFGNode greenFlag = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode show = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Show).findFirst().get();
+        CFGNode hide = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Hide).findFirst().get();
+        CFGNode ask = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AskAndWait).findFirst().get();
+        CFGNode say = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Say).findFirst().get();
+        CFGNode sayfor = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        CFGNode ifthen = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
+
+        AttributeUseVisitor useVisitor = new AttributeUseVisitor(greenFlag.getActor());
+        AttributeDefinitionVisitor defVisitor = new AttributeDefinitionVisitor(greenFlag.getActor());
+        greenFlag.getASTNode().accept(useVisitor);
+        greenFlag.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).isEmpty();
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(show.getActor());
+        defVisitor = new AttributeDefinitionVisitor(show.getActor());
+        show.getASTNode().accept(useVisitor);
+        show.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).hasSize(1);
+
+        useVisitor = new AttributeUseVisitor(ifthen.getActor());
+        defVisitor = new AttributeDefinitionVisitor(ifthen.getActor());
+        ifthen.getASTNode().accept(useVisitor);
+        ifthen.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(hide.getActor());
+        defVisitor = new AttributeDefinitionVisitor(hide.getActor());
+        hide.getASTNode().accept(useVisitor);
+        hide.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).hasSize(1);
+
+        useVisitor = new AttributeUseVisitor(ask.getActor());
+        defVisitor = new AttributeDefinitionVisitor(ask.getActor());
+        ask.getASTNode().accept(useVisitor);
+        ask.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(say.getActor());
+        defVisitor = new AttributeDefinitionVisitor(say.getActor());
+        say.getASTNode().accept(useVisitor);
+        say.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(sayfor.getActor());
+        defVisitor = new AttributeDefinitionVisitor(sayfor.getActor());
+        sayfor.getASTNode().accept(useVisitor);
+        sayfor.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+    }
+
     @Test
     public void testNextBackdrop() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
@@ -238,7 +306,11 @@ public class AttributeTest implements JsonTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/useattributefromothersprite.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        assertThat(getUsedAttributes(node)).hasSize(1);
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        assertThat(uses).hasSize(2);
+        Attribute use1 = uses.get(0);
+        Attribute use2 = uses.get(1);
+        assertThat(use1.getActorIdentifier()).isNotEqualTo(use2.getActorIdentifier());
     }
 
     private Set<Attribute> getDefinedAttributes(CFGNode node) {

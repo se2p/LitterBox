@@ -36,7 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
@@ -62,7 +61,6 @@ public class TopLevelMetadataTest implements JsonTest {
         DataBlockMetadata meta = (DataBlockMetadata) data.getMetadata();
         Assertions.assertEquals(471, meta.getX());
         Assertions.assertEquals(383, meta.getY());
-        Assertions.assertEquals(VAR_PRIMITIVE, meta.getDataType());
     }
 
     @Test
@@ -77,11 +75,6 @@ public class TopLevelMetadataTest implements JsonTest {
         Assertions.assertEquals(184, defMet.getYPos());
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
-        Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());
-        PrototypeMutationMetadata mutationMetadata = (PrototypeMutationMetadata) protoMet.getMutation();
-        Assertions.assertEquals("TestMethod %s", mutationMetadata.getProcCode());
-        List<String> list = new ArrayList<>();
-        list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list, mutationMetadata.getArgumentIds());
+        Assertions.assertEquals(ProcedureMutationMetadata.class, protoMet.getMutation().getClass());
     }
 }
