@@ -18,13 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyCustomBlock;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.util.Set;
 
 public interface JsonTest {
 
@@ -45,4 +50,9 @@ public interface JsonTest {
         return parser.parseFile(fileName);
     }
 
+    default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws IOException, ParsingException {
+        Program prog = getAST(filePath);
+        Set<Issue> reports = finder.check(prog);
+        Assertions.assertEquals(expectedIssues, reports.size());
+    }
 }

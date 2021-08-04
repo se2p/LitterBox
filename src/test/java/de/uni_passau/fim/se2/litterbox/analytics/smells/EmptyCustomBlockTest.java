@@ -35,10 +35,7 @@ public class EmptyCustomBlockTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        EmptyCustomBlock parameterName = new EmptyCustomBlock();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new EmptyCustomBlock(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
