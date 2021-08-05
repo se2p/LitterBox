@@ -29,9 +29,7 @@ import java.io.IOException;
 public class BackdropCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        BackdropCount parameterName = new BackdropCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
+        assertThatMetricReports(1, new BackdropCount(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
