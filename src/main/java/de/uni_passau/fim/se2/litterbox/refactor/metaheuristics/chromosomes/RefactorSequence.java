@@ -109,6 +109,20 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     }
 
     /**
+     * Copy constructor
+     *
+     * @param other RefactoringSequence to copy
+     */
+    RefactorSequence(RefactorSequence other) {
+        super(other);
+        this.originalProgram = other.originalProgram;
+        this.productions = new LinkedList<>(other.productions);
+        this.refactoringFinders = other.refactoringFinders;
+        this.setRank(other.getRank());
+        this.setDistance(other.getDistance());
+    }
+
+    /**
      * Apply the refactoring sequence to a given program, without modifying the original program.
      *
      * @return A deep copy of the original program after the refactorings were applied.
@@ -145,8 +159,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     @Override
     public RefactorSequence copy() {
-        return new RefactorSequence(originalProgram, getMutation(), getCrossover(),
-                new ArrayList<>(productions), refactoringFinders);
+        return new RefactorSequence(this);
     }
 
     /*
