@@ -118,8 +118,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         this.originalProgram = other.originalProgram;
         this.productions = new LinkedList<>(other.productions);
         this.refactoringFinders = other.refactoringFinders;
-        this.setRank(other.getRank());
-        this.setDistance(other.getDistance());
     }
 
     /**

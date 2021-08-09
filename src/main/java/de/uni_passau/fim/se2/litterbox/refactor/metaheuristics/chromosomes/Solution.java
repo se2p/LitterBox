@@ -72,6 +72,8 @@ public abstract class Solution<C extends Solution<C>> extends Chromosome<C> {
     protected Solution(C other) throws NullPointerException {
         super(other);
         this.fitnessMap = new LinkedHashMap<>(other.getFitnessMap());
+        this.rank = other.getRank();
+        this.distance = other.getDistance();
     }
 
     /**
