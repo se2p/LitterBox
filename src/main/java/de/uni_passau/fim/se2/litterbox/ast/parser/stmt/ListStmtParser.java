@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -37,6 +39,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -91,9 +95,6 @@ public class ListStmtParser {
         StringExpr expr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info == null) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
-        }
         return new AddTo(expr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
@@ -106,13 +107,19 @@ public class ListStmtParser {
         String idName = listArray.get(LIST_NAME_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getList(identifier, idName, currentActorName).isEmpty()) {
-            return null;
+            createNewList(identifier, idName);
         }
         Optional<ExpressionListInfo> info = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
 
         Preconditions.checkArgument(info.isPresent());
         Preconditions.checkArgument(info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
         return info.get();
+    }
+
+    private static void createNewList(String identifier, String name) {
+        List<Expression> list = new ArrayList<>();
+        ExpressionList expressionList = new ExpressionList(list);
+        ProgramParser.symbolTable.addExpressionListInfo(identifier, name, expressionList, true, "Stage");
     }
 
     private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
@@ -122,9 +129,6 @@ public class ListStmtParser {
         NumExpr expr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info == null) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
-        }
         return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
@@ -133,9 +137,6 @@ public class ListStmtParser {
         Preconditions.checkNotNull(current);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info == null) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
-        }
         return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
@@ -148,9 +149,6 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info == null) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
-        }
         return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
@@ -163,9 +161,6 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info == null) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
-        }
         return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
