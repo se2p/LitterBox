@@ -112,7 +112,8 @@ public class DataExprParser {
             } else if (isList) {
                 return parseScratchList(exprArray);
             } else {
-                throw new ParsingException("Variable / List ID not specified in JSON.");
+                ProgramParser.symbolTable.addVariable(idString, idName, new StringType(), true, "Stage");
+                return parseVariable(exprArray);
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");
@@ -142,7 +143,7 @@ public class DataExprParser {
     /**
      * Parses a dead parameter which is not inside of a script.
      *
-     * @param blockId The id of the param node.
+     * @param blockId   The id of the param node.
      * @param paramNode The node holding the name of the parameter.
      * @return The parameter corresponding to the param node.
      * @throws ParsingException If parsing the metadata fails.
