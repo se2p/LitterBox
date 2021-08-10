@@ -43,7 +43,6 @@ public class MovementInLoop extends AbstractIssueFinder {
     public static final String NAME = "movement_in_loop";
     private boolean hasKeyPressed;
     private boolean insideLoop;
-    private boolean insideGreenFlagClone;
     private boolean inCondition;
     private boolean subsequentMovement;
 
@@ -53,15 +52,12 @@ public class MovementInLoop extends AbstractIssueFinder {
             // Ignore unconnected blocks
             return;
         }
-        if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
-            insideGreenFlagClone = true;
-        }
+
         subsequentMovement = false;
         inCondition = false;
         insideLoop = false;
         hasKeyPressed = false;
         super.visit(node);
-        insideGreenFlagClone = false;
     }
 
     @Override
@@ -73,7 +69,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -84,7 +80,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -119,6 +115,14 @@ public class MovementInLoop extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(PointInDirection node) {
+        if (hasKeyPressed && !subsequentMovement) {
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            subsequentMovement = true;
+        }
+    }
+
+    @Override
     public void visit(TurnRight node) {
         if (hasKeyPressed && !subsequentMovement) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
@@ -136,7 +140,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             hasKeyPressed = true;
         }
     }
