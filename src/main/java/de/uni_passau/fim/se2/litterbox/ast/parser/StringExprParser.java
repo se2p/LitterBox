@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -43,6 +45,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -157,19 +161,22 @@ public class StringExprParser {
                 return new Username(metadata);
             case data_itemoflist:
                 NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
-                String id =
+                String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                String listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
                 String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(id, idName, currentActorName);
-                if (list.isPresent()) {
-                    ExpressionListInfo variableInfo = list.get();
-                    var = new Qualified(new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId((variableInfo.getVariableName()))));
-                } else {
-                    throw new ParsingException("Variable / List ID not specified in JSON.");
+                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                    List<Expression> listEx = new ArrayList<>();
+                    ExpressionList expressionList = new ExpressionList(listEx);
+                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
+                Preconditions.checkArgument(list.isPresent());
+                ExpressionListInfo variableInfo = list.get();
+                var = new Qualified(new StrId(variableInfo.getActor()),
+                        new ScratchList(new StrId((variableInfo.getVariableName()))));
                 return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:
                 String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();

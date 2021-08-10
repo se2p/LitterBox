@@ -25,7 +25,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -43,6 +45,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -249,16 +253,18 @@ public class BoolExprParser {
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier containingVar;
                 String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-                Optional<ExpressionListInfo> list
-                        = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
 
-                if (list.isPresent()) {
-                    ExpressionListInfo variableInfo = list.get();
-                    containingVar = new Qualified(new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId((variableInfo.getVariableName()))));
-                } else {
-                    throw new ParsingException("Variable / List ID not specified in JSON.");
+                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                    List<Expression> listEx = new ArrayList<>();
+                    ExpressionList expressionList = new ExpressionList(listEx);
+                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
+                Preconditions.checkArgument(list.isPresent());
+                ExpressionListInfo variableInfo = list.get();
+                containingVar = new Qualified(new StrId(variableInfo.getActor()),
+                        new ScratchList(new StrId((variableInfo.getVariableName()))));
                 contained = StringExprParser.parseStringExpr(exprBlock, ITEM_KEY, allBlocks);
                 return new ListContains(containingVar, contained, metadata);
             default:
