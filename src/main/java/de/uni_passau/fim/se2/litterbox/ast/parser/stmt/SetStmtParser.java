@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
@@ -61,7 +62,7 @@ public class SetStmtParser {
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).isEmpty()) {
-            throw new ParsingException("Variable / List ID not specified in JSON.");
+            ProgramParser.symbolTable.addVariable(unique, variableName, new StringType(), true, "Stage");
         }
         VariableInfo info = ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).get();
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),

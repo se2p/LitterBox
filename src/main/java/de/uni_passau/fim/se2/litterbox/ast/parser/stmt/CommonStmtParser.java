@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.*;
@@ -110,13 +111,12 @@ public class CommonStmtParser {
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-            throw new ParsingException("Variable / List ID not specified in JSON");
-        } else {
-            VariableInfo variableInfo
-                    = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
-            String actorName = variableInfo.getActor();
-            var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
+            ProgramParser.symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
         }
+        VariableInfo variableInfo
+                = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+        String actorName = variableInfo.getActor();
+        var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
 
         return new ChangeVariableBy(var, numExpr, metadata);
     }

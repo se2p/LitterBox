@@ -126,6 +126,22 @@ public class SymbolTable {
             return Optional.of(variables.get(stageKey));
         }
 
+        String identFromMap = getVariableIdentifierFromActorAndName(variableName, actorName);
+        if (identFromMap != null) {
+            key = identFromMap + variableName + actorName;
+            if (variables.containsKey(key)) {
+                return Optional.of(variables.get(key));
+            }
+        }
+
+        identFromMap = getVariableIdentifierFromActorAndName(variableName, "Stage");
+        if (identFromMap != null) {
+            key = identFromMap + variableName + "Stage";
+            if (variables.containsKey(key)) {
+                return Optional.of(variables.get(key));
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -150,6 +166,22 @@ public class SymbolTable {
         String stageKey = ident + listName + "Stage";
         if (lists.containsKey(stageKey)) {
             return Optional.of(lists.get(stageKey));
+        }
+
+        String identFromMap = getListIdentifierFromActorAndName(listName, actorName);
+        if (identFromMap != null) {
+            key = identFromMap + listName + actorName;
+            if (lists.containsKey(key)) {
+                return Optional.of(lists.get(key));
+            }
+        }
+
+        identFromMap = getListIdentifierFromActorAndName(listName, "Stage");
+        if (identFromMap != null) {
+            stageKey = identFromMap + listName + "Stage";
+            if (lists.containsKey(stageKey)) {
+                return Optional.of(lists.get(stageKey));
+            }
         }
 
         return Optional.empty();
