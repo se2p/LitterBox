@@ -110,8 +110,8 @@ class BinaryRankTournamentTest {
         refactorSequence1.setDistance(2.0);
         mockedRandomness.when(() -> Randomness.nextInt(2)).thenReturn(0).thenReturn(1);
         RefactorSequence candidate2 = selection.apply(population);
-        assertNotSame(refactorSequence1, candidate1);
-        assertEquals(refactorSequence1, candidate1);
+        assertNotSame(refactorSequence1, candidate2);
+        assertEquals(refactorSequence1, candidate2);
     }
 
     @Test

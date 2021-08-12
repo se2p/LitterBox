@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
