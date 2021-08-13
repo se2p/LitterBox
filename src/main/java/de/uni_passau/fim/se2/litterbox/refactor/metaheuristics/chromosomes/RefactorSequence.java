@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -109,6 +108,18 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     }
 
     /**
+     * Copy constructor
+     *
+     * @param other RefactoringSequence to copy
+     */
+    RefactorSequence(RefactorSequence other) {
+        super(other);
+        this.originalProgram = other.originalProgram;
+        this.productions = new LinkedList<>(other.productions);
+        this.refactoringFinders = other.refactoringFinders;
+    }
+
+    /**
      * Apply the refactoring sequence to a given program, without modifying the original program.
      *
      * @return A deep copy of the original program after the refactorings were applied.
@@ -145,8 +156,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     @Override
     public RefactorSequence copy() {
-        return new RefactorSequence(originalProgram, getMutation(), getCrossover(),
-                new ArrayList<>(productions), refactoringFinders);
+        return new RefactorSequence(this);
     }
 
     /*

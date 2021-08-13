@@ -26,8 +26,6 @@ import java.util.NoSuchElementException;
 
 public class BinaryRankTournament<C extends Solution<C>> implements Selection<C> {
 
-    public BinaryRankTournament() {
-    }
 
     /**
      * Selects a chromosome to be used as parent for mutation or crossover from the given non-null
