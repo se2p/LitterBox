@@ -140,7 +140,7 @@ LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
 ```
-java -jar Litterbox-1.6.jar --stats --project <path/to/project.json> --output <statsfile.csv>
+java -jar Litterbox-1.6.jar --stats --path <path/to/project.json> --output <statsfile.csv>
 ```
 
 ### Automatically refactoring projects
