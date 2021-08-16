@@ -143,6 +143,20 @@ number of blocks, number of sprites, weighted method count):
 java -jar Litterbox-1.6.jar --stats --project <path/to/project.json> --output <statsfile.csv>
 ```
 
+### Automatically refactoring projects
+
+Since version 1.6 Litterbox can automatically refactor a given Scratch project to improve its readability:
+
+```
+java -jar Litterbox-1.6.jar \
+    --refactor \
+    --path <path/to/project.json> \
+    --refactored-projects <path/to/output-dir>
+```
+
+To this end, Litterbox uses a multi-objective search-based approach to explore possible
+refactorings that optimize code readability metrics such as size, complexity and entropy.
+The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
 
 ## Adding new bug patterns or code smells
