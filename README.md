@@ -192,7 +192,7 @@ C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bug
 
 To learn more about code perfumes, see the following paper:
 
-F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM, 2021. https://doi.org/10.1145/3481312.3481346
+F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM, 2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
 
 ## Contributors
 
