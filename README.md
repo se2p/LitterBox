@@ -29,7 +29,7 @@ produce an executable jar-file, run the following command:
 mvn package
 ```
 
-This will produce `target/Litterbox-1.5.jar`
+This will produce `target/Litterbox-1.6.jar`
 
 
 ## Using LitterBox
@@ -37,7 +37,7 @@ This will produce `target/Litterbox-1.5.jar`
 To see an overview of the command line options available in LitterBox type:
 
 ```
-java -jar Litterbox-1.5.jar --help
+java -jar Litterbox-1.6.jar --help
 ```
 
 ### Basic usage
@@ -46,7 +46,7 @@ LitterBox parses the JSON file of a Scratch project, which contains
 its source code. Given such a JSON file, LitterBox is invoked as follows:
 
 ```
-java -jar Litterbox-1.5.jar --check --path <path/to/project.json>
+java -jar Litterbox-1.6.jar --check --path <path/to/project.json>
 ```
 
 As a result, LitterBox will report any occurrences of bug patterns or
@@ -59,7 +59,7 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```
-java -jar Litterbox-1.5.jar --check --projectid <projectid> --path <path/to/store/downloaded/project>
+java -jar Litterbox-1.6.jar --check --projectid <projectid> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
@@ -75,7 +75,7 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```
-java -jar Litterbox-1.5.jar --check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
+java -jar Litterbox-1.6.jar --check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -91,7 +91,7 @@ filename specified in order to decide whether to produce CSV or JSON
 output:
 
 ```
-java -jar Litterbox-1.5.jar --check --path <path/to/project.json> --output <result.csv>
+java -jar Litterbox-1.6.jar --check --path <path/to/project.json> --output <result.csv>
 ```
 
 The CSV file will contain a high-level summary of the number of
@@ -103,7 +103,7 @@ analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
 ```
-java -jar Litterbox-1.5.jar --check --path <path/to/project.json> --annotate <result.json>
+java -jar Litterbox-1.6.jar --check --path <path/to/project.json> --annotate <result.json>
 ```
 
 
@@ -119,14 +119,14 @@ comma-separated list of bug patterns, e.g.:
 
 
 ```
-java -jar Litterbox-1.5.jar --check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
+java -jar Litterbox-1.6.jar --check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
 ```
 
 A full list of available bug checkers can be retrieved using:
 
 
 ```
-java -jar Litterbox-1.5.jar --help
+java -jar Litterbox-1.6.jar --help
 ```
 
 To select all bug patterns, you can also use the term `bugs` in the
@@ -140,9 +140,23 @@ LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
 ```
-java -jar Litterbox-1.5.jar --stats --project <path/to/project.json> --output <statsfile.csv>
+java -jar Litterbox-1.6.jar --stats --path <path/to/project.json> --output <statsfile.csv>
 ```
 
+### Automatically refactoring projects
+
+Since version 1.6 Litterbox can automatically refactor a given Scratch project to improve its readability:
+
+```
+java -jar Litterbox-1.6.jar \
+    --refactor \
+    --path <path/to/project.json> \
+    --refactored-projects <path/to/output-dir>
+```
+
+To this end, Litterbox uses a multi-objective search-based approach to explore possible
+refactorings that optimize code readability metrics such as size, complexity and entropy.
+The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
 
 ## Adding new bug patterns or code smells
@@ -158,14 +172,27 @@ Add it to the `generateSmellFinders()` method via `registerSmellFinder(new NewFi
 Please also add the name of the finder to `IssueNames_de.properties` / `IssueNames_en.properties` and
 provide hints in `IssueHints_de.properties` / `IssueHints_en.properties`, so that your finder helps programmers understand how to resolve the issue in their code to improve code quality.
 
+## Website
+
+We provide a website in which users can check their projects with LitterBox directly by uploading the project file or entering the project ID: [https://scratch-litterbox.org/](https://scratch-litterbox.org/)
+
 ## Publications
 
-To learn more about LitterBox and its bug patterns, see the following paper:
+To learn more about LitterBox, see the following paper:
+
+G. Fraser, U. Heuer, N. Körber, E. Wasmeier, "LitterBox: A Linter for Scratch Programs", 
+in Proceedings of the IEEE/ACM 43rd International Conference on Software Engineering: Software Engineering Education and Training (ICSE-SEET) (pp. 183-188). IEEE, 2021.
+[https://doi.org/10.1109/ICSE-SEET52601.2021.00028](https://doi.org/10.1109/ICSE-SEET52601.2021.00028)
+
+To learn more about bug patterns, see the following paper:
 
 C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
  the 25th Annual Conference on Innovation and Technology in Computer
  Science Education (ITiCSE), pages 89-95, ACM, 2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
 
+To learn more about code perfumes, see the following paper:
+
+F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM, 2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
 
 ## Contributors
 
@@ -176,15 +203,22 @@ the [University of Passau](https://www.uni-passau.de).
 
 Contributors:
 
+Felix Adler\
+Lena Bloch\
 Christoph Frädrich\
 Gordon Fraser\
+Luisa Greifenstein\
+Eva Gründinger\
 Ute Heuer\
 Nina Körber\
+Simon Labrenz\
+Jonas Lerchenberger\
 Stephan Lukasczyk\
 Miriam Münch\
 Florian Obermüller\
 Gregorio Robles\
-Lisa-Marina Selvesen\
+Lisa-Marina Salvesen\
+Sebastian Schweikl\
 Andreas Stahlbauer\
 Florian Sulzmeier\
 Ewald Wasmeier
