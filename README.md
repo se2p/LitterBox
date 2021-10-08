@@ -158,6 +158,20 @@ To this end, Litterbox uses a multi-objective search-based approach to explore p
 refactorings that optimize code readability metrics such as size, complexity and entropy.
 The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
+### Code2Vec output
+
+To be able to use code2vec with the programming language Scratch, Litterbox can produce a file as 
+input for code2vecs neural network. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
+Litterbox produces a file with exactly this rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with 
+multiple projects and produces the output to the declared output folder.
+
+```
+java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output <path/to/folder/or/file/for/the/output> -path <path/to/json/project/or/folder/with/projects>
+```
+
+There are some differences between Scratch and "normal" programming languages like java, but the most important is,
+that Scratch has no methods and therefore no method names. Because of that, Litterbox uses sprite names like method names 
+and creates pathcontexts from every single sprite in a project.
 
 ## Adding new bug patterns or code smells
 
