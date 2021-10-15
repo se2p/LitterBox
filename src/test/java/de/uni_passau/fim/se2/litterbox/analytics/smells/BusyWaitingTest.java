@@ -44,4 +44,12 @@ public class BusyWaitingTest implements JsonTest {
         Set<Issue> reports = parameterName.check(longScript);
         Assertions.assertEquals(3, reports.size());
     }
+
+    @Test
+    public void testFollowingBlocks() throws IOException, ParsingException {
+        Program followingBlocks = getAST("./src/test/fixtures/smells/noBusyWaitingFollowingBlocks.json");
+        BusyWaiting parameterName = new BusyWaiting();
+        Set<Issue> reports = parameterName.check(followingBlocks);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
