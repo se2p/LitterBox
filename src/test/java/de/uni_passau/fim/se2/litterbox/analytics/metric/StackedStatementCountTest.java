@@ -29,15 +29,11 @@ import java.io.IOException;
 public class StackedStatementCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        StackedStatementCount parameterName = new StackedStatementCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new StackedStatementCount(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testStackedTTS() throws IOException, ParsingException {
-        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/metrics/stackedTTS.json");
-        StackedStatementCount parameterName = new StackedStatementCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(unusedProc));
+        assertThatMetricReports(1, new StackedStatementCount(), "./src/test/fixtures/metrics/stackedTTS.json");
     }
 }

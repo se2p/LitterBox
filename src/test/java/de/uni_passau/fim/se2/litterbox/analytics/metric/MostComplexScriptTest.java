@@ -30,15 +30,11 @@ public class MostComplexScriptTest implements JsonTest {
 
     @Test
     public void testLooseBlocks() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allEventsBlocks.json");
-        MostComplexScript parameterName = new MostComplexScript();
-        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
+        assertThatMetricReports(1, new MostComplexScript(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 
     @Test
     public void oneMoreComplex() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/oneMoreComplex.json");
-        MostComplexScript parameterName = new MostComplexScript();
-        Assertions.assertEquals(2, parameterName.calculateMetric(empty));
+        assertThatMetricReports(2, new MostComplexScript(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

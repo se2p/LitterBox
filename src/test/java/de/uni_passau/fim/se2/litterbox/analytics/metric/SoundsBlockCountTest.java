@@ -30,8 +30,6 @@ public class SoundsBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allSoundsBlocks.json");
-        SoundBlockCount parameterName = new SoundBlockCount();
-        Assertions.assertEquals(9, parameterName.calculateMetric(empty));
+        assertThatMetricReports(9, new SoundBlockCount(), "./src/test/fixtures/metrics/allSoundsBlocks.json");
     }
 }

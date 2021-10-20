@@ -30,9 +30,7 @@ public class MotionBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allMotionBlocks.json");
-        MotionBlockCount parameterName = new MotionBlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(empty));
+        assertThatMetricReports(18, new MotionBlockCount(), "./src/test/fixtures/metrics/allMotionBlocks.json");
     }
 
 }

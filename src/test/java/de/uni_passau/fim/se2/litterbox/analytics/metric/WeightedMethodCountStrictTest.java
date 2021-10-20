@@ -26,19 +26,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class WeightedMethodCountStrictTest {
+public class WeightedMethodCountStrictTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new WeightedMethodCountStrict(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMethodCount() throws IOException, ParsingException {
-        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
-        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
-        Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
+        assertThatMetricReports(2, new WeightedMethodCountStrict(), "./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
     }
 }

@@ -30,64 +30,47 @@ public class BlockCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new BlockCount(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testBlockCountNested() throws IOException, ParsingException {
-        Program nestedLoops = JsonTest.parseProgram("./src/test/fixtures/smells/nestedLoops.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(14, parameterName.calculateMetric(nestedLoops));
+        assertThatMetricReports(14, new BlockCount(), "./src/test/fixtures/smells/nestedLoops.json");
     }
 
     @Test
     public void testBlockproc() throws IOException, ParsingException {
-        Program withProc = JsonTest.parseProgram("./src/test/fixtures/blockCountWithProc.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(withProc));
+        assertThatMetricReports(18, new BlockCount(), "./src/test/fixtures/blockCountWithProc.json");
     }
 
     @Test
     public void testFixedStatements() throws IOException, ParsingException {
-        Program fixedStatements = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allFixedStatements.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(26, parameterName.calculateMetric(fixedStatements));
+        assertThatMetricReports(26, new BlockCount(), "./src/test/fixtures/stmtParser/allFixedStatements.json");
     }
 
     @Test
     public void testFixedExpr() throws IOException, ParsingException {
-        Program fixedExpressions = JsonTest.parseProgram("./src/test/fixtures/fixedExpressions.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(4, parameterName.calculateMetric(fixedExpressions));
+        assertThatMetricReports(4, new BlockCount(), "./src/test/fixtures/fixedExpressions.json");
     }
 
     @Test
     public void testTTS() throws IOException, ParsingException {
-        Program fixedExpressions = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allTextToSpeech.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(3, parameterName.calculateMetric(fixedExpressions));
+        assertThatMetricReports(3, new BlockCount(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
     }
 
     @Test
     public void testOnlyVariable() throws IOException, ParsingException {
-        Program onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(onlyVariable));
+        assertThatMetricReports(1, new BlockCount(), "./src/test/fixtures/onlyVariable.json");
     }
 
     @Test
     public void testHalfFixedExpr() throws IOException, ParsingException {
-        Program halfFixedExpr = JsonTest.parseProgram("./src/test/fixtures/halfFixedExpressions.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(5, parameterName.calculateMetric(halfFixedExpr)); //TODO does an empty string have to be an UnspecifiedExpr?
+        assertThatMetricReports(5, new BlockCount(), "./src/test/fixtures/halfFixedExpressions.json");
+         //TODO does an empty string have to be an UnspecifiedExpr?
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
-        BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(4, parameterName.calculateMetric(program));
+        assertThatMetricReports(4, new BlockCount(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

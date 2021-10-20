@@ -31,9 +31,6 @@ public class InterproceduralCyclomaticComplexityTest implements JsonTest {
 
     @Test
     public void testCCCalculation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/cfg/ifelse_repeattimes.json");
-        InterproceduralCyclomaticComplexity icc = new InterproceduralCyclomaticComplexity();
-        double complexity = icc.calculateMetric(program);
-        assertThat(complexity).isEqualTo(5);
+        assertThatMetricReports(5, new InterproceduralCyclomaticComplexity(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 }

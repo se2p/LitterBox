@@ -34,6 +34,8 @@ import org.junit.jupiter.api.Assertions;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
+
 public interface JsonTest {
 
     default Program getAST(String fileName) throws IOException, ParsingException {
@@ -62,6 +64,11 @@ public interface JsonTest {
     default void assertThatMetricReports(double expectedIssues, MetricExtractor finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         Assertions.assertEquals(expectedIssues, finder.calculateMetric(prog));
+    }
+
+    default void assertThatMetricReportsWithin(double expectedIssues, double epsilon, MetricExtractor finder, String filePath) throws IOException, ParsingException {
+        Program prog = getAST(filePath);
+        assertThat(finder.calculateMetric(prog)).isWithin(epsilon).of(expectedIssues);
     }
 
     default void assertNumberActorDefinitions(int expectedActors, String filePath) throws IOException, ParsingException {

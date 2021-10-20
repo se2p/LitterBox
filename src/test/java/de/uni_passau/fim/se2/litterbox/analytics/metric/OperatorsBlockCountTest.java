@@ -30,9 +30,7 @@ public class OperatorsBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allOperatorsBlocks.json");
-        OperatorsBlockCount parameterName = new OperatorsBlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(empty));
+        assertThatMetricReports(18, new OperatorsBlockCount(), "./src/test/fixtures/metrics/allOperatorsBlocks.json");
     }
 
 }

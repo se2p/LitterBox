@@ -30,8 +30,6 @@ public class LooksBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allLooksBlocks.json");
-        LooksBlockCount parameterName = new LooksBlockCount();
-        Assertions.assertEquals(21, parameterName.calculateMetric(empty));
+        assertThatMetricReports(21, new LooksBlockCount(), "./src/test/fixtures/metrics/allLooksBlocks.json");
     }
 }

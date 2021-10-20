@@ -31,52 +31,38 @@ public class TokenEntropyTest implements JsonTest {
 
     @Test
     public void testFourBlocks() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/metrics/entropy_3identical.json");
-
         double p1 = 1.0 / 7.0;
         double p2 = 3.0 / 7.0;
         double expectedEntropy = - ( p1 * (Math.log(p1)/Math.log(2.0)) + 2 * p2 * (Math.log(p2)/Math.log(2.0)) );
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_3identical.json");
     }
 
     @Test
     public void testNestedBlocks() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/metrics/entropy_nestedblocks.json");
-
         double p1 = 1.0 / 11.0;
         double p3 = 3.0 / 11.0;
         double expectedEntropy = - ( 5 * p1 * (Math.log(p1)/Math.log(2.0)) +
                 (2 * p3 * (Math.log(p3)/Math.log(2.0))));
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_nestedblocks.json");
     }
 
 
 
     @Test
     public void testCustomBlock() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/metrics/entropy_customblock.json");
-
         double p1 = 1.0 / 23.0;
         double p3 = 3.0 / 23.0;
         double expectedEntropy = - ( 17 * p1 * (Math.log(p1)/Math.log(2.0)) +
                 2 * p3 * (Math.log(p3)/Math.log(2.0)));
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_customblock.json");
     }
 
 
     @Test
     public void testIfElse() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/cfg/ifelse_repeattimes.json");
-
         double p1 = 1.0 / 12.0;
         double p2 = 2.0 / 12.0;
         double p4 = 4.0 / 12.0;
@@ -84,34 +70,24 @@ public class TokenEntropyTest implements JsonTest {
                 2 * p2 * (Math.log(p2)/Math.log(2.0)) +
                 p4 * (Math.log(p4)/Math.log(2.0)));
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 
     @Test
     public void testMultipleScripts() throws IOException, ParsingException {
-        Program program = JsonTest.parseProgram("./src/test/fixtures/weightedMethod.json");
-
         double p = 1.0 / 14.0;
         double expectedEntropy = - ( 14 * p * (Math.log(p)/Math.log(2.0)));
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testComplexScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/oneMoreComplex.json");
-
         double p1 = 1.0 / 11.0;
         double p2 = 2.0 / 11.0;
         double expectedEntropy = - ( 9 * p1 * (Math.log(p1)/Math.log(2.0)) +
                 1 * p2 * (Math.log(p2)/Math.log(2.0)));
 
-        TokenEntropy entropy = new TokenEntropy();
-        double length = entropy.calculateMetric(program);
-        assertThat(length).isWithin(0.1).of(expectedEntropy);
+        assertThatMetricReportsWithin(expectedEntropy,0.1, new TokenEntropy(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

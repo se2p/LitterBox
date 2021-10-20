@@ -34,8 +34,6 @@ public class BackdropCountTest implements JsonTest {
 
     @Test
     public void testMultipleBackdrops() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/metrics/multipleSpritesBackdrops.json");
-        BackdropCount parameterName = new BackdropCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(empty));
+        assertThatMetricReports(2, new BackdropCount(), "./src/test/fixtures/metrics/multipleSpritesBackdrops.json");
     }
 }

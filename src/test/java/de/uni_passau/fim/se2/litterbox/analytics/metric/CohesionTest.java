@@ -30,8 +30,6 @@ public class CohesionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws ParsingException, IOException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        Cohesion cohesion = new Cohesion();
-        Assertions.assertEquals(0, cohesion.calculateMetric(empty));
+        assertThatMetricReports(0, new Cohesion(), "./src/test/fixtures/emptyProject.json");
     }
 }

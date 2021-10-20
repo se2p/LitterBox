@@ -30,15 +30,11 @@ public class TextToSpeechBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/stmtParser/allTextToSpeech.json");
-        TextToSpeechBlockCount parameterName = new TextToSpeechBlockCount();
-        Assertions.assertEquals(3, parameterName.calculateMetric(empty));
+        assertThatMetricReports(3, new TextToSpeechBlockCount(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/penAndTTS.json");
-        TextToSpeechBlockCount parameterName = new TextToSpeechBlockCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(empty));
+        assertThatMetricReports(2, new TextToSpeechBlockCount(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

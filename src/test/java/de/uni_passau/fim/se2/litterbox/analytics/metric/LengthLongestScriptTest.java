@@ -30,15 +30,11 @@ public class LengthLongestScriptTest implements JsonTest {
 
     @Test
     public void testLooseBlocks() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allEventsBlocks.json");
-        LengthLongestScript parameterName = new LengthLongestScript();
-        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
+        assertThatMetricReports(1, new LengthLongestScript(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 
     @Test
     public void oneLonger() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/oneMoreComplex.json");
-        LengthLongestScript parameterName = new LengthLongestScript();
-        Assertions.assertEquals(5, parameterName.calculateMetric(empty));
+        assertThatMetricReports(5, new LengthLongestScript(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

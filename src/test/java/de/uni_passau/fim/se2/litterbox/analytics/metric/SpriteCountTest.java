@@ -26,19 +26,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class SpriteCountTest {
+public class SpriteCountTest implements JsonTest{
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        SpriteCount parameterName = new SpriteCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
+        assertThatMetricReports(1, new SpriteCount(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testSpriteCount() throws IOException, ParsingException {
-        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        SpriteCount parameterName = new SpriteCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(unusedProc));
+        assertThatMetricReports(1, new SpriteCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 }

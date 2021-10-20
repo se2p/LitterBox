@@ -30,8 +30,6 @@ public class SensingBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allSensingBlocks.json");
-        SensingBlockCount parameterName = new SensingBlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(empty));
+        assertThatMetricReports(18, new SensingBlockCount(), "./src/test/fixtures/metrics/allSensingBlocks.json");
     }
 }
