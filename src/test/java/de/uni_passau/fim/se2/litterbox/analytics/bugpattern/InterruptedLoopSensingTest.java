@@ -36,10 +36,7 @@ public class InterruptedLoopSensingTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
@@ -48,30 +45,24 @@ public class InterruptedLoopSensingTest implements JsonTest {
         InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
         Set<Issue> reports = parameterName.check(illegalParameter);
         Assertions.assertEquals(2, reports.size());
-        List<Issue> issues= new ArrayList<>(reports);
+        List<Issue> issues = new ArrayList<>(reports);
         Hint hint1 = new Hint(parameterName.getName());
         hint1.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then"));
         hint1.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
         Hint hint2 = new Hint(parameterName.getName());
         hint2.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
         hint2.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-        Assertions.assertEquals(hint1.getHintText(),issues.get(0).getHint());
-        Assertions.assertEquals(hint2.getHintText(),issues.get(1).getHint());
+        Assertions.assertEquals(hint1.getHintText(), issues.get(0).getHint());
+        Assertions.assertEquals(hint2.getHintText(), issues.get(1).getHint());
     }
 
     @Test
     public void testInterruptedLoopSensingWithVariableChanging() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/interruptedLoopSensingChangingVariable.json");
-        InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/interruptedLoopSensingChangingVariable.json");
     }
 
     @Test
     public void testInterruptedLoopSensingWithStop() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/interruptedLoopSensingWithStop.json");
-        InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/interruptedLoopSensingWithStop.json");
     }
 }

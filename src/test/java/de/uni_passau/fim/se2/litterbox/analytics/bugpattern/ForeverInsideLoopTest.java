@@ -19,54 +19,35 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class ForeverInsideLoopTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        ForeverInsideLoop parameterName = new ForeverInsideLoop();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new ForeverInsideLoop(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testForeverInLoop() throws IOException, ParsingException {
-        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoop.json");
-        ForeverInsideLoop parameterName = new ForeverInsideLoop();
-        Set<Issue> reports = parameterName.check(foreverInLoop);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new ForeverInsideLoop(), "./src/test/fixtures/bugpattern/foreverInLoop.json");
     }
 
     @Test
     public void testForeverInLoopNoOtherBlock() throws IOException, ParsingException {
-        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoopWithoutOtherBlock.json");
-        ForeverInsideLoop parameterName = new ForeverInsideLoop();
-        Set<Issue> reports = parameterName.check(foreverInLoop);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new ForeverInsideLoop(), "./src/test/fixtures/bugpattern/foreverInLoopWithoutOtherBlock.json");
     }
 
     @Test
     public void testForeverInsideUnnecessary() throws IOException, ParsingException {
-        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/unnecessaryForever.json");
-        ForeverInsideLoop parameterName = new ForeverInsideLoop();
-        Set<Issue> reports = parameterName.check(foreverInLoop);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new ForeverInsideLoop(), "./src/test/fixtures/bugpattern/unnecessaryForever.json");
     }
 
     @Test
     public void testForeverInsideLoopInIfElse() throws IOException, ParsingException {
-        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInsideLoopInsideIfElse.json");
-        ForeverInsideLoop parameterName = new ForeverInsideLoop();
-        Set<Issue> reports = parameterName.check(foreverInLoop);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new ForeverInsideLoop(), "./src/test/fixtures/bugpattern/foreverInsideLoopInsideIfElse.json");
     }
 }

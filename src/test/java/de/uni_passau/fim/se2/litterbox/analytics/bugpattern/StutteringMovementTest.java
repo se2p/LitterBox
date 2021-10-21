@@ -28,40 +28,27 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class StutteringMovementTest implements JsonTest {
 
     @Test
     public void testStutteringMovement() throws IOException, ParsingException {
-        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringMovement.json");
-        StutteringMovement finder = new StutteringMovement();
-        Set<Issue> reports = finder.check(stutteringMovement);
-        Assertions.assertEquals(5, reports.size());
+        assertThatFinderReports(5, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringMovement.json");
     }
 
     @Test
     public void testDeleteParam() throws IOException, ParsingException {
-        Program deleteParam = getAST("./src/test/fixtures/stmtParser/deleteParam.json");
-        StutteringMovement finder = new StutteringMovement();
-        Set<Issue> reports = finder.check(deleteParam);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new StutteringMovement(), "./src/test/fixtures/stmtParser/deleteParam.json");
     }
 
     @Test
     public void testStutteringRotation() throws IOException, ParsingException {
-        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringRotation.json");
-        StutteringMovement finder = new StutteringMovement();
-        Set<Issue> reports = finder.check(stutteringMovement);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringRotation.json");
     }
 
     @Test
     public void testStutteringMovementReset() throws IOException, ParsingException {
-        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringMovementBug.json");
-        StutteringMovement finder = new StutteringMovement();
-        Set<Issue> reports = finder.check(stutteringMovement);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringMovementBug.json");
     }
 
     @Test
@@ -75,9 +62,6 @@ public class StutteringMovementTest implements JsonTest {
 
     @Test
     public void testNonStuttering() throws IOException, ParsingException {
-        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/nonStuttering.json");
-        StutteringMovement finder = new StutteringMovement();
-        List<Issue> reports = new ArrayList<>(finder.check(stutteringMovement));
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new StutteringMovement(), "./src/test/fixtures/bugpattern/nonStuttering.json");
     }
 }

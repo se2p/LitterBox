@@ -39,6 +39,5 @@ class MissingPenDownTest implements JsonTest {
         for (Issue issue : reports) {
             Truth.assertThat(issue.getActor().getIdent().getName()).isEqualTo("Apple");
         }
-
     }
 }

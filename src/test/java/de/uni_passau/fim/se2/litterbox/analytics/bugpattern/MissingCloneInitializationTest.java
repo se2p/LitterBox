@@ -51,10 +51,7 @@ public class MissingCloneInitializationTest implements JsonTest {
 
     @Test
     public void testCloningWithClicked() throws IOException, ParsingException {
-        Program clicked = getAST("src/test/fixtures/bugpattern/cloningWithClicked.json");
-        MissingCloneInitialization finder = new MissingCloneInitialization();
-        Set<Issue> reports = finder.check(clicked);
-        Truth.assertThat(reports).isEmpty();
+        assertThatFinderReports(0, new MissingCloneInitialization(), "src/test/fixtures/bugpattern/cloningWithClicked.json");
     }
 
     @Test

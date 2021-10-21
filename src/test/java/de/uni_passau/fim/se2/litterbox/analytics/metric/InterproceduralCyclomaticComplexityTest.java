@@ -20,12 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class InterproceduralCyclomaticComplexityTest implements JsonTest {
 

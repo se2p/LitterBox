@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -66,7 +64,7 @@ public class BlockCountTest implements JsonTest {
     @Test
     public void testHalfFixedExpr() throws IOException, ParsingException {
         assertThatMetricReports(5, new BlockCount(), "./src/test/fixtures/halfFixedExpressions.json");
-         //TODO does an empty string have to be an UnspecifiedExpr?
+        //TODO does an empty string have to be an UnspecifiedExpr?
     }
 
     @Test

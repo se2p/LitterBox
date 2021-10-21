@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -53,17 +52,11 @@ class BlockingIfElseTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        BlockingIfElse parameterName = new BlockingIfElse();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new BlockingIfElse(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testNestedBlockingIfElse() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/nestedBlockingIfElse.json");
-        BlockingIfElse parameterName = new BlockingIfElse();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new BlockingIfElse(), "./src/test/fixtures/bugpattern/nestedBlockingIfElse.json");
     }
 }

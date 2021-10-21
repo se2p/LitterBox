@@ -19,38 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class RecursiveCloningTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new RecursiveCloning(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testRecursiveCloning() throws IOException, ParsingException {
-        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/recursiveCloning.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
-        Set<Issue> reports = parameterName.check(recursiveClones);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new RecursiveCloning(), "./src/test/fixtures/bugpattern/recursiveCloning.json");
     }
 
     @Test
     public void testRecursionWithDelete() throws IOException, ParsingException {
-        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/happyNewYear.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
-        Set<Issue> reports = parameterName.check(recursiveClones);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new RecursiveCloning(), "./src/test/fixtures/bugpattern/happyNewYear.json");
     }
 }

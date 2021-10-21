@@ -20,12 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class HalsteadMetricsTest implements JsonTest {
 
@@ -42,7 +39,7 @@ public class HalsteadMetricsTest implements JsonTest {
     @Test
     public void testVolume() throws IOException, ParsingException {
         // V = N * log2(n)
-        assertThatMetricReportsWithin(33.7,0.1, new HalsteadVolume(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
+        assertThatMetricReportsWithin(33.7, 0.1, new HalsteadVolume(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 
     @Test
@@ -54,7 +51,7 @@ public class HalsteadMetricsTest implements JsonTest {
     @Test
     public void testEffort() throws IOException, ParsingException {
         // E = V * D
-        assertThatMetricReportsWithin(210.6,0.1, new HalsteadEffort(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
+        assertThatMetricReportsWithin(210.6, 0.1, new HalsteadEffort(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 
     @Test
@@ -71,5 +68,4 @@ public class HalsteadMetricsTest implements JsonTest {
     public void testVolume_EmptyProject() throws IOException, ParsingException {
         assertThatMetricReports(0, new HalsteadVolume(), "src/test/fixtures/metrics/empty.json");
     }
-
 }

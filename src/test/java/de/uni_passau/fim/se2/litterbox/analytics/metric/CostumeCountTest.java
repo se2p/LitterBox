@@ -20,13 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class CostumeCountTest  implements JsonTest {
+public class CostumeCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatMetricReports(2, new CostumeCount(), "./src/test/fixtures/emptyProject.json");

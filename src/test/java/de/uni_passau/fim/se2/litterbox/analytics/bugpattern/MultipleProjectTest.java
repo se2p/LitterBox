@@ -32,18 +32,12 @@ public class MultipleProjectTest implements JsonTest {
 
     @Test
     public void testBoatRace() throws IOException, ParsingException {
-        Program boatrace = JsonTest.parseProgram("./src/test/fixtures/bugpattern/boatrace.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(boatrace);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/boatrace.json");
     }
 
     @Test
     public void testBallgame() throws IOException, ParsingException {
-        Program ballgame = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ballgame.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(ballgame);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/ballgame.json");
     }
 
     @Test
