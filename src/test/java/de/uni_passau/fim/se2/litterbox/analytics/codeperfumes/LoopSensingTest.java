@@ -34,32 +34,22 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class LoopSensingTest implements JsonTest {
 
     @Test
     public void testSensingInLoop() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/eventInLoop.json");
-        LoopSensing LoopSensing = new LoopSensing();
-        Set<Issue> reports = LoopSensing.check(prog);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new LoopSensing(), "./src/test/fixtures/solutionpattern/eventInLoop.json");
     }
 
     @Test
     public void testTwoEventsInLoop() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/eventInLoopTwo.json");
-        LoopSensing LoopSensing = new LoopSensing();
-        Set<Issue> reports = LoopSensing.check(prog);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new LoopSensing(), "./src/test/fixtures/solutionpattern/eventInLoopTwo.json");
     }
 
     @Test
     public void testMissingSensingForEvent() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
-        LoopSensing LoopSensing = new LoopSensing();
-        Set<Issue> reports = LoopSensing.check(prog);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new LoopSensing(), "./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
     }
 
     @Test
