@@ -56,7 +56,7 @@ public class BusyWaiting extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideForeverWithOneStmt) {
+        if (insideForeverWithOneStmt && node.getParentNode().getParentNode() instanceof RepeatForeverStmt) {
             insideForeverAndIf = true;
             hasStop = false;
         }
