@@ -28,7 +28,7 @@ public class UnusedVariableTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatFinderReports(0, new UnusedVariable(), "./src/test/fixtures/emptyProject.json");
+        assertThatFinderReports(0, new UnusedVariable(), "./src/test/fixtures/bugpattern/recursion.json");
     }
 
     @Test
