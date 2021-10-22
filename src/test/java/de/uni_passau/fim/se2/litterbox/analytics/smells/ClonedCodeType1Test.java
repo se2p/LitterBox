@@ -18,101 +18,65 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClonedCodeType1Test {
+public class ClonedCodeType1Test implements JsonTest {
 
     @Test
     public void testDuplicatedScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
-        assertEquals(2, issues.size());
+        assertThatFinderReports(2, new ClonedCodeType1(), "./src/test/fixtures/smells/duplicatedScript.json");
     }
 
     @Test
     public void testDuplicatedScriptDifferentLiteralsAndVariables() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/codecloneliteralsvariables.json");
     }
 
     @Test
     public void testSubsequenceClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/codeclonesubsequence.json");
     }
 
     @Test
     public void testVariableClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/codeclonevariableblocks.json");
     }
 
     @Test
     public void testCompareScriptWithItself() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/cloneScriptWithItself.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
-        assertEquals(2, issues.size());
+        assertThatFinderReports(2, new ClonedCodeType1(), "./src/test/fixtures/smells/cloneScriptWithItself.json");
     }
 
     @Test
     public void testListClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/codeclonelistblocks.json");
     }
 
     @Test
     public void testCustomBlockClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is shorter than the minSize of 6
-        assertEquals(0, issues.size());
-    }
-
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/codeclonecustomblock.json");
     }
 
     @Test
     public void testDuplicatedScriptSixInclEvent() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/exactCopySixInclEvent.json");
-        ClonedCodeType1 finder = new ClonedCodeType1();
-        List<Issue> issues = new ArrayList<>(finder.check(program));
         //0, event is not counted
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType1(), "./src/test/fixtures/smells/exactCopySixInclEvent.json");
     }
 
     @Test

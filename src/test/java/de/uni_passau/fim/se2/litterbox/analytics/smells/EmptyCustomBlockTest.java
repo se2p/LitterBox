@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class EmptyCustomBlockTest implements JsonTest {
 
@@ -40,10 +39,7 @@ public class EmptyCustomBlockTest implements JsonTest {
 
     @Test
     public void testEmptyProcedure() throws IOException, ParsingException {
-        Program unusedProc = getAST("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        EmptyCustomBlock parameterName = new EmptyCustomBlock();
-        Set<Issue> reports = parameterName.check(unusedProc);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new EmptyCustomBlock(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test

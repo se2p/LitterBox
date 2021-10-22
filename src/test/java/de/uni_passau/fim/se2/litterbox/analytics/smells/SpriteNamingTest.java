@@ -32,9 +32,14 @@ import java.util.List;
 public class SpriteNamingTest implements JsonTest {
 
     @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        assertThatFinderReports(1, new SpriteNaming(), "./src/test/fixtures/emptyProject.json");
+    }
+
+    @Test
     public void testSpriteNaming() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/smells/spriteNaming.json");
-       SpriteNaming parameterName = new SpriteNaming();
+        SpriteNaming parameterName = new SpriteNaming();
         List<Issue> reports = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(2, reports.size());
         Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(1)));
