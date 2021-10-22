@@ -29,23 +29,16 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class UnnecessaryLoopTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        UnnecessaryLoop parameterName = new UnnecessaryLoop();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new UnnecessaryLoop(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testUnnecessary() throws IOException, ParsingException {
-        Program longScript = getAST("./src/test/fixtures/smells/loopOne.json");
-        UnnecessaryLoop parameterName = new UnnecessaryLoop();
-        Set<Issue> reports = parameterName.check(longScript);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new UnnecessaryLoop(), "./src/test/fixtures/smells/loopOne.json");
     }
 
     @Test

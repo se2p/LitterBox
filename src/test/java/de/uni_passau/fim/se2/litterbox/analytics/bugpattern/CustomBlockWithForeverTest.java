@@ -19,46 +19,30 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class CustomBlockWithForeverTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CustomBlockWithForever(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testProcedureWithNoForever() throws IOException, ParsingException {
-        Program procedureWithNoForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
-        CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        Set<Issue> reports = parameterName.check(procedureWithNoForever);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CustomBlockWithForever(), "./src/test/fixtures/bugpattern/procedureWithNoForever.json");
     }
 
     @Test
     public void testProcedureWithForever() throws IOException, ParsingException {
-        Program procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        Set<Issue> reports = parameterName.check(procedureWithForever);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new CustomBlockWithForever(), "./src/test/fixtures/bugpattern/procedureWithForever.json");
     }
 
     @Test
     public void testLastCall() throws IOException, ParsingException {
-        Program lastCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/callLast.json");
-        CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        Set<Issue> reports = parameterName.check(lastCall);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CustomBlockWithForever(), "./src/test/fixtures/bugpattern/callLast.json");
     }
 }

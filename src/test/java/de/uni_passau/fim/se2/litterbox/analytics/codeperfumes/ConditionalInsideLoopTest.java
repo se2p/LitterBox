@@ -28,24 +28,17 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ConditionalInsideLoopTest implements JsonTest {
 
     @Test
     public void testNestedConInLoop() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/nestedConInLoop.json");
-        ConditionalInsideLoop conditionalInsideLoop = new ConditionalInsideLoop();
-        Set<Issue> reports = conditionalInsideLoop.check(prog);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new ConditionalInsideLoop(), "./src/test/fixtures/goodPractice/nestedConInLoop.json");
     }
 
     @Test
     public void testNestedConInLoopTwoDifferent() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/nestedConInLoopTwo.json");
-        ConditionalInsideLoop conditionalInsideLoop = new ConditionalInsideLoop();
-        Set<Issue> reports = conditionalInsideLoop.check(prog);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new ConditionalInsideLoop(), "./src/test/fixtures/goodPractice/nestedConInLoopTwo.json");
     }
 
     @Test

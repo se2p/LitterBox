@@ -36,23 +36,17 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitialization.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitialization.json");
     }
 
     @Test
     public void testMissingInitializationInClone() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
     }
 
     @Test
     public void testMissingInitializationWrongVarUsed() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
     }
 
     @Test
@@ -67,77 +61,57 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
     }
 
     @Test
     public void testMissingInitializationInTwoBroadcasts() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
     }
 
     @Test
     public void testMissingInitializationInTwoBroadcastsWithDefinition() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
         // Not an anomaly: The definition happens in the message receiver, and we don't know
         // if the execution of the receiver will be scheduled before the use
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
     }
 
     @Test
     public void testMissingInitializationTwoVarReadChange() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
         // 2 vars, each is first used in a say, then in a change
-        Assertions.assertEquals(4, reports.size());
+        assertThatFinderReports(4, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
     }
 
     @Test
     public void testMissingInitializationVariableOfAndVar() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
         // One direct use, one us with AttributeOf
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
     }
 
     @Test
     public void testMissingInitializationInParallel() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
         // This is not an anomaly: The initialization may happen before the use, depending on the scheduler
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
     }
 
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
     }
 
     @Test
     public void testMissingPositionInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
     }
 
     @Test
     public void testMissingListInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/cfg/listoperations.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/cfg/listoperations.json");
     }
 
     @Test
     public void testMissingInitializationInCustomBlockWithCall() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationInCustomBlock.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationInCustomBlock.json");
     }
 
     @Test
@@ -151,18 +125,12 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitializationOfList() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationUseList.json");
-        MissingInitialization initialization = new MissingInitialization();
-        Set<Issue> reports = (initialization).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationUseList.json");
     }
 
     @Test
     public void testMissingInitializationOfListNotReportingHide() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationHideList.json");
-        MissingInitialization initialization = new MissingInitialization();
-        Set<Issue> reports = (initialization).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationHideList.json");
     }
 
     @Test

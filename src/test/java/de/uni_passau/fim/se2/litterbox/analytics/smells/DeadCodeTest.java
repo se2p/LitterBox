@@ -19,54 +19,35 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class DeadCodeTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        DeadCode parameterName = new DeadCode();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new DeadCode(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        Program deadCode = JsonTest.parseProgram("./src/test/fixtures/smells/deadCode.json");
-        DeadCode parameterName = new DeadCode();
-        Set<Issue> reports = parameterName.check(deadCode);
-        Assertions.assertEquals(3, reports.size());
+        assertThatFinderReports(3, new DeadCode(), "./src/test/fixtures/smells/deadCode.json");
     }
 
     @Test
     public void testDeadVariable() throws IOException, ParsingException {
-        Program deadVariable = JsonTest.parseProgram("./src/test/fixtures/smells/deadVariable.json");
-        DeadCode parameterName = new DeadCode();
-        Set<Issue> reports = parameterName.check(deadVariable);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new DeadCode(), "./src/test/fixtures/smells/deadVariable.json");
     }
 
     @Test
     public void testDeadParam() throws IOException, ParsingException {
-        Program deadParam = JsonTest.parseProgram("./src/test/fixtures/smells/deadParam.json");
-        DeadCode parameterName = new DeadCode();
-        Set<Issue> reports = parameterName.check(deadParam);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new DeadCode(), "./src/test/fixtures/smells/deadParam.json");
     }
 
     @Test
     public void testAllDead() throws IOException, ParsingException {
-        Program allDead = JsonTest.parseProgram("./src/test/fixtures/smells/allBlocksDead.json");
-        DeadCode parameterName = new DeadCode();
-        Set<Issue> reports = parameterName.check(allDead);
-        Assertions.assertEquals(126, reports.size());
+        assertThatFinderReports(126, new DeadCode(), "./src/test/fixtures/smells/allBlocksDead.json");
     }
 }

@@ -28,21 +28,17 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class BoolExpressionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        BoolExpression bool = new BoolExpression();
-        Set<Issue> reports = bool.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new BoolExpression(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testBooleanExpressions() throws IOException, ParsingException {
-        Program boolProg =  JsonTest.parseProgram("./src/test/fixtures/goodPractice/boolExpressions.json");
+        Program boolProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/boolExpressions.json");
         BoolExpression bool = new BoolExpression();
         List<Issue> reports = new ArrayList<>(bool.check(boolProg));
         Assertions.assertEquals(7, reports.size());

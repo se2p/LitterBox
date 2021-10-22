@@ -28,72 +28,47 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MissingBackdropSwitchTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMissingBackdropSwitchNext() throws IOException, ParsingException {
-        Program missingBackdropSwitchNext = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
     }
 
     @Test
     public void testMissingBackdropSwitchNextInSprite() throws IOException, ParsingException {
-        Program missingBackdropSwitchNext2 = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchNext2.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext2);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missingBackDropSwitchNext2.json");
     }
 
     @Test
     public void testMissBackdrop() throws IOException, ParsingException {
-        Program missingBack = getAST("./src/test/fixtures/bugpattern/missBackdrop.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(missingBack);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missBackdrop.json");
     }
 
     @Test
     public void testRandomBack() throws IOException, ParsingException {
-        Program random = getAST("./src/test/fixtures/bugpattern/randomBackdrop.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(random);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/randomBackdrop.json");
     }
 
     @Test
     public void testFischmampfer() throws IOException, ParsingException {
-        Program fischmampfer = getAST("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(fischmampfer);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
     }
 
     @Test
     public void testSwitchAndWait() throws IOException, ParsingException {
-        Program fischmampferWithWait = getAST("./src/test/fixtures/bugpattern/missingBackdropSwitchAndWaitAsString.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(fischmampferWithWait);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missingBackdropSwitchAndWaitAsString.json");
     }
 
     @Test
     public void testSwitchWithNumericExpression() throws IOException, ParsingException {
-        Program programWithSwitch = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchShouldIgnoreNumericExpr.json");
-        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        Set<Issue> reports = parameterName.check(programWithSwitch);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingBackdropSwitch(), "./src/test/fixtures/bugpattern/missingBackDropSwitchShouldIgnoreNumericExpr.json");
     }
 
     @Test

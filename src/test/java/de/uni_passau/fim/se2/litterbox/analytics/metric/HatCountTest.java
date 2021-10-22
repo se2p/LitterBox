@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,36 +28,26 @@ public class HatCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        HatCount parameterName = new HatCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new HatCount(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEmptySprites() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        HatCount parameterName = new HatCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(program));
+        assertThatMetricReports(0, new HatCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test
     public void testNonEmptyScripts() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/weightedMethod.json");
-        HatCount parameterName = new HatCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(program));
+        assertThatMetricReports(2, new HatCount(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testLooseScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
-        HatCount parameterName = new HatCount();
-        Assertions.assertEquals(1, parameterName.calculateMetric(program));
+        assertThatMetricReports(1, new HatCount(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/deadCode.json");
-        HatCount parameterName = new HatCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(program));
+        assertThatMetricReports(0, new HatCount(), "./src/test/fixtures/smells/deadCode.json");
     }
 }

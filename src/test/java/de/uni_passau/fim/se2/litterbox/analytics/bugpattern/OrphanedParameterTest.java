@@ -19,46 +19,30 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class OrphanedParameterTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        OrphanedParameter parameterName = new OrphanedParameter();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new OrphanedParameter(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testOrphanedParameter() throws IOException, ParsingException {
-        Program orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParameter.json");
-        OrphanedParameter parameterName = new OrphanedParameter();
-        Set<Issue> reports = parameterName.check(orphanedParam);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new OrphanedParameter(), "./src/test/fixtures/bugpattern/orphanedParameter.json");
     }
 
     @Test
     public void testOutsideParameter() throws IOException, ParsingException {
-        Program outsideParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
-        OrphanedParameter parameterName = new OrphanedParameter();
-        Set<Issue> reports = parameterName.check(outsideParam);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new OrphanedParameter(), "./src/test/fixtures/bugpattern/parameterOutsideScope.json");
     }
 
     @Test
     public void testOrphanedParameterRichtung() throws IOException, ParsingException {
-        Program orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParamRichtung.json");
-        OrphanedParameter orph = new OrphanedParameter();
-        Set<Issue> reports = orph.check(orphanedParam);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new OrphanedParameter(), "./src/test/fixtures/bugpattern/orphanedParamRichtung.json");
     }
 }

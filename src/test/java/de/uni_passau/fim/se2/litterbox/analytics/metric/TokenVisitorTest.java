@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class TokenVisitorTest  implements JsonTest {
+public class TokenVisitorTest implements JsonTest {
 
     @Test
     public void testFourBlocks() throws IOException, ParsingException {
@@ -59,7 +59,6 @@ public class TokenVisitorTest  implements JsonTest {
         assertThat(visitor.getUniqueTokens().size()).isEqualTo(19);
     }
 
-
     @Test
     public void testIfElse() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/cfg/ifelse_repeattimes.json");
@@ -89,6 +88,4 @@ public class TokenVisitorTest  implements JsonTest {
         assertThat(visitor.getTotalTokenCount()).isEqualTo(11);
         assertThat(visitor.getUniqueTokens().size()).isEqualTo(10);
     }
-
-
 }

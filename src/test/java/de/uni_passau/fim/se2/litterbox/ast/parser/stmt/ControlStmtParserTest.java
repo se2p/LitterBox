@@ -37,9 +37,7 @@ public class ControlStmtParserTest implements JsonTest {
 
     @Test
     public void testProgramStructure() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/stmtParser/controlStmts.json");
-        ActorDefinitionList list = program.getActorDefinitionList();
-        Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
+        assertNumberActorDefinitions(2, "src/test/fixtures/stmtParser/controlStmts.json");
     }
 
     @Test

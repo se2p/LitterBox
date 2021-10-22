@@ -29,16 +29,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        ImmediateDeleteCloneAfterBroadcast parameterName = new ImmediateDeleteCloneAfterBroadcast();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new ImmediateDeleteCloneAfterBroadcast(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test

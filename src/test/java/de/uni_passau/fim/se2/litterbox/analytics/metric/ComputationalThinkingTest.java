@@ -58,7 +58,6 @@ public class ComputationalThinkingTest implements JsonTest {
         assertThat(new ComputationalThinkingScoreUserInteractivity().calculateMetric(program)).isEqualTo(1.0);
     }
 
-
     @Test
     public void testOnClick() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/cfg/onclick.json");
