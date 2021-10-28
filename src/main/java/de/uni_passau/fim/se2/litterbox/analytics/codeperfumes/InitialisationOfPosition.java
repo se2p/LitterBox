@@ -22,7 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -30,8 +33,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,9 +120,9 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
             }
         } else {
 
-            // Initialization should not be in a control- or if- statement
+            // Initialization should not be in a control- statement
             node.getStmts().forEach(stmt -> {
-                if (!(stmt instanceof ControlStmt || stmt instanceof IfStmt)) {
+                if (!(stmt instanceof ControlStmt)) {
                     stmt.accept(this);
                 }
             });
@@ -129,7 +133,7 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
     public void visit(SetXTo stmt) {
         if (stmt.getNum() instanceof NumberLiteral) {
             initializedX = true;
-            if (initializedX && initializedY) {
+            if (initializedY) {
                 check(stmt);
                 initializedX = false;
                 initializedY = false;
@@ -141,7 +145,7 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
     public void visit(SetYTo stmt) {
         if (stmt.getNum() instanceof NumberLiteral) {
             initializedY = true;
-            if (initializedX && initializedY) {
+            if (initializedX) {
                 check(stmt);
                 initializedX = false;
                 initializedY = false;
@@ -158,10 +162,10 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
     }
 
     private void check(AbstractNode node) {
-        if (inGreenFlag) {
+        if (inGreenFlag || inCustomBlock) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-        } else if (inCustomBlock) {
-            initializedInBlock = true;
+            //} else if (inCustomBlock) {
+            //   initializedInBlock = true;
         }
     }
 
