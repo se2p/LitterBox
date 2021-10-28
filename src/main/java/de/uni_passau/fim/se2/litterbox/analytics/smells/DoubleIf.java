@@ -28,34 +28,107 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
 
 public class DoubleIf extends AbstractIssueFinder {
 
     private static final String NAME = "double_if";
+    private boolean movedInIf = false;
+    private boolean checkingForMove = false;
 
     @Override
     public void visit(StmtList node) {
-        final List<Stmt> stmts = node.getStmts();
-        BoolExpr lastCondition = null;
-        for (Stmt s : stmts) {
-            if (s instanceof IfStmt) {
-                BoolExpr condition = getCondition((IfStmt) s);
-                if (lastCondition != null) {
-                    if (lastCondition.equals(condition)) {
-                        addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
+        if (!checkingForMove) {
+            movedInIf = false;
+            final List<Stmt> stmts = node.getStmts();
+            BoolExpr lastCondition = null;
+            for (Stmt s : stmts) {
+                if (s instanceof IfStmt) {
+                    BoolExpr condition = getCondition((IfStmt) s);
+                    if (lastCondition != null) {
+                        checkingForMove = true;
+                        visitChildren(node);
+                        checkingForMove = false;
+                        //todo check if condition is of the touching kind
+                        if (lastCondition.equals(condition) &&  !movedInIf) {
+                            addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
+                        }
                     }
+                    lastCondition = condition;
+                } else {
+                    // even if we already have a condition from an ifstmt before, it only counts if a second ifstmt
+                    // follows directly after the first.
+                    lastCondition = null;
                 }
-                lastCondition = condition;
-            } else {
-                // even if we already have a condition from an ifstmt before, it only counts if a second ifstmt
-                // follows directly after the first.
-                lastCondition = null;
             }
         }
 
         visitChildren(node);
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(GlideSecsTo node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(GlideSecsToXY node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(GoToPos node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(GoToPosXY node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(SetXTo node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
+    }
+
+    @Override
+    public void visit(SetYTo node) {
+        if (checkingForMove) {
+            movedInIf = true;
+        }
     }
 
     private BoolExpr getCondition(IfStmt s) {
