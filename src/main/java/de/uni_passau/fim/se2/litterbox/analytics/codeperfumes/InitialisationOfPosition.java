@@ -30,16 +30,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This checks for an initialization for the sprite location. This initialization should usually happen in a
@@ -51,15 +46,11 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
     private boolean initializedY = false;
     private boolean inCustomBlock = false;
     private boolean inGreenFlag = false;
-    private boolean initializedInBlock = false;
-    private List<String> customBlocks = new ArrayList<>();
 
     @Override
     public void visit(ActorDefinition actor) {
-        customBlocks = new ArrayList<>();
         initializedX = false;
         initializedY = false;
-        initializedInBlock = false;
         super.visit(actor);
     }
 
@@ -71,22 +62,6 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
         }
         if (node.getEvent() instanceof GreenFlag) {
             inGreenFlag = true;
-            if (initializedInBlock) {
-                node.getStmtList().getStmts().forEach(stmt -> {
-                    if (stmt instanceof CallStmt) {
-
-                        // Remove duplicates from custom block list
-                        customBlocks = customBlocks.stream().distinct().collect(Collectors.toList());
-
-                        if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
-
-                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
-                            initializedInBlock = false;
-                            customBlocks.remove(((CallStmt) stmt).getIdent().getName());
-                        }
-                    }
-                });
-            }
             this.currentScript = node;
             this.currentProcedure = null;
             node.getStmtList().accept(this);
@@ -113,7 +88,6 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
 
                 for (Stmt stmt : node.getStmts()) {
                     if (stmt instanceof GoToPosXY || stmt instanceof SetXTo || stmt instanceof SetYTo) {
-                        customBlocks.add(procMap.get(parent.getIdent()).getName());
                         stmt.accept(this);
                     }
                 }

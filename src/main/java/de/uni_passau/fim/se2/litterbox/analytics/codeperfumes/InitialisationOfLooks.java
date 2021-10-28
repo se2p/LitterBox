@@ -19,17 +19,18 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
@@ -46,13 +47,9 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
     public static final String HINT_SPRITE = "initialisation_of_looks_sprite";
     private boolean inGreenFlag = false;
     private boolean inCustomBlock = false;
-    private List<String> customBlocks = new ArrayList<>();
-    private boolean initializedInBlock = false;
 
     @Override
     public void visit(ActorDefinition actor) {
-        initializedInBlock = false;
-        customBlocks = new ArrayList<>();
         super.visit(actor);
     }
 
@@ -64,23 +61,6 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
         }
         if (node.getEvent() instanceof GreenFlag) {
             inGreenFlag = true;
-            if (initializedInBlock) {
-                node.getStmtList().getStmts().forEach(stmt -> {
-                    if (stmt instanceof CallStmt) {
-                        if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
-                            Hint hint;
-                            if (currentActor.isStage()) {
-                                hint = new Hint(HINT_STAGE);
-                            } else {
-                                hint = new Hint(HINT_SPRITE);
-                            }
-                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM, hint);
-                            initializedInBlock = false;
-                            customBlocks.remove(((CallStmt) stmt).getIdent().getName());
-                        }
-                    }
-                });
-            }
             this.currentScript = node;
             this.currentProcedure = null;
             node.getStmtList().accept(this);
@@ -109,7 +89,6 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
                     if (stmt instanceof SetSizeTo || stmt instanceof SwitchCostumeTo || stmt instanceof Show
                             || stmt instanceof Hide || stmt instanceof ClearGraphicEffects
                             || stmt instanceof SetGraphicEffectTo || stmt instanceof SwitchBackdrop) {
-                        customBlocks.add(procMap.get(parent.getIdent()).getName());
                         stmt.accept(this);
                         break;
                     }
@@ -117,9 +96,9 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
             }
         } else {
 
-            // Initialization should not be in a control- or if- statement
+            // Initialization should not be in a control- statement
             node.getStmts().forEach(stmt -> {
-                if (!(stmt instanceof ControlStmt || stmt instanceof IfStmt)) {
+                if (!(stmt instanceof ControlStmt)) {
                     stmt.accept(this);
                 }
             });
@@ -162,7 +141,7 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
     }
 
     private void check(AbstractNode node) {
-        if (inGreenFlag) {
+        if (inGreenFlag || inCustomBlock) {
             Hint hint;
             if (currentActor.isStage() || node instanceof SwitchBackdrop) {
                 hint = new Hint(HINT_STAGE);
@@ -170,8 +149,6 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
                 hint = new Hint(HINT_SPRITE);
             }
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
-        } else if (inCustomBlock) {
-            initializedInBlock = true;
         }
     }
 
