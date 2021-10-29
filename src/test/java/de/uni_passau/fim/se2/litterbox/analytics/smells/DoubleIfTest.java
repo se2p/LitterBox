@@ -33,7 +33,7 @@ public class DoubleIfTest implements JsonTest {
 
     @Test
     public void testProgram() throws IOException, ParsingException {
-        assertThatFinderReports(2, new DoubleIf(), "./src/test/fixtures/smells/doubleIf.json");
+        assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIf.json");
     }
 
     @Test
@@ -60,5 +60,11 @@ public class DoubleIfTest implements JsonTest {
     public void testDoubleIfWithDifferentBody() throws IOException, ParsingException {
         // The body of the condition doesn't matter
         assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
+    }
+
+    @Test
+    public void testNoDoubleIfMovingProgram() throws IOException, ParsingException {
+        //no double if because the condition is a touching one and the first if has a moving block
+        assertThatFinderReports(0, new DoubleIf(), "./src/test/fixtures/smells/noDoubleIfMoving.json");
     }
 }
