@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -51,8 +54,10 @@ public class DoubleIf extends AbstractIssueFinder {
                         checkingForMove = true;
                         visitChildren(node);
                         checkingForMove = false;
-                        //todo check if condition is of the touching kind
-                        if (lastCondition.equals(condition) &&  !movedInIf) {
+                        boolean touchingCondition = condition instanceof Touching
+                                || condition instanceof ColorTouchingColor || condition instanceof SpriteTouchingColor;
+
+                        if (lastCondition.equals(condition) && !(movedInIf && touchingCondition)) {
                             addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
                         }
                     }
