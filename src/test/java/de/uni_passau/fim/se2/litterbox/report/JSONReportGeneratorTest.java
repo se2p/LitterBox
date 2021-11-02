@@ -258,7 +258,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testReportWithCouplingInformation() throws IOException, ParsingException {
         Set<Issue> issues = new LinkedHashSet<>();
-        Program program = getAST("./src/test/fixtures/smells/unnecessaryIf.json");
+        Program program = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
         UnnecessaryIfAfterUntil unnecessaryIfAfterUntil = new UnnecessaryIfAfterUntil();
         issues.addAll(unnecessaryIfAfterUntil.check(program));
         MissingLoopSensing mls = new MissingLoopSensing();
