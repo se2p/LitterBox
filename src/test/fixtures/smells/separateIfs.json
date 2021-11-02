@@ -103,7 +103,7 @@
                         ],
                         "SUBSTACK": [
                             2,
-                            "`y^O/FD{D%=bKJ_E%ePt"
+                            "3gxf#C;2Fnhv:7YJMU!a"
                         ]
                     },
                     "fields": {},
@@ -172,16 +172,16 @@
                     "shadow": false,
                     "topLevel": false
                 },
-                "`y^O/FD{D%=bKJ_E%ePt": {
-                    "opcode": "motion_movesteps",
+                "3gxf#C;2Fnhv:7YJMU!a": {
+                    "opcode": "motion_turnright",
                     "next": null,
                     "parent": "y~1A2=%1HZ+k$CwH@FP,",
                     "inputs": {
-                        "STEPS": [
+                        "DEGREES": [
                             1,
                             [
                                 4,
-                                "10"
+                                "15"
                             ]
                         ]
                     },

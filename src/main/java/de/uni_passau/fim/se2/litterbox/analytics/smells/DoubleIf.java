@@ -49,7 +49,7 @@ public class DoubleIf extends AbstractIssueFinder {
             BoolExpr lastCondition = null;
             for (Stmt s : stmts) {
                 if (s instanceof IfStmt) {
-                    BoolExpr condition = getCondition((IfStmt) s);
+                    BoolExpr condition = ((IfStmt) s).getBoolExpr();
                     if (lastCondition != null) {
                         checkingForMove = true;
                         visitChildren(node);
@@ -58,7 +58,7 @@ public class DoubleIf extends AbstractIssueFinder {
                                 || condition instanceof ColorTouchingColor || condition instanceof SpriteTouchingColor;
 
                         if (lastCondition.equals(condition) && !(movedInIf && touchingCondition)) {
-                            addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
+                            addIssue(s, s.getMetadata(), IssueSeverity.LOW);
                         }
                     }
                     lastCondition = condition;
@@ -133,26 +133,6 @@ public class DoubleIf extends AbstractIssueFinder {
     public void visit(SetYTo node) {
         if (checkingForMove) {
             movedInIf = true;
-        }
-    }
-
-    private BoolExpr getCondition(IfStmt s) {
-        if (s instanceof IfThenStmt) {
-            return ((IfThenStmt) s).getBoolExpr();
-        } else if (s instanceof IfElseStmt) {
-            return ((IfElseStmt) s).getBoolExpr();
-        } else {
-            throw new IllegalArgumentException("Cannot get condition of anything but IfStmts");
-        }
-    }
-
-    private BlockMetadata getMetadata(IfStmt s) {
-        if (s instanceof IfThenStmt) {
-            return ((IfThenStmt) s).getMetadata();
-        } else if (s instanceof IfElseStmt) {
-            return ((IfElseStmt) s).getMetadata();
-        } else {
-            throw new IllegalArgumentException("Cannot get condition of anything but IfStmts");
         }
     }
 
