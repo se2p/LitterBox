@@ -30,10 +30,12 @@ public class Code2VecAnalyzer extends Analyzer{
         GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength);
         String code2VecInput = generatePathTask.createContextForCode2Vec();
 
-        if (outputPath.equals("CONSOLE")) {
-            System.out.println(code2VecInput);
-        } else {
-            writeToFile(fileEntry.getName(), outputPath, code2VecInput);
+        if (code2VecInput.length() > 0) {
+            if (outputPath.equals("CONSOLE")) {
+                System.out.println(code2VecInput);
+            } else {
+                writeToFile(fileEntry.getName(), outputPath, code2VecInput);
+            }
         }
     }
 
