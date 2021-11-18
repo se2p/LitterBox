@@ -161,12 +161,12 @@ The resulting set of refactored versions of the original project will be placed 
 ### Code2Vec output
 
 To be able to use code2vec with the programming language Scratch, Litterbox can produce a file as 
-input for code2vecs neural network. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
+input for code2vecs machine learning. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
 Litterbox produces a file with exactly this rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with 
 multiple projects and produces the output to the declared output folder.
 
 ```
-java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output <path/to/folder/or/file/for/the/output> -path <path/to/json/project/or/folder/with/projects>
+java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output <path/to/folder/for/the/output> -path <path/to/json/project/or/folder/with/projects>
 ```
 
 There are some differences between Scratch and "normal" programming languages like java, but the most important is,

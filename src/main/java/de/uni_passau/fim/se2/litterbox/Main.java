@@ -131,7 +131,7 @@ public class Main {
 
         //parameters for Code2Vec
         options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
-        options.addOption(NOHASH_SHORT, NOHASH, false, "The paths will not be converted to hashes");
+        options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
 
         return options;
     }
@@ -149,7 +149,7 @@ public class Main {
                 + "~/path/to/json/project/or/folder/with/projects \n");
         System.out.println("Example for refactoring: java -jar Litterbox-1.0.jar -r -p ~/path/to/project -e /path/to/output/folder \n");
         System.out.println("Example to produce a text file as input for code2vec: "
-                + "java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output ~/path/to/folder/or/file/for/the/output "
+                + "java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output ~/path/to/folder/for/the/output "
                 + "-path ~/path/to/json/project/or/folder/with/projects -maxpathlength 8");
 
         System.out.println("Detectors:");
@@ -236,9 +236,10 @@ public class Main {
 
     static void convertToCode2Vec(CommandLine cmd) throws ParseException, IOException {
         int maxPathLength = 8; //default Value
+        String outputPath = "CONSOLE"; //if no outputPath was declared, it prints to console
 
-        if (!cmd.hasOption(OUTPUT)) {
-            throw new ParseException("Output path option '" + OUTPUT + "' required");
+        if (cmd.hasOption(OUTPUT)) {
+            outputPath = cmd.getOptionValue(OUTPUT);
         }
 
         if (!cmd.hasOption(PROJECTPATH)) {
@@ -256,10 +257,6 @@ public class Main {
             }
         }
 
-
-
-
-        String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
         Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
