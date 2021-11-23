@@ -120,6 +120,7 @@ public class IssueTool {
         registerSmellFinder(new UnnecessaryLoop(), smellFinders);
         registerSmellFinder(new UnnecessaryIf(), smellFinders);
         registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
+        registerSmellFinder(new UnnecessaryMessage(), smellFinders);
         registerSmellFinder(new UnnecessaryTime(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedParameter(), smellFinders);

@@ -1,0 +1,234 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {
+                "N@?*P5-ir2fLSfhIM9$G": "Nachricht1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "`d#YV|t[+:W@m]i^p]ZS": {
+                    "opcode": "event_broadcast",
+                    "next": "02)awgh}xxAfewt{FG$:",
+                    "parent": "bp_V-d*0@#}3JpLsOtbE",
+                    "inputs": {
+                        "BROADCAST_INPUT": [
+                            1,
+                            [
+                                11,
+                                "Nachricht1",
+                                "N@?*P5-ir2fLSfhIM9$G"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "bp_V-d*0@#}3JpLsOtbE": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "`d#YV|t[+:W@m]i^p]ZS",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -435,
+                    "y": 349
+                },
+                "02)awgh}xxAfewt{FG$:": {
+                    "opcode": "sensing_askandwait",
+                    "next": null,
+                    "parent": "`d#YV|t[+:W@m]i^p]ZS",
+                    "inputs": {
+                        "QUESTION": [
+                            1,
+                            [
+                                10,
+                                "Wie heißt du?"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Apple",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                ":6?mw8G%n0/6(C^C@p?k": {
+                    "opcode": "event_whenbroadcastreceived",
+                    "next": "7l@A9ZV-zUwTVnhWRUQz",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BROADCAST_OPTION": [
+                            "Nachricht1",
+                            "N@?*P5-ir2fLSfhIM9$G"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -405,
+                    "y": 293
+                },
+                "7l@A9ZV-zUwTVnhWRUQz": {
+                    "opcode": "looks_sayforsecs",
+                    "next": null,
+                    "parent": ":6?mw8G%n0/6(C^C@p?k",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hallo!"
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "3826a4091a33e4d26f87a2fac7cf796b",
+                    "name": "apple",
+                    "bitmapResolution": 1,
+                    "md5ext": "3826a4091a33e4d26f87a2fac7cf796b.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 31,
+                    "rotationCenterY": 31
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "0b1e3033140d094563248e61de4039e5",
+                    "name": "Chomp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 12678,
+                    "md5ext": "0b1e3033140d094563248e61de4039e5.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": -82,
+            "y": 28,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20211015091140",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36"
+    }
+}
