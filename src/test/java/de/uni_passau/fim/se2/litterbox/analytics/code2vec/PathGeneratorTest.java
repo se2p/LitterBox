@@ -19,20 +19,32 @@ class PathGeneratorTest implements JsonTest {
         PathGenerator generator = new PathGenerator(program, 8);
         ArrayList<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
+        int positionCat = 0;
+        int positionAbby = 0;
+        if (pathContextsPerSprite.get(0).getName().equals("cat") && pathContextsPerSprite.get(1).getName().equals("abby")){
+            positionAbby = 1;
+        } else if (pathContextsPerSprite.get(1).getName().equals("cat") && pathContextsPerSprite.get(0).getName().equals("abby")) {
+            positionCat = 1;
+        } else {
+            fail();
+        }
+
         // Sprite cat
-        assertEquals("cat", pathContextsPerSprite.get(0).getName());
-        assertEquals(3, pathContextsPerSprite.get(0).getFeatures().size());
+        ProgramFeatures cat = pathContextsPerSprite.get(positionCat);
+        assertEquals("cat", cat.getName());
+        assertEquals(3, cat.getFeatures().size());
         assertEquals("NumberLiteral,625791294,StringLiteral",
-                pathContextsPerSprite.get(0).getFeatures().get(0).toString());
+                cat.getFeatures().get(0).toString());
         assertEquals("NumberLiteral,1493538624,Show",
-                pathContextsPerSprite.get(0).getFeatures().get(1).toString());
+                cat.getFeatures().get(1).toString());
         assertEquals("StringLiteral,-547448667,Show",
-                pathContextsPerSprite.get(0).getFeatures().get(2).toString());
+                cat.getFeatures().get(2).toString());
 
         // Sprite abby
-        assertEquals("abby", pathContextsPerSprite.get(1).getName());
-        assertEquals(1, pathContextsPerSprite.get(1).getFeatures().size());
+        ProgramFeatures abby = pathContextsPerSprite.get(positionAbby);
+        assertEquals("abby", abby.getName());
+        assertEquals(1, abby.getFeatures().size());
         assertEquals("GreenFlag,-2069003229,StringLiteral",
-                pathContextsPerSprite.get(1).getFeatures().get(0).toString());
+                abby.getFeatures().get(0).toString());
     }
 }
