@@ -23,7 +23,7 @@ public class Code2VecAnalyzer extends Analyzer{
     void check(File fileEntry, String outputPath) {
         Program program = extractProgram(fileEntry);
         if(program == null) {
-            // Todo error message
+            log.warning("Program was null. File name was '" + fileEntry.getName() + "'");
             return;
         }
 
