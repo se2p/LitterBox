@@ -49,7 +49,7 @@ class ExtractSpriteVisitorTest implements JsonTest {
             } else if (((ActorDefinition)sprite).getIdent().getName().equals("cat")){
                 sprites[1] = sprite;
             } else {
-                fail("Expected were abby or cat but was " + ((ActorDefinition)sprite).getIdent().getName());
+                fail("Expected were 'abby' or 'cat' but was " + ((ActorDefinition)sprite).getIdent().getName());
             }
         }
         return sprites;
