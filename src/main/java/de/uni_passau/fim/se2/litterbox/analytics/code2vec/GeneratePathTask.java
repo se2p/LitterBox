@@ -19,8 +19,7 @@ public class GeneratePathTask {
 
     public String createContextForCode2Vec() {
         PathGenerator pathGenerator = new PathGenerator(program, maxPathLength);
-        pathGenerator.extractASTLeafsPerSprite();
-        //pathGenerator.printLeafsPerSpite();
+        //pathGenerator.printLeafsPerSprite();
         ArrayList<ProgramFeatures> programs = pathGenerator.generatePaths();
         return featuresToString(programs);
     }
@@ -35,7 +34,7 @@ public class GeneratePathTask {
         for (ProgramFeatures singleSpriteFeatures : features) {
             StringBuilder builder = new StringBuilder();
 
-            String toPrint = "";
+            String toPrint;
             toPrint = singleSpriteFeatures.toString();
             builder.append(toPrint);
 
