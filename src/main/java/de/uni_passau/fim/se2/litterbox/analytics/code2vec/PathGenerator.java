@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class PathGenerator {
 
@@ -64,7 +63,7 @@ public class PathGenerator {
         List<ASTNode> spriteLeafs = leafsMap.get(sprite);
         String spriteName = ((ActorDefinition)sprite).getIdent().getName();
         //Normalize SpriteLabel
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName, "BLANK");
+        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
         if (isDefaultName(normalizedSpriteLabel) || normalizedSpriteLabel.isEmpty()) {
             return null;
         }

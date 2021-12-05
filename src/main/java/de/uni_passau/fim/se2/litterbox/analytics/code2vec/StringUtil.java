@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StringUtil {
-    public static String normalizeName(String original, String defaultString) {
+    public static String normalizeName(String original) {
 		original = original.toLowerCase().replaceAll("\\\\n", "") // escaped new
 																	// lines
 				.replaceAll("//s+", "") // whitespaces
@@ -30,7 +30,7 @@ public class StringUtil {
 	public static ArrayList<String> splitToSubtokens(String str1) {
 		String str2 = str1.trim();
 		return Stream.of(str2.split("(?<=[a-z])(?=[A-Z])|_|-|[0-9]|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"))
-				.filter(s -> s.length() > 0).map(s -> StringUtil.normalizeName(s, ""))
+				.filter(s -> s.length() > 0).map(StringUtil::normalizeName)
 				.filter(s -> s.length() > 0).collect(Collectors.toCollection(ArrayList::new));
 	}
 }
