@@ -235,7 +235,8 @@ Lisa-Marina Salvesen\
 Sebastian Schweikl\
 Andreas Stahlbauer\
 Florian Sulzmeier\
-Ewald Wasmeier
+Ewald Wasmeier \
+Florian Beck
 
 LitterBox is supported by the project FR 2955/3-1 funded by the
 "Deutsche Forschungsgemeinschaft" and BMBF project
