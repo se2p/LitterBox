@@ -20,12 +20,12 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
         if (node.getActorType().isSprite()) {
             List<ASTNode> leafsCollector = new LinkedList<>();
 
-            leafsCollector = traverseLeafs(node.getScripts(), leafsCollector, node.getIdent().getName());
+            leafsCollector = traverseLeafs(node.getScripts(), leafsCollector);
             leafsMap.put(node, leafsCollector);
         }
     }
 
-    private List<ASTNode> traverseLeafs(ASTNode node, List<ASTNode> leafsCollector, String SpriteLabel) {
+    private List<ASTNode> traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {
         if (node instanceof ASTLeaf) {
             leafsCollector.add(node);
         }
@@ -35,11 +35,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
                 continue;
             }
 
-            //Ignoring the StringLiteral which is equal to the SpriteLabel
-            if (child instanceof StringLiteral && ((StringLiteral) child).getText().equals(SpriteLabel)) {
-                continue;
-            }
-            leafsCollector = traverseLeafs(child, leafsCollector, SpriteLabel);
+            leafsCollector = traverseLeafs(child, leafsCollector);
         }
         return leafsCollector;
     }
