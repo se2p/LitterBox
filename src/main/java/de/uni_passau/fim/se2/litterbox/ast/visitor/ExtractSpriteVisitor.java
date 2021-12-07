@@ -29,8 +29,8 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
             leafsCollector.add(node);
         }
         for (ASTNode child : node.getChildren()) {
-            if (child instanceof DeclarationStmtList || child instanceof SetStmtList
-                    || child instanceof ActorType || child instanceof Metadata) {
+            //Metadata such as code position in the editor are irrelevant for the path contexts
+            if (child instanceof Metadata) {
                 continue;
             }
 
