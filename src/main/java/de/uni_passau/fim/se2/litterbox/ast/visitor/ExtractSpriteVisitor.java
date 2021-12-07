@@ -24,7 +24,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
         }
     }
 
-    private List<ASTNode> traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {
+    private void traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {
         if (node instanceof ASTLeaf) {
             leafsCollector.add(node);
         }
@@ -34,8 +34,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
                 continue;
             }
 
-            leafsCollector = traverseLeafs(child, leafsCollector);
+            traverseLeafs(child, leafsCollector);
         }
-        return leafsCollector;
     }
 }
