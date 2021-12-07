@@ -79,7 +79,7 @@ public class PathGenerator {
         for (int i = 0; i < spriteLeafs.size(); i++) {
             for (int j = i + 1; j < spriteLeafs.size(); j++) {
                 String path = generatePath(spriteLeafs.get(i), spriteLeafs.get(j));
-                if (!path.equals("")) {
+                if (!path.isEmpty()) {
                     String source = spriteLeafs.get(i).getUniqueName();
                     String target = spriteLeafs.get(j).getUniqueName();
                     programFeatures.addFeature(source, path, target);

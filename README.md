@@ -218,8 +218,8 @@ the [University of Passau](https://www.uni-passau.de).
 Contributors:
 
 Felix Adler\
-Lena Bloch\
 Florian Beck\
+Lena Bloch\
 Christoph Frädrich\
 Gordon Fraser\
 Luisa Greifenstein\
