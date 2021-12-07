@@ -11,8 +11,7 @@ public class GeneratePathTask {
     private final Program program;
     private final int maxPathLength;
 
-
-    public GeneratePathTask(Program program, int maxPathLength){
+    public GeneratePathTask(Program program, int maxPathLength) {
         this.program = program;
         this.maxPathLength = maxPathLength;
     }
@@ -40,8 +39,6 @@ public class GeneratePathTask {
 
             spriteOutputs.add(builder.toString());
         }
-        // Anzahl an triples = (leafs * (leafs - 1)) / 2
-        //System.out.println("Anzahl an Tripels: " + features.get(0).getFeatures().size());
 
         return StringUtils.join(spriteOutputs, "\n");
     }

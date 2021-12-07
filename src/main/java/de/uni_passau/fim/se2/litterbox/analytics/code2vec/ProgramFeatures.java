@@ -15,7 +15,8 @@ public class ProgramFeatures {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append(" ");
-        stringBuilder.append(features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
+        stringBuilder.append(features.stream().map(ProgramRelation::toString)
+                .collect(Collectors.joining(" ")));
 
         return stringBuilder.toString();
     }

@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
-public class Code2VecAnalyzer extends Analyzer{
+public class Code2VecAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
 
@@ -22,7 +22,7 @@ public class Code2VecAnalyzer extends Analyzer{
     @Override
     void check(File fileEntry, String outputPath) {
         Program program = extractProgram(fileEntry);
-        if(program == null) {
+        if (program == null) {
             log.warning("Program was null. File name was '" + fileEntry.getName() + "'");
             return;
         }
@@ -60,5 +60,4 @@ public class Code2VecAnalyzer extends Analyzer{
         stream.close();
         log.info("Finished printing.");
     }
-
 }

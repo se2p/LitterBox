@@ -16,14 +16,14 @@ public class PathGenerator {
     Program program;
     Map<ASTNode, List<ASTNode>> leafsMap;
 
-    private static final String[] SPRITE_LANGUAGES = {"Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš",
-            "Hahmo", "Kihusika", "Kukla", "Lik", "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia",
-            "Postava", "Pêlîstik", "Sprait", "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning",
-            "Umlingisi", "Veikėjas", "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن",
+    private static final String[] SPRITE_LANGUAGES = {"Actor", "Ator", "Ciplun", "Duszek",
+            "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik", "Nhân", "Objeto",
+            "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
+            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi",
+            "Veikėjas", "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن",
             "تەن", "شکلک", "สไปรต์", "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"};
 
-
-    public PathGenerator(Program program, int maxPathLength){
+    public PathGenerator(Program program, int maxPathLength) {
         this.maxPathLength = maxPathLength;
         this.program = program;
         extractASTLeafsPerSprite();
@@ -37,11 +37,12 @@ public class PathGenerator {
 
     public void printLeafsPerSprite() {
         System.out.println("Anzahl der Sprites: " + leafsMap.keySet().size());
-        for(ASTNode key : leafsMap.keySet()) {
-            System.out.println("Actor Definition: " + ((ActorDefinition)key).getIdent().getName());
-            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition)key).getIdent().getName() + ": " + leafsMap.get(key).size());
-            int i=0;
-            for(ASTNode value : leafsMap.get(key)){
+        for (ASTNode key : leafsMap.keySet()) {
+            System.out.println("Actor Definition: " + ((ActorDefinition) key).getIdent().getName());
+            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition) key).getIdent().getName() +
+                    ": " + leafsMap.get(key).size());
+            int i = 0;
+            for (ASTNode value : leafsMap.get(key)) {
                 System.out.println(i + "Blatt (Test): " + value.getUniqueName());
                 i++;
             }
@@ -50,7 +51,7 @@ public class PathGenerator {
 
     public ArrayList<ProgramFeatures> generatePaths() {
         ArrayList<ProgramFeatures> spriteFeatures = new ArrayList<>();
-        for(ASTNode sprite : leafsMap.keySet()) {
+        for (ASTNode sprite : leafsMap.keySet()) {
             ProgramFeatures singleSpriteFeatures = generatePathsPerSprite(sprite);
             if (singleSpriteFeatures != null && !singleSpriteFeatures.isEmpty()) {
                 spriteFeatures.add(singleSpriteFeatures);
@@ -61,7 +62,7 @@ public class PathGenerator {
 
     private ProgramFeatures generatePathsPerSprite(ASTNode sprite) {
         List<ASTNode> spriteLeafs = leafsMap.get(sprite);
-        String spriteName = ((ActorDefinition)sprite).getIdent().getName();
+        String spriteName = ((ActorDefinition) sprite).getIdent().getName();
         //Normalize SpriteLabel
         String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
         if (isDefaultName(normalizedSpriteLabel) || normalizedSpriteLabel.isEmpty()) {
@@ -75,10 +76,10 @@ public class PathGenerator {
 
         ProgramFeatures programFeatures = new ProgramFeatures(splitName);
 
-        for(int i = 0; i < spriteLeafs.size(); i++) {
-            for(int j = i + 1; j < spriteLeafs.size(); j++) {
+        for (int i = 0; i < spriteLeafs.size(); i++) {
+            for (int j = i + 1; j < spriteLeafs.size(); j++) {
                 String path = generatePath(spriteLeafs.get(i), spriteLeafs.get(j));
-                if (!path.equals("")){
+                if (!path.equals("")) {
                     String source = spriteLeafs.get(i).getUniqueName();
                     String target = spriteLeafs.get(j).getUniqueName();
                     programFeatures.addFeature(source, path, target);
@@ -156,12 +157,11 @@ public class PathGenerator {
     private boolean isDefaultName(String normalizedSpriteLabel) {
         boolean isDefaultName = false;
         for (String defaultName : SPRITE_LANGUAGES) {
-            if (defaultName.toLowerCase().equals(normalizedSpriteLabel)){
+            if (defaultName.toLowerCase().equals(normalizedSpriteLabel)) {
                 isDefaultName = true;
                 break;
             }
         }
         return isDefaultName;
     }
-
 }
