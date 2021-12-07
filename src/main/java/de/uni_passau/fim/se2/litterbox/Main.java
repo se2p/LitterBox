@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.code2vec.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -68,6 +69,13 @@ public class Main {
     private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
     private static final String IGNORE_LOOSE_BLOCKS_SHORT = "g";
 
+    private static final String CODE2VEC = "code2vec";
+    private static final String CODE2VEC_SHORT = "c2v";
+    private static final String NOHASH = "nohash";
+    private static final String NOHASH_SHORT = "nh";
+    private static final String MAXPATHLENGTH = "maxpathlength";
+    private static final String MAXPATHLENGTH_SHORT = "plength";
+
     private Main() {
     }
 
@@ -80,6 +88,7 @@ public class Main {
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
         mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
+        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
 
         Options options = new Options();
@@ -120,6 +129,10 @@ public class Main {
 
         options.addOption(IGNORE_LOOSE_BLOCKS_SHORT, IGNORE_LOOSE_BLOCKS, false, "ignore loose blocks when checking bug patterns");
 
+        //parameters for Code2Vec
+        options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
+        options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
+
         return options;
     }
 
@@ -134,7 +147,10 @@ public class Main {
         System.out.println("Example for Leila intermediate language output: "
                 + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path "
                 + "~/path/to/json/project/or/folder/with/projects \n");
-        System.out.println("Example for refactoring: java -jar Litterbox-1.0.jar -r -p ~/path/to/project -e /path/to/output/folder");
+        System.out.println("Example for refactoring: java -jar Litterbox-1.0.jar -r -p ~/path/to/project -e /path/to/output/folder \n");
+        System.out.println("Example to produce a text file as input for code2vec: "
+                + "java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output ~/path/to/folder/for/the/output "
+                + "-path ~/path/to/json/project/or/folder/with/projects -maxpathlength 8");
 
         System.out.println("Detectors:");
         IssueTranslator messages = IssueTranslator.getInstance();
@@ -218,6 +234,34 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
+    static void convertToCode2Vec(CommandLine cmd) throws ParseException, IOException {
+        int maxPathLength = 8; //default Value
+        String outputPath = "CONSOLE"; //if no outputPath was declared, it prints to console
+
+        if (cmd.hasOption(OUTPUT)) {
+            outputPath = cmd.getOptionValue(OUTPUT);
+        }
+
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+        if (cmd.hasOption(NOHASH)) {
+            ProgramRelation.setNoHash();
+        }
+
+        if (cmd.hasOption(MAXPATHLENGTH)) {
+            maxPathLength = Integer.parseInt(cmd.getOptionValue(MAXPATHLENGTH));
+            if (maxPathLength < 0) {
+                throw new ParseException("Max Path Length can't be negative");
+            }
+        }
+
+        String input = cmd.getOptionValue(PROJECTPATH);
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+        runAnalysis(cmd, analyzer);
+    }
+
     private static void featurePrograms(CommandLine cmd) throws ParseException, IOException {
         if (!cmd.hasOption(OUTPUT)) {
             throw new ParseException("Output path option '" + OUTPUT + "' required");
@@ -264,6 +308,8 @@ public class Main {
                 translatePrograms(cmd);
             } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
+            } else if (cmd.hasOption(CODE2VEC)) {
+                convertToCode2Vec(cmd);
             } else {
                 printHelp();
             }
