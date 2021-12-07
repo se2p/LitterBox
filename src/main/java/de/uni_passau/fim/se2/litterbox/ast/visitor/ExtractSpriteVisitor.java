@@ -3,7 +3,6 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 
 import java.util.*;
@@ -21,7 +20,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
         if (node.getActorType().isSprite()) {
             List<ASTNode> leafsCollector = new LinkedList<>();
 
-            leafsCollector = traverseLeafs(node, leafsCollector, node.getIdent().getName());
+            leafsCollector = traverseLeafs(node.getScripts(), leafsCollector, node.getIdent().getName());
             leafsMap.put(node, leafsCollector);
         }
     }
