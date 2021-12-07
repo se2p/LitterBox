@@ -12,14 +12,6 @@ public class StringUtil {
                 .replaceAll("\\P{Print}", ""); // unicode weird characters
         String stripped = original.replaceAll("[^A-Za-z]", "");
         if (stripped.length() == 0) {
-		    /*
-			String carefulStripped = original.replaceAll(" ", "_");
-			if (carefulStripped.length() == 0) {
-				return defaultString;
-			} else {
-				return carefulStripped;
-			}
-			*/
             return "";
         } else {
             return stripped;
