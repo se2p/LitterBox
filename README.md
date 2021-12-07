@@ -219,6 +219,7 @@ Contributors:
 
 Felix Adler\
 Lena Bloch\
+Florian Beck\
 Christoph Frädrich\
 Gordon Fraser\
 Luisa Greifenstein\
@@ -235,8 +236,7 @@ Lisa-Marina Salvesen\
 Sebastian Schweikl\
 Andreas Stahlbauer\
 Florian Sulzmeier\
-Ewald Wasmeier \
-Florian Beck
+Ewald Wasmeier
 
 LitterBox is supported by the project FR 2955/3-1 funded by the
 "Deutsche Forschungsgemeinschaft" and BMBF project
