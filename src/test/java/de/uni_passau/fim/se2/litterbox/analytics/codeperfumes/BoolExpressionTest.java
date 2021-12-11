@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -45,5 +46,18 @@ public class BoolExpressionTest implements JsonTest {
         Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
         Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(2)));
         Assertions.assertTrue(reports.get(1).isDuplicateOf(reports.get(2)));
+    }
+
+    @Test
+    public void testBooleanExpressionIsSubsumedByPositionEqualsCheck() throws IOException, ParsingException {
+        Program boolProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/peqSubsumesBoolean.json");
+        BoolExpression bool = new BoolExpression();
+        PositionEqualsCheck pec = new PositionEqualsCheck();
+        List<Issue> reports = new ArrayList<>(bool.check(boolProg));
+        Assertions.assertEquals(2, reports.size());
+        List<Issue> reportsPEC = new ArrayList<>(pec.check(boolProg));
+        Assertions.assertEquals(2, reportsPEC.size());
+        Assertions.assertTrue(bool.isSubsumedBy(reports.get(0), reportsPEC.get(0)));
+        Assertions.assertTrue(bool.isSubsumedBy(reports.get(1), reportsPEC.get(1)));
     }
 }
