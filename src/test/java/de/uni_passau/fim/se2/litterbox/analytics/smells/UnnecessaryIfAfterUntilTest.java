@@ -39,7 +39,7 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
 
     @Test
     public void testIfThenUnnecessary() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIf.json");
+        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
         UnnecessaryIfAfterUntil parameterName = new UnnecessaryIfAfterUntil();
         List<Issue> reports = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(1, reports.size());
@@ -49,7 +49,7 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
 
     @Test
     public void testCoupling() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIf.json");
+        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
         UnnecessaryIfAfterUntil parameterName = new UnnecessaryIfAfterUntil();
         List<Issue> reportsUnnecessaryIf = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(1, reportsUnnecessaryIf.size());
