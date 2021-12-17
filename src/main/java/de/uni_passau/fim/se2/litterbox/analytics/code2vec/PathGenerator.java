@@ -65,6 +65,16 @@ public class PathGenerator {
         }
     }
 
+    public ArrayList<String> getAllLeafs() {
+        ArrayList<String> leafs = new ArrayList<>();
+        for (ASTNode sprite: leafsMap.keySet()) {
+            for (ASTNode leaf : leafsMap.get(sprite)) {
+                leafs.add(getToken(leaf));
+            }
+        }
+        return leafs;
+    }
+
     public ArrayList<ProgramFeatures> generatePaths() {
         ArrayList<ProgramFeatures> spriteFeatures = new ArrayList<>();
         for (ASTNode sprite : leafsMap.keySet()) {
@@ -200,9 +210,7 @@ public class PathGenerator {
             token = ((SoundEffect) leaf).getTypeName();
         } else if (leaf instanceof RotationStyle) {
             token = ((RotationStyle) leaf).getTypeName();
-        } else if (leaf instanceof ProcedureMutationMetadata) {
-            token = Boolean.toString(((ProcedureMutationMetadata) leaf).isWarp());
-        } else if (leaf instanceof NumFunct) {
+        }  else if (leaf instanceof NumFunct) {
             token = ((NumFunct) leaf).getTypeName();
         } else if (leaf instanceof NameNum) {
             token = ((NameNum) leaf).getTypeName();
@@ -219,6 +227,7 @@ public class PathGenerator {
         } else if (leaf instanceof FixedAttribute) {
             token = ((FixedAttribute) leaf).getTypeName();
         }
+
         token = StringUtils.deleteWhitespace(token);
         return token;
     }
