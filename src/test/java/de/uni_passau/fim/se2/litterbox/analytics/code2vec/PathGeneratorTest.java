@@ -59,7 +59,6 @@ class PathGeneratorTest implements JsonTest {
 
     @Test
     public void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
-        assertTrue(true);
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
         PathGenerator generator = new PathGenerator(program, 8);
         ArrayList<String> tokens = generator.getAllLeafs();
