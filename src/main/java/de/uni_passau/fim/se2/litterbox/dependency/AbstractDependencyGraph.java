@@ -99,6 +99,10 @@ public abstract class AbstractDependencyGraph {
         return Collections.unmodifiableSet(graph.nodes());
     }
 
+    public ControlFlowGraph getCFG() {
+        return cfg;
+    }
+
     public Set<EndpointPair<CFGNode>> getEdges() {
         return Collections.unmodifiableSet(graph.edges());
     }

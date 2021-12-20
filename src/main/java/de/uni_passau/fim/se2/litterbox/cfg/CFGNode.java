@@ -40,6 +40,14 @@ public abstract class CFGNode {
         return scriptOrProcedure;
     }
 
+    public boolean defines(Defineable defineable) {
+        return getDefinitions().stream().anyMatch(d -> d.getDefinable().equals(defineable));
+    }
+
+    public boolean uses(Defineable defineable) {
+        return getUses().stream().anyMatch(u -> u.getDefinable().equals(defineable));
+    }
+
     public Set<Definition> getDefinitions() {
         if (definitions == null) {
             definitions = calculateDefinitions();
