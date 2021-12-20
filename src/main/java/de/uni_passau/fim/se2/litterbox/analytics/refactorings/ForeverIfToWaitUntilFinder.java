@@ -31,7 +31,6 @@ public class ForeverIfToWaitUntilFinder extends AbstractRefactoringFinder {
         if (loop.getStmtList().getNumberOfStatements() == 1) {
             Stmt loopBody = loop.getStmtList().getStatement(0);
             if (loopBody instanceof IfThenStmt) {
-                IfThenStmt ifThenStmt = (IfThenStmt) loopBody;
                 refactorings.add(new ForeverIfToWaitUntil(loop));
             }
         }
