@@ -145,6 +145,7 @@ public class PathGenerator {
         for (int i = 0; i < sourceStack.size() - commonPrefix; i++) {
             ASTNode currentNode = sourceStack.get(i);
             String childId = "";
+            // Since these are not terminal nodes, we just need to token name (getUniqueName)
             stringBuilder.add(String.format("%s%s%s%s%s", startSymbol,
                     currentNode.getUniqueName(), childId, endSymbol, up));
         }
@@ -177,6 +178,12 @@ public class PathGenerator {
         return isDefaultName;
     }
 
+    /**
+     * Retrieve the actual literal represented by this node
+     *
+     * @param leaf
+     * @return
+     */
     private String getToken(ASTNode leaf) {
         TokenVisitor visitor = new TokenVisitor();
         leaf.accept(visitor);
