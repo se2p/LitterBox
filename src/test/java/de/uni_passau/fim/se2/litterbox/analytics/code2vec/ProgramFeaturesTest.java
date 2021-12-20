@@ -13,21 +13,21 @@ class ProgramFeaturesTest {
     @BeforeEach
     void setUp() {
         cat = new ProgramFeatures("cat");
-        cat.addFeature("NumberLiteral",
+        cat.addFeature("39.0",
                 "(NumberLiteral)^(Key)^(KeyPressed)^(Script)_(StmtList)_(Say)_(StringLiteral)",
-                "StringLiteral");
-        cat.addFeature("NumberLiteral",
+                "Hi!");
+        cat.addFeature("39.0",
                 "(NumberLiteral)^(Key)^(KeyPressed)^(Script)_(StmtList)_(Show)",
                 "Show");
-        cat.addFeature("StringLiteral",
+        cat.addFeature("Hi!",
                 "(StringLiteral)^(Say)^(StmtList)_(Show)",
                 "Show");
     }
 
     @Test
     void testToString() {
-        assertEquals("cat NumberLiteral,625791294,StringLiteral NumberLiteral," +
-                "1493538624,Show StringLiteral,-547448667,Show", cat.toString());
+        assertEquals("cat 39.0,625791294,Hi! 39.0," +
+                "1493538624,Show Hi!,-547448667,Show", cat.toString());
     }
 
     @Test
@@ -50,8 +50,8 @@ class ProgramFeaturesTest {
     void testGetFeatures() {
         ArrayList<ProgramRelation> features = cat.getFeatures();
         assertEquals(3, features.size());
-        assertEquals("NumberLiteral,625791294,StringLiteral", features.get(0).toString());
-        assertEquals("NumberLiteral,1493538624,Show", features.get(1).toString());
-        assertEquals("StringLiteral,-547448667,Show", features.get(2).toString());
+        assertEquals("39.0,625791294,Hi!", features.get(0).toString());
+        assertEquals("39.0,1493538624,Show", features.get(1).toString());
+        assertEquals("Hi!,-547448667,Show", features.get(2).toString());
     }
 }

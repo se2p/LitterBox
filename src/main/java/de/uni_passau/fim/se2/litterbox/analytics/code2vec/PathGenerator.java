@@ -4,7 +4,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +42,20 @@ public class PathGenerator {
                     ": " + leafsMap.get(key).size());
             int i = 0;
             for (ASTNode value : leafsMap.get(key)) {
-                System.out.println(i + "Blatt (Test): " + value.getUniqueName());
+                System.out.println(i + "Blatt (Test): " + getToken(value));
                 i++;
             }
         }
+    }
+
+    public ArrayList<String> getAllLeafs() {
+        ArrayList<String> leafs = new ArrayList<>();
+        for (ASTNode sprite: leafsMap.keySet()) {
+            for (ASTNode leaf : leafsMap.get(sprite)) {
+                leafs.add(getToken(leaf));
+            }
+        }
+        return leafs;
     }
 
     public ArrayList<ProgramFeatures> generatePaths() {
@@ -80,8 +89,11 @@ public class PathGenerator {
             for (int j = i + 1; j < spriteLeafs.size(); j++) {
                 String path = generatePath(spriteLeafs.get(i), spriteLeafs.get(j));
                 if (!path.isEmpty()) {
-                    String source = spriteLeafs.get(i).getUniqueName();
-                    String target = spriteLeafs.get(j).getUniqueName();
+                    String source = getToken(spriteLeafs.get(i));
+                    String target = getToken(spriteLeafs.get(j));
+                    if (source.isEmpty() || target.isEmpty()) {
+                        return null;
+                    }
                     programFeatures.addFeature(source, path, target);
                 }
             }
@@ -133,6 +145,7 @@ public class PathGenerator {
         for (int i = 0; i < sourceStack.size() - commonPrefix; i++) {
             ASTNode currentNode = sourceStack.get(i);
             String childId = "";
+            // Since these are not terminal nodes, we just need to token name (getUniqueName)
             stringBuilder.add(String.format("%s%s%s%s%s", startSymbol,
                     currentNode.getUniqueName(), childId, endSymbol, up));
         }
@@ -163,5 +176,17 @@ public class PathGenerator {
             }
         }
         return isDefaultName;
+    }
+
+    /**
+     * Retrieve the actual literal represented by this node
+     *
+     * @param leaf
+     * @return
+     */
+    private String getToken(ASTNode leaf) {
+        TokenVisitor visitor = new TokenVisitor();
+        leaf.accept(visitor);
+        return visitor.getToken();
     }
 }
