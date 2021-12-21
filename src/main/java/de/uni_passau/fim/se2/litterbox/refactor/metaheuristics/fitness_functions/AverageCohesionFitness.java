@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.metric.SliceCoverage;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -21,6 +22,11 @@ public class AverageCohesionFitness implements MaximizingFitnessFunction<Refacto
         List<Double> coverage = new ArrayList<>();
 
         refactoredProgram.accept(new ScratchVisitor() {
+            private ActorDefinition actor = null;
+            @Override
+            public void visit(ActorDefinition actorDefinition) {
+                this.actor = actorDefinition;
+            }
             @Override
             public void visit(Script node) {
                 SliceCoverage<Script> sliceCoverage = new SliceCoverage<>();
