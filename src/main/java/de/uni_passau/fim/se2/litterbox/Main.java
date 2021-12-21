@@ -44,6 +44,8 @@ public class Main {
     private static final String STATS_SHORT = "s";
     private static final String HELP = "help";
     private static final String HELP_SHORT = "h";
+    private static final String DETECTORS_LIST = "detectorslist";
+    private static final String DETECTORS_LIST_SHORT = "dl";
 
     private static final String PROJECTPATH = "path";
     private static final String PROJECTPATH_SHORT = "p";
@@ -89,7 +91,8 @@ public class Main {
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
         mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
         mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
-        mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
+        mainMode.addOption(new Option(DETECTORS_LIST_SHORT, DETECTORS_LIST, false, "Print a list of all detectors implemented in LitterBox."));
+        mainMode.addOption(new Option(HELP_SHORT, HELP, false, "Print this message"));
 
         Options options = new Options();
         options.addOptionGroup(mainMode);
@@ -151,14 +154,35 @@ public class Main {
         System.out.println("Example to produce a text file as input for code2vec: "
                 + "java -jar target/Litterbox-1.7-SNAPSHOT.jar -c2v -output ~/path/to/folder/for/the/output "
                 + "-path ~/path/to/json/project/or/folder/with/projects -maxpathlength 8");
+    }
 
+    static void printDetectorList() {
         System.out.println("Detectors:");
         IssueTranslator messages = IssueTranslator.getInstance();
         System.out.printf("\t%-20s %-30s%n", ALL, messages.getInfo(ALL));
         System.out.printf("\t%-20s %-30s%n", BUGS, messages.getInfo(BUGS));
         System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getInfo(SMELLS));
+        System.out.printf("\t%-20s %-30s%n", PERFUMES, messages.getInfo(PERFUMES));
 
-        IssueTool.getAllFinderNames().forEach(finder -> System.out.printf(
+        System.out.println(System.lineSeparator());
+        System.out.printf("\t%-20s %-30s%n", "Bugpatterns:", "");
+        IssueTool.getBugFinderNames().forEach(finder -> System.out.printf(
+                "\t%-20s %-30s%n",
+                finder,
+                messages.getName(finder)
+        ));
+
+        System.out.println(System.lineSeparator());
+        System.out.printf("\t%-20s %-30s%n", "Smells:", "");
+        IssueTool.getSmellFinderNames().forEach(finder -> System.out.printf(
+                "\t%-20s %-30s%n",
+                finder,
+                messages.getName(finder)
+        ));
+
+        System.out.println(System.lineSeparator());
+        System.out.printf("\t%-20s %-30s%n", "Perfumes:", "");
+        IssueTool.getPerfumeFinderNames().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
                 messages.getName(finder)
@@ -176,8 +200,6 @@ public class Main {
         boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
 
         RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, delete);
-
-
 
         runAnalysis(cmd, refactorer);
     }
@@ -310,6 +332,8 @@ public class Main {
                 featurePrograms(cmd);
             } else if (cmd.hasOption(CODE2VEC)) {
                 convertToCode2Vec(cmd);
+            } else if (cmd.hasOption(DETECTORS_LIST)) {
+                printDetectorList();
             } else {
                 printHelp();
             }
@@ -322,8 +346,6 @@ public class Main {
             System.err.println("Error while trying to parse project: " + parseException.getMessage());
         }
     }
-
-
 
     /**
      * Entry point to LitterBox where the arguments are parsed and the selected functionality is called.
