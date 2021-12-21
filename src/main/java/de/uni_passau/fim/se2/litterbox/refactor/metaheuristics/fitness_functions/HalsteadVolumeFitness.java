@@ -29,7 +29,7 @@ public class HalsteadVolumeFitness implements MinimizingFitnessFunction<Refactor
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
-        HalsteadVolume volume = new HalsteadVolume();
+        HalsteadVolume<Program> volume = new HalsteadVolume<>();
         return volume.calculateMetric(refactoredProgram);
     }
 
