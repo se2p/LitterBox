@@ -44,7 +44,11 @@ public class TokenVisitor implements ScratchVisitor {
 
     @Override
     public void visit(NumberLiteral node) {
-        token = Double.toString(node.getValue());
+        if (Math.floor(node.getValue()) == node.getValue()) {
+            token = Integer.toString((int) node.getValue());
+        } else {
+            token = Double.toString(node.getValue());
+        }
     }
 
     @Override
