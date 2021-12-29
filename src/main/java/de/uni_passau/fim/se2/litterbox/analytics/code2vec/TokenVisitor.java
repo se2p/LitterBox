@@ -19,6 +19,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Locale;
+
 public class TokenVisitor implements ScratchVisitor {
 
     private String token = "";
@@ -47,7 +49,7 @@ public class TokenVisitor implements ScratchVisitor {
         if (Math.floor(node.getValue()) == node.getValue()) {
             token = Integer.toString((int) node.getValue());
         } else {
-            token = Double.toString(node.getValue());
+            token = String.format(Locale.ROOT, "%.2f", node.getValue());
         }
     }
 
