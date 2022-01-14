@@ -26,7 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -151,6 +155,22 @@ public class ControlFlowGraph {
         builder.append("}");
         return builder.toString();
     }
+    
+    public Map<String, List<String>> getFlowEdges(){
+    	Map<String, List<String>> flowEdges = new HashMap<String, List<String>>();
+    	for (EndpointPair<CFGNode> edge : graph.edges()) {
+    		String[] nodeUTexts = edge.nodeU().toString().split("\\.");
+    		String nodeU=nodeUTexts[nodeUTexts.length-1].split("\\@")[0];
+    		String[] nodeVTexts = edge.nodeV().toString().split("\\.");
+    		String nodeV=nodeVTexts[nodeVTexts.length-1].split("\\@")[0];    		
+    		
+    		if((nodeU.toLowerCase().equals("entry")==false) && (nodeV.toLowerCase().equals("exit")==false)) {
+    			
+    			flowEdges.computeIfAbsent(nodeU, k -> new ArrayList<>()).add(nodeV);
+    		}    		
+        }
+        return flowEdges;
+    } 
 
     public Set<Definition> getDefinitions() {
         return graph.nodes().stream().map(CFGNode::getDefinitions).flatMap(Set::stream).collect(Collectors.toSet());

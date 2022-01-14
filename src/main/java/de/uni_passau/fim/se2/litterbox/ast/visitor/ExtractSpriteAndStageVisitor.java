@@ -1,13 +1,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 
-import java.util.*;
-
-public class ExtractSpriteVisitor implements ScratchVisitor{
+public class ExtractSpriteAndStageVisitor implements ScratchVisitor{
 
     Map<ASTNode, List<ASTNode>> leafsMap = new HashMap<>();
 
@@ -17,7 +24,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor{
 
     @Override
     public void visit(ActorDefinition node) {
-        if (node.getActorType().isSprite()){
+    	if (node.getActorType().isSprite()||node.getActorType().isStage()){
             List<ASTNode> leafsCollector = new LinkedList<>();
 
             leafsCollector = traverseLeafs(node, leafsCollector, node.getIdent().getName());

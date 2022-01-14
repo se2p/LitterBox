@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteAndStageVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.ArrayList;
@@ -15,20 +16,29 @@ public class PathGenerator {
 
     private final int maxPathLength;
     private final int maxPathWidth;
+    private final boolean isStageIncluded;
     Program program;
     Map<ASTNode, List<ASTNode>> leafsMap;
 
 
-    public PathGenerator(Program program, int maxPathLength, int maxPathWidth){
+    public PathGenerator(Program program, int maxPathLength, int maxPathWidth, boolean isStageIncluded){
         this.maxPathLength = maxPathLength;
         this.maxPathWidth = maxPathWidth;
+        this.isStageIncluded=isStageIncluded;
         this.program = program;
     }
 
     public void extractASTLeafsPerSprite() {
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor();
-        program.accept(spriteVisitor);
-        leafsMap = spriteVisitor.getLeafsCollector();
+    	if(isStageIncluded) {
+    		ExtractSpriteAndStageVisitor spriteVisitor = new ExtractSpriteAndStageVisitor();
+            program.accept(spriteVisitor);
+            leafsMap = spriteVisitor.getLeafsCollector();
+    	}
+    	else {
+    		ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor();
+            program.accept(spriteVisitor);
+            leafsMap = spriteVisitor.getLeafsCollector();
+    	}    	
     }
 
     public void printLeafsPerSpite() {

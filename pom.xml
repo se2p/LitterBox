@@ -222,6 +222,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.8.1</version>
         </dependency>
+        <dependency>
+    		<groupId>org.javatuples</groupId>
+    		<artifactId>javatuples</artifactId>
+    		<version>1.2</version>
+		</dependency>
     </dependencies>
 
 

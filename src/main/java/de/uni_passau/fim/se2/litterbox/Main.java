@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -75,6 +74,23 @@ public class Main {
     private static final String MAXPATHLENGTH_SHORT = "plength";
     private static final String MAXPATHWIDTH = "maxpathwidth";
     private static final String MAXPATHWIDTH_SHORT = "pwidth";
+    private static final String INCLUDE_STAGE = "includestage";
+    private static final String INCLUDE_STAGE_BLOCKS_SHORT = "incstage";
+    
+    private static final String WHOLE_PROGRAM = "wholeprogram";
+    private static final String WHOLE_PROGRAM_SHORT = "whpro";
+    
+    private static final String SAVE_TEXT_OUTPUT_PATH = "savetextoutputpath";
+    private static final String SAVE_TEXT_OUTPUT_PATH_SHORT = "satxtoutpath";
+    
+    private static final String AS_DOT_STRING_GRAPH = "savedotstringgraph";
+    private static final String AS_DOT_STRING_GRAPH_SHORT = "sadotgraph";
+    
+    private static final String GRAPH = "graphdata";
+    private static final String GRAPH_SHORT = "graph";
+    
+    private static final String LABEL_NAME = "labelname";
+    private static final String LABEL_NAME_SHORT = "lblname";
 
     private Main() {
     }
@@ -89,6 +105,7 @@ public class Main {
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
         mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
         mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
+        mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generates text output for specified Scratch projects as input for Gated Graph Neural Network"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
 
         Options options = new Options();
@@ -134,6 +151,16 @@ public class Main {
         options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
         options.addOption(MAXPATHWIDTH_SHORT, MAXPATHWIDTH, true, "maximum of path width for connecting two AST leafs. 0 means there is no max path width. Default is 2");
 
+        //parameters for Code2Vec and GNN
+        options.addOption(INCLUDE_STAGE_BLOCKS_SHORT, INCLUDE_STAGE, false, "include stage information for code2vec and graph neural network");
+        
+        options.addOption(WHOLE_PROGRAM_SHORT, WHOLE_PROGRAM, false, "generate either paths or graph information for code2vec and graph neural network for whole scratch program ");
+        options.addOption(SAVE_TEXT_OUTPUT_PATH_SHORT, SAVE_TEXT_OUTPUT_PATH, true, "save code2vec or graph data");
+        
+        options.addOption(AS_DOT_STRING_GRAPH_SHORT, AS_DOT_STRING_GRAPH, false, "save code2vec or graph data in dot string format");
+        
+        options.addOption(LABEL_NAME_SHORT, LABEL_NAME, true, "label name for code2vec or graph data");
+        
         return options;
     }
 
@@ -177,9 +204,6 @@ public class Main {
         boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
 
         RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, delete);
-
-
-
         runAnalysis(cmd, refactorer);
     }
 
@@ -256,14 +280,33 @@ public class Main {
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
-
+        
+        boolean isStageIncluded=(cmd.hasOption(INCLUDE_STAGE))?cmd.hasOption(INCLUDE_STAGE):false;        
 
         String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
-        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, maxPathWidth, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, maxPathWidth, isStageIncluded ,cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
     }
 
+    static void convertToGraph(CommandLine cmd) throws ParseException {
+    	 if (!cmd.hasOption(PROJECTPATH)) {
+             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+         }
+    	     
+         
+         boolean isStageIncluded=(cmd.hasOption(INCLUDE_STAGE))?cmd.hasOption(INCLUDE_STAGE):false;   
+         boolean isWholeProgram=(cmd.hasOption(WHOLE_PROGRAM))?cmd.hasOption(WHOLE_PROGRAM):false; 
+         boolean isDotStringGraph=(cmd.hasOption(AS_DOT_STRING_GRAPH))?cmd.hasOption(AS_DOT_STRING_GRAPH):false;
+         
+         String outputPath = cmd.getOptionValue(SAVE_TEXT_OUTPUT_PATH);
+         String input = cmd.getOptionValue(PROJECTPATH);
+         String labelName = cmd.getOptionValue(LABEL_NAME);
+         
+         GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath,isStageIncluded,isWholeProgram,isDotStringGraph,labelName,cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+         runAnalysis(cmd, analyzer);
+    }
+    
 
     private static void featurePrograms(CommandLine cmd) throws ParseException {
         if (!cmd.hasOption(OUTPUT)) {
@@ -313,6 +356,8 @@ public class Main {
                 convertToCode2Vec(cmd);
             } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
+            } else if (cmd.hasOption(GRAPH)) {
+            	convertToGraph(cmd);
             }
             else {
                 printHelp();
