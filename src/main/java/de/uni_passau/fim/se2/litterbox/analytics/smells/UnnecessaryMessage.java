@@ -33,7 +33,7 @@ public class UnnecessaryMessage extends AbstractIssueFinder {
     @Override
     public void visit(Script node) {
         List<Stmt> stmts = node.getStmtList().getStmts();
-        if (stmts.get(0) instanceof Broadcast) {
+        if (stmts.size() > 0 && stmts.get(0) instanceof Broadcast) {
             Broadcast brd = (Broadcast) stmts.get(0);
             if (searching) {
                 messagesInFirstPlace.add(brd.getMessage());
