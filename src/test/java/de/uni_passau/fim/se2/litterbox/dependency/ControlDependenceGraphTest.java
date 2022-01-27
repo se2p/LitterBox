@@ -23,11 +23,14 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import org.junit.jupiter.api.Test;
 
@@ -143,5 +146,50 @@ public class ControlDependenceGraphTest implements JsonTest {
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, keyPressed));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, move1));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(keyPressed, move2));
+    }
+
+    @Test
+    public void testCloneDependency() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneDependency.json");
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        assertThat(cdg.getNodes()).isEqualTo(cfg.getNodes());
+        assertThat(cdg.getNumEdges()).isEqualTo(5);
+
+        CFGNode entry = cfg.getEntryNode();
+        CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).collect(Collectors.toList()).get(0);
+        CFGNode move = cfg.getSuccessors(createCloneOf).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
+        CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
+        CFGNode exit = cfg.getExitNode();
+
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, exit));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, greenFlag));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, move));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, createCloneOf));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(createCloneOf, clone));
+    }
+
+    @Test
+    public void testCloneInRepeatDependency() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneInRepeatDependency.json");
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        assertThat(cdg.getNodes()).isEqualTo(cfg.getNodes());
+        assertThat(cdg.getNumEdges()).isEqualTo(7);
+
+        CFGNode entry = cfg.getEntryNode();
+        CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode repeatTimes = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof RepeatTimesStmt).findFirst().get();
+        CFGNode createCloneOf = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).collect(Collectors.toList()).get(0);
+        CFGNode move = cfg.getSuccessors(createCloneOf).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
+        CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
+        CFGNode exit = cfg.getExitNode();
+
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, exit));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, greenFlag));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, repeatTimes));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, repeatTimes));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, move));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, createCloneOf));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(createCloneOf, clone));
     }
 }

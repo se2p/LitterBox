@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.dependency;
 
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.MutableGraph;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
 import java.util.LinkedHashSet;
@@ -70,7 +72,17 @@ public class ControlDependenceGraph extends AbstractDependencyGraph {
         CFGNode entry = cfg.getEntryNode();
         for (CFGNode node : cdg.nodes()) {
             if (node != entry && cdg.inDegree(node) == 0) {
-                cdg.putEdge(entry, node);
+                if (node instanceof CloneEventNode) {
+                    for (CFGNode pred : cfg.getPredecessors(node)) {
+                        if (node.getASTNode() instanceof CreateCloneOf) {
+                            cdg.putEdge(pred, node);
+                        }
+                    }
+
+                }
+                else {
+                    cdg.putEdge(entry, node);
+                }
             }
         }
 

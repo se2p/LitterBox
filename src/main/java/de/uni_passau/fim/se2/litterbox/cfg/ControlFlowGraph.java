@@ -25,8 +25,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -168,9 +171,37 @@ public class ControlFlowGraph {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
 
+    private MutableGraph<CFGNode> process(MutableGraph<CFGNode> graph) {
+        MutableGraph<CFGNode> processedGraph = Graphs.copyOf(graph);
+
+        // remove the edge from CreateCloneOf to Clone
+        Set<Pair<CFGNode>> toRemove = new HashSet<>();
+
+        for (CFGNode node : processedGraph.nodes()) {
+            if (node.getASTNode() instanceof CreateCloneOf) {
+                Set<CFGNode> successors = processedGraph.successors(node);
+                for (CFGNode suc : successors) {
+                    if (suc instanceof CloneEventNode) {
+                        toRemove.add(new Pair<>(node, suc));
+                    }
+                }
+            }
+        }
+
+        for (Pair<CFGNode> p : toRemove) {
+            processedGraph.removeEdge(p.getFst(), p.getSnd());
+        }
+        return processedGraph;
+    }
+
     public ControlFlowGraph reverse() {
+        return reverse(true);
+    }
+
+    public ControlFlowGraph reverse(boolean process) {
         ControlFlowGraph newCFG = new ControlFlowGraph();
-        newCFG.graph = Graphs.copyOf(Graphs.transpose(graph));
+        MutableGraph<CFGNode> processedGraph = process ? process(graph) : graph;
+        newCFG.graph = Graphs.copyOf(Graphs.transpose(processedGraph));
         newCFG.entryNode = this.exitNode;
         newCFG.exitNode  = this.entryNode;
 
