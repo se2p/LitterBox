@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -51,7 +51,7 @@ public class ProcedureDefinitionNameMapping {
                              String actorName,
                              String procedureName,
                              String[] argumentNames,
-                             Type[] types) {
+                             Type[] types) throws ParsingException {
 
         Map<LocalIdentifier, ProcedureInfo> currentMap;
         if (procedures.containsKey(actorName)) {
@@ -64,8 +64,10 @@ public class ProcedureDefinitionNameMapping {
                 new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
     }
 
-    private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) {
-        Preconditions.checkArgument(argumentNames.length == types.length);
+    private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) throws ParsingException {
+        if (argumentNames.length != types.length) {
+            throw new ParsingException("Your own block has problems in its definition.");
+        }
         ArgumentInfo[] arguments = new ArgumentInfo[argumentNames.length];
         for (int i = 0; i < argumentNames.length; i++) {
             arguments[i] = new ArgumentInfo(argumentNames[i], types[i]);

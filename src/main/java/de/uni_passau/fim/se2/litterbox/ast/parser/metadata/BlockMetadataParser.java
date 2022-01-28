@@ -57,8 +57,9 @@ public class BlockMetadataParser {
             Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a "
                     + "NonDataBlock. ID: " + blockId);
             ArrayNode data = (ArrayNode) blockNode;
-            Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
-                    + "top level data block. ID: " + blockId);
+            if (data.size() != 5) {
+                throw new ParsingException("You have malformated variables in your project.");
+            }
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
             return new DataBlockMetadata(blockId, x, y);
