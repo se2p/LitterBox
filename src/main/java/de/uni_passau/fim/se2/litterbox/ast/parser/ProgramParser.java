@@ -56,7 +56,7 @@ public class ProgramParser {
         LocalIdentifier ident = new StrId(programName);
 
         if (!programNode.has(TARGETS_KEY) && programNode.has("objName")) {
-            throw new ParsingException("You tried to parse a Scratch 2 project.");
+            throw new ParsingException("LitterBox only supports Scratch 3 projects.");
         }
 
         Iterable<JsonNode> iterable = () -> programNode.get(TARGETS_KEY).iterator();
