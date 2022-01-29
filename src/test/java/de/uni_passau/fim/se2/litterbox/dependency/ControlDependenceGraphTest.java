@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.dependency;
 import com.google.common.graph.EndpointPair;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -29,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
@@ -191,5 +193,26 @@ public class ControlDependenceGraphTest implements JsonTest {
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, move));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, createCloneOf));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(createCloneOf, clone));
+    }
+
+    @Test
+    public void testCloneDependencyWithWhen() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneDependencyWithWhen.json");
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        assertThat(cdg.getNodes()).isEqualTo(cfg.getNodes());
+        assertThat(cdg.getNumEdges()).isEqualTo(5);
+
+        CFGNode entry = cfg.getEntryNode();
+        CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).collect(Collectors.toList()).get(0);
+        CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
+        CFGNode deleteClone = cfg.getSuccessors(clone).stream().filter(t -> t.getASTNode() instanceof DeleteClone).findFirst().get();
+        CFGNode exit = cfg.getExitNode();
+
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, exit));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, greenFlag));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, createCloneOf));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(createCloneOf, clone));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(clone, deleteClone));
     }
 }
