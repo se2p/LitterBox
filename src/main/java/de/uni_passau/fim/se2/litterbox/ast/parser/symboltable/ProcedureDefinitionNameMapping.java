@@ -66,7 +66,7 @@ public class ProcedureDefinitionNameMapping {
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) throws ParsingException {
         if (argumentNames.length != types.length) {
-            throw new ParsingException("Your own block has problems in its definition.");
+            throw new ParsingException("The project has a custom block with problems in its definition.");
         }
         ArgumentInfo[] arguments = new ArgumentInfo[argumentNames.length];
         for (int i = 0; i < argumentNames.length; i++) {

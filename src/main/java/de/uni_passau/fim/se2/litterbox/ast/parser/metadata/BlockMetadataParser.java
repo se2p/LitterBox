@@ -44,9 +44,7 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId,
-                        shadow,
-                        mutation);
+                return new NonDataBlockMetadata(commentId, blockId, shadow, mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
@@ -58,7 +56,7 @@ public class BlockMetadataParser {
                     + "NonDataBlock. ID: " + blockId);
             ArrayNode data = (ArrayNode) blockNode;
             if (data.size() != 5) {
-                throw new ParsingException("You have malformated variables in your project.");
+                throw new ParsingException("The project has malformated variables.");
             }
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
