@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -63,6 +63,7 @@ public class IssueTool {
         registerBugFinder(new MissingCloneInitialization(), bugFinders);
         registerBugFinder(new MissingInitialization(), bugFinders);
         registerBugFinder(new MissingEraseAll(), bugFinders);
+        registerBugFinder(new MissingLoopMousePosition(), bugFinders);
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
