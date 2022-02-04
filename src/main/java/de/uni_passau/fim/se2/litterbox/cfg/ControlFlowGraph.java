@@ -24,7 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
@@ -48,6 +50,10 @@ public class ControlFlowGraph {
 
         graph.addNode(entryNode);
         graph.addNode(exitNode);
+    }
+
+    private ControlFlowGraph(MutableGraph<CFGNode> graph) {
+        this.graph = graph;
     }
 
     public int getNumNodes() {
@@ -171,17 +177,36 @@ public class ControlFlowGraph {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
 
-    private MutableGraph<CFGNode> process(MutableGraph<CFGNode> graph) {
-        MutableGraph<CFGNode> processedGraph = Graphs.copyOf(graph);
+    public ControlFlowGraph reverseAndFilterInterproceduralDependencies() {
+        ControlFlowGraph newCFG = new ControlFlowGraph();
+        newCFG.graph = Graphs.copyOf(Graphs.transpose(processNonDependentInterproceduralEdges(graph)));
+        newCFG.entryNode = this.exitNode;
+        newCFG.exitNode = this.entryNode;
 
-        // remove the edge from CreateCloneOf to Clone
+        return newCFG;
+    }
+
+    private MutableGraph<CFGNode> processNonDependentInterproceduralEdges(MutableGraph<CFGNode> graph) {
+        MutableGraph<CFGNode> processedGraph = Graphs.copyOf(graph);
         Set<Pair<CFGNode>> toRemove = new HashSet<>();
 
         for (CFGNode node : processedGraph.nodes()) {
+            // Avoid clone nodes from becoming control dependencies in the local script
             if (node.getASTNode() instanceof CreateCloneOf) {
                 Set<CFGNode> successors = processedGraph.successors(node);
                 for (CFGNode suc : successors) {
                     if (suc instanceof CloneEventNode) {
+                        toRemove.add(new Pair<>(node, suc));
+                    }
+                }
+            }
+
+            // Avoid broadcast nodes from becoming control dependencies in the local script
+            // (does not apply to BroadcastAndWait)
+            if (node.getASTNode() instanceof Broadcast) {
+                Set<CFGNode> successors = processedGraph.successors(node);
+                for (CFGNode suc : successors) {
+                    if (suc instanceof MessageNode) {
                         toRemove.add(new Pair<>(node, suc));
                     }
                 }
@@ -195,16 +220,10 @@ public class ControlFlowGraph {
     }
 
     public ControlFlowGraph reverse() {
-        return reverse(true);
-    }
-
-    public ControlFlowGraph reverse(boolean process) {
         ControlFlowGraph newCFG = new ControlFlowGraph();
-        MutableGraph<CFGNode> processedGraph = process ? process(graph) : graph;
-        newCFG.graph = Graphs.copyOf(Graphs.transpose(processedGraph));
+        newCFG.graph = Graphs.copyOf(Graphs.transpose(graph));
         newCFG.entryNode = this.exitNode;
-        newCFG.exitNode  = this.entryNode;
-
+        newCFG.exitNode = this.entryNode;
         return newCFG;
     }
 

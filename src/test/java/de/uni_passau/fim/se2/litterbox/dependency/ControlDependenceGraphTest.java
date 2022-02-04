@@ -24,16 +24,21 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.cfg.MessageNode;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -214,5 +219,32 @@ public class ControlDependenceGraphTest implements JsonTest {
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, createCloneOf));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(createCloneOf, clone));
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(clone, deleteClone));
+    }
+
+    @Test
+    public void testBroadcastDependencyWithWhen() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/dependency/broadcastDependency.json");
+        ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
+        assertThat(cdg.getNodes()).isEqualTo(cfg.getNodes());
+        assertThat(cdg.getNumEdges()).isEqualTo(9);
+
+        CFGNode entry = cfg.getEntryNode();
+        CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode repeatTimes = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof RepeatTimesStmt).findFirst().get();
+        CFGNode broadcast = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof Broadcast).collect(Collectors.toList()).get(0);
+        CFGNode say = cfg.getSuccessors(broadcast).stream().filter(t -> t.getASTNode() instanceof SayForSecs).collect(Collectors.toList()).get(0);
+        CFGNode move = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof MoveSteps).collect(Collectors.toList()).get(0);
+        CFGNode message = cfg.getSuccessors(broadcast).stream().filter(t -> t instanceof MessageNode).findFirst().get();
+        CFGNode think = cfg.getSuccessors(message).stream().filter(t -> t.getASTNode() instanceof ThinkForSecs).collect(Collectors.toList()).get(0);
+        CFGNode exit = cfg.getExitNode();
+
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, exit));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, greenFlag));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, repeatTimes));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(greenFlag, move));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, broadcast));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(repeatTimes, say));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(broadcast, message));
+        assertThat(cdg.getEdges()).contains(EndpointPair.ordered(message, think));
     }
 }
