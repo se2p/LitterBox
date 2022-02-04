@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -125,6 +125,7 @@ public class IssueTool {
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedParameter(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
+        registerSmellFinder(new UselessBlocks(), smellFinders);
         registerSmellFinder(new VariableInitializationRace(), smellFinders);
 
         return smellFinders;
