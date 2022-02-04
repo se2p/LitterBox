@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
@@ -43,8 +44,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -62,6 +68,11 @@ public class RefactoringAnalyzer extends Analyzer {
         super(input, output, delete);
         this.refactoredPath = refactoredPath;
         refactoringFinders = RefactoringTool.getRefactoringFinders();
+    }
+
+    public static <T> Predicate<T> distinctByFitness(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     @Override
@@ -83,10 +94,18 @@ public class RefactoringAnalyzer extends Analyzer {
         final long refactoringSearchTime = Duration.between(startRefactoringSearch, endRefactoringSearch).toMillis();
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
-            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), solutions, iteration,
+            List<RefactorSequence> uniqueSolutions = solutions.stream().filter(distinctByFitness(RefactorSequence::getFitnessMap)).collect(Collectors.toList());
+            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), uniqueSolutions, iteration,
                     programExtractionTime, refactoringSearchTime, program);
+            Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
+            for (RefactorSequence solution : uniqueSolutions) {
+                RefactorSequence empty = new RefactorSequence(program, solution.getMutation(), solution.getCrossover(), Collections.EMPTY_LIST);
+                if (dominance.test(empty, solution)) {
+                    log.log(Level.FINE, "Found dominating solution " + solution.getFitnessMap());
+                }
+            }
         } else {
-            System.out.println("NSGA-II found no solutions!");
+            log.log(Level.FINE, "NSGA-II found no solutions!");
         }
     }
 
@@ -99,15 +118,20 @@ public class RefactoringAnalyzer extends Analyzer {
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
 
+
         for (int i = 0; i < solutions.size(); i++) {
-            log.log(Level.FINE, "Refactoring " + i);
-            log.log(Level.FINE, "Original program");
-            log.log(Level.FINE, solutions.get(i).getOriginalProgram().getScratchBlocks());
-            log.log(Level.FINE, "Refactoring sequence");
-            log.log(Level.FINE, solutions.get(i).getExecutedRefactorings().toString());
-            log.log(Level.FINE, "Refactored program");
-            log.log(Level.FINE, solutions.get(i).getRefactoredProgram().getScratchBlocks());
             Program refactored = solutions.get(i).getRefactoredProgram();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Solution,");
+            sb.append(refactored.getIdent().getName() + "_refactored_" + i);
+            sb.append(",");
+            sb.append(solutions.get(i).getExecutedRefactorings().size());
+            sb.append(",");
+            for (FitnessFunction<RefactorSequence> fitnessFunction : fitnessFunctions) {
+                sb.append(solutions.get(i).getFitness(fitnessFunction));
+                sb.append(",");
+            }
+            log.log(Level.FINE, sb.toString());
             generateOutput(i,
                     refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, programExtractionTime,
                     refactoringSearchTime);
@@ -142,15 +166,9 @@ public class RefactoringAnalyzer extends Analyzer {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        // fitnessFunctions.add(new SumComplexityFitness());
-        // fitnessFunctions.add(new SumEntropyFitness());
-        fitnessFunctions.add(new AverageComplexityFitness());
-        // fitnessFunctions.add(new AverageHalsteadVolumeFitness());
-        fitnessFunctions.add(new AverageEntropyFitness());
-
-        // fitnessFunctions.add(new HalsteadDifficultyFitness());
-        fitnessFunctions.add(new NumberOfBlocksFitness());
-        // fitnessFunctions.add(new CategoryEntropyFitness());
+        fitnessFunctions.add(new CohesionFitness());
+        fitnessFunctions.add(new CyclomaticComplexityFitness());
+        fitnessFunctions.add(new NumberOfScriptsFitness());
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
