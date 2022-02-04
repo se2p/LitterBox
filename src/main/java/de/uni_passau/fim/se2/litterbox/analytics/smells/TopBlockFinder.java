@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
@@ -31,6 +32,14 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     boolean setHint = false;
 
     public void visit(Stmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    public void visit(Event node) {
         if (setHint) {
             addIssue(node, node.getMetadata());
         } else {
