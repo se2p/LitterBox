@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -25,9 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class MultiBlockIssue extends Issue {
 
@@ -45,7 +44,10 @@ public class MultiBlockIssue extends Issue {
 
     @Override
     public boolean isCodeLocation(ASTNode node) {
-        return nodes.contains(node);
+        // TODO: Workaround until we have figured out how to implement hashCode/equals properly
+        Set<ASTNode> uniqueNodes = Sets.newIdentityHashSet();
+        uniqueNodes.addAll(nodes);
+        return uniqueNodes.contains(node);
     }
 
     @Override
