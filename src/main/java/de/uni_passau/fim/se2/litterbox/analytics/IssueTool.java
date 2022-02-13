@@ -63,6 +63,7 @@ public class IssueTool {
         registerBugFinder(new MissingCloneInitialization(), bugFinders);
         registerBugFinder(new MissingInitialization(), bugFinders);
         registerBugFinder(new MissingEraseAll(), bugFinders);
+        registerBugFinder(new MissingLoopMousePosition(), bugFinders);
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
