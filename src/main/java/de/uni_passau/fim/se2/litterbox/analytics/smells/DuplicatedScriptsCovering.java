@@ -8,13 +8,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DuplicatedScriptsCovering extends AbstractIssueFinder {
-    private static final String NAME = "duplicated_script_covering";
+    private static final String NAME = "duplicated_scripts_covering";
 
     @Override
     public IssueType getIssueType() {
@@ -28,30 +26,26 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
 
     @Override
     public void visit(ScriptList node) {
-        Set<Script> checked = new HashSet<>();
         List<Script> scripts;
         if (ignoreLooseBlocks) {
             scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
         } else {
             scripts = node.getScriptList();
         }
-        for (Script s : scripts) {
-            currentScript = s;
+        for (int i = 0; i < scripts.size() - 1; i++) {
+            currentScript = scripts.get(i);
+            for (int j = i + 1; j < scripts.size(); j++) {
+                Script script2 = scripts.get(j);
 
-            for (Script other : scripts) {
-                if (s == other || checked.contains(other)) {
-                    continue;
-                }
-
-                if (s.equals(other)) {
+                if (currentScript.equals(script2)) {
                     ASTNode topBlockCurrent;
                     ASTNode topBlockOther;
-                    if (!(s.getEvent() instanceof Never)) {
-                        topBlockCurrent = s.getEvent();
-                        topBlockOther = other.getEvent();
+                    if (!(currentScript.getEvent() instanceof Never)) {
+                        topBlockCurrent = currentScript.getEvent();
+                        topBlockOther = script2.getEvent();
                     } else {
-                        topBlockCurrent = s.getStmtList().getStmts().get(0);
-                        topBlockOther = other.getStmtList().getStmts().get(0);
+                        topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
+                        topBlockOther = script2.getStmtList().getStmts().get(0);
                     }
                     TopNonDataBlockMetadata metaCurrent = (TopNonDataBlockMetadata) topBlockCurrent.getMetadata();
                     TopNonDataBlockMetadata metaOther = (TopNonDataBlockMetadata) topBlockOther.getMetadata();
@@ -64,7 +58,6 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
                     }
                 }
             }
-            checked.add(s);
         }
     }
 }

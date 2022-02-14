@@ -19,10 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 class DuplicatedScriptTest implements JsonTest {
 
@@ -55,5 +60,17 @@ class DuplicatedScriptTest implements JsonTest {
     @Test
     public void testDuplicatedScriptOtherSprite() throws IOException, ParsingException {
         assertThatFinderReports(0, new DuplicatedScript(), "./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
+    }
+
+    @Test
+    public void testSubsumptionCovering() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/smells/duplicatedScriptCovering.json");
+        DuplicatedScript duplicatedScript = new DuplicatedScript();
+        List<Issue> reportsDuplicatedScript = new ArrayList<>(duplicatedScript.check(empty));
+        Assertions.assertEquals(1, reportsDuplicatedScript.size());
+        DuplicatedScriptsCovering duplicatedScriptsCovering = new DuplicatedScriptsCovering();
+        List<Issue> reportsDuplicatedScriptsCovering = new ArrayList<>(duplicatedScriptsCovering.check(empty));
+        Assertions.assertEquals(1, reportsDuplicatedScriptsCovering.size());
+        Assertions.assertTrue(duplicatedScript.isSubsumedBy(reportsDuplicatedScript.get(0), reportsDuplicatedScriptsCovering.get(0)));
     }
 }
