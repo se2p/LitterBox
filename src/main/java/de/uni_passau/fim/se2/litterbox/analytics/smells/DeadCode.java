@@ -18,14 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 /**
  * Checks if the project has loose blocks without a head.
  */
-public class DeadCode extends TopBlockFinder {
+public class DeadCode extends AbstractIssueFinder {
 
     public static final String NAME = "dead_code";
 
@@ -33,10 +35,9 @@ public class DeadCode extends TopBlockFinder {
     public void visit(Script node) {
         currentScript = node;
         if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
-            setHint = true;
-            node.getStmtList().getStmts().get(0).accept(this);
+            ASTNode top = node.getStmtList().getStmts().get(0);
+            addIssue(top, top.getMetadata());
         }
-        setHint = false;
         currentScript = null;
     }
 
