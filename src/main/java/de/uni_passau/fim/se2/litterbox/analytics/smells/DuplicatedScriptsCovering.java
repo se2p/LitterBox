@@ -37,6 +37,7 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
             for (int j = i + 1; j < scripts.size(); j++) {
                 Script script2 = scripts.get(j);
 
+                //Todo: a change of equals/hash would break this
                 if (currentScript.equals(script2)) {
                     ASTNode topBlockCurrent;
                     ASTNode topBlockOther;
