@@ -109,6 +109,7 @@ public class IssueTool {
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new DoubleIf(), smellFinders);
         registerSmellFinder(new DuplicatedScript(), smellFinders);
+        registerSmellFinder(new DuplicatedScriptsCovering(), smellFinders);
         registerSmellFinder(new DuplicateSprite(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
         registerSmellFinder(new MessageNaming(), smellFinders);
