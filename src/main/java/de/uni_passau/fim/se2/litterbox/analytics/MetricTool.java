@@ -63,6 +63,7 @@ public class MetricTool {
             new HalsteadVolume<Program>(),
             new HatCount<Program>(),
             new InterproceduralCyclomaticComplexity<Program>(),
+            new InterproceduralSliceCoverage<Program>(),
             new LengthLongestScript<Program>(),
             new LooksBlockCount<Program>(),
             new MostComplexScript<Program>(),
@@ -79,7 +80,6 @@ public class MetricTool {
             new SpriteCount<Program>(),
             new StackedStatementCount<Program>(),
             new StatementCount<Program>(),
-            // TODO: Slice cohesion metrics?
             new TokenEntropy<Program>(),
             new VariableCount<Program>(),
             new VariablesBlockCount<Program>(),
