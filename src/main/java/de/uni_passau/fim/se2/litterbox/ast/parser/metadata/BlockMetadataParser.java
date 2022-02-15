@@ -44,9 +44,7 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId,
-                        shadow,
-                        mutation);
+                return new NonDataBlockMetadata(commentId, blockId, shadow, mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
@@ -57,8 +55,9 @@ public class BlockMetadataParser {
             Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a "
                     + "NonDataBlock. ID: " + blockId);
             ArrayNode data = (ArrayNode) blockNode;
-            Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
-                    + "top level data block. ID: " + blockId);
+            if (data.size() != 5) {
+                throw new ParsingException("The project has malformated variables.");
+            }
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
             return new DataBlockMetadata(blockId, x, y);

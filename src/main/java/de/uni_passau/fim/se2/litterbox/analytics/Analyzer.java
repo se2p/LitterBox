@@ -67,7 +67,7 @@ public abstract class Analyzer {
             check(file, output);
             deleteFile(file);
         } else {
-            log.info("Folder or file '" + file.getName() + "' does not exist");
+            log.severe("Folder or file '" + file.getName() + "' does not exist");
         }
     }
 
@@ -75,7 +75,7 @@ public abstract class Analyzer {
         if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
             boolean success = file.delete();
             if (!success) {
-                log.warning("[Error] Could not delete project: " + file.getName());
+                log.warning("Could not delete project: " + file.getName());
             }
         }
     }
@@ -113,7 +113,7 @@ public abstract class Analyzer {
             try {
                 Downloader.downloadAndSaveProject(pid, input.toString());
             } catch (IOException e) {
-                log.warning("[Error] Could not download project with PID: " + pid);
+                log.warning("Could not download project with PID: " + pid);
                 return;
             }
         }
@@ -136,10 +136,11 @@ public abstract class Analyzer {
         try {
             program = parser.parseFile(fileEntry);
         } catch (IOException e) {
-            log.info("[Error] could not load program from file " + fileEntry.getName());
-        } catch (ParsingException | RuntimeException e) {
-            // TODO: Proper error handling
-            log.info("[Error] could not parse program for file " + fileEntry.getName());
+            log.severe("Could not load program from file " + fileEntry.getName());
+        } catch (ParsingException e) {
+            log.severe("Could not parse program for file " + fileEntry.getName() + ". " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.severe("Could not parse program for file " + fileEntry.getName() + ".");
         }
         return program;
     }
