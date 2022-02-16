@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -29,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 /**
  * Checks for scripts with more than 12 blocks.
  */
-public class LongScript extends TopBlockFinder {
+public class LongScript extends AbstractIssueFinder {
 
     public static final String NAME = "long_script";
     private static final int NUMBER_TOO_LONG = 12;
@@ -43,20 +45,19 @@ public class LongScript extends TopBlockFinder {
         }
         currentScript = node;
         localCount = 0;
-        setHint = false;
         if (!(node.getEvent() instanceof Never)) {
             localCount++;
         }
         visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            setHint = true;
+            ASTNode top;
             if (!(node.getEvent() instanceof Never)) {
-                node.getEvent().accept(this);
+                top = node.getEvent();
             } else {
-                node.getStmtList().accept(this);
+                top = node.getStmtList().getStmts().get(0);
             }
+            addIssue(top, top.getMetadata());
         }
-        setHint = false;
         currentScript = null;
     }
 
@@ -69,19 +70,15 @@ public class LongScript extends TopBlockFinder {
         localCount++;
         visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW);
         }
         currentProcedure = null;
     }
 
     @Override
     public void visit(StmtList node) {
-        if (!setHint) {
-            localCount = localCount + node.getStmts().size();
-            visitChildren(node);
-        } else {
-            node.getStmts().get(0).accept(this);
-        }
+        localCount = localCount + node.getStmts().size();
+        visitChildren(node);
     }
 
     @Override
