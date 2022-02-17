@@ -12,7 +12,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 
 public class DeleteCloneInLoop extends AbstractIssueFinder {
     private static final String NAME = "delete_clone_in_loop";
-    private boolean hasStartAsClone;
     private boolean insideLoop;
     private boolean insideIf;
 
@@ -29,10 +28,8 @@ public class DeleteCloneInLoop extends AbstractIssueFinder {
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof StartedAsClone) {
-            hasStartAsClone = true;
+            super.visit(node);
         }
-        super.visit(node);
-        hasStartAsClone = false;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class DeleteCloneInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(DeleteClone node) {
-        if (hasStartAsClone && insideLoop && !insideIf) {
+        if (insideLoop && !insideIf) {
             addIssue(node, node.getMetadata());
         }
     }
