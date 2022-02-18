@@ -155,7 +155,7 @@ public class ControlFlowGraphBuilder {
     public void addUserEventHandler(Event event) {
 
         // Create new event node
-        CFGNode node = cfg.addNode(event, currentActor);
+        CFGNode node = cfg.addNode(event, currentActor, currentScriptOrProcedure);
 
         // Add edge from Entry to event node
         cfg.addEdgeFromEntry(node);
@@ -168,7 +168,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEventHandler(Event event) {
-        CFGNode eventNode = cfg.addNode(event, currentActor);
+        CFGNode eventNode = cfg.addNode(event, currentActor, currentScriptOrProcedure);
         cfg.addEdgeToExit(eventNode);
 
         // Update current node to event node (so that it branches)
@@ -176,7 +176,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addVariableEventHandler(AttributeAboveValue node) {
-        CFGNode eventNode = cfg.addNode(node, currentActor);
+        CFGNode eventNode = cfg.addNode(node, currentActor, currentScriptOrProcedure);
         cfg.addEdgeFromEntry(eventNode);
         cfg.addEdgeToExit(eventNode);
 
@@ -186,7 +186,7 @@ public class ControlFlowGraphBuilder {
 
     public void addBroadcastHandler(Message message) {
 
-        CFGNode handlerNode = cfg.addNode(message);
+        CFGNode handlerNode = cfg.addNode(message, currentScriptOrProcedure);
         receivedMessages.add(handlerNode);
         cfg.addEdgeToExit(handlerNode);
         setCurrentNode(handlerNode);
@@ -199,7 +199,7 @@ public class ControlFlowGraphBuilder {
         if (message.getMessage() instanceof StringLiteral) {
             // Message selected via dropdown
             // Retrieve broadcast handler, or create if it doesn't exist yet
-            CFGNode handlerNode = cfg.addNode(message);
+            CFGNode handlerNode = cfg.addNode(message, currentScriptOrProcedure);
             cfg.addEdgeToExit(handlerNode); // Broadcasts need a second edge to exit
 
             // Add edge from node to broadcast handler

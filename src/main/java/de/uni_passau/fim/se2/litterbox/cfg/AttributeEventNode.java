@@ -29,10 +29,11 @@ public class AttributeEventNode extends CFGNode {
 
     private AttributeAboveValue node;
 
-    public AttributeEventNode(AttributeAboveValue node, ActorDefinition actor) {
+    public AttributeEventNode(AttributeAboveValue node, ActorDefinition actor, ASTNode scriptOrProcedure) {
         this.node = node;
         this.actor = actor;
         this.attribute = node.getAttribute();
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override
