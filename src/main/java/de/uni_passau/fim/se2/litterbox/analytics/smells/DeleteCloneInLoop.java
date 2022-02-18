@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -66,4 +67,10 @@ public class DeleteCloneInLoop extends AbstractIssueFinder {
             addIssue(node, node.getMetadata());
         }
     }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // NOP as it shouldn't be detected in Procedures
+    }
+
 }
