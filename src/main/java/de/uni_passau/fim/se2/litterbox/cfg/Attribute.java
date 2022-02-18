@@ -77,6 +77,10 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.BACKDROP);
     }
 
+    public static Attribute timerOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.TIMER);
+    }
+
     public LocalIdentifier getActorIdentifier() {
         return actorIdentifier;
     }
@@ -104,6 +108,6 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP //, BUBBLESTATE
+        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER //, BUBBLESTATE
     }
 }

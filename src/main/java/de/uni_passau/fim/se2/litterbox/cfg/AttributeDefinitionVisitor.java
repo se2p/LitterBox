@@ -19,8 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -229,5 +231,15 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     public void visit(SwitchBackdropAndWait node) {
         definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
     }
+
+
+    //---------------------------------------------------------------
+    // Timer
+
+    @Override
+    public void visit(ResetTimer node) {
+        definitions.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
 
 }

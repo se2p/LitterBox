@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
@@ -285,7 +287,7 @@ public class AttributeTest implements JsonTest {
 
     }
 
-    
+
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/useattributefromothersprite.json");
@@ -434,6 +436,44 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(defs).isEmpty();
         long numUses = uses.stream().filter(u -> u.getAttributeType() == BACKDROP).count();
+        assertThat(numUses).isEqualTo(1);
+    }
+
+    @Test
+    public void testTimerEvent() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/startontimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(TIMER);
+    }
+
+    @Test
+    public void testResetTimer() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/resettimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ResetTimer).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(TIMER);
+    }
+
+    @Test
+    public void testSayTimer() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/saytimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Say).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == TIMER).count();
         assertThat(numUses).isEqualTo(1);
     }
 

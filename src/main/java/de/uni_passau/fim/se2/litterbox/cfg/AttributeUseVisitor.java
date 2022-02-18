@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -35,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraph
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -164,6 +166,23 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     //---------------------------------------------------------------
+    // Timer
+
+    @Override
+    public void visit(Timer node) {
+        uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
+        if (node.getAttribute().getType().equals(EventAttribute.EventAttributeType.TIMER)) {
+            uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+        }
+        // Loudness attribute is not the same as volume, so no use in that case
+        node.getValue().accept(this);
+    }
+
+    //---------------------------------------------------------------
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
@@ -237,11 +256,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-    @Override
-    public void visit(AttributeAboveValue node) {
-        // TODO: Handle use of timer and volume attributes here once implemented (#210)
-        node.getValue().accept(this);
-    }
 
     @Override
     public void visit(AttributeOf node) {
