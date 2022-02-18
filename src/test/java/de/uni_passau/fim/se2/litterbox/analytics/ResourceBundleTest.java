@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -92,6 +93,16 @@ public class ResourceBundleTest {
         }
     }
 
+    @ParameterizedTest(name = "Testing existence of general terms for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void checkGeneralTerms(String locale) {
+        ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+
+        for (IssueTranslator.GeneralTerm term : IssueTranslator.GeneralTerm.values()) {
+            assertWithMessage("Language "+locale+", general term "+ term.getKey() +" not found in resources").that(hints.keySet()).contains(term.getKey());
+        }
+    }
+
     @ParameterizedTest(name = "Testing for spurious issue names for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
     public void checkSpuriousNames(String locale) {
@@ -113,4 +124,15 @@ public class ResourceBundleTest {
             assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
         }
     }
+
+    // TODO: Cannot test this because keys are spread across many classes...
+//    @ParameterizedTest(name = "Testing for spurious general term keys for language {0}")
+//    @ValueSource(strings = {"de", "en", "es"})
+//    public void checkSpuriousGeneralTerms(String locale) {
+//        ResourceBundle names = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+//        Set<String> hintKeys = Arrays.stream(IssueTranslator.GeneralTerm.values()).map(IssueTranslator.GeneralTerm::getLabel).collect(Collectors.toSet());
+//        for (String key : Collections.list(names.getKeys())) {
+//            assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
+//        }
+//    }
 }
