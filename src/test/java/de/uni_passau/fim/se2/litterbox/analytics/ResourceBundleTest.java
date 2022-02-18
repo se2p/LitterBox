@@ -24,8 +24,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 public class ResourceBundleTest {
@@ -57,6 +60,25 @@ public class ResourceBundleTest {
         }
     }
 
+    private void checkValidBrackets(String hint) {
+        List<String> matches = Pattern.compile("\\[[^\\]]+\\]")
+                .matcher(hint)
+                .results()
+                .map(MatchResult::group)
+                .collect(Collectors.toList());
+        String currentToken = "";
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            String match = matches.get(i);
+            if (match.startsWith("[/")) {
+                assertThat(currentToken).isEmpty();
+                currentToken = match.replace("/", "");
+            } else if (match.equals(currentToken)) {
+                currentToken = "";
+            }
+        }
+        assertThat(currentToken).isEmpty();
+    }
+
     @ParameterizedTest(name = "Testing existence of bug hints for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
     public void checkBugResourceHints(String locale) {
@@ -65,6 +87,7 @@ public class ResourceBundleTest {
         for (IssueFinder finder : bugFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(hints.getString(key));
             }
         }
     }
@@ -77,6 +100,7 @@ public class ResourceBundleTest {
         for (IssueFinder finder : smellFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(hints.getString(key));
             }
         }
     }
@@ -89,6 +113,7 @@ public class ResourceBundleTest {
         for (IssueFinder finder : perfumeFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(hints.getString(key));
             }
         }
     }
