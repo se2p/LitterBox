@@ -113,7 +113,7 @@ public class MissingInitialization extends AbstractIssueFinder {
     public String getDefineableName(Defineable def) {
         String result = "";
         if (def instanceof Variable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.VARIABLE);
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VARIABLE);
             result += " \"";
             Variable var = (Variable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
@@ -123,7 +123,7 @@ public class MissingInitialization extends AbstractIssueFinder {
             }
             result += "\"";
         } else if (def instanceof ListVariable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.LIST);
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LIST);
             result += " \"";
             ListVariable var = (ListVariable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
@@ -133,33 +133,36 @@ public class MissingInitialization extends AbstractIssueFinder {
             }
             result += "\"";
         } else if (def instanceof Attribute) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.ATTRIBUTE);
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE);
             result += " \"";
             Attribute attr = (Attribute) def;
             switch (attr.getAttributeType()) {
                 case SIZE:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SIZE);
                     break;
-                case APPEARANCE:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.COSTUME);
+                case COSTUME:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.COSTUME);
                     break;
                 case POSITION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.POSITION);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.POSITION);
                     break;
                 case ROTATION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.ROTATION);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ROTATION);
                     break;
                 case VISIBILITY:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VISIBILITY);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VISIBILITY);
                     break;
                 case VOLUME:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VOLUME);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VOLUME);
+                    break;
+                case GRAPHIC_EFFECT:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.GRAPHIC_EFFECT);
                     break;
                 case SOUND_EFFECT:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SOUND_EFFECT);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SOUND_EFFECT);
                     break;
                 case LAYER:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.LAYER);
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LAYER);
                     break;
             }
             result += "\"";

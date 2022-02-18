@@ -164,7 +164,7 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     @Override
@@ -187,12 +187,12 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     // Costume
     @Override
     public void visit(NextCostume node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(Costume node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -253,12 +253,12 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                         uses.add(Attribute.rotationOf(localIdentifier));
                         break;
                     case COSTUME_NUMBER:
-                        uses.add(Attribute.appearanceOf(localIdentifier));
+                    case COSTUME_NAME:
+                        uses.add(Attribute.costumeOf(localIdentifier));
                         break;
                     case VOLUME:
                         uses.add(Attribute.volumeOf(localIdentifier));
                         break;
-                    case COSTUME_NAME:
                     case BACKDROP_NAME:
                     case BACKDROP_NUMBER:
                         // Not handled yet

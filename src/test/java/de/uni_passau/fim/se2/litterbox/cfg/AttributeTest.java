@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -131,7 +132,7 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
-            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(APPEARANCE);
+            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
         }
     }
 
@@ -147,7 +148,7 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses.size()).isAtLeast(1);
-            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(APPEARANCE)).count()).isEqualTo(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(COSTUME)).count()).isEqualTo(1);
         }
     }
 
@@ -311,6 +312,36 @@ public class AttributeTest implements JsonTest {
         Attribute use1 = uses.get(0);
         Attribute use2 = uses.get(1);
         assertThat(use1.getActorIdentifier()).isNotEqualTo(use2.getActorIdentifier());
+    }
+
+    @Test
+    public void testGraphicsEffect() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseGraphicsEffect.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeGraphicEffectBy).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
+        assertThat(def.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
+    }
+
+    @Test
+    public void testCostumeAttribute() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseCostume.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(Attribute.AttributeType.COSTUME);
+        assertThat(def.getAttributeType()).isEqualTo(Attribute.AttributeType.COSTUME);
     }
 
     private Set<Attribute> getDefinedAttributes(CFGNode node) {

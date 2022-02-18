@@ -56,7 +56,8 @@ public class SplitSlicesTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/splitGraphicDependency.json");
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);
-        assertThat(refactorings).isEmpty();
+        // Splitting graphics effect and next costume is fine
+        assertThat(refactorings).hasSize(1);
     }
 
     @Test
