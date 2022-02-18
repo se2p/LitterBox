@@ -19,10 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -34,7 +34,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     private Set<Attribute> definitions = new LinkedHashSet<>();
 
-    // TODO: Store LocalIdentifier instead of actor directly?
     private ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
@@ -67,17 +66,17 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
-        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     @Override
@@ -193,12 +192,12 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     @Override
     public void visit(NextCostume node) {
-        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        definitions.add(Attribute.appearanceOf(currentActor.getIdent()));
+        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -214,16 +213,33 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
+
     //---------------------------------------------------------------
     // Backdrop
-    //
-    //    @Override
-    //    public void visit(NextBackdrop node) {
-    //        definitions.add(Attribute.backdropOf(stageActor));
-    //    }
-    //
-    //    @Override
-    //    public void visit(BackdropSwitchTo node) {
-    //        definitions.add(Attribute.backdropOf(stageActor));
-    //    }
+
+    @Override
+    public void visit(NextBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
+    //---------------------------------------------------------------
+    // Timer
+
+    @Override
+    public void visit(ResetTimer node) {
+        definitions.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
 }

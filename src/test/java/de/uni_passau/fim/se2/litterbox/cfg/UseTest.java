@@ -170,7 +170,7 @@ public class UseTest implements JsonTest {
         assertThat(nodes).hasSize(1);
         CFGNode node = nodes.iterator().next();
 
-        assertThat(node.getUses()).hasSize(1);
+        assertThat(node.getUses()).hasSize(2);
         assertThat(node.getDefinitions()).isEmpty();
     }
 

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 
 import java.util.Objects;
@@ -27,7 +28,8 @@ public class EventNode extends CFGNode {
 
     private Event event;
 
-    public EventNode(Event event) {
+    public EventNode(Event event, ActorDefinition actor) {
+        this.actor = actor;
         this.event = event;
     }
 

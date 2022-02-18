@@ -155,7 +155,7 @@ public class ControlFlowGraphBuilder {
     public void addUserEventHandler(Event event) {
 
         // Create new event node
-        CFGNode node = cfg.addNode(event);
+        CFGNode node = cfg.addNode(event, currentActor);
 
         // Add edge from Entry to event node
         cfg.addEdgeFromEntry(node);
@@ -168,7 +168,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEventHandler(Event event) {
-        CFGNode eventNode = cfg.addNode(event);
+        CFGNode eventNode = cfg.addNode(event, currentActor);
         cfg.addEdgeToExit(eventNode);
 
         // Update current node to event node (so that it branches)

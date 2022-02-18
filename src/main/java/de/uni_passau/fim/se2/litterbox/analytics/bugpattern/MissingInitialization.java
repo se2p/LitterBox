@@ -111,60 +111,68 @@ public class MissingInitialization extends AbstractIssueFinder {
 
     // TODO: Clean this up
     public String getDefineableName(Defineable def) {
-        String result = "";
+        StringBuilder builder = new StringBuilder();
+
         if (def instanceof Variable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.VARIABLE);
-            result += " \"";
+            builder.append("[var]");
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VARIABLE));
+            builder.append(" \"");
             Variable var = (Variable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier) var.getIdentifier()).getName();
+                builder.append(((LocalIdentifier) var.getIdentifier()).getName());
             } else {
-                result += ((Qualified) var.getIdentifier()).getSecond().getName().getName();
+                builder.append(((Qualified) var.getIdentifier()).getSecond().getName().getName());
             }
-            result += "\"";
+            builder.append("\"");
+            builder.append("[/var]");
         } else if (def instanceof ListVariable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.LIST);
-            result += " \"";
+            builder.append("[list]");
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LIST));
+            builder.append(" \"");
             ListVariable var = (ListVariable) def;
             if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier) var.getIdentifier()).getName();
+                builder.append(((LocalIdentifier) var.getIdentifier()).getName());
             } else {
-                result += ((Qualified) var.getIdentifier()).getSecond().getName().getName();
+                builder.append(((Qualified) var.getIdentifier()).getSecond().getName().getName());
             }
-            result += "\"";
+            builder.append("\"");
+            builder.append("[/list]");
         } else if (def instanceof Attribute) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.ATTRIBUTE);
-            result += " \"";
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+            builder.append(" \"");
             Attribute attr = (Attribute) def;
             switch (attr.getAttributeType()) {
                 case SIZE:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SIZE));
                     break;
-                case APPEARANCE:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.COSTUME);
+                case COSTUME:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.COSTUME));
                     break;
                 case POSITION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.POSITION);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.POSITION));
                     break;
                 case ROTATION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.ROTATION);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ROTATION));
                     break;
                 case VISIBILITY:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VISIBILITY);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
                     break;
                 case VOLUME:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.VOLUME);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VOLUME));
+                    break;
+                case GRAPHIC_EFFECT:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.GRAPHIC_EFFECT));
                     break;
                 case SOUND_EFFECT:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SOUND_EFFECT);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SOUND_EFFECT));
                     break;
                 case LAYER:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.LAYER);
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LAYER));
                     break;
             }
-            result += "\"";
+            builder.append("\"");
         }
-        return result;
+        return builder.toString();
     }
 
     @Override

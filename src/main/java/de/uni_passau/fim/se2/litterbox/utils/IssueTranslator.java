@@ -30,17 +30,30 @@ public class IssueTranslator {
     private ResourceBundle general;
     private Locale locale;
 
-    public static final String SIZE = "size";
-    public static final String POSITION = "position";
-    public static final String COSTUME = "costume";
-    public static final String ROTATION = "rotation";
-    public static final String VISIBILITY = "visibility";
-    public static final String VARIABLE = "variable";
-    public static final String LIST = "list";
-    public static final String ATTRIBUTE = "attribute";
-    public static final String LAYER = "layer";
-    public static final String VOLUME = "volume";
-    public static final String SOUND_EFFECT = "sound_effect";
+    public static enum GeneralTerm {
+        SIZE("size"),
+        POSITION("position"),
+        COSTUME("costume"),
+        ROTATION("rotation"),
+        VISIBILITY("visibility"),
+        VARIABLE("variable"),
+        LIST("list"),
+        ATTRIBUTE("attribute"),
+        LAYER("layer"),
+        VOLUME("volume"),
+        SOUND_EFFECT("sound_effect"),
+        GRAPHIC_EFFECT("graphic_effect");
+
+        private final String key;
+
+        private GeneralTerm(String label) {
+            this.key = label;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
 
     /**
      * Private constructor to avoid instatiation of singleton.
@@ -141,5 +154,9 @@ public class IssueTranslator {
         } else {
             return keyword;
         }
+    }
+
+    public String getInfo(GeneralTerm keyword) {
+        return getInfo(keyword.getKey());
     }
 }

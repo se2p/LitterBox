@@ -21,17 +21,22 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -161,10 +166,27 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     //---------------------------------------------------------------
+    // Timer
+
+    @Override
+    public void visit(Timer node) {
+        uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
+        if (node.getAttribute().getType().equals(EventAttribute.EventAttributeType.TIMER)) {
+            uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+        }
+        // Loudness attribute is not the same as volume, so no use in that case
+        node.getValue().accept(this);
+    }
+
+    //---------------------------------------------------------------
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     @Override
@@ -187,12 +209,30 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     // Costume
     @Override
     public void visit(NextCostume node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(Costume node) {
-        uses.add(Attribute.appearanceOf(currentActor.getIdent()));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(NextBackdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
+    @Override
+    public void visit(Backdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -216,11 +256,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-    @Override
-    public void visit(AttributeAboveValue node) {
-        // TODO: Handle use of timer and volume attributes here once implemented (#210)
-        node.getValue().accept(this);
-    }
 
     @Override
     public void visit(AttributeOf node) {
@@ -253,15 +288,15 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                         uses.add(Attribute.rotationOf(localIdentifier));
                         break;
                     case COSTUME_NUMBER:
-                        uses.add(Attribute.appearanceOf(localIdentifier));
+                    case COSTUME_NAME:
+                        uses.add(Attribute.costumeOf(localIdentifier));
                         break;
                     case VOLUME:
                         uses.add(Attribute.volumeOf(localIdentifier));
                         break;
-                    case COSTUME_NAME:
                     case BACKDROP_NAME:
                     case BACKDROP_NUMBER:
-                        // Not handled yet
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
                         break;
                     default:
                         // TODO: What should happen in the default case?
