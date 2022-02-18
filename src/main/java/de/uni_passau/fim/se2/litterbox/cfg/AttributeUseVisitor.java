@@ -21,15 +21,18 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
@@ -198,6 +201,24 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     //---------------------------------------------------------------
     // Layer
     @Override
+    public void visit(NextBackdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
+    @Override
+    public void visit(Backdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
     public void visit(ChangeLayerBy node) {
         uses.add(Attribute.layerOf(currentActor.getIdent()));
     }
@@ -261,7 +282,7 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                         break;
                     case BACKDROP_NAME:
                     case BACKDROP_NUMBER:
-                        // Not handled yet
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
                         break;
                     default:
                         // TODO: What should happen in the default case?

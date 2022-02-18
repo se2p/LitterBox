@@ -74,7 +74,7 @@ public class Attribute implements Defineable {
     }
 
     public static Attribute backdropOf(LocalIdentifier actorIdentifier) {
-        return new Attribute(actorIdentifier, AttributeType.COSTUME);
+        return new Attribute(actorIdentifier, AttributeType.BACKDROP);
     }
 
     public LocalIdentifier getActorIdentifier() {
@@ -104,6 +104,6 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, // BACKDROP //, BUBBLESTATE
+        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP //, BUBBLESTATE
     }
 }

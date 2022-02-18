@@ -20,10 +20,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
@@ -286,22 +285,7 @@ public class AttributeTest implements JsonTest {
 
     }
 
-    @Test
-    public void testNextBackdrop() throws IOException, ParsingException {
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
-        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
-        // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getDefinedAttributes(node)).hasSize(0);
-    }
-
-    @Test
-    public void testNextBackdropOnSprite() throws IOException, ParsingException {
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
-        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
-        // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getDefinedAttributes(node)).hasSize(0);
-    }
-
+    
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/useattributefromothersprite.json");
@@ -340,8 +324,117 @@ public class AttributeTest implements JsonTest {
         assertThat(defs).hasSize(1);
         Attribute use = uses.get(0);
         Attribute def = uses.get(0);
-        assertThat(use.getAttributeType()).isEqualTo(Attribute.AttributeType.COSTUME);
-        assertThat(def.getAttributeType()).isEqualTo(Attribute.AttributeType.COSTUME);
+        assertThat(use.getAttributeType()).isEqualTo(COSTUME);
+        assertThat(def.getAttributeType()).isEqualTo(COSTUME);
+    }
+
+
+
+    @Test
+    public void testNextBackdropOnSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+
+    @Test
+    public void testNextBackdrop() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttribute() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttributeDefinition() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defonlyBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SwitchBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testSwitchBackgroundAndWaitAttributeDefinition() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defandwaitBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SwitchBackdropAndWait).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundEventUse() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/onbackdropchange.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BackdropSwitchTo).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttributeInSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/backdropAttributeInSprite.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == BACKDROP).count();
+        assertThat(numUses).isEqualTo(1);
+    }
+
+    @Test
+    public void testBackgroundAttributeInStage() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/backdropAttributeInStage.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == BACKDROP).count();
+        assertThat(numUses).isEqualTo(1);
     }
 
     private Set<Attribute> getDefinedAttributes(CFGNode node) {

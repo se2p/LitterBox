@@ -97,8 +97,8 @@ public class ControlFlowGraph {
         return node;
     }
 
-    public EventNode addNode(Event node) {
-        EventNode cfgNode = new EventNode(node);
+    public EventNode addNode(Event node, ActorDefinition actor) {
+        EventNode cfgNode = new EventNode(node, actor);
         graph.addNode(cfgNode);
         return cfgNode;
     }

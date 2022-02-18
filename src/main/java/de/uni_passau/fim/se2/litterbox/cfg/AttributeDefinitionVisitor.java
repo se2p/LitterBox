@@ -19,11 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
@@ -36,7 +32,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     private Set<Attribute> definitions = new LinkedHashSet<>();
 
-    // TODO: Store LocalIdentifier instead of actor directly?
     private ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
@@ -220,13 +215,19 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     //---------------------------------------------------------------
     // Backdrop
 
-//    @Override
-//    public void visit(NextBackdrop node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
-//
-//    @Override
-//    public void visit(BackdropSwitchTo node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
+    @Override
+    public void visit(NextBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
 }
