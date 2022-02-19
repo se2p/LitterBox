@@ -28,7 +28,7 @@ public class CloneAnalysis {
 
     public static int MIN_SIZE = 6;
     public static int MAX_GAP = 2;
-    public static int MIN_SIZE_NEXT_TO_GAP = 2;
+    public static int MIN_SIZE_NEXT_TO_GAP = 1; // TODO: This could be used to improve performance
 
     private int minSize = MIN_SIZE;
     private int maxGap = MAX_GAP;
@@ -150,13 +150,16 @@ public class CloneAnalysis {
                 if (block.size() >= minSize) {
                     CodeClone clone = new CodeClone(root1, root2);
                     block.fillClone(clone, statements1, statements2);
-                    if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
-                        if (cloneType == CodeClone.CloneType.TYPE1) {
-                            continue;
+                    if (cloneType == CodeClone.CloneType.TYPE1) {
+                        if (clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                            clones.add(clone);
                         }
-                        clone.setType(CodeClone.CloneType.TYPE2);
+                    } else {
+                        if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                            clone.setType(CodeClone.CloneType.TYPE2);
+                            clones.add(clone);
+                        }
                     }
-                    clones.add(clone);
                 }
             }
         }
