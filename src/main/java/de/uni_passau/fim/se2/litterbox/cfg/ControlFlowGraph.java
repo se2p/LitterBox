@@ -97,20 +97,20 @@ public class ControlFlowGraph {
         return node;
     }
 
-    public EventNode addNode(Event node, ActorDefinition actor) {
-        EventNode cfgNode = new EventNode(node, actor);
+    public EventNode addNode(Event node, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        EventNode cfgNode = new EventNode(node, actor, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
 
-    public MessageNode addNode(Message message) {
-        MessageNode cfgNode = new MessageNode(message);
+    public MessageNode addNode(Message message, ASTNode scriptOrProcedure) {
+        MessageNode cfgNode = new MessageNode(message, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
 
-    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor) {
-        AttributeEventNode cfgNode = new AttributeEventNode(node, actor);
+    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        AttributeEventNode cfgNode = new AttributeEventNode(node, actor, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
