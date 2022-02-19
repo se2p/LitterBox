@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,6 +36,7 @@ import java.util.List;
  */
 public class SpriteNaming extends AbstractIssueFinder {
     public static final String NAME = "sprite_naming";
+    public static final String HINT_DEFAULT = "sprite_naming_default";
     private List<String> visitedNames;
 
     private static final String[] SPRITE_LANGUAGES = {"Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš",
@@ -59,7 +62,7 @@ public class SpriteNaming extends AbstractIssueFinder {
 
         for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
-                Hint hint = new Hint(getName());
+                Hint hint = new Hint(HINT_DEFAULT);
                 hint.setParameter(Hint.HINT_SPRITE, name);
                 addIssueWithLooseComment(hint);
                 visitedNames.add(trimmedName);
@@ -113,5 +116,10 @@ public class SpriteNaming extends AbstractIssueFinder {
     @Override
     public String getName() {
         return "sprite_naming";
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        return Arrays.asList(NAME, HINT_DEFAULT);
     }
 }
