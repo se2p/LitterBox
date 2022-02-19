@@ -46,6 +46,7 @@ public class DisjunctionToIfElseFinder extends AbstractRefactoringFinder {
 
         visitChildren(ifThenStmt);
     }
+
     @Override
     public String getName() {
         return DisjunctionToIfElse.NAME;

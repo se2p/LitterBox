@@ -8,7 +8,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 
-public class SliceCoverage <T extends ASTNode> implements MetricExtractor<T> {
+public class SliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
 
     private ActorDefinition actor;
 

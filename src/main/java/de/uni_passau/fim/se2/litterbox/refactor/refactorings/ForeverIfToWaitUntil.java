@@ -64,8 +64,8 @@ public class ForeverIfToWaitUntil extends OnlyCodeCloneVisitor implements Refact
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced forever loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator() +
-                "with forever-wait loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced forever loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
+                + "with forever-wait loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

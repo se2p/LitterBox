@@ -105,7 +105,7 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 

@@ -63,8 +63,8 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced forever loop with wait:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator() +
-                "with forever loop with if:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced forever loop with wait:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
+                + "with forever loop with if:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

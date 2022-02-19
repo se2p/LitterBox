@@ -47,8 +47,8 @@ public class IfIfNotToIfElseFinder extends AbstractRefactoringFinder {
         final List<Stmt> stmts = node.getStmts();
 
         for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof IfThenStmt &&
-                    stmts.get(i + 1) instanceof IfThenStmt) {
+            if (stmts.get(i) instanceof IfThenStmt
+                    && stmts.get(i + 1) instanceof IfThenStmt) {
                 IfThenStmt ifThenStmt1 = (IfThenStmt) stmts.get(i);
                 IfThenStmt ifThenStmt2 = (IfThenStmt) stmts.get(i + 1);
 

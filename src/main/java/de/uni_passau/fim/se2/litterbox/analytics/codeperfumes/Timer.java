@@ -123,7 +123,7 @@ public class Timer extends AbstractIssueFinder {
                             }
                         }
                     }
-                );
+            );
             waitSec = false;
         } else {
             visitChildren(node);

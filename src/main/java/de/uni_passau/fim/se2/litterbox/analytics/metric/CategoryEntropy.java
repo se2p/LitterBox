@@ -30,14 +30,14 @@ import java.util.ArrayList;
 public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "category_entropy";
 
-    private double program_count = 0;
+    private double programCount = 0;
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        program_count = 0;
+        programCount = 0;
         node.accept(this);
-        return -program_count;
+        return -programCount;
     }
 
     @Override
@@ -57,20 +57,21 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double count = new BlockCount<Script>().calculateMetric(node);
 
         // Empty program
-        if(count == 0)
+        if (count == 0) {
             return;
+        }
 
-        double local_entropy = 0.0; // Compute script category entropy
+        double localEntropy = 0.0; // Compute script category entropy
 
-        for(MetricExtractor extractor : list) {
+        for (MetricExtractor extractor : list) {
             double p_x = extractor.calculateMetric(node) / count;
             if (p_x == 0)
                 continue;
-            double category_entropy = p_x * (Math.log(p_x)/Math.log(2.0));
-            local_entropy += category_entropy;
+            double categoryEntropy = p_x * (Math.log(p_x) / Math.log(2.0));
+            localEntropy += categoryEntropy;
         }
 
-        this.program_count += local_entropy;
+        this.programCount += localEntropy;
     }
 
     @Override
@@ -89,20 +90,20 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double count = new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         // Empty program
-        if(count == 0)
+        if (count == 0)
             return;
 
-        double local_entropy = 0.0; // Compute script category entropy
+        double localEntropy = 0.0; // Compute script category entropy
 
-        for(MetricExtractor extractor : list) {
+        for (MetricExtractor extractor : list) {
             double p_x =  extractor.calculateMetric(node) / count;
             if (p_x == 0)
                 continue;
-            double category_entropy = p_x * (Math.log(p_x)/Math.log(2.0));
-            local_entropy += category_entropy;
+            double categoryEntropy = p_x * (Math.log(p_x) / Math.log(2.0));
+            localEntropy += categoryEntropy;
         }
 
-        this.program_count += local_entropy;
+        this.programCount += localEntropy;
 
     }
 

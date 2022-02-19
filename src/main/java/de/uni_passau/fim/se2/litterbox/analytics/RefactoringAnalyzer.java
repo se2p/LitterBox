@@ -33,10 +33,6 @@ import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.HyperVolume2D;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
-
-import java.time.Duration;
-import java.time.Instant;
-
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -44,6 +40,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

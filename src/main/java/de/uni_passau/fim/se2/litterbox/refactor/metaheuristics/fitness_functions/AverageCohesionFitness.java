@@ -23,10 +23,12 @@ public class AverageCohesionFitness implements MaximizingFitnessFunction<Refacto
 
         refactoredProgram.accept(new ScratchVisitor() {
             private ActorDefinition actor = null;
+
             @Override
             public void visit(ActorDefinition actorDefinition) {
                 this.actor = actorDefinition;
             }
+
             @Override
             public void visit(Script node) {
                 SliceCoverage<Script> sliceCoverage = new SliceCoverage<>();

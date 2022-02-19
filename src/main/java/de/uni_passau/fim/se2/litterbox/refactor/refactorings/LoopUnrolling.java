@@ -59,8 +59,8 @@ public class LoopUnrolling extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Unrolled loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator() +
-                this.value + " times" +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Unrolled loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
+                + this.value + " times" +  System.lineSeparator();
     }
 
     @Override
