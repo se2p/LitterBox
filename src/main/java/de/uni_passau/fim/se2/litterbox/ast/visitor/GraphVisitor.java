@@ -222,7 +222,7 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor  {
         builder.append("},");
 //        builder.append("\"SlotDummyNode\":0,");
         builder.append("\"SymbolCandidates\":[");    
-        builder.append(getSymbolCandidates(correctLabel.replaceAll("^\"|\"$", ""), incorrectLabel.replaceAll("^\"|\"$", "")));      
+        builder.append(getSymbolCandidates(correctLabel.replaceAll("[^a-zA-Z0-9\\s_-]", ""), incorrectLabel.replaceAll("[^a-zA-Z0-9\\s_-]", "")));      
         builder.append("]}");
         if (spriteIndex!=lastIndex-1) {
         	builder.append("\n");      	
