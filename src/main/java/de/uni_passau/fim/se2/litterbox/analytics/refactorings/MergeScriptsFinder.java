@@ -68,10 +68,10 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
         List<Stmt> stmtScript1 = new ArrayList<>(merged.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
         List<Stmt> stmtScript2 = new ArrayList<>(merged.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), merged.getStmtList().getNumberOfStatements()));
 
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2) ||
-                hasDataDependency(cfg, stmtScript1, stmtScript2) ||
-                hasTimeDependency(cfg, stmtScript1, stmtScript2) ||
-                wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
+        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+                || hasDataDependency(cfg, stmtScript1, stmtScript2)
+                || hasTimeDependency(cfg, stmtScript1, stmtScript2)
+                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
             return true;
         }
 

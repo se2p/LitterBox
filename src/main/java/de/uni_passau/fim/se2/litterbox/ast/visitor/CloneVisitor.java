@@ -3347,8 +3347,8 @@ public class CloneVisitor {
     /*
      * UID generation based on https://github.com/LLK/scratch-blocks
      */
-    public static final String BLOCKLY_SOUP = "!#$%()*+,-./:;=?@[]^_`{|}~" +
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final String BLOCKLY_SOUP = "!#$%()*+,-./:;=?@[]^_`{|}~"
+            + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     /**
      * Generate a unique ID.  This should be globally unique.

@@ -64,7 +64,7 @@ public class MergeScripts extends OnlyCodeCloneVisitor implements Refactoring {
         for (Script currentScript : node.getScriptList()) {
             if (currentScript == this.script1) {
                 scripts.add(replacementScript);
-            } else if (currentScript != this.script2){
+            } else if (currentScript != this.script2) {
                 scripts.add(apply(currentScript));
             }
         }
@@ -91,8 +91,8 @@ public class MergeScripts extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator() +
-                " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
+                + " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
     }
 }

@@ -66,10 +66,10 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
             Stmt stmt2 = stmtList.getStatement(i + 1);
             Optional<CFGNode> stmt1Node = pdg.getNode(stmt1);
             Optional<CFGNode> stmt2Node = pdg.getNode(stmt2);
-            if (stmt1Node.isPresent() && stmt2Node.isPresent() &&
-                    !isTerminationStatement(stmt2Node.get().getASTNode()) &&
-                    !pdg.hasDependency(stmt1Node.get(), stmt2Node.get()) &&
-                    !wouldCreateDataDependency(currentScript, Arrays.asList(stmt2), Arrays.asList(stmt1))) {
+            if (stmt1Node.isPresent() && stmt2Node.isPresent()
+                    && !isTerminationStatement(stmt2Node.get().getASTNode())
+                    && !pdg.hasDependency(stmt1Node.get(), stmt2Node.get())
+                    && !wouldCreateDataDependency(currentScript, Arrays.asList(stmt2), Arrays.asList(stmt1))) {
                 refactorings.add(new SwapStatements(stmt1, stmt2));
             }
         }

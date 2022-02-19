@@ -78,9 +78,7 @@ public class ControlDependenceGraph extends AbstractDependencyGraph {
                             cdg.putEdge(pred, node);
                         }
                     }
-
-                }
-                else {
+                } else {
                     cdg.putEdge(entry, node);
                 }
             }

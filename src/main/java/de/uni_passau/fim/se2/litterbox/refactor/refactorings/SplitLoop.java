@@ -90,7 +90,7 @@ public class SplitLoop extends OnlyCodeCloneVisitor implements Refactoring {
             UntilStmt origLoop = (UntilStmt) loopStmt;
             return new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
         } else {
-            throw new RuntimeException("Unknown loop statement: "+loopStmt);
+            throw new RuntimeException("Unknown loop statement: " + loopStmt);
         }
     }
 

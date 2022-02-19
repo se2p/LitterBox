@@ -159,7 +159,7 @@ public class CSVRefactorReportGenerator {
         }
 
         if (!folder.exists()) {
-                Files.createDirectory(filePath.getParent());
+            Files.createDirectory(filePath.getParent());
         }
 
         if (filePath.toFile().length() > 0) {

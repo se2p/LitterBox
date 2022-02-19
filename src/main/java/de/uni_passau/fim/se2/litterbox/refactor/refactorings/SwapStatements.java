@@ -74,8 +74,8 @@ public class SwapStatements extends OnlyCodeCloneVisitor implements Refactoring 
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Swapping statements:" + System.lineSeparator() + stmt1.getScratchBlocks() + System.lineSeparator() +
-                "and:" + System.lineSeparator() + stmt2.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Swapping statements:" + System.lineSeparator() + stmt1.getScratchBlocks() + System.lineSeparator()
+                + "and:" + System.lineSeparator() + stmt2.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

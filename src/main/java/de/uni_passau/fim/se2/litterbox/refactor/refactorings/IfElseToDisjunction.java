@@ -74,7 +74,7 @@ public class IfElseToDisjunction extends OnlyCodeCloneVisitor implements Refacto
 
         if (if1.getBoolExpr().equals(if2.getBoolExpr())) {
             // Silly, but actually observed in practice
-            replacement = new IfThenStmt(apply(if1.getBoolExpr())   ,
+            replacement = new IfThenStmt(apply(if1.getBoolExpr()),
                     apply(if1.getThenStmts()),
                     apply(if1.getMetadata()));
         } else {
@@ -101,9 +101,9 @@ public class IfElseToDisjunction extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator() +
-                "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement if:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator()
+                + "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement if:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

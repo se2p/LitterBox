@@ -73,9 +73,9 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() +
-                "Summarised " + times +" repetitions to:" + System.lineSeparator() +
-                replacementLoop.getScratchBlocks() + System.lineSeparator();
+        return NAME + System.lineSeparator()
+                + "Summarised " + times + " repetitions to:" + System.lineSeparator()
+                + replacementLoop.getScratchBlocks() + System.lineSeparator();
     }
 
     @Override

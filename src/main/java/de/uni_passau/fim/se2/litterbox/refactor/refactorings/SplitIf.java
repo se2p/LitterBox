@@ -96,9 +96,9 @@ public class SplitIf extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Split if:" + System.lineSeparator() + ifThenStmt.getScratchBlocks() + System.lineSeparator() +
-                "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Split if:" + System.lineSeparator() + ifThenStmt.getScratchBlocks() + System.lineSeparator()
+                + "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

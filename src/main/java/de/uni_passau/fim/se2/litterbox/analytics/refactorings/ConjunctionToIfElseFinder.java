@@ -48,14 +48,14 @@ public class ConjunctionToIfElseFinder extends AbstractRefactoringFinder {
         final List<Stmt> stmts = node.getStmts();
 
         for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof IfThenStmt &&
-                stmts.get(i + 1) instanceof IfThenStmt) {
+            if (stmts.get(i) instanceof IfThenStmt
+                    && stmts.get(i + 1) instanceof IfThenStmt) {
                 IfThenStmt ifThenStmt1 = (IfThenStmt) stmts.get(i);
                 IfThenStmt ifThenStmt2 = (IfThenStmt) stmts.get(i + 1);
                 if (ifThenStmt1.getBoolExpr() instanceof And) {
                     And conjunction = (And) ifThenStmt1.getBoolExpr();
-                    if (conjunction.getOperand1().equals(ifThenStmt2.getBoolExpr()) ||
-                            conjunction.getOperand2().equals(ifThenStmt2.getBoolExpr())) {
+                    if (conjunction.getOperand1().equals(ifThenStmt2.getBoolExpr())
+                            || conjunction.getOperand2().equals(ifThenStmt2.getBoolExpr())) {
                         refactorings.add(new ConjunctionToIfElse(ifThenStmt1, ifThenStmt2));
                     }
                 }

@@ -82,9 +82,9 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + ifStatement1.getScratchBlocks() + System.lineSeparator() +
-                "Replaced if 2:" + System.lineSeparator() + ifStatement2.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + ifStatement1.getScratchBlocks() + System.lineSeparator()
+                + "Replaced if 2:" + System.lineSeparator() + ifStatement2.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

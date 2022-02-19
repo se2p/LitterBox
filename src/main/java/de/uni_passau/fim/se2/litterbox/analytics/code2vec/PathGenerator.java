@@ -38,8 +38,8 @@ public class PathGenerator {
         System.out.println("Anzahl der Sprites: " + leafsMap.keySet().size());
         for (ASTNode key : leafsMap.keySet()) {
             System.out.println("Actor Definition: " + ((ActorDefinition) key).getIdent().getName());
-            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition) key).getIdent().getName() +
-                    ": " + leafsMap.get(key).size());
+            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition) key).getIdent().getName()
+                    + ": " + leafsMap.get(key).size());
             int i = 0;
             for (ASTNode value : leafsMap.get(key)) {
                 System.out.println(i + "Blatt (Test): " + getToken(value));

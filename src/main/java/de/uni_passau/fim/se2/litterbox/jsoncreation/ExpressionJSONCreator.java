@@ -266,12 +266,12 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     private String getListDataFields(Identifier identifier) {
-            Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
-            Qualified qual = (Qualified) identifier;
-            Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
-            ScratchList list = (ScratchList) qual.getSecond();
-            String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-            return createFields(LIST_KEY, list.getName().getName(), id);
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+        ScratchList list = (ScratchList) qual.getSecond();
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
+        return createFields(LIST_KEY, list.getName().getName(), id);
     }
 
     @Override

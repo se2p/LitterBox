@@ -4,7 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
-public class NumberOfScriptsFitness implements MinimizingFitnessFunction<RefactorSequence>{
+public class NumberOfScriptsFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "number_of_scripts_fitness";
 
     @Override

@@ -52,8 +52,8 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
                     continue;
                 }
 
-                if (!stmtList1.getStatement(0).getClass().equals(stmtList2.getStatement(0).getClass()) ||
-                        !(stmtList1.getStatement(0) instanceof LoopStmt)) {
+                if (!stmtList1.getStatement(0).getClass().equals(stmtList2.getStatement(0).getClass())
+                        || !(stmtList1.getStatement(0) instanceof LoopStmt)) {
                     continue;
                 }
 
@@ -88,10 +88,10 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
         List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements()));
         List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(loop1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
 
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2) ||
-                hasDataDependency(cfg, stmtScript1, stmtScript2) ||
-                hasTimeDependency(cfg, stmtScript1, stmtScript2) ||
-                wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
+        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+                || hasDataDependency(cfg, stmtScript1, stmtScript2)
+                || hasTimeDependency(cfg, stmtScript1, stmtScript2)
+                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
             return true;
         }
 

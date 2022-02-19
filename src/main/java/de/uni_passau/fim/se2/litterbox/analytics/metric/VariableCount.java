@@ -55,6 +55,7 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
         Set<String> variables = new HashSet<>(allVariables);
         return variables.size();
     }
+
     @Override
     public void visit(Variable node) {
         if (insideScript || insideProcedure) {
@@ -68,6 +69,7 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
             this.variables.add(node.getName().getName());
         }
     }
+
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
