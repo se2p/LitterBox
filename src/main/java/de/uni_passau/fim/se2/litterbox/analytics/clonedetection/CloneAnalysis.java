@@ -28,9 +28,11 @@ public class CloneAnalysis {
 
     public static int MIN_SIZE = 6;
     public static int MAX_GAP = 2;
+    public static int MIN_SIZE_NEXT_TO_GAP = 2;
 
     private int minSize = MIN_SIZE;
     private int maxGap = MAX_GAP;
+    private int minSizeNextToGap = MIN_SIZE_NEXT_TO_GAP;
 
     private ASTNode root1;
     private ASTNode root2;
@@ -79,8 +81,7 @@ public class CloneAnalysis {
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2, root1 == root2);
 
         // Return all clones identifiable in the matrix
-        Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix);
-        allClones = allClones.stream().filter(c -> c.getType() == cloneType).collect(Collectors.toSet());
+        Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix, cloneType);
 
         if (root1 == root2) {
             // If a script is compared against itself, then there will always be a trivial type 1 clone
@@ -124,28 +125,37 @@ public class CloneAnalysis {
         return matrix;
     }
 
-    private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix) {
+    private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
         Set<CloneBlock> blocks = getAllBlocks(similarityMatrix);
         for (CloneBlock block : blocks) {
-            // Type 1/2
-            if (block.size() >= minSize) {
-                CodeClone clone = new CodeClone(root1, root2);
-                block.fillClone(clone, statements1, statements2);
-                if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
-                    clone.setType(CodeClone.CloneType.TYPE2);
-                }
-                clones.add(clone);
-            }
 
-            // Type 3
-            for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks)) {
-                CodeClone clone = new CodeClone(root1, root2);
-                clone.setType(CodeClone.CloneType.TYPE3);
-                block.fillClone(clone, statements1, statements2);
-                otherBlock.fillClone(clone, statements1, statements2);
-                if (clone.size() >= minSize) {
+            if (cloneType == CodeClone.CloneType.TYPE3) {
+                // Type 3
+                if (block.size() < minSizeNextToGap) {
+                    continue;
+                }
+                for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks)) {
+                    CodeClone clone = new CodeClone(root1, root2);
+                    clone.setType(CodeClone.CloneType.TYPE3);
+                    block.fillClone(clone, statements1, statements2);
+                    otherBlock.fillClone(clone, statements1, statements2);
+                    if (clone.size() >= minSize) {
+                        clones.add(clone);
+                    }
+                }
+            } else {
+                // Type 1/2
+                if (block.size() >= minSize) {
+                    CodeClone clone = new CodeClone(root1, root2);
+                    block.fillClone(clone, statements1, statements2);
+                    if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                        if (cloneType == CodeClone.CloneType.TYPE1) {
+                            continue;
+                        }
+                        clone.setType(CodeClone.CloneType.TYPE2);
+                    }
                     clones.add(clone);
                 }
             }
@@ -157,8 +167,18 @@ public class CloneAnalysis {
     private Set<CloneBlock> getNeighbouringBlocks(CloneBlock block, Set<CloneBlock> otherBlocks) {
         Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
 
+        int size = block.size();
         for (CloneBlock otherBlock : otherBlocks) {
             if (otherBlock == block) {
+                continue;
+            }
+
+            int otherSize = otherBlock.size();
+            if (otherSize < minSizeNextToGap) {
+                continue;
+            }
+
+            if (size + otherSize < minSize) {
                 continue;
             }
 
