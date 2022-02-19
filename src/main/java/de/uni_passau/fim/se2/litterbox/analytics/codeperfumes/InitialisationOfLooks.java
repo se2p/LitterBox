@@ -83,8 +83,6 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
     public void visit(StmtList node) {
         if (inCustomBlock) {
             if (node.getParentNode() instanceof ProcedureDefinition) {
-                ProcedureDefinition parent = (ProcedureDefinition) node.getParentNode();
-
                 for (Stmt stmt : node.getStmts()) {
                     if (stmt instanceof SetSizeTo || stmt instanceof SwitchCostumeTo || stmt instanceof Show
                             || stmt instanceof Hide || stmt instanceof ClearGraphicEffects

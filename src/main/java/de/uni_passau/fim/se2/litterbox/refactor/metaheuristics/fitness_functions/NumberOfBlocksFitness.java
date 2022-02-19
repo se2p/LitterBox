@@ -29,7 +29,7 @@ public class NumberOfBlocksFitness implements MinimizingFitnessFunction<Refactor
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
-        BlockCount blockCountMetric = new BlockCount();
+        BlockCount<Program> blockCountMetric = new BlockCount<>();
         return blockCountMetric.calculateMetric(refactoredProgram);
     }
 

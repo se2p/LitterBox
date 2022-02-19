@@ -87,17 +87,14 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
         var mutation = Randomness.nextInt(3);
         switch (mutation) {
             case 0:
-                log.log(Level.FINE, "Mutation operator added a new production.");
                 mutatedProductions.add(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
                 index++;
                 break;
             case 1:
-                log.log(Level.FINE, "Mutation operator changed one production.");
                 mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
                 break;
             case 2:
             default:
-                log.log(Level.FINE, "Mutation operator removed one production.");
                 mutatedProductions.remove(index);
                 index--;
                 break;

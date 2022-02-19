@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
-public class HalsteadDifficulty<T extends ASTNode>  implements MetricExtractor<T> {
+public class HalsteadDifficulty<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public double calculateMetric(T node) {

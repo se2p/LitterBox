@@ -30,7 +30,7 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
     public double getFitness(RefactorSequence refactorSequence) {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
-        CategoryEntropy entropy = new CategoryEntropy();
+        CategoryEntropy<Program> entropy = new CategoryEntropy<>();
         return entropy.calculateMetric(refactoredProgram);
     }
 

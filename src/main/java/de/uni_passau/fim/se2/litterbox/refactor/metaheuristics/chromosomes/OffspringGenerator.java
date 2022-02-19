@@ -49,7 +49,6 @@ public class OffspringGenerator<C extends Solution<C>> {
 
             Pair<C> nextOffsprings;
             if (Randomness.nextDouble() < CROSSOVER_PROBABILITY) {
-                log.log(Level.FINE, "Crossover was applied");
                 nextOffsprings = parent1.crossover(parent2);
             } else {
                 nextOffsprings = Pair.of(parent1, parent2);

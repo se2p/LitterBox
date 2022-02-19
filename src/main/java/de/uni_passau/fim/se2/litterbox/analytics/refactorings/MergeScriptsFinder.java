@@ -34,16 +34,16 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
     public void visit(ScriptList scriptList) {
 
         for (Script script1 : scriptList.getScriptList()) {
+            if (endsWithTerminationStatement(script1.getStmtList())) {
+                continue;
+            }
+
             for (Script script2 : scriptList.getScriptList()) {
                 if (script1 == script2) {
                     continue;
                 }
 
                 if (!script1.getEvent().equals(script2.getEvent()) || script1.getEvent() instanceof Never) {
-                    continue;
-                }
-
-                if (endsWithTerminationStatement(script1.getStmtList())) {
                     continue;
                 }
 

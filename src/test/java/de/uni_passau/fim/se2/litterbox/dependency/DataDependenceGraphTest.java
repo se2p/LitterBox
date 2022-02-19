@@ -80,8 +80,6 @@ public class DataDependenceGraphTest  implements JsonTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twoevents.json");
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
 
-        System.out.println(cfg.toDotString());
-
         assertThat(ddg.getNodes()).isEqualTo(cfg.getNodes());
         assertThat(ddg.getNumEdges()).isEqualTo(0);
     }
