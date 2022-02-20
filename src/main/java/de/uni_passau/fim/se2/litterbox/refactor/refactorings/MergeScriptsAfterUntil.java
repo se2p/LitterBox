@@ -78,9 +78,9 @@ public class MergeScriptsAfterUntil extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Merging script1:" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator() +
-                "with script 2:" + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement script:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Merging script1:" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
+                + "with script 2:" + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement script:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

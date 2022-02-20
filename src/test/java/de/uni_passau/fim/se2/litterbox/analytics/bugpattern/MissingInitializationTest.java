@@ -143,4 +143,13 @@ public class MissingInitializationTest implements JsonTest {
         hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
         Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
     }
+
+    @Test
+    public void testMissingInitializationInLooseBlock() throws IOException, ParsingException {
+        MissingInitialization finder = new MissingInitialization();
+        finder.setIgnoreLooseBlocks(true);
+        assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
+        finder.setIgnoreLooseBlocks(false);
+        assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
+    }
 }

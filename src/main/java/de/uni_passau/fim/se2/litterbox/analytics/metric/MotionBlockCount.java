@@ -32,6 +32,7 @@ public class MotionBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     public static final String NAME = "motion_block_count";
 
     private int count = 0;
+
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);

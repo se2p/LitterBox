@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Refactoring{
+public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "extract_event_handler";
 
@@ -72,7 +72,7 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
         }
 
         // Add all scripts
-        for(Script currentScript : eventScripts) {
+        for (Script currentScript : eventScripts) {
             scripts.add(currentScript);
         }
 
@@ -110,9 +110,9 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
             sb.append(script.getScratchBlocks());
             sb.append(" and ");
         }
-        sb.delete(sb.length()-6 , sb.length()-1);
-        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + sb +  System.lineSeparator();
+        sb.delete(sb.length() - 6, sb.length() - 1);
+        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + sb +  System.lineSeparator();
     }
 
 }

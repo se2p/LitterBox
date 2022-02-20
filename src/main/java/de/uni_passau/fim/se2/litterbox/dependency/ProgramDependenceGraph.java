@@ -61,9 +61,19 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
         return backwardSlice(Arrays.asList(target));
     }
 
+    public Set<Stmt> forwardSlice(Stmt target) {
+        return forwardSlice(Arrays.asList(target));
+    }
+
     public Set<Stmt> backwardSlice(Collection<Stmt> target) {
         Set<CFGNode> targetNodes = target.stream().map(s -> getNode(s).get()).collect(Collectors.toSet());
         Set<CFGNode> slice = backwardSliceNodes(targetNodes);
+        return slice.stream().filter(n -> n.getASTNode() != null & n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
+    }
+
+    public Set<Stmt> forwardSlice(Collection<Stmt> target) {
+        Set<CFGNode> targetNodes = target.stream().map(s -> getNode(s).get()).collect(Collectors.toSet());
+        Set<CFGNode> slice = forwardSliceNodes(targetNodes);
         return slice.stream().filter(n -> n.getASTNode() != null & n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
     }
 
@@ -77,6 +87,22 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
             if (!slice.contains(node)) {
                 slice.add(node);
                 queue.addAll(graph.predecessors(node));
+            }
+        }
+
+        return slice;
+    }
+
+    public Set<CFGNode> forwardSliceNodes(Collection<CFGNode> source) {
+        Set<CFGNode> slice = new LinkedHashSet<>();
+        Queue<CFGNode> queue = new ArrayDeque<>();
+        queue.addAll(source);
+
+        while (!queue.isEmpty()) {
+            CFGNode node = queue.poll();
+            if (!slice.contains(node)) {
+                slice.add(node);
+                queue.addAll(graph.successors(node));
             }
         }
 

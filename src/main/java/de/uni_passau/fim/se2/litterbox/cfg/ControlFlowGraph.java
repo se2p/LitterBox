@@ -24,9 +24,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +50,10 @@ public class ControlFlowGraph {
 
         graph.addNode(entryNode);
         graph.addNode(exitNode);
+    }
+
+    private ControlFlowGraph(MutableGraph<CFGNode> graph) {
+        this.graph = graph;
     }
 
     public int getNumNodes() {
@@ -97,20 +106,20 @@ public class ControlFlowGraph {
         return node;
     }
 
-    public EventNode addNode(Event node, ActorDefinition actor) {
-        EventNode cfgNode = new EventNode(node, actor);
+    public EventNode addNode(Event node, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        EventNode cfgNode = new EventNode(node, actor, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
 
-    public MessageNode addNode(Message message) {
-        MessageNode cfgNode = new MessageNode(message);
+    public MessageNode addNode(Message message, ASTNode scriptOrProcedure) {
+        MessageNode cfgNode = new MessageNode(message, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
 
-    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor) {
-        AttributeEventNode cfgNode = new AttributeEventNode(node, actor);
+    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        AttributeEventNode cfgNode = new AttributeEventNode(node, actor, scriptOrProcedure);
         graph.addNode(cfgNode);
         return cfgNode;
     }
@@ -168,12 +177,53 @@ public class ControlFlowGraph {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
 
+    public ControlFlowGraph reverseAndFilterInterproceduralDependencies() {
+        ControlFlowGraph newCFG = new ControlFlowGraph();
+        newCFG.graph = Graphs.copyOf(Graphs.transpose(processNonDependentInterproceduralEdges(graph)));
+        newCFG.entryNode = this.exitNode;
+        newCFG.exitNode = this.entryNode;
+
+        return newCFG;
+    }
+
+    private MutableGraph<CFGNode> processNonDependentInterproceduralEdges(MutableGraph<CFGNode> graph) {
+        MutableGraph<CFGNode> processedGraph = Graphs.copyOf(graph);
+        Set<Pair<CFGNode>> toRemove = new HashSet<>();
+
+        for (CFGNode node : processedGraph.nodes()) {
+            // Avoid clone nodes from becoming control dependencies in the local script
+            if (node.getASTNode() instanceof CreateCloneOf) {
+                Set<CFGNode> successors = processedGraph.successors(node);
+                for (CFGNode suc : successors) {
+                    if (suc instanceof CloneEventNode) {
+                        toRemove.add(new Pair<>(node, suc));
+                    }
+                }
+            }
+
+            // Avoid broadcast nodes from becoming control dependencies in the local script
+            // (does not apply to BroadcastAndWait)
+            if (node.getASTNode() instanceof Broadcast) {
+                Set<CFGNode> successors = processedGraph.successors(node);
+                for (CFGNode suc : successors) {
+                    if (suc instanceof MessageNode) {
+                        toRemove.add(new Pair<>(node, suc));
+                    }
+                }
+            }
+        }
+
+        for (Pair<CFGNode> p : toRemove) {
+            processedGraph.removeEdge(p.getFst(), p.getSnd());
+        }
+        return processedGraph;
+    }
+
     public ControlFlowGraph reverse() {
         ControlFlowGraph newCFG = new ControlFlowGraph();
         newCFG.graph = Graphs.copyOf(Graphs.transpose(graph));
         newCFG.entryNode = this.exitNode;
-        newCFG.exitNode  = this.entryNode;
-
+        newCFG.exitNode = this.entryNode;
         return newCFG;
     }
 

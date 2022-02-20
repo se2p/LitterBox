@@ -28,9 +28,10 @@ public class EventNode extends CFGNode {
 
     private Event event;
 
-    public EventNode(Event event, ActorDefinition actor) {
+    public EventNode(Event event, ActorDefinition actor, ASTNode scriptOrProcedure) {
         this.actor = actor;
         this.event = event;
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override

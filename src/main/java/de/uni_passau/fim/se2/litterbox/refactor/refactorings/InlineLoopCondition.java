@@ -78,8 +78,8 @@ public class InlineLoopCondition extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced until loop:" + System.lineSeparator() + untilLoop.getScratchBlocks() + System.lineSeparator() +
-                "with forever loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced until loop:" + System.lineSeparator() + untilLoop.getScratchBlocks() + System.lineSeparator()
+                + "with forever loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

@@ -60,7 +60,7 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
 
     default String getName() {
         return DEFAULT_NAME;
-    };
+    }
 
     /**
      * Tells whether this function is a minimizing fitness function.

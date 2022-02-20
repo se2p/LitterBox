@@ -69,8 +69,8 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced loop:" + System.lineSeparator() + foreverLoop.getScratchBlocks() + System.lineSeparator() +
-                "with until loop:" + System.lineSeparator() + replacement.get(0).getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced loop:" + System.lineSeparator() + foreverLoop.getScratchBlocks() + System.lineSeparator()
+                + "with until loop:" + System.lineSeparator() + replacement.get(0).getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

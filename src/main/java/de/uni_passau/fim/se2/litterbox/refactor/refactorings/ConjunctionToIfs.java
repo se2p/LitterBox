@@ -70,8 +70,8 @@ public class ConjunctionToIfs extends OnlyCodeCloneVisitor implements Refactorin
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifStatement.getScratchBlocks() + System.lineSeparator() +
-                "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifStatement.getScratchBlocks() + System.lineSeparator()
+                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

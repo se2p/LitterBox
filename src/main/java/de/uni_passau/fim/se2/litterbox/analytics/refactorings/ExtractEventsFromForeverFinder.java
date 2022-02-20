@@ -72,7 +72,7 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
             return;
         }
 
-        for(Stmt stmtForever : repeatForeverStmt.getStmtList().getStmts()) {
+        for (Stmt stmtForever : repeatForeverStmt.getStmtList().getStmts()) {
             // Check for ifThen statement.
             if (stmtForever instanceof IfThenStmt) {
                 // Check the bool expression for isKeyPressed event.

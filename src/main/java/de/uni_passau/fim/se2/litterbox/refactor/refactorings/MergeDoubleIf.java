@@ -73,7 +73,7 @@ public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
         String if1ScratchBlocks = if1.getScratchBlocks();
         String if2ScratchBlocks = if2.getScratchBlocks();
         String replacementScratchBlocks = replacement.getScratchBlocks();
-        return NAME + System.lineSeparator()+"Replaced ifs:"+System.lineSeparator()+System.lineSeparator() + if1ScratchBlocks + System.lineSeparator() + if2ScratchBlocks + System.lineSeparator()+"Replacement:"+System.lineSeparator()+System.lineSeparator() + replacementScratchBlocks;
+        return NAME + System.lineSeparator() + "Replaced ifs:" + System.lineSeparator() + System.lineSeparator() + if1ScratchBlocks + System.lineSeparator() + if2ScratchBlocks + System.lineSeparator() + "Replacement:" + System.lineSeparator() + System.lineSeparator() + replacementScratchBlocks;
     }
 
     @Override

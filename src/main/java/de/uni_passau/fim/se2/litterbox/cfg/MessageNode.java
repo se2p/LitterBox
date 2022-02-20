@@ -45,8 +45,9 @@ public class MessageNode extends CFGNode {
 
     private Message message;
 
-    public MessageNode(Message message) {
+    public MessageNode(Message message, ASTNode scriptOrProcedure) {
         this.message = message;
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override

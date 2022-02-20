@@ -39,6 +39,7 @@ public class VariableInitializationRace extends AbstractIssueFinder {
     private static class InitializationInstance {
         private Script script;
         private CommonStmt statement;
+
         public InitializationInstance(Script script, CommonStmt commonStmt) {
             this.script = script;
             this.statement = commonStmt;

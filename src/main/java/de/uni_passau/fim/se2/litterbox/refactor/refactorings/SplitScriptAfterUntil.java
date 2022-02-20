@@ -98,9 +98,9 @@ public class SplitScriptAfterUntil extends OnlyCodeCloneVisitor implements Refac
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Split script:" + System.lineSeparator() + script.getScratchBlocks() + System.lineSeparator() +
-                "Replacement script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Split script:" + System.lineSeparator() + script.getScratchBlocks() + System.lineSeparator()
+                + "Replacement script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

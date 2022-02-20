@@ -65,10 +65,10 @@ public class SplitScriptFinder extends AbstractDependencyRefactoringFinder {
             List<Stmt> stmts1 = new ArrayList<>(stmts.getStmts().subList(0, i));
             List<Stmt> stmts2 = new ArrayList<>(stmts.getStmts().subList(i, stmts.getNumberOfStatements()));
 
-            if (!cdg.hasDependencyEdge(stmts1, stmts2) &&
-                    !tdg.hasDependencyEdge(stmts1, stmts2) &&
-                    !ddg.hasDependencyEdge(stmts1, stmts2) &&
-                    !wouldCreateDataDependency(script, stmts2, stmts1)) {
+            if (!cdg.hasDependencyEdge(stmts1, stmts2)
+                    && !tdg.hasDependencyEdge(stmts1, stmts2)
+                    && !ddg.hasDependencyEdge(stmts1, stmts2)
+                    && !wouldCreateDataDependency(script, stmts2, stmts1)) {
                 refactorings.add(new SplitScript(script, splitPoint));
             }
         }

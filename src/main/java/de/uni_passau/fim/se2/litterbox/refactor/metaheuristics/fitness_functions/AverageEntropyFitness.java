@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions;
 
-import static java.util.stream.Collectors.*;
-
 import de.uni_passau.fim.se2.litterbox.analytics.metric.CategoryEntropy;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -28,7 +26,8 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.averagingDouble;
 
 public class AverageEntropyFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "average_entropy_fitness";

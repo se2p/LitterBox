@@ -29,7 +29,7 @@ public class HalsteadDifficultyFitness implements MinimizingFitnessFunction<Refa
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
-        HalsteadDifficulty difficulty = new HalsteadDifficulty();
+        HalsteadDifficulty<Program> difficulty = new HalsteadDifficulty<>();
         return difficulty.calculateMetric(refactoredProgram);
     }
 

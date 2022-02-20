@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.CategoryEntropy;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
-public class CategoryEntropyFitness implements MinimizingFitnessFunction<RefactorSequence>{
+public class CategoryEntropyFitness implements MinimizingFitnessFunction<RefactorSequence> {
 
     private static final String NAME = "category_entropy_fitness";
 
@@ -30,7 +30,7 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
     public double getFitness(RefactorSequence refactorSequence) {
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
-        CategoryEntropy entropy = new CategoryEntropy();
+        CategoryEntropy<Program> entropy = new CategoryEntropy<>();
         return entropy.calculateMetric(refactoredProgram);
     }
 

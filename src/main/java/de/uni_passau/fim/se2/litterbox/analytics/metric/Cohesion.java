@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 
-public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "cohesion";
 
     private double count = 0;
@@ -57,9 +57,9 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
 
         int count_different_blocks = 0;
 
-        for(MetricExtractor extractor : list) {
+        for (MetricExtractor extractor : list) {
             double count = extractor.calculateMetric(node);
-            if(count > 0)
+            if (count > 0)
                 count_different_blocks++;
         }
 
@@ -81,16 +81,16 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
         list.add(new VariablesBlockCount<>());
         list.add(new OperatorsBlockCount<>());
 
-        int count_different_blocks = 0;
+        int countDifferentBlocks = 0;
 
-        for(MetricExtractor extractor : list) {
+        for (MetricExtractor extractor : list) {
             double count = extractor.calculateMetric(node);
-            if(count > 0)
-                count_different_blocks++;
+            if (count > 0)
+                countDifferentBlocks++;
         }
 
         // Calculate local script cohesion
-        local_cohesion = count_different_blocks /  new BlockCount<ProcedureDefinition>().calculateMetric(node);
+        local_cohesion = countDifferentBlocks /  new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         count += local_cohesion;
 

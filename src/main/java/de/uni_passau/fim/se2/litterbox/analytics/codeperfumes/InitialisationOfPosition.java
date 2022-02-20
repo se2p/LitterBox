@@ -84,8 +84,6 @@ public class InitialisationOfPosition extends AbstractIssueFinder {
     public void visit(StmtList node) {
         if (inCustomBlock) {
             if (node.getParentNode() instanceof ProcedureDefinition) {
-                ProcedureDefinition parent = (ProcedureDefinition) node.getParentNode();
-
                 for (Stmt stmt : node.getStmts()) {
                     if (stmt instanceof GoToPosXY || stmt instanceof SetXTo || stmt instanceof SetYTo) {
                         stmt.accept(this);

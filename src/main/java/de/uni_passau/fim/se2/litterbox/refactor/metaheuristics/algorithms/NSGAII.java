@@ -72,6 +72,13 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
             population = evolve(population);
 
             log.log(Level.FINE, "NSGA-II iteration {0} created a population with size {1}", new Object[]{iteration, population.size()});
+            for (FitnessFunction<C> fitnessFunction : fastNonDominatedSort.getFitnessFunctions()) {
+                if (fitnessFunction.isMinimizing()) {
+                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).min().getAsDouble());
+                } else {
+                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
+                }
+            }
             iteration++;
         }
 
