@@ -34,9 +34,7 @@ public class ResourceBundleTest {
 
     private static final List<String> DOUBLE_TAGS = Arrays.asList("[sbi]", "[var]", "[list]", "[bc]");
 
-    private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]",
-            "[FALLS]", "[SONST]", "[FALSCH]", "[WAHR]", "[sbVariables]",
-            "[VERDADERO]");
+    private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]");
 
     @ParameterizedTest(name = "Testing existence of bug names for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
