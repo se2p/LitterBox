@@ -43,6 +43,7 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String bugFinder : IssueTool.getBugFinderNames()) {
             assertWithMessage("Language "+locale+", bug finder "+bugFinder +" not found in name resources").that(names.keySet()).contains(bugFinder);
+            checkEncodingProblems(names.getString(bugFinder));
         }
     }
 
@@ -52,6 +53,7 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String smellFinder : IssueTool.getSmellFinderNames()) {
             assertWithMessage("Language "+locale+", smell finder "+smellFinder +" not found in name resources").that(names.keySet()).contains(smellFinder);
+            checkEncodingProblems(names.getString(smellFinder));
         }
     }
 
@@ -61,11 +63,12 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
             assertWithMessage("Language "+locale+", perfume finder "+perfumeFinder +" not found in name resources").that(names.keySet()).contains(perfumeFinder);
+            checkEncodingProblems(names.getString(perfumeFinder));
         }
     }
 
     private void checkEncodingProblems(String hint) {
-        List<String> invalidChars = Arrays.asList("Ã¶", "ÃŸ", "Ã¤", "Ã¼");
+        List<String> invalidChars = Arrays.asList("Ã¶", "ÃŸ", "Ã¤", "Ã¼", "Ã„", "Ã–", "Ãœ");
         for (String invalidChar : invalidChars) {
             assertThat(hint).doesNotContain(invalidChar);
         }
@@ -145,8 +148,8 @@ public class ResourceBundleTest {
         ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
 
         for (IssueTranslator.GeneralTerm term : IssueTranslator.GeneralTerm.values()) {
-            checkEncodingProblems(hints.getString(term.getKey()));
             assertWithMessage("Language "+locale+", general term "+ term.getKey() +" not found in resources").that(hints.keySet()).contains(term.getKey());
+            checkEncodingProblems(hints.getString(term.getKey()));
         }
     }
 
