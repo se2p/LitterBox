@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -98,6 +99,18 @@ public class ResourceBundleTest {
             }
         }
         assertWithMessage("Unmatched tag " + currentToken + " in hint for " + key).that(currentToken).isEmpty();
+    }
+
+    @ParameterizedTest(name = "Testing encoding of general terms for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void testEncodingInGeneralTerms(String locale) {
+        ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+
+        for (String key : hints.keySet()) {
+            String hint = hints.getString(key);
+            checkEncodingProblems(hint);
+            System.out.println(key + ": " + hint);
+        }
     }
 
     @ParameterizedTest(name = "Testing existence of bug hints for language {0}")
