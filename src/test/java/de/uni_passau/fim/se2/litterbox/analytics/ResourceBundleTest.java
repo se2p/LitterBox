@@ -28,6 +28,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 public class ResourceBundleTest {
@@ -60,6 +61,13 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
             assertWithMessage("Language "+locale+", perfume finder "+perfumeFinder +" not found in name resources").that(names.keySet()).contains(perfumeFinder);
+        }
+    }
+
+    private void checkEncodingProblems(String hint) {
+        List<String> invalidChars = Arrays.asList("Ã¶", "ÃŸ", "Ã¤", "Ã¼");
+        for (String invalidChar : invalidChars) {
+            assertThat(hint).doesNotContain(invalidChar);
         }
     }
 
@@ -98,6 +106,7 @@ public class ResourceBundleTest {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
         }
     }
@@ -111,6 +120,7 @@ public class ResourceBundleTest {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
         }
     }
@@ -124,6 +134,7 @@ public class ResourceBundleTest {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
         }
     }
@@ -134,6 +145,7 @@ public class ResourceBundleTest {
         ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
 
         for (IssueTranslator.GeneralTerm term : IssueTranslator.GeneralTerm.values()) {
+            checkEncodingProblems(hints.getString(term.getKey()));
             assertWithMessage("Language "+locale+", general term "+ term.getKey() +" not found in resources").that(hints.keySet()).contains(term.getKey());
         }
     }
