@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
+
 public class MissingInitializationTest implements JsonTest {
 
     @Test
@@ -151,5 +153,31 @@ public class MissingInitializationTest implements JsonTest {
         assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
         finder.setIgnoreLooseBlocks(false);
         assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
+    }
+
+    @Test
+    public void testMissingInitializationDuplicates() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/duplicateMI.json");
+        MissingInitialization initialization = new MissingInitialization();
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(2, reports.size());
+
+        Issue issue1 = reports.get(0);
+        Issue issue2 = reports.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
+        assertThat(issue2.isDuplicateOf(issue1)).isTrue();
+    }
+
+    @Test
+    public void testMissingInitializationNotDuplicates() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/nonduplicateMI.json");
+        MissingInitialization initialization = new MissingInitialization();
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(2, reports.size());
+
+        Issue issue1 = reports.get(0);
+        Issue issue2 = reports.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isFalse();
+        assertThat(issue2.isDuplicateOf(issue1)).isFalse();
     }
 }

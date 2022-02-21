@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
@@ -34,6 +36,32 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
 
 public class MissingInitialization extends AbstractIssueFinder {
+
+    private class UseIssue extends Issue {
+
+        private Use use;
+
+        public UseIssue(IssueFinder finder, Program program, Script script, Hint hint, Use use) {
+            super(finder, IssueSeverity.HIGH, program,
+                    use.getUseTarget().getActor(), script,
+                    use.getUseTarget().getASTNode(),
+                    use.getUseTarget().getASTNode().getMetadata(), hint);
+            this.use = use;
+        }
+
+        public UseIssue(IssueFinder finder, Program program, ProcedureDefinition procedure, Hint hint, Use use) {
+            super(finder, IssueSeverity.HIGH, program,
+                    use.getUseTarget().getActor(), procedure,
+                    use.getUseTarget().getASTNode(),
+                    use.getUseTarget().getASTNode().getMetadata(), hint);
+            this.use = use;
+        }
+
+        public Use getUse() {
+            return use;
+        }
+    }
+
 
     public static final String NAME = "missing_initialization";
     public static final String NAME_CLONE = "missing_initialization_clone";
@@ -87,23 +115,42 @@ public class MissingInitialization extends AbstractIssueFinder {
                         hint = new Hint(getName());
                     }
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
-                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
-                            (Script) containingScript,
-                            use.getUseTarget().getASTNode(),
-                            use.getUseTarget().getASTNode().getMetadata(),
-                            hint));
+                    issues.add(new UseIssue(this, program,
+                            (Script) containingScript, hint, use));
                 } else {
                     hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
-                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
-                            (ProcedureDefinition) containingScript,
-                            use.getUseTarget().getASTNode(),
-                            use.getUseTarget().getASTNode().getMetadata(),
-                            hint));
+                    issues.add(new UseIssue(this, program,
+                            (ProcedureDefinition) containingScript, hint, use));
                 }
             }
         }
         return Collections.unmodifiableSet(issues);
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if (first instanceof UseIssue && other instanceof UseIssue) {
+            UseIssue firstUse = (UseIssue) first;
+            UseIssue otherUse = (UseIssue) other;
+            Use use1 = firstUse.getUse();
+            Use use2 = otherUse.getUse();
+            if (use1.getDefinable().equals(use2.getDefinable())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
