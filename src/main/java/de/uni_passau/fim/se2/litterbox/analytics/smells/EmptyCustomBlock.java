@@ -21,11 +21,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {

@@ -39,7 +39,6 @@ import java.util.List;
 public class LoopSensing extends AbstractIssueFinder {
 
     public static final String NAME = "loop_sensing";
-    private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
     private List<ASTNode> loops;
@@ -51,23 +50,16 @@ public class LoopSensing extends AbstractIssueFinder {
             return;
         }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
-            insideGreenFlagClone = true;
+            loops = new ArrayList<>();
+            insideLoop = false;
+            inCondition = false;
+            super.visit(node);
         }
-        loops = new ArrayList<>();
-        insideLoop = false;
-        inCondition = false;
-        super.visit(node);
-        insideGreenFlagClone = false;
     }
-
 
     @Override
     public void visit(ProcedureDefinition node) {
-        loops = new ArrayList<>();
-        insideLoop = false;
-        inCondition = false;
-        insideGreenFlagClone = false;
-        super.visit(node);
+        //NOP should not detect in Procedures
     }
 
     @Override
@@ -90,7 +82,7 @@ public class LoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -101,42 +93,42 @@ public class LoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             generateMultiBlockIssue(node);
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             generateMultiBlockIssue(node);
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             generateMultiBlockIssue(node);
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             generateMultiBlockIssue(node);
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             generateMultiBlockIssue(node);
         }
     }
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);

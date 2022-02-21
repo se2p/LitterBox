@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -37,21 +38,21 @@ import java.util.List;
 public class OrphanedParameter extends AbstractIssueFinder {
     public static final String NAME = "orphaned_parameter";
     private List<ParameterDefinition> currentParameterDefinitions;
-    private boolean insideProcedure;
 
     @Override
     public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
         super.visit(node);
-        insideProcedure = false;
+    }
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not check Scripts
     }
 
     @Override
     public void visit(Parameter node) {
-        if (insideProcedure) {
-            checkParameterNames(node.getName().getName(), node);
-        }
+        checkParameterNames(node.getName().getName(), node);
         visitChildren(node);
     }
 
@@ -60,7 +61,6 @@ public class OrphanedParameter extends AbstractIssueFinder {
         for (int i = 0; i < currentParameterDefinitions.size() && !validParametername; i++) {
             if (name.equals(currentParameterDefinitions.get(i).getIdent().getName())) {
                 validParametername = true;
-                break;
             }
         }
         if (!validParametername) {

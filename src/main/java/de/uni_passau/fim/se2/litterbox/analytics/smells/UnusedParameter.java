@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -35,6 +36,11 @@ public class UnusedParameter extends AbstractIssueFinder {
     public static final String NAME = "unused_parameter";
     private boolean insideProcedure;
     private List<String> usedParameterNames;
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not detect in Script
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {

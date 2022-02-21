@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -36,6 +37,11 @@ import java.util.List;
  */
 public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_custom_block_signature";
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {

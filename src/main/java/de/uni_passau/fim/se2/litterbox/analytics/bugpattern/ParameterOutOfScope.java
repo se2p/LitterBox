@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
@@ -30,18 +31,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
  */
 public class ParameterOutOfScope extends AbstractIssueFinder {
     public static final String NAME = "parameter_out_of_scope";
-    private boolean insideProcedure;
+    private boolean insideScript;
+
+    @Override
+    public void visit(Script node) {
+        insideScript = true;
+        super.visit(node);
+        insideScript = false;
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
-        super.visit(node);
-        insideProcedure = false;
+        //NOP should not be detected in Procedure
     }
 
     @Override
     public void visit(Parameter node) {
-        if (!insideProcedure) {
+        if (insideScript) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);

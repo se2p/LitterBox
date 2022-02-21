@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -46,7 +47,6 @@ import java.util.List;
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
     public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
-    private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
     private boolean insideEquals = false;
@@ -60,12 +60,15 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             return;
         }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
-            insideGreenFlagClone = true;
+            inCondition = false;
+            super.visit(node);
+            afterWaitUntil = false;
         }
-        inCondition = false;
-        super.visit(node);
-        insideGreenFlagClone = false;
-        afterWaitUntil = false;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        //NOP should not be detected in Procedures
     }
 
     @Override
@@ -84,7 +87,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -95,49 +98,49 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Equals node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil) {
             insideEquals = true;
         }
         visitChildren(node);
@@ -165,7 +168,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);

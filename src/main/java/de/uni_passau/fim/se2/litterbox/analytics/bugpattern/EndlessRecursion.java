@@ -75,10 +75,10 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Script node) {
         if (node.getEvent() instanceof ReceptionOfMessage) {
             insideBroadcastReception = true;
+            super.visit(node);
+            insideBroadcastReception = false;
+            currentMessageName = null;
         }
-        super.visit(node);
-        insideBroadcastReception = false;
-        currentMessageName = null;
     }
 
     @Override

@@ -23,13 +23,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
@@ -39,9 +39,7 @@ import java.util.List;
 public class MatchingParameter extends AbstractIssueFinder {
     public static final String NAME = "matching_parameter";
     private List<ParameterDefinition> currentParameterDefinitions;
-    private boolean insideProcedure;
     private List<String> checkedList;
-
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -51,17 +49,20 @@ public class MatchingParameter extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
+
+    @Override
     public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
         checkedList = new ArrayList<>();
         super.visit(node);
-        insideProcedure = false;
     }
 
     @Override
     public void visit(Parameter node) {
-        if (insideProcedure && !checked(node.getName().getName())) {
+        if (!checked(node.getName().getName())) {
             checkParameterNames(node.getName().getName(), node);
             checkedList.add(node.getName().getName());
         }

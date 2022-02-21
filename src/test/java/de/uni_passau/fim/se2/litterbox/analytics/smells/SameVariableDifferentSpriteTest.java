@@ -32,6 +32,6 @@ public class SameVariableDifferentSpriteTest implements JsonTest {
 
     @Test
     public void testSameVariableDifferentSprite() throws IOException, ParsingException {
-        assertThatFinderReports(4, new SameVariableDifferentSprite(), "./src/test/fixtures/bugpattern/variableDifferentSprite.json");
+        assertThatFinderReports(2, new SameVariableDifferentSprite(), "./src/test/fixtures/bugpattern/variableDifferentSprite.json");
     }
 }

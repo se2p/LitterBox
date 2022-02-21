@@ -49,7 +49,7 @@ public class MiddleMan extends AbstractIssueFinder {
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
-                addIssue(event, ((ReceptionOfMessage) event).getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
+                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
             }
         }
     }
