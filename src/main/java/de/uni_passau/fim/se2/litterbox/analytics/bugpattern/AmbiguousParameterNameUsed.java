@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
@@ -45,6 +46,11 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
     private boolean found = false;
     private boolean used = false;
     private LinkedList<String> paraNames = new LinkedList<>();
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
 
     @Override
     public Set<Issue> check(Program program) {

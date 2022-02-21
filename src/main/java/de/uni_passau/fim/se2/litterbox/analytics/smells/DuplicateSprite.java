@@ -36,15 +36,13 @@ public class DuplicateSprite extends AbstractIssueFinder {
 
     @Override
     public void visit(Program node) {
-        Set<ActorDefinition> checked = new HashSet<>();
-        ActorDefinitionList actors = node.getActorDefinitionList();
-        for (ActorDefinition actor : actors.getDefinitions()) {
-            for (ActorDefinition other : actors.getDefinitions()) {
+        List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
+        for (int i = 0; i < actors.size(); i++) {
+            ActorDefinition actor = actors.get(i);
+            for (int j = i + 1; i < actors.size(); j++) {
+                ActorDefinition other = actors.get(j);
                 //empty sprite shouldn't be checked
                 if (!actor.getScripts().getScriptList().isEmpty() || !actor.getProcedureDefinitionList().getList().isEmpty()) {
-                    if (actor == other || checked.contains(other)) {
-                        continue;
-                    }
 
                     if (areActorsIdentical(actor, other)) {
                         currentActor = actor;
@@ -53,7 +51,6 @@ public class DuplicateSprite extends AbstractIssueFinder {
                     }
                 }
             }
-            checked.add(actor);
         }
     }
 

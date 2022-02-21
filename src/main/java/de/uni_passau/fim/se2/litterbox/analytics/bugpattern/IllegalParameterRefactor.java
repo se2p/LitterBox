@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -35,6 +36,11 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     public static final String NAME = "illegal_parameter_refactor";
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
 
     private void checkBool(BoolExpr boolExpr) {
         if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {

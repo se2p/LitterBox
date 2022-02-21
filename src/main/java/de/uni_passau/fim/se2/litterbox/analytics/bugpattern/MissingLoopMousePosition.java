@@ -12,6 +12,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -24,7 +25,6 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_mouse_position";
     private static final String MOTION = "missing_loop_mouse_position_motion";
     private static final String DIRECTION = "missing_loop_mouse_position_direction";
-    private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inMotionStmtWithoutLoop = false;
 
@@ -35,10 +35,13 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
             return;
         }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
-            insideGreenFlagClone = true;
+            super.visit(node);
         }
-        super.visit(node);
-        insideGreenFlagClone = false;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        //NOP should not be detected in Procedure
     }
 
     @Override
@@ -77,7 +80,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     @Override
     public void visit(PointTowards node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
                 Hint hint = new Hint(DIRECTION);
@@ -89,7 +92,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
                 Hint hint = new Hint(DIRECTION);
@@ -101,7 +104,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     @Override
     public void visit(GoToPos node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
                 Hint hint = new Hint(DIRECTION);
@@ -112,7 +115,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
     }
 
     private void checkMotionStmt(SpriteMotionStmt node) {
-        if (insideGreenFlagClone && !insideLoop) {
+        if (!insideLoop) {
             inMotionStmtWithoutLoop = true;
         }
         visitChildren(node);

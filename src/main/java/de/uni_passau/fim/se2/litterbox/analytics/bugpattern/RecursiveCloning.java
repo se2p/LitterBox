@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
@@ -40,14 +40,17 @@ import java.util.Set;
  */
 public class RecursiveCloning extends AbstractIssueFinder {
     public static final String NAME = "recursive_cloning";
-    private boolean startAsClone = false;
     private boolean secondVisit;
     private boolean foundDelete;
 
     @Override
     public Set<Issue> check(Program program) {
-        startAsClone = false;
         return super.check(program);
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        //NOP should not be detected in Procedure
     }
 
     @Override
@@ -57,7 +60,6 @@ public class RecursiveCloning extends AbstractIssueFinder {
             return;
         }
         if (node.getEvent() instanceof StartedAsClone) {
-            startAsClone = true;
             super.visit(node);
             /* the first visit is to make sure that the complete script is scanned for a delete clone
                in the second visit the create clone of blocks are collected in issues,
@@ -69,13 +71,12 @@ public class RecursiveCloning extends AbstractIssueFinder {
                 secondVisit = false;
             }
             foundDelete = false;
-            startAsClone = false;
         }
     }
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (startAsClone && secondVisit) {
+        if (secondVisit) {
             if (node.getStringExpr() instanceof AsString
                     && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
 
