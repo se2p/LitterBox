@@ -40,7 +40,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
-        for (int i = 0; i < varInfos.size(); i++) {
+        for (int i = 0; i < varInfos.size() - 1; i++) {
             String currentName = varInfos.get(i).getVariableName();
             String currentActorName = varInfos.get(i).getActor();
             for (int j = i + 1; j < varInfos.size(); j++) {
@@ -64,7 +64,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
 
         Map<String, ExpressionListInfo> listInfoMap = program.getSymbolTable().getLists();
         ArrayList<ExpressionListInfo> listInfos = new ArrayList<>(listInfoMap.values());
-        for (int i = 0; i < listInfos.size(); i++) {
+        for (int i = 0; i < listInfos.size() - 1; i++) {
             String currentName = listInfos.get(i).getVariableName();
             String currentActorName = listInfos.get(i).getActor();
             for (int j = i + 1; j < listInfos.size(); j++) {
