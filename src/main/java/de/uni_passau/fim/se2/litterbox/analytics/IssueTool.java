@@ -121,10 +121,12 @@ public class IssueTool {
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
         registerSmellFinder(new SequentialActions(), smellFinders);
         registerSmellFinder(new SpriteNaming(), smellFinders);
+        registerSmellFinder(new UnnecessaryBoolean(), smellFinders);
         registerSmellFinder(new UnnecessaryLoop(), smellFinders);
         registerSmellFinder(new UnnecessaryIf(), smellFinders);
         registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
         registerSmellFinder(new UnnecessaryMessage(), smellFinders);
+        registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
         registerSmellFinder(new UnnecessaryTime(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedParameter(), smellFinders);
