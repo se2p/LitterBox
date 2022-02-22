@@ -1,0 +1,195 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "/V}k=ez!2H]-=Lb97~wI-Punkte-": [
+                    "Punkte",
+                    0
+                ],
+                "/V}k=ez!2H]-=Lb97~wI-Zeit-": [
+                    "Zeit",
+                    "30"
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "WW[JDDV1+3s:FFDGMdeL": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "be#SBa.`Jd?mc/}s5(~j",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 304,
+                    "y": 265
+                },
+                "be#SBa.`Jd?mc/}s5(~j": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "WW[JDDV1+3s:FFDGMdeL",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "V0.fQ@z:{5%I2mOTA~I7"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "V0.fQ@z:{5%I2mOTA~I7": {
+                    "opcode": "looks_changeeffectby",
+                    "next": null,
+                    "parent": "be#SBa.`Jd?mc/}s5(~j",
+                    "inputs": {
+                        "CHANGE": [
+                            1,
+                            [
+                                4,
+                                "25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "EFFECT": [
+                            "COLOR",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "c5e73ab1fc107172a339690f648386cf",
+                    "name": "boardwalk",
+                    "bitmapResolution": 2,
+                    "md5ext": "c5e73ab1fc107172a339690f648386cf.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Apple",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "?;)%sN~:elDN/65K_10*": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "d_@U1}y$GrNdRGS%pTdW",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 832,
+                    "y": 353
+                },
+                "FQ`/l;,`{#K!xlWDl]YO": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "d_@U1}y$GrNdRGS%pTdW",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                },
+                "d_@U1}y$GrNdRGS%pTdW": {
+                    "opcode": "looks_say",
+                    "next": "FQ`/l;,`{#K!xlWDl]YO",
+                    "parent": "?;)%sN~:elDN/65K_10*",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "6d0755b91a3ad976e2c6ca92c6e51b80",
+                    "name": "apple",
+                    "bitmapResolution": 1,
+                    "md5ext": "6d0755b91a3ad976e2c6ca92c6e51b80.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 31,
+                    "rotationCenterY": 31
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": -17,
+            "y": -180,
+            "size": 50,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20220214082923",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:97.0) Gecko/20100101 Firefox/97.0"
+    }
+}
