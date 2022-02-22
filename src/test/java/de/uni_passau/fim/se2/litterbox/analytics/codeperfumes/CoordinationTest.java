@@ -19,15 +19,32 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoordinationTest implements JsonTest {
 
     @Test
     public void testCoordination() throws IOException, ParsingException {
         assertThatFinderReports(1, new Coordination(), "./src/test/fixtures/goodPractice/coordinationBoth.json");
+    }
+
+    @Test
+    public void testSubsumption() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/oneTimeCheckStop.json");
+        OneTimeCheckToStop oneTimeCheckToStop = new OneTimeCheckToStop();
+        List<Issue> report = new ArrayList<>(oneTimeCheckToStop.check(prog));
+        Assertions.assertEquals(1, report.size());
+        Coordination coordination = new Coordination();
+        List<Issue> reportCoord = new ArrayList<>(coordination.check(prog));
+        Assertions.assertEquals(1, reportCoord.size());
+        Assertions.assertTrue(reportCoord.get(0).isSubsumedBy(report.get(0)));
     }
 }
