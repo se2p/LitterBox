@@ -19,10 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImmediateStopAfterSayTest implements JsonTest {
 
@@ -34,5 +40,16 @@ public class ImmediateStopAfterSayTest implements JsonTest {
     @Test
     public void testImmediateStop() throws IOException, ParsingException {
         assertThatFinderReports(2, new ImmediateStopAfterSay(), "./src/test/fixtures/bugpattern/immediateStop.json");
+    }
+
+    @Test
+    public void testImmediateStopMultiple() throws IOException, ParsingException {
+        Program illegalParameter = JsonTest.parseProgram("./src/test/fixtures/bugpattern/immediateStopAfterSayMultiple.json");
+        ImmediateStopAfterSay parameterName = new ImmediateStopAfterSay();
+        List<Issue> reports = new ArrayList<>(parameterName.check(illegalParameter));
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(ImmediateStopAfterSay.HINT_MULTIPLE);
+        hint.setParameter(Hint.HINT_SAY_THINK, "say");
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
     }
 }
