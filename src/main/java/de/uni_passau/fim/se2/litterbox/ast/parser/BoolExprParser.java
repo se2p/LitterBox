@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -162,73 +163,25 @@ public class BoolExprParser {
             case operator_gt:
                 ComparableExpr first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 ComparableExpr second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                if (first instanceof AsNumber) {
-                    if (((AsNumber) first).getOperand1() instanceof StringExpr) {
-                        first = (StringExpr) ((AsNumber) first).getOperand1();
-                    } else {
-                        first = new AsString(((AsNumber) first).getOperand1());
-                    }
-                } else if (first instanceof UnspecifiedNumExpr) {
-                    first = StringExprParser.parseStringExpr(exprBlock, OPERAND1_KEY, allBlocks);
-                }
 
-                if (second instanceof AsNumber) {
-                    if (((AsNumber) second).getOperand1() instanceof StringExpr) {
-                        second = (StringExpr) ((AsNumber) second).getOperand1();
-                    } else {
-                        second = new AsString(((AsNumber) second).getOperand1());
-                    }
-                } else if (second instanceof UnspecifiedNumExpr) {
-                    second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                }
+                first = convertInputToFittingComparableExpr(first, OPERAND1_KEY, exprBlock, allBlocks);
+                second = convertInputToFittingComparableExpr(second, OPERAND2_KEY, exprBlock, allBlocks);
 
                 return new BiggerThan(first, second, metadata);
             case operator_lt:
                 first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                if (first instanceof AsNumber) {
-                    if (((AsNumber) first).getOperand1() instanceof StringExpr) {
-                        first = (StringExpr) ((AsNumber) first).getOperand1();
-                    } else {
-                        first = new AsString(((AsNumber) first).getOperand1());
-                    }
-                } else if (first instanceof UnspecifiedNumExpr) {
-                    first = StringExprParser.parseStringExpr(exprBlock, OPERAND1_KEY, allBlocks);
-                }
 
-                if (second instanceof AsNumber) {
-                    if (((AsNumber) second).getOperand1() instanceof StringExpr) {
-                        second = (StringExpr) ((AsNumber) second).getOperand1();
-                    } else {
-                        second = new AsString(((AsNumber) second).getOperand1());
-                    }
-                } else if (second instanceof UnspecifiedNumExpr) {
-                    second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                }
+                first = convertInputToFittingComparableExpr(first, OPERAND1_KEY, exprBlock, allBlocks);
+                second = convertInputToFittingComparableExpr(second, OPERAND2_KEY, exprBlock, allBlocks);
 
                 return new LessThan(first, second, metadata);
             case operator_equals:
                 first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                if (first instanceof AsNumber) {
-                    if (((AsNumber) first).getOperand1() instanceof StringExpr) {
-                        first = (StringExpr) ((AsNumber) first).getOperand1();
-                    } else {
-                        first = new AsString(((AsNumber) first).getOperand1());
-                    }
-                } else if (first instanceof UnspecifiedNumExpr) {
-                    first = StringExprParser.parseStringExpr(exprBlock, OPERAND1_KEY, allBlocks);
-                }
 
-                if (second instanceof AsNumber) {
-                    if (((AsNumber) second).getOperand1() instanceof StringExpr) {
-                        second = (StringExpr) ((AsNumber) second).getOperand1();
-                    } else {
-                        second = new AsString(((AsNumber) second).getOperand1());
-                    }
-                } else if (second instanceof UnspecifiedNumExpr) {
-                    second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
-                }
+                first = convertInputToFittingComparableExpr(first, OPERAND1_KEY, exprBlock, allBlocks);
+                second = convertInputToFittingComparableExpr(second, OPERAND2_KEY, exprBlock, allBlocks);
 
                 return new Equals(first, second, metadata);
             case operator_and:
@@ -291,5 +244,24 @@ public class BoolExprParser {
         } else {
             return new UnspecifiedBoolExpr();
         }
+    }
+
+    private static ComparableExpr convertInputToFittingComparableExpr(ComparableExpr node, String input, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+        if (node instanceof AsNumber) {
+            if (((AsNumber) node).getOperand1() instanceof StringExpr) {
+                node = (StringExpr) ((AsNumber) node).getOperand1();
+            } else if (((AsNumber) node).getOperand1() instanceof ComparableExpr) {
+                node = (ComparableExpr) ((AsNumber) node).getOperand1();
+            } else {
+                node = new AsString(((AsNumber) node).getOperand1());
+            }
+        } else if (node instanceof UnspecifiedNumExpr) {
+            node = StringExprParser.parseStringExpr(exprBlock, input, allBlocks);
+        } else if (node instanceof NumExpr) {
+            return node;
+        } else {
+            throw new ParsingException("Could not convert to ComparableExpression");
+        }
+        return node;
     }
 }

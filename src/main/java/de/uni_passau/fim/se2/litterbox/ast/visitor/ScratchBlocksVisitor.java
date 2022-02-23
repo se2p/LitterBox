@@ -161,7 +161,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     /**
-     *
      * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
      *                      i.e., without their context in a script.
      *                      This prevents certain blocks from not being printed as they have to be ignored if they
@@ -1744,9 +1743,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(BiggerThan node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" > ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1754,9 +1753,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LessThan node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" < ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1764,9 +1763,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Equals node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" = ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -2089,5 +2088,16 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         String name = os.toString();
         printStream = origStream;
         return name;
+    }
+
+    private void visitAndEscapeQualified(ASTNode node) {
+        if (node instanceof Qualified) {
+            emitNoSpace("(");
+            node.accept(this);
+            storeNotesForIssue(node);
+            emitNoSpace(")");
+        } else {
+            node.accept(this);
+        }
     }
 }
