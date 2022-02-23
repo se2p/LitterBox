@@ -221,8 +221,12 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor  {
         builder.append(getNodes(nodeTypes));  
         builder.append("},");
 //        builder.append("\"SlotDummyNode\":0,");
-        builder.append("\"SymbolCandidates\":[");    
-        builder.append(getSymbolCandidates(correctLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim(), incorrectLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim()));      
+        builder.append("\"SymbolCandidates\":["); 
+        String trimmedCorrectLabel = correctLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim();
+        trimmedCorrectLabel = (trimmedCorrectLabel == null && trimmedCorrectLabel.trim().isEmpty())?"blank": trimmedCorrectLabel;
+        String trimmedIncorrectLabel = incorrectLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim();
+        trimmedIncorrectLabel = (trimmedIncorrectLabel == null && trimmedIncorrectLabel.trim().isEmpty())?"blank": trimmedIncorrectLabel;
+        builder.append(getSymbolCandidates(trimmedCorrectLabel, trimmedIncorrectLabel));      
         builder.append("]}");
         if (spriteIndex!=lastIndex-1) {
         	builder.append("\n");      	
