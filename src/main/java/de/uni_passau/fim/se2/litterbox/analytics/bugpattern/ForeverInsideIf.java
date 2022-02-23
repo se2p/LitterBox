@@ -34,7 +34,7 @@ public class ForeverInsideIf extends AbstractIssueFinder {
         boolean hasIf = false;
         //size - 1 so that there are following blocks
         for (int i = 0; i < node.getStmts().size() - 1; i++) {
-            if (node.getStmts().get(0) instanceof IfStmt) {
+            if (node.getStmts().get(i) instanceof IfStmt) {
                 ifFollowingCounter++;
                 hasIf = true;
                 break;
