@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -256,6 +257,10 @@ public class BoolExprParser {
             }
         } else if (node instanceof UnspecifiedNumExpr) {
             node = StringExprParser.parseStringExpr(exprBlock, input, allBlocks);
+        } else if (node instanceof NumExpr) {
+            return node;
+        } else {
+            throw new ParsingException("Could not convert to ComparableExpression");
         }
         return node;
     }

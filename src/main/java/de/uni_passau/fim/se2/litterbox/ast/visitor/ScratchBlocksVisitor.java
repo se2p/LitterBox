@@ -1743,9 +1743,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(BiggerThan node) {
         emitNoSpace("<");
-        checkForQualified(node.getOperand1());
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" > ");
-        checkForQualified(node.getOperand2());
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1753,9 +1753,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LessThan node) {
         emitNoSpace("<");
-        checkForQualified(node.getOperand1());
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" < ");
-        checkForQualified(node.getOperand2());
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1763,9 +1763,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Equals node) {
         emitNoSpace("<");
-        checkForQualified(node.getOperand1());
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" = ");
-        checkForQualified(node.getOperand2());
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -2090,7 +2090,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         return name;
     }
 
-    private void checkForQualified(ASTNode node) {
+    private void visitAndEscapeQualified(ASTNode node) {
         if (node instanceof Qualified) {
             emitNoSpace("(");
             node.accept(this);
