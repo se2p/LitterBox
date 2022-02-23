@@ -49,6 +49,7 @@ public class IssueTool {
         registerBugFinder(new CustomBlockWithTermination(), bugFinders);
         registerBugFinder(new EndlessRecursion(), bugFinders);
         registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
+        registerBugFinder(new ForeverInsideIf(), bugFinders);
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
