@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -27,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Objects;
 
-public class Qualified extends AbstractNode implements Identifier {
+public class Qualified extends AbstractNode implements Identifier, ComparableExpr {
 
     private final LocalIdentifier first;
     private final DataExpr second;
