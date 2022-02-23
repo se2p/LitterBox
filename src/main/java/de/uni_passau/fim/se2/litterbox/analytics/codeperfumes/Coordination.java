@@ -67,7 +67,7 @@ public class Coordination extends AbstractIssueFinder {
             return super.isSubsumedBy(first, other);
         }
 
-        if (other.getFinder() instanceof OneTimeCheckToStop) {
+        if (other.getFinder() instanceof WaitingCheckToStop) {
             ASTNode node = first.getCodeLocation();
             if (other.hasMultipleBlocks()) {
                 List<ASTNode> nodesOther = ((MultiBlockIssue) other).getNodes();

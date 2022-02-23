@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class OneTimeCheckToStopTest implements JsonTest {
+public class WaitingCheckToStopTest implements JsonTest {
 
     @Test
     public void testEmpty() throws IOException, ParsingException {
-        assertThatFinderReports(0, new OneTimeCheckToStop(), "./src/test/fixtures/emptyProject.json");
+        assertThatFinderReports(0, new WaitingCheckToStop(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testOneTimeCheck() throws IOException, ParsingException {
-        assertThatFinderReports(1, new OneTimeCheckToStop(), "./src/test/fixtures/goodPractice/oneTimeCheckStop.json");
+        assertThatFinderReports(1, new WaitingCheckToStop(), "./src/test/fixtures/goodPractice/oneTimeCheckStop.json");
     }
 }

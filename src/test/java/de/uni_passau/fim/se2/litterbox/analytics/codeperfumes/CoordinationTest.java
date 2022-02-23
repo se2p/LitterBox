@@ -39,8 +39,8 @@ public class CoordinationTest implements JsonTest {
     @Test
     public void testSubsumption() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/oneTimeCheckStop.json");
-        OneTimeCheckToStop oneTimeCheckToStop = new OneTimeCheckToStop();
-        List<Issue> report = new ArrayList<>(oneTimeCheckToStop.check(prog));
+        WaitingCheckToStop waitingCheckToStop = new WaitingCheckToStop();
+        List<Issue> report = new ArrayList<>(waitingCheckToStop.check(prog));
         Assertions.assertEquals(1, report.size());
         Coordination coordination = new Coordination();
         List<Issue> reportCoord = new ArrayList<>(coordination.check(prog));

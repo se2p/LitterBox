@@ -12,8 +12,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OneTimeCheckToStop extends AbstractIssueFinder {
-    public static final String NAME = "one_time_check_stop";
+public class WaitingCheckToStop extends AbstractIssueFinder {
+    public static final String NAME = "waiting_check_stop";
 
     @Override
     public void visit(Script node) {
