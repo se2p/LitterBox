@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CodeClone {
 
@@ -81,5 +83,16 @@ public class CodeClone {
 
     public int size() {
         return copy1.size();
+    }
+
+    public boolean subsumes(CodeClone otherClone) {
+        // TODO: IdentifyHashSet does not handle removeAll properly, so using a workaround
+        Set<Integer> firstIDs = otherClone.getFirstStatements().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+        Set<Integer> secondIDs = otherClone.getSecondStatements().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+
+        copy1.stream().map(s -> System.identityHashCode(s)).forEach(firstIDs::remove);
+        copy2.stream().map(s -> System.identityHashCode(s)).forEach(secondIDs::remove);
+
+        return firstIDs.isEmpty() && secondIDs.isEmpty();
     }
 }
