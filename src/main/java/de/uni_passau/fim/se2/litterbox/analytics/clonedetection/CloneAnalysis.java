@@ -81,16 +81,7 @@ public class CloneAnalysis {
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2, root1 == root2);
 
         // Return all clones identifiable in the matrix
-        Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix, cloneType);
-
-        if (root1 == root2) {
-            // If a script is compared against itself, then there will always be a trivial type 1 clone
-            allClones = allClones.stream().filter(c -> c.size() != statements1.size()).collect(Collectors.toSet());
-
-            // Also exclude clones within a script that overlap
-            allClones = allClones.stream().filter(c -> !hasOverlap(c.getFirstStatements(), c.getSecondStatements())).collect(Collectors.toSet());
-        }
-
+        Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix, cloneType, root1 == root2);
         return allClones;
     }
 
@@ -125,14 +116,19 @@ public class CloneAnalysis {
         return matrix;
     }
 
-    private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType) {
+    private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType, boolean selfComparison) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
         Set<CloneBlock> blocks = getAllBlocks(similarityMatrix);
         for (CloneBlock block : blocks) {
 
+            // If a script is compared against itself, skip the trivial type 1 clone
+            if (selfComparison && block.size() == statements1.size()) {
+                continue;
+            }
+
+            // Type 3
             if (cloneType == CodeClone.CloneType.TYPE3) {
-                // Type 3
                 if (block.size() < minSizeNextToGap) {
                     continue;
                 }
@@ -141,8 +137,11 @@ public class CloneAnalysis {
                     clone.setType(CodeClone.CloneType.TYPE3);
                     block.fillClone(clone, statements1, statements2);
                     otherBlock.fillClone(clone, statements1, statements2);
+                    if (selfComparison && hasOverlap(clone.getFirstStatements(), clone.getSecondStatements())) {
+                        continue;
+                    }
                     if (clone.size() >= minSize) {
-                        clones.add(clone);
+                        insertClone(clones, clone);
                     }
                 }
             } else {
@@ -150,14 +149,17 @@ public class CloneAnalysis {
                 if (block.size() >= minSize) {
                     CodeClone clone = new CodeClone(root1, root2);
                     block.fillClone(clone, statements1, statements2);
+                    if (selfComparison && hasOverlap(clone.getFirstStatements(), clone.getSecondStatements())) {
+                        continue;
+                    }
                     if (cloneType == CodeClone.CloneType.TYPE1) {
                         if (clone.getFirstStatements().equals(clone.getSecondStatements())) {
-                            clones.add(clone);
+                            insertClone(clones, clone);
                         }
                     } else {
                         if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
                             clone.setType(CodeClone.CloneType.TYPE2);
-                            clones.add(clone);
+                            insertClone(clones, clone);
                         }
                     }
                 }
@@ -165,6 +167,19 @@ public class CloneAnalysis {
         }
 
         return clones;
+    }
+
+    private void insertClone(Set<CodeClone> clones, CodeClone clone) {
+        Iterator<CodeClone> iterator = clones.iterator();
+        while (iterator.hasNext()) {
+            CodeClone otherClone = iterator.next();
+            if (otherClone.subsumes(clone)) {
+                return;
+            } else if(clone.subsumes(otherClone)) {
+                iterator.remove();
+            }
+        }
+        clones.add(clone);
     }
 
     private Set<CloneBlock> getNeighbouringBlocks(CloneBlock block, Set<CloneBlock> otherBlocks) {

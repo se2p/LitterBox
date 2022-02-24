@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.ClonedCodeType1;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.ClonedCodeType2;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -29,8 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -271,4 +274,18 @@ public class CloneAnalysisTest implements JsonTest {
         Set<Issue> issues = cc1.check(program);
         assertEquals(2, issues.size());
     }
+
+    @Test
+    public void testMultipleIfClone() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType2EightIf.json");
+        ClonedCodeType2 cc2 = new ClonedCodeType2();
+        Set<Issue> issues = cc2.check(program);
+        assertEquals(2, issues.size());
+        Iterator<Issue> iterator = issues.iterator();
+        Issue issue1 = iterator.next();
+        Issue issue2 = iterator.next();
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
+        assertThat(issue2.isDuplicateOf(issue1)).isTrue();
+    }
+
 }
