@@ -80,4 +80,32 @@ public class ClonedCodeType3Test implements JsonTest {
         Issue issue2 = issues.get(1);
         assertThat(issue1.isDuplicateOf(issue2)).isTrue();
     }
+
+
+    @Test
+    public void testMultipleIfCloneType123() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType23Subsumption.json");
+        ClonedCodeType2 cc2 = new ClonedCodeType2();
+        ClonedCodeType3 cc3 = new ClonedCodeType3();
+
+        List<Issue> issues2 = new ArrayList<>(cc2.check(program));
+        List<Issue> issues3 = new ArrayList<>(cc3.check(program));
+        assertEquals(2, issues2.size());
+        assertEquals(2, issues3.size());
+
+        assertThat(issues2.get(0).isDuplicateOf(issues3.get(0))).isFalse();
+        assertThat(issues2.get(1).isDuplicateOf(issues3.get(0))).isFalse();
+        assertThat(issues2.get(0).isDuplicateOf(issues3.get(1))).isFalse();
+        assertThat(issues2.get(1).isDuplicateOf(issues3.get(1))).isFalse();
+
+        assertThat(issues2.get(0).isSubsumedBy(issues3.get(0))).isFalse();
+        assertThat(issues2.get(1).isSubsumedBy(issues3.get(0))).isFalse();
+        assertThat(issues2.get(0).isSubsumedBy(issues3.get(1))).isFalse();
+        assertThat(issues2.get(1).isSubsumedBy(issues3.get(1))).isFalse();
+
+        assertThat(issues3.get(0).isSubsumedBy(issues2.get(0))).isTrue();
+        assertThat(issues3.get(1).isSubsumedBy(issues2.get(0))).isFalse();
+        assertThat(issues3.get(0).isSubsumedBy(issues2.get(1))).isFalse();
+        assertThat(issues3.get(1).isSubsumedBy(issues2.get(1))).isFalse();
+    }
 }

@@ -18,11 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClonedCodeType3 extends ClonedCode {
@@ -30,6 +33,41 @@ public class ClonedCodeType3 extends ClonedCode {
     public ClonedCodeType3() {
         super(CodeClone.CloneType.TYPE3, "clone_type_3");
     }
+
+    @Override
+    public boolean isSubsumedBy(Issue first, Issue other) {
+
+        // Can be subsumed by a type 1 or 2 clone
+
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+        if (!(first.getFinder() instanceof ClonedCodeType3)) {
+            return false;
+        }
+
+        if (other.getFinder() instanceof ClonedCodeType1
+            || other.getFinder() instanceof ClonedCodeType2) {
+            if (!(first instanceof MultiBlockIssue) || !(other instanceof MultiBlockIssue)) {
+                return false;
+            }
+
+            // If there is a type 1 or type 2 clone that covers all the nodes then it subsumes a type 3 issue
+
+            MultiBlockIssue mbIssue1 = (MultiBlockIssue) first;
+            MultiBlockIssue mbIssue2 = (MultiBlockIssue) other;
+
+            Set<Integer> statements1 = mbIssue1.getNodes().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+            Set<Integer> statements2 = mbIssue2.getNodes().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+
+            statements1.removeAll(statements2);
+            return statements1.isEmpty();
+        }
+
+        return false;
+    }
+
 
     @Override
     protected boolean compareStatements(List<Stmt> statements1, List<Stmt> statements2) {
