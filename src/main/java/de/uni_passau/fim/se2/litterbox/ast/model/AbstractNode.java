@@ -36,7 +36,7 @@ public abstract class AbstractNode implements ASTNode {
     protected ASTNode parent;
 
     public AbstractNode() {
-        this(Collections.EMPTY_LIST);
+        this(Collections.emptyList());
     }
 
     public AbstractNode(ASTNode... children) {

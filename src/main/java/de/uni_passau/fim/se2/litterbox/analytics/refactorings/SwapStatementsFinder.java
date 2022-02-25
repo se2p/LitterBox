@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitSlice;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SwapStatements;
 
 import java.util.ArrayList;

@@ -19,14 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RefactorSequenceMutation implements Mutation<RefactorSequence> {

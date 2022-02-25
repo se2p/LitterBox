@@ -45,7 +45,7 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
             if (!calledProcedures.contains(info.getName())) {
                 currentProcedure = procedureDef;
                 currentScript = null;
-                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition(), IssueSeverity.LOW);
+                addIssue(procedureDef, procedureDef.getMetadata().getDefinition(), IssueSeverity.LOW);
             }
         }
     }

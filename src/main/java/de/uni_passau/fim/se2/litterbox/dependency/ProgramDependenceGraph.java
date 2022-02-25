@@ -68,13 +68,13 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
     public Set<Stmt> backwardSlice(Collection<Stmt> target) {
         Set<CFGNode> targetNodes = target.stream().map(s -> getNode(s).get()).collect(Collectors.toSet());
         Set<CFGNode> slice = backwardSliceNodes(targetNodes);
-        return slice.stream().filter(n -> n.getASTNode() != null & n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
+        return slice.stream().filter(n -> n.getASTNode() != null && n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
     }
 
     public Set<Stmt> forwardSlice(Collection<Stmt> target) {
         Set<CFGNode> targetNodes = target.stream().map(s -> getNode(s).get()).collect(Collectors.toSet());
         Set<CFGNode> slice = forwardSliceNodes(targetNodes);
-        return slice.stream().filter(n -> n.getASTNode() != null & n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
+        return slice.stream().filter(n -> n.getASTNode() != null && n.getASTNode() instanceof Stmt).map(n -> (Stmt) n.getASTNode()).collect(Collectors.toSet());
     }
 
     public Set<CFGNode> backwardSliceNodes(Collection<CFGNode> target) {

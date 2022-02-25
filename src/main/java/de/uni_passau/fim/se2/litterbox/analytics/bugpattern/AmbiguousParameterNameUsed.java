@@ -93,14 +93,14 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        if (node.getStmtList().getStmts().size() > 0) {
+        if (!node.getStmtList().getStmts().isEmpty()) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
         }
 
         visitChildren(node);
 
         if (used) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.MEDIUM);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
         }
 
         // TODO: This handling with used/found seems really error prone

@@ -46,7 +46,7 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
         for (ActorDefinition actor : actors) {
             List<Script> scripts = actor.getScripts().getScriptList();
             List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
-            if (scripts.size() > 0 || procedures.size() > 0) {
+            if (!scripts.isEmpty() || !procedures.isEmpty()) {
                 i++;
             }
         }

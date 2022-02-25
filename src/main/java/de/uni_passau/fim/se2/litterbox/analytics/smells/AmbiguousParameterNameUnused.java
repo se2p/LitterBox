@@ -98,7 +98,7 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
         visitChildren(node);
 
         if (!used && foundAmbiguousParam) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.MEDIUM);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
         }
 
         // TODO: This handling with used/found seems really error prone

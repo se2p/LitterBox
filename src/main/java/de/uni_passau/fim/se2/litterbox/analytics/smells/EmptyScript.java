@@ -41,7 +41,7 @@ public class EmptyScript extends AbstractIssueFinder {
     public void visit(Script node) {
         currentScript = node;
         currentProcedure = null;
-        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() == 0) {
+        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().isEmpty()) {
             addIssue(node.getEvent(), node.getEvent().getMetadata(), IssueSeverity.LOW);
         }
     }

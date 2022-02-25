@@ -39,7 +39,7 @@ public abstract class AbstractDependencyGraph {
 
     protected ControlFlowGraph cfg;
 
-    public AbstractDependencyGraph(ControlFlowGraph cfg) {
+    protected AbstractDependencyGraph(ControlFlowGraph cfg) {
         this.cfg = cfg;
         this.graph = computeGraph();
     }
@@ -59,7 +59,7 @@ public abstract class AbstractDependencyGraph {
     }
 
     private void fillGraphWithCFGNodes(MutableGraph<CFGNode> graph) {
-        cfg.getNodes().forEach(node -> graph.addNode(node));
+        cfg.getNodes().forEach(graph::addNode);
     }
 
     public Set<CFGNode> getPredecessors(CFGNode node) {
@@ -126,7 +126,7 @@ public abstract class AbstractDependencyGraph {
             graph.removeNode(cfgNode);
         } else if (node instanceof StartedAsClone) {
             // Rely on exception if this doesn't exist
-            CFGNode cfgNode = cfg.stream().filter(n -> n instanceof CloneEventNode).findFirst().get();
+            CFGNode cfgNode = cfg.stream().filter(CloneEventNode.class::isInstance).findFirst().get();
             graph.removeNode(cfgNode);
         } else {
             CFGNode cfgNode = getNode(node).get();
@@ -174,7 +174,7 @@ public abstract class AbstractDependencyGraph {
     }
 
     private Set<Stmt> getTransitiveStatements(Stmt stmt) {
-        return getTransitiveNodes(stmt).stream().filter(node -> node instanceof Stmt).map(Stmt.class::cast).collect(Collectors.toSet());
+        return getTransitiveNodes(stmt).stream().filter(Stmt.class::isInstance).map(Stmt.class::cast).collect(Collectors.toSet());
     }
 
     private Set<ASTNode> getTransitiveNodes(ASTNode node) {

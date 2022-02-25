@@ -30,7 +30,7 @@ public class IssueTranslator {
     private ResourceBundle general;
     private Locale locale;
 
-    public static enum GeneralTerm {
+    public enum GeneralTerm {
         SIZE("size"),
         POSITION("position"),
         COSTUME("costume"),

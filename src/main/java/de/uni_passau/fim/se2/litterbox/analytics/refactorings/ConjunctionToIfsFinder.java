@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.ConjunctionToIfs;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.IfsToConjunction;
 
 /*
 If A && B:

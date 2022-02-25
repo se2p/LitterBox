@@ -97,7 +97,7 @@ public class RefactoringAnalyzer extends Analyzer {
                     programExtractionTime, refactoringSearchTime, program);
             Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
             for (RefactorSequence solution : uniqueSolutions) {
-                RefactorSequence empty = new RefactorSequence(program, solution.getMutation(), solution.getCrossover(), Collections.EMPTY_LIST);
+                RefactorSequence empty = new RefactorSequence(program, solution.getMutation(), solution.getCrossover(), Collections.emptyList());
                 if (dominance.test(empty, solution)) {
                     log.log(Level.FINE, "Found dominating solution " + solution.getFitnessMap());
                 }

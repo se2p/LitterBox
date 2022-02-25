@@ -54,7 +54,7 @@ public class ScriptJSONCreator {
             String blockId = null;
             String nextId = null;
 
-            if (stmtList.getStmts().size() > 0) {
+            if (!stmtList.getStmts().isEmpty()) {
                 IdVisitor vis = new IdVisitor();
                 nextId = vis.getBlockId(stmtList.getStmts().get(0));
             }
@@ -147,7 +147,7 @@ public class ScriptJSONCreator {
                 jsonString.append(createFixedBlock(meta, nextId, null, startedAsClone.getOpcode()));
             }
 
-            if (script.getStmtList().getStmts().size() > 0) {
+            if (!script.getStmtList().getStmts().isEmpty()) {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
                 jsonString.append(",");

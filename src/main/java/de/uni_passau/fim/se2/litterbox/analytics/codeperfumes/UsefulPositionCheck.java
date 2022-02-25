@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
-import java.util.Collection;
-
 /**
  * In an until or wait until loop the condition can include distances to other sprites or mouse positions. These values
  * are floating point values, therefore an equals comparison might never match exactly. For most cases a BiggerThan or

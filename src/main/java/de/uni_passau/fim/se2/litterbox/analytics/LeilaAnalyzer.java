@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public class LeilaAnalyzer extends Analyzer {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
-    private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(LeilaAnalyzer.class.getName());
     private final boolean nonDet;
     private final boolean onNever;
 

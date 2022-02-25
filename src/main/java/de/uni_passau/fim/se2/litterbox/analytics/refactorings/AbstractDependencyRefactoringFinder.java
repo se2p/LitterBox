@@ -65,7 +65,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         // is not an interprocedural CFG, we need to add the missing edge
         // TODO: Create a builder for intraprocedural CFGs
         if (script.getEvent() instanceof StartedAsClone) {
-            CFGNode head = cfg.getNodes().stream().filter(n -> n instanceof CloneEventNode).findFirst().get();
+            CFGNode head = cfg.getNodes().stream().filter(CloneEventNode.class::isInstance).findFirst().get();
             cfg.addEdgeFromEntry(head);
         } else if (script.getEvent() instanceof ReceptionOfMessage) {
             ReceptionOfMessage reception = (ReceptionOfMessage) script.getEvent();

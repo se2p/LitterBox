@@ -49,11 +49,6 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
     private boolean inCustomBlock = false;
 
     @Override
-    public void visit(ActorDefinition actor) {
-        super.visit(actor);
-    }
-
-    @Override
     public void visit(Script node) {
         if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
             // Ignore unconnected blocks

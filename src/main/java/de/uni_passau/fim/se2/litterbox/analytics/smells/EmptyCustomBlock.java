@@ -38,7 +38,7 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW);
         }
         visitChildren(node);
         currentProcedure = null;

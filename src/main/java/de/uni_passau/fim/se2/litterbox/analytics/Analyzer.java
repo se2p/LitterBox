@@ -41,7 +41,7 @@ public abstract class Analyzer {
     String output;
     boolean delete;
 
-    public Analyzer(String input, String output, boolean delete) {
+    protected Analyzer(String input, String output, boolean delete) {
         this.input = Paths.get(input);
         this.output = output;
         this.delete = delete;
