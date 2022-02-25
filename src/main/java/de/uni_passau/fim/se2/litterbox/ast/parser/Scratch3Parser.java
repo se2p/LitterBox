@@ -44,7 +44,7 @@ public class Scratch3Parser {
 
     public Program parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
-        if ((FilenameUtils.getExtension(fileName)).toLowerCase().equals("json")) {
+        if ((FilenameUtils.getExtension(fileName)).equalsIgnoreCase("json")) {
             return parseJsonFile(fileEntry);
         } else {
             return parseSB3File(fileEntry);

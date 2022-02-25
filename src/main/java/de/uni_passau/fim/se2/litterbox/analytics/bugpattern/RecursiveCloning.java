@@ -44,11 +44,6 @@ public class RecursiveCloning extends AbstractIssueFinder {
     private boolean foundDelete;
 
     @Override
-    public Set<Issue> check(Program program) {
-        return super.check(program);
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         //NOP should not be detected in Procedure
     }

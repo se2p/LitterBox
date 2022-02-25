@@ -52,9 +52,6 @@ public abstract class AbstractNode implements ASTNode {
     }
 
     @Override
-    public abstract void accept(ScratchVisitor visitor);
-
-    @Override
     public List<? extends ASTNode> getChildren() {
         return children;
     }
