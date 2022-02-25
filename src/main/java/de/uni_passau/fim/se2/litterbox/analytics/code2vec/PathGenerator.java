@@ -48,8 +48,8 @@ public class PathGenerator {
         }
     }
 
-    public ArrayList<String> getAllLeafs() {
-        ArrayList<String> leafs = new ArrayList<>();
+    public List<String> getAllLeafs() {
+        List<String> leafs = new ArrayList<>();
         for (ASTNode sprite: leafsMap.keySet()) {
             for (ASTNode leaf : leafsMap.get(sprite)) {
                 leafs.add(getToken(leaf));
@@ -58,8 +58,8 @@ public class PathGenerator {
         return leafs;
     }
 
-    public ArrayList<ProgramFeatures> generatePaths() {
-        ArrayList<ProgramFeatures> spriteFeatures = new ArrayList<>();
+    public List<ProgramFeatures> generatePaths() {
+        List<ProgramFeatures> spriteFeatures = new ArrayList<>();
         for (ASTNode sprite : leafsMap.keySet()) {
             ProgramFeatures singleSpriteFeatures = generatePathsPerSprite(sprite);
             if (singleSpriteFeatures != null && !singleSpriteFeatures.isEmpty()) {
@@ -77,9 +77,9 @@ public class PathGenerator {
         if (isDefaultName(normalizedSpriteLabel) || normalizedSpriteLabel.isEmpty()) {
             return null;
         }
-        ArrayList<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
+        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
         String splitName = normalizedSpriteLabel;
-        if (splitNameParts.size() > 0) {
+        if (!splitNameParts.isEmpty()) {
             splitName = String.join("|", splitNameParts);
         }
 

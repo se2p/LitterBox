@@ -53,11 +53,10 @@ public class OnlyCodeCloneVisitor extends CloneVisitor {
      */
     @Override
     public ASTNode visit(Program node) {
-        Program program = new Program(node.getIdent(),
+        return new Program(node.getIdent(),
                 apply(node.getActorDefinitionList()),
                 node.getSymbolTable(),
                 node.getProcedureMapping(),
                 node.getProgramMetadata());
-        return program;
     }
 }

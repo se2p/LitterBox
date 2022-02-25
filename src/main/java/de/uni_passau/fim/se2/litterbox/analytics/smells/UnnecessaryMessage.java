@@ -16,9 +16,9 @@ import java.util.Set;
  */
 public class UnnecessaryMessage extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_message";
-    public Set<Message> messagesInFirstPlace;
-    public Set<Message> messagesInOtherPlace;
-    public boolean searching;
+    private Set<Message> messagesInFirstPlace;
+    private Set<Message> messagesInOtherPlace;
+    private boolean searching;
 
     @Override
     public void visit(Program node) {

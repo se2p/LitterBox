@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +49,7 @@ class ProgramFeaturesTest {
 
     @Test
     void testGetFeatures() {
-        ArrayList<ProgramRelation> features = cat.getFeatures();
+        List<ProgramRelation> features = cat.getFeatures();
         assertEquals(3, features.size());
         assertEquals("39.0,625791294,Hi!", features.get(0).toString());
         assertEquals("39.0,1493538624,Show", features.get(1).toString());

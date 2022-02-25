@@ -110,14 +110,10 @@ public class VariableInitializationRace extends AbstractIssueFinder {
             return;
         }
 
-        if (!variableMap.containsKey(currentEvent)) {
-            variableMap.put(currentEvent, new LinkedHashMap<>());
-        }
+        variableMap.computeIfAbsent(currentEvent, e -> new LinkedHashMap<>());
         Map<Identifier, Set<InitializationInstance>> theMap = variableMap.get(currentEvent);
 
-        if (!theMap.containsKey(identifier)) {
-            theMap.put(identifier, new LinkedHashSet<>());
-        }
+        theMap.computeIfAbsent(identifier, i -> new LinkedHashSet<>());
 
         Set<InitializationInstance> scriptSet = theMap.get(identifier);
         scriptSet.add(new InitializationInstance(currentScript, stmt));

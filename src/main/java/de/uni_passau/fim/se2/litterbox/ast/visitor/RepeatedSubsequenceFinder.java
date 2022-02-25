@@ -27,8 +27,8 @@ import java.util.List;
 
 public abstract class RepeatedSubsequenceFinder {
 
-    public final static int MIN_LENGTH = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_length");
-    public final static int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_occurrence");
+    public static final int MIN_LENGTH = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_length");
+    public static final int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_occurrence");
 
     private final int minLength;
     private final int minOccurrence;

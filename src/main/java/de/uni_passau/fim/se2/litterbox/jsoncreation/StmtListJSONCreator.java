@@ -963,7 +963,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
         String insideBlockId = null;
         StmtListJSONCreator creator = null;
-        if (stmtList.getStmts().size() > 0) {
+        if (!stmtList.getStmts().isEmpty()) {
             creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
             insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
         }

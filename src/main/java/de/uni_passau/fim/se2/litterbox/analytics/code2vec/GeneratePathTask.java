@@ -19,11 +19,11 @@ public class GeneratePathTask {
     public String createContextForCode2Vec() {
         PathGenerator pathGenerator = new PathGenerator(program, maxPathLength);
         //pathGenerator.printLeafsPerSprite();
-        ArrayList<ProgramFeatures> programs = pathGenerator.generatePaths();
+        List<ProgramFeatures> programs = pathGenerator.generatePaths();
         return featuresToString(programs);
     }
 
-    private String featuresToString(ArrayList<ProgramFeatures> features) {
+    private String featuresToString(List<ProgramFeatures> features) {
         if (features == null || features.isEmpty()) {
             return "";
         }
