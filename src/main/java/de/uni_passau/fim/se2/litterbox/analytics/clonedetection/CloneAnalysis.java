@@ -120,7 +120,7 @@ public class CloneAnalysis {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
         List<CloneBlock> blocks = getAllBlocks(similarityMatrix);
-        for (int i = 0; i < blocks.size() - 1; i++) {
+        for (int i = 0; i < blocks.size(); i++) {
             CloneBlock block = blocks.get(i);
 
             // If a script is compared against itself, skip the trivial type 1 clone
@@ -134,7 +134,7 @@ public class CloneAnalysis {
                     continue;
                 }
 
-                for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks.subList(i + 1, blocks.size()))) {
+                for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks.subList(i, blocks.size()))) {
                     CodeClone clone = new CodeClone(root1, root2);
                     clone.setType(CodeClone.CloneType.TYPE3);
                     block.fillClone(clone, statements1, statements2);
