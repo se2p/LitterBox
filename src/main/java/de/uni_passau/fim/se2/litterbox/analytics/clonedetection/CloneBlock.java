@@ -60,14 +60,15 @@ public class CloneBlock {
 
     public boolean extendsWithGap(CloneBlock other, int gapSize) {
         int diffX = getFirstX() - other.getLastX() - 1;
+        if (diffX < 0 || diffX > gapSize) {
+            return false;
+        }
         int diffY = getFirstY() - other.getLastY() - 1;
-
-        if (diffX >= 0 && diffX <= gapSize
-                && Math.abs(diffY) <= gapSize) {
-            return true;
+        if (Math.abs(diffY) > gapSize) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public void fillPositionMap(boolean[][] filledPositions) {

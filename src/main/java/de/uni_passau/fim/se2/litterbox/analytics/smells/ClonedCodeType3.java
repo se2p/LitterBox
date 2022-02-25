@@ -48,7 +48,7 @@ public class ClonedCodeType3 extends ClonedCode {
         }
 
         if (other.getFinder() instanceof ClonedCodeType1
-            || other.getFinder() instanceof ClonedCodeType2) {
+                || other.getFinder() instanceof ClonedCodeType2) {
             if (!(first instanceof MultiBlockIssue) || !(other instanceof MultiBlockIssue)) {
                 return false;
             }
@@ -58,8 +58,8 @@ public class ClonedCodeType3 extends ClonedCode {
             MultiBlockIssue mbIssue1 = (MultiBlockIssue) first;
             MultiBlockIssue mbIssue2 = (MultiBlockIssue) other;
 
-            Set<Integer> statements1 = mbIssue1.getNodes().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
-            Set<Integer> statements2 = mbIssue2.getNodes().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+            Set<Integer> statements1 = mbIssue1.getNodes().stream().map(System::identityHashCode).collect(Collectors.toSet());
+            Set<Integer> statements2 = mbIssue2.getNodes().stream().map(System::identityHashCode).collect(Collectors.toSet());
 
             statements1.removeAll(statements2);
             return statements1.isEmpty();

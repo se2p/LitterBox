@@ -119,8 +119,9 @@ public class CloneAnalysis {
     private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType, boolean selfComparison) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
-        Set<CloneBlock> blocks = getAllBlocks(similarityMatrix);
-        for (CloneBlock block : blocks) {
+        List<CloneBlock> blocks = getAllBlocks(similarityMatrix);
+        for (int i = 0; i < blocks.size() - 1; i++) {
+            CloneBlock block = blocks.get(i);
 
             // If a script is compared against itself, skip the trivial type 1 clone
             if (selfComparison && block.size() == statements1.size()) {
@@ -132,7 +133,8 @@ public class CloneAnalysis {
                 if (block.size() < minSizeNextToGap) {
                     continue;
                 }
-                for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks)) {
+
+                for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks.subList(i + 1, blocks.size()))) {
                     CodeClone clone = new CodeClone(root1, root2);
                     clone.setType(CodeClone.CloneType.TYPE3);
                     block.fillClone(clone, statements1, statements2);
@@ -182,7 +184,7 @@ public class CloneAnalysis {
         clones.add(clone);
     }
 
-    private Set<CloneBlock> getNeighbouringBlocks(CloneBlock block, Set<CloneBlock> otherBlocks) {
+    private Set<CloneBlock> getNeighbouringBlocks(CloneBlock block, List<CloneBlock> otherBlocks) {
         Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
 
         int size = block.size();
@@ -208,8 +210,8 @@ public class CloneAnalysis {
         return cloneBlocks;
     }
 
-    private Set<CloneBlock> getAllBlocks(boolean[][] similarityMatrix) {
-        Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
+    private List<CloneBlock> getAllBlocks(boolean[][] similarityMatrix) {
+        List<CloneBlock> cloneBlocks = new ArrayList<>();
         int width = similarityMatrix.length;
         if (width == 0) {
             // Empty matrix
@@ -225,12 +227,13 @@ public class CloneAnalysis {
                     continue;
                 }
                 CloneBlock block = getBlockAt(similarityMatrix, i, j);
-                if (block.size() > 0) {
+                if (block.size() >= MIN_SIZE_NEXT_TO_GAP) {
                     cloneBlocks.add(block);
                     block.fillPositionMap(coveredFields);
                 }
             }
         }
+
         return cloneBlocks;
     }
 
