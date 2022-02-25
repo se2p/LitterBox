@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,7 +45,7 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
     private boolean inStmtList = false;
     private boolean foundAmbiguousParam = false;
     private boolean used = false;
-    private LinkedList<String> paraNames = new LinkedList<>();
+    private List<String> paraNames = new LinkedList<>();
 
     @Override
     public void visit(Script node) {

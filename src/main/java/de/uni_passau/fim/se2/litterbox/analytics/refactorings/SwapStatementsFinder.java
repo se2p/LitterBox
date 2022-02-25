@@ -74,6 +74,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         }
     }
 
+    @Override
     protected boolean wouldCreateDataDependency(Script script, List<Stmt> subScript1, List<Stmt> subScript2) {
         List<Stmt> mergedStatements = new ArrayList<>(subScript1);
         mergedStatements.addAll(subScript2);

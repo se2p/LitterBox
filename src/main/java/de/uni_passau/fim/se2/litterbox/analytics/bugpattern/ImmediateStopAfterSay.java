@@ -39,6 +39,7 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
     public static final String HINT_MULTIPLE = "immediate_stop_after_say_think_multiple";
     public boolean hasMultipleActorsWithCode;
 
+    @Override
     public void visit(Program node) {
         List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
         hasMultipleActorsWithCode = false;

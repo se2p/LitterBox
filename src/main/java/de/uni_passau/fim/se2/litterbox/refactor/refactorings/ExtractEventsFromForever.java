@@ -40,7 +40,7 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     private RepeatForeverStmt loop;
     private ScriptList scriptList;
     private Script script;
-    private ArrayList<Script> eventScripts = new ArrayList<>();
+    private List<Script> eventScripts = new ArrayList<>();
 
     public ExtractEventsFromForever(ScriptList scriptList, Script script, RepeatForeverStmt loop) {
         this.loop = Preconditions.checkNotNull(loop);

@@ -40,8 +40,8 @@ public class ZipReader {
      * @throws IOException when given a invalid file or corrupted ZIP file
      */
     public static String getJsonString(String path) throws IOException {
-        final ZipFile file = new ZipFile(path);
-        try {
+
+        try(final ZipFile file = new ZipFile(path)) {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
@@ -57,8 +57,6 @@ public class ZipReader {
                     return sb.toString();
                 }
             }
-        } finally {
-            file.close();
         }
         return null;
     }

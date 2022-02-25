@@ -30,9 +30,9 @@ import java.util.Set;
 
 public class SymbolTable {
 
-    private LinkedHashMap<String, VariableInfo> variables;
-    private LinkedHashMap<String, MessageInfo> messages;
-    private LinkedHashMap<String, ExpressionListInfo> lists;
+    private Map<String, VariableInfo> variables;
+    private Map<String, MessageInfo> messages;
+    private Map<String, ExpressionListInfo> lists;
 
     /**
      * The symbol table collects all information about variable, lists and messages.

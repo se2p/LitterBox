@@ -12,6 +12,7 @@ public class ProgramFeatures {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append(" ");
