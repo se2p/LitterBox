@@ -53,7 +53,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         return tdg;
     }
 
-    private class Delay implements DataflowFact {
+    private static class Delay implements DataflowFact {
 
         private CFGNode source;
 

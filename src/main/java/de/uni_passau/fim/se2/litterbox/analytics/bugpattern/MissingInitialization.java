@@ -35,7 +35,7 @@ import java.util.*;
 
 public class MissingInitialization extends AbstractIssueFinder {
 
-    private class UseIssue extends Issue {
+    private static class UseIssue extends Issue {
 
         private Use use;
 
