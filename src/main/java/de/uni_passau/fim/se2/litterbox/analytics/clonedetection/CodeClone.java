@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 public class CodeClone {
 
-    public enum CloneType { TYPE1, TYPE2, TYPE3 };
+    public enum CloneType { TYPE1, TYPE2, TYPE3 }
 
     private CloneType type = CloneType.TYPE1;
 
@@ -87,11 +87,11 @@ public class CodeClone {
 
     public boolean subsumes(CodeClone otherClone) {
         // TODO: IdentifyHashSet does not handle removeAll properly, so using a workaround
-        Set<Integer> firstIDs = otherClone.getFirstStatements().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
-        Set<Integer> secondIDs = otherClone.getSecondStatements().stream().map(s -> System.identityHashCode(s)).collect(Collectors.toSet());
+        Set<Integer> firstIDs = otherClone.getFirstStatements().stream().map(System::identityHashCode).collect(Collectors.toSet());
+        Set<Integer> secondIDs = otherClone.getSecondStatements().stream().map(System::identityHashCode).collect(Collectors.toSet());
 
-        copy1.stream().map(s -> System.identityHashCode(s)).forEach(firstIDs::remove);
-        copy2.stream().map(s -> System.identityHashCode(s)).forEach(secondIDs::remove);
+        copy1.stream().map(System::identityHashCode).forEach(firstIDs::remove);
+        copy2.stream().map(System::identityHashCode).forEach(secondIDs::remove);
 
         return firstIDs.isEmpty() && secondIDs.isEmpty();
     }
