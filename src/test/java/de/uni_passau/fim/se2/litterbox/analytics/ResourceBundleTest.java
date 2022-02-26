@@ -109,7 +109,6 @@ public class ResourceBundleTest {
         for (String key : hints.keySet()) {
             String hint = hints.getString(key);
             checkEncodingProblems(hint);
-            System.out.println(key + ": " + hint);
         }
     }
 

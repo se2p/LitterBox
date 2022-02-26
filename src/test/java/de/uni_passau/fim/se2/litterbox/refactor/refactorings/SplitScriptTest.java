@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -112,8 +111,6 @@ public class SplitScriptTest implements JsonTest {
     @Test
     public void testSplitScriptFinder() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScript.json");
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/refactoring/splitScript.json");
-        System.out.println(cfg.toDotString());
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
