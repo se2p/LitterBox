@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -45,7 +44,7 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
             if (!calledProcedures.contains(info.getName())) {
                 currentProcedure = procedureDef;
                 currentScript = null;
-                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition(), IssueSeverity.LOW);
+                addIssue(procedureDef, procedureDef.getMetadata().getDefinition(), IssueSeverity.LOW);
             }
         }
     }

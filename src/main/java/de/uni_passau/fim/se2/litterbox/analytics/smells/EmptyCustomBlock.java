@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
@@ -38,7 +37,7 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW);
         }
         visitChildren(node);
         currentProcedure = null;

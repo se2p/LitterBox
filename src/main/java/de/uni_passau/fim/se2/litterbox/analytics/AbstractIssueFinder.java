@@ -195,14 +195,13 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 case LAYER:
                     builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LAYER));
                     break;
+                default:
+                    throw new RuntimeException("Unknown attribute type: " + attr.getAttributeType());
             }
             builder.append("\"");
         }
         return builder.toString();
     }
-
-    @Override
-    public abstract IssueType getIssueType();
 
     @Override
     public Collection<String> getHintKeys() {

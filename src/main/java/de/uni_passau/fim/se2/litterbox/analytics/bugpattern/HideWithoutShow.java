@@ -10,7 +10,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 
 public class HideWithoutShow extends AbstractIssueFinder {
-    public final static String NAME = "hide_without_show";
+    public static final String NAME = "hide_without_show";
     private boolean hasVisibleChange;
     private boolean hasHide;
     private Hide firstHide;

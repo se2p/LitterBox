@@ -39,5 +39,6 @@ public interface GeneticAlgorithm<C extends Chromosome<C>> extends SearchAlgorit
      *
      * @return the solutions
      */
+    @Override
     List<C> findSolution();
 }

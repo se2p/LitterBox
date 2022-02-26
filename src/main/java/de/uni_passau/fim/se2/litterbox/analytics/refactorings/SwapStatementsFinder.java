@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitSlice;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SwapStatements;
 
 import java.util.ArrayList;
@@ -75,6 +74,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
         }
     }
 
+    @Override
     protected boolean wouldCreateDataDependency(Script script, List<Stmt> subScript1, List<Stmt> subScript2) {
         List<Stmt> mergedStatements = new ArrayList<>(subScript1);
         mergedStatements.addAll(subScript2);

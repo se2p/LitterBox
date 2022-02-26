@@ -103,7 +103,7 @@ public class ControlStmtParser {
             substackNode = inputs.get(inputSubstack).get(Constants.POS_INPUT_VALUE);
             return ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
         } else {
-            return new StmtList(new ArrayList<Stmt>());
+            return new StmtList(new ArrayList<>());
         }
     }
 }

@@ -52,7 +52,7 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
             scriptWidths.add(scriptBlock.length());
         }
         double avgWidth = (double) scriptWidths.stream().mapToInt(Integer::intValue).sum() / scriptBlocks.length;
-        return new BigDecimal(avgWidth).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return BigDecimal.valueOf(avgWidth).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     private String getScriptString(T node) {

@@ -65,8 +65,7 @@ public class JsonParser {
     public static JsonNode getTargetsNodeFromJSONString(String json) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode rootNode = mapper.readTree(json);
-            return rootNode;
+            return mapper.readTree(json);
         } catch (Exception e) {
             e.printStackTrace();
         }

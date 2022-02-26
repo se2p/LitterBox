@@ -39,7 +39,7 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
     private double y;
     private boolean visible;
 
-    public MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
+    protected MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
                            String spriteName, double width, double height, double x, double y, boolean visible) {
         super(paramsMetadata);
         this.id = id;

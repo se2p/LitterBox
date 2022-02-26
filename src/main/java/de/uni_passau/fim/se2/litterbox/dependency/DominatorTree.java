@@ -43,6 +43,7 @@ public class DominatorTree extends AbstractDependencyGraph {
         return current;
     }
 
+    @Override
     protected MutableGraph<CFGNode> computeGraph() {
 
         MutableGraph<CFGNode> dominatorTree = createUnconnectedTree();

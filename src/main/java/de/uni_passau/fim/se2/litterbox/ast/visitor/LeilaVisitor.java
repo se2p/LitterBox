@@ -114,7 +114,7 @@ public class LeilaVisitor extends PrintVisitor {
 
         public static boolean contains(String varname) {
             for (STDVAR value : STDVAR.values()) {
-                if (value.name().toLowerCase().equals(varname.toLowerCase())) {
+                if (value.name().equalsIgnoreCase(varname.toLowerCase())) {
                     return true;
                 }
             }
@@ -957,7 +957,7 @@ public class LeilaVisitor extends PrintVisitor {
             emitNoSpace("[");
         }
         List<Expression> expressions = expressionList.getExpressions();
-        if (expressions.size() > 0) {
+        if (!expressions.isEmpty()) {
             expectOriginal();
             for (int i = 0; i < expressions.size() - 1; i++) {
                 expressions.get(i).accept(this);
@@ -1111,7 +1111,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(ParameterDefinitionList parameterDefinitionList) {
         openParentheses();
         List<ParameterDefinition> parameterDefinitions = parameterDefinitionList.getParameterDefinitions();
-        if (parameterDefinitions.size() > 0) {
+        if (!parameterDefinitions.isEmpty()) {
             for (int i = 0; i < parameterDefinitions.size() - 1; i++) {
                 parameterDefinitions.get(i).accept(this);
                 comma();

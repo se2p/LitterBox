@@ -1,17 +1,19 @@
 package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProgramFeatures {
     private String name;
 
-    private ArrayList<ProgramRelation> features = new ArrayList<>();
+    private List<ProgramRelation> features = new ArrayList<>();
 
     public ProgramFeatures(String name) {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append(" ");
@@ -34,7 +36,7 @@ public class ProgramFeatures {
         return name;
     }
 
-    public ArrayList<ProgramRelation> getFeatures() {
+    public List<ProgramRelation> getFeatures() {
         return features;
     }
 }

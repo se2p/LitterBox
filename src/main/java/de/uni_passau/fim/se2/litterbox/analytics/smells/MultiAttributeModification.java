@@ -258,7 +258,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetDragMode node) {
         // TODO: We have no attribute for drag mode yet
-        if (prevNode != null && (prevNode instanceof SetDragMode)) {
+        if (prevNode instanceof SetDragMode) {
             generateMultiBlockIssue(node);
         }
 
@@ -268,7 +268,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetRotationStyle node) {
         // TODO: We have no attribute for rotation style yet
-        if (prevNode != null && (prevNode instanceof SetRotationStyle)) {
+        if (prevNode instanceof SetRotationStyle) {
             generateMultiBlockIssue(node);
         }
 
@@ -277,7 +277,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
 
     @Override
     public void visit(Hide node) {
-        if (prevNode != null && (prevNode instanceof Hide || prevNode instanceof Show)) {
+        if (prevNode instanceof Hide || prevNode instanceof Show) {
             generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), VISIBILITY));
         }
 
@@ -417,7 +417,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
 
     @Override
     public void visit(SetPenColorToColorStmt node) {
-        if (prevNode != null && prevNode instanceof SetPenColorToColorStmt) {
+        if (prevNode instanceof SetPenColorToColorStmt) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 

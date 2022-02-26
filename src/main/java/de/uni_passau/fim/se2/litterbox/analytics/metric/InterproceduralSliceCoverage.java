@@ -36,7 +36,7 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
                     for (Defineable defineable : profileMap.keySet()) {
                         Set<Stmt> slice = profileMap.get(defineable);
                         int length = getScriptLength(pdg);
-                        double coverage = length > 0 ? slice.size() / getScriptLength(pdg) : 0.0;
+                        double coverage = length > 0 ? slice.size() / (double) getScriptLength(pdg) : 0.0;
                         if (!coverageMap.containsKey(defineable)) {
                             coverageMap.put(defineable, coverage);
                         } else {

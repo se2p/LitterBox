@@ -36,7 +36,7 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
  */
 public class IssueTool {
 
-    private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(IssueTool.class.getName());
 
     private static Map<String, IssueFinder> generateBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();

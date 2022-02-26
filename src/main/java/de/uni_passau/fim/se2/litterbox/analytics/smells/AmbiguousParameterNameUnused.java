@@ -27,11 +27,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -45,7 +45,7 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
     private boolean inStmtList = false;
     private boolean foundAmbiguousParam = false;
     private boolean used = false;
-    private LinkedList<String> paraNames = new LinkedList<>();
+    private List<String> paraNames = new LinkedList<>();
 
     @Override
     public void visit(Script node) {
@@ -98,7 +98,7 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
         visitChildren(node);
 
         if (!used && foundAmbiguousParam) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.MEDIUM);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
         }
 
         // TODO: This handling with used/found seems really error prone

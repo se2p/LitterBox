@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 
-import java.util.List;
-
 /**
  * The sprite follows another object (another sprite).
  */

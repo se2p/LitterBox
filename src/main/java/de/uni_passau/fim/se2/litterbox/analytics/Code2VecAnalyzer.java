@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.code2vec.GeneratePathTask;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

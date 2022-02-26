@@ -45,7 +45,7 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
     private final RepeatTimesStmt replacementLoop;
 
     public SequenceToLoop(StmtList stmtList, List<Stmt> repeatedStatements, int times) {
-        Preconditions.checkArgument(repeatedStatements.size() > 0);
+        Preconditions.checkArgument(!repeatedStatements.isEmpty());
         this.targetStatement = repeatedStatements.get(0);
         this.repeatedStatements = repeatedStatements;
         this.times = times;

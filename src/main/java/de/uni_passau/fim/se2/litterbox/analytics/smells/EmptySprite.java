@@ -45,7 +45,7 @@ public class EmptySprite extends AbstractIssueFinder {
 
     @Override
     public void visit(ActorDefinition actor) {
-        if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
+        if (actor.getProcedureDefinitionList().getList().isEmpty() && actor.getScripts().getScriptList().isEmpty()
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());

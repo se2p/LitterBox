@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ class PathGeneratorTest implements JsonTest {
     public void testGeneratePaths() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator generator = new PathGenerator(program, 8);
-        ArrayList<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
+        List<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
         int positionCat = 0;
         int positionAbby = 0;
@@ -56,7 +57,7 @@ class PathGeneratorTest implements JsonTest {
     public void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
         PathGenerator generator = new PathGenerator(program, 8);
-        ArrayList<String> tokens = generator.getAllLeafs();
+        List<String> tokens = generator.getAllLeafs();
         assertArrayEquals(expectedLeafs, tokens.toArray());
     }
 }

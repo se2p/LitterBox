@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
@@ -54,13 +53,13 @@ public class ProcedureJSONCreator {
                                                    String actorName, SymbolTable symbol,
                                                    ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
-        TopNonDataBlockMetadata defMetadata = (TopNonDataBlockMetadata) ((ProcedureMetadata) definition.getMetadata()).getDefinition();
-        NonDataBlockMetadata protoMetadata = (NonDataBlockMetadata) ((ProcedureMetadata) definition.getMetadata()).getPrototype();
+        TopNonDataBlockMetadata defMetadata = (TopNonDataBlockMetadata) definition.getMetadata().getDefinition();
+        NonDataBlockMetadata protoMetadata = (NonDataBlockMetadata) definition.getMetadata().getPrototype();
         String protoId = protoMetadata.getBlockId();
         StmtList stmtList = definition.getStmtList();
         String nextId = null;
 
-        if (stmtList.getStmts().size() > 0) {
+        if (!stmtList.getStmts().isEmpty()) {
             IdVisitor vis = new IdVisitor();
             nextId = vis.getBlockId(stmtList.getStmts().get(0));
         }
@@ -101,7 +100,7 @@ public class ProcedureJSONCreator {
         jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
                 createInputs(inputs), EMPTY_VALUE, mutationString, definition.getPrototypeOpcode()));
 
-        if (stmtList.getStmts().size() > 0) {
+        if (!stmtList.getStmts().isEmpty()) {
             StmtListJSONCreator stmtListJSONCreator =
                     new StmtListJSONCreator(defMetadata.getBlockId(), definition.getStmtList(), symbol);
             jsonString.append(",");

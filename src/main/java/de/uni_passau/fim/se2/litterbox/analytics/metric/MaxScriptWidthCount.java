@@ -31,15 +31,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    private double count = 0;
     public static final String NAME = "max_script_width_count";
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        count = 0;
-        count = countMaxScriptWidthCount(node);
-        return count;
+        return countMaxScriptWidthCount(node);
     }
 
     private double countMaxScriptWidthCount(T node) {

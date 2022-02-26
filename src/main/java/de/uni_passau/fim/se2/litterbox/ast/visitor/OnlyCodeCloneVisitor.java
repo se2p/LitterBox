@@ -33,6 +33,7 @@ public class OnlyCodeCloneVisitor extends CloneVisitor {
      * @param node ActorDefinition which will be copied
      * @return the copy of the visited node
      */
+    @Override
     public ASTNode visit(ActorDefinition node) {
         ActorDefinition actorDefinition = new ActorDefinition(node.getActorType(), node.getIdent(), node.getDecls(), node.getSetStmtList(), apply(node.getProcedureDefinitionList()), apply(node.getScripts()), node.getActorMetadata());
         actorDefinition.getScripts().accept(new ParentVisitor());
@@ -50,12 +51,12 @@ public class OnlyCodeCloneVisitor extends CloneVisitor {
      * @param node Program  Node which will be copied
      * @return the copy of the visited node
      */
+    @Override
     public ASTNode visit(Program node) {
-        Program program = new Program(node.getIdent(),
+        return new Program(node.getIdent(),
                 apply(node.getActorDefinitionList()),
                 node.getSymbolTable(),
                 node.getProcedureMapping(),
                 node.getProgramMetadata());
-        return program;
     }
 }

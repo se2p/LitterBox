@@ -1962,7 +1962,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         List<Expression> parameters = node.getExpressions().getExpressions();
         for (Expression param : parameters) {
             int nextIndex = procedureName.indexOf('%');
-            String type = procedureName.substring(nextIndex, nextIndex + 1); // Todo: Unused variable?
             procedureName = procedureName.substring(0, nextIndex)
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);

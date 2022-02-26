@@ -23,19 +23,19 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 public class Hint {
 
-    public final static char ESCAPE_CHARACTER = '%';
+    public static final char ESCAPE_CHARACTER = '%';
 
-    public final static String HINT_SPRITE = "SPRITE";
-    public final static String HINT_SPRITES = "SPRITES";
-    public final static String HINT_VARIABLE = "VARIABLE";
-    public final static String HINT_VARIABLE1 = "VARIABLE1";
-    public final static String HINT_VARIABLE2 = "VARIABLE2";
-    public final static String HINT_MESSAGE = "MESSAGE";
-    public final static String HINT_KEY = "KEY";
-    public final static String HINT_SAY_THINK = "SAYTHINK";
-    public final static String THEN_ELSE = "THENELSE";
-    public final static String BLOCK_NAME = "BLOCKNAME";
-    public final static String EVENT_HANDLER = "EVENTHANDLER";
+    public static final String HINT_SPRITE = "SPRITE";
+    public static final String HINT_SPRITES = "SPRITES";
+    public static final String HINT_VARIABLE = "VARIABLE";
+    public static final String HINT_VARIABLE1 = "VARIABLE1";
+    public static final String HINT_VARIABLE2 = "VARIABLE2";
+    public static final String HINT_MESSAGE = "MESSAGE";
+    public static final String HINT_KEY = "KEY";
+    public static final String HINT_SAY_THINK = "SAYTHINK";
+    public static final String THEN_ELSE = "THENELSE";
+    public static final String BLOCK_NAME = "BLOCKNAME";
+    public static final String EVENT_HANDLER = "EVENTHANDLER";
     public static final String METHOD = "METHOD";
 
     private String hintKey;

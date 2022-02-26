@@ -19,10 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -32,8 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
-import java.util.Set;
-
 /**
  * Script starting with a When I start as a clone event handler that contain a create clone of
  * myself block may result in an infinite recursion.
@@ -42,11 +38,6 @@ public class RecursiveCloning extends AbstractIssueFinder {
     public static final String NAME = "recursive_cloning";
     private boolean secondVisit;
     private boolean foundDelete;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        return super.check(program);
-    }
 
     @Override
     public void visit(ProcedureDefinition node) {

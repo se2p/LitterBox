@@ -1065,7 +1065,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(GreenFlag node) {
-        return new GreenFlag((BlockMetadata) apply(node.getMetadata()));
+        return new GreenFlag(apply(node.getMetadata()));
     }
 
     /**

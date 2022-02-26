@@ -42,7 +42,7 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
 
     public MergeEventsIntoForever(List<Script> eventList) {
         Preconditions.checkNotNull(eventList);
-        Preconditions.checkArgument(eventList.size() > 0);
+        Preconditions.checkArgument(!eventList.isEmpty());
         this.scriptList = eventList;
 
         // Create statement list with if then blocks for each event script.

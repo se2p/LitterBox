@@ -141,8 +141,7 @@ public class CommonStmtParser {
         StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
-        BroadcastAndWait broadcast = new BroadcastAndWait(message, metadata);
-        return broadcast;
+        return new BroadcastAndWait(message, metadata);
     }
 
     private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, String blockId)

@@ -53,7 +53,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         return tdg;
     }
 
-    private class Delay implements DataflowFact {
+    private static class Delay implements DataflowFact {
 
         private CFGNode source;
 
@@ -90,7 +90,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
             // There is no kill set, so the result is inFacts ∪ {gen}
             Set<Delay> result = new LinkedHashSet<>(inFacts);
 
-            if (node.getASTNode() != null && node.getASTNode() instanceof TimedStmt) {
+            if (node.getASTNode() instanceof TimedStmt) {
                 result.add(new Delay(node));
             }
 

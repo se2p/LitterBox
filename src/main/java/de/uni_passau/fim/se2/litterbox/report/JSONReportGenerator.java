@@ -23,8 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
@@ -54,23 +52,23 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
     private void addDuplicateIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
-                .filter(issue -> theIssue.isDuplicateOf(issue))
-                .map(issue -> issue.getId())
-                .forEach(id -> jsonNode.add(id));
+                .filter(theIssue::isDuplicateOf)
+                .map(Issue::getId)
+                .forEach(jsonNode::add);
     }
 
     private void addSubsumingIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
-                .filter(issue -> theIssue.isSubsumedBy(issue))
-                .map(issue -> issue.getId())
-                .forEach(id -> jsonNode.add(id));
+                .filter(theIssue::isSubsumedBy)
+                .map(Issue::getId)
+                .forEach(jsonNode::add);
     }
 
     private void addCoupledIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
-                .filter(issue -> theIssue.areCoupled(issue))
-                .map(issue -> issue.getId())
-                .forEach(id -> jsonNode.add(id));
+                .filter(theIssue::areCoupled)
+                .map(Issue::getId)
+                .forEach(jsonNode::add);
     }
 
     private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {

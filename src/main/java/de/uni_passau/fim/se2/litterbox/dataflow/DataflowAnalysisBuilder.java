@@ -32,13 +32,13 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
     }
 
     public DataflowAnalysisBuilder<T> withMay() {
-        analysis.setJoinFunction(new MayFunction<T>());
+        analysis.setJoinFunction(new MayFunction<>());
         analysis.initializeMay();
         return this;
     }
 
     public DataflowAnalysisBuilder<T> withMust(Set<T> allFacts) {
-        analysis.setJoinFunction(new MustFunction<T>());
+        analysis.setJoinFunction(new MustFunction<>());
         analysis.initializeMust(allFacts); // TODO: Need set of all facts!
         return this;
     }

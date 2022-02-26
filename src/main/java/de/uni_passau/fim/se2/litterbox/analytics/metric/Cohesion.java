@@ -32,7 +32,7 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
 
     private double count = 0;
 
-    private double local_cohesion = 0;
+    private double localCohesion = 0;
 
     @Override
     public double calculateMetric(T node) {
@@ -46,7 +46,7 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
     public void visit(Script node) {
         ArrayList<MetricExtractor<Script>> list = new ArrayList<>();
         list.add(new EventsBlockCount<>()); //TODO if you doesnt want to count events as kind of blocks
-                                            // add corner case for count_different_blocks == 0
+                                            // add corner case for countDifferentBlocks == 0
         list.add(new SoundBlockCount<>());
         list.add(new MotionBlockCount<>());
         list.add(new LooksBlockCount<>());
@@ -55,18 +55,18 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
         list.add(new VariablesBlockCount<>());
         list.add(new OperatorsBlockCount<>());
 
-        int count_different_blocks = 0;
+        int countDifferentBlocks = 0;
 
         for (MetricExtractor extractor : list) {
             double count = extractor.calculateMetric(node);
             if (count > 0)
-                count_different_blocks++;
+                countDifferentBlocks++;
         }
 
         // Calculate local script cohesion
-        local_cohesion = count_different_blocks /  new BlockCount<Script>().calculateMetric(node); //TODO corner case here
+        localCohesion = countDifferentBlocks /  new BlockCount<Script>().calculateMetric(node); //TODO corner case here
 
-        count += local_cohesion;
+        count += localCohesion;
     }
 
     @Override
@@ -90,9 +90,9 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
         }
 
         // Calculate local script cohesion
-        local_cohesion = countDifferentBlocks /  new BlockCount<ProcedureDefinition>().calculateMetric(node);
+        localCohesion = countDifferentBlocks /  new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
-        count += local_cohesion;
+        count += localCohesion;
 
     }
 

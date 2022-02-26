@@ -79,6 +79,7 @@ public class FixedSizePopulationGenerator<C extends Chromosome<C>> implements Su
      *
      * @return the generated population
      */
+    @Override
     public List<C> get() {
         return Stream.generate(chromosomes)
                 .limit(populationSize)

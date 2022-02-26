@@ -24,7 +24,6 @@ import java.util.List;
 
 public class KeySetPosition extends AbstractIssueFinder {
     public static final String NAME = "key_set_position";
-    private boolean insideLoop = false;
     private boolean inCondition = false;
     private NumberLiteral lastKeyValue = null;
 

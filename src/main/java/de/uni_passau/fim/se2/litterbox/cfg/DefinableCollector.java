@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Set;
@@ -36,8 +35,7 @@ public interface DefinableCollector<T extends Defineable> extends ScratchVisitor
             ASTNode parent = actor.getParentNode();
             if (parent != null && parent.getParentNode() != null) {
                 Program program = (Program) parent.getParentNode();
-                ActorDefinition stageActor = program.getActorDefinitionList().getDefinitions().get(0);
-                return stageActor;
+                return program.getActorDefinitionList().getDefinitions().get(0);
             }
             // Fallback: return actor itself
             return actor;
