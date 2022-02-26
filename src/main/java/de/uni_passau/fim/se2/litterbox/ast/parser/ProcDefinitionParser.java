@@ -113,7 +113,7 @@ public class ProcDefinitionParser {
         try {
             argumentIdsNode = (ArrayNode) mapper.readTree(argumentIds.asText());
         } catch (IOException e) {
-            throw new ParsingException("Could not read argument ids of a procedure");
+            throw new ParsingException("Could not read argument ids of a procedure", e);
         }
 
         JsonNode argumentDefaults = proto.get(MUTATION_KEY).get(ARGUMENT_DEFAULTS_KEY);
@@ -121,7 +121,7 @@ public class ProcDefinitionParser {
         try {
             argumentDefaultsNode = (ArrayNode) mapper.readTree(argumentDefaults.asText());
         } catch (IOException e) {
-            throw new ParsingException("Could not read argument defaults of a procedure");
+            throw new ParsingException("Could not read argument defaults of a procedure", e);
         }
 
         List<Type> paraTypes = new ArrayList<>();
@@ -174,7 +174,7 @@ public class ProcDefinitionParser {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
             ProgramParser.procDefMap.addMalformated(actorName + methodName);
-            throw new ParsingException("Could not read argument names of a procedure");
+            throw new ParsingException("Could not read argument names of a procedure", e);
         }
 
         Preconditions.checkArgument(argumentsNode.isArray());

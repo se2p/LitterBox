@@ -92,15 +92,15 @@ public class BackdropSwitch extends AbstractIssueFinder {
             nextRandPrev = true;
         } else if (msgName instanceof WithExpr) {
             if (((WithExpr) msgName).getExpression() instanceof StrId) {
-                switched.add(new Pair(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
+                switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
             } else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
+                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
             } else if (((WithExpr) msgName).getExpression() instanceof AsString) {
                 AsString expr = (AsString) ((WithExpr) msgName).getExpression();
                 if (expr.getOperand1() instanceof StrId) {
-                    switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
+                    switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
                 } else if (expr.getOperand1() instanceof StringLiteral) {
-                    switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                    switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             } else if (((WithExpr) msgName).getExpression() instanceof NumExpr) {
                 nextRandPrev = true;

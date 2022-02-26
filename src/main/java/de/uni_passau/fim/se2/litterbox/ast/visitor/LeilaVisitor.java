@@ -193,7 +193,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitResourceListsOf(def);
 
         DeclarationStmtList declarations = def.getDecls();
-        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
+        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmts();
         int numDeclarations = declarationStmtList.size();
         if (numDeclarations > 0) {
             newLine();
@@ -205,7 +205,7 @@ public class LeilaVisitor extends PrintVisitor {
         if (!nonDet) {
             SetStmtList setStmtList = def.getSetStmtList();
             List<SetStmt> stmts = setStmtList.getStmts();
-            if (stmts.size() > 0 && !(skippedDeclarations == numDeclarations)) {
+            if (!stmts.isEmpty() && skippedDeclarations != numDeclarations) {
                 newLine();
             }
             for (SetStmt stmt : stmts) {

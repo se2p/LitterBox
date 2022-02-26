@@ -28,7 +28,7 @@ import java.util.*;
  * Based on {@code Randomness.java} in EvoSuite.
  * </p>
  */
-public class Randomness implements Serializable {
+public final class Randomness implements Serializable {
 
     private static final long serialVersionUID = -5934455398558935937L;
 

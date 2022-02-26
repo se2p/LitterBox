@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class VariableCount<T extends ASTNode> implements  ScratchVisitor, MetricExtractor<T> {
 

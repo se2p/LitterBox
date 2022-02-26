@@ -77,7 +77,6 @@ public class MissingCloneInitializationTest implements JsonTest {
         hint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
         hint.setParameter(Hint.EVENT_HANDLER, IssueTranslator.getInstance().getInfo("greenflag"));
         hint.setParameter(Hint.HINT_SPRITE, "Sprite1");
-        System.out.println(hint.getHintText());
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }

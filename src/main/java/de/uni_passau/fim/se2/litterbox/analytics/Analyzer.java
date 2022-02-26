@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class Analyzer {
 
@@ -88,8 +89,8 @@ public abstract class Analyzer {
     public void analyzeMultiple(String listPath) {
         Path projectList = Paths.get(listPath);
 
-        try {
-            List<String> pids = Files.lines(projectList).collect(Collectors.toList());
+        try(Stream<String> lines = Files.lines(projectList)) {
+            List<String> pids = lines.collect(Collectors.toList());
             for (String pid : pids) {
                 analyzeSingle(pid);
             }

@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class PropertyLoader {
+public final class PropertyLoader {
 
     static {
         setDefaultSystemProperties("litterbox.properties");
@@ -56,7 +56,7 @@ public class PropertyLoader {
             try {
                 return Integer.parseInt(stringValue);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The value for key " + name + " is not an integer value!");
+                throw new IllegalArgumentException("The value for key " + name + " is not an integer value!", e);
             }
         }
     }
@@ -77,7 +77,7 @@ public class PropertyLoader {
             try {
                 return Double.parseDouble(stringValue);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The value for key " + name + " is not a floating number!");
+                throw new IllegalArgumentException("The value for key " + name + " is not a floating number!", e);
             }
         }
     }
@@ -97,7 +97,7 @@ public class PropertyLoader {
             try {
                 return Optional.of(Long.parseLong(stringValue));
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The specified seed is not a long.");
+                throw new IllegalArgumentException("The specified seed is not a long.", e);
             }
         }
     }

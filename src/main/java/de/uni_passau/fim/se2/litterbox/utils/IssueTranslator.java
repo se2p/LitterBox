@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class IssueTranslator {
+public final class IssueTranslator {
 
     private static IssueTranslator instance;
     private ResourceBundle hints;
@@ -46,7 +46,7 @@ public class IssueTranslator {
 
         private final String key;
 
-        private GeneralTerm(String label) {
+        GeneralTerm(String label) {
             this.key = label;
         }
 

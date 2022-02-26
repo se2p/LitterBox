@@ -34,15 +34,15 @@ public abstract class AbstractNode implements ASTNode {
 
     protected ASTNode parent;
 
-    public AbstractNode() {
+    protected AbstractNode() {
         this(Collections.emptyList());
     }
 
-    public AbstractNode(ASTNode... children) {
+    protected AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
     }
 
-    public AbstractNode(List<? extends ASTNode> children) {
+    protected AbstractNode(List<? extends ASTNode> children) {
 
         Preconditions.checkAllArgsNotNull(children);
         this.children = UnmodifiableListBuilder.<ASTNode>builder()

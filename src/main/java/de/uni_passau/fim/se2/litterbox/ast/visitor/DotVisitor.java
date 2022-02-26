@@ -44,7 +44,7 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             edges.add(label);
             for (ASTNode child : node.getChildren()) {
-                String edge = name + " -> " + System.identityHashCode(child) + "";
+                String edge = name + " -> " + System.identityHashCode(child);
                 edges.add(edge);
             }
 
@@ -82,21 +82,21 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     public void saveGraph(String fileName) throws IOException {
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+        try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8))) {
 
-        bw.write("digraph G {");
-        bw.newLine();
-        // bw.write("\t rankdir=LR");
-        // bw.newLine();
-        bw.write("\t shape=rectangle");
-        bw.newLine();
-        for (String edge : edges) {
-            bw.write("\t");
-            bw.write(edge);
+            bw.write("digraph G {");
             bw.newLine();
+            // bw.write("\t rankdir=LR");
+            // bw.newLine();
+            bw.write("\t shape=rectangle");
+            bw.newLine();
+            for (String edge : edges) {
+                bw.write("\t");
+                bw.write(edge);
+                bw.newLine();
+            }
+            bw.write("}");
         }
-        bw.write("}");
-        bw.close();
     }
 
     @Override

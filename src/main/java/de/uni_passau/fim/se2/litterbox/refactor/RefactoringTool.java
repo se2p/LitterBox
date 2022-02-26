@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * Holds all Refactorings and executes them.
  * Register new implemented refactorings here.
  */
-public class RefactoringTool {
+public final class RefactoringTool {
 
     private RefactoringTool() {
     }

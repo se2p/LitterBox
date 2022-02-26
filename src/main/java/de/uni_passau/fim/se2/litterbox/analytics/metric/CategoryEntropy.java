@@ -63,11 +63,11 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
 
         double localEntropy = 0.0; // Compute script category entropy
 
-        for (MetricExtractor extractor : list) {
-            double p_x = extractor.calculateMetric(node) / count;
-            if (p_x == 0)
+        for (MetricExtractor<Script> extractor : list) {
+            double pX = extractor.calculateMetric(node) / count;
+            if (pX == 0)
                 continue;
-            double categoryEntropy = p_x * (Math.log(p_x) / Math.log(2.0));
+            double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));
             localEntropy += categoryEntropy;
         }
 
@@ -95,11 +95,11 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
 
         double localEntropy = 0.0; // Compute script category entropy
 
-        for (MetricExtractor extractor : list) {
-            double p_x =  extractor.calculateMetric(node) / count;
-            if (p_x == 0)
+        for (MetricExtractor<ProcedureDefinition> extractor : list) {
+            double pX =  extractor.calculateMetric(node) / count;
+            if (pX == 0)
                 continue;
-            double categoryEntropy = p_x * (Math.log(p_x) / Math.log(2.0));
+            double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));
             localEntropy += categoryEntropy;
         }
 
