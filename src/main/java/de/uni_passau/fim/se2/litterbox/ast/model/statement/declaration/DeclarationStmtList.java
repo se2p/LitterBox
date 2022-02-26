@@ -28,15 +28,15 @@ import java.util.List;
 
 public class DeclarationStmtList extends AbstractNode implements ASTNode {
 
-    private final List<DeclarationStmt> declarationStmtList;
+    private final List<DeclarationStmt> declarationStmts;
 
-    public DeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
-        super(declarationStmtList);
-        this.declarationStmtList = Preconditions.checkNotNull(declarationStmtList);
+    public DeclarationStmtList(List<DeclarationStmt> declarationStmts) {
+        super(declarationStmts);
+        this.declarationStmts = Preconditions.checkNotNull(declarationStmts);
     }
 
-    public List<DeclarationStmt> getDeclarationStmtList() {
-        return declarationStmtList;
+    public List<DeclarationStmt> getDeclarationStmts() {
+        return declarationStmts;
     }
 
     @Override

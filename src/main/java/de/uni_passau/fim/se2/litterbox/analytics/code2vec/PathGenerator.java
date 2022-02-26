@@ -101,7 +101,7 @@ public class PathGenerator {
         return programFeatures;
     }
 
-    private static ArrayList<ASTNode> getTreeStack(ASTNode node) {
+    private static List<ASTNode> getTreeStack(ASTNode node) {
         ArrayList<ASTNode> upStack = new ArrayList<>();
         ASTNode current = node;
         while (current != null) {
@@ -119,8 +119,8 @@ public class PathGenerator {
         String seperator = "";
 
         StringJoiner stringBuilder = new StringJoiner(seperator);
-        ArrayList<ASTNode> sourceStack = getTreeStack(source);
-        ArrayList<ASTNode> targetStack = getTreeStack(target);
+        List<ASTNode> sourceStack = getTreeStack(source);
+        List<ASTNode> targetStack = getTreeStack(target);
 
         int commonPrefix = 0;
         int currentSourceAncestorIndex = sourceStack.size() - 1;

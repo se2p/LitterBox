@@ -87,7 +87,7 @@ public class ProgramParserTest implements JsonTest {
     public void testVariable() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
-        List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
+        List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmts();
         Assertions.assertTrue(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent() instanceof Variable);
         Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
                 .getName().getName()).isEqualTo("my variable");

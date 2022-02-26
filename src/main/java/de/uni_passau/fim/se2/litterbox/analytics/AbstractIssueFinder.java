@@ -143,11 +143,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             builder.append("[var]");
             builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VARIABLE));
             builder.append(" \"");
-            Variable var = (Variable) def;
-            if (var.getIdentifier() instanceof LocalIdentifier) {
-                builder.append(((LocalIdentifier) var.getIdentifier()).getName());
+            Variable variable = (Variable) def;
+            if (variable.getIdentifier() instanceof LocalIdentifier) {
+                builder.append(((LocalIdentifier) variable.getIdentifier()).getName());
             } else {
-                builder.append(((Qualified) var.getIdentifier()).getSecond().getName().getName());
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
             }
             builder.append("\"");
             builder.append("[/var]");
@@ -155,11 +155,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             builder.append("[list]");
             builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LIST));
             builder.append(" \"");
-            ListVariable var = (ListVariable) def;
-            if (var.getIdentifier() instanceof LocalIdentifier) {
-                builder.append(((LocalIdentifier) var.getIdentifier()).getName());
+            ListVariable variable = (ListVariable) def;
+            if (variable.getIdentifier() instanceof LocalIdentifier) {
+                builder.append(((LocalIdentifier) variable.getIdentifier()).getName());
             } else {
-                builder.append(((Qualified) var.getIdentifier()).getSecond().getName().getName());
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
             }
             builder.append("\"");
             builder.append("[/list]");
@@ -231,12 +231,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             return false;
         }
 
-        if (first.getCodeLocation().equals(other.getCodeLocation())) {
-            // Same block, so assume it's a duplicate
-            return true;
-        }
-
-        return false;
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override

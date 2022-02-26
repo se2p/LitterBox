@@ -34,7 +34,7 @@ import java.util.Iterator;
 public class JsonParser {
 
     public static JsonNode getBlocksNodeFromJSON(String path) throws IOException {
-        JsonNode script = null;
+        JsonNode script;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();

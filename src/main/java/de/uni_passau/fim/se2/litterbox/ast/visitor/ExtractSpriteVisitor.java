@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ExtractSpriteVisitor implements ScratchVisitor {
 
-    Map<ASTNode, List<ASTNode>> leafsMap = new HashMap<>();
+    private Map<ASTNode, List<ASTNode>> leafsMap = new HashMap<>();
 
     public Map<ASTNode, List<ASTNode>> getLeafsCollector() {
         return leafsMap;

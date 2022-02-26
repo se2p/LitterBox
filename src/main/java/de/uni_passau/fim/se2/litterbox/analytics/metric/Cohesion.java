@@ -57,7 +57,7 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
 
         int countDifferentBlocks = 0;
 
-        for (MetricExtractor extractor : list) {
+        for (MetricExtractor<Script> extractor : list) {
             double count = extractor.calculateMetric(node);
             if (count > 0)
                 countDifferentBlocks++;
@@ -83,7 +83,7 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
 
         int countDifferentBlocks = 0;
 
-        for (MetricExtractor extractor : list) {
+        for (MetricExtractor<ProcedureDefinition> extractor : list) {
             double count = extractor.calculateMetric(node);
             if (count > 0)
                 countDifferentBlocks++;

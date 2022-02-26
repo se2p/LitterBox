@@ -41,7 +41,7 @@ public class ZipReader {
      */
     public static String getJsonString(String path) throws IOException {
 
-        try(final ZipFile file = new ZipFile(path)) {
+        try(ZipFile file = new ZipFile(path)) {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();

@@ -122,12 +122,12 @@ public class RefactoringAnalyzer extends Analyzer {
             StringBuilder sb = new StringBuilder();
             sb.append("Solution,");
             sb.append(refactored.getIdent().getName() + "_refactored_" + i);
-            sb.append(",");
+            sb.append(',');
             sb.append(solutions.get(i).getExecutedRefactorings().size());
-            sb.append(",");
+            sb.append(',');
             for (FitnessFunction<RefactorSequence> fitnessFunction : fitnessFunctions) {
                 sb.append(solutions.get(i).getFitness(fitnessFunction));
-                sb.append(",");
+                sb.append(',');
             }
             log.log(Level.FINE, sb.toString());
             generateOutput(i,

@@ -30,7 +30,7 @@ import java.io.IOException;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
-public class Main {
+public final class Main {
 
     private static final String REFACTOR = "refactor";
     private static final String REFACTOR_SHORT = "r";

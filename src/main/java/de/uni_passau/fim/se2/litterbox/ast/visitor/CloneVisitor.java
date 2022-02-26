@@ -1850,7 +1850,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DeclarationStmtList node) {
-        return new DeclarationStmtList(applyList(node.getDeclarationStmtList()));
+        return new DeclarationStmtList(applyList(node.getDeclarationStmts()));
     }
 
     /**

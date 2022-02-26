@@ -74,6 +74,6 @@ public class Scratch3Parser {
     }
 
     private String getProgramName(String fileName) {
-        return fileName.substring(0, fileName.lastIndexOf("."));
+        return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 }

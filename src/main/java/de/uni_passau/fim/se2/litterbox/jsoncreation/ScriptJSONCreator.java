@@ -44,7 +44,7 @@ public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script, SymbolTable symbol) {
         StringBuilder jsonString = new StringBuilder();
         Event event = script.getEvent();
-        StmtListJSONCreator stmtListJSONCreator = null;
+        StmtListJSONCreator stmtListJSONCreator;
         StmtList stmtList = script.getStmtList();
         ExpressionJSONCreator exprCreator = new ExpressionJSONCreator();
         if (event instanceof Never) {

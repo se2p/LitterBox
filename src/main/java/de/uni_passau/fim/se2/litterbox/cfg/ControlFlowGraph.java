@@ -156,7 +156,7 @@ public class ControlFlowGraph {
             builder.append(System.lineSeparator());
         }
 
-        builder.append("}");
+        builder.append('}');
         return builder.toString();
     }
 

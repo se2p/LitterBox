@@ -37,9 +37,9 @@ public class ProgramMetadataParser {
      * @return the Metadata of the program including meta, extension and monitors metadata.
      */
     public static ProgramMetadata parse(JsonNode program) {
-        MonitorMetadataList monitorMetadataList = null;
-        MetaMetadata meta = null;
-        ExtensionMetadata extensionMetadata = null;
+        MonitorMetadataList monitorMetadataList;
+        MetaMetadata meta;
+        ExtensionMetadata extensionMetadata;
         if (program.has(META_KEY)) {
             meta = MetaMetadataParser.parse(program.get(META_KEY));
         } else {
