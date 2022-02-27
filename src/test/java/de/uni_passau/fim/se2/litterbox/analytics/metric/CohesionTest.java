@@ -28,6 +28,6 @@ public class CohesionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws ParsingException, IOException {
-        assertThatMetricReports(0, new Cohesion(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new Cohesion<>(), "./src/test/fixtures/emptyProject.json");
     }
 }

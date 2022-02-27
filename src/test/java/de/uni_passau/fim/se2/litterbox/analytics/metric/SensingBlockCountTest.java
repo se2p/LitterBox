@@ -28,6 +28,6 @@ public class SensingBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(18, new SensingBlockCount(), "./src/test/fixtures/metrics/allSensingBlocks.json");
+        assertThatMetricReports(18, new SensingBlockCount<>(), "./src/test/fixtures/metrics/allSensingBlocks.json");
     }
 }

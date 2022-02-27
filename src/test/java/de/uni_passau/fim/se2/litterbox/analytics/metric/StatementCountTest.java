@@ -27,31 +27,31 @@ import java.io.IOException;
 public class StatementCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new StatementCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new StatementCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testProcedures() throws IOException, ParsingException {
-        assertThatMetricReports(3, new StatementCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        assertThatMetricReports(3, new StatementCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test
     public void testNonEmptyScripts() throws IOException, ParsingException {
-        assertThatMetricReports(6, new StatementCount(), "./src/test/fixtures/weightedMethod.json");
+        assertThatMetricReports(6, new StatementCount<>(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testLooseScript() throws IOException, ParsingException {
-        assertThatMetricReports(3, new StatementCount(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
+        assertThatMetricReports(3, new StatementCount<>(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        assertThatMetricReports(5, new StatementCount(), "./src/test/fixtures/smells/deadCode.json");
+        assertThatMetricReports(5, new StatementCount<>(), "./src/test/fixtures/smells/deadCode.json");
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        assertThatMetricReports(4, new StatementCount(), "./src/test/fixtures/metrics/penAndTTS.json");
+        assertThatMetricReports(4, new StatementCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

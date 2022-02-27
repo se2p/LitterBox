@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProgramRelationTest implements JsonTest {
 
-    final String NO_HASH_OUTPUT = "GreenFlag,(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral),Hello!";
+    final static String NO_HASH_OUTPUT = "GreenFlag,(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral),Hello!";
 
     @Test
     void testSetNoHash() {

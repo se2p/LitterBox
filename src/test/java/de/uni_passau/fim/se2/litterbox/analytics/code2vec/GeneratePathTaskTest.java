@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneratePathTaskTest implements JsonTest{
 
-    final String OUTPUT_TEST = "cat 39,625791294,Hi!" +
+    final static String OUTPUT_TEST = "cat 39,625791294,Hi!" +
             " 39,1493538624,Show " +
             "Hi!,-547448667,Show\n" +
             "abby GreenFlag,-2069003229,Hello!";
 
-    final String OUTPUT_TEST_SPRITES_POSITION_CHANGED = "abby GreenFlag,-2069003229,Hello!\n" +
+    final static String OUTPUT_TEST_SPRITES_POSITION_CHANGED = "abby GreenFlag,-2069003229,Hello!\n" +
             "cat 39,625791294,Hi!" +
             " 39,1493538624,Show " +
             "Hi!,-547448667,Show";

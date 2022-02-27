@@ -62,7 +62,6 @@ public class ExtractLoopConditionTest implements JsonTest {
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 
         UntilStmt untilStmt = (UntilStmt) refactoredStmtList.getStatement(0);
-        StopAll stopAll = (StopAll) refactoredStmtList.getStatement(1);
         assertThat(untilStmt.getBoolExpr().equals(ifStmt.getBoolExpr()));
         assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(1);
     }

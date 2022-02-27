@@ -54,6 +54,7 @@ class NSGAIITest implements JsonTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testNSGAIICalls() {
         RefactorSequence c1gen1 = mock(RefactorSequence.class);
         RefactorSequence c2gen1 = mock(RefactorSequence.class);
@@ -103,6 +104,7 @@ class NSGAIITest implements JsonTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void evolveOnEmptyPopulation() {
         List<RefactorSequence> emptyList = List.of();
 

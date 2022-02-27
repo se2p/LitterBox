@@ -32,7 +32,7 @@ public class TokenEntropyTest implements JsonTest {
         double p2 = 3.0 / 7.0;
         double expectedEntropy = -(p1 * (Math.log(p1) / Math.log(2.0)) + 2 * p2 * (Math.log(p2) / Math.log(2.0)));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_3identical.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "src/test/fixtures/metrics/entropy_3identical.json");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class TokenEntropyTest implements JsonTest {
         double expectedEntropy = -(5 * p1 * (Math.log(p1) / Math.log(2.0)) +
                 (2 * p3 * (Math.log(p3) / Math.log(2.0))));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_nestedblocks.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "src/test/fixtures/metrics/entropy_nestedblocks.json");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class TokenEntropyTest implements JsonTest {
         double expectedEntropy = -(17 * p1 * (Math.log(p1) / Math.log(2.0)) +
                 2 * p3 * (Math.log(p3) / Math.log(2.0)));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "src/test/fixtures/metrics/entropy_customblock.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "src/test/fixtures/metrics/entropy_customblock.json");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TokenEntropyTest implements JsonTest {
                 2 * p2 * (Math.log(p2) / Math.log(2.0)) +
                 p4 * (Math.log(p4) / Math.log(2.0)));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class TokenEntropyTest implements JsonTest {
         double p = 1.0 / 14.0;
         double expectedEntropy = -(14 * p * (Math.log(p) / Math.log(2.0)));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "./src/test/fixtures/weightedMethod.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
@@ -82,6 +82,6 @@ public class TokenEntropyTest implements JsonTest {
         double expectedEntropy = -(9 * p1 * (Math.log(p1) / Math.log(2.0)) +
                 1 * p2 * (Math.log(p2) / Math.log(2.0)));
 
-        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy(), "./src/test/fixtures/metrics/oneMoreComplex.json");
+        assertThatMetricReportsWithin(expectedEntropy, 0.1, new TokenEntropy<>(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

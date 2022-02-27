@@ -28,6 +28,6 @@ public class ControlBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(13, new ControlBlockCount(), "./src/test/fixtures/metrics/allControlBlocks.json");
+        assertThatMetricReports(13, new ControlBlockCount<>(), "./src/test/fixtures/metrics/allControlBlocks.json");
     }
 }

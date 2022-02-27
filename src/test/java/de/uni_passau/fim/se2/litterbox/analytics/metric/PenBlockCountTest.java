@@ -28,11 +28,11 @@ public class PenBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(9, new PenBlockCount(), "./src/test/fixtures/metrics/allPenBlocks.json");
+        assertThatMetricReports(9, new PenBlockCount<>(), "./src/test/fixtures/metrics/allPenBlocks.json");
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        assertThatMetricReports(2, new PenBlockCount(), "./src/test/fixtures/metrics/penAndTTS.json");
+        assertThatMetricReports(2, new PenBlockCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

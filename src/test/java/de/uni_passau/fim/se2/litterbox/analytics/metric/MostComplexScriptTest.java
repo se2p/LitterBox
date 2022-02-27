@@ -28,11 +28,11 @@ public class MostComplexScriptTest implements JsonTest {
 
     @Test
     public void testLooseBlocks() throws IOException, ParsingException {
-        assertThatMetricReports(1, new MostComplexScript(), "./src/test/fixtures/metrics/allEventsBlocks.json");
+        assertThatMetricReports(1, new MostComplexScript<>(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 
     @Test
     public void oneMoreComplex() throws IOException, ParsingException {
-        assertThatMetricReports(2, new MostComplexScript(), "./src/test/fixtures/metrics/oneMoreComplex.json");
+        assertThatMetricReports(2, new MostComplexScript<>(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

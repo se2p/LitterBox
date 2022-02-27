@@ -28,6 +28,6 @@ public class SayHelloBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(2, new SayHelloBlockCount(), "./src/test/fixtures/bugpattern/missingPenDown.json");
+        assertThatMetricReports(2, new SayHelloBlockCount<>(), "./src/test/fixtures/bugpattern/missingPenDown.json");
     }
 }

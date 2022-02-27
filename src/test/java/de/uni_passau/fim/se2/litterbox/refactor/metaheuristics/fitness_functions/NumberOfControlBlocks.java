@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 public class NumberOfControlBlocks implements MinimizingFitnessFunction<RefactorSequence> {
 
-    private final ControlBlockCount blockCounter = new ControlBlockCount();
+    private final ControlBlockCount<Program> blockCounter = new ControlBlockCount<>();
 
     /**
      * <p>

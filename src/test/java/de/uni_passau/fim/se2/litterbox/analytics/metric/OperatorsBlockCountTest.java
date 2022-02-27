@@ -28,6 +28,6 @@ public class OperatorsBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(18, new OperatorsBlockCount(), "./src/test/fixtures/metrics/allOperatorsBlocks.json");
+        assertThatMetricReports(18, new OperatorsBlockCount<>(), "./src/test/fixtures/metrics/allOperatorsBlocks.json");
     }
 }

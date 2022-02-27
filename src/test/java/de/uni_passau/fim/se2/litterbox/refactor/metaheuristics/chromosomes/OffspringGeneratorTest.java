@@ -83,6 +83,7 @@ class OffspringGeneratorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void offspringGeneratorCreatesOffspringCorrectlyWithCrossover() {
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
@@ -102,6 +103,7 @@ class OffspringGeneratorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void offspringGeneratorCreatesOffspringCorrectlyWithoutCrossover() {
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
@@ -120,6 +122,7 @@ class OffspringGeneratorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void offspringGeneratorCreatesUnevenPopulationSize() {
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
