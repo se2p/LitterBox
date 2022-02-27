@@ -51,7 +51,6 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         long programExtractionTime = 23;
         long refactoringSearchTime = 42;
         Randomness.setSeed(132);
-        List<String> fitnessValuesWithoutRefactoring = List.of("1.2", "3.4", "5.6");
         FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
         FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
         FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
@@ -88,7 +87,7 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         reportGenerator.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).contains(
@@ -150,7 +149,7 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         reportGenerator2.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).contains(

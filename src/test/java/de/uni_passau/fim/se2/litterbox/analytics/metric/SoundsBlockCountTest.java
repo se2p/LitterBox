@@ -28,6 +28,6 @@ public class SoundsBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(9, new SoundBlockCount(), "./src/test/fixtures/metrics/allSoundsBlocks.json");
+        assertThatMetricReports(9, new SoundBlockCount<>(), "./src/test/fixtures/metrics/allSoundsBlocks.json");
     }
 }

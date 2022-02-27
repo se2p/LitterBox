@@ -31,7 +31,7 @@ public class ScratchListAsBooleanTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/stmtParser/listElementsBoolean.json");
-        SpriteCount sp = new SpriteCount();
+        SpriteCount<Program> sp = new SpriteCount<>();
         Assertions.assertEquals(1, sp.calculateMetric(empty));
     }
 }

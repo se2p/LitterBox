@@ -28,11 +28,11 @@ public class WeightedMethodCountStrictTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new WeightedMethodCountStrict(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new WeightedMethodCountStrict<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMethodCount() throws IOException, ParsingException {
-        assertThatMetricReports(2, new WeightedMethodCountStrict(), "./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
+        assertThatMetricReports(2, new WeightedMethodCountStrict<>(), "./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
     }
 }

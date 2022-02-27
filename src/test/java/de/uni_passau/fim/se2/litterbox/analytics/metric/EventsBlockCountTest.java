@@ -28,6 +28,6 @@ public class EventsBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(8, new EventsBlockCount(), "./src/test/fixtures/metrics/allEventsBlocks.json");
+        assertThatMetricReports(8, new EventsBlockCount<>(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 }

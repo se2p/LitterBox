@@ -28,47 +28,47 @@ public class BlockCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new BlockCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new BlockCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testBlockCountNested() throws IOException, ParsingException {
-        assertThatMetricReports(14, new BlockCount(), "./src/test/fixtures/smells/nestedLoops.json");
+        assertThatMetricReports(14, new BlockCount<>(), "./src/test/fixtures/smells/nestedLoops.json");
     }
 
     @Test
     public void testBlockproc() throws IOException, ParsingException {
-        assertThatMetricReports(18, new BlockCount(), "./src/test/fixtures/blockCountWithProc.json");
+        assertThatMetricReports(18, new BlockCount<>(), "./src/test/fixtures/blockCountWithProc.json");
     }
 
     @Test
     public void testFixedStatements() throws IOException, ParsingException {
-        assertThatMetricReports(26, new BlockCount(), "./src/test/fixtures/stmtParser/allFixedStatements.json");
+        assertThatMetricReports(26, new BlockCount<>(), "./src/test/fixtures/stmtParser/allFixedStatements.json");
     }
 
     @Test
     public void testFixedExpr() throws IOException, ParsingException {
-        assertThatMetricReports(4, new BlockCount(), "./src/test/fixtures/fixedExpressions.json");
+        assertThatMetricReports(4, new BlockCount<>(), "./src/test/fixtures/fixedExpressions.json");
     }
 
     @Test
     public void testTTS() throws IOException, ParsingException {
-        assertThatMetricReports(3, new BlockCount(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
+        assertThatMetricReports(3, new BlockCount<>(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
     }
 
     @Test
     public void testOnlyVariable() throws IOException, ParsingException {
-        assertThatMetricReports(1, new BlockCount(), "./src/test/fixtures/onlyVariable.json");
+        assertThatMetricReports(1, new BlockCount<>(), "./src/test/fixtures/onlyVariable.json");
     }
 
     @Test
     public void testHalfFixedExpr() throws IOException, ParsingException {
-        assertThatMetricReports(5, new BlockCount(), "./src/test/fixtures/halfFixedExpressions.json");
+        assertThatMetricReports(5, new BlockCount<>(), "./src/test/fixtures/halfFixedExpressions.json");
         //TODO does an empty string have to be an UnspecifiedExpr?
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        assertThatMetricReports(4, new BlockCount(), "./src/test/fixtures/metrics/penAndTTS.json");
+        assertThatMetricReports(4, new BlockCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

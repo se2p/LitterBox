@@ -27,11 +27,11 @@ import java.io.IOException;
 public class CostumeCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(2, new CostumeCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(2, new CostumeCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMultipleSprites() throws IOException, ParsingException {
-        assertThatMetricReports(4, new CostumeCount(), "./src/test/fixtures/metrics/multipleSpritesBackdrops.json");
+        assertThatMetricReports(4, new CostumeCount<>(), "./src/test/fixtures/metrics/multipleSpritesBackdrops.json");
     }
 }

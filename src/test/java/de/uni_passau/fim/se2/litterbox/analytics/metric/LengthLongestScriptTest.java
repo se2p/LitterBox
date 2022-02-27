@@ -28,11 +28,11 @@ public class LengthLongestScriptTest implements JsonTest {
 
     @Test
     public void testLooseBlocks() throws IOException, ParsingException {
-        assertThatMetricReports(1, new LengthLongestScript(), "./src/test/fixtures/metrics/allEventsBlocks.json");
+        assertThatMetricReports(1, new LengthLongestScript<>(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 
     @Test
     public void oneLonger() throws IOException, ParsingException {
-        assertThatMetricReports(5, new LengthLongestScript(), "./src/test/fixtures/metrics/oneMoreComplex.json");
+        assertThatMetricReports(5, new LengthLongestScript<>(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

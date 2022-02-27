@@ -28,11 +28,11 @@ public class SpriteCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(1, new SpriteCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(1, new SpriteCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testSpriteCount() throws IOException, ParsingException {
-        assertThatMetricReports(1, new SpriteCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        assertThatMetricReports(1, new SpriteCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 }

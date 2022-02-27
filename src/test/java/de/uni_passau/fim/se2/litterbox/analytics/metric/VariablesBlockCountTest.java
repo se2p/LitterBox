@@ -28,6 +28,6 @@ public class VariablesBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(17, new VariablesBlockCount(), "./src/test/fixtures/metrics/allVariablesBlocks.json");
+        assertThatMetricReports(17, new VariablesBlockCount<>(), "./src/test/fixtures/metrics/allVariablesBlocks.json");
     }
 }

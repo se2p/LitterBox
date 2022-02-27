@@ -28,6 +28,6 @@ public class InterproceduralCyclomaticComplexityTest implements JsonTest {
 
     @Test
     public void testCCCalculation() throws IOException, ParsingException {
-        assertThatMetricReports(5, new InterproceduralCyclomaticComplexity(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
+        assertThatMetricReports(5, new InterproceduralCyclomaticComplexity<>(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 }

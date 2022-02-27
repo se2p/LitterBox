@@ -27,11 +27,11 @@ import java.io.IOException;
 public class StackedStatementCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new StackedStatementCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new StackedStatementCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testStackedTTS() throws IOException, ParsingException {
-        assertThatMetricReports(1, new StackedStatementCount(), "./src/test/fixtures/metrics/stackedTTS.json");
+        assertThatMetricReports(1, new StackedStatementCount<>(), "./src/test/fixtures/metrics/stackedTTS.json");
     }
 }

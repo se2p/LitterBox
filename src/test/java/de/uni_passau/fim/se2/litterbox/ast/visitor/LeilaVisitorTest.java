@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -209,11 +210,11 @@ public class LeilaVisitorTest implements JsonTest {
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(out);
+        PrintStream stream = new PrintStream(out, true, Charset.forName("UTF-8"));
         LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         Program program = getAST(path);
         visitor.visit(program);
-        return out.toString();
+        return out.toString(Charset.forName("UTF-8"));
     }
 
     @Test

@@ -28,11 +28,11 @@ public class ProcedureCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new ProcedureCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new ProcedureCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testProcCount() throws IOException, ParsingException {
-        assertThatMetricReports(2, new ProcedureCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        assertThatMetricReports(2, new ProcedureCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 }

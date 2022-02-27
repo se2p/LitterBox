@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -44,12 +45,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMotionBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/motionblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "move (10) steps" + System.lineSeparator() +
@@ -74,12 +75,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTouchingEdgeBlock() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/touchingedgeblock.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "forever " + System.lineSeparator() +
@@ -94,12 +95,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTouchingSpriteBlock() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/touchingspriteblock.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "forever " + System.lineSeparator() +
@@ -114,12 +115,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTouchingVarBlock() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/touchingvarblock.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [my variable v] to [Bell]" + System.lineSeparator() +
@@ -135,12 +136,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSetVarToVar() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/setvariabletovariable.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "set [my variable v] to (other variable)" + System.lineSeparator() +
                 "change [my variable v] by (other variable)" + System.lineSeparator() +
@@ -151,12 +152,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSetVarToBool() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleaninsetvar.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name [number or text] <boolean>" + System.lineSeparator() +
                 "set [my variable v] to <touching color [#c9dae2] ?>" + System.lineSeparator() +
@@ -177,12 +178,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSetVarToAllOtherblocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/setvartoblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
                 "set [my variable v] to (other variable)" + System.lineSeparator() +
@@ -212,12 +213,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testChangeVarToAllOtherblocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/changevartoblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "change [my variable v] by (1)" + System.lineSeparator() +
                 "change [my variable v] by (x position)" + System.lineSeparator() +
@@ -254,12 +255,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMoveWithAllOtherblocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/movewithallblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "move (10) steps" + System.lineSeparator() +
                 "move (x position) steps" + System.lineSeparator() +
@@ -301,12 +302,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMultipleCustomBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block1" + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
@@ -324,12 +325,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testLookBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/lookblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
@@ -356,12 +357,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSoundBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/soundblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "play sound (Meow v) until done" + System.lineSeparator() +
@@ -379,12 +380,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMultipleSoundBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/soundblocks2.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [loudness v] > (10)" + System.lineSeparator() +
                 "say (volume)" + System.lineSeparator() +
@@ -398,12 +399,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSensingBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "ask [What's your name?] and wait" + System.lineSeparator() +
@@ -416,12 +417,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testVariableBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/variableblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
@@ -442,12 +443,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testControlBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/controlblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "wait (1) seconds" + System.lineSeparator() +
@@ -472,12 +473,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMessageBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/messageblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when I receive [message1 v]" + System.lineSeparator() +
                 "broadcast (message1 v)" + System.lineSeparator() +
@@ -489,12 +490,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCloneBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/cloneblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when I start as a clone " + System.lineSeparator() +
                 "create clone of (myself v)" + System.lineSeparator() +
@@ -507,12 +508,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testBackdropBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/backdropblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when backdrop switches to [backdrop1 v]" + System.lineSeparator() +
                 "switch backdrop to (backdrop1 v)" + System.lineSeparator() +
@@ -529,12 +530,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTimerBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/timerblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [timer v] > (10)" + System.lineSeparator() +
                 "say (timer) for (timer) seconds" + System.lineSeparator() +
@@ -546,12 +547,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTimerBlockWithVariable() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/dataflow/timerBlock.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [timer v] > (my variable)" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
@@ -570,12 +571,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTimerBlockWithExpression() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/mathExprInTimerBlock.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
@@ -589,12 +590,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testArithmeticBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/arithmeticblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [x v] to (0)" + System.lineSeparator() +
@@ -624,12 +625,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testTouchingAllBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/touchingallblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name [number or text] <boolean>" + System.lineSeparator() +
                 "wait until <touching (my variable) ?>" + System.lineSeparator() +
@@ -677,12 +678,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testAskAllBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/askallblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name [number or text] <boolean>" + System.lineSeparator() +
                 "ask [What's your name?] and wait" + System.lineSeparator() +
@@ -728,12 +729,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testBooleanBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [x v] to (0)" + System.lineSeparator() +
@@ -758,12 +759,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testStringBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/stringblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "say (join [apple ][banana])" + System.lineSeparator() +
@@ -780,12 +781,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testAttributeBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/attributeblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "say (x position)" + System.lineSeparator() +
@@ -814,12 +815,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSensingConditionBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingconditionblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "wait until <touching (mouse-pointer v) ?>" + System.lineSeparator() +
@@ -834,12 +835,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testListAttributeBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/listattributeblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "say (foo)" + System.lineSeparator() +
@@ -855,12 +856,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCustomBlockNoArgs() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/customblock1.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define fun_noargs" + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
@@ -871,12 +872,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCustomBlockNumArg() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/customblock2.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define fun_numarg [num_param]" + System.lineSeparator() +
                 "say (num_param)" + System.lineSeparator() +
@@ -887,12 +888,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCustomBlockBooleanArg() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/customblock3.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define fun_numarg <boolean_param>" + System.lineSeparator() +
                 "say <boolean_param>" + System.lineSeparator() +
@@ -903,12 +904,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCustomBlockMultipleArgs() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/customblock4.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define fun_numarg <boolean_param> [num_param] label" + System.lineSeparator() +
                 "say <boolean_param>" + System.lineSeparator() +
@@ -920,12 +921,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testCustomBlockCall() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/customblock5.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define fun_numarg <boolean_param> [num_param] label" + System.lineSeparator() +
                 "say <boolean_param>" + System.lineSeparator() +
@@ -940,12 +941,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testPenBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/penblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "erase all" + System.lineSeparator() +
                 "stamp" + System.lineSeparator() +
@@ -965,12 +966,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testUnconnectedBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/unconnectedblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "repeat (10)" + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
@@ -982,12 +983,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testMultipleUnconnectedBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multipleunconnectedblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "show" + System.lineSeparator() +
                 "" + System.lineSeparator() +
@@ -1001,12 +1002,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testStopScriptBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/stopscriptblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "if <key (space v) pressed?> then" + System.lineSeparator() +
@@ -1021,12 +1022,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testSpriteClickedBlock() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/spriteclickedblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when this sprite clicked" + System.lineSeparator() +
                 "set [my variable v] to [message 1]" + System.lineSeparator() +
@@ -1039,12 +1040,12 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     public void testVariableBlocksInSelections() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/variablesinchoiceblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
+        PrintStream ps = new PrintStream(os, true, Charset.forName("UTF-8"));
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString();
+        String result = os.toString(Charset.forName("UTF-8"));
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "go to (my variable)" + System.lineSeparator() +

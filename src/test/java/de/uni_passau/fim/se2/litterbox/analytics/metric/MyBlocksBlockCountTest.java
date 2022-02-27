@@ -28,6 +28,6 @@ public class MyBlocksBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(4, new MyBlocksBlockCount(), "./src/test/fixtures/metrics/allMyBlocksBlocks.json");
+        assertThatMetricReports(4, new MyBlocksBlockCount<>(), "./src/test/fixtures/metrics/allMyBlocksBlocks.json");
     }
 }

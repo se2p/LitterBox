@@ -47,6 +47,11 @@ public class ActorMetadataTest {
         Assertions.assertNotNull(stage.getCommentsMetadata());
         Assertions.assertNull(stage.getTextToSpeechLanguage());
         Assertions.assertEquals(0, stage.getCurrentCostume());
+
+        Assertions.assertNotNull(actor1.getCostumes());
+        Assertions.assertNotNull(actor1.getSounds());
+        Assertions.assertNotNull(actor1.getCommentsMetadata());
+        Assertions.assertEquals(0, actor1.getCurrentCostume());
     }
 }
 

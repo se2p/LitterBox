@@ -8,7 +8,6 @@ public class ProgramRelation {
     private String m_Target;
     private String m_HashedPath;
     private String m_Path;
-    private List<String> result;
     public static Function<String, String> s_Hasher = s -> Integer.toString(s.hashCode());
 
     public ProgramRelation(String sourceName, String targetName, String path) {

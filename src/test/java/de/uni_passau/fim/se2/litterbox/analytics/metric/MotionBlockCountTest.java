@@ -28,6 +28,6 @@ public class MotionBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(18, new MotionBlockCount(), "./src/test/fixtures/metrics/allMotionBlocks.json");
+        assertThatMetricReports(18, new MotionBlockCount<>(), "./src/test/fixtures/metrics/allMotionBlocks.json");
     }
 }

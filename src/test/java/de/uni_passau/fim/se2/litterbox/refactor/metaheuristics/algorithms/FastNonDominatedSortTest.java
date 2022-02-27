@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 class FastNonDominatedSortTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {
         MinimizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1);
@@ -60,6 +61,7 @@ class FastNonDominatedSortTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testDominationCheck() {
         MaximizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfHelloBlocks.class);
         MinimizingFitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
@@ -91,6 +93,7 @@ class FastNonDominatedSortTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testFastNonDominatingSort() {
         RefactorSequence c1 = mock(RefactorSequence.class);
         RefactorSequence c2 = mock(RefactorSequence.class);
@@ -119,7 +122,7 @@ class FastNonDominatedSortTest {
         when(dominance.test(c4, c2)).thenReturn(true);
         when(dominance.test(c4, c3)).thenReturn(false);
         when(dominance.test(c4, c4)).thenReturn(false);
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort(Collections.emptyList(), dominance);
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(Collections.emptyList(), dominance);
 
         List<List<RefactorSequence>> fronts = fastNonDominatedSort.fastNonDominatedSort(solutions);
         assertEquals(2, fronts.size());

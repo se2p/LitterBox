@@ -28,26 +28,26 @@ public class ScriptCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new ScriptCount(), "./src/test/fixtures/emptyProject.json");
+        assertThatMetricReports(0, new ScriptCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEmptySprites() throws IOException, ParsingException {
-        assertThatMetricReports(0, new ScriptCount(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        assertThatMetricReports(0, new ScriptCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test
     public void testNonEmptyScripts() throws IOException, ParsingException {
-        assertThatMetricReports(2, new ScriptCount(), "./src/test/fixtures/weightedMethod.json");
+        assertThatMetricReports(2, new ScriptCount<>(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testLooseScript() throws IOException, ParsingException {
-        assertThatMetricReports(2, new ScriptCount(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
+        assertThatMetricReports(2, new ScriptCount<>(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        assertThatMetricReports(3, new ScriptCount(), "./src/test/fixtures/smells/deadCode.json");
+        assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/smells/deadCode.json");
     }
 }

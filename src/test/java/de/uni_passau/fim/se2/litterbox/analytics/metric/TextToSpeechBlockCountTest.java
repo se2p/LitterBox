@@ -28,11 +28,11 @@ public class TextToSpeechBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(3, new TextToSpeechBlockCount(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
+        assertThatMetricReports(3, new TextToSpeechBlockCount<>(), "./src/test/fixtures/stmtParser/allTextToSpeech.json");
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        assertThatMetricReports(2, new TextToSpeechBlockCount(), "./src/test/fixtures/metrics/penAndTTS.json");
+        assertThatMetricReports(2, new TextToSpeechBlockCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

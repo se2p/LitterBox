@@ -52,7 +52,6 @@ public class MergeScriptsAfterUntilTest implements JsonTest {
         StmtList stmtList1 = script1.getStmtList();
         StmtList stmtList2 = script2.getStmtList();
         UntilStmt untilStmt = (UntilStmt) stmtList1.getStatement(0);
-        WaitUntil waitUntilStmt = (WaitUntil) stmtList2.getStatement(0);
 
         MergeScriptsAfterUntil refactoring = new MergeScriptsAfterUntil(script1, script2, untilStmt);
         Program refactored = refactoring.apply(program);

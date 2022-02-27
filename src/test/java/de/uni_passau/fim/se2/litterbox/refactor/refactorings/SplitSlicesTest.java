@@ -80,7 +80,6 @@ public class SplitSlicesTest implements JsonTest {
     public void testSplitSliceRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/sliceable.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
-        StmtList stmtList = script.getStmtList();
 
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);

@@ -61,12 +61,12 @@ public interface JsonTest {
         Assertions.assertEquals(expectedIssues, reports.size());
     }
 
-    default void assertThatMetricReports(double expectedIssues, MetricExtractor finder, String filePath) throws IOException, ParsingException {
+    default void assertThatMetricReports(double expectedIssues, MetricExtractor<Program> finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         Assertions.assertEquals(expectedIssues, finder.calculateMetric(prog));
     }
 
-    default void assertThatMetricReportsWithin(double expectedIssues, double epsilon, MetricExtractor finder, String filePath) throws IOException, ParsingException {
+    default void assertThatMetricReportsWithin(double expectedIssues, double epsilon, MetricExtractor<Program> finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         assertThat(finder.calculateMetric(prog)).isWithin(epsilon).of(expectedIssues);
     }

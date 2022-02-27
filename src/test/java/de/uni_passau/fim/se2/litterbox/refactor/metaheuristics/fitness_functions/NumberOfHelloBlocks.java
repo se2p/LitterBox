@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 public class NumberOfHelloBlocks implements MaximizingFitnessFunction<RefactorSequence> {
 
-    private final SayHelloBlockCount helloCounter = new SayHelloBlockCount();
+    private final SayHelloBlockCount<Program> helloCounter = new SayHelloBlockCount<>();
 
     /**
      * <p>
