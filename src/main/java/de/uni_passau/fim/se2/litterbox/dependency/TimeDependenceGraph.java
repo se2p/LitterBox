@@ -83,7 +83,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         }
     }
 
-    private class DelayTransferFunction implements TransferFunction<Delay> {
+    private static class DelayTransferFunction implements TransferFunction<Delay> {
 
         @Override
         public Set<Delay> apply(CFGNode node, Set<Delay> inFacts) {
