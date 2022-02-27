@@ -37,7 +37,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -147,18 +146,15 @@ public class CSVRefactorReportGenerator {
     }
 
     protected CSVPrinter getNewPrinter(String name, String refactoredPath) throws IOException {
-        File folder;
         Path filePath;
         Path namePath = Paths.get(name);
         if (namePath.isAbsolute()) {
             filePath = namePath;
-            folder = new File(filePath.getParent().toString());
         } else {
             filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
-            folder = new File(refactoredPath);
         }
 
-        if (!folder.exists()) {
+        if (!Files.exists(filePath.getParent())) {
             Files.createDirectory(filePath.getParent());
         }
 
