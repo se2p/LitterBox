@@ -26,6 +26,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,13 +43,13 @@ public class CommandlineTest {
     @Test
     public void testInvalidOptionPrintsAnError() {
         Main.parseCommandLine(new String[]{"--optionthatdefinitelydoesntexist"});
-        assertThat(mockErr.toString()).isNotEmpty();
+        assertThat(mockErr.toString(Charset.forName("UTF-8"))).isNotEmpty();
     }
 
     @Test
     public void testPrintHelp() {
         Main.parseCommandLine(new String[]{"--output", "foobar"});
-        assertThat(mockOut.toString()).contains("usage: LitterBox");
+        assertThat(mockOut.toString(Charset.forName("UTF-8"))).contains("usage: LitterBox");
     }
 
     @Test
@@ -63,13 +64,13 @@ public class CommandlineTest {
     @Test
     public void testLeilaWithoutOutput() {
         Main.parseCommandLine(new String[] {"-leila"});
-        assertThat(mockErr.toString()).contains("Invalid option: Output path option 'output' required");
+        assertThat(mockErr.toString(Charset.forName("UTF-8"))).contains("Invalid option: Output path option 'output' required");
     }
 
     @Test
     public void testLeilaWithoutPath() {
         Main.parseCommandLine(new String[] {"-leila", "--output", "foobar"});
-        assertThat(mockErr.toString()).contains("Input path option 'path' required");
+        assertThat(mockErr.toString(Charset.forName("UTF-8"))).contains("Input path option 'path' required");
     }
 
     @Test
@@ -95,7 +96,7 @@ public class CommandlineTest {
         mockErr.reset();
         mockOut.reset();
 
-        System.setOut(new PrintStream(mockOut));
-        System.setErr(new PrintStream(mockErr));
+        System.setOut(new PrintStream(mockOut, true, Charset.forName("UTF-8")));
+        System.setErr(new PrintStream(mockErr, true, Charset.forName("UTF-8")));
     }
 }
