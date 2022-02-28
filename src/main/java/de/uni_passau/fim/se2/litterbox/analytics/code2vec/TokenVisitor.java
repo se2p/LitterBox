@@ -26,7 +26,7 @@ public class TokenVisitor implements ScratchVisitor {
     private String token = "";
 
     public String getToken() {
-        return StringUtils.deleteWhitespace(token);
+        return StringUtils.deleteWhitespace(token).replace(",", "");
     }
 
     @Override
