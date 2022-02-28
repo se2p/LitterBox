@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -21,5 +22,21 @@ public class TokenVisitorTest {
         TokenVisitor visitor = new TokenVisitor();
         literal.accept(visitor);
         assertThat(visitor.getToken()).isEqualTo("3.14");
+    }
+
+    @Test
+    public void testStringWithWhitespace() {
+        StringLiteral literal = new StringLiteral("hello\t world \n");
+        TokenVisitor visitor = new TokenVisitor();
+        literal.accept(visitor);
+        assertThat(visitor.getToken()).isEqualTo("helloworld");
+    }
+
+    @Test
+    public void testStringWithComma() {
+        StringLiteral literal = new StringLiteral("a,b,c");
+        TokenVisitor visitor = new TokenVisitor();
+        literal.accept(visitor);
+        assertThat(visitor.getToken()).isEqualTo("abc");
     }
 }
