@@ -48,6 +48,9 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
         String[] scriptBlocks = scriptString.split("\r\n");
+        if (scriptBlocks.length == 0) {
+            return 0.0;
+        }
         for (String scriptBlock : scriptBlocks) {
             scriptWidths.add(scriptBlock.length());
         }
