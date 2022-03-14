@@ -1,13 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +15,7 @@ class ProgramRelationTest implements JsonTest {
         ProgramRelation programRelation = new ProgramRelation("GreenFlag", "Hello!",
                 "(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral)");
         assertEquals(NO_HASH_OUTPUT, programRelation.toString());
-        ProgramRelation.s_Hasher = (s) -> Integer.toString(s.hashCode());
+        ProgramRelation.sHasher = (s) -> Integer.toString(s.hashCode());
     }
 
     @Test

@@ -12,10 +12,14 @@ import java.util.logging.Logger;
 public class Code2VecAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
+    private final boolean includeStage;
+    private final boolean wholeProgram;
 
-    public Code2VecAnalyzer(String input, String output, int maxPathLength, boolean delete) {
+    public Code2VecAnalyzer(String input, String output, int maxPathLength, boolean includeStage, boolean wholeProgram, boolean delete) {
         super(input, output, delete);
         this.maxPathLength = maxPathLength;
+        this.includeStage = includeStage;
+        this.wholeProgram = wholeProgram;
     }
 
     @Override
@@ -26,7 +30,7 @@ public class Code2VecAnalyzer extends Analyzer {
             return;
         }
 
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength);
+        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram);
         String code2VecInput = generatePathTask.createContextForCode2Vec();
 
         if (code2VecInput.length() > 0) {

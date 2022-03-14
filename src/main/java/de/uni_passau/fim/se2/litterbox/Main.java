@@ -77,6 +77,10 @@ public final class Main {
     private static final String NOHASH_SHORT = "nh";
     private static final String MAXPATHLENGTH = "maxpathlength";
     private static final String MAXPATHLENGTH_SHORT = "plength";
+    private static final String INCLUDE_STAGE = "includestage";
+    private static final String INCLUDE_STAGE_SHORT = "incstage";
+    private static final String WHOLE_PROGRAM = "wholeprogram";
+    private static final String WHOLE_PROGRAM_SHORT = "whpro";
 
     private Main() {
     }
@@ -135,6 +139,8 @@ public final class Main {
         //parameters for Code2Vec
         options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
         options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
+        options.addOption(INCLUDE_STAGE_SHORT, INCLUDE_STAGE, false, "generate paths for the stage sprite");
+        options.addOption(WHOLE_PROGRAM_SHORT, WHOLE_PROGRAM, false, "generate paths between terminals across the whole program instead of per sprite");
 
         return options;
     }
@@ -279,8 +285,12 @@ public final class Main {
             }
         }
 
+        boolean includeStage = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
+        boolean wholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
+        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
+
         String input = cmd.getOptionValue(PROJECTPATH);
-        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, includeStage, wholeProgram, deleteAfterwards);
         runAnalysis(cmd, analyzer);
     }
 
