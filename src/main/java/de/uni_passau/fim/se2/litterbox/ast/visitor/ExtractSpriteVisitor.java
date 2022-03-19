@@ -6,21 +6,29 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import java.util.*;
 
 public class ExtractSpriteVisitor implements ScratchVisitor {
+    private final Map<ActorDefinition, List<ASTNode>> leafsMap = new HashMap<>();
+    private final boolean includeStage;
 
-    private Map<ASTNode, List<ASTNode>> leafsMap = new HashMap<>();
+    public ExtractSpriteVisitor(boolean includeStage) {
+        this.includeStage = includeStage;
+    }
 
-    public Map<ASTNode, List<ASTNode>> getLeafsCollector() {
+    public Map<ActorDefinition, List<ASTNode>> getLeafsCollector() {
         return leafsMap;
     }
 
     @Override
     public void visit(ActorDefinition node) {
-        if (node.getActorType().isSprite()) {
+        if (shouldActorBeIncluded(node)) {
             List<ASTNode> leafsCollector = new LinkedList<>();
 
             traverseLeafs(node.getScripts(), leafsCollector);
             leafsMap.put(node, leafsCollector);
         }
+    }
+
+    private boolean shouldActorBeIncluded(ActorDefinition actor) {
+        return actor.isSprite() || (includeStage && actor.isStage());
     }
 
     private void traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {

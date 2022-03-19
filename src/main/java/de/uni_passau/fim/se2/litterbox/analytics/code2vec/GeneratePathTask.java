@@ -10,15 +10,19 @@ public class GeneratePathTask {
 
     private final Program program;
     private final int maxPathLength;
+    private final boolean includeStage;
+    private final boolean wholeProgram;
 
-    public GeneratePathTask(Program program, int maxPathLength) {
+    public GeneratePathTask(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
         this.program = program;
         this.maxPathLength = maxPathLength;
+        this.includeStage = includeStage;
+        this.wholeProgram = wholeProgram;
     }
 
     public String createContextForCode2Vec() {
-        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength);
-        //pathGenerator.printLeafsPerSprite();
+        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram);
+        // pathGenerator.printLeafsPerSprite();
         List<ProgramFeatures> programs = pathGenerator.generatePaths();
         return featuresToString(programs);
     }

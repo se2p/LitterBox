@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,12 +19,11 @@ class ExtractSpriteVisitorTest implements JsonTest {
     @Test
     void testVisit() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor();
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(false);
         program.accept(spriteVisitor);
-        Map<ASTNode, List<ASTNode>> leafsMap;
-        leafsMap = spriteVisitor.getLeafsCollector();
+        Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();
 
-        assertEquals(leafsMap.keySet().size(), 2);
+        assertEquals(2, leafsMap.keySet().size());
 
         ASTNode[] sprites = getSpriteArrayFromLeafsMap(leafsMap);
 
@@ -41,15 +41,28 @@ class ExtractSpriteVisitorTest implements JsonTest {
         assertEquals("Show", leafsMap.get(sprites[1]).get(2).getUniqueName());
     }
 
-    private ASTNode[] getSpriteArrayFromLeafsMap(Map<ASTNode, List<ASTNode>> leafsMap) {
+    @Test
+    void testVisitIncludeStage() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/multipleSprites.json");
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(true);
+        program.accept(spriteVisitor);
+
+        Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();
+        assertEquals(3, leafsMap.keySet().size());
+
+        Optional<ActorDefinition> stage = leafsMap.keySet().stream().filter(ActorDefinition::isStage).findFirst();
+        assertTrue(stage.isPresent());
+    }
+
+    private ASTNode[] getSpriteArrayFromLeafsMap(Map<ActorDefinition, List<ASTNode>> leafsMap) {
         ASTNode[] sprites = new ASTNode[2];
-        for (ASTNode sprite : leafsMap.keySet()) {
-            if (((ActorDefinition)sprite).getIdent().getName().equals("abby")) {
+        for (ActorDefinition sprite : leafsMap.keySet()) {
+            if (sprite.getIdent().getName().equals("abby")) {
                 sprites[0] = sprite;
-            } else if (((ActorDefinition)sprite).getIdent().getName().equals("cat")){
+            } else if (sprite.getIdent().getName().equals("cat")){
                 sprites[1] = sprite;
             } else {
-                fail("Expected were 'abby' or 'cat' but was " + ((ActorDefinition)sprite).getIdent().getName());
+                fail("Expected were 'abby' or 'cat' but was " + sprite.getIdent().getName());
             }
         }
         return sprites;

@@ -4,10 +4,16 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,15 +23,15 @@ class PathGeneratorTest implements JsonTest {
             "color", "0", "1", "forward", "front", "number", "Size", "1", "2", "log", "year"};
 
     @Test
-    public void testGeneratePaths() throws ParsingException, IOException {
+    void testGeneratePaths() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator generator = new PathGenerator(program, 8);
+        PathGenerator generator = new PathGenerator(program, 8, false, false);
         List<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
         int positionCat = 0;
         int positionAbby = 0;
         if (pathContextsPerSprite.get(0).getName().equals("cat")
-                && pathContextsPerSprite.get(1).getName().equals("abby")){
+                && pathContextsPerSprite.get(1).getName().equals("abby")) {
             positionAbby = 1;
         } else if (pathContextsPerSprite.get(1).getName().equals("cat")
                 && pathContextsPerSprite.get(0).getName().equals("abby")) {
@@ -54,10 +60,63 @@ class PathGeneratorTest implements JsonTest {
     }
 
     @Test
-    public void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
+    void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
-        PathGenerator generator = new PathGenerator(program, 8);
+        PathGenerator generator = new PathGenerator(program, 8, false, false);
         List<String> tokens = generator.getAllLeafs();
         assertArrayEquals(expectedLeafs, tokens.toArray());
+    }
+
+    @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
+    @ValueSource(booleans = {true, false})
+    void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/multipleSprites.json");
+        PathGenerator generator = new PathGenerator(program, 8, includeStage, true);
+
+        List<ProgramFeatures> pathContexts = generator.generatePaths();
+        assertEquals(1, pathContexts.size());
+        assertEquals("program", pathContexts.get(0).getName());
+
+        int expectedPathCount;
+        List<String> expectedPaths = new ArrayList<>(List.of(
+                "39,625791294,Hi!",
+                "39,1493538624,Show",
+                "Hi!,-547448667,Show",
+                "GreenFlag,-2069003229,Hello!"
+        ));
+        if (includeStage) {
+            expectedPathCount = 6;
+            expectedPaths.add("GreenFlag,272321927,GreenFlag");
+            expectedPaths.add("GreenFlag,1809747443,10");
+        } else {
+            expectedPathCount = 4;
+        }
+
+        List<String> actualPaths = pathContexts.get(0).getFeatures()
+                .stream().map(ProgramRelation::toString).collect(Collectors.toList());
+        assertEquals(expectedPathCount, actualPaths.size());
+
+        for (String expectedPath : expectedPaths) {
+            assertTrue(actualPaths.contains(expectedPath), expectedPath);
+        }
+    }
+
+    @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}, wholeProgram={1}")
+    @MethodSource("code2vecOptions")
+    void testGeneratePathsEmptyProgram(boolean includeStage, boolean wholeProgram) throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+
+        PathGenerator generator = new PathGenerator(program, 8, includeStage, wholeProgram);
+        List<ProgramFeatures> features = generator.generatePaths();
+        assertTrue(features.isEmpty());
+    }
+
+    private static Stream<Arguments> code2vecOptions() {
+        return Stream.of(
+                Arguments.arguments(true, true),
+                Arguments.arguments(true, false),
+                Arguments.arguments(false, true),
+                Arguments.arguments(false, false)
+        );
     }
 }
