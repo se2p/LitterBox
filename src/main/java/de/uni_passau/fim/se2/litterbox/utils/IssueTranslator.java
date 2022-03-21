@@ -42,7 +42,9 @@ public final class IssueTranslator {
         LAYER("layer"),
         VOLUME("volume"),
         SOUND_EFFECT("sound_effect"),
-        GRAPHIC_EFFECT("graphic_effect");
+        GRAPHIC_EFFECT("graphic_effect"),
+        BACKDROP("backdrop"),
+        TIMER("timer");
 
         private final String key;
 
