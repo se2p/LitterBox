@@ -25,7 +25,12 @@ public class UnnecessaryIf extends AbstractIssueFinder {
 
                 if (lastList != null) {
                     if (lastList.equals(((IfThenStmt) s).getThenStmts())) {
-                        MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentScript, Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                        MultiBlockIssue issue;
+                        if (currentScript != null) {
+                            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentScript, Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                        } else {
+                            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentProcedure, Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                        }
                         addIssue(issue);
                     }
                 }
