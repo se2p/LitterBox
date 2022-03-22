@@ -119,6 +119,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
             }
         }
         prevIdent = node.getIdentifier();
+        prevNode = node;
     }
 
     @Override
@@ -129,6 +130,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
             }
         }
         prevIdent = node.getIdentifier();
+        prevNode = node;
     }
 
     @Override
