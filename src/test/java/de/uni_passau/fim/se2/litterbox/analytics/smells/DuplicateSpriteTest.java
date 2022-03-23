@@ -33,7 +33,12 @@ public class DuplicateSpriteTest implements JsonTest {
 
     @Test
     public void testDuplicateSprite() throws IOException, ParsingException {
-        assertThatFinderReports(3, new DuplicateSprite(), "./src/test/fixtures/smells/duplicateSprite.json");
+        assertThatFinderReports(2, new DuplicateSprite(), "./src/test/fixtures/smells/duplicateSprite.json");
+    }
+
+    @Test
+    public void testDuplicateSpriteMultiple() throws IOException, ParsingException {
+        assertThatFinderReports(3, new DuplicateSprite(), "./src/test/fixtures/smells/duplicateSpriteMultiple.json");
     }
 
     @Test
@@ -63,8 +68,8 @@ public class DuplicateSpriteTest implements JsonTest {
 
     @Test
     public void test2Clones() throws IOException, ParsingException {
-        // 1-2, 1-3, 2-3
-        assertThatFinderReports(3, new DuplicateSprite(), "./src/test/fixtures/smells/duplicated3Sprites.json");
+        // 1-2, 1-3 (Would be redundant: 2-3)
+        assertThatFinderReports(2, new DuplicateSprite(), "./src/test/fixtures/smells/duplicated3Sprites.json");
     }
 
     @Test

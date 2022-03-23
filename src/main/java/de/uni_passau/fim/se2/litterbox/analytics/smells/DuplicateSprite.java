@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.util.List;
+import java.util.*;
 
 public class DuplicateSprite extends AbstractIssueFinder {
 
@@ -34,19 +34,20 @@ public class DuplicateSprite extends AbstractIssueFinder {
 
     @Override
     public void visit(Program node) {
-        List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
-        for (int i = 0; i < actors.size() - 1; i++) {
-            ActorDefinition actor = actors.get(i);
-            for (int j = i + 1; j < actors.size(); j++) {
-                ActorDefinition other = actors.get(j);
-                //empty sprite shouldn't be checked
-                if (!actor.getScripts().getScriptList().isEmpty() || !actor.getProcedureDefinitionList().getList().isEmpty()) {
-
-                    if (areActorsIdentical(actor, other)) {
-                        currentActor = actor;
-                        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-                        addIssueWithLooseComment();
-                    }
+        Queue<ActorDefinition> actorQueue = new LinkedList<>(node.getActorDefinitionList().getDefinitions());
+        while (!actorQueue.isEmpty()) {
+            ActorDefinition actor = actorQueue.poll();
+            if (actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty()) {
+                continue;
+            }
+            Iterator<ActorDefinition> iterator = actorQueue.iterator();
+            currentActor = actor;
+            procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+            while (iterator.hasNext()) {
+                ActorDefinition other = iterator.next();
+                if (areActorsIdentical(actor, other)) {
+                    addIssueWithLooseComment();
+                    iterator.remove();
                 }
             }
         }
