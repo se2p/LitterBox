@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -28,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Objects;
 
-public class RotationStyle extends AbstractNode implements ASTLeaf {
+public class RotationStyle extends AbstractNode implements FixedNodeOption {
 
     public enum RotationStyleType {
         dont_rotate("don't rotate"),

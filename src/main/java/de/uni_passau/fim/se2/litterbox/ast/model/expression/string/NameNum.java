@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -29,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Objects;
 
-public class NameNum extends AbstractNode implements ASTLeaf {
+public class NameNum extends AbstractNode implements FixedNodeOption {
 
     public enum NameNumType {
         NAME("name"), NUMBER("number");
