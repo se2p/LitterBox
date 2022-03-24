@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -75,9 +74,9 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
                 .forEach(issue -> {
-                            JsonNode childNode = mapper.createObjectNode();
-                            ((ObjectNode) childNode).put("id", issue.getId());
-                            ((ObjectNode) childNode).put("distance", theIssue.getDistanceTo(issue));
+                            ObjectNode childNode = mapper.createObjectNode();
+                            childNode.put("id", issue.getId());
+                            childNode.put("distance", theIssue.getDistanceTo(issue));
                             jsonNode.add(childNode);
                         }
                 );
@@ -94,46 +93,46 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         rootNode.set("metrics", metricNode);
 
         for (Issue issue : issues) {
-            JsonNode childNode = mapper.createObjectNode();
-            ((ObjectNode) childNode).put("id", issue.getId());
-            ((ObjectNode) childNode).put("finder", issue.getFinderName());
-            ((ObjectNode) childNode).put("name", issue.getTranslatedFinderName());
-            ((ObjectNode) childNode).put("type", issue.getIssueType().toString());
-            ((ObjectNode) childNode).put("severity", issue.getSeverity().getSeverityLevel());
-            ((ObjectNode) childNode).put("sprite", issue.getActorName());
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.put("id", issue.getId());
+            childNode.put("finder", issue.getFinderName());
+            childNode.put("name", issue.getTranslatedFinderName());
+            childNode.put("type", issue.getIssueType().toString());
+            childNode.put("severity", issue.getSeverity().getSeverityLevel());
+            childNode.put("sprite", issue.getActorName());
 
-            ArrayNode duplicateNode = ((ObjectNode) childNode).putArray("duplicate-of");
+            ArrayNode duplicateNode = childNode.putArray("duplicate-of");
             addDuplicateIDs(duplicateNode, issue, issues);
 
-            ArrayNode subsumedNode  = ((ObjectNode) childNode).putArray("subsumed-by");
+            ArrayNode subsumedNode  = childNode.putArray("subsumed-by");
             addSubsumingIssueIDs(subsumedNode, issue, issues);
 
-            ArrayNode coupledNode  = ((ObjectNode) childNode).putArray("coupled-to");
+            ArrayNode coupledNode  = childNode.putArray("coupled-to");
             addCoupledIssueIDs(coupledNode, issue, issues);
 
-            ArrayNode similarNode  = ((ObjectNode) childNode).putArray("similar-to");
+            ArrayNode similarNode  = childNode.putArray("similar-to");
             addSimilarIssueIDs(mapper, similarNode, issue, issues);
 
-            ((ObjectNode) childNode).put("hint", issue.getHint());
-            ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
+            childNode.put("hint", issue.getHint());
+            ArrayNode arrayNode = childNode.putArray("costumes");
             ActorMetadata actorMetadata = issue.getActor().getActorMetadata();
             for (ImageMetadata image : actorMetadata.getCostumes().getList()) {
                 arrayNode.add(image.getAssetId());
             }
-            ((ObjectNode) childNode).put("currentCostume", actorMetadata.getCurrentCostume());
+            childNode.put("currentCostume", actorMetadata.getCurrentCostume());
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
             if (location == null) {
                 String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
                         + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
-                ((ObjectNode) childNode).put("code", emptyScript);
+                childNode.put("code", emptyScript);
             } else {
                 ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
                 blockVisitor.begin();
                 location.accept(blockVisitor);
                 blockVisitor.end();
                 String scratchBlockCode = blockVisitor.getScratchBlocks();
-                ((ObjectNode) childNode).put("code", scratchBlockCode);
+                childNode.put("code", scratchBlockCode);
             }
             issueNode.add(childNode);
         }

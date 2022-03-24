@@ -58,13 +58,37 @@ public class CloneBlock {
         return positions2.get(0);
     }
 
+    public boolean contains(CloneBlock other) {
+        return positions1.containsAll(other.positions1) && positions2.containsAll(other.positions2);
+    }
+
+    public boolean hasOverlap() {
+        List<Integer> positions = new ArrayList<>(positions1);
+        positions.retainAll(positions2);
+        return !positions.isEmpty();
+    }
+
+    public boolean overlaps(CloneBlock other, boolean selfComparison) {
+        if (selfComparison) {
+            return hasOverlap(positions1, other.positions1) || hasOverlap(positions2, other.positions2);
+        } else {
+            return hasOverlap(positions1, other.positions1) && hasOverlap(positions2, other.positions2);
+        }
+    }
+
+    private boolean hasOverlap(List<Integer> positions1, List<Integer> positions2) {
+        List<Integer> positions = new ArrayList<>(positions1);
+        positions.retainAll(positions2);
+        return !positions.isEmpty();
+    }
+
     public boolean extendsWithGap(CloneBlock other, int gapSize) {
         int diffX = getFirstX() - other.getLastX() - 1;
         if (diffX < 0 || diffX > gapSize) {
             return false;
         }
         int diffY = getFirstY() - other.getLastY() - 1;
-        if (Math.abs(diffY) > gapSize) {
+        if (diffY < 0 || Math.abs(diffY) > gapSize) {
             return false;
         }
 

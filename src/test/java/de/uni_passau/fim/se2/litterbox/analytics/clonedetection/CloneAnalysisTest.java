@@ -251,7 +251,7 @@ public class CloneAnalysisTest implements JsonTest {
 
         cloneAnalysis = new CloneAnalysis(2, 2);
         clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
-        assertEquals(2, clones.size());
+        assertEquals(1, clones.size());
     }
 
     @Test
