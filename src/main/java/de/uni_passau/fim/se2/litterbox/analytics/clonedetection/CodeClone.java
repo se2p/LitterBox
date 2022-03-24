@@ -33,11 +33,11 @@ public class CodeClone {
 
     private CloneType type = CloneType.TYPE1;
 
-    private List<Stmt> copy1 = new ArrayList<>();
-    private List<Stmt> copy2 = new ArrayList<>();
+    private final List<Stmt> copy1 = new ArrayList<>();
+    private final List<Stmt> copy2 = new ArrayList<>();
 
-    private ASTNode firstRoot;
-    private ASTNode secondRoot;
+    private final ASTNode firstRoot;
+    private final ASTNode secondRoot;
 
     public CodeClone(ASTNode root1, ASTNode root2) {
         this.firstRoot = root1;

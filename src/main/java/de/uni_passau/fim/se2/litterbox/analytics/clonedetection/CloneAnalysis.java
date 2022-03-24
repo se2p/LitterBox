@@ -122,7 +122,7 @@ public class CloneAnalysis {
     private Set<CodeClone> getAllClonesType12(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType, boolean selfComparison) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
-        List<CloneBlock> blocks = getAllBlocks(similarityMatrix);
+        List<CloneBlock> blocks = getAllBlocks(similarityMatrix, minSize, selfComparison);
         for (CloneBlock block : blocks) {
 
             // If a script is compared against itself, skip the trivial type 1 clone
@@ -131,21 +131,16 @@ public class CloneAnalysis {
             }
 
             // Type 1/2
-            if (block.size() >= minSize) {
-                CodeClone clone = new CodeClone(root1, root2);
-                block.fillClone(clone, statements1, statements2);
-                if (selfComparison && hasOverlap(clone.getFirstStatements(), clone.getSecondStatements())) {
-                    continue;
+            CodeClone clone = new CodeClone(root1, root2);
+            block.fillClone(clone, statements1, statements2);
+            if (cloneType == CodeClone.CloneType.TYPE1) {
+                if (clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                    insertClone(clones, clone);
                 }
-                if (cloneType == CodeClone.CloneType.TYPE1) {
-                    if (clone.getFirstStatements().equals(clone.getSecondStatements())) {
-                        insertClone(clones, clone);
-                    }
-                } else {
-                    if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
-                        clone.setType(CodeClone.CloneType.TYPE2);
-                        insertClone(clones, clone);
-                    }
+            } else {
+                if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                    clone.setType(CodeClone.CloneType.TYPE2);
+                    insertClone(clones, clone);
                 }
             }
 
@@ -158,23 +153,15 @@ public class CloneAnalysis {
     private Set<CodeClone> getAllClonesType3(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, boolean selfComparison) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
-        List<CloneBlock> blocks = getAllBlocks(similarityMatrix);
+        List<CloneBlock> blocks = getAllBlocks(similarityMatrix, MIN_SIZE_NEXT_TO_GAP, selfComparison);
         for (int i = 0; i < blocks.size() - 1; i++) {
             CloneBlock block = blocks.get(i);
-
-            // Type 3
-            if (block.size() < minSizeNextToGap) {
-                continue;
-            }
 
             for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks.subList(i + 1, blocks.size()))) {
                 CodeClone clone = new CodeClone(root1, root2);
                 clone.setType(CodeClone.CloneType.TYPE3);
                 block.fillClone(clone, statements1, statements2);
                 otherBlock.fillClone(clone, statements1, statements2);
-                if (selfComparison && hasOverlap(clone.getFirstStatements(), clone.getSecondStatements())) {
-                    continue;
-                }
                 if (clone.size() >= minSize) {
                     insertClone(clones, clone);
                 }
@@ -223,7 +210,7 @@ public class CloneAnalysis {
         return cloneBlocks;
     }
 
-    private List<CloneBlock> getAllBlocks(boolean[][] similarityMatrix) {
+    private List<CloneBlock> getAllBlocks(boolean[][] similarityMatrix, int minSize, boolean selfComparison) {
         List<CloneBlock> cloneBlocks = new ArrayList<>();
         int width = similarityMatrix.length;
         if (width == 0) {
@@ -240,7 +227,11 @@ public class CloneAnalysis {
                     continue;
                 }
                 CloneBlock block = getBlockAt(similarityMatrix, i, j);
-                if (block.size() >= MIN_SIZE_NEXT_TO_GAP) {
+                if (block.size() >= minSize
+                        && !(selfComparison && block.hasOverlap())
+                        // TODO: Overlap when self comparison is different than overlap across scripts
+                        && (cloneBlocks.stream().noneMatch(otherBlock -> otherBlock.size() != width && otherBlock.overlaps(block, selfComparison)))
+                ) {
                     cloneBlocks.add(block);
                     block.fillPositionMap(coveredFields);
                 }

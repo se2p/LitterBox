@@ -103,7 +103,7 @@ public class ClonedCodeType3Test implements JsonTest {
         assertThat(issues2.get(0).isSubsumedBy(issues3.get(1))).isFalse();
         assertThat(issues2.get(1).isSubsumedBy(issues3.get(1))).isFalse();
 
-        assertThat(issues3.get(0).isSubsumedBy(issues2.get(0))).isTrue();
+        assertThat(issues3.get(0).isSubsumedBy(issues2.get(0))).isFalse();
         assertThat(issues3.get(1).isSubsumedBy(issues2.get(0))).isFalse();
         assertThat(issues3.get(0).isSubsumedBy(issues2.get(1))).isFalse();
         assertThat(issues3.get(1).isSubsumedBy(issues2.get(1))).isFalse();
