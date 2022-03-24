@@ -229,7 +229,6 @@ public class CloneAnalysis {
                 CloneBlock block = getBlockAt(similarityMatrix, i, j);
                 if (block.size() >= minSize
                         && !(selfComparison && block.hasOverlap())
-                        // TODO: Overlap when self comparison is different than overlap across scripts
                         && (cloneBlocks.stream().noneMatch(otherBlock -> otherBlock.size() != width && otherBlock.overlaps(block, selfComparison)))
                 ) {
                     cloneBlocks.add(block);
