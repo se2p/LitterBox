@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -241,8 +240,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     @Override
-    public double getDistanceTo(Issue first, Issue other) {
-        double distance = 0;
+    public int getDistanceTo(Issue first, Issue other) {
 
         //if two issues are duplicates of one another, they can be considered the same
         if (!first.isDuplicateOf(other)) {
@@ -251,29 +249,61 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
                 ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
 
-                //if a different script or procedure has the issue, distance is increased by 1
+                //if a different script or procedure has the issue, distance is increased
                 if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
-                    distance += 1;
+
                     ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
                     ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
-
-                    //if the scripts are different after normalisation their pq-distance is added to the distance
-                    if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
-                        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
-                        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
-                        distance += profile1.calculateDistanceTo(profile2);
+                    if (first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are equal and location is equal
+                            return 3;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are equal and normalised location is equal
+                            return 4;
+                        } else {
+                            //scripts are equal and location is different
+                            return 5;
+                        }
+                    } else if (firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are normalised equal and location is equal
+                            return 6;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are normalised equal and normalised location is equal
+                            return 7;
+                        } else {
+                            //scripts are normalised equal and location is different
+                            return 8;
+                        }
+                    } else {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are different and location is equal
+                            return 9;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are different and normalised location is equal
+                            return 10;
+                        } else {
+                            //scripts are different and location is different
+                            return 11;
+                        }
                     }
-                }
-                //if the code location is different the distance is increased by 1 to reflect this
-                if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
-                    distance += 1;
+                } else {
+                    if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                        //same script but code location is normalised the same
+                        return 1;
+                    } else {
+                        //same script but code location is normalised not the same
+                        return 2;
+                    }
                 }
             } else {
                 //Issues don't have location so distance has to be very high
-                distance = 5;
+                return 12;
             }
         }
-        return distance;
+        //the issues are duplicates and can be considered the same
+        return 0;
     }
 
     @Override
