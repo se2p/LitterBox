@@ -87,8 +87,7 @@ public class MissingLoopSensingTest implements JsonTest {
         // scripts are different, location is equals
         PQGramProfile profile0 = new PQGramProfile(reports.get(0).getScriptOrProcedureDefinition());
         PQGramProfile profile2 = new PQGramProfile(reports.get(2).getScriptOrProcedureDefinition());
-        double distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile2);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(2)));
+        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(2)));
 
         //Location equals other location in same script
         Assertions.assertSame(reports.get(4).getScriptOrProcedureDefinition(), reports.get(5).getScriptOrProcedureDefinition());
@@ -97,17 +96,15 @@ public class MissingLoopSensingTest implements JsonTest {
 
         // scripts are different, location is equals
         PQGramProfile profile4 = new PQGramProfile(reports.get(4).getScriptOrProcedureDefinition());
-        distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile4);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(4)));
+        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(4)));
 
         // scripts are different, location is different
         PQGramProfile profile3 = new PQGramProfile(reports.get(3).getScriptOrProcedureDefinition());
-        distanceSameLocationOtherScript = 1 + 1 + profile0.calculateDistanceTo(profile3);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(3)));
+        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(3)));
 
         //Location not equals other location in same script
         Assertions.assertSame(reports.get(6).getScriptOrProcedureDefinition(), reports.get(7).getScriptOrProcedureDefinition());
         Assertions.assertNotEquals(reports.get(6).getCodeLocation(), reports.get(7).getCodeLocation());
-        Assertions.assertEquals(1, reports.get(6).getDistanceTo(reports.get(7)));
+        Assertions.assertEquals(2, reports.get(6).getDistanceTo(reports.get(7)));
     }
 }
