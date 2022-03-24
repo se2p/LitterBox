@@ -100,7 +100,7 @@ public class MissingLoopSensingTest implements JsonTest {
 
         // scripts are different, location is different
         PQGramProfile profile3 = new PQGramProfile(reports.get(3).getScriptOrProcedureDefinition());
-        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(3)));
+        Assertions.assertEquals(11, reports.get(0).getDistanceTo(reports.get(3)));
 
         //Location not equals other location in same script
         Assertions.assertSame(reports.get(6).getScriptOrProcedureDefinition(), reports.get(7).getScriptOrProcedureDefinition());

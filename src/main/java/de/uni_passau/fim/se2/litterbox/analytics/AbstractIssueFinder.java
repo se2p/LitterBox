@@ -256,29 +256,37 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                     ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
                     if (first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
                         if (first.getCodeLocation().equals(other.getCodeLocation())) {
-                            //scripts are equal, and location is equal
+                            //scripts are equal and location is equal
                             return 3;
                         } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
-                            //scripts are equal, and normalised location is equal
+                            //scripts are equal and normalised location is equal
                             return 4;
                         } else {
-                            //scripts are equal, and location is different
-                            return 7;
+                            //scripts are equal and location is different
+                            return 5;
                         }
                     } else if (firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
                         if (first.getCodeLocation().equals(other.getCodeLocation())) {
-                            //scripts are normalised equal, and location is equal
-                            return 5;
-                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
-                            //scripts are normalised equal, and normalised location is equal
+                            //scripts are normalised equal and location is equal
                             return 6;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are normalised equal and normalised location is equal
+                            return 7;
                         } else {
-                            //scripts are normalised equal, and location is different
+                            //scripts are normalised equal and location is different
                             return 8;
                         }
                     } else {
-                        //scripts are different
-                        return 9;
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are different and location is equal
+                            return 9;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are different and normalised location is equal
+                            return 10;
+                        } else {
+                            //scripts are different and location is different
+                            return 11;
+                        }
                     }
                 } else {
                     if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
@@ -291,7 +299,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 }
             } else {
                 //Issues don't have location so distance has to be very high
-                return 9;
+                return 12;
             }
         }
         //the issues are duplicates and can be considered the same
