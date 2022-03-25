@@ -58,9 +58,6 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         StringLiteral that = (StringLiteral) o;
         return Objects.equals(text, that.text);
     }

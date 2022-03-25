@@ -50,9 +50,6 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
         if (!(o instanceof LocalIdentifier)) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         LocalIdentifier that = (LocalIdentifier) o;
         return Objects.equals(name, that.name);
     }

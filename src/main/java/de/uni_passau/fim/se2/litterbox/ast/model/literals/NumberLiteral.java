@@ -32,7 +32,6 @@ public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
     private final double value;
 
     public NumberLiteral(double number) {
-        super();
         this.value = number;
     }
 
@@ -56,9 +55,6 @@ public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
             return false;
         }
         NumberLiteral that = (NumberLiteral) o;
