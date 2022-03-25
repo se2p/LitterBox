@@ -27,20 +27,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
 
     private OutputStream outputStream;
 
     private boolean closeStream = false;
+
+    private static final int MAX_SIMILAR = PropertyLoader.getSystemIntProperty("json.max_similar_issues");
 
     public JSONReportGenerator(String fileName) throws IOException {
         outputStream = new FileOutputStream(fileName);
@@ -73,16 +76,13 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
     }
 
     private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
-        Map<Issue, Integer> issuesWithDistance = new HashMap<>();
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
-                .forEach(issue -> issuesWithDistance.put(issue, theIssue.getDistanceTo(issue))
-                );
-
-        issuesWithDistance.entrySet().stream()
+                .collect(Collectors.toMap(issue -> issue, issue -> theIssue.getDistanceTo(issue)))
+                .entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
+                .limit(MAX_SIMILAR)
                 .map(Map.Entry::getKey)
-                .limit(10)
                 .forEach(issue -> {
                     ObjectNode childNode = mapper.createObjectNode();
                     childNode.put("id", issue.getId());
