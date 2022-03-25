@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -36,8 +37,11 @@ public class Issue {
     private IssueSeverity severity;
     private ActorDefinition actor;
     private ASTNode node;
+    private ASTNode normalizedNode;
     private Script script;
+    private Script normalizedScript;
     private ProcedureDefinition procedure;
+    private ProcedureDefinition normalisedProcedure;
     private Program program;
     private Metadata metaData;
     private Hint hint;
@@ -68,6 +72,11 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
+        if (node != null) {
+            NormalizationVisitor visitor = new NormalizationVisitor();
+            normalizedNode = node.accept(visitor);
+            normalizedScript = (Script) script.accept(visitor);
+        }
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -96,6 +105,11 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
+        if (node != null) {
+            NormalizationVisitor visitor = new NormalizationVisitor();
+            normalizedNode = node.accept(visitor);
+            normalisedProcedure = (ProcedureDefinition) procedure.accept(visitor);
+        }
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -149,6 +163,14 @@ public class Issue {
         }
     }
 
+    public ASTNode getNormalizedScriptOrProcedureDefinition() {
+        if (normalizedScript != null) {
+            return normalizedScript;
+        } else {
+            return normalisedProcedure;
+        }
+    }
+
     public String getFinderName() {
         return finder.getName();
     }
@@ -163,6 +185,10 @@ public class Issue {
 
     public ASTNode getCodeLocation() {
         return node;
+    }
+
+    public ASTNode getNormalizedCodeLocation() {
+        return normalizedNode;
     }
 
     public boolean isCodeLocation(ASTNode node) {
