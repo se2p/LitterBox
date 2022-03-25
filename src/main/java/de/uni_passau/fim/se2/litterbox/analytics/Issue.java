@@ -58,9 +58,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
-        if (currentNode == null) {
-            Preconditions.checkArgument(script == null);
-        }
+        Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;
@@ -88,9 +86,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
-        if (currentNode == null) {
-            Preconditions.checkArgument(program == null);
-        }
+        Preconditions.checkArgument((currentNode == null) == (procedure == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;
