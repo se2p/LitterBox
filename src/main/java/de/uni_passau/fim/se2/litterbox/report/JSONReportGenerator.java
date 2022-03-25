@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
 
@@ -71,15 +73,22 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
     }
 
     private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        Map<Issue, Integer> issuesWithDistance = new HashMap<>();
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
-                .forEach(issue -> {
-                            ObjectNode childNode = mapper.createObjectNode();
-                            childNode.put("id", issue.getId());
-                            childNode.put("distance", theIssue.getDistanceTo(issue));
-                            jsonNode.add(childNode);
-                        }
+                .forEach(issue -> issuesWithDistance.put(issue, theIssue.getDistanceTo(issue))
                 );
+
+        issuesWithDistance.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .limit(10)
+                .forEach(issue -> {
+                    ObjectNode childNode = mapper.createObjectNode();
+                    childNode.put("id", issue.getId());
+                    childNode.put("distance", theIssue.getDistanceTo(issue));
+                    jsonNode.add(childNode);
+                });
     }
 
     @Override
@@ -104,13 +113,13 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
             ArrayNode duplicateNode = childNode.putArray("duplicate-of");
             addDuplicateIDs(duplicateNode, issue, issues);
 
-            ArrayNode subsumedNode  = childNode.putArray("subsumed-by");
+            ArrayNode subsumedNode = childNode.putArray("subsumed-by");
             addSubsumingIssueIDs(subsumedNode, issue, issues);
 
-            ArrayNode coupledNode  = childNode.putArray("coupled-to");
+            ArrayNode coupledNode = childNode.putArray("coupled-to");
             addCoupledIssueIDs(coupledNode, issue, issues);
 
-            ArrayNode similarNode  = childNode.putArray("similar-to");
+            ArrayNode similarNode = childNode.putArray("similar-to");
             addSimilarIssueIDs(mapper, similarNode, issue, issues);
 
             childNode.put("hint", issue.getHint());
