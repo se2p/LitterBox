@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 /**
  * The Issue represents issues that are identified in Scratch Projects.
@@ -57,6 +58,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
+        Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;
@@ -84,6 +86,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
+        Preconditions.checkArgument((currentNode == null) == (procedure == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;

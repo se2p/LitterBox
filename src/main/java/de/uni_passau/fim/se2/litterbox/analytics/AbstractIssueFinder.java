@@ -116,7 +116,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
-                currentActor, // TODO: There is no node?
+                null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 new Hint(getName())));
     }
@@ -124,7 +124,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     protected void addIssueWithLooseComment(Hint hint) {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
-                currentActor, // TODO: There is no node?
+                null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 hint));
     }
