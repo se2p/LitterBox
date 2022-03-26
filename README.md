@@ -220,6 +220,7 @@ Contributors:
 Felix Adler\
 Florian Beck\
 Lena Bloch\
+Benedikt Fein\
 Christoph Frädrich\
 Gordon Fraser\
 Luisa Greifenstein\
