@@ -29,7 +29,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -64,6 +66,31 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(node.has("subsumed-by")).isTrue();
             assertThat(node.has("similar-to")).isTrue();
         }
+    }
+
+    private String oldSimilarityValue;
+    private String oldCouplingValue;
+    private String oldDuplicateValue;
+    private String oldSubsumptionValue;
+
+    @BeforeEach
+    void setupProperties() {
+        oldSimilarityValue = System.getProperty("json.similarity", "false");
+        oldCouplingValue = System.getProperty("json.coupling", "false");
+        oldDuplicateValue = System.getProperty("json.duplicates", "true");
+        oldSubsumptionValue = System.getProperty("json.subsumption", "true");
+        System.setProperty("json.similarity", "true");
+        System.setProperty("json.coupling", "true");
+        System.setProperty("json.duplicates", "true");
+        System.setProperty("json.subsumption", "true");
+    }
+
+    @AfterEach
+    void restoreProperties() {
+        System.setProperty("json.similarity", oldSimilarityValue);
+        System.setProperty("json.coupling", oldCouplingValue);
+        System.setProperty("json.duplicates", oldDuplicateValue);
+        System.setProperty("json.subsumption", oldSubsumptionValue);
     }
 
     @Test
