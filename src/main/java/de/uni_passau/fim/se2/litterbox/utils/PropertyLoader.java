@@ -61,6 +61,19 @@ public final class PropertyLoader {
         }
     }
 
+    public static boolean getSystemBoolProperty(String name) {
+        String stringValue = System.getProperty(name);
+        if (stringValue == null) {
+            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+        } else {
+            try {
+                return Boolean.parseBoolean(stringValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("The value for key " + name + " is not a Boolean value!", e);
+            }
+        }
+    }
+
     /**
      * Load the string value of the given key from the system properties.
      * If the key has a value assigned, that is a parsable floating number, return that value as a double.

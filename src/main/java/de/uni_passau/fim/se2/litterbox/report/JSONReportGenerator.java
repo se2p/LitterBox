@@ -46,7 +46,13 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
     private JsonGenerator jsonGenerator;
 
-    private static final int MAX_SIMILAR = PropertyLoader.getSystemIntProperty("json.max_similar_issues");
+    private static final boolean INCLUDE_SIMILARITY = PropertyLoader.getSystemBoolProperty("json.similarity");
+
+    private static final boolean INCLUDE_SUBSUMPTION = PropertyLoader.getSystemBoolProperty("json.subsumption");
+
+    private static final boolean INCLUDE_DUPLICATES = PropertyLoader.getSystemBoolProperty("json.duplicates");
+
+    private static final boolean INCLUDE_COUPLING = PropertyLoader.getSystemBoolProperty("json.coupling");
 
     public JSONReportGenerator(String fileName) throws IOException {
         outputStream = new FileOutputStream(fileName);
@@ -88,7 +94,6 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
                 .collect(Collectors.toMap(issue -> issue, issue -> theIssue.getDistanceTo(issue)))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
-                .limit(MAX_SIMILAR)
                 .map(Map.Entry::getKey)
                 .forEach(issue -> {
                     try {
@@ -123,25 +128,33 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
             jsonGenerator.writeNumberField("severity", issue.getSeverity().getSeverityLevel());
             jsonGenerator.writeStringField("sprite", issue.getActorName());
 
-            jsonGenerator.writeFieldName("duplicate-of");
-            jsonGenerator.writeStartArray();
-            addDuplicateIDs(issue, issues);
-            jsonGenerator.writeEndArray();
+            if (INCLUDE_DUPLICATES) {
+                jsonGenerator.writeFieldName("duplicate-of");
+                jsonGenerator.writeStartArray();
+                addDuplicateIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            jsonGenerator.writeFieldName("subsumed-by");
-            jsonGenerator.writeStartArray();
-            addSubsumingIssueIDs(issue, issues);
-            jsonGenerator.writeEndArray();
+            if (INCLUDE_SUBSUMPTION) {
+                jsonGenerator.writeFieldName("subsumed-by");
+                jsonGenerator.writeStartArray();
+                addSubsumingIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            jsonGenerator.writeFieldName("coupled-to");
-            jsonGenerator.writeStartArray();
-            addCoupledIssueIDs(issue, issues);
-            jsonGenerator.writeEndArray();
+            if (INCLUDE_COUPLING) {
+                jsonGenerator.writeFieldName("coupled-to");
+                jsonGenerator.writeStartArray();
+                addCoupledIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            jsonGenerator.writeFieldName("similar-to");
-            jsonGenerator.writeStartArray();
-            addSimilarIssueIDs(issue, issues);
-            jsonGenerator.writeEndArray();
+            if (INCLUDE_SIMILARITY) {
+                jsonGenerator.writeFieldName("similar-to");
+                jsonGenerator.writeStartArray();
+                addSimilarIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
             jsonGenerator.writeStringField("hint", issue.getHint());
 
