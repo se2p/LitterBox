@@ -34,7 +34,6 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
     private final long blue;
 
     public ColorLiteral(long red, long green, long blue) {
-        super();
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -68,9 +67,6 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
             return false;
         }
         ColorLiteral that = (ColorLiteral) o;

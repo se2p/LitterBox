@@ -34,7 +34,6 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
     private final boolean value;
 
     public BoolLiteral(boolean value) {
-        super();
         this.value = value;
     }
 
@@ -64,9 +63,6 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
             return false;
         }
         BoolLiteral that = (BoolLiteral) o;

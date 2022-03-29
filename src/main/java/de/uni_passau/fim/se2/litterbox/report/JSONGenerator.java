@@ -18,18 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.core.JsonGenerator;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.io.IOException;
+
 public abstract class JSONGenerator {
-    void addMetrics(ObjectNode metricsNode, Program program) {
+    void addMetrics(JsonGenerator jsonGenerator, Program program) throws IOException {
         MetricTool tool = new MetricTool();
 
         for (MetricExtractor metric : tool.getAnalyzers()) {
             double value = metric.calculateMetric(program);
-            metricsNode.put(metric.getName(), value);
+            jsonGenerator.writeNumberField(metric.getName(), value);
         }
     }
 }

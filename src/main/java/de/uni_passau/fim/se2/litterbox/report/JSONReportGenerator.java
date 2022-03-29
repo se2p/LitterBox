@@ -18,21 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
 
@@ -40,107 +42,152 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
     private boolean closeStream = false;
 
+    private JsonFactory jfactory = new JsonFactory();
+
+    private JsonGenerator jsonGenerator;
+
+    private static final boolean INCLUDE_SIMILARITY = PropertyLoader.getSystemBoolProperty("json.similarity");
+
+    private static final boolean INCLUDE_SUBSUMPTION = PropertyLoader.getSystemBoolProperty("json.subsumption");
+
+    private static final boolean INCLUDE_DUPLICATES = PropertyLoader.getSystemBoolProperty("json.duplicates");
+
+    private static final boolean INCLUDE_COUPLING = PropertyLoader.getSystemBoolProperty("json.coupling");
+
     public JSONReportGenerator(String fileName) throws IOException {
         outputStream = new FileOutputStream(fileName);
+        jsonGenerator = jfactory.createGenerator(outputStream, JsonEncoding.UTF8);
+        jsonGenerator.useDefaultPrettyPrinter();
         closeStream = true;
     }
 
-    public JSONReportGenerator(OutputStream stream) {
+    public JSONReportGenerator(OutputStream stream) throws IOException {
         this.outputStream = stream;
+        jsonGenerator = jfactory.createGenerator(outputStream, JsonEncoding.UTF8);
+        jsonGenerator.useDefaultPrettyPrinter();
     }
 
-    private void addDuplicateIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+    private void addDuplicateIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::isDuplicateOf)
                 .map(Issue::getId)
-                .forEach(jsonNode::add);
+                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
     }
 
-    private void addSubsumingIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+    private void addSubsumingIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::isSubsumedBy)
                 .map(Issue::getId)
-                .forEach(jsonNode::add);
+                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
     }
 
-    private void addCoupledIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+    private void addCoupledIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::areCoupled)
                 .map(Issue::getId)
-                .forEach(jsonNode::add);
+                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e);}});
     }
 
-    private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+    private void addSimilarIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
+                .collect(Collectors.toMap(issue -> issue, issue -> theIssue.getDistanceTo(issue)))
+                .entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
                 .forEach(issue -> {
-                            ObjectNode childNode = mapper.createObjectNode();
-                            childNode.put("id", issue.getId());
-                            childNode.put("distance", theIssue.getDistanceTo(issue));
-                            jsonNode.add(childNode);
-                        }
-                );
+                    try {
+                        jsonGenerator.writeStartObject();
+                        jsonGenerator.writeNumberField("id", issue.getId());
+                        jsonGenerator.writeNumberField("distance", theIssue.getDistanceTo(issue));
+                        jsonGenerator.writeEndObject();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode rootNode = mapper.createObjectNode();
-        ArrayNode issueNode = mapper.createArrayNode();
-        ObjectNode metricNode = mapper.createObjectNode();
 
-        addMetrics(metricNode, program);
-        rootNode.set("metrics", metricNode);
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeFieldName("metrics");
+        jsonGenerator.writeStartObject();
+        addMetrics(jsonGenerator, program);
+        jsonGenerator.writeEndObject();
+
+        jsonGenerator.writeFieldName("issues");
+        jsonGenerator.writeStartArray();
 
         for (Issue issue : issues) {
-            ObjectNode childNode = mapper.createObjectNode();
-            childNode.put("id", issue.getId());
-            childNode.put("finder", issue.getFinderName());
-            childNode.put("name", issue.getTranslatedFinderName());
-            childNode.put("type", issue.getIssueType().toString());
-            childNode.put("severity", issue.getSeverity().getSeverityLevel());
-            childNode.put("sprite", issue.getActorName());
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeNumberField("id", issue.getId());
+            jsonGenerator.writeStringField("finder", issue.getFinderName());
+            jsonGenerator.writeStringField("name", issue.getTranslatedFinderName());
+            jsonGenerator.writeStringField("type", issue.getIssueType().toString());
+            jsonGenerator.writeNumberField("severity", issue.getSeverity().getSeverityLevel());
+            jsonGenerator.writeStringField("sprite", issue.getActorName());
 
-            ArrayNode duplicateNode = childNode.putArray("duplicate-of");
-            addDuplicateIDs(duplicateNode, issue, issues);
+            if (INCLUDE_DUPLICATES) {
+                jsonGenerator.writeFieldName("duplicate-of");
+                jsonGenerator.writeStartArray();
+                addDuplicateIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            ArrayNode subsumedNode  = childNode.putArray("subsumed-by");
-            addSubsumingIssueIDs(subsumedNode, issue, issues);
+            if (INCLUDE_SUBSUMPTION) {
+                jsonGenerator.writeFieldName("subsumed-by");
+                jsonGenerator.writeStartArray();
+                addSubsumingIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            ArrayNode coupledNode  = childNode.putArray("coupled-to");
-            addCoupledIssueIDs(coupledNode, issue, issues);
+            if (INCLUDE_COUPLING) {
+                jsonGenerator.writeFieldName("coupled-to");
+                jsonGenerator.writeStartArray();
+                addCoupledIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            ArrayNode similarNode  = childNode.putArray("similar-to");
-            addSimilarIssueIDs(mapper, similarNode, issue, issues);
+            if (INCLUDE_SIMILARITY) {
+                jsonGenerator.writeFieldName("similar-to");
+                jsonGenerator.writeStartArray();
+                addSimilarIssueIDs(issue, issues);
+                jsonGenerator.writeEndArray();
+            }
 
-            childNode.put("hint", issue.getHint());
-            ArrayNode arrayNode = childNode.putArray("costumes");
+            jsonGenerator.writeStringField("hint", issue.getHint());
+
+            jsonGenerator.writeFieldName("costumes");
+            jsonGenerator.writeStartArray();
+
             ActorMetadata actorMetadata = issue.getActor().getActorMetadata();
             for (ImageMetadata image : actorMetadata.getCostumes().getList()) {
-                arrayNode.add(image.getAssetId());
+                jsonGenerator.writeString(image.getAssetId());
             }
-            childNode.put("currentCostume", actorMetadata.getCurrentCostume());
+            jsonGenerator.writeEndArray();
+
+            jsonGenerator.writeNumberField("currentCostume", actorMetadata.getCurrentCostume());
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
             if (location == null) {
                 String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
                         + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
-                childNode.put("code", emptyScript);
+                jsonGenerator.writeStringField("code", emptyScript);
             } else {
                 ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
                 blockVisitor.begin();
                 location.accept(blockVisitor);
                 blockVisitor.end();
                 String scratchBlockCode = blockVisitor.getScratchBlocks();
-                childNode.put("code", scratchBlockCode);
+                jsonGenerator.writeStringField("code", scratchBlockCode);
             }
-            issueNode.add(childNode);
+            jsonGenerator.writeEndObject();
         }
-        rootNode.set("issues", issueNode);
+        jsonGenerator.writeEndArray();
 
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-        final PrintStream printStream = new PrintStream(outputStream);
-        printStream.print(jsonString);
+        jsonGenerator.writeEndObject();
+        jsonGenerator.close();
         if (closeStream) {
             outputStream.close();
         }

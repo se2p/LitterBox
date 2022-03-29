@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import com.google.common.collect.Sets;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -27,10 +28,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MultiBlockIssue extends Issue {
 
     private List<ASTNode> nodes = new ArrayList<>();
+
+    private List<ASTNode> normalizedNodes;
 
     public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
         super(finder, severity, program, actor, script, nodes.get(0), metaData, hint);
@@ -57,5 +61,13 @@ public class MultiBlockIssue extends Issue {
 
     public List<ASTNode> getNodes() {
         return Collections.unmodifiableList(nodes);
+    }
+
+    public List<ASTNode> getNormalizedNodes() {
+        if (normalizedNodes == null) {
+            NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
+            normalizedNodes = nodes.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+        }
+        return normalizedNodes;
     }
 }

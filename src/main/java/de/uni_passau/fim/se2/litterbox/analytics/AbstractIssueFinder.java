@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -245,15 +244,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         //if two issues are duplicates of one another, they can be considered the same
         if (!first.isDuplicateOf(other)) {
             if (first.getCodeLocation() != null && other.getCodeLocation() != null) {
-                NormalizationVisitor visitor = new NormalizationVisitor();
-                ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-                ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
+                ASTNode firstNormalizedLocation = first.getNormalizedCodeLocation();
+                ASTNode secondNormalizedLocation = other.getNormalizedCodeLocation();
 
                 //if a different script or procedure has the issue, distance is increased
                 if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
 
-                    ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
-                    ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
+                    ASTNode firstNormalizedScriptProcedure = first.getNormalizedScriptOrProcedureDefinition();
+                    ASTNode secondNormalizedScriptProcedure = other.getNormalizedScriptOrProcedureDefinition();
                     if (first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
                         if (first.getCodeLocation().equals(other.getCodeLocation())) {
                             //scripts are equal and location is equal

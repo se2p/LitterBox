@@ -65,9 +65,6 @@ public class Qualified extends AbstractNode implements Identifier, ComparableExp
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         Qualified qualified = (Qualified) o;
         return Objects.equals(first, qualified.first)
                 && Objects.equals(second, qualified.second);
