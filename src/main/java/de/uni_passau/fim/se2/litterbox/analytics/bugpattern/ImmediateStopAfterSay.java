@@ -18,16 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
@@ -63,18 +63,33 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
         // check size > 1 because there has to be room for a say/think AND a stop stmt
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof StopAll) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
-            Hint hint;
-            if (hasMultipleActorsWithCode) {
-                hint = new Hint(HINT_MULTIPLE);
-            } else {
-                hint = new Hint(getName());
-            }
-            if (questionableNode instanceof Say) {
-                hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
-                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
-            } else if (questionableNode instanceof Think) {
-                hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
-                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
+            if (questionableNode instanceof Say || questionableNode instanceof Think) {
+                IssueBuilder issueBuilder = prepareIssueBuilder().withCurrentNode(questionableNode)
+                        .withMetadata(questionableNode.getMetadata())
+                        .withSeverity(IssueSeverity.LOW);
+
+                Hint hint;
+                if (hasMultipleActorsWithCode) {
+                    hint = new Hint(HINT_MULTIPLE);
+                } else {
+                    hint = new Hint(getName());
+                }
+                if (questionableNode instanceof Say) {
+                    Say say = (Say) questionableNode;
+                    hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
+                    // TODO: This does not clone the message and metadata, should it?
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(say, new SayForSecs(say.getString(), new NumberLiteral(2), say.getMetadata()));
+                    ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
+                    issueBuilder = issueBuilder.withHint(hint).withRefactoring(refactoredScript);
+                } else if (questionableNode instanceof Think) {
+                    Think think = (Think) questionableNode;
+                    hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
+                    // TODO: This does not clone the message and metadata, should it?
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(think, new SayForSecs(think.getThought(), new NumberLiteral(2), think.getMetadata()));
+                    ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
+                    issueBuilder = issueBuilder.withHint(hint).withRefactoring(refactoredScript);
+                }
+                addIssue(issueBuilder);
             }
         }
         super.visitChildren(node);
