@@ -18,12 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementDeletionVisitor;
 
 import java.util.List;
 
@@ -45,7 +46,14 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
             currentScript = script;
             Stmt last = stmts.get(stmts.size() - 1);
             if (last instanceof StopThisScript) {
-                addIssue(last, last.getMetadata());
+                StatementDeletionVisitor visitor = new StatementDeletionVisitor(last);
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                IssueBuilder builder = prepareIssueBuilder()
+                        .withCurrentNode(last).withMetadata(last.getMetadata())
+                        .withSeverity(IssueSeverity.HIGH).withHint(new Hint(getName()))
+                        .withRefactoring(refactoring);
+
+                addIssue(builder);
             }
         }
     }
