@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -81,6 +78,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         currentProcedure = procedure;
         currentScript = null;
         visitChildren(procedure);
+    }
+
+    protected IssueBuilder prepareIssueBuilder() {
+        return new IssueBuilder().withFinder(this).withProgram(program).withActor(currentActor).withScriptOrProcedure(getCurrentScriptEntity());
+    }
+
+    protected void addIssue(IssueBuilder issueBuilder) {
+        issues.add(issueBuilder.build());
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
@@ -312,5 +317,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     @Override
     public boolean areCoupled(Issue first, Issue other) {
         return false;
+    }
+
+
+    protected ScriptEntity getCurrentScriptEntity() {
+        if (currentScript != null) {
+            return currentScript;
+        } else {
+            return currentProcedure;
+        }
     }
 }

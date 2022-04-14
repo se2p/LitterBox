@@ -77,6 +77,24 @@ public class Issue {
         assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
+    public Issue(IssueBuilder builder) {
+        this.finder = builder.getFinder();
+        this.severity = builder.getSeverity();
+        this.program = builder.getProgram();
+        this.actor = builder.getActor();
+        this.script = builder.getScript();
+        this.node = builder.getCurrentNode();
+        this.normalizedNode   = normalize(this.node);
+        this.normalizedScript = normalize(script);
+        this.refactoredScript = builder.getRefactoring();
+        this.metaData = builder.getMetaData();
+        this.hint = builder.getHint();
+        this.id = globalIssueCount++;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
+    }
+
     public IssueFinder getFinder() {
         return finder;
     }
