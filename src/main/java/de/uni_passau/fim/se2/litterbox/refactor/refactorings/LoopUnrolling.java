@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -48,8 +49,8 @@ public class LoopUnrolling extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(new StatementReplacementVisitor(loop, unrolledStmts));
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(new StatementReplacementVisitor(loop, unrolledStmts));
     }
 
     @Override

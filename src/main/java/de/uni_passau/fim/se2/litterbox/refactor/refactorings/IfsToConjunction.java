@@ -58,8 +58,8 @@ public class IfsToConjunction extends OnlyCodeCloneVisitor implements Refactorin
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(new StatementReplacementVisitor(if1, replacement));
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(new StatementReplacementVisitor(if1, replacement));
     }
 
     @Override

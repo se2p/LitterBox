@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 /**
@@ -30,10 +31,10 @@ public interface Refactoring {
      * refactoring after a deep copy of the original program was made with the {@code deepCopy()} method to avoid
      * transformations on the original program tree!
      *
-     * @param program The program before the refactoring.
+     * @param node The program before the refactoring.
      * @return The refactored program.
      */
-    Program apply(Program program);
+    <T extends ASTNode> T apply(T node);
 
     String getName();
 }

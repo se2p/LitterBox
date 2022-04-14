@@ -95,8 +95,8 @@ public class SplitLoop extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(this);
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(this);
     }
 
     @Override

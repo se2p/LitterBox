@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
@@ -50,9 +51,9 @@ public class DisjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public Program apply(Program program) {
+    public <T extends ASTNode> T apply(T node) {
         NodeReplacementVisitor replacementVisitor =  new NodeReplacementVisitor(ifStatement, replacementIf);
-        return (Program) program.accept(replacementVisitor);
+        return (T) node.accept(replacementVisitor);
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -60,8 +61,8 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf)));
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf)));
     }
 
     @Override
