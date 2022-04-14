@@ -19,26 +19,56 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class DoubleIfTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatFinderReports(0, new DoubleIf(), "./src/test/fixtures/emptyProject.json");
+        Program prog = getAST("./src/test/fixtures/emptyProject.json");
+        Set<Issue> reports = new DoubleIf().check(prog);
+        assertThat(reports).isEmpty();
     }
 
     @Test
     public void testProgram() throws IOException, ParsingException {
-        assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIf.json");
+        DoubleIf doubleIf = new DoubleIf();
+        Program program = getAST("./src/test/fixtures/smells/doubleIf.json");
+        Set<Issue> issues = doubleIf.check(program);
+        assertThat(issues).hasSize(1);
+        Issue issue = issues.iterator().next();
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = doubleIf.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testDuplicateConditionOnVariable() throws IOException, ParsingException {
-        assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIfCondition.json");
+        DoubleIf doubleIf = new DoubleIf();
+        Program program = getAST("./src/test/fixtures/smells/doubleIfCondition.json");
+        Set<Issue> issues = doubleIf.check(program);
+        assertThat(issues).hasSize(1);
+        Issue issue = issues.iterator().next();
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = doubleIf.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
@@ -48,7 +78,16 @@ public class DoubleIfTest implements JsonTest {
 
     @Test
     public void testIfThenFollowedByIfElse() throws IOException, ParsingException {
-        assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIfIfElse.json");
+        DoubleIf doubleIf = new DoubleIf();
+        Program program = getAST("./src/test/fixtures/smells/doubleIfIfElse.json");
+        Set<Issue> issues = doubleIf.check(program);
+        assertThat(issues).hasSize(1);
+        Issue issue = issues.iterator().next();
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = doubleIf.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
@@ -59,7 +98,17 @@ public class DoubleIfTest implements JsonTest {
     @Test
     public void testDoubleIfWithDifferentBody() throws IOException, ParsingException {
         // The body of the condition doesn't matter
-        assertThatFinderReports(1, new DoubleIf(), "./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
+        DoubleIf doubleIf = new DoubleIf();
+        Program program = getAST("./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
+        Set<Issue> issues = doubleIf.check(program);
+        assertThat(issues).hasSize(1);
+        Issue issue = issues.iterator().next();
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = doubleIf.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
+
     }
 
     @Test

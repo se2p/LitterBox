@@ -61,6 +61,7 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(node.has("sprite")).isTrue();
             assertThat(node.has("hint")).isTrue();
             assertThat(node.has("code")).isTrue();
+            assertThat(node.has("refactoring")).isTrue();
             assertThat(node.has("id")).isTrue();
             assertThat(node.has("duplicate-of")).isTrue();
             assertThat(node.has("subsumed-by")).isTrue();
