@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.RepeatedSubsequenceFinder;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SequenceToLoop;
 
 import java.util.*;
 
@@ -31,12 +31,16 @@ public class SequentialActions extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList statementList) {
-        List<Stmt> statements = statementList.getStmts();
-
         new RepeatedSubsequenceFinder() {
             @Override
             protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences) {
-                addIssue(subsequence.get(0), statements.get(0).getMetadata(), IssueSeverity.LOW);
+                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.get(0))
+                                .withMetadata(subsequence.get(0).getMetadata())
+                                .withSeverity(IssueSeverity.LOW)
+                                .withHint(new Hint(getName()));
+                SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences);
+                ScriptEntity refactoring = sequenceToLoop.apply(getCurrentScriptEntity());
+                addIssue(builder.withRefactoring(refactoring));
             }
         }.findRepetitions(statementList);
 

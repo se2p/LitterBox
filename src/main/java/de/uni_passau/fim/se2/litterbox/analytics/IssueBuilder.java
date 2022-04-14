@@ -90,6 +90,12 @@ public class IssueBuilder {
     }
 
     private void validate() {
+        if (finder == null) {
+            throw new IllegalArgumentException("Finder not set.");
+        }
+        if (hint == null) {
+            throw new IllegalArgumentException("Hint not set.");
+        }
         if (!finder.getHintKeys().contains(hint.getHintKey())) {
             throw new IllegalArgumentException("Hint key " + hint.getHintKey() + " is not valid.");
         }
