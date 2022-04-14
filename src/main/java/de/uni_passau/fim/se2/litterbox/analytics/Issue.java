@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -38,10 +35,10 @@ public class Issue {
     private ActorDefinition actor;
     private ASTNode node;
     private ASTNode normalizedNode;
-    private Script script;
-    private Script normalizedScript;
-    private ProcedureDefinition procedure;
-    private ProcedureDefinition normalisedProcedure;
+
+    private ScriptEntity script;
+    private ScriptEntity normalizedScript;
+
     private Program program;
     private Metadata metaData;
     private Hint hint;
@@ -60,7 +57,7 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
@@ -69,47 +66,11 @@ public class Issue {
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
+        this.normalizedNode   = normalize(this.node);
+        this.normalizedScript = normalize(script);
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
-        if (node != null) {
-            NormalizationVisitor visitor = new NormalizationVisitor();
-            normalizedNode = node.accept(visitor);
-            normalizedScript = (Script) script.accept(visitor);
-        }
-        // Check that hints have actually been declared, otherwise
-        // we might be missing translations
-        assert (finder.getHintKeys().contains(hint.getHintKey()));
-    }
-
-    /**
-     * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
-     * the ASTNode that is most specific to this issue.
-     *
-     * @param finder      that created this issue
-     * @param program     in which this issue was found
-     * @param actor       in which this issue was found
-     * @param procedure   in which this issue was found
-     * @param currentNode that is closest to the issue origin
-     * @param metaData    that contains references for comments
-     */
-    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
-                 ASTNode currentNode, Metadata metaData, Hint hint) {
-        Preconditions.checkArgument((currentNode == null) == (procedure == null));
-        this.finder = finder;
-        this.severity = severity;
-        this.program = program;
-        this.actor = actor;
-        this.procedure = procedure;
-        this.node = currentNode;
-        this.metaData = metaData;
-        this.hint = hint;
-        this.id = globalIssueCount++;
-        if (node != null) {
-            NormalizationVisitor visitor = new NormalizationVisitor();
-            normalizedNode = node.accept(visitor);
-            normalisedProcedure = (ProcedureDefinition) procedure.accept(visitor);
-        }
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -132,11 +93,11 @@ public class Issue {
     }
 
     public Script getScript() {
-        return script;
+        return script instanceof Script ? (Script) script : null;
     }
 
     public ProcedureDefinition getProcedure() {
-        return procedure;
+        return script instanceof ProcedureDefinition ? (ProcedureDefinition) script : null;
     }
 
     public Program getProgram() {
@@ -155,20 +116,12 @@ public class Issue {
      *
      * @return an astNode that represents a script or procedure-definition
      */
-    public ASTNode getScriptOrProcedureDefinition() {
-        if (script != null) {
-            return script;
-        } else {
-            return procedure;
-        }
+    public ScriptEntity getScriptOrProcedureDefinition() {
+        return script;
     }
 
-    public ASTNode getNormalizedScriptOrProcedureDefinition() {
-        if (normalizedScript != null) {
-            return normalizedScript;
-        } else {
-            return normalisedProcedure;
-        }
+    public ScriptEntity getNormalizedScriptOrProcedureDefinition() {
+        return normalizedScript;
     }
 
     public String getFinderName() {
@@ -221,5 +174,13 @@ public class Issue {
 
     public int getDistanceTo(Issue other) {
         return finder.getDistanceTo(this, other);
+    }
+
+    private <T extends ASTNode> T normalize(T node) {
+        if (node == null) {
+            return null;
+        }
+        NormalizationVisitor visitor = new NormalizationVisitor();
+        return (T) node.accept(visitor);
     }
 }
