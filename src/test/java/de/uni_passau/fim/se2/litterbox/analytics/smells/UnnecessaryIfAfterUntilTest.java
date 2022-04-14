@@ -24,39 +24,51 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class UnnecessaryIfAfterUntilTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatFinderReports(0, new UnnecessaryIfAfterUntil(), "./src/test/fixtures/emptyProject.json");
+        assertThatFinderReports(0, new UnnecessaryIfAfterUntil(), "src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testIfThenUnnecessary() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
-        UnnecessaryIfAfterUntil parameterName = new UnnecessaryIfAfterUntil();
-        List<Issue> reports = new ArrayList<>(parameterName.check(empty));
-        Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(parameterName.getName());
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+        Program program = getAST("src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
+        UnnecessaryIfAfterUntil finder = new UnnecessaryIfAfterUntil();
+        Set<Issue> reports = finder.check(program);
+        assertThat(reports).hasSize(1);
+
+        Issue theIssue = reports.iterator().next();
+        Hint expectedHint = new Hint(finder.getName());
+        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testCoupling() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
-        UnnecessaryIfAfterUntil parameterName = new UnnecessaryIfAfterUntil();
-        List<Issue> reportsUnnecessaryIf = new ArrayList<>(parameterName.check(empty));
+        Program program = getAST("src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
+        UnnecessaryIfAfterUntil finder = new UnnecessaryIfAfterUntil();
+        List<Issue> reportsUnnecessaryIf = new ArrayList<>(finder.check(program));
         Assertions.assertEquals(1, reportsUnnecessaryIf.size());
         MissingLoopSensing mls = new MissingLoopSensing();
-        List<Issue> reportsMLS = new ArrayList<>(mls.check(empty));
+        List<Issue> reportsMLS = new ArrayList<>(mls.check(program));
         Assertions.assertEquals(1, reportsMLS.size());
-        Assertions.assertTrue(parameterName.areCoupled(reportsUnnecessaryIf.get(0), reportsMLS.get(0)));
+        Assertions.assertTrue(finder.areCoupled(reportsUnnecessaryIf.get(0), reportsMLS.get(0)));
         Assertions.assertTrue(mls.areCoupled(reportsMLS.get(0), reportsUnnecessaryIf.get(0)));
     }
 }

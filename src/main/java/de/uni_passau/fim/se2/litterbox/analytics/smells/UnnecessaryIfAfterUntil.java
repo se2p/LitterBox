@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,15 +44,27 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
                 UntilStmt until = (UntilStmt) stmts.get(i);
                 IfElseStmt ifElse = (IfElseStmt) stmts.get(i + 1);
                 if (until.getBoolExpr().equals(ifElse.getBoolExpr())) {
-                    Hint hint = new Hint(NAME_ELSE);
-                    addIssue(ifElse, ifElse.getMetadata(), IssueSeverity.LOW, hint);
+                    IssueBuilder builder = prepareIssueBuilder()
+                            .withCurrentNode(ifElse)
+                            .withMetadata(ifElse.getMetadata())
+                            .withSeverity(IssueSeverity.LOW)
+                            .withHint(NAME_ELSE)
+                            .withRefactoring(new StatementReplacementVisitor(ifElse, ifElse.getThenStmts().getStmts()).apply(getCurrentScriptEntity()));
+
+                    addIssue(builder);
                 }
             } else if (stmts.get(i) instanceof UntilStmt && stmts.get(i + 1) instanceof IfThenStmt) {
                 UntilStmt until = (UntilStmt) stmts.get(i);
                 IfThenStmt ifThen = (IfThenStmt) stmts.get(i + 1);
                 if (until.getBoolExpr().equals(ifThen.getBoolExpr())) {
-                    Hint hint = new Hint(NAME);
-                    addIssue(ifThen, ifThen.getMetadata(), IssueSeverity.LOW, hint);
+                    IssueBuilder builder = prepareIssueBuilder()
+                            .withCurrentNode(ifThen)
+                            .withMetadata(ifThen.getMetadata())
+                            .withSeverity(IssueSeverity.LOW)
+                            .withHint(NAME)
+                            .withRefactoring(new StatementReplacementVisitor(ifThen, ifThen.getThenStmts().getStmts()).apply(getCurrentScriptEntity()));
+
+                    addIssue(builder);
                 }
             }
         }
