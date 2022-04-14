@@ -18,16 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
@@ -42,6 +42,7 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Broadcast) {
+                Broadcast broadcast = (Broadcast) questionableNode;
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_SPRITE, currentActor.getIdent().getName());
                 if (((Broadcast) questionableNode).getMessage().getMessage() instanceof StringLiteral) {
@@ -49,7 +50,17 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
                 } else {
                     hint.setParameter(Hint.HINT_MESSAGE, IssueTranslator.getInstance().getInfo("message"));
                 }
-                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
+
+                // TODO: This does not clone the message and metadata, should it?
+                StatementReplacementVisitor visitor = new StatementReplacementVisitor(broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata()));
+                ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
+
+                IssueBuilder issueBuilder = prepareIssueBuilder().withCurrentNode(questionableNode)
+                        .withMetadata(questionableNode.getMetadata())
+                        .withSeverity(IssueSeverity.LOW)
+                        .withHint(hint)
+                        .withRefactoring(refactoredScript);
+                addIssue(issueBuilder);
             }
         }
         super.visitChildren(node);

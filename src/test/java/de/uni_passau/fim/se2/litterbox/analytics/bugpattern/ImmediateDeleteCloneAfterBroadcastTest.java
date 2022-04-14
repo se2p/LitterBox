@@ -23,12 +23,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
 
@@ -39,14 +41,22 @@ public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
 
     @Test
     public void testImmediateDeleteCloneAfterBroadcast() throws IOException, ParsingException {
-        Program illegalParameter = JsonTest.parseProgram("./src/test/fixtures/bugpattern/immediateDeleteCloneAfterBroadcast.json");
-        ImmediateDeleteCloneAfterBroadcast parameterName = new ImmediateDeleteCloneAfterBroadcast();
-        List<Issue> reports = new ArrayList<>(parameterName.check(illegalParameter));
-        Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(parameterName.getName());
-        hint.setParameter(Hint.HINT_SPRITE, "Sprite1");
-        hint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+        Program program = JsonTest.parseProgram("./src/test/fixtures/bugpattern/immediateDeleteCloneAfterBroadcast.json");
+        ImmediateDeleteCloneAfterBroadcast issueFinder = new ImmediateDeleteCloneAfterBroadcast();
+        Set<Issue> reports = issueFinder.check(program);
+        assertThat(reports).hasSize(1);
+
+        Issue theIssue = reports.iterator().next();
+
+        Hint expectedHint = new Hint(issueFinder.getName());
+        expectedHint.setParameter(Hint.HINT_SPRITE, "Sprite1");
+        expectedHint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
+        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = issueFinder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 }
 
