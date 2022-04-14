@@ -19,10 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class UnnecessaryBooleanTest implements JsonTest {
 
@@ -33,21 +40,57 @@ public class UnnecessaryBooleanTest implements JsonTest {
 
     @Test
     public void testComparisonToTrue() throws IOException, ParsingException {
-        assertThatFinderReports(1, new UnnecessaryBoolean(), "./src/test/fixtures/smells/compareBooleanToTrue.json");
+        Program program = getAST("src/test/fixtures/smells/compareBooleanToTrue.json");
+        UnnecessaryBoolean finder = new UnnecessaryBoolean();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testComparisonToOne() throws IOException, ParsingException {
-        assertThatFinderReports(1, new UnnecessaryBoolean(), "./src/test/fixtures/smells/compareBooleanToOne.json");
+        Program program = getAST("src/test/fixtures/smells/compareBooleanToOne.json");
+        UnnecessaryBoolean finder = new UnnecessaryBoolean();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testComparisonToFalse() throws IOException, ParsingException {
-        assertThatFinderReports(1, new UnnecessaryBoolean(), "./src/test/fixtures/smells/compareBooleanToFalse.json");
+        Program program = getAST("src/test/fixtures/smells/compareBooleanToFalse.json");
+        UnnecessaryBoolean finder = new UnnecessaryBoolean();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testComparisonToZero() throws IOException, ParsingException {
-        assertThatFinderReports(1, new UnnecessaryBoolean(), "./src/test/fixtures/smells/compareBooleanToZero.json");
+        Program program = getAST("src/test/fixtures/smells/compareBooleanToZero.json");
+        UnnecessaryBoolean finder = new UnnecessaryBoolean();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 }

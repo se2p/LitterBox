@@ -84,6 +84,16 @@ public class IssueBuilder {
         return this;
     }
 
+    public IssueBuilder withHint(String hintKey) {
+        this.hint = new Hint(hintKey);
+        return this;
+    }
+
+    public IssueBuilder withHintParameter(String key, String value) {
+        this.hint.setParameter(key, value);
+        return this;
+    }
+
     public IssueBuilder withRefactoring(ScriptEntity refactoring) {
         this.refactoring = refactoring;
         return this;
