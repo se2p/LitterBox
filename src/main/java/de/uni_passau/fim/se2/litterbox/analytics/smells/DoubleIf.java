@@ -18,9 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
@@ -29,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeDoubleIf;
 
 import java.util.List;
 
@@ -43,26 +43,38 @@ public class DoubleIf extends AbstractIssueFinder {
         if (!checkingForMove) {
             movedInIf = false;
             final List<Stmt> stmts = node.getStmts();
-            BoolExpr lastCondition = null;
+
+            IfStmt lastIf = null;
             for (Stmt s : stmts) {
                 if (s instanceof IfStmt) {
-                    BoolExpr condition = ((IfStmt) s).getBoolExpr();
-                    if (lastCondition != null) {
+                    IfStmt ifStmt = (IfStmt) s;
+                    BoolExpr condition = ifStmt.getBoolExpr();
+                    if (lastIf != null) {
                         checkingForMove = true;
                         visitChildren(node);
                         checkingForMove = false;
                         boolean touchingCondition = condition instanceof Touching
                                 || condition instanceof ColorTouchingColor || condition instanceof SpriteTouchingColor;
 
-                        if (lastCondition.equals(condition) && !(movedInIf && touchingCondition)) {
-                            addIssue(s, s.getMetadata(), IssueSeverity.LOW);
+                        if (lastIf.getBoolExpr().equals(condition) && !(movedInIf && touchingCondition)) {
+                            MergeDoubleIf merge = new MergeDoubleIf(lastIf, ifStmt);
+                            ScriptEntity refactoring = merge.apply(getCurrentScriptEntity());
+
+                            IssueBuilder builder = prepareIssueBuilder();
+                            builder.withSeverity(IssueSeverity.LOW)
+                                    .withCurrentNode(s)
+                                    .withMetadata(s.getMetadata())
+                                    .withHint(new Hint(getName()))
+                                    .withRefactoring(refactoring);
+
+                            addIssue(builder);
                         }
                     }
-                    lastCondition = condition;
+                    lastIf = ifStmt;
                 } else {
                     // even if we already have a condition from an ifstmt before, it only counts if a second ifstmt
                     // follows directly after the first.
-                    lastCondition = null;
+                    lastIf = null;
                 }
             }
         }
