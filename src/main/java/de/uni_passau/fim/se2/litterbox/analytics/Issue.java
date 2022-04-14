@@ -38,6 +38,7 @@ public class Issue {
 
     private ScriptEntity script;
     private ScriptEntity normalizedScript;
+    private ScriptEntity refactoredScript;
 
     private Program program;
     private Metadata metaData;
@@ -123,6 +124,15 @@ public class Issue {
     public ScriptEntity getNormalizedScriptOrProcedureDefinition() {
         return normalizedScript;
     }
+
+    public ScriptEntity getRefactoredScriptOrProcedureDefinition() {
+        return refactoredScript;
+    }
+
+    public void setRefactoredScriptOrProcedureDefinition(ScriptEntity script) {
+        this.refactoredScript = script;
+    }
+
 
     public String getFinderName() {
         return finder.getName();
