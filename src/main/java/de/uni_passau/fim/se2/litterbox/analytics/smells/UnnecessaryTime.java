@@ -18,18 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementDeletionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,43 +49,60 @@ public class UnnecessaryTime extends AbstractIssueFinder {
     public static final String THINK = "unnecessary_think";
     public static final String SAY = "unnecessary_say";
 
+    private void createIssue(TimedStmt node, String hintKey) {
+        IssueBuilder builder = prepareIssueBuilder()
+                .withHint(hintKey)
+                .withSeverity(IssueSeverity.HIGH)
+                .withCurrentNode(node)
+                .withMetadata(node.getMetadata())
+                .withRefactoring(new StatementDeletionVisitor(node).apply(getCurrentScriptEntity()));
+        addIssue(builder);
+    }
+
     @Override
     public void visit(WaitSeconds node) {
         if (checkTime(node.getSeconds())) {
-            Hint hint = new Hint(WAIT);
-            addIssue(node, node.getMetadata(), hint);
+            createIssue(node, WAIT);
         }
     }
 
     @Override
     public void visit(ThinkForSecs node) {
         if (checkTime(node.getSecs())) {
-            Hint hint = new Hint(THINK);
-            addIssue(node, node.getMetadata(), hint);
+            createIssue(node, THINK);
         }
     }
 
     @Override
     public void visit(SayForSecs node) {
         if (checkTime(node.getSecs())) {
-            Hint hint = new Hint(SAY);
-            addIssue(node, node.getMetadata(), hint);
+            createIssue(node, SAY);
         }
     }
 
     @Override
     public void visit(GlideSecsTo node) {
         if (checkTime(node.getSecs())) {
-            Hint hint = new Hint(GLIDE);
-            addIssue(node, node.getMetadata(), hint);
+            IssueBuilder builder = prepareIssueBuilder()
+                    .withHint(GLIDE)
+                    .withSeverity(IssueSeverity.HIGH)
+                    .withCurrentNode(node)
+                    .withMetadata(node.getMetadata())
+                    .withRefactoring(new StatementReplacementVisitor(node, new GoToPos(node.getPosition(), node.getMetadata())).apply(getCurrentScriptEntity()));
+            addIssue(builder);
         }
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
         if (checkTime(node.getSecs())) {
-            Hint hint = new Hint(GLIDE_XY);
-            addIssue(node, node.getMetadata(), hint);
+            IssueBuilder builder = prepareIssueBuilder()
+                    .withHint(GLIDE_XY)
+                    .withSeverity(IssueSeverity.HIGH)
+                    .withCurrentNode(node)
+                    .withMetadata(node.getMetadata())
+                    .withRefactoring(new StatementReplacementVisitor(node, new GoToPosXY(node.getX(), node.getY(), node.getMetadata())).apply(getCurrentScriptEntity()));
+            addIssue(builder);
         }
     }
 
