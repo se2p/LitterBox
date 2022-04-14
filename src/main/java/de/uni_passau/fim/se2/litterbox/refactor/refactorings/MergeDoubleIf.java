@@ -19,14 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,19 +46,33 @@ if A:
  */
 public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
 
-    private final IfThenStmt if1;
-    private final IfThenStmt if2;
-    private final IfThenStmt replacement;
+    private final IfStmt if1;
+    private final IfStmt if2;
+    private final IfStmt replacement;
     public static final String NAME = "merge_double_if";
 
-    public MergeDoubleIf(IfThenStmt if1, IfThenStmt if2) {
+    public MergeDoubleIf(IfStmt if1, IfStmt if2) {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = Preconditions.checkNotNull(if2);
 
         List<Stmt> mergedListOfStmts = apply(if1.getThenStmts()).getStmts();
         mergedListOfStmts.addAll(apply(if2.getThenStmts()).getStmts());
         StmtList mergedThenStmts = new StmtList(mergedListOfStmts);
-        replacement = new IfThenStmt(apply(if1.getBoolExpr()), mergedThenStmts, apply(if1.getMetadata()));
+
+        List<Stmt> mergedElseStmt = new ArrayList<>();
+        if (if1 instanceof IfElseStmt) {
+            mergedElseStmt.addAll(apply(((IfElseStmt)if1).getElseStmts()).getStmts());
+        }
+        if (if2 instanceof IfElseStmt) {
+            mergedElseStmt.addAll(apply(((IfElseStmt)if2).getElseStmts()).getStmts());
+        }
+        StmtList mergedElseStmts = new StmtList(mergedElseStmt);
+
+        if (mergedElseStmt.isEmpty()) {
+            replacement = new IfThenStmt(apply(if1.getBoolExpr()), mergedThenStmts, apply(if1.getMetadata()));
+        } else {
+            replacement = new IfElseStmt(apply(if1.getBoolExpr()), mergedThenStmts, mergedElseStmts, apply(if1.getMetadata()));
+        }
     }
 
     @Override
