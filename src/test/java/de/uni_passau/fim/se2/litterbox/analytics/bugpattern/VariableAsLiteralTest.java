@@ -24,7 +24,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VariableAsLiteralTest implements JsonTest {
@@ -44,7 +47,16 @@ public class VariableAsLiteralTest implements JsonTest {
 
     @Test
     public void testLiteralsInSayAndIf() throws IOException, ParsingException {
-        assertThatFinderReports(2, new VariableAsLiteral(), "src/test/fixtures/bugpattern/variableAsLiteral.json");
+        Program program = JsonTest.parseProgram("src/test/fixtures/bugpattern/variableAsLiteral.json");
+        VariableAsLiteral issueFinder = new VariableAsLiteral();
+        Set<Issue> reports = issueFinder.check(program);
+        assertThat(reports).hasSize(2);
+        for (Issue anIssue : reports) {
+            ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(anIssue.getScript(), (Script) anIssue.getRefactoredScriptOrProcedureDefinition());
+            Program refactoredProgram = (Program) program.accept(visitor);
+            Set<Issue> refactoredIssues = issueFinder.check(refactoredProgram);
+            assertThat(refactoredIssues).hasSize(1);
+        }
     }
 
     @Test
