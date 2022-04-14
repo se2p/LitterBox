@@ -20,14 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UnnecessaryIf extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_if";
@@ -43,12 +43,12 @@ public class UnnecessaryIf extends AbstractIssueFinder {
 
                 if (lastList != null) {
                     if (lastList.equals(((IfThenStmt) s).getThenStmts())) {
-                        MultiBlockIssue issue;
-                        if (currentScript != null) {
-                            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentScript, Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
-                        } else {
-                            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentProcedure, Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
-                        }
+                        IfThenStmt joinedIf = new IfThenStmt(new Or(lastIf.getBoolExpr(), ((IfThenStmt) s).getBoolExpr(), lastIf.getMetadata()), lastIf.getThenStmts(), s.getMetadata());
+                        StatementReplacementVisitor visitor = new StatementReplacementVisitor(lastIf, Arrays.asList(s), Arrays.asList(joinedIf));
+                        ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
+
+                        MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                        issue.setRefactoredScriptOrProcedureDefinition(refactored);
                         addIssue(issue);
                     }
                 }
@@ -58,6 +58,7 @@ public class UnnecessaryIf extends AbstractIssueFinder {
                 // even if we already have a list from an ifstmt before, it only counts if a second ifstmt
                 // follows directly after the first.
                 lastList = null;
+                lastIf = null;
             }
         }
 
