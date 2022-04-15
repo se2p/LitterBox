@@ -48,8 +48,7 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
             if (last instanceof StopThisScript) {
                 StatementDeletionVisitor visitor = new StatementDeletionVisitor(last);
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-                IssueBuilder builder = prepareIssueBuilder()
-                        .withCurrentNode(last).withMetadata(last.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(last)
                         .withSeverity(IssueSeverity.HIGH).withHint(new Hint(getName()))
                         .withRefactoring(refactoring);
 

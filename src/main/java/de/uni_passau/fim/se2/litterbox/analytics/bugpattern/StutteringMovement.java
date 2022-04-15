@@ -68,9 +68,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
-                    IssueBuilder builder = prepareIssueBuilder()
-                            .withCurrentNode(stmt)
-                            .withMetadata(stmt.getMetadata())
+                    IssueBuilder builder = prepareIssueBuilder(stmt)
                             .withSeverity(IssueSeverity.HIGH)
                             .withHint(getName())
                             .withHintParameter(Hint.HINT_KEY, key)

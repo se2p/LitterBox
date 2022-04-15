@@ -60,10 +60,8 @@ public class DoubleIf extends AbstractIssueFinder {
                             MergeDoubleIf merge = new MergeDoubleIf(lastIf, ifStmt);
                             ScriptEntity refactoring = merge.apply(getCurrentScriptEntity());
 
-                            IssueBuilder builder = prepareIssueBuilder();
-                            builder.withSeverity(IssueSeverity.LOW)
-                                    .withCurrentNode(s)
-                                    .withMetadata(s.getMetadata())
+                            IssueBuilder builder = prepareIssueBuilder(s)
+                                    .withSeverity(IssueSeverity.LOW)
                                     .withHint(new Hint(getName()))
                                     .withRefactoring(refactoring);
 

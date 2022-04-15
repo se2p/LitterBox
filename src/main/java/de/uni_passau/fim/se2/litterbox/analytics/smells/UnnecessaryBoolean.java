@@ -47,8 +47,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             if (isBooleanTrueLiteral(equals.getOperand2())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, getBooleanExpression(equals.getOperand1()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(equals)
-                        .withMetadata(equals.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(equals)
                         .withHint(HINT_TRUE)
                         .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand2()))
                         .withSeverity(IssueSeverity.HIGH)
@@ -58,8 +57,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             } else if (isBooleanFalseLiteral(equals.getOperand2())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand1()), equals.getMetadata()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(equals)
-                        .withMetadata(equals.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(equals)
                         .withHint(HINT_FALSE)
                         .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand2()))
                         .withSeverity(IssueSeverity.HIGH)
@@ -71,8 +69,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             if (isBooleanTrueLiteral(equals.getOperand1())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, getBooleanExpression(equals.getOperand2()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(equals)
-                        .withMetadata(equals.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(equals)
                         .withHint(HINT_TRUE)
                         .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand1()))
                         .withSeverity(IssueSeverity.HIGH)
@@ -81,8 +78,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             } else if (isBooleanFalseLiteral(equals.getOperand1())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand2()), equals.getMetadata()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(equals)
-                        .withMetadata(equals.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(equals)
                         .withHint(HINT_FALSE)
                         .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand1()))
                         .withSeverity(IssueSeverity.HIGH)

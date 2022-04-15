@@ -42,13 +42,13 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
     public void visit(RepeatTimesStmt node) {
         if (node.getTimes() instanceof NumberLiteral) {
             if (((NumberLiteral) node.getTimes()).getValue() == 1) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withCurrentNode(node).withMetadata(node.getMetadata()).withHint(new Hint(ONE_HINT));
+                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW).withHint(ONE_HINT);
                 // TODO: Statements are not copied, is this important?
                 StatementReplacementVisitor visitor = new StatementReplacementVisitor(node, node.getStmtList().getStmts());
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
                 addIssue(builder.withRefactoring(refactoring));
             } else if (((NumberLiteral) node.getTimes()).getValue() == 0) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withCurrentNode(node).withMetadata(node.getMetadata()).withHint(new Hint(ZERO_HINT));
+                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW).withHint(ZERO_HINT);
                 // TODO: Resulting script may be empty?
                 StatementDeletionVisitor visitor = new StatementDeletionVisitor(node);
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());

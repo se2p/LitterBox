@@ -70,9 +70,7 @@ public class BusyWaiting extends AbstractIssueFinder {
             statements.add(0, waitUntil);
             StatementReplacementVisitor visitor = new StatementReplacementVisitor(foreverLoop, statements);
             ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
-            IssueBuilder builder = prepareIssueBuilder()
-                    .withCurrentNode(node)
-                    .withMetadata(node.getMetadata())
+            IssueBuilder builder = prepareIssueBuilder(node)
                     .withSeverity(IssueSeverity.LOW)
                     .withHint(hint)
                     .withRefactoring(refactoring);

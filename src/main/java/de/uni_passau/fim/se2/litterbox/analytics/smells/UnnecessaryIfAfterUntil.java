@@ -44,9 +44,7 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
                 UntilStmt until = (UntilStmt) stmts.get(i);
                 IfElseStmt ifElse = (IfElseStmt) stmts.get(i + 1);
                 if (until.getBoolExpr().equals(ifElse.getBoolExpr())) {
-                    IssueBuilder builder = prepareIssueBuilder()
-                            .withCurrentNode(ifElse)
-                            .withMetadata(ifElse.getMetadata())
+                    IssueBuilder builder = prepareIssueBuilder(ifElse)
                             .withSeverity(IssueSeverity.LOW)
                             .withHint(NAME_ELSE)
                             .withRefactoring(new StatementReplacementVisitor(ifElse, ifElse.getThenStmts().getStmts()).apply(getCurrentScriptEntity()));
@@ -57,9 +55,7 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
                 UntilStmt until = (UntilStmt) stmts.get(i);
                 IfThenStmt ifThen = (IfThenStmt) stmts.get(i + 1);
                 if (until.getBoolExpr().equals(ifThen.getBoolExpr())) {
-                    IssueBuilder builder = prepareIssueBuilder()
-                            .withCurrentNode(ifThen)
-                            .withMetadata(ifThen.getMetadata())
+                    IssueBuilder builder = prepareIssueBuilder(ifThen)
                             .withSeverity(IssueSeverity.LOW)
                             .withHint(NAME)
                             .withRefactoring(new StatementReplacementVisitor(ifThen, ifThen.getThenStmts().getStmts()).apply(getCurrentScriptEntity()));

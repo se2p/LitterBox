@@ -84,9 +84,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                IssueBuilder builder = prepareIssueBuilder()
-                        .withCurrentNode(node)
-                        .withMetadata(node.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
                         .withHint(BROADCAST_HINT)
                         .withRefactoring(getBroadcastRefactoring(node));
@@ -101,9 +99,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                IssueBuilder builder = prepareIssueBuilder()
-                        .withCurrentNode(node)
-                        .withMetadata(node.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
                         .withHint(BROADCAST_HINT)
                         .withRefactoring(getBroadcastRefactoring(node));
@@ -118,9 +114,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                IssueBuilder builder = prepareIssueBuilder()
-                        .withCurrentNode(node)
-                        .withMetadata(node.getMetadata())
+                IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
                         .withHint(PROCEDURE_HINT)
                         .withRefactoring(getProcedureRefactoring(node));

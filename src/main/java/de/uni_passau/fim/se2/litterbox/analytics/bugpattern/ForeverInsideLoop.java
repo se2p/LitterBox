@@ -84,9 +84,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     public void visit(RepeatForeverStmt node) {
         if (!loopStack.isEmpty() && (blocksAfter || blocksBefore || insideIfElse)) {
 
-            IssueBuilder builder = prepareIssueBuilder()
-                    .withCurrentNode(node)
-                    .withMetadata(node.getMetadata())
+            IssueBuilder builder = prepareIssueBuilder(node)
                     .withSeverity(IssueSeverity.HIGH)
                     .withHint(getName())
                     .withRefactoring(getRefactoring(node, loopStack.peek()));

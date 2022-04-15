@@ -50,11 +50,9 @@ public class UnnecessaryTime extends AbstractIssueFinder {
     public static final String SAY = "unnecessary_say";
 
     private void createIssue(TimedStmt node, String hintKey) {
-        IssueBuilder builder = prepareIssueBuilder()
+        IssueBuilder builder = prepareIssueBuilder(node)
                 .withHint(hintKey)
                 .withSeverity(IssueSeverity.HIGH)
-                .withCurrentNode(node)
-                .withMetadata(node.getMetadata())
                 .withRefactoring(new StatementDeletionVisitor(node).apply(getCurrentScriptEntity()));
         addIssue(builder);
     }
@@ -83,11 +81,9 @@ public class UnnecessaryTime extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsTo node) {
         if (checkTime(node.getSecs())) {
-            IssueBuilder builder = prepareIssueBuilder()
+            IssueBuilder builder = prepareIssueBuilder(node)
                     .withHint(GLIDE)
                     .withSeverity(IssueSeverity.HIGH)
-                    .withCurrentNode(node)
-                    .withMetadata(node.getMetadata())
                     .withRefactoring(new StatementReplacementVisitor(node, new GoToPos(node.getPosition(), node.getMetadata())).apply(getCurrentScriptEntity()));
             addIssue(builder);
         }
@@ -96,11 +92,9 @@ public class UnnecessaryTime extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsToXY node) {
         if (checkTime(node.getSecs())) {
-            IssueBuilder builder = prepareIssueBuilder()
+            IssueBuilder builder = prepareIssueBuilder(node)
                     .withHint(GLIDE_XY)
                     .withSeverity(IssueSeverity.HIGH)
-                    .withCurrentNode(node)
-                    .withMetadata(node.getMetadata())
                     .withRefactoring(new StatementReplacementVisitor(node, new GoToPosXY(node.getX(), node.getY(), node.getMetadata())).apply(getCurrentScriptEntity()));
             addIssue(builder);
         }

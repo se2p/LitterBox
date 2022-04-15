@@ -55,8 +55,7 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
                 StatementReplacementVisitor visitor = new StatementReplacementVisitor(broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata()));
                 ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
 
-                IssueBuilder issueBuilder = prepareIssueBuilder().withCurrentNode(questionableNode)
-                        .withMetadata(questionableNode.getMetadata())
+                IssueBuilder issueBuilder = prepareIssueBuilder(questionableNode)
                         .withSeverity(IssueSeverity.LOW)
                         .withHint(hint)
                         .withRefactoring(refactoredScript);
