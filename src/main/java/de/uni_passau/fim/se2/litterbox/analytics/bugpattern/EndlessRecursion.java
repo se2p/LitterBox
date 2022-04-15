@@ -18,20 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,7 +84,15 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
+                IssueBuilder builder = prepareIssueBuilder()
+                        .withCurrentNode(node)
+                        .withMetadata(node.getMetadata())
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withHint(BROADCAST_HINT)
+                        .withRefactoring(getBroadcastRefactoring(node));
+
+                addIssue(builder);
+
             }
         }
     }
@@ -94,7 +101,14 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
+                IssueBuilder builder = prepareIssueBuilder()
+                        .withCurrentNode(node)
+                        .withMetadata(node.getMetadata())
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withHint(BROADCAST_HINT)
+                        .withRefactoring(getBroadcastRefactoring(node));
+
+                addIssue(builder);
             }
         }
     }
@@ -104,9 +118,34 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(PROCEDURE_HINT));
+                IssueBuilder builder = prepareIssueBuilder()
+                        .withCurrentNode(node)
+                        .withMetadata(node.getMetadata())
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withHint(PROCEDURE_HINT)
+                        .withRefactoring(getProcedureRefactoring(node));
+
+                addIssue(builder);
             }
         }
+    }
+
+    private ProcedureDefinition getProcedureRefactoring(CallStmt node) {
+        List<Stmt> stmtList = ((StmtList)node.getParentNode()).getStmts();
+        int position = stmtList.indexOf(node);
+        stmtList = stmtList.subList(0, position);
+        RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
+        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt)).apply(currentProcedure);
+    }
+
+    private ScriptEntity getBroadcastRefactoring(ASTNode node) {
+        // Note that this is a valid local refactoring, but if there are other receivers this
+        // would break the program
+        List<Stmt> stmtList = ((StmtList)node.getParentNode()).getStmts();
+        int position = stmtList.indexOf(node);
+        stmtList = stmtList.subList(0, position);
+        RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
+        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt)).apply(getCurrentScriptEntity());
     }
 
     @Override
