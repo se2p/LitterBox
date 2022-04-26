@@ -26,9 +26,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.hint.ComparingLiteralsHintFacto
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 class ComparingLiteralsTest implements JsonTest {
@@ -106,5 +109,16 @@ class ComparingLiteralsTest implements JsonTest {
     @Test
     public void testComparingLiteralsTwoStrings() throws IOException, ParsingException {
         assertThatFinderReports(1, new ComparingLiterals(), "src/test/fixtures/bugpattern/comparingLiteralsStrings.json");
+    }
+
+    @Test
+    public void testSubsumptionByVariableAsLiteral() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsSubsumption.json");
+        List<Issue> reportsVariableAsLiteral = new ArrayList<>((new VariableAsLiteral()).check(program));
+        Assertions.assertEquals(2, reportsVariableAsLiteral.size());
+        List<Issue> reportsComparingLiterals = new ArrayList<>((new ComparingLiterals()).check(program));
+        Assertions.assertEquals(1, reportsComparingLiterals.size());
+        Assertions.assertFalse(reportsComparingLiterals.get(0).isSubsumedBy(reportsVariableAsLiteral.get(0)));
+        Assertions.assertTrue(reportsComparingLiterals.get(0).isSubsumedBy(reportsVariableAsLiteral.get(1)));
     }
 }

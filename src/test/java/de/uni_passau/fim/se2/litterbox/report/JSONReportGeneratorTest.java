@@ -274,7 +274,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode subsumption0 = issue0.get("subsumed-by");
         JsonNode subsumption1 = issue1.get("subsumed-by");
 
-        if (issue0.get("finder").asText().equals(finder.getName())) {
+        if (!issue0.get("finder").asText().equals(finder.getName())) {
             assertThat(subsumption0.size()).isEqualTo(0);
             assertThat(subsumption1.get(0).asInt()).isEqualTo(issue0.get("id").asInt());
         } else {
@@ -291,7 +291,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         issues.addAll(unnecessaryIfAfterUntil.check(program));
         MissingLoopSensing mls = new MissingLoopSensing();
         issues.addAll(mls.check(program));
-
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         JSONReportGenerator generator = new JSONReportGenerator(os);
@@ -317,7 +316,6 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(coupling0.get(0).asInt()).isEqualTo(issue1.get("id").asInt());
         }
     }
-
 
     @Test
     public void testDuplicatesAreSimilar() throws IOException, ParsingException {
