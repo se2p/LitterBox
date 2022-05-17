@@ -155,22 +155,21 @@ public class ControlFlowGraph {
         builder.append("}");
         return builder.toString();
     }
-    
-    public Map<String, List<String>> getFlowEdges(){
-    	Map<String, List<String>> flowEdges = new HashMap<String, List<String>>();
-    	for (EndpointPair<CFGNode> edge : graph.edges()) {
-    		String[] nodeUTexts = edge.nodeU().toString().split("\\.");
-    		String nodeU=nodeUTexts[nodeUTexts.length-1].split("\\@")[0];
-    		String[] nodeVTexts = edge.nodeV().toString().split("\\.");
-    		String nodeV=nodeVTexts[nodeVTexts.length-1].split("\\@")[0];    		
-    		
-    		if((nodeU.toLowerCase().equals("entry")==false) && (nodeV.toLowerCase().equals("exit")==false)) {
-    			
-    			flowEdges.computeIfAbsent(nodeU, k -> new ArrayList<>()).add(nodeV);
-    		}    		
+
+    public Map<String, List<String>> getFlowEdges() {
+        Map<String, List<String>> flowEdges = new HashMap<>();
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
+            String[] nodeUTexts = edge.nodeU().toString().split("\\.");
+            String nodeU = nodeUTexts[nodeUTexts.length - 1].split("\\@")[0];
+            String[] nodeVTexts = edge.nodeV().toString().split("\\.");
+            String nodeV = nodeVTexts[nodeVTexts.length - 1].split("\\@")[0];
+
+            if (!"entry".equalsIgnoreCase(nodeU) && !"exit".equalsIgnoreCase(nodeV)) {
+                flowEdges.computeIfAbsent(nodeU, k -> new ArrayList<>()).add(nodeV);
+            }
         }
         return flowEdges;
-    } 
+    }
 
     public Set<Definition> getDefinitions() {
         return graph.nodes().stream().map(CFGNode::getDefinitions).flatMap(Set::stream).collect(Collectors.toSet());
@@ -192,9 +191,8 @@ public class ControlFlowGraph {
         ControlFlowGraph newCFG = new ControlFlowGraph();
         newCFG.graph = Graphs.copyOf(Graphs.transpose(graph));
         newCFG.entryNode = this.exitNode;
-        newCFG.exitNode  = this.entryNode;
+        newCFG.exitNode = this.entryNode;
 
         return newCFG;
     }
-
 }

@@ -211,22 +211,6 @@
             <version>3.9.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-commons</artifactId>
-            <version>1.7.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-        </dependency>
-        <dependency>
-    		<groupId>org.javatuples</groupId>
-    		<artifactId>javatuples</artifactId>
-    		<version>1.2</version>
-		</dependency>
     </dependencies>
 
 

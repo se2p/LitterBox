@@ -7,7 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 
 import java.util.*;
 
-public class ExtractSpriteVisitor implements ScratchVisitor{
+public class ExtractSpriteVisitor implements ScratchVisitor {
 
     Map<ASTNode, List<ASTNode>> leafsMap = new HashMap<>();
 
@@ -17,7 +17,7 @@ public class ExtractSpriteVisitor implements ScratchVisitor{
 
     @Override
     public void visit(ActorDefinition node) {
-        if (node.getActorType().isSprite()){
+        if (node.getActorType().isSprite()) {
             List<ASTNode> leafsCollector = new LinkedList<>();
 
             leafsCollector = traverseLeafs(node, leafsCollector, node.getIdent().getName());
@@ -26,20 +26,19 @@ public class ExtractSpriteVisitor implements ScratchVisitor{
     }
 
     private List<ASTNode> traverseLeafs(ASTNode node, List<ASTNode> leafsCollector, String SpriteLabel) {
-        if(node instanceof ASTLeaf){
+        if (node instanceof ASTLeaf) {
             leafsCollector.add(node);
         }
-        for (ASTNode child : node.getChildren()){
-            if(child instanceof DeclarationStmtList || child instanceof SetStmtList || child instanceof ActorType || child instanceof Metadata) {
+        for (ASTNode child : node.getChildren()) {
+            if (child instanceof DeclarationStmtList || child instanceof SetStmtList || child instanceof ActorType || child instanceof Metadata) {
                 continue;
             }
             //Ignoring the StringLiteral which is equal to the SpriteLabel
-            if(child instanceof StringLiteral && ((StringLiteral) child).getText().equals(SpriteLabel)){
+            if (child instanceof StringLiteral && ((StringLiteral) child).getText().equals(SpriteLabel)) {
                 continue;
             }
             leafsCollector = traverseLeafs(child, leafsCollector, SpriteLabel);
         }
         return leafsCollector;
     }
-
 }
