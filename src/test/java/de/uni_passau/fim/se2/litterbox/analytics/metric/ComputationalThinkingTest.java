@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -57,7 +57,6 @@ public class ComputationalThinkingTest implements JsonTest {
         // Move
         assertThat(new ComputationalThinkingScoreUserInteractivity().calculateMetric(program)).isEqualTo(1.0);
     }
-
 
     @Test
     public void testOnClick() throws IOException, ParsingException {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -49,7 +49,7 @@ public class MiddleMan extends AbstractIssueFinder {
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
-                addIssue(event, ((ReceptionOfMessage) event).getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
+                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
             }
         }
     }

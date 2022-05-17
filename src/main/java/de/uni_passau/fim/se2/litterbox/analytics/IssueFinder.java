@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,7 +46,7 @@ public interface IssueFinder {
 
     boolean isDuplicateOf(Issue first, Issue other);
 
-    double getDistanceTo(Issue first, Issue other);
+    int getDistanceTo(Issue first, Issue other);
 
     boolean isSubsumedBy(Issue first, Issue other);
 

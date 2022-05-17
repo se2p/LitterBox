@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;

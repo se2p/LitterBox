@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CloneBlock {
 
@@ -59,16 +58,41 @@ public class CloneBlock {
         return positions2.get(0);
     }
 
+    public boolean contains(CloneBlock other) {
+        return positions1.containsAll(other.positions1) && positions2.containsAll(other.positions2);
+    }
+
+    public boolean hasOverlap() {
+        List<Integer> positions = new ArrayList<>(positions1);
+        positions.retainAll(positions2);
+        return !positions.isEmpty();
+    }
+
+    public boolean overlaps(CloneBlock other, boolean selfComparison) {
+        if (selfComparison) {
+            return hasOverlap(positions1, other.positions1) || hasOverlap(positions2, other.positions2);
+        } else {
+            return hasOverlap(positions1, other.positions1) && hasOverlap(positions2, other.positions2);
+        }
+    }
+
+    private boolean hasOverlap(List<Integer> positions1, List<Integer> positions2) {
+        List<Integer> positions = new ArrayList<>(positions1);
+        positions.retainAll(positions2);
+        return !positions.isEmpty();
+    }
+
     public boolean extendsWithGap(CloneBlock other, int gapSize) {
         int diffX = getFirstX() - other.getLastX() - 1;
+        if (diffX < 0 || diffX > gapSize) {
+            return false;
+        }
         int diffY = getFirstY() - other.getLastY() - 1;
-
-        if (diffX >= 0 && diffX <= gapSize &&
-                Math.abs(diffY) <= gapSize) {
-            return true;
+        if (diffY < 0 || Math.abs(diffY) > gapSize) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public void fillPositionMap(boolean[][] filledPositions) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
  * Checks if all Sprites have a starting point.
@@ -30,71 +31,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 public class EmptyScript extends AbstractIssueFinder {
 
     public static final String NAME = "empty_script";
-    private boolean isEmpty;
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        //NOP should not be detected in Procedures
+    }
 
     @Override
     public void visit(Script node) {
         currentScript = node;
-        isEmpty = false;
-        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() == 0) {
-            isEmpty = true;
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(AttributeAboveValue node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(BackdropSwitchTo node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(GreenFlag node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(KeyPressed node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(ReceptionOfMessage node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(SpriteClicked node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(StageClicked node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(StartedAsClone node) {
-        if (isEmpty) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        currentProcedure = null;
+        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().isEmpty()) {
+            addIssue(node.getEvent(), node.getEvent().getMetadata(), IssueSeverity.LOW);
         }
     }
 

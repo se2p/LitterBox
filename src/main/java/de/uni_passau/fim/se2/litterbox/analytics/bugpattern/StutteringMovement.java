@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -58,7 +58,7 @@ public class StutteringMovement extends AbstractIssueFinder {
         visitChildren(script);
         if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
-            if (listOfStmt.size() <= 2 && listOfStmt.size() > 0) {
+            if (listOfStmt.size() <= 2 && !listOfStmt.isEmpty()) {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();

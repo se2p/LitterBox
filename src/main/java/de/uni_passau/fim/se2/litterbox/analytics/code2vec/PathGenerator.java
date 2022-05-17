@@ -1,97 +1,139 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteAndStageVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PathGenerator {
-
     private final int maxPathLength;
-    private final int maxPathWidth;
-    private final boolean isStageIncluded;
-    Program program;
-    Map<ASTNode, List<ASTNode>> leafsMap;
+    private final boolean includeStage;
+    private final boolean wholeProgram;
 
+    private final Program program;
+    private Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public PathGenerator(Program program, int maxPathLength, int maxPathWidth, boolean isStageIncluded){
+    private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
+            "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
+            "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
+            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
+            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
+            "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
+    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
+
+    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
         this.maxPathLength = maxPathLength;
-        this.maxPathWidth = maxPathWidth;
-        this.isStageIncluded=isStageIncluded;
+        this.includeStage = includeStage;
+        this.wholeProgram = wholeProgram;
         this.program = program;
+
+        extractASTLeafsPerSprite();
     }
 
-    public void extractASTLeafsPerSprite() {
-    	if(isStageIncluded) {
-    		ExtractSpriteAndStageVisitor spriteVisitor = new ExtractSpriteAndStageVisitor();
-            program.accept(spriteVisitor);
-            leafsMap = spriteVisitor.getLeafsCollector();
-    	}
-    	else {
-    		ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor();
-            program.accept(spriteVisitor);
-            leafsMap = spriteVisitor.getLeafsCollector();
-    	}    	
+    private void extractASTLeafsPerSprite() {
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
+        program.accept(spriteVisitor);
+        leafsMap = spriteVisitor.getLeafsCollector();
     }
 
-    public void printLeafsPerSpite() {
-        System.out.println("Anzahl der Sprites: " + leafsMap.keySet().size());
-        for(ASTNode key : leafsMap.keySet()) {
-            System.out.println("Actor Definition: " + ((ActorDefinition)key).getIdent().getName());
-            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition)key).getIdent().getName() + ": " + leafsMap.get(key).size());
-            int i=0;
-            for(ASTNode value : leafsMap.get(key)){
-                System.out.println(i + "Blatt (Test): " + value.getUniqueName());
+    public void printLeafsPerSprite() {
+        System.out.println("Number of sprites: " + leafsMap.keySet().size());
+        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
+            String actorName = entry.getKey().getIdent().getName();
+            System.out.println("Actor Definition: " + actorName);
+            System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
+            int i = 0;
+            for (ASTNode value : entry.getValue()) {
+                System.out.println(i + " Leaf (Test): " + getToken(value));
                 i++;
             }
         }
     }
 
-    public ArrayList<ProgramFeatures> generatePaths() {
-        ArrayList<ProgramFeatures> spriteFeatures = new ArrayList<>();
-        for(ASTNode sprite : leafsMap.keySet()) {
-            ProgramFeatures singleSpriteFeatures = generatePathsPerSprite(sprite);
-            if (!singleSpriteFeatures.isEmpty()) {
+    public List<String> getAllLeafs() {
+        return leafsMap.values().stream().flatMap(Collection::stream).map(this::getToken).collect(Collectors.toList());
+    }
+
+    public List<ProgramFeatures> generatePaths() {
+        if (wholeProgram) {
+            return generatePathsWholeProgram().stream().collect(Collectors.toList());
+        } else {
+            return generatePathsPerSprite();
+        }
+    }
+
+    private List<ProgramFeatures> generatePathsPerSprite() {
+        List<ProgramFeatures> spriteFeatures = new ArrayList<>();
+        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
+            ActorDefinition actor = entry.getKey();
+            List<ASTNode> leafs = entry.getValue();
+            ProgramFeatures singleSpriteFeatures = generatePathsForSprite(actor, leafs);
+            if (singleSpriteFeatures != null && !singleSpriteFeatures.isEmpty()) {
                 spriteFeatures.add(singleSpriteFeatures);
             }
         }
         return spriteFeatures;
     }
 
-    private ProgramFeatures generatePathsPerSprite(ASTNode sprite) {
-        List<ASTNode> spriteLeafs = leafsMap.get(sprite);
-        String spriteName = ((ActorDefinition)sprite).getIdent().getName();
-        //Normalize SpriteLabel
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName, "BLANK");
-        ArrayList<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        String splitName = normalizedSpriteLabel;
-        if (splitNameParts.size() > 0) {
-            splitName = splitNameParts.stream().collect(Collectors.joining("|"));
+    private Optional<ProgramFeatures> generatePathsWholeProgram() {
+        final List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
+        return Optional.ofNullable(programFeatures).filter(features -> !features.isEmpty());
+    }
+
+    private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
+        String spriteName = normalizeSpriteName(sprite.getIdent().getName());
+        if (spriteName == null) {
+            return null;
         }
 
-        ProgramFeatures programFeatures = new ProgramFeatures(splitName);
+        return getProgramFeatures(spriteName, leafs);
+    }
 
-        for(int i = 0; i < spriteLeafs.size(); i++) {
-            for(int j = i + 1; j < spriteLeafs.size(); j++) {
-                String path = generatePath(spriteLeafs.get(i), spriteLeafs.get(j));
-                if (path != ""){
-                    String source = spriteLeafs.get(i).getUniqueName();
-                    String target = spriteLeafs.get(j).getUniqueName();
-                    programFeatures.addFeature(source, path, target);
+    private ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
+        final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
+
+        for (int i = 0; i < astLeafs.size(); i++) {
+            for (int j = i + 1; j < astLeafs.size(); j++) {
+                ASTNode source = astLeafs.get(i);
+                ASTNode target = astLeafs.get(j);
+                String path = generatePath(source, target);
+                if (!path.isEmpty()) {
+                    String sourceLiteral = getToken(source);
+                    String targetLiteral = getToken(target);
+                    if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
+                        programFeatures.addFeature(sourceLiteral, path, targetLiteral);
+                    }
                 }
             }
         }
+
         return programFeatures;
     }
 
-    private static ArrayList<ASTNode> getTreeStack(ASTNode node) {
+    private static List<ASTNode> getTreeStack(ASTNode node) {
         ArrayList<ASTNode> upStack = new ArrayList<>();
         ASTNode current = node;
         while (current != null) {
@@ -104,13 +146,10 @@ public class PathGenerator {
     private String generatePath(ASTNode source, ASTNode target) {
         String down = "_";
         String up = "^";
-        String startSymbol = "(";
-        String endSymbol = ")";
-        String seperator = "";
 
-        StringJoiner stringBuilder = new StringJoiner(seperator);
-        ArrayList<ASTNode> sourceStack = getTreeStack(source);
-        ArrayList<ASTNode> targetStack = getTreeStack(target);
+        final StringBuilder pathBuilder = new StringBuilder();
+        final List<ASTNode> sourceStack = getTreeStack(source);
+        final List<ASTNode> targetStack = getTreeStack(target);
 
         int commonPrefix = 0;
         int currentSourceAncestorIndex = sourceStack.size() - 1;
@@ -123,51 +162,68 @@ public class PathGenerator {
             currentTargetAncestorIndex--;
         }
 
-        //manage too long path length
+        // manage too long path length
         int pathLength = sourceStack.size() + targetStack.size() - 2 * commonPrefix;
-        if (maxPathLength > 0) {
-            if (pathLength > maxPathLength) {
-                return "";
-            }
+        if (maxPathLength > 0 && pathLength > maxPathLength) {
+            return "";
         }
 
-
-        /*
-        //manage path width
-        if (currentSourceAncestorIndex >= 0 && currentTargetAncestorIndex >= 0) {
-            int pathWidth = targetStack.get(currentTargetAncestorIndex).getUserData(Common.ChildId)
-                    - sourceStack.get(currentSourceAncestorIndex).getUserData(Common.ChildId);
-            if (pathWidth > maxPathWidth) {
-                return "";
-            }
-        }
-        */
-
-        //add source Stack Nodes until common Node(up to the common)
+        // add source Stack Nodes until common Node(up to the common)
         for (int i = 0; i < sourceStack.size() - commonPrefix; i++) {
             ASTNode currentNode = sourceStack.get(i);
             String childId = "";
-            stringBuilder.add(String.format("%s%s%s%s%s", startSymbol,
-                    currentNode.getUniqueName(), childId, endSymbol, up));
+            appendNodeToPath(pathBuilder, currentNode, childId);
+            pathBuilder.append(up);
         }
 
-        //add common Node
+        // add common Node
         ASTNode commonNode = sourceStack.get(sourceStack.size() - commonPrefix);
         String commonNodeChildId = "";
-        stringBuilder.add(String.format("%s%s%s%s", startSymbol,
-                commonNode.getUniqueName(), commonNodeChildId, endSymbol));
+        appendNodeToPath(pathBuilder, commonNode, commonNodeChildId);
 
-        //add target Stack Nodes (down to the target)
+        // add target Stack Nodes (down to the target)
         for (int i = targetStack.size() - commonPrefix - 1; i >= 0; i--) {
             ASTNode currentNode = targetStack.get(i);
             String childId = "";
-            stringBuilder.add(String.format("%s%s%s%s%s", down, startSymbol,
-                    currentNode.getUniqueName(), childId, endSymbol));
+            pathBuilder.append(down);
+            appendNodeToPath(pathBuilder, currentNode, childId);
         }
 
-        return stringBuilder.toString();
+        return pathBuilder.toString();
     }
 
+    private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
+        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
+    }
 
+    private static String normalizeSpriteName(String spriteName) {
+        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
+        if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
+            return null;
+        }
 
+        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
+        String splitName = normalizedSpriteLabel;
+        if (!splitNameParts.isEmpty()) {
+            splitName = String.join("|", splitNameParts);
+        }
+
+        return splitName;
+    }
+
+    private static boolean isDefaultName(String normalizedSpriteLabel) {
+        return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
+    }
+
+    /**
+     * Retrieve the actual literal represented by this node.
+     *
+     * @param leaf A leaf of the AST.
+     * @return The literal value of the given leaf.
+     */
+    private String getToken(ASTNode leaf) {
+        TokenVisitor visitor = new TokenVisitor();
+        leaf.accept(visitor);
+        return visitor.getToken();
+    }
 }

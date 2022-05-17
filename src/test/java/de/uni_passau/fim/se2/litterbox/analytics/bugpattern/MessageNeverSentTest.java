@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -38,21 +38,14 @@ class MessageNeverSentTest implements JsonTest {
 
     @Test
     public void testMessageNeverSent() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
-        MessageNeverSent finder = new MessageNeverSent();
-        Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).isEmpty();
+        assertThatFinderReports(0, new MessageNeverSent(), "src/test/fixtures/bugpattern/broadcastSync.json");
     }
 
     @Test
     public void testMessageRec() throws IOException, ParsingException {
-        Program messageRec = getAST("src/test/fixtures/bugpattern/messageRec.json");
-        MessageNeverSent finder = new MessageNeverSent();
-        Set<Issue> reports = finder.check(messageRec);
-        Truth.assertThat(reports).hasSize(1);
-        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
-        reports = finder.check(program);
-        Truth.assertThat(reports).isEmpty();
+        assertThatFinderReports(1, new MessageNeverSent(), "src/test/fixtures/bugpattern/messageRec.json");
+        //test reset
+        assertThatFinderReports(0, new MessageNeverSent(), "src/test/fixtures/bugpattern/broadcastSync.json");
     }
 
     @Test
@@ -64,13 +57,11 @@ class MessageNeverSentTest implements JsonTest {
         for (Issue issue : reports) {
             Hint hint = new Hint(MessageNeverSentHintFactory.MESSAGE_IN_SAY_OR_THINK);
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
-            hint.setParameter(Hint.HINT_MESSAGE,"test");
+            hint.setParameter(Hint.HINT_MESSAGE, "test");
             hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
             Assertions.assertEquals(hint.getHintText(), issue.getHint());
         }
-        messageRec = getAST("src/test/fixtures/bugpattern/messageRec.json");
-        reports = finder.check(messageRec);
-        Truth.assertThat(reports).hasSize(1);
+        assertThatFinderReports(1, new MessageNeverSent(), "src/test/fixtures/bugpattern/messageRec.json");
     }
 
     @Test
@@ -83,7 +74,7 @@ class MessageNeverSentTest implements JsonTest {
             Hint hint = new Hint(MessageNeverSentHintFactory.TOUCHING_USED);
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_SPRITE, "Bat");
-            hint.setParameter(Hint.HINT_MESSAGE,"Bat berührt");
+            hint.setParameter(Hint.HINT_MESSAGE, "Bat berührt");
             Assertions.assertEquals(hint.getHintText(), issue.getHint());
         }
     }

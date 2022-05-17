@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,20 +29,19 @@ import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JSONReportGeneratorTest implements JsonTest {
 
@@ -67,6 +66,31 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(node.has("subsumed-by")).isTrue();
             assertThat(node.has("similar-to")).isTrue();
         }
+    }
+
+    private String oldSimilarityValue;
+    private String oldCouplingValue;
+    private String oldDuplicateValue;
+    private String oldSubsumptionValue;
+
+    @BeforeEach
+    void setupProperties() {
+        oldSimilarityValue = System.getProperty("json.similarity", "false");
+        oldCouplingValue = System.getProperty("json.coupling", "false");
+        oldDuplicateValue = System.getProperty("json.duplicates", "true");
+        oldSubsumptionValue = System.getProperty("json.subsumption", "true");
+        System.setProperty("json.similarity", "true");
+        System.setProperty("json.coupling", "true");
+        System.setProperty("json.duplicates", "true");
+        System.setProperty("json.subsumption", "true");
+    }
+
+    @AfterEach
+    void restoreProperties() {
+        System.setProperty("json.similarity", oldSimilarityValue);
+        System.setProperty("json.coupling", oldCouplingValue);
+        System.setProperty("json.duplicates", oldDuplicateValue);
+        System.setProperty("json.subsumption", oldSubsumptionValue);
     }
 
     @Test
@@ -261,7 +285,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testReportWithCouplingInformation() throws IOException, ParsingException {
         Set<Issue> issues = new LinkedHashSet<>();
-        Program program = getAST("./src/test/fixtures/smells/unnecessaryIf.json");
+        Program program = getAST("./src/test/fixtures/smells/unnecessaryIfAfterUntil.json");
         UnnecessaryIfAfterUntil unnecessaryIfAfterUntil = new UnnecessaryIfAfterUntil();
         issues.addAll(unnecessaryIfAfterUntil.check(program));
         MissingLoopSensing mls = new MissingLoopSensing();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -38,6 +38,7 @@ public class WeightedMethodCountStrict<T extends ASTNode> extends WeightedMethod
         return NAME;
     }
 
+    @Override
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
             inScriptOrProcedure = true;

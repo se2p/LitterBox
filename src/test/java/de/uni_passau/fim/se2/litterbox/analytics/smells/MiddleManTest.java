@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,38 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class MiddleManTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        MiddleMan finder = new MiddleMan();
-        Set<Issue> reports = finder.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MiddleMan(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMiddleMan() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/middleMan.json");
-        MiddleMan finder = new MiddleMan();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(3, reports.size());
+        assertThatFinderReports(3, new MiddleMan(), "./src/test/fixtures/smells/middleMan.json");
     }
 
     @Test
     public void testMiddleManProcedure() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/middleManProcedure.json");
-        MiddleMan finder = new MiddleMan();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MiddleMan(), "./src/test/fixtures/smells/middleManProcedure.json");
     }
 }

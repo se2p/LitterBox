@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -35,6 +34,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScratchListStmtParserTest implements JsonTest {
 
@@ -57,17 +58,6 @@ class ScratchListStmtParserTest implements JsonTest {
         Truth.assertThat(((StringLiteral) addTo.getString()).getText()).isEqualTo("thing");
         Truth.assertThat(((Qualified) addTo.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
         Truth.assertThat(((Qualified) addTo.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
-    }
-
-    @Test
-    public void testAddToWithMissingListId() throws Exception {
-        Program program = getAST("src/test/fixtures/stmtParser/missingId.json");
-        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = actorDefinition.getScripts().getScriptList().get(0);
-        Stmt stmt = script.getStmtList().getStmts().get(0);
-        Truth.assertThat(stmt).isInstanceOf(AddTo.class);
-        Identifier identifier = ((AddTo) stmt).getIdentifier();
-        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
     }
 
     @Test
@@ -139,38 +129,5 @@ class ScratchListStmtParserTest implements JsonTest {
         final DeleteAllOf deleteAllOf = (DeleteAllOf) stmt;
         Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
         Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
-    }
-
-    @Test
-    public void testAddInvalid() throws Exception {
-        Program program = getAST("src/test/fixtures/stmtParser/invalidList.json");
-        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = actorDefinition.getScripts().getScriptList().get(0);
-        Stmt stmt = script.getStmtList().getStmts().get(0);
-        Truth.assertThat(stmt).isInstanceOf(AddTo.class);
-        Identifier identifier = ((AddTo) stmt).getIdentifier();
-        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
-    }
-
-    @Test
-    public void testDeleteInvalid() throws Exception {
-        Program program = getAST("src/test/fixtures/stmtParser/invalidList.json");
-        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = actorDefinition.getScripts().getScriptList().get(0);
-        Stmt stmt = script.getStmtList().getStmts().get(2);
-        Truth.assertThat(stmt).isInstanceOf(DeleteAllOf.class);
-        Identifier identifier = ((DeleteAllOf) stmt).getIdentifier();
-        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
-    }
-
-    @Test
-    public void testInsertInvalid() throws Exception {
-        Program program = getAST("src/test/fixtures/stmtParser/invalidList.json");
-        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = actorDefinition.getScripts().getScriptList().get(0);
-        Stmt stmt = script.getStmtList().getStmts().get(3);
-        Truth.assertThat(stmt).isInstanceOf(InsertAt.class);
-        Identifier identifier = ((InsertAt) stmt).getIdentifier();
-        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
     }
 }

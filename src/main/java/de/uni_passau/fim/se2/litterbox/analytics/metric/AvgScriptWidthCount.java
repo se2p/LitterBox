@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,15 +32,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    private double count = 0;
     public static final String NAME = "avg_script_width_count";
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        count = 0;
-        count = countScriptWidthCount(node);
-        return count;
+        return countScriptWidthCount(node);
     }
 
     private double countScriptWidthCount(T node) {
@@ -51,18 +48,21 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
         String[] scriptBlocks = scriptString.split("\r\n");
+        if (scriptBlocks.length == 0) {
+            return 0.0;
+        }
         for (String scriptBlock : scriptBlocks) {
             scriptWidths.add(scriptBlock.length());
         }
         double avgWidth = (double) scriptWidths.stream().mapToInt(Integer::intValue).sum() / scriptBlocks.length;
-        return new BigDecimal(avgWidth).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return BigDecimal.valueOf(avgWidth).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     private String getScriptString(T node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(node instanceof ProcedureDefinition){
-            ActorDefinition actorDefinition= (ActorDefinition) node.getParentNode().getParentNode();
-            Program program= (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
+        if (node instanceof ProcedureDefinition) {
+            ActorDefinition actorDefinition = (ActorDefinition) node.getParentNode().getParentNode();
+            Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

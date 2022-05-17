@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class ScratchListAsBooleanTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/stmtParser/listElementsBoolean.json");
-        SpriteCount sp = new SpriteCount();
+        SpriteCount<Program> sp = new SpriteCount<>();
         Assertions.assertEquals(1, sp.calculateMetric(empty));
     }
 }

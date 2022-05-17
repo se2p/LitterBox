@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,5 +25,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 public interface TransferFunction<T extends DataflowFact> extends BiFunction<CFGNode, Set<T>, Set<T>> {
+    @Override
     Set<T> apply(CFGNode node, Set<T> inFacts);
 }

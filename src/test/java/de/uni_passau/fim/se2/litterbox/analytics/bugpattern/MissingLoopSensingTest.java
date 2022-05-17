@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,56 +29,37 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MissingLoopSensingTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMissingLoopSensing() throws IOException, ParsingException {
-        Program codeHero = JsonTest.parseProgram("./src/test/fixtures/bugpattern/codeHero.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(codeHero);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/codeHero.json");
     }
 
     @Test
     public void testAnina() throws IOException, ParsingException {
-        Program anina = JsonTest.parseProgram("./src/test/fixtures/bugpattern/anina.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(anina);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/anina.json");
     }
 
     @Test
     public void testMissingLoopSensingNested() throws IOException, ParsingException {
-        Program nestedMissingLoopSensing = JsonTest.parseProgram("./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(nestedMissingLoopSensing);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
     }
 
     @Test
     public void testMissingLoopSensingMultiple() throws IOException, ParsingException {
-        Program missingLoopSensingMultiple = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(missingLoopSensingMultiple);
-        Assertions.assertEquals(5, reports.size());
+        assertThatFinderReports(5, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
     }
 
     @Test
     public void testMissingLoopSensingVariable() throws IOException, ParsingException {
-        Program missingLoopSensingVariable = JsonTest.parseProgram("./src/test/fixtures/bugpattern/geisterwald.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(missingLoopSensingVariable);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/geisterwald.json");
     }
 
     @Test
@@ -90,10 +70,7 @@ public class MissingLoopSensingTest implements JsonTest {
 
     @Test
     public void testMissingLoopSensingAfterWaitUntil() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingAfterWaitUntil.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/missingLoopSensingAfterWaitUntil.json");
     }
 
     @Test
@@ -110,8 +87,7 @@ public class MissingLoopSensingTest implements JsonTest {
         // scripts are different, location is equals
         PQGramProfile profile0 = new PQGramProfile(reports.get(0).getScriptOrProcedureDefinition());
         PQGramProfile profile2 = new PQGramProfile(reports.get(2).getScriptOrProcedureDefinition());
-        double distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile2);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(2)));
+        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(2)));
 
         //Location equals other location in same script
         Assertions.assertSame(reports.get(4).getScriptOrProcedureDefinition(), reports.get(5).getScriptOrProcedureDefinition());
@@ -120,17 +96,15 @@ public class MissingLoopSensingTest implements JsonTest {
 
         // scripts are different, location is equals
         PQGramProfile profile4 = new PQGramProfile(reports.get(4).getScriptOrProcedureDefinition());
-        distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile4);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(4)));
+        Assertions.assertEquals(9, reports.get(0).getDistanceTo(reports.get(4)));
 
         // scripts are different, location is different
         PQGramProfile profile3 = new PQGramProfile(reports.get(3).getScriptOrProcedureDefinition());
-        distanceSameLocationOtherScript = 1 + 1 + profile0.calculateDistanceTo(profile3);
-        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(3)));
+        Assertions.assertEquals(11, reports.get(0).getDistanceTo(reports.get(3)));
 
         //Location not equals other location in same script
         Assertions.assertSame(reports.get(6).getScriptOrProcedureDefinition(), reports.get(7).getScriptOrProcedureDefinition());
         Assertions.assertNotEquals(reports.get(6).getCodeLocation(), reports.get(7).getCodeLocation());
-        Assertions.assertEquals(1, reports.get(6).getDistanceTo(reports.get(7)));
+        Assertions.assertEquals(2, reports.get(6).getDistanceTo(reports.get(7)));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -118,10 +117,10 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                 }
             } else if (notClonedActor.contains(spriteName)) {
                 Hint hint = generateHint(spriteName);
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
                 Hint hint = generateHint(currentActor.getIdent().getName());
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -153,7 +152,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         Hint hint;
         if (deleteCloneSpritesAndMessages.containsKey(actorName)) {
             Set<String> messages = deleteCloneSpritesAndMessages.get(actorName);
-            if (messages.size() > 0) {
+            if (!messages.isEmpty()) {
                 Set<String> events = new LinkedHashSet<>();
                 for (String message : messages) {
                     if (actorMessageWithEvent.containsKey(actorName + message)) {

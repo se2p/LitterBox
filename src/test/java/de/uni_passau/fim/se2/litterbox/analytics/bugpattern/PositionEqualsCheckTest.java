@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,58 +37,37 @@ public class PositionEqualsCheckTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new PositionEqualsCheck(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEqualCond() throws IOException, ParsingException {
-        Program equalX = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPosEqual.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(equalX);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/xPosEqual.json");
     }
 
     @Test
     public void testEqualDir() throws IOException, ParsingException {
-        Program equalDirection = JsonTest.parseProgram("./src/test/fixtures/bugpattern/posEqualDirection.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(equalDirection);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/posEqualDirection.json");
     }
 
     @Test
     public void testXPositionEquals() throws IOException, ParsingException {
-        Program xPositionEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPositionEquals.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(xPositionEquals);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/xPositionEquals.json");
     }
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program allChecks = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(allChecks);
-        Assertions.assertEquals(4, reports.size());
+        assertThatFinderReports(4, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/positionEqualsCheck.json");
     }
 
     @Test
     public void testNested() throws IOException, ParsingException {
-        Program nested = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsNested.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(nested);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/positionEqualsNested.json");
     }
 
     @Test
     public void testDeadEquals() throws IOException, ParsingException {
-        Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        Set<Issue> reports = parameterName.check(deadEquals);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new PositionEqualsCheck(), "./src/test/fixtures/bugpattern/deadPositionEquals.json");
     }
 
     @Test

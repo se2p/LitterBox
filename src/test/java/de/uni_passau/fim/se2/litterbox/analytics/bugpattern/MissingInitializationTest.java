@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -27,29 +28,27 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitialization.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitialization.json");
     }
 
     @Test
     public void testMissingInitializationInClone() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
     }
 
     @Test
     public void testMissingInitializationWrongVarUsed() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
     }
 
     @Test
@@ -64,77 +63,57 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
     }
 
     @Test
     public void testMissingInitializationInTwoBroadcasts() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
     }
 
     @Test
     public void testMissingInitializationInTwoBroadcastsWithDefinition() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
         // Not an anomaly: The definition happens in the message receiver, and we don't know
         // if the execution of the receiver will be scheduled before the use
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
     }
 
     @Test
     public void testMissingInitializationTwoVarReadChange() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
         // 2 vars, each is first used in a say, then in a change
-        Assertions.assertEquals(4, reports.size());
+        assertThatFinderReports(4, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
     }
 
     @Test
     public void testMissingInitializationVariableOfAndVar() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
         // One direct use, one us with AttributeOf
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
     }
 
     @Test
     public void testMissingInitializationInParallel() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
         // This is not an anomaly: The initialization may happen before the use, depending on the scheduler
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
     }
 
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
     }
 
     @Test
     public void testMissingPositionInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
     }
 
     @Test
     public void testMissingListInitialization() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/cfg/listoperations.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/cfg/listoperations.json");
     }
 
     @Test
     public void testMissingInitializationInCustomBlockWithCall() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationInCustomBlock.json");
-        Set<Issue> reports = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationInCustomBlock.json");
     }
 
     @Test
@@ -148,17 +127,57 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitializationOfList() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationUseList.json");
-        MissingInitialization initialization = new MissingInitialization();
-        Set<Issue> reports = (initialization).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationUseList.json");
     }
 
     @Test
     public void testMissingInitializationOfListNotReportingHide() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationHideList.json");
+        assertThatFinderReports(0, new MissingInitialization(), "src/test/fixtures/bugpattern/missingInitializationHideList.json");
+    }
+
+    @Test
+    public void testMissingInitializationCostumeInCloneScript() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingInitClone.json");
         MissingInitialization initialization = new MissingInitialization();
-        Set<Issue> reports = (initialization).check(program);
-        Assertions.assertEquals(0, reports.size());
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(MissingInitialization.NAME_CLONE);
+        hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+    }
+
+    @Test
+    public void testMissingInitializationInLooseBlock() throws IOException, ParsingException {
+        MissingInitialization finder = new MissingInitialization();
+        finder.setIgnoreLooseBlocks(true);
+        assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
+        finder.setIgnoreLooseBlocks(false);
+        assertThatFinderReports(0, finder, "src/test/fixtures/bugpattern/missingInitializationLooseBlock.json");
+    }
+
+    @Test
+    public void testMissingInitializationDuplicates() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/duplicateMI.json");
+        MissingInitialization initialization = new MissingInitialization();
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(2, reports.size());
+
+        Issue issue1 = reports.get(0);
+        Issue issue2 = reports.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
+        assertThat(issue2.isDuplicateOf(issue1)).isTrue();
+    }
+
+    @Test
+    public void testMissingInitializationNotDuplicates() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/nonduplicateMI.json");
+        MissingInitialization initialization = new MissingInitialization();
+        List<Issue> reports = new ArrayList<>(initialization.check(program));
+        Assertions.assertEquals(2, reports.size());
+
+        Issue issue1 = reports.get(0);
+        Issue issue2 = reports.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isFalse();
+        assertThat(issue2.isDuplicateOf(issue1)).isFalse();
     }
 }

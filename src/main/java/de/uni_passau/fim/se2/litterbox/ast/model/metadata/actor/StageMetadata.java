@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,38 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class StageMetadata extends ActorMetadata {
-    private double tempo;
-    private double videoTransparency;
-    private String videoState;
     private String textToSpeechLanguage;
 
-    public StageMetadata(CommentMetadataList commentsMetadata, VariableMetadataList variables, ListMetadataList lists,
-                         BroadcastMetadataList broadcasts, int currentCostume, ImageMetadataList costumes,
-                         SoundMetadataList sounds, double volume, int layerOrder, double tempo,
-                         double videoTransparency,
-                         String videoState, String textToSpeechLanguage) {
-        super(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
-        this.tempo = tempo;
-        this.videoTransparency = videoTransparency;
-        this.videoState = videoState;
+    public StageMetadata(CommentMetadataList commentsMetadata, int currentCostume, ImageMetadataList costumes,
+                         SoundMetadataList sounds, String textToSpeechLanguage) {
+        super(commentsMetadata, currentCostume, costumes, sounds);
         this.textToSpeechLanguage = textToSpeechLanguage;
-    }
-
-    public double getTempo() {
-        return tempo;
-    }
-
-    public double getVideoTransparency() {
-        return videoTransparency;
-    }
-
-    public String getVideoState() {
-        return videoState;
     }
 
     public String getTextToSpeechLanguage() {

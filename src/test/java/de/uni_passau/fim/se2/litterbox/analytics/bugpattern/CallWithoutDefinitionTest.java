@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,62 +19,40 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
-public class CallWithoutDefinitionTest {
+public class CallWithoutDefinitionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testCallWithoutDef() throws IOException, ParsingException {
-        Program callWithoutDef = JsonTest.parseProgram("./src/test/fixtures/bugpattern/callWithoutDefinition.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(callWithoutDef);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/callWithoutDefinition.json");
     }
 
     @Test
     public void testSportPong() throws IOException, ParsingException {
-        Program sportPong = JsonTest.parseProgram("./src/test/fixtures/bugpattern/sportpong.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(sportPong);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/sportpong.json");
     }
 
     @Test
     public void testWriteTheDraw() throws IOException, ParsingException {
-        Program writeTheDraw = JsonTest.parseProgram("./src/test/fixtures/bugpattern/writeTheDraw.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(writeTheDraw);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/writeTheDraw.json");
     }
 
     @Test
     public void testHomeVideo() throws IOException, ParsingException {
-        Program scratchHomeVideo = JsonTest.parseProgram("./src/test/fixtures/bugpattern/scratchHomeVideo.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(scratchHomeVideo);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/scratchHomeVideo.json");
     }
 
     @Test
     public void testDerpyAnimal() throws IOException, ParsingException {
-        Program derpyAnimal = JsonTest.parseProgram("./src/test/fixtures/bugpattern/derpyAnimal.json");
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(derpyAnimal);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/derpyAnimal.json");
     }
 }

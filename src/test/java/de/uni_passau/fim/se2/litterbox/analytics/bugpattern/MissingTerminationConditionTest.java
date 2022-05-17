@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,28 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class MissingTerminationConditionTest implements JsonTest {
 
     @Test
     public void testMissingTermination() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/missingTermination/missingTermination.json");
-        Set<Issue> reports = (new MissingTerminationCondition()).check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingTerminationCondition(), "./src/test/fixtures/missingTermination/missingTermination.json");
     }
 
     @Test
     public void testMissingTerminationNested() throws IOException, ParsingException {
-        Program programNested = getAST("./src/test/fixtures/missingTermination/missingTerminationNested.json");
-        Set<Issue> reports = (new MissingTerminationCondition()).check(programNested);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingTerminationCondition(), "./src/test/fixtures/missingTermination/missingTerminationNested.json");
     }
 }

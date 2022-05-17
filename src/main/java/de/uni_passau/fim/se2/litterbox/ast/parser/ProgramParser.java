@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -55,8 +55,9 @@ public class ProgramParser {
 
         LocalIdentifier ident = new StrId(programName);
 
-        Preconditions.checkArgument(programNode.has(TARGETS_KEY),
-                "Program node has no field targets");
+        if (!programNode.has(TARGETS_KEY) && programNode.has("objName")) {
+            throw new ParsingException("LitterBox only supports Scratch 3 projects.");
+        }
 
         Iterable<JsonNode> iterable = () -> programNode.get(TARGETS_KEY).iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);

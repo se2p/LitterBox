@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
@@ -7,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -34,8 +51,32 @@ public class SplitScriptTest implements JsonTest {
     }
 
     @Test
+    public void testSplitScriptFinder_DoNotSplitEffectDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitGraphicDependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testSplitScriptFinder_DoNotSplitDataDependency_WhenMerged() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_data_dependency_merged.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_Clone() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitScriptClone.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_Broadcast() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitScriptBroadcast.json");
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).isEmpty();
@@ -70,8 +111,6 @@ public class SplitScriptTest implements JsonTest {
     @Test
     public void testSplitScriptFinder() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScript.json");
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/refactoring/splitScript.json");
-        System.out.println(cfg.toDotString());
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);

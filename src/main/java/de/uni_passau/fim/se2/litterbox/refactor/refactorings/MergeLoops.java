@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
@@ -6,14 +24,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeLoops extends CloneVisitor implements Refactoring {
+public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "merge_loops";
 
@@ -56,7 +74,7 @@ public class MergeLoops extends CloneVisitor implements Refactoring {
             UntilStmt origLoop = (UntilStmt) loopStmt;
             return new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
         } else {
-            throw new RuntimeException("Unknown loop statement: "+loopStmt);
+            throw new RuntimeException("Unknown loop statement: " + loopStmt);
         }
     }
 
@@ -71,7 +89,7 @@ public class MergeLoops extends CloneVisitor implements Refactoring {
         for (Script currentScript : node.getScriptList()) {
             if (currentScript == this.script1) {
                 scripts.add(replacementScript);
-            } else if (currentScript != this.script2){
+            } else if (currentScript != this.script2) {
                 scripts.add(apply(currentScript));
             }
         }
@@ -98,8 +116,8 @@ public class MergeLoops extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator() +
-                " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
+                + " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
     }
 }

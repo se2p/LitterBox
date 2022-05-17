@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -56,9 +56,6 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
             return false;
         }
         StringLiteral that = (StringLiteral) o;

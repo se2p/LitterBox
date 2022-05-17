@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,6 +32,7 @@ public class MotionBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     public static final String NAME = "motion_block_count";
 
     private int count = 0;
+
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
@@ -51,17 +52,17 @@ public class MotionBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public void visit(PositionX node){
+    public void visit(PositionX node) {
         count++;
     }
 
     @Override
-    public void visit(PositionY node){
+    public void visit(PositionY node) {
         count++;
     }
 
     @Override
-    public void visit(Direction node){
+    public void visit(Direction node) {
         count++;
     }
 

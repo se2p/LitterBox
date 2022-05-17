@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -113,7 +112,8 @@ public class DataExprParser {
             } else if (isList) {
                 return parseScratchList(exprArray);
             } else {
-                return new UnspecifiedId();
+                ProgramParser.symbolTable.addVariable(idString, idName, new StringType(), true, "Stage");
+                return parseVariable(exprArray);
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");
@@ -132,9 +132,9 @@ public class DataExprParser {
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(exprArray.get(POS_BLOCK_ID).asText(), paramBlock);
         Type type;
-        if(paramBlock.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())){
+        if (paramBlock.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())) {
             type = new BooleanType();
-        }else{
+        } else {
             type = new StringType();
         }
         return new Parameter(new StrId(name), type, metadata);
@@ -143,7 +143,7 @@ public class DataExprParser {
     /**
      * Parses a dead parameter which is not inside of a script.
      *
-     * @param blockId The id of the param node.
+     * @param blockId   The id of the param node.
      * @param paramNode The node holding the name of the parameter.
      * @return The parameter corresponding to the param node.
      * @throws ParsingException If parsing the metadata fails.
@@ -152,9 +152,9 @@ public class DataExprParser {
         String name = paramNode.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, paramNode);
         Type type;
-        if(paramNode.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())){
+        if (paramNode.get(OPCODE_KEY).asText().equals(argument_reporter_boolean.name())) {
             type = new BooleanType();
-        }else{
+        } else {
             type = new StringType();
         }
         return new Parameter(new StrId(name), type, metadata);

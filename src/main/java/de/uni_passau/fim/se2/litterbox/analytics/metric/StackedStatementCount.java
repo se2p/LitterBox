@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,8 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLang
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
@@ -629,7 +627,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 
@@ -669,7 +667,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

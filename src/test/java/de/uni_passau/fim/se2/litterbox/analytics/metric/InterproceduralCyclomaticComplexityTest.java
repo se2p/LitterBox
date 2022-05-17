@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,20 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class InterproceduralCyclomaticComplexityTest implements JsonTest {
 
     @Test
     public void testCCCalculation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/cfg/ifelse_repeattimes.json");
-        InterproceduralCyclomaticComplexity icc = new InterproceduralCyclomaticComplexity();
-        double complexity = icc.calculateMetric(program);
-        assertThat(complexity).isEqualTo(5);
+        assertThatMetricReports(5, new InterproceduralCyclomaticComplexity<>(), "src/test/fixtures/cfg/ifelse_repeattimes.json");
     }
 }

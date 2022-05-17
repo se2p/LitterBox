@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -25,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 /**
  * The Issue represents issues that are identified in Scratch Projects.
@@ -35,8 +37,11 @@ public class Issue {
     private IssueSeverity severity;
     private ActorDefinition actor;
     private ASTNode node;
+    private ASTNode normalizedNode;
     private Script script;
+    private Script normalizedScript;
     private ProcedureDefinition procedure;
+    private ProcedureDefinition normalisedProcedure;
     private Program program;
     private Metadata metaData;
     private Hint hint;
@@ -57,6 +62,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
+        Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;
@@ -66,6 +72,11 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
+        if (node != null) {
+            NormalizationVisitor visitor = new NormalizationVisitor();
+            normalizedNode = node.accept(visitor);
+            normalizedScript = (Script) script.accept(visitor);
+        }
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -84,6 +95,7 @@ public class Issue {
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
+        Preconditions.checkArgument((currentNode == null) == (procedure == null));
         this.finder = finder;
         this.severity = severity;
         this.program = program;
@@ -93,6 +105,11 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
+        if (node != null) {
+            NormalizationVisitor visitor = new NormalizationVisitor();
+            normalizedNode = node.accept(visitor);
+            normalisedProcedure = (ProcedureDefinition) procedure.accept(visitor);
+        }
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -146,6 +163,14 @@ public class Issue {
         }
     }
 
+    public ASTNode getNormalizedScriptOrProcedureDefinition() {
+        if (normalizedScript != null) {
+            return normalizedScript;
+        } else {
+            return normalisedProcedure;
+        }
+    }
+
     public String getFinderName() {
         return finder.getName();
     }
@@ -160,6 +185,10 @@ public class Issue {
 
     public ASTNode getCodeLocation() {
         return node;
+    }
+
+    public ASTNode getNormalizedCodeLocation() {
+        return normalizedNode;
     }
 
     public boolean isCodeLocation(ASTNode node) {
@@ -190,6 +219,7 @@ public class Issue {
         return finder.isDuplicateOf(this, other);
     }
 
-    public double getDistanceTo(Issue other) { return finder.getDistanceTo(this, other); }
-
+    public int getDistanceTo(Issue other) {
+        return finder.getDistanceTo(this, other);
+    }
 }

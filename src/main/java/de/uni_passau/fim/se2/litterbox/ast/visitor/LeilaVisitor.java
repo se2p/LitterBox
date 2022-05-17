@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,9 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -66,7 +63,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -118,7 +114,7 @@ public class LeilaVisitor extends PrintVisitor {
 
         public static boolean contains(String varname) {
             for (STDVAR value : STDVAR.values()) {
-                if (value.name().toLowerCase().equals(varname.toLowerCase())) {
+                if (value.name().equalsIgnoreCase(varname.toLowerCase())) {
                     return true;
                 }
             }
@@ -197,7 +193,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitResourceListsOf(def);
 
         DeclarationStmtList declarations = def.getDecls();
-        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
+        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmts();
         int numDeclarations = declarationStmtList.size();
         if (numDeclarations > 0) {
             newLine();
@@ -209,7 +205,7 @@ public class LeilaVisitor extends PrintVisitor {
         if (!nonDet) {
             SetStmtList setStmtList = def.getSetStmtList();
             List<SetStmt> stmts = setStmtList.getStmts();
-            if (stmts.size() > 0 && !(skippedDeclarations == numDeclarations)) {
+            if (!stmts.isEmpty() && skippedDeclarations != numDeclarations) {
                 newLine();
             }
             for (SetStmt stmt : stmts) {
@@ -961,7 +957,7 @@ public class LeilaVisitor extends PrintVisitor {
             emitNoSpace("[");
         }
         List<Expression> expressions = expressionList.getExpressions();
-        if (expressions.size() > 0) {
+        if (!expressions.isEmpty()) {
             expectOriginal();
             for (int i = 0; i < expressions.size() - 1; i++) {
                 expressions.get(i).accept(this);
@@ -1115,7 +1111,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(ParameterDefinitionList parameterDefinitionList) {
         openParentheses();
         List<ParameterDefinition> parameterDefinitions = parameterDefinitionList.getParameterDefinitions();
-        if (parameterDefinitions.size() > 0) {
+        if (!parameterDefinitions.isEmpty()) {
             for (int i = 0; i < parameterDefinitions.size() - 1; i++) {
                 parameterDefinitions.get(i).accept(this);
                 comma();

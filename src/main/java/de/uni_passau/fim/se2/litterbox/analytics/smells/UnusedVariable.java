@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -47,7 +47,7 @@ import java.util.*;
 public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
-    public static final String NAME_LIST= "unused_variables_list";
+    public static final String NAME_LIST = "unused_variables_list";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
             "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy "
             + "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",

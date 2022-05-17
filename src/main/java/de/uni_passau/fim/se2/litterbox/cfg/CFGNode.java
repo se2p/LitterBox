@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -38,6 +38,14 @@ public abstract class CFGNode {
 
     public ASTNode getScriptOrProcedure() {
         return scriptOrProcedure;
+    }
+
+    public boolean defines(Defineable defineable) {
+        return getDefinitions().stream().anyMatch(d -> d.getDefinable().equals(defineable));
+    }
+
+    public boolean uses(Defineable defineable) {
+        return getUses().stream().anyMatch(u -> u.getDefinable().equals(defineable));
     }
 
     public Set<Definition> getDefinitions() {

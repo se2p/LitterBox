@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -60,7 +60,7 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
 
     @Override
     public void accept(PenExtensionVisitor visitor) {
-        visitor.visit( this);
+        visitor.visit(this);
     }
 
     @Override

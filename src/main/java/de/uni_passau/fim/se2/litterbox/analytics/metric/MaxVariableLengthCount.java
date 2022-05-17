@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -57,18 +57,16 @@ public class MaxVariableLengthCount<T extends ASTNode> implements ScratchVisitor
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        double count = 0;
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        count = getMaxVariableLengthCount();
-        return count;
+        return getMaxVariableLengthCount();
     }
 
     private double getMaxVariableLengthCount() {
         List<String> allVariables = getVariables();
-        Set<String> variables = new HashSet<String>(allVariables);
+        Set<String> variables = new HashSet<>(allVariables);
         double maxVarLen = 0;
         for (String var : variables) { // loop through the list of strings
             if (maxVarLen < var.length()) {

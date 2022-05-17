@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,10 +18,27 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Set;
 
 public interface DefinableCollector<T extends Defineable> extends ScratchVisitor {
     Set<T> getDefineables();
+
+    default ActorDefinition getActorSprite(ActorDefinition actor) {
+        if (actor.isStage()) {
+            return actor;
+        } else {
+            ASTNode parent = actor.getParentNode();
+            if (parent != null && parent.getParentNode() != null) {
+                Program program = (Program) parent.getParentNode();
+                return program.getActorDefinitionList().getDefinitions().get(0);
+            }
+            // Fallback: return actor itself
+            return actor;
+        }
+    }
 }

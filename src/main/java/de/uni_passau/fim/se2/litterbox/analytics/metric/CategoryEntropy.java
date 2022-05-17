@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
@@ -12,14 +30,14 @@ import java.util.ArrayList;
 public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "category_entropy";
 
-    private double program_count = 0;
+    private double programCount = 0;
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        program_count = 0;
+        programCount = 0;
         node.accept(this);
-        return -program_count;
+        return -programCount;
     }
 
     @Override
@@ -39,20 +57,21 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double count = new BlockCount<Script>().calculateMetric(node);
 
         // Empty program
-        if(count == 0)
+        if (count == 0) {
             return;
-
-        double local_entropy = 0.0; // Compute script category entropy
-
-        for(MetricExtractor extractor : list) {
-            double p_x = extractor.calculateMetric(node) / count;
-            if (p_x == 0)
-                continue;
-            double category_entropy = p_x * (Math.log(p_x)/Math.log(2.0));
-            local_entropy += category_entropy;
         }
 
-        this.program_count += local_entropy;
+        double localEntropy = 0.0; // Compute script category entropy
+
+        for (MetricExtractor<Script> extractor : list) {
+            double pX = extractor.calculateMetric(node) / count;
+            if (pX == 0)
+                continue;
+            double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));
+            localEntropy += categoryEntropy;
+        }
+
+        this.programCount += localEntropy;
     }
 
     @Override
@@ -71,20 +90,20 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double count = new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         // Empty program
-        if(count == 0)
+        if (count == 0)
             return;
 
-        double local_entropy = 0.0; // Compute script category entropy
+        double localEntropy = 0.0; // Compute script category entropy
 
-        for(MetricExtractor extractor : list) {
-            double p_x =  extractor.calculateMetric(node) / count;
-            if (p_x == 0)
+        for (MetricExtractor<ProcedureDefinition> extractor : list) {
+            double pX =  extractor.calculateMetric(node) / count;
+            if (pX == 0)
                 continue;
-            double category_entropy = p_x * (Math.log(p_x)/Math.log(2.0));
-            local_entropy += category_entropy;
+            double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));
+            localEntropy += categoryEntropy;
         }
 
-        this.program_count += local_entropy;
+        this.programCount += localEntropy;
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -34,10 +34,7 @@ public class EndlessRecursionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        EndlessRecursion parameterName = new EndlessRecursion();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new EndlessRecursion(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
@@ -54,17 +51,11 @@ public class EndlessRecursionTest implements JsonTest {
 
     @Test
     public void testRecursion() throws IOException, ParsingException {
-        Program recursion = getAST("./src/test/fixtures/bugpattern/recursion.json");
-        EndlessRecursion parameterName = new EndlessRecursion();
-        Set<Issue> reports = parameterName.check(recursion);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new EndlessRecursion(), "./src/test/fixtures/bugpattern/recursion.json");
     }
 
     @Test
     public void testEndlessBroadcast() throws IOException, ParsingException {
-        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/endlessBroadcast.json");
-        EndlessRecursion parameterName = new EndlessRecursion();
-        Set<Issue> reports = parameterName.check(endlessRecursion);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new EndlessRecursion(), "./src/test/fixtures/bugpattern/endlessBroadcast.json");
     }
 }

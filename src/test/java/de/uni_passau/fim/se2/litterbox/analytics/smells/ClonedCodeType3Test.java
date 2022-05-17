@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,77 +18,55 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ClonedCodeType3Test {
+public class ClonedCodeType3Test implements JsonTest {
 
     @Test
     public void testDuplicatedScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 1
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/duplicatedScript.json");
     }
 
     @Test
     public void testDuplicatedScriptDifferentLiteralsAndVariables() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/codecloneliteralsvariables.json");
     }
 
     @Test
     public void testSubsequenceClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/codeclonesubsequence.json");
     }
 
     @Test
     public void testVariableClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/codeclonevariableblocks.json");
     }
 
     @Test
     public void testListClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 2
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/codeclonelistblocks.json");
     }
 
     @Test
     public void testCustomBlockClone() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 1
-        assertEquals(0, issues.size());
+        assertThatFinderReports(0, new ClonedCodeType3(), "./src/test/fixtures/smells/codeclonecustomblock.json");
     }
 
     @Test
@@ -103,11 +81,31 @@ public class ClonedCodeType3Test {
         assertThat(issue1.isDuplicateOf(issue2)).isTrue();
     }
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
+
+    @Test
+    public void testMultipleIfCloneType123() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType23Subsumption.json");
+        ClonedCodeType2 cc2 = new ClonedCodeType2();
+        ClonedCodeType3 cc3 = new ClonedCodeType3();
+
+        List<Issue> issues2 = new ArrayList<>(cc2.check(program));
+        List<Issue> issues3 = new ArrayList<>(cc3.check(program));
+        assertEquals(2, issues2.size());
+        assertEquals(2, issues3.size());
+
+        assertThat(issues2.get(0).isDuplicateOf(issues3.get(0))).isFalse();
+        assertThat(issues2.get(1).isDuplicateOf(issues3.get(0))).isFalse();
+        assertThat(issues2.get(0).isDuplicateOf(issues3.get(1))).isFalse();
+        assertThat(issues2.get(1).isDuplicateOf(issues3.get(1))).isFalse();
+
+        assertThat(issues2.get(0).isSubsumedBy(issues3.get(0))).isFalse();
+        assertThat(issues2.get(1).isSubsumedBy(issues3.get(0))).isFalse();
+        assertThat(issues2.get(0).isSubsumedBy(issues3.get(1))).isFalse();
+        assertThat(issues2.get(1).isSubsumedBy(issues3.get(1))).isFalse();
+
+        assertThat(issues3.get(0).isSubsumedBy(issues2.get(0))).isFalse();
+        assertThat(issues3.get(1).isSubsumedBy(issues2.get(0))).isFalse();
+        assertThat(issues3.get(0).isSubsumedBy(issues2.get(1))).isFalse();
+        assertThat(issues3.get(1).isSubsumedBy(issues2.get(1))).isFalse();
     }
 }

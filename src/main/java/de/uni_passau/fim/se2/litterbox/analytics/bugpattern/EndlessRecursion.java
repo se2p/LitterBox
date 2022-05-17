@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -75,10 +75,10 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Script node) {
         if (node.getEvent() instanceof ReceptionOfMessage) {
             insideBroadcastReception = true;
+            super.visit(node);
+            insideBroadcastReception = false;
+            currentMessageName = null;
         }
-        super.visit(node);
-        insideBroadcastReception = false;
-        currentMessageName = null;
     }
 
     @Override

@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -7,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeLoops;
 
 import java.util.ArrayList;
@@ -35,8 +52,8 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
                     continue;
                 }
 
-                if (!(stmtList1.getStatement(0) instanceof LoopStmt) ||
-                        !(stmtList2.getStatement(0) instanceof LoopStmt)) {
+                if (!stmtList1.getStatement(0).getClass().equals(stmtList2.getStatement(0).getClass())
+                        || !(stmtList1.getStatement(0) instanceof LoopStmt)) {
                     continue;
                 }
 
@@ -58,17 +75,23 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(currentActor);
-        merged.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        LoopStmt loop1 = (LoopStmt) script1.getStmtList().getStatement(0);
+        LoopStmt loop2 = (LoopStmt) script2.getStmtList().getStatement(0);
 
-        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(script1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
+        if (!loop1.getStmtList().hasStatements() || !loop2.getStmtList().hasStatements()) {
+            // If one of the loops is empty, merging is always possible
+            return false;
+        }
 
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2) ||
-                hasDataDependency(cfg, stmtScript1, stmtScript2) ||
-                hasTimeDependency(cfg, stmtScript1, stmtScript2) ||
-                wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
+        ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
+
+        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements()));
+        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(loop1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
+
+        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+                || hasDataDependency(cfg, stmtScript1, stmtScript2)
+                || hasTimeDependency(cfg, stmtScript1, stmtScript2)
+                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
             return true;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,15 +31,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    private double count = 0;
     public static final String NAME = "max_script_width_count";
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        count = 0;
-        count = countMaxScriptWidthCount(node);
-        return count;
+        return countMaxScriptWidthCount(node);
     }
 
     private double countMaxScriptWidthCount(T node) {
@@ -59,9 +56,9 @@ public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
 
     private String getScriptString(T node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(node instanceof ProcedureDefinition){
-            ActorDefinition actorDefinition= (ActorDefinition) node.getParentNode().getParentNode();
-            Program program= (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
+        if (node instanceof ProcedureDefinition) {
+            ActorDefinition actorDefinition = (ActorDefinition) node.getParentNode().getParentNode();
+            Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

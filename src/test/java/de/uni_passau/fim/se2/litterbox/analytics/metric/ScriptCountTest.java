@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,36 +28,26 @@ public class ScriptCountTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        ScriptCount parameterName = new ScriptCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new ScriptCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEmptySprites() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        ScriptCount parameterName = new ScriptCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(program));
+        assertThatMetricReports(0, new ScriptCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test
     public void testNonEmptyScripts() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/weightedMethod.json");
-        ScriptCount parameterName = new ScriptCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(program));
+        assertThatMetricReports(2, new ScriptCount<>(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testLooseScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
-        ScriptCount parameterName = new ScriptCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(program));
+        assertThatMetricReports(2, new ScriptCount<>(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/deadCode.json");
-        ScriptCount parameterName = new ScriptCount();
-        Assertions.assertEquals(3, parameterName.calculateMetric(program));
+        assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/smells/deadCode.json");
     }
 }

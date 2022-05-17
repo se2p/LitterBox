@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,12 +29,12 @@ public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
         node.accept(visitor);
 
         double entropyValue = 0.0;
-        for(ASTNode token : visitor.getUniqueTokens()) {
-            double p = ((double)visitor.getTokenCount(token)) / (double)visitor.getTotalTokenCount();
-            double tokenEntropy = p * (Math.log(p)/Math.log(2.0));
+        for (ASTNode token : visitor.getUniqueTokens()) {
+            double p = ((double) visitor.getTokenCount(token)) / (double) visitor.getTotalTokenCount();
+            double tokenEntropy = p * (Math.log(p) / Math.log(2.0));
             entropyValue += tokenEntropy;
         }
-        return(-entropyValue);
+        return (-entropyValue);
     }
 
     @Override

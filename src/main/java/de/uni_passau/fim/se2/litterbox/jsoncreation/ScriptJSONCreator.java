@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,8 +31,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -42,7 +44,7 @@ public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script, SymbolTable symbol) {
         StringBuilder jsonString = new StringBuilder();
         Event event = script.getEvent();
-        StmtListJSONCreator stmtListJSONCreator = null;
+        StmtListJSONCreator stmtListJSONCreator;
         StmtList stmtList = script.getStmtList();
         ExpressionJSONCreator exprCreator = new ExpressionJSONCreator();
         if (event instanceof Never) {
@@ -52,7 +54,7 @@ public class ScriptJSONCreator {
             String blockId = null;
             String nextId = null;
 
-            if (stmtList.getStmts().size() > 0) {
+            if (!stmtList.getStmts().isEmpty()) {
                 IdVisitor vis = new IdVisitor();
                 nextId = vis.getBlockId(stmtList.getStmts().get(0));
             }
@@ -67,7 +69,8 @@ public class ScriptJSONCreator {
                 if (numExpr instanceof UnspecifiedNumExpr) {
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral) {
-                    DecimalFormat format = new DecimalFormat();
+                    NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+                    format.setGroupingUsed(false);
                     format.setMinimumFractionDigits(0);
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                             format.format(((NumberLiteral) numExpr).getValue())));
@@ -144,7 +147,7 @@ public class ScriptJSONCreator {
                 jsonString.append(createFixedBlock(meta, nextId, null, startedAsClone.getOpcode()));
             }
 
-            if (script.getStmtList().getStmts().size() > 0) {
+            if (!script.getStmtList().getStmts().isEmpty()) {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
                 jsonString.append(",");

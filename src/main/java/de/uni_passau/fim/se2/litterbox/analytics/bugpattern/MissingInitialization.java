@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,22 +22,47 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
 public class MissingInitialization extends AbstractIssueFinder {
 
+    private static class UseIssue extends Issue {
+
+        private Use use;
+
+        public UseIssue(IssueFinder finder, Program program, Script script, Hint hint, Use use) {
+            super(finder, IssueSeverity.HIGH, program,
+                    use.getUseTarget().getActor(), script,
+                    use.getUseTarget().getASTNode(),
+                    use.getUseTarget().getASTNode().getMetadata(), hint);
+            this.use = use;
+        }
+
+        public UseIssue(IssueFinder finder, Program program, ProcedureDefinition procedure, Hint hint, Use use) {
+            super(finder, IssueSeverity.HIGH, program,
+                    use.getUseTarget().getActor(), procedure,
+                    use.getUseTarget().getASTNode(),
+                    use.getUseTarget().getASTNode().getMetadata(), hint);
+            this.use = use;
+        }
+
+        public Use getUse() {
+            return use;
+        }
+    }
+
+
     public static final String NAME = "missing_initialization";
+    public static final String NAME_CLONE = "missing_initialization_clone";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -63,81 +88,67 @@ public class MissingInitialization extends AbstractIssueFinder {
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         for (Use use : initialUses) {
+
+            if (use.getDefinable() instanceof Attribute) {
+                if (((Attribute)use.getDefinable()).getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
+                    // TODO: Handle visibility properly in a way that does not produce too many false positives
+                    // e.g. only report this if there is a hide statement?
+                    continue;
+                }
+            }
+
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
             if (initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
                             != use.getUseTarget().getScriptOrProcedure())) {
 
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                Hint hint;
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script) {
-                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
-                            (Script) containingScript,
-                            use.getUseTarget().getASTNode(),
-                            null,  // TODO: Where is the relevant metadata?
-                            hint));
+                    if (((Script) containingScript).getEvent() instanceof StartedAsClone) {
+                        hint = new Hint(NAME_CLONE);
+                    } else {
+                        hint = new Hint(getName());
+                    }
+                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                    issues.add(new UseIssue(this, program,
+                            (Script) containingScript, hint, use));
                 } else {
-                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
-                            (ProcedureDefinition) containingScript,
-                            use.getUseTarget().getASTNode(),
-                            null, // TODO: Where is the relevant metadata
-                            hint));
+                    hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                    issues.add(new UseIssue(this, program,
+                            (ProcedureDefinition) containingScript, hint, use));
                 }
             }
         }
         return Collections.unmodifiableSet(issues);
     }
 
-    // TODO: Clean this up
-    public String getDefineableName(Defineable def) {
-        String result = "";
-        if (def instanceof Variable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.VARIABLE);
-            result += " \"";
-            Variable var = (Variable)def;
-            if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier)var.getIdentifier()).getName();
-            } else {
-                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
-            }
-            result += "\"";
-
-        } else if (def instanceof ListVariable) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.LIST);
-            result += " \"";
-            ListVariable var = (ListVariable)def;
-            if (var.getIdentifier() instanceof LocalIdentifier) {
-                result += ((LocalIdentifier)var.getIdentifier()).getName();
-            } else {
-                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
-            }
-            result += "\"";
-
-        } else if (def instanceof Attribute) {
-            result = IssueTranslator.getInstance().getInfo(IssueTranslator.ATTRIBUTE);
-            result += " \"";
-            Attribute attr = (Attribute)def;
-            switch (attr.getAttributeType()) {
-                case SIZE:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
-                    break;
-                case COSTUME:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.COSTUME);
-                    break;
-                case POSITION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.POSITION);
-                    break;
-                case ROTATION:
-                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.ROTATION);
-                    break;
-            }
-            result += "\"";
-
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
         }
-        return result;
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if (first instanceof UseIssue && other instanceof UseIssue) {
+            UseIssue firstUse = (UseIssue) first;
+            UseIssue otherUse = (UseIssue) other;
+            Use use1 = firstUse.getUse();
+            Use use2 = otherUse.getUse();
+            if (use1.getDefinable().equals(use2.getDefinable())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -157,7 +168,9 @@ public class MissingInitialization extends AbstractIssueFinder {
 
     @Override
     public Collection<String> getHintKeys() {
-        // Default: Only one key with the name of the finder
-        return Arrays.asList(getName());
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(NAME_CLONE);
+        return keys;
     }
 }

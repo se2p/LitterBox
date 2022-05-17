@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import com.google.common.collect.Sets;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -25,13 +27,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MultiBlockIssue extends Issue {
 
     private List<ASTNode> nodes = new ArrayList<>();
+
+    private List<ASTNode> normalizedNodes;
 
     public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
         super(finder, severity, program, actor, script, nodes.get(0), metaData, hint);
@@ -45,7 +48,10 @@ public class MultiBlockIssue extends Issue {
 
     @Override
     public boolean isCodeLocation(ASTNode node) {
-        return nodes.contains(node);
+        // TODO: Workaround until we have figured out how to implement hashCode/equals properly
+        Set<ASTNode> uniqueNodes = Sets.newIdentityHashSet();
+        uniqueNodes.addAll(nodes);
+        return uniqueNodes.contains(node);
     }
 
     @Override
@@ -55,5 +61,13 @@ public class MultiBlockIssue extends Issue {
 
     public List<ASTNode> getNodes() {
         return Collections.unmodifiableList(nodes);
+    }
+
+    public List<ASTNode> getNormalizedNodes() {
+        if (normalizedNodes == null) {
+            NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
+            normalizedNodes = nodes.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+        }
+        return normalizedNodes;
     }
 }

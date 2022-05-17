@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -64,7 +64,7 @@ public class CreateCloneOf extends AbstractNode implements CommonStmt {
         return CommonStmtOpcode.control_create_clone_of;
     }
 
-    public Opcode getCloneMenuOpcode(){
+    public Opcode getCloneMenuOpcode() {
         return DependentBlockOpcode.control_create_clone_of_menu;
     }
 }

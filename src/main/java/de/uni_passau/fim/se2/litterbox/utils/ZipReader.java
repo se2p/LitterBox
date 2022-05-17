@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -40,8 +40,8 @@ public class ZipReader {
      * @throws IOException when given a invalid file or corrupted ZIP file
      */
     public static String getJsonString(String path) throws IOException {
-        final ZipFile file = new ZipFile(path);
-        try {
+
+        try(ZipFile file = new ZipFile(path)) {
             final Enumeration<? extends ZipEntry> entries = file.entries();
             while (entries.hasMoreElements()) {
                 final ZipEntry entry = entries.nextElement();
@@ -57,8 +57,6 @@ public class ZipReader {
                     return sb.toString();
                 }
             }
-        } finally {
-            file.close();
         }
         return null;
     }

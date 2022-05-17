@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -86,7 +86,7 @@ public class ProcDefinitionParser {
 
         //each definition needs the prototype block because it holds the name of the procedure
         Preconditions.checkArgument(protoBlock.size() == defBlock.size());
-        if (defBlock.size() == 0) {
+        if (defBlock.isEmpty()) {
             return new ProcedureDefinitionList(new ArrayList<>());
         }
 
@@ -113,7 +113,7 @@ public class ProcDefinitionParser {
         try {
             argumentIdsNode = (ArrayNode) mapper.readTree(argumentIds.asText());
         } catch (IOException e) {
-            throw new ParsingException("Could not read argument ids of a procedure");
+            throw new ParsingException("Could not read argument ids of a procedure", e);
         }
 
         JsonNode argumentDefaults = proto.get(MUTATION_KEY).get(ARGUMENT_DEFAULTS_KEY);
@@ -121,7 +121,7 @@ public class ProcDefinitionParser {
         try {
             argumentDefaultsNode = (ArrayNode) mapper.readTree(argumentDefaults.asText());
         } catch (IOException e) {
-            throw new ParsingException("Could not read argument defaults of a procedure");
+            throw new ParsingException("Could not read argument defaults of a procedure", e);
         }
 
         List<Type> paraTypes = new ArrayList<>();
@@ -174,7 +174,7 @@ public class ProcDefinitionParser {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
             ProgramParser.procDefMap.addMalformated(actorName + methodName);
-            throw new ParsingException("Could not read argument names of a procedure");
+            throw new ParsingException("Could not read argument names of a procedure", e);
         }
 
         Preconditions.checkArgument(argumentsNode.isArray());

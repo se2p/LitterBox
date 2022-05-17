@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,11 +23,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -39,6 +39,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -72,7 +74,7 @@ public class NumExprParser {
             try {
                 String valueString =
                         ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
-                float value = Float.parseFloat(valueString);
+                Float.parseFloat(valueString);
                 parsableAsNumberLiteral = true;
             } catch (NumberFormatException | ParsingException | ClassCastException e) {
                 // not parsable as NumberLiteral
@@ -175,17 +177,19 @@ public class NumExprParser {
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                String listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                Optional<ExpressionListInfo> list
-                        = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
-                if (list.isPresent()) {
-                    ExpressionListInfo variableInfo = list.get();
-                    var = new Qualified(new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId(variableInfo.getVariableName())));
-                } else {
-                    var = new UnspecifiedId();
+                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                    List<Expression> listEx = new ArrayList<>();
+                    ExpressionList expressionList = new ExpressionList(listEx);
+                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
+                Preconditions.checkArgument(list.isPresent());
+                ExpressionListInfo variableInfo = list.get();
+                var = new Qualified(new StrId(variableInfo.getActor()),
+                        new ScratchList(new StrId(variableInfo.getVariableName())));
                 return new LengthOfVar(var, metadata);
             case sensing_current:
                 TimeComp timeComp = TimecompParser.parse(exprBlock);
@@ -215,15 +219,18 @@ public class NumExprParser {
                 Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
-                if (list.isPresent()) {
-                    ExpressionListInfo variableInfo = list.get();
-                    var = new Qualified(new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId(variableInfo.getVariableName())));
-                } else {
-                    var = new UnspecifiedId();
+                listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                    List<Expression> listEx = new ArrayList<>();
+                    ExpressionList expressionList = new ExpressionList(listEx);
+                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
+                list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
+                Preconditions.checkArgument(list.isPresent());
+                variableInfo = list.get();
+                var = new Qualified(new StrId(variableInfo.getActor()),
+                        new ScratchList(new StrId(variableInfo.getVariableName())));
                 return new IndexOf(item, var, metadata);
             default:
                 throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");

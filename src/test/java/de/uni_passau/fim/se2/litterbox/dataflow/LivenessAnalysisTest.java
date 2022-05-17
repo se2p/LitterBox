@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
@@ -48,10 +49,11 @@ public class LivenessAnalysisTest implements JsonTest {
         CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         CFGNode setNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
 
-        Use theUse = sayNode.getUses().iterator().next(); // Exactly one use
+        Use theUse = sayNode.getUses().iterator().next(); // Assumes the visibility use comes second...
+        Use visibilityUse = sayNode.getUses().stream().filter(u -> u.getDefinable() instanceof Attribute).findFirst().get();
 
-        assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
-        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(theUse);
+        assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(visibilityUse);
+        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(theUse, visibilityUse);
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
@@ -71,10 +73,12 @@ public class LivenessAnalysisTest implements JsonTest {
 
         Use firstUse = sayNode1.getUses().iterator().next();
         Use secondUse = sayNode2.getUses().iterator().next();
+        Use visibilityUse1 = sayNode1.getUses().stream().filter(u -> u.getDefinable() instanceof Attribute).findFirst().get();
+        Use visibilityUse2 = sayNode2.getUses().stream().filter(u -> u.getDefinable() instanceof Attribute).findFirst().get();
 
-        assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
-        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse);
-        assertThat(analysis.getDataflowFacts(sayNode1)).containsExactly(secondUse);
+        assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(visibilityUse1, visibilityUse2);
+        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, visibilityUse1, visibilityUse2);
+        assertThat(analysis.getDataflowFacts(sayNode1)).containsExactly(secondUse, visibilityUse2);
         assertThat(analysis.getDataflowFacts(sayNode2)).isEmpty();
         assertThat(analysis.getDataflowFacts(exitNode)).isEmpty();
     }
@@ -96,11 +100,12 @@ public class LivenessAnalysisTest implements JsonTest {
         Use firstUse = ifNode.getUses().iterator().next();
         Use secondUse = changeNode.getUses().iterator().next();
         Use thirdUse = sayNode.getUses().iterator().next();
+        Use visibilityUse = sayNode.getUses().stream().filter(u -> u.getDefinable() instanceof Attribute).findFirst().get();
 
-        assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
-        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
-        assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(secondUse, thirdUse);
-        assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(thirdUse);
+        assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(visibilityUse);
+        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(secondUse, thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(thirdUse, visibilityUse);
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
@@ -123,12 +128,13 @@ public class LivenessAnalysisTest implements JsonTest {
         Use firstUse = ifNode.getUses().iterator().next(); // var1
         Use secondUse = changeNode.getUses().iterator().next(); // var1
         Use thirdUse = sayNode.getUses().iterator().next(); // var2
+        Use visibilityUse = sayNode.getUses().stream().filter(u -> u.getDefinable() instanceof Attribute).findFirst().get();
 
-        assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(thirdUse);
-        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
-        assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(secondUse, thirdUse);
-        assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(thirdUse);
-        assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(thirdUse);
+        assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(secondUse, thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(thirdUse, visibilityUse);
+        assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(thirdUse, visibilityUse);
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }

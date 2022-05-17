@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,6 +31,7 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
 
     private Set<Variable> definitions = new LinkedHashSet<>();
 
+    @Override
     public Set<Variable> getDefineables() {
         return definitions;
     }

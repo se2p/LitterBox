@@ -1,11 +1,31 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -14,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SequenceToLoop extends CloneVisitor implements Refactoring {
+public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "sequence_to_loop";
 
@@ -25,7 +45,7 @@ public class SequenceToLoop extends CloneVisitor implements Refactoring {
     private final RepeatTimesStmt replacementLoop;
 
     public SequenceToLoop(StmtList stmtList, List<Stmt> repeatedStatements, int times) {
-        Preconditions.checkArgument(repeatedStatements.size() > 0);
+        Preconditions.checkArgument(!repeatedStatements.isEmpty());
         this.targetStatement = repeatedStatements.get(0);
         this.repeatedStatements = repeatedStatements;
         this.times = times;
@@ -37,7 +57,8 @@ public class SequenceToLoop extends CloneVisitor implements Refactoring {
         }
 
         StmtList loopBody = new StmtList(repeatedStatements);
-        replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, apply(targetStatement.getMetadata()));
+        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata) ? apply(targetStatement.getMetadata()) : NonDataBlockMetadata.emptyNonBlockMetadata();
+        replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, metadata);
     }
 
     @Override
@@ -52,9 +73,9 @@ public class SequenceToLoop extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() +
-                "Summarised " + times +" repetitions to:" + System.lineSeparator() +
-                replacementLoop.getScratchBlocks() + System.lineSeparator();
+        return NAME + System.lineSeparator()
+                + "Summarised " + times + " repetitions to:" + System.lineSeparator()
+                + replacementLoop.getScratchBlocks() + System.lineSeparator();
     }
 
     @Override

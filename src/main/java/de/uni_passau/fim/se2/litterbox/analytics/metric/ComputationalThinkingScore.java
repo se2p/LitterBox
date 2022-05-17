@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,8 +32,8 @@ public class ComputationalThinkingScore  implements MetricExtractor<Program> {
         double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program);
         double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program);
 
-        return abstractionScore + dataRepresentationScore + flowControlScore +
-                logicScore + parallelizationScore + synchronizationScore + userInteractivityScore;
+        return abstractionScore + dataRepresentationScore + flowControlScore
+                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,21 +30,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithMenuMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -89,7 +89,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
-        if (finishedJSONStrings.size() > 0) {
+        if (!finishedJSONStrings.isEmpty()) {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
@@ -169,8 +169,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getStringExpr();
         if (stringExpr instanceof AsString && ((AsString) stringExpr).getOperand1() instanceof StrId) {
             StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
-            CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(), CLONE_OPTION,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, CLONE_OPTION,
                     strid.getName());
         }
     }
@@ -230,8 +237,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
     }
@@ -246,8 +260,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
+            NonDataBlockMetadata menuMetadata;
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
+                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            } else {
+                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
+                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
+            }
+            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
     }

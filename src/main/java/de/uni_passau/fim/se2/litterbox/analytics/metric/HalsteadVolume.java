@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,6 +33,10 @@ public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
         //        V = N * log2(n)
         int length = halstead.getTotalOperands() + halstead.getTotalOperators();
         int size = halstead.getUniqueOperands() + halstead.getUniqueOperators();
+        if (size == 0) {
+            // Empty project
+            return 0;
+        }
         return length * Math.log(size) / Math.log(2);
     }
 

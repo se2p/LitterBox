@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,18 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
+import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
+import de.uni_passau.fim.se2.litterbox.cfg.ListVariable;
+import de.uni_passau.fim.se2.litterbox.cfg.Variable;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
@@ -111,7 +115,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
-                currentActor, // TODO: There is no node?
+                null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 new Hint(getName())));
     }
@@ -119,16 +123,89 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     protected void addIssueWithLooseComment(Hint hint) {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
-                currentActor, // TODO: There is no node?
+                null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 hint));
     }
 
+    @Override
     public void setIgnoreLooseBlocks(boolean value) {
         ignoreLooseBlocks = value;
     }
 
-    public abstract IssueType getIssueType();
+    // TODO: Clean this up
+    public String getDefineableName(Defineable def) {
+        StringBuilder builder = new StringBuilder();
+
+        if (def instanceof Variable) {
+            builder.append("[var]");
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VARIABLE));
+            builder.append(" \"");
+            Variable variable = (Variable) def;
+            if (variable.getIdentifier() instanceof LocalIdentifier) {
+                builder.append(((LocalIdentifier) variable.getIdentifier()).getName());
+            } else {
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
+            }
+            builder.append("\"");
+            builder.append("[/var]");
+        } else if (def instanceof ListVariable) {
+            builder.append("[list]");
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LIST));
+            builder.append(" \"");
+            ListVariable variable = (ListVariable) def;
+            if (variable.getIdentifier() instanceof LocalIdentifier) {
+                builder.append(((LocalIdentifier) variable.getIdentifier()).getName());
+            } else {
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
+            }
+            builder.append("\"");
+            builder.append("[/list]");
+        } else if (def instanceof Attribute) {
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+            builder.append(" \"");
+            Attribute attr = (Attribute) def;
+            switch (attr.getAttributeType()) {
+                case SIZE:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SIZE));
+                    break;
+                case COSTUME:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.COSTUME));
+                    break;
+                case POSITION:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.POSITION));
+                    break;
+                case ROTATION:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ROTATION));
+                    break;
+                case VISIBILITY:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
+                    break;
+                case VOLUME:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VOLUME));
+                    break;
+                case GRAPHIC_EFFECT:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.GRAPHIC_EFFECT));
+                    break;
+                case SOUND_EFFECT:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.SOUND_EFFECT));
+                    break;
+                case LAYER:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LAYER));
+                    break;
+                case BACKDROP:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.BACKDROP));
+                    break;
+                case TIMER:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.TIMER));
+                    break;
+                default:
+                    throw new RuntimeException("Unknown attribute type: " + attr.getAttributeType());
+            }
+            builder.append("\"");
+        }
+        return builder.toString();
+    }
 
     @Override
     public Collection<String> getHintKeys() {
@@ -158,48 +235,73 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             return false;
         }
 
-        if (first.getCodeLocation().equals(other.getCodeLocation())) {
-            // Same block, so assume it's a duplicate
-            return true;
-        }
-
-        return false;
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override
-    public double getDistanceTo(Issue first, Issue other) {
-        double distance = 0;
+    public int getDistanceTo(Issue first, Issue other) {
 
         //if two issues are duplicates of one another, they can be considered the same
         if (!first.isDuplicateOf(other)) {
             if (first.getCodeLocation() != null && other.getCodeLocation() != null) {
-                NormalizationVisitor visitor = new NormalizationVisitor();
-                ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-                ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
+                ASTNode firstNormalizedLocation = first.getNormalizedCodeLocation();
+                ASTNode secondNormalizedLocation = other.getNormalizedCodeLocation();
 
-                //if a different script or procedure has the issue, distance is increased by 1
+                //if a different script or procedure has the issue, distance is increased
                 if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
-                    distance += 1;
-                    ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
-                    ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
 
-                    //if the scripts are different after normalisation their pq-distance is added to the distance
-                    if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
-                        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
-                        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
-                        distance += profile1.calculateDistanceTo(profile2);
+                    ASTNode firstNormalizedScriptProcedure = first.getNormalizedScriptOrProcedureDefinition();
+                    ASTNode secondNormalizedScriptProcedure = other.getNormalizedScriptOrProcedureDefinition();
+                    if (first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are equal and location is equal
+                            return 3;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are equal and normalised location is equal
+                            return 4;
+                        } else {
+                            //scripts are equal and location is different
+                            return 5;
+                        }
+                    } else if (firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are normalised equal and location is equal
+                            return 6;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are normalised equal and normalised location is equal
+                            return 7;
+                        } else {
+                            //scripts are normalised equal and location is different
+                            return 8;
+                        }
+                    } else {
+                        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+                            //scripts are different and location is equal
+                            return 9;
+                        } else if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            //scripts are different and normalised location is equal
+                            return 10;
+                        } else {
+                            //scripts are different and location is different
+                            return 11;
+                        }
                     }
-                }
-                //if the code location is different the distance is increased by 1 to reflect this
-                if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
-                    distance += 1;
+                } else {
+                    if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                        //same script but code location is normalised the same
+                        return 1;
+                    } else {
+                        //same script but code location is normalised not the same
+                        return 2;
+                    }
                 }
             } else {
                 //Issues don't have location so distance has to be very high
-                distance = 5;
+                return 12;
             }
         }
-        return distance;
+        //the issues are duplicates and can be considered the same
+        return 0;
     }
 
     @Override

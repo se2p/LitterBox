@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,39 +19,26 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class TerminatedLoopTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        TerminatedLoop terminatedLoop = new TerminatedLoop();
-        Set<Issue> reports = terminatedLoop.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new TerminatedLoop(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testProcedureWithTermination() throws IOException, ParsingException {
-        Program terminatedLoop = getAST("./src/test/fixtures/bugpattern/terminatedLoop.json");
-        TerminatedLoop terminatedLoopChecker = new TerminatedLoop();
-        Set<Issue> reports = terminatedLoopChecker.check(terminatedLoop);
-        Assertions.assertEquals(3, reports.size());
+        assertThatFinderReports(3, new TerminatedLoop(), "./src/test/fixtures/bugpattern/terminatedLoop.json");
     }
 
     @Test
     public void testEmptyLoopAndOneIssue() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/bugpattern/emptyLoopAndOneIssue.json");
-        TerminatedLoop terminatedLoop = new TerminatedLoop();
-        Set<Issue> reports = terminatedLoop.check(empty);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new TerminatedLoop(), "./src/test/fixtures/bugpattern/emptyLoopAndOneIssue.json");
     }
 }
 

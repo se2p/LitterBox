@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,7 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -30,22 +33,24 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
@@ -72,14 +77,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -1068,7 +1075,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(GreenFlag node) {
-        return new GreenFlag((BlockMetadata) apply(node.getMetadata()));
+        return new GreenFlag(apply(node.getMetadata()));
     }
 
     /**
@@ -1098,20 +1105,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(UnspecifiedExpression node) {
         return new UnspecifiedExpression();
-    }
-
-    /**
-     * Default implementation of visit method for {@link UnspecifiedId}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node UnspecifiedId  Node which will be copied
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(UnspecifiedId node) {
-        return new UnspecifiedId();
     }
 
     /**
@@ -1867,7 +1860,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DeclarationStmtList node) {
-        return new DeclarationStmtList(applyList(node.getDeclarationStmtList()));
+        return new DeclarationStmtList(applyList(node.getDeclarationStmts()));
     }
 
     /**
@@ -2942,21 +2935,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link VariableMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node VariableMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(VariableMetadata node) {
-        return new VariableMetadata(node.getVariableId(), node.getVariableName(), node.getValue());
-    }
-
-    /**
      * Default implementation of visit method for {@link MetaMetadata}.
      *
      * <p>
@@ -2969,21 +2947,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(MetaMetadata node) {
         return new MetaMetadata(node.getSemver(), node.getVm(), node.getAgent());
-    }
-
-    /**
-     * Default implementation of visit method for {@link ListMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ListMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ListMetadata node) {
-        return new ListMetadata(node.getListId(), node.getListName(), new ArrayList<>(node.getValues()));
     }
 
     /**
@@ -3017,7 +2980,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link PenWithParamMetadata}.
+     * Default implementation of visit method for {@link NonDataBlockWithMenuMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3027,8 +2990,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(PenWithParamMetadata node) {
-        return new PenWithParamMetadata(apply(node.getPenBlockMetadata()), apply(node.getParamMetadata()));
+    public ASTNode visit(NonDataBlockWithMenuMetadata node) {
+        return new NonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), apply(node.getMenuMetadata()));
     }
 
     /**
@@ -3044,21 +3007,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(ProgramMetadata node) {
         return new ProgramMetadata(apply(node.getMonitor()), apply(node.getExtension()), apply(node.getMeta()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node BroadcastMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(BroadcastMetadata node) {
-        return new BroadcastMetadata(node.getBroadcastID(), node.getBroadcastName());
     }
 
     /**
@@ -3143,51 +3091,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ReferenceInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ReferenceInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ReferenceInputMetadata node) {
-        return new ReferenceInputMetadata(node.getInputName(), node.getReference());
-    }
-
-    /**
-     * Default implementation of visit method for {@link TypeInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node TypeInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(TypeInputMetadata node) {
-        return new TypeInputMetadata(node.getInputName(), node.getType(), node.getValue());
-    }
-
-    /**
-     * Default implementation of visit method for {@link DataInputMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node DataInputMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(DataInputMetadata node) {
-        return new DataInputMetadata(node.getInputName(), node.getDataType(), node.getDataName(), node.getDataReference());
-    }
-
-    /**
      * Default implementation of visit method for {@link DataBlockMetadata}.
      *
      * <p>
@@ -3199,7 +3102,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getDataType(), node.getDataName(), node.getDataReference(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getX(), node.getY());
     }
 
     /**
@@ -3215,8 +3118,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(NonDataBlockMetadata node) {
         return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getInputMetadata()), apply(node.getFields()),
-                node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
+                node.isShadow(), apply(node.getMutation()));
     }
 
     /**
@@ -3232,24 +3134,8 @@ public class CloneVisitor {
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
         return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
-                apply(node.getInputMetadata()), apply(node.getFields()),
-                node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
+                node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
-    }
-
-    /**
-     * Default implementation of visit method for {@link FieldsMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node FieldsMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(FieldsMetadata node) {
-        return new FieldsMetadata(node.getFieldsName(), node.getFieldsValue(), node.getFieldsReference());
     }
 
     /**
@@ -3268,7 +3154,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CallMutationMetadata}.
+     * Default implementation of visit method for {@link ProcedureMutationMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3278,40 +3164,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(CallMutationMetadata node) {
-        return new CallMutationMetadata(node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link PrototypeMutationMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ExistingPrototypeMutationMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(PrototypeMutationMetadata node) {
-        return new PrototypeMutationMetadata(node.getTagName(), new ArrayList<>(node.getChild()),
-                node.getProcCode(), new ArrayList<>(node.getArgumentIds()),
-                node.isWarp(), node.getArgumentNames(), node.getArgumentDefaults());
-    }
-
-    /**
-     * Default implementation of visit method for {@link StopMutationMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node StopMutationMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(StopMutationMetadata node) {
-        return new StopMutationMetadata(node.getTagName(), new ArrayList<>(node.getChild()), node.isHasNext());
+    public ASTNode visit(ProcedureMutationMetadata node) {
+        return new ProcedureMutationMetadata(node);
     }
 
     /**
@@ -3326,18 +3180,15 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(StageMetadata node) {
-        return new StageMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
-                apply(node.getLists()),
-                apply(node.getBroadcasts()),
+        return new StageMetadata(apply(node.getCommentsMetadata()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
                 apply(node.getSounds()),
-                node.getVolume(), node.getLayerOrder(), node.getTempo(), node.getVideoTransparency(),
-                node.getVideoState(), node.getTextToSpeechLanguage());
+                node.getTextToSpeechLanguage());
     }
 
     /**
-     * Default implementation of visit method for {@link SpriteMetadata}.
+     * Default implementation of visit method for {@link ActorMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3347,30 +3198,11 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(SpriteMetadata node) {
-        return new SpriteMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
-                apply(node.getLists()),
-                apply(node.getBroadcasts()),
+    public ASTNode visit(ActorMetadata node) {
+        return new ActorMetadata(apply(node.getCommentsMetadata()),
                 node.getCurrentCostume(),
                 apply(node.getCostumes()),
-                apply(node.getSounds()),
-                node.getVolume(), node.getLayerOrder(), node.isVisible(), node.getX(), node.getY(), node.getSize(),
-                node.getDirection(), node.isDraggable(), node.getRotationStyle());
-    }
-
-    /**
-     * Default implementation of visit method for {@link BroadcastMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node BroadcastMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(BroadcastMetadataList node) {
-        return new BroadcastMetadataList(applyList(node.getList()));
+                apply(node.getSounds()));
     }
 
     /**
@@ -3389,21 +3221,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link FieldsMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node FieldsMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(FieldsMetadataList node) {
-        return new FieldsMetadataList(applyList(node.getList()));
-    }
-
-    /**
      * Default implementation of visit method for {@link ImageMetadataList}.
      *
      * <p>
@@ -3416,36 +3233,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(ImageMetadataList node) {
         return new ImageMetadataList(applyList(node.getList()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link InputMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node InputMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(InputMetadataList node) {
-        return new InputMetadataList(applyList(node.getList()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link ListMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node ListMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(ListMetadataList node) {
-        return new ListMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3491,21 +3278,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(SoundMetadataList node) {
         return new SoundMetadataList(applyList(node.getList()));
-    }
-
-    /**
-     * Default implementation of visit method for {@link VariableMetadataList}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node VariableMetadataList Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(VariableMetadataList node) {
-        return new VariableMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3568,7 +3340,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CloneOfMetadata}.
+     * Default implementation of visit method for {@link TopNonDataBlockWithMenuMetadata}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3578,30 +3350,33 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(CloneOfMetadata node) {
-        return new CloneOfMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
+    public ASTNode visit(TopNonDataBlockWithMenuMetadata node) {
+        return new TopNonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), node.getXPos(), node.getYPos(), apply(node.getMenuMetadata()));
     }
 
     /*
      * UID generation based on https://github.com/LLK/scratch-blocks
      */
-    public static final String BLOCKLY_SOUP = "!#$%()*+,-./:;=?@[]^_`{|}~" +
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final String BLOCKLY_SOUP = "!#$%()*+,-./:;=?@[]^_`{|}~"
+            + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     /**
      * Generate a unique ID.  This should be globally unique.
      * 87 characters ^ 20 length > 128 bits (better than a UUID).
+     *
      * @return {string} A globally unique ID string.
      */
     public static String generateUID() {
         int length = 20;
         int soupLength = BLOCKLY_SOUP.length();
-        String id = "";
+        StringBuilder id = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            id += BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength));
+            id.append(BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength)));
         }
-        return id;
-    };
+        return id.toString();
+    }
+
+    ;
 
     /**
      * Default implementation of visit method for {@link Speak}.

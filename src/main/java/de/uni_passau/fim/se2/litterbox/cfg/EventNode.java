@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 
 import java.util.Objects;
@@ -27,8 +28,10 @@ public class EventNode extends CFGNode {
 
     private Event event;
 
-    public EventNode(Event event) {
+    public EventNode(Event event, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        this.actor = actor;
         this.event = event;
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override

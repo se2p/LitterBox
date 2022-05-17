@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 
-    Copyright (C) 2019-2021 LitterBox contributors
+    Copyright (C) 2019-2022 LitterBox contributors
 
     This file is part of LitterBox.
 
@@ -268,8 +268,8 @@
             <property name="target"
                       value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
         </module>
+        <!--
         <module name="JavadocMethod">
-            <property name="scope" value="public"/>
             <property name="allowMissingParamTags" value="true"/>
             <property name="allowMissingReturnTag" value="true"/>
             <property name="allowedAnnotations" value="Override, Test"/>
@@ -279,6 +279,7 @@
             <property name="minLineCount" value="2"/>
             <property name="allowedAnnotations" value="Override, Test"/>
         </module>
+        -->
         <module name="MethodName">
             <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>
             <message key="name.invalidPattern"

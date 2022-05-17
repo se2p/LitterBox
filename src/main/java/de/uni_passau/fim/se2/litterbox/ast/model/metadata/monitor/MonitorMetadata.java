@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorParamMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
@@ -40,7 +39,7 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
     private double y;
     private boolean visible;
 
-    public MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
+    protected MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
                            String spriteName, double width, double height, double x, double y, boolean visible) {
         super(paramsMetadata);
         this.id = id;

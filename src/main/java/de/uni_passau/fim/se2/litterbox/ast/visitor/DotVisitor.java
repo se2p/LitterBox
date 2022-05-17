@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -40,11 +40,11 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
         if (node instanceof ASTLeaf) {
             recordLeaf((ASTLeaf) node);
         } else {
-            String name = String.valueOf(node.hashCode()); //This should only be a workaround this is a hack
+            String name = String.valueOf(System.identityHashCode(node)); //This should only be a workaround this is a hack
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             edges.add(label);
             for (ASTNode child : node.getChildren()) {
-                String edge = name + " -> " + child.hashCode() + "";
+                String edge = name + " -> " + System.identityHashCode(child);
                 edges.add(edge);
             }
 
@@ -55,7 +55,7 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     }
 
     public void recordLeaf(ASTLeaf node) {
-        String name = String.valueOf(node.hashCode());
+        String name = String.valueOf(System.identityHashCode(node));
         String label = name + " [label = \"" + node.getUniqueName() + "\"];";
         edges.add(label);
         String[] simpleStrings = node.toSimpleStringArray();
@@ -82,21 +82,21 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     public void saveGraph(String fileName) throws IOException {
         File file = new File(fileName);
         FileOutputStream fos = new FileOutputStream(file);
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+        try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8))) {
 
-        bw.write("digraph G {");
-        bw.newLine();
-        // bw.write("\t rankdir=LR");
-        // bw.newLine();
-        bw.write("\t shape=rectangle");
-        bw.newLine();
-        for (String edge : edges) {
-            bw.write("\t");
-            bw.write(edge);
+            bw.write("digraph G {");
             bw.newLine();
+            // bw.write("\t rankdir=LR");
+            // bw.newLine();
+            bw.write("\t shape=rectangle");
+            bw.newLine();
+            for (String edge : edges) {
+                bw.write("\t");
+                bw.write(edge);
+                bw.newLine();
+            }
+            bw.write("}");
         }
-        bw.write("}");
-        bw.close();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 

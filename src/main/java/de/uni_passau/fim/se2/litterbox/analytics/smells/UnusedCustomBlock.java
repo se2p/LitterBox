@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -43,7 +42,9 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
         for (ProcedureDefinition procedureDef : proceduresDef) {
             ProcedureInfo info = procMap.get(procedureDef.getIdent());
             if (!calledProcedures.contains(info.getName())) {
-                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition(), IssueSeverity.LOW);
+                currentProcedure = procedureDef;
+                currentScript = null;
+                addIssue(procedureDef, procedureDef.getMetadata().getDefinition(), IssueSeverity.LOW);
             }
         }
     }

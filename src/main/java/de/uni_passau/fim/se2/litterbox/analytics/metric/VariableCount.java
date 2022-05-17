@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class VariableCount<T extends ASTNode> implements  ScratchVisitor, MetricExtractor<T> {
 
@@ -43,20 +42,18 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        double count = 0;
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        count = getVariableCount();
-        return count;
+        return getVariableCount();
     }
 
     private double getVariableCount() {
         List<String> allVariables = getVariables();
-        Set<String> variables = new HashSet<String>(allVariables);
-        return variables.size();
+        return new HashSet<>(allVariables).size();
     }
+
     @Override
     public void visit(Variable node) {
         if (insideScript || insideProcedure) {
@@ -70,6 +67,7 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
             this.variables.add(node.getName().getName());
         }
     }
+
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;

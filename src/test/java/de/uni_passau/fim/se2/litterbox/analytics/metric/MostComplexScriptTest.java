@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,15 +28,11 @@ public class MostComplexScriptTest implements JsonTest {
 
     @Test
     public void testLooseBlocks() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allEventsBlocks.json");
-        MostComplexScript parameterName = new MostComplexScript();
-        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
+        assertThatMetricReports(1, new MostComplexScript<>(), "./src/test/fixtures/metrics/allEventsBlocks.json");
     }
 
     @Test
     public void oneMoreComplex() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/oneMoreComplex.json");
-        MostComplexScript parameterName = new MostComplexScript();
-        Assertions.assertEquals(2, parameterName.calculateMetric(empty));
+        assertThatMetricReports(2, new MostComplexScript<>(), "./src/test/fixtures/metrics/oneMoreComplex.json");
     }
 }

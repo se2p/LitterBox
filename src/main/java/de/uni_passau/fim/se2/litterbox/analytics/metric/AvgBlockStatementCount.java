@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,7 +35,7 @@ public class AvgBlockStatementCount<T extends ASTNode> implements MetricExtracto
         double blockCount = new BlockCount<T>().calculateMetric(node);
         double statementCount = new StatementCount<T>().calculateMetric(node);
         node.accept(this);
-        return blockCount/statementCount;
+        return statementCount > 0 ? blockCount / statementCount : 0;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,32 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class DataBlockMetadata extends AbstractNode implements BlockMetadata, ASTLeaf {
     private String blockId;
-    private int dataType;
-    private String dataName;
-    private String dataReference;
     private double x;
     private double y;
 
-    public DataBlockMetadata(String blockId, int dataType, String dataName, String dataReference, double x, double y) {
+    public DataBlockMetadata(String blockId,  double x, double y) {
         super();
         this.blockId = blockId;
-        this.dataType = dataType;
-        this.dataName = dataName;
-        this.dataReference = dataReference;
         this.x = x;
         this.y = y;
-    }
-
-    public int getDataType() {
-        return dataType;
-    }
-
-    public String getDataName() {
-        return dataName;
-    }
-
-    public String getDataReference() {
-        return dataReference;
     }
 
     public double getX() {

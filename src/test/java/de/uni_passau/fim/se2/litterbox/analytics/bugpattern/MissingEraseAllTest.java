@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,39 +19,27 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class MissingEraseAllTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        MissingEraseAll parameterName = new MissingEraseAll();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertTrue(reports.isEmpty());
+        assertThatFinderReports(0, new MissingEraseAll(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEraseInOtherSprite() throws IOException, ParsingException {
-        Program eraseOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/eraseOtherSprite.json");
-        MissingEraseAll parameterName = new MissingEraseAll();
-        Set<Issue> reports = parameterName.check(eraseOtherSprite);
-        Assertions.assertTrue(reports.isEmpty());
+        assertThatFinderReports(0, new MissingEraseAll(), "./src/test/fixtures/bugpattern/eraseOtherSprite.json");
     }
 
     @Test
     public void testMissingEraseAll() throws IOException, ParsingException {
-        Program missingEraseAll = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingEraseAll.json");
-        MissingEraseAll parameterName = new MissingEraseAll();
-        Set<Issue> reports = parameterName.check(missingEraseAll);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingEraseAll(), "./src/test/fixtures/bugpattern/missingEraseAll.json");
     }
 
     @Test

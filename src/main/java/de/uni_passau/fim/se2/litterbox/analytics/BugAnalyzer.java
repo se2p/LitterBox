@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -43,10 +43,12 @@ public class BugAnalyzer extends Analyzer {
     private List<IssueFinder> issueFinders;
     private String annotationOutput;
     private boolean ignoreLooseBlocks;
+    private final String detectors;
 
     public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
+        this.detectors = detectors;
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
@@ -61,7 +63,9 @@ public class BugAnalyzer extends Analyzer {
      * @param fileEntry      the file to analyze
      * @param reportFileName the file in which to write the results
      */
+    @Override
     void check(File fileEntry, String reportFileName) {
+        issueFinders = IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message

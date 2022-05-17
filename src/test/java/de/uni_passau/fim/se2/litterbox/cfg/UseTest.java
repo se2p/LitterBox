@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -159,7 +159,7 @@ public class UseTest implements JsonTest {
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
         for (CFGNode node : nodes) {
             assertThat(node.getDefinitions()).isEmpty();
-            assertThat(node.getUses()).isEmpty();
+            assertThat(node.getUses()).hasSize(1); // Visibility for say
         }
     }
 
@@ -170,7 +170,7 @@ public class UseTest implements JsonTest {
         assertThat(nodes).hasSize(1);
         CFGNode node = nodes.iterator().next();
 
-        assertThat(node.getUses()).hasSize(1);
+        assertThat(node.getUses()).hasSize(2);
         assertThat(node.getDefinitions()).isEmpty();
     }
 

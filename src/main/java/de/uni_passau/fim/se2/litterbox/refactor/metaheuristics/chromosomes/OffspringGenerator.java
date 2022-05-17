@@ -1,14 +1,30 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
 import com.google.common.collect.Lists;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OffspringGenerator<C extends Solution<C>> {
@@ -31,7 +47,6 @@ public class OffspringGenerator<C extends Solution<C>> {
 
             Pair<C> nextOffsprings;
             if (Randomness.nextDouble() < CROSSOVER_PROBABILITY) {
-                log.log(Level.FINE, "Crossover was applied");
                 nextOffsprings = parent1.crossover(parent2);
             } else {
                 nextOffsprings = Pair.of(parent1, parent2);

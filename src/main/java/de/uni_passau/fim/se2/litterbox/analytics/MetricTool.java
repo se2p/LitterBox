@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -63,6 +63,7 @@ public class MetricTool {
             new HalsteadVolume<Program>(),
             new HatCount<Program>(),
             new InterproceduralCyclomaticComplexity<Program>(),
+            new InterproceduralSliceCoverage<Program>(),
             new LengthLongestScript<Program>(),
             new LooksBlockCount<Program>(),
             new MostComplexScript<Program>(),

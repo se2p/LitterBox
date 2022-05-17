@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -73,7 +73,7 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Program program) {
-        for(ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
             visit(actor.getScripts());
             visit(actor.getProcedureDefinitionList());
         }

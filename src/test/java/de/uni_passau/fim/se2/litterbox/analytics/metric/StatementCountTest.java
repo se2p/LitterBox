@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,43 +27,31 @@ import java.io.IOException;
 public class StatementCountTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new StatementCount<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testProcedures() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(3, parameterName.calculateMetric(program));
+        assertThatMetricReports(3, new StatementCount<>(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
     }
 
     @Test
     public void testNonEmptyScripts() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/weightedMethod.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(6, parameterName.calculateMetric(program));
+        assertThatMetricReports(6, new StatementCount<>(), "./src/test/fixtures/weightedMethod.json");
     }
 
     @Test
     public void testLooseScript() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(3, parameterName.calculateMetric(program));
+        assertThatMetricReports(3, new StatementCount<>(), "./src/test/fixtures/metrics/looseAndNoneLooseScript.json");
     }
 
     @Test
     public void testDeadCode() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/deadCode.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(5, parameterName.calculateMetric(program));
+        assertThatMetricReports(5, new StatementCount<>(), "./src/test/fixtures/smells/deadCode.json");
     }
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
-        StatementCount parameterName = new StatementCount();
-        Assertions.assertEquals(4, parameterName.calculateMetric(program));
+        assertThatMetricReports(4, new StatementCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
 }

@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
@@ -5,80 +23,64 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementDeletionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ExtractEventsFromForever extends CloneVisitor implements Refactoring{
+public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "extract_event_handler";
 
     private RepeatForeverStmt loop;
+    private ScriptList scriptList;
     private Script script;
-    private ArrayList<Script> eventScripts = new ArrayList<>();
-    private boolean onlyIfThenStmts = false;
-    // The new ForeverLoop if not only IfThen Statements;
-    private RepeatForeverStmt replacement = null;
+    private List<Script> eventScripts = new ArrayList<>();
 
-    public ExtractEventsFromForever(Script script, RepeatForeverStmt loop) {
+    public ExtractEventsFromForever(ScriptList scriptList, Script script, RepeatForeverStmt loop) {
         this.loop = Preconditions.checkNotNull(loop);
+        this.scriptList = Preconditions.checkNotNull(scriptList);
         this.script = Preconditions.checkNotNull(script);
 
-
         // New Script for each if then with KeyPressed Event
-        ArrayList<Stmt> replacementStmts = new ArrayList<>();
         for (Stmt stmt : this.loop.getStmtList().getStmts()) {
-            if(stmt instanceof IfThenStmt) {
-                IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-                BoolExpr expr = ifThenStmt.getBoolExpr();
-                if(expr instanceof IsKeyPressed) {
-                    NonDataBlockMetadata keyMetaData = NonDataBlockMetadata.emptyNonBlockMetadata();
-                    Event e = new KeyPressed(((IsKeyPressed) expr).getKey(), keyMetaData);
-                    Script event = new Script(e, ifThenStmt.getThenStmts());
-                    eventScripts.add(event);
-                }
-            } else {
-                replacementStmts.add(stmt);
-            }
-        }
-
-        if (replacementStmts.size() > 0) {
-            replacement = new RepeatForeverStmt(new StmtList(replacementStmts), loop.getMetadata());
-        } else {
-            onlyIfThenStmts = true;
+            IfThenStmt ifThenStmt = (IfThenStmt) stmt;
+            BoolExpr expr = ifThenStmt.getBoolExpr();
+            Event keyPressedEvent = new KeyPressed(apply(((IsKeyPressed) expr).getKey()), apply(script.getEvent().getMetadata()));
+            Script eventScript = new Script(keyPressedEvent, apply(ifThenStmt.getThenStmts()));
+            eventScripts.add(eventScript);
         }
     }
 
     @Override
     public ASTNode visit(ScriptList node) {
+
+        if (node != this.scriptList) {
+            return new ScriptList(applyList(node.getScriptList()));
+        }
+
         List<Script> scripts = new ArrayList<>();
         for (Script currentScript : node.getScriptList()) {
-            scripts.add(apply(currentScript));
+            if (currentScript != this.script) {
+                scripts.add(apply(currentScript));
+            }
         }
 
         // Add all scripts
-        for(Script currentScript : eventScripts) {
+        for (Script currentScript : eventScripts) {
             scripts.add(currentScript);
         }
+
         return new ScriptList(scripts);
     }
 
     @Override
     public Program apply(Program program) {
-        if(onlyIfThenStmts) {
-            program = (Program) program.accept(new StatementDeletionVisitor(loop));
-        } else {
-            program = (Program) program.accept(new StatementReplacementVisitor(loop, replacement));
-        }
         return (Program) program.accept(this);
     }
 
@@ -92,22 +94,12 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
         if (this == o) return true;
         if (!(o instanceof ExtractEventsFromForever)) return false;
         ExtractEventsFromForever that = (ExtractEventsFromForever) o;
-        boolean equals = true;
-
-        if(this.eventScripts.size() != that.eventScripts.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < this.eventScripts.size(); i++) {
-            if (this.eventScripts.get(i).equals(that.eventScripts.get(i)))
-                equals = false;
-        }
-        return equals && Objects.equals(this.loop, that.loop) && Objects.equals(this.script, that.script);
+        return Objects.equals(loop, that.loop) && Objects.equals(scriptList, that.scriptList) && Objects.equals(script, that.script) && Objects.equals(eventScripts, that.eventScripts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(loop, eventScripts);
+        return Objects.hash(loop, scriptList, script, eventScripts);
     }
 
     @Override
@@ -118,9 +110,9 @@ public class ExtractEventsFromForever extends CloneVisitor implements Refactorin
             sb.append(script.getScratchBlocks());
             sb.append(" and ");
         }
-        sb.delete(sb.length()-6 , sb.length()-1);
-        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator() +
-                " to:" + System.lineSeparator() + sb +  System.lineSeparator();
+        sb.delete(sb.length() - 6, sb.length() - 1);
+        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator()
+                + " to:" + System.lineSeparator() + sb +  System.lineSeparator();
     }
 
 }

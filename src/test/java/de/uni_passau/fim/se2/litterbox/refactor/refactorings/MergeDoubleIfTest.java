@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
@@ -55,7 +73,7 @@ class MergeDoubleIfTest implements JsonTest {
         List<Stmt> stmtList = script.getStmtList().getStmts();
         IfThenStmt if1 = null;
         IfThenStmt if2 = null;
-        for (Stmt stmt :stmtList) {
+        for (Stmt stmt : stmtList) {
             if (stmt instanceof IfThenStmt) {
                 if (if1 == null) {
                     if1 = (IfThenStmt) stmt;
@@ -85,16 +103,16 @@ class MergeDoubleIfTest implements JsonTest {
         refactored.accept(scratchBlocksVisitor);
         String scratchBlocks = scratchBlocksVisitor.getScratchBlocks();
         assertThat(scratchBlocks).isEqualTo(
-                "when green flag clicked\n"
-                        + "forever \n"
-                        + "if <touching (mouse-pointer v) ?> then\n"
-                        + "move (10) steps\n"
-                        + "end\n"
-                        + "if <touching (edge v) ?> then\n"
-                        + "move (5) steps\n"
-                        + "move (2) steps\n"
-                        + "end\n"
-                        + "end\n");
+                "when green flag clicked" + System.lineSeparator()
+                        + "forever " + System.lineSeparator()
+                        + "if <touching (mouse-pointer v) ?> then" + System.lineSeparator()
+                        + "move (10) steps" + System.lineSeparator()
+                        + "end" + System.lineSeparator()
+                        + "if <touching (edge v) ?> then" + System.lineSeparator()
+                        + "move (5) steps" + System.lineSeparator()
+                        + "move (2) steps" + System.lineSeparator()
+                        + "end" + System.lineSeparator()
+                        + "end" + System.lineSeparator());
     }
 
     @Test
@@ -104,23 +122,23 @@ class MergeDoubleIfTest implements JsonTest {
 
     @Test
     void toStringTest() {
-        assertThat(refactoring.toString()).isEqualTo("merge_double_if\n"
-                + "Replaced ifs:\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (5) steps\n"
-                + "end\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (2) steps\n"
-                + "end\n"
-                + "\n"
-                + "Replacement:\n"
-                + "\n"
-                + "if <touching (edge v) ?> then\n"
-                + "move (5) steps\n"
-                + "move (2) steps\n"
-                + "end\n");
+        assertThat(refactoring.toString()).isEqualTo("merge_double_if" + System.lineSeparator()
+                + "Replaced ifs:" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (5) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (2) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator()
+                + System.lineSeparator()
+                + "Replacement:" + System.lineSeparator()
+                + System.lineSeparator()
+                + "if <touching (edge v) ?> then" + System.lineSeparator()
+                + "move (5) steps" + System.lineSeparator()
+                + "move (2) steps" + System.lineSeparator()
+                + "end" + System.lineSeparator());
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.AvgScriptWidthCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -60,6 +59,9 @@ public class FeatureTool {
             new NestedBlockCount<>(),
             new OperatorsBlockCount<>(),
             new SensingBlockCount<>(),
+            new SliceCoverage<>(),
+            new SliceOverlap<>(),
+            new SliceTightness<>(),
             new SoundBlockCount<>(),
             new StackedStatementCount<>(),
             new StatementCount<>(),
@@ -98,13 +100,12 @@ public class FeatureTool {
                 List<String> row = new ArrayList<>();
                 row.add(program.getIdent().getName());
                 String uniqueID = "";
-                if(target instanceof Script){
-                    scriptCount =scriptCount + 1;
-                    uniqueID = "ACTOR"+actorCount+"_"+"SCRIPT"+scriptCount;
-                }
-                else if(target instanceof ProcedureDefinition){
+                if (target instanceof Script) {
+                    scriptCount = scriptCount + 1;
+                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
-                    uniqueID = "ACTOR"+actorCount+"_"+"PROCEDUREDEFINITION"+procedureDefCount;
+                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
                 }
 
                 row.add(uniqueID);
@@ -122,7 +123,7 @@ public class FeatureTool {
 
     private String getScratchBlockCode(ASTNode target, Program program,ActorDefinition actorDefinition) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if(target instanceof ProcedureDefinition) {
+        if (target instanceof ProcedureDefinition) {
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
         }

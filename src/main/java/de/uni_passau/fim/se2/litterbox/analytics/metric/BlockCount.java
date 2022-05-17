@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,9 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
@@ -72,7 +70,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
-    private boolean insideParameterList = false;
     private boolean fixedBlock = false;
 
     @Override
@@ -80,7 +77,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         Preconditions.checkNotNull(node);
         count = 0;
         insideProcedure = false;
-        insideParameterList = false;
         fixedBlock = false;
         insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
         node.accept(this);
@@ -276,9 +272,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
 
     @Override
     public void visit(ParameterDefinitionList node) {
-        insideParameterList = true;
         visitChildren(node);
-        insideParameterList = false;
     }
 
     @Override
@@ -568,7 +562,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

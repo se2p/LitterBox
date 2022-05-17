@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ExtensionMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 
 import java.util.ArrayList;
 
@@ -37,9 +37,9 @@ public class ProgramMetadataParser {
      * @return the Metadata of the program including meta, extension and monitors metadata.
      */
     public static ProgramMetadata parse(JsonNode program) {
-        MonitorMetadataList monitorMetadataList = null;
-        MetaMetadata meta = null;
-        ExtensionMetadata extensionMetadata = null;
+        MonitorMetadataList monitorMetadataList;
+        MetaMetadata meta;
+        ExtensionMetadata extensionMetadata;
         if (program.has(META_KEY)) {
             meta = MetaMetadataParser.parse(program.get(META_KEY));
         } else {

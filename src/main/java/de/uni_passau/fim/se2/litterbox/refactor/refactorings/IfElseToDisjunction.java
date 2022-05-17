@@ -1,10 +1,28 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -20,7 +38,7 @@ to
 If A || C:
   B
  */
-public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
+public class IfElseToDisjunction extends OnlyCodeCloneVisitor implements Refactoring {
 
     public static final String NAME = "ifelse_to_disjunction";
 
@@ -53,16 +71,22 @@ public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
         this.if2 = Preconditions.checkNotNull(if2);
 
         Preconditions.checkArgument(if1.getThenStmts().equals(if2.getThenStmts()));
-        Preconditions.checkArgument(!if1.getBoolExpr().equals(if2.getBoolExpr()));
 
-        Or disjunction = new Or(
-                apply(if1.getBoolExpr()),
-                apply(if2.getBoolExpr()),
-                apply(if2.getMetadata()));
+        if (if1.getBoolExpr().equals(if2.getBoolExpr())) {
+            // Silly, but actually observed in practice
+            replacement = new IfThenStmt(apply(if1.getBoolExpr()),
+                    apply(if1.getThenStmts()),
+                    apply(if1.getMetadata()));
+        } else {
+            Or disjunction = new Or(
+                    apply(if1.getBoolExpr()),
+                    apply(if2.getBoolExpr()),
+                    apply(if2.getMetadata()));
 
-        replacement = new IfThenStmt(disjunction,
-                apply(if1.getThenStmts()),
-                apply(if1.getMetadata()));
+            replacement = new IfThenStmt(disjunction,
+                    apply(if1.getThenStmts()),
+                    apply(if1.getMetadata()));
+        }
     }
 
     @Override
@@ -77,9 +101,9 @@ public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator() +
-                "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator() +
-                "Replacement if:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator()
+                + "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator()
+                + "Replacement if:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
     }
 
     @Override

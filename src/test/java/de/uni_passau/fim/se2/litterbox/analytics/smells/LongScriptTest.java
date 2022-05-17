@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,38 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class LongScriptTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        LongScript parameterName = new LongScript();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new LongScript(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testLongScript() throws IOException, ParsingException {
-        Program longScript = getAST("./src/test/fixtures/smells/longScript.json");
-        LongScript parameterName = new LongScript();
-        Set<Issue> reports = parameterName.check(longScript);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new LongScript(), "./src/test/fixtures/smells/longScript.json");
     }
 
     @Test
     public void testLongProcedure() throws IOException, ParsingException {
-        Program longProcedure = getAST("./src/test/fixtures/smells/longProcedure.json");
-        LongScript parameterName = new LongScript();
-        Set<Issue> reports = parameterName.check(longProcedure);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new LongScript(), "./src/test/fixtures/smells/longProcedure.json");
     }
 }

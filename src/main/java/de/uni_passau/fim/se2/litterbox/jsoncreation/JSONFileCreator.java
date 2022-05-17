@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
-public class JSONFileCreator {
+public final class JSONFileCreator {
 
     private JSONFileCreator() {
     }
@@ -66,22 +66,24 @@ public class JSONFileCreator {
             out.println(jsonString);
         }
 
-        ZipFile zipFile = new ZipFile(sourceSB3File);
-        zipFile.extractAll(String.valueOf(tmp));
+        try (ZipFile zipFile = new ZipFile(sourceSB3File)) {
+            zipFile.extractAll(String.valueOf(tmp));
 
-        File tempProj = new File(tmp + "/project.json");
-        File annotatedJson = new File(program.getIdent().getName() + postfix + JSON);
+            File tempProj = new File(tmp + "/project.json");
+            File annotatedJson = new File(program.getIdent().getName() + postfix + JSON);
 
-        Files.copy(annotatedJson.toPath(), tempProj.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(annotatedJson.toPath());
-        File tempDir = new File(String.valueOf(tmp));
+            Files.copy(annotatedJson.toPath(), tempProj.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(annotatedJson.toPath());
+            File tempDir = new File(String.valueOf(tmp));
 
-        File[] files = tempDir.listFiles();
-        if (files != null) {
-            ZipFile zip = new ZipFile(destinationPath);
-            zip.addFiles(Arrays.asList(files));
+            File[] files = tempDir.listFiles();
+            if (files != null) {
+                try (ZipFile zip = new ZipFile(destinationPath)) {
+                    zip.addFiles(Arrays.asList(files));
+                }
+            }
+
+            FileUtils.deleteDirectory(tempDir);
         }
-
-        FileUtils.deleteDirectory(tempDir);
     }
 }

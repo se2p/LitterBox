@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,12 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -29,6 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -95,8 +101,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(POSITION);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(POSITION)).count()).isEqualTo(1);
         }
     }
 
@@ -110,8 +116,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(ROTATION);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(ROTATION)).count()).isEqualTo(1);
         }
     }
 
@@ -142,8 +148,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(COSTUME)).count()).isEqualTo(1);
         }
     }
 
@@ -174,8 +180,8 @@ public class AttributeTest implements JsonTest {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
-            assertThat(uses).hasSize(1);
-            assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(SIZE);
+            assertThat(uses.size()).isAtLeast(1);
+            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(SIZE)).count()).isEqualTo(1);
         }
     }
 
@@ -217,28 +223,258 @@ public class AttributeTest implements JsonTest {
         assertThat(defVisitor.getDefineables()).hasSize(1);
     }
 
-    @Test
-    public void testNextBackdrop() throws IOException, ParsingException {
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
-        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
-        // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getDefinedAttributes(node)).hasSize(0);
-    }
 
     @Test
-    public void testNextBackdropOnSprite() throws IOException, ParsingException {
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
-        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
-        // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getDefinedAttributes(node)).hasSize(0);
+    public void testVisibilityDefAndUse() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/visibility.json");
+
+        CFGNode greenFlag = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).findFirst().get();
+        CFGNode show = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Show).findFirst().get();
+        CFGNode hide = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Hide).findFirst().get();
+        CFGNode ask = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AskAndWait).findFirst().get();
+        CFGNode say = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Say).findFirst().get();
+        CFGNode sayfor = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        CFGNode ifthen = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
+
+        AttributeUseVisitor useVisitor = new AttributeUseVisitor(greenFlag.getActor());
+        AttributeDefinitionVisitor defVisitor = new AttributeDefinitionVisitor(greenFlag.getActor());
+        greenFlag.getASTNode().accept(useVisitor);
+        greenFlag.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).isEmpty();
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(show.getActor());
+        defVisitor = new AttributeDefinitionVisitor(show.getActor());
+        show.getASTNode().accept(useVisitor);
+        show.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).hasSize(1);
+
+        useVisitor = new AttributeUseVisitor(ifthen.getActor());
+        defVisitor = new AttributeDefinitionVisitor(ifthen.getActor());
+        ifthen.getASTNode().accept(useVisitor);
+        ifthen.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(hide.getActor());
+        defVisitor = new AttributeDefinitionVisitor(hide.getActor());
+        hide.getASTNode().accept(useVisitor);
+        hide.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).hasSize(1);
+
+        useVisitor = new AttributeUseVisitor(ask.getActor());
+        defVisitor = new AttributeDefinitionVisitor(ask.getActor());
+        ask.getASTNode().accept(useVisitor);
+        ask.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(say.getActor());
+        defVisitor = new AttributeDefinitionVisitor(say.getActor());
+        say.getASTNode().accept(useVisitor);
+        say.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
+        useVisitor = new AttributeUseVisitor(sayfor.getActor());
+        defVisitor = new AttributeDefinitionVisitor(sayfor.getActor());
+        sayfor.getASTNode().accept(useVisitor);
+        sayfor.getASTNode().accept(defVisitor);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).isEmpty();
+
     }
+
 
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/useattributefromothersprite.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        assertThat(getUsedAttributes(node)).hasSize(1);
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        assertThat(uses).hasSize(2);
+        Attribute use1 = uses.get(0);
+        Attribute use2 = uses.get(1);
+        assertThat(use1.getActorIdentifier()).isNotEqualTo(use2.getActorIdentifier());
+    }
+
+    @Test
+    public void testGraphicsEffect() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseGraphicsEffect.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeGraphicEffectBy).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
+        assertThat(def.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
+    }
+
+    @Test
+    public void testCostumeAttribute() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseCostume.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(COSTUME);
+        assertThat(def.getAttributeType()).isEqualTo(COSTUME);
+    }
+
+
+
+    @Test
+    public void testNextBackdropOnSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+
+    @Test
+    public void testNextBackdrop() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttribute() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).hasSize(1);
+        assertThat(defs).hasSize(1);
+        Attribute use = uses.get(0);
+        Attribute def = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttributeDefinition() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defonlyBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SwitchBackdrop).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testSwitchBackgroundAndWaitAttributeDefinition() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defandwaitBackground.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SwitchBackdropAndWait).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundEventUse() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/onbackdropchange.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BackdropSwitchTo).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
+    }
+
+    @Test
+    public void testBackgroundAttributeInSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/backdropAttributeInSprite.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == BACKDROP).count();
+        assertThat(numUses).isEqualTo(1);
+    }
+
+    @Test
+    public void testBackgroundAttributeInStage() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/backdropAttributeInStage.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == BACKDROP).count();
+        assertThat(numUses).isEqualTo(1);
+    }
+
+    @Test
+    public void testTimerEvent() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/startontimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.get(0);
+        assertThat(use.getAttributeType()).isEqualTo(TIMER);
+    }
+
+    @Test
+    public void testResetTimer() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/resettimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ResetTimer).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(uses).isEmpty();
+        assertThat(defs).hasSize(1);
+        Attribute def = defs.get(0);
+        assertThat(def.getAttributeType()).isEqualTo(TIMER);
+    }
+
+    @Test
+    public void testSayTimer() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/saytimer.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Say).findFirst().get();
+        List<Attribute> uses = new ArrayList<>(getUsedAttributes(node));
+        List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
+        assertThat(defs).isEmpty();
+        long numUses = uses.stream().filter(u -> u.getAttributeType() == TIMER).count();
+        assertThat(numUses).isEqualTo(1);
     }
 
     private Set<Attribute> getDefinedAttributes(CFGNode node) {

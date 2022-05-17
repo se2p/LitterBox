@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,7 +50,7 @@ public class CSVReportGeneratorTest implements JsonTest {
         reportGenerator.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).isEqualTo("project,endless_recursion");
@@ -78,7 +78,7 @@ public class CSVReportGeneratorTest implements JsonTest {
         reportGenerator.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).isEqualTo("project,endless_recursion");

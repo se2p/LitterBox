@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -109,7 +109,7 @@ public class ScriptParser {
                     }
                 } catch (ParsingException e) {
                     Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
-                            + current.get(OPCODE_KEY));
+                            + current.get(OPCODE_KEY) + ". "+e.getMessage());
                 }
                 blockId = current.get(NEXT_KEY).asText();
                 current = blocks.get(blockId);

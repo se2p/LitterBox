@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,14 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -53,8 +54,7 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(CreateCloneOf node) {
-        CloneOfMetadata meta = (CloneOfMetadata) node.getMetadata();
-        id = ((NonDataBlockMetadata) meta.getCloneBlockMetadata()).getBlockId();
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
@@ -451,25 +451,23 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
-        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
-        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 
     //Text to Speech
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

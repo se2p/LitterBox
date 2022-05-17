@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,27 +22,32 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmptyCustomBlockTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        EmptyCustomBlock parameterName = new EmptyCustomBlock();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new EmptyCustomBlock(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEmptyProcedure() throws IOException, ParsingException {
-        Program unusedProc = getAST("./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        assertThatFinderReports(1, new EmptyCustomBlock(), "./src/test/fixtures/smells/unusedEmptyProcedure.json");
+    }
+
+    @Test
+    public void testUnusedCustomBlockWithIf() throws IOException, ParsingException {
+        Program unusedProc = getAST("./src/test/fixtures/smells/unusedCustomBlockAndIf.json");
         EmptyCustomBlock parameterName = new EmptyCustomBlock();
-        Set<Issue> reports = parameterName.check(unusedProc);
+        List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
+        Assertions.assertTrue(reports.get(0).getScriptOrProcedureDefinition() instanceof ProcedureDefinition);
     }
 }

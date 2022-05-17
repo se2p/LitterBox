@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,121 +19,69 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class VariableInitializationRaceTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testVariableInitializationOnGreenFlag() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionVarGreenFlag.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionVarGreenFlag.json");
     }
 
     @Test
     public void testVariableInitializationOn3GreenFlags() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionVarGreenFlag3.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionVarGreenFlag3.json");
     }
 
     @Test
     public void testVariableInitializationOnClick() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionOnClick.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionOnClick.json");
     }
 
     @Test
     public void testVariableInitializationOnDifferentEvents() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentEvents.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionDifferentEvents.json");
     }
 
     @Test
     public void testVariableInitializationOnDifferentVariables() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentVariables.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionDifferentVariables.json");
     }
 
     @Test
     public void testVariableInitializationSetAndChangeVariable() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentVariableStatements.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionDifferentVariableStatements.json");
     }
 
     @Test
     public void testVariableInitializationDifferentActors() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentActors.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionDifferentActors.json");
     }
 
     @Test
     public void testVariableInitializationLocalVariables() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionLocalVariables.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionLocalVariables.json");
     }
 
     @Test
     public void testVariableAfterInitializationInLoop() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionAfterInitialization.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionAfterInitialization.json");
     }
 
     @Test
     public void testVariableAfterInitialization() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
     }
 
     @Test
     public void testNoVariableRace() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/smells/variableInitialisationWithoutRace.json");
-
-        VariableInitializationRace finder = new VariableInitializationRace();
-        Set<Issue> reports = finder.check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableInitializationRace(), "./src/test/fixtures/smells/variableInitialisationWithoutRace.json");
     }
 }

@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.dependency;
 
 import com.google.common.graph.MutableGraph;
@@ -35,7 +53,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         return tdg;
     }
 
-    private class Delay implements DataflowFact {
+    private static class Delay implements DataflowFact {
 
         private CFGNode source;
 
@@ -65,14 +83,14 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         }
     }
 
-    private class DelayTransferFunction implements TransferFunction<Delay> {
+    private static class DelayTransferFunction implements TransferFunction<Delay> {
 
         @Override
         public Set<Delay> apply(CFGNode node, Set<Delay> inFacts) {
             // There is no kill set, so the result is inFacts ∪ {gen}
             Set<Delay> result = new LinkedHashSet<>(inFacts);
 
-            if (node.getASTNode() != null && node.getASTNode() instanceof TimedStmt) {
+            if (node.getASTNode() instanceof TimedStmt) {
                 result.add(new Delay(node));
             }
 

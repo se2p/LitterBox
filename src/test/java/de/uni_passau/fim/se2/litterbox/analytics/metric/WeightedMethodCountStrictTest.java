@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,26 +20,19 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class WeightedMethodCountStrictTest {
+public class WeightedMethodCountStrictTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
-        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
+        assertThatMetricReports(0, new WeightedMethodCountStrict<>(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testMethodCount() throws IOException, ParsingException {
-        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
-        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
-        Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
+        assertThatMetricReports(2, new WeightedMethodCountStrict<>(), "./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,62 +23,42 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MissingCloneCallTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingCloneCall(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testClone() throws IOException, ParsingException {
-        Program emptyCloneCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/emptyCloneCall.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(emptyCloneCall);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingCloneCall(), "./src/test/fixtures/bugpattern/emptyCloneCall.json");
     }
 
     @Test
     public void testMissingCloneCall() throws IOException, ParsingException {
-        Program missingCloneCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingCloneCall.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(missingCloneCall);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingCloneCall(), "./src/test/fixtures/bugpattern/missingCloneCall.json");
     }
 
     @Test
     public void testCloneInOtherSprite() throws IOException, ParsingException {
-        Program cloneInOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(cloneInOtherSprite);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingCloneCall(), "./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
     }
 
     @Test
     public void testRainbowSix() throws IOException, ParsingException {
-        Program rainbowSix = JsonTest.parseProgram("./src/test/fixtures/bugpattern/rainbowSix.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(rainbowSix);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingCloneCall(), "./src/test/fixtures/bugpattern/rainbowSix.json");
     }
 
     @Test
     public void testJumper() throws IOException, ParsingException {
-        Program jumper = JsonTest.parseProgram("./src/test/fixtures/bugpattern/jumper.json");
-        MissingCloneCall parameterName = new MissingCloneCall();
-        Set<Issue> reports = parameterName.check(jumper);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new MissingCloneCall(), "./src/test/fixtures/bugpattern/jumper.json");
     }
 
     @Test

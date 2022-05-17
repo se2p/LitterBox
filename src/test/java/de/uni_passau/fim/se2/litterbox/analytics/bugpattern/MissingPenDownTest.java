@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -39,6 +39,5 @@ class MissingPenDownTest implements JsonTest {
         for (Issue issue : reports) {
             Truth.assertThat(issue.getActor().getIdent().getName()).isEqualTo("Apple");
         }
-
     }
 }

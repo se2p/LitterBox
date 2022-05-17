@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,15 +26,15 @@ import java.util.List;
 
 public class ActorDefinitionList extends AbstractNode {
 
-    private final List<ActorDefinition> actorDefinitionList;
+    private final List<ActorDefinition> actorDefinitions;
 
-    public ActorDefinitionList(List<ActorDefinition> actorDefinitionList) {
-        super(actorDefinitionList);
-        this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
+    public ActorDefinitionList(List<ActorDefinition> actorDefinitions) {
+        super(actorDefinitions);
+        this.actorDefinitions = Preconditions.checkNotNull(actorDefinitions);
     }
 
     public List<ActorDefinition> getDefinitions() {
-        return actorDefinitionList;
+        return actorDefinitions;
     }
 
     @Override

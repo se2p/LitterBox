@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -65,8 +65,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -112,7 +114,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
-        if (finishedJSONStrings.size() > 0) {
+        if (!finishedJSONStrings.isEmpty()) {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return jsonString.toString();
@@ -237,36 +239,31 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(DeleteAllOf node) {
-        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        getListDataFields(node.getIdentifier());
     }
 
     @Override
     public void visit(ShowList node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 
-    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        if (identifier instanceof Qualified) {
-            // Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
-            Qualified qual = (Qualified) identifier;
-            Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
-            ScratchList list = (ScratchList) qual.getSecond();
-            String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-            return createFields(LIST_KEY, list.getName().getName(), id);
-        } else {
-            return createFields(LIST_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
-        }
+    private String getListDataFields(Identifier identifier) {
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+        ScratchList list = (ScratchList) qual.getSecond();
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
+        return createFields(LIST_KEY, list.getName().getName(), id);
     }
 
     @Override
     public void visit(HideList node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
         previousBlockId = metadata.getBlockId();
@@ -283,19 +280,15 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     }
 
     private void getVariableFields(NonDataBlockMetadata metadata, Identifier identifier, String inputsString, Opcode opcode) {
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         String fieldsString;
-        if (identifier instanceof Qualified) {
-            //Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
-            Qualified qual = (Qualified) identifier;
-            Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
-            Variable variable = (Variable) qual.getSecond();
-            String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
-                    variable.getName().getName());
-            fieldsString = createFields(VARIABLE_KEY, variable.getName().getName(), id);
-        } else {
-            fieldsString = createFields(VARIABLE_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
-        }
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
+        Variable variable = (Variable) qual.getSecond();
+        String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
+                variable.getName().getName());
+        fieldsString = createFields(VARIABLE_KEY, variable.getName().getName(), id);
+
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, inputsString, fieldsString, opcode));
         previousBlockId = metadata.getBlockId();
@@ -304,26 +297,23 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(StopAll node) {
         String fieldsString = createFields(STOP_OPTION, "all", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), false);
     }
 
     @Override
     public void visit(StopThisScript node) {
         String fieldsString = createFields(STOP_OPTION, "this script", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), false);
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         String fieldsString = createFields(STOP_OPTION, "other scripts in sprite", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), true);
     }
 
-    private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata, Opcode opcode) {
-        MutationMetadata mutation = metadata.getMutation();
-        Preconditions.checkArgument(mutation instanceof StopMutationMetadata);
-        StopMutationMetadata stopMutationMetadata = (StopMutationMetadata) mutation;
-        String mutationString = createStopMetadata(stopMutationMetadata.getTagName(), stopMutationMetadata.isHasNext());
+    private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata, Opcode opcode, boolean hasNext) {
+        String mutationString = createStopMetadata(hasNext);
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString, opcode));
         previousBlockId = metadata.getBlockId();
@@ -619,7 +609,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(AddTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, ITEM_KEY, node.getString()));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
@@ -630,7 +620,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(DeleteOf node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         List<String> inputs = new ArrayList<>();
         inputs.add(createNumExpr(metadata, INDEX_KEY, node.getNum(), INTEGER_NUM_PRIMITIVE));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
@@ -641,7 +631,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(InsertAt node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, ITEM_KEY, node.getString()));
         inputs.add(createNumExpr(metadata, INDEX_KEY, node.getIndex(), INTEGER_NUM_PRIMITIVE));
@@ -653,7 +643,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(ReplaceItem node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         List<String> inputs = new ArrayList<>();
         inputs.add(createNumExpr(metadata, INDEX_KEY, node.getIndex(), INTEGER_NUM_PRIMITIVE));
         inputs.add(createExpr(metadata, ITEM_KEY, node.getString()));
@@ -717,23 +707,29 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(CreateCloneOf node) {
-        CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-        NonDataBlockMetadata cloneBlockMetadata = (NonDataBlockMetadata) metadata.getCloneBlockMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         StringExpr stringExpr = node.getStringExpr();
         IdJsonStringTuple tuple;
-
-        if (!(metadata.getCloneMenuMetadata() instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(cloneBlockMetadata.getBlockId(), node, node.getCloneMenuOpcode());
+        BlockMetadata menuMetadata;
+        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
+            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        } else {
+            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        }
+        if (!(menuMetadata instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, node.getCloneMenuOpcode());
             inputs.add(createReferenceInput(CLONE_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr(cloneBlockMetadata, CLONE_OPTION, stringExpr));
+            inputs.add(createExpr(metadata, CLONE_OPTION, stringExpr));
         }
-        finishedJSONStrings.add(createBlockWithoutMutationString(cloneBlockMetadata, getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
 
-        previousBlockId = cloneBlockMetadata.getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -767,72 +763,82 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(CallStmt node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        CallMutationMetadata mutationMetadata = (CallMutationMetadata) metadata.getMutation();
-        List<String> argumentIds = mutationMetadata.getArgumentIds();
+        ProcedureMutationMetadata mutationMetadata = (ProcedureMutationMetadata) metadata.getMutation();
+        List<String> argumentIds = new ArrayList<>();
 
         StrId name = (StrId) node.getIdent();
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
         List<Expression> expressionList = node.getExpressions().getExpressions();
-        Preconditions.checkArgument(argumentIds.size() >= expressionList.size(), "Number of parameters is not equal "
-                + "to the number of argument ids");
 
         for (int i = 0; i < expressionList.size(); i++) {
             Expression current = expressionList.get(i);
+            String argumentId = name.getName().replace(" ", "_") + "_argument_" + i;
+            argumentIds.add(argumentId);
+
             if (current instanceof UnspecifiedBoolExpr) {
                 inputs.add(createReferenceJSON(null, argumentIds.get(i), false));
             } else if (current instanceof BoolExpr) {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
+
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.getJsonString());
                     inputs.add(jsonString.toString());
                 } else {
                     finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), false));
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, false));
                 }
             } else {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
+
                 if (tuple.getId() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.getJsonString());
                     inputs.add(jsonString.toString());
                 } else {
                     finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), true));
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, true));
                 }
             }
         }
 
-        String mutationString = createCallMetadata(mutationMetadata.getTagName(), name.getName(), argumentIds,
+        String mutationString = createCallMetadata(name.getName(), argumentIds,
                 mutationMetadata.isWarp());
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, mutationString, node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createPenWithParamStmt(PenWithParamMetadata metadata, StringExpr stringExpr,
+    private void createPenWithParamStmt(NonDataBlockMetadata metadata, StringExpr stringExpr,
                                         NumExpr numExpr, Stmt node, Opcode opcode, Opcode dependentOpcode) {
-        NonDataBlockMetadata penBlockMetadata = (NonDataBlockMetadata) metadata.getPenBlockMetadata();
+
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
-
-        if (!(metadata.getParamMetadata() instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(penBlockMetadata.getBlockId(), node, dependentOpcode);
+        BlockMetadata menuMetadata;
+        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
+            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        } else {
+            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
+            menuMetadata = metadataWithMenu.getMenuMetadata();
+        }
+        if (!(menuMetadata instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, dependentOpcode);
             inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr(penBlockMetadata, COLOR_PARAM_BIG_KEY, stringExpr));
+            inputs.add(createExpr(metadata, COLOR_PARAM_BIG_KEY, stringExpr));
         }
 
-        inputs.add(createNumExpr(penBlockMetadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(metadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
 
-        finishedJSONStrings.add(createBlockWithoutMutationString(penBlockMetadata, getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, opcode));
 
-        previousBlockId = penBlockMetadata.getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -850,8 +856,11 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private void createVariableWithInputBlock(NonDataBlockMetadata metadata, Identifier identifier, Expression expr, Opcode opcode) {
         List<String> inputs = new ArrayList<>();
         if (expr instanceof NumberLiteral) {
+            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+            format.setGroupingUsed(false);
+            format.setMinimumFractionDigits(0);
             inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                    String.valueOf((float) ((NumberLiteral) expr).getValue())));
+                    format.format(((NumberLiteral) expr).getValue())));
         } else {
             inputs.add(createExpr(metadata, VALUE_KEY, expr));
         }
@@ -954,7 +963,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
         String insideBlockId = null;
         StmtListJSONCreator creator = null;
-        if (stmtList.getStmts().size() > 0) {
+        if (!stmtList.getStmts().isEmpty()) {
             creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
             insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
         }
@@ -989,7 +998,8 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof NumberLiteral) {
-            DecimalFormat format = new DecimalFormat();
+            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+            format.setGroupingUsed(false);
             format.setMinimumFractionDigits(0);
             return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
                     format.format(((NumberLiteral) numExpr).getValue()));
@@ -1081,13 +1091,13 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
     }
 

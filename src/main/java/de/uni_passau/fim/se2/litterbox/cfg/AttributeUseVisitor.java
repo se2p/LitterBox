@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,17 +21,25 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -75,6 +83,41 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(UntilStmt node) {
         node.getBoolExpr().accept(this);
     }
+
+    @Override
+    public void visit(Hide node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Show node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SpriteTouchable sprite) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(sprite);
+    }
+
+    @Override
+    public void visit(AskAndWait node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Say node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SayForSecs node) {
+        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
+        visitChildren(node);
+    }
+
 
     @Override
     public void visit(ChangeXBy node) {
@@ -122,8 +165,47 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     //---------------------------------------------------------------
-    // Costume
+    // Timer
 
+    @Override
+    public void visit(Timer node) {
+        uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
+        if (node.getAttribute().getType().equals(EventAttribute.EventAttributeType.TIMER)) {
+            uses.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+        }
+        // Loudness attribute is not the same as volume, so no use in that case
+        node.getValue().accept(this);
+    }
+
+    //---------------------------------------------------------------
+    // Effect
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        uses.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        uses.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        uses.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Volume node) {
+        uses.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+
+    //---------------------------------------------------------------
+    // Costume
     @Override
     public void visit(NextCostume node) {
         uses.add(Attribute.costumeOf(currentActor.getIdent()));
@@ -133,6 +215,32 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(Costume node) {
         uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(NextBackdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
+    @Override
+    public void visit(Backdrop node) {
+        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(ChangeLayerBy node) {
+        uses.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
 
     //---------------------------------------------------------------
     // Size
@@ -147,11 +255,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-    @Override
-    public void visit(AttributeAboveValue node) {
-        // TODO: Handle use of timer and volume attributes here once implemented (#210)
-        node.getValue().accept(this);
-    }
 
     @Override
     public void visit(AttributeOf node) {
@@ -184,13 +287,15 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                         uses.add(Attribute.rotationOf(localIdentifier));
                         break;
                     case COSTUME_NUMBER:
+                    case COSTUME_NAME:
                         uses.add(Attribute.costumeOf(localIdentifier));
                         break;
                     case VOLUME:
-                    case COSTUME_NAME:
+                        uses.add(Attribute.volumeOf(localIdentifier));
+                        break;
                     case BACKDROP_NAME:
                     case BACKDROP_NUMBER:
-                        // Not handled yet
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
                         break;
                     default:
                         // TODO: What should happen in the default case?

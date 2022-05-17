@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,9 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DuplicateSprite extends AbstractIssueFinder {
 
@@ -36,24 +34,22 @@ public class DuplicateSprite extends AbstractIssueFinder {
 
     @Override
     public void visit(Program node) {
-        Set<ActorDefinition> checked = new HashSet<>();
-        ActorDefinitionList actors = node.getActorDefinitionList();
-        for (ActorDefinition actor : actors.getDefinitions()) {
-            for (ActorDefinition other : actors.getDefinitions()) {
-                //empty sprite shouldn't be checked
-                if (!actor.getScripts().getScriptList().isEmpty() || !actor.getProcedureDefinitionList().getList().isEmpty()) {
-                    if (actor == other || checked.contains(other)) {
-                        continue;
-                    }
-
-                    if (areActorsIdentical(actor, other)) {
-                        currentActor = actor;
-                        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-                        addIssueWithLooseComment();
-                    }
+        Queue<ActorDefinition> actorQueue = new LinkedList<>(node.getActorDefinitionList().getDefinitions());
+        while (!actorQueue.isEmpty()) {
+            ActorDefinition actor = actorQueue.poll();
+            if (actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty()) {
+                continue;
+            }
+            Iterator<ActorDefinition> iterator = actorQueue.iterator();
+            currentActor = actor;
+            procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+            while (iterator.hasNext()) {
+                ActorDefinition other = iterator.next();
+                if (areActorsIdentical(actor, other)) {
+                    addIssueWithLooseComment();
+                    iterator.remove();
                 }
             }
-            checked.add(actor);
         }
     }
 

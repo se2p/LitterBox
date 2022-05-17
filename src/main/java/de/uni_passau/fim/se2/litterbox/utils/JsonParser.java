@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,8 +26,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 
 /**
@@ -36,7 +34,7 @@ import java.util.Iterator;
 public class JsonParser {
 
     public static JsonNode getBlocksNodeFromJSON(String path) throws IOException {
-        JsonNode script = null;
+        JsonNode script;
 
         try (BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
@@ -67,8 +65,7 @@ public class JsonParser {
     public static JsonNode getTargetsNodeFromJSONString(String json) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode rootNode = mapper.readTree(json);
-            return rootNode;
+            return mapper.readTree(json);
         } catch (Exception e) {
             e.printStackTrace();
         }

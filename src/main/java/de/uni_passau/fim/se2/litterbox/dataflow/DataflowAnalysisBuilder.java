@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,13 +32,13 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
     }
 
     public DataflowAnalysisBuilder<T> withMay() {
-        analysis.setJoinFunction(new MayFunction<T>());
+        analysis.setJoinFunction(new MayFunction<>());
         analysis.initializeMay();
         return this;
     }
 
     public DataflowAnalysisBuilder<T> withMust(Set<T> allFacts) {
-        analysis.setJoinFunction(new MustFunction<T>());
+        analysis.setJoinFunction(new MustFunction<>());
         analysis.initializeMust(allFacts); // TODO: Need set of all facts!
         return this;
     }

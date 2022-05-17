@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,9 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -56,8 +54,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -83,7 +83,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
-        if (finishedJSONStrings.size() > 0) {
+        if (!finishedJSONStrings.isEmpty()) {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
@@ -138,7 +138,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(NumberLiteral node) {
-        DecimalFormat format = new DecimalFormat();
+        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+        format.setGroupingUsed(false);
         format.setMinimumFractionDigits(0);
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                 format.format(node.getValue())));
@@ -258,24 +259,19 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
-        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        String fieldsString = getListDataFields(node.getIdentifier());
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString,node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 
-    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        if (identifier instanceof Qualified) {
-            //Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
-            Qualified qual = (Qualified) identifier;
-            Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
-            ScratchList list = (ScratchList) qual.getSecond();
-            String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-            return createFields(LIST_KEY, list.getName().getName(), id);
-        } else {
-            return createFields(LIST_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
-        }
+    private String getListDataFields(Identifier identifier) {
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+        ScratchList list = (ScratchList) qual.getSecond();
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
+        return createFields(LIST_KEY, list.getName().getName(), id);
     }
 
     @Override
@@ -644,7 +640,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         }
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, expr, inputName, true));
-        String fieldsString = getListDataFields(metadata, identifier);
+        String fieldsString = getListDataFields(identifier);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString, opcode));
         previousBlockId = metadata.getBlockId();
@@ -700,7 +696,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 

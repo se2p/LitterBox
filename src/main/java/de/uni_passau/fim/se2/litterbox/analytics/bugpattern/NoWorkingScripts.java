@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -54,12 +54,12 @@ public class NoWorkingScripts extends AbstractIssueFinder {
         currentScript = node;
         if (stillFullfilledEmptyScript) {
             if (node.getEvent() instanceof Never) {
-                if (node.getStmtList().getStmts().size() > 0) {
+                if (!node.getStmtList().getStmts().isEmpty()) {
                     deadCodeFound = true;
                 }
             } else {
                 foundEvent = true;
-                if (node.getStmtList().getStmts().size() > 0) {
+                if (!node.getStmtList().getStmts().isEmpty()) {
                     stillFullfilledEmptyScript = false;
                 }
             }

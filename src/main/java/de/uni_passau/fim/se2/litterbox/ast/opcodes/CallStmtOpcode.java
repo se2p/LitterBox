@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,4 +33,5 @@ public enum CallStmtOpcode implements Opcode {
     @Override
     public String getName() {
         return name();
-    }}
+    }
+}

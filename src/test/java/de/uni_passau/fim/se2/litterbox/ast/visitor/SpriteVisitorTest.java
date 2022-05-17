@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +21,7 @@ public class SpriteVisitorTest {
 
     private static JsonNode project;
 
-    //@BeforeAll
+    // @BeforeAll
     public static void setup() {
         String path = "/path/to/scratchproject.json";
         File file = new File(path);
@@ -33,14 +34,14 @@ public class SpriteVisitorTest {
     }
 
 
-    //@Test
+    // @Test
     public void testSpriteVisitor() {
-        ExtractSpriteVisitor visitor = new ExtractSpriteVisitor();
+        ExtractSpriteVisitor visitor = new ExtractSpriteVisitor(false);
         try {
             Program program = ProgramParser.parseProgram("All", project);
             program.accept(visitor);
 
-            Map<ASTNode, List<ASTNode>> leafsMap = visitor.getLeafsCollector();
+            Map<ActorDefinition, List<ASTNode>> leafsMap = visitor.getLeafsCollector();
             System.out.println("Anzahl der Keys: " + leafsMap.keySet().size());
 
             for(ASTNode key : leafsMap.keySet()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,11 +20,11 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,11 +34,15 @@ public abstract class AbstractNode implements ASTNode {
 
     protected ASTNode parent;
 
-    public AbstractNode(ASTNode... children) {
+    protected AbstractNode() {
+        this(Collections.emptyList());
+    }
+
+    protected AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
     }
 
-    public AbstractNode(List<? extends ASTNode> children) {
+    protected AbstractNode(List<? extends ASTNode> children) {
 
         Preconditions.checkAllArgsNotNull(children);
         this.children = UnmodifiableListBuilder.<ASTNode>builder()
@@ -46,12 +50,12 @@ public abstract class AbstractNode implements ASTNode {
                 .build();
     }
 
-    public abstract void accept(ScratchVisitor visitor);
-
+    @Override
     public List<? extends ASTNode> getChildren() {
         return children;
     }
 
+    @Override
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -66,6 +70,7 @@ public abstract class AbstractNode implements ASTNode {
         this.parent = parent;
     }
 
+    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }

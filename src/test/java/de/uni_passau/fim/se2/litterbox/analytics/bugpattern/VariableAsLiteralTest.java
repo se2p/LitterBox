@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,45 +39,33 @@ public class VariableAsLiteralTest implements JsonTest {
 
     @Test
     public void testEmpty() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/emptyProject.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableAsLiteral(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testLiteralsInSayAndIf() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/variableAsLiteral.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new VariableAsLiteral(), "src/test/fixtures/bugpattern/variableAsLiteral.json");
     }
 
     @Test
     public void testListAsLiteral() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/listAsLiteral.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new VariableAsLiteral(), "src/test/fixtures/bugpattern/listAsLiteral.json");
     }
 
     @Test
     public void testParameterAsLiteral() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/parameterAsLiteral.json");
         // 2 usages inside custom block, and 2 outside custom block
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(4, reports.size());
+        assertThatFinderReports(4, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterAsLiteral.json");
     }
 
     @Test
     public void testActorsAsLiterals() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/actorsAsLiterals.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/actorsAsLiterals.json");
     }
 
     @Test
     public void testRandomListEntry() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/randomListentry.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/randomListentry.json");
     }
 
     @Test
@@ -119,16 +106,12 @@ public class VariableAsLiteralTest implements JsonTest {
 
     @Test
     public void testBlocksThatShouldNotBeRecognisedAsStrings() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/smells/attributesThatAreNotStrings.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/smells/attributesThatAreNotStrings.json");
     }
 
     @Test
     public void testHideListWithNoBug() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/hideList.json");
-        Set<Issue> reports = (new VariableAsLiteral()).check(program);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/hideList.json");
     }
 
     @Test

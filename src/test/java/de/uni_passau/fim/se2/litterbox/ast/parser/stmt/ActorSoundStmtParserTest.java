@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,8 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -71,7 +71,7 @@ public class ActorSoundStmtParserTest implements JsonTest {
         Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
         StopAll stop = (StopAll) listOfStmt.get(4);
         Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
+        Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof NoMutationMetadata);
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.ClonedCodeType1;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.ClonedCodeType2;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -29,9 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -44,7 +46,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script = actor.getScripts().getScriptList().get(0);
         assertEquals(script, script);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE1);
         assertEquals(0, clones.size());
     }
@@ -57,7 +59,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         assertEquals(1, clones.size());
         assertEquals(6, clones.iterator().next().size());
@@ -71,7 +73,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> type1Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> type2Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         Set<CodeClone> type3Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
@@ -89,7 +91,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3 , 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3 , 2);
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         assertEquals(1, clones.size());
         assertEquals(4, clones.iterator().next().size());
@@ -103,7 +105,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         assertEquals(1, clones.size());
         assertEquals(4, clones.iterator().next().size());
@@ -117,7 +119,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         assertEquals(1, clones.size());
         assertEquals(11, clones.iterator().next().size());
@@ -129,7 +131,7 @@ public class CloneAnalysisTest implements JsonTest {
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
         Script script1 = actor.getScripts().getScriptList().get(0);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clonesType = cloneAnalysis.check(script1, CodeClone.CloneType.TYPE1);
         assertEquals(1, clonesType.size());
         assertEquals(7, clonesType.iterator().next().size());
@@ -143,7 +145,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         assertEquals(1, clonesType.size());
         assertEquals(6, clonesType.iterator().next().size());
@@ -157,7 +159,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         assertEquals(1, clonesType.size());
         assertEquals(4, clonesType.iterator().next().size());
@@ -171,7 +173,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         assertEquals(2, clonesType1.size());
@@ -188,7 +190,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
         assertNotEquals(script1, script2);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         Set<CodeClone> clonesType3 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
@@ -205,7 +207,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script = actor.getScripts().getScriptList().get(0);
         ProcedureDefinition procedure = actor.getProcedureDefinitionList().getList().get(0);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clones = cloneAnalysis.check(script, procedure, CodeClone.CloneType.TYPE1);
         assertEquals(1, clones.size());
         assertEquals(4, clones.iterator().next().size());
@@ -217,7 +219,7 @@ public class CloneAnalysisTest implements JsonTest {
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
         Script script = actor.getScripts().getScriptList().get(0);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE3);
         assertEquals(0, clones.size());
     }
@@ -229,7 +231,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script1 = actor.getScripts().getScriptList().get(0);
         Script script2 = actor.getScripts().getScriptList().get(1);
 
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, CloneAnalysis.MIN_SIZE, CloneAnalysis.MAX_GAP);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(CloneAnalysis.MIN_SIZE, CloneAnalysis.MAX_GAP);
         // Potential clone has size 2, should not report anything
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
         assertEquals(0, clones.size());
@@ -243,13 +245,13 @@ public class CloneAnalysisTest implements JsonTest {
         Script script2 = actor.getScripts().getScriptList().get(1);
 
         // Gap size is > 2
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 2, 1);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(2, 1);
         Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
         assertEquals(0, clones.size());
 
-        cloneAnalysis = new CloneAnalysis(actor, 2, 2);
+        cloneAnalysis = new CloneAnalysis(2, 2);
         clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
-        assertEquals(2, clones.size());
+        assertEquals(1, clones.size());
     }
 
     @Test
@@ -259,7 +261,7 @@ public class CloneAnalysisTest implements JsonTest {
         Script script = actor.getScripts().getScriptList().get(0);
 
         // Gap size is > 2
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE2);
         assertEquals(0, clones.size());
     }
@@ -272,4 +274,18 @@ public class CloneAnalysisTest implements JsonTest {
         Set<Issue> issues = cc1.check(program);
         assertEquals(2, issues.size());
     }
+
+    @Test
+    public void testMultipleIfClone() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType2EightIf.json");
+        ClonedCodeType2 cc2 = new ClonedCodeType2();
+        Set<Issue> issues = cc2.check(program);
+        assertEquals(2, issues.size());
+        Iterator<Issue> iterator = issues.iterator();
+        Issue issue1 = iterator.next();
+        Issue issue2 = iterator.next();
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
+        assertThat(issue2.isDuplicateOf(issue1)).isTrue();
+    }
+
 }

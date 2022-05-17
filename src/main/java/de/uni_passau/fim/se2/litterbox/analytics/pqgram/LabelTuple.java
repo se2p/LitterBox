@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,10 +26,6 @@ public class LabelTuple {
     private final List<Label> labels;
 
     public LabelTuple(List<Label> anc, List<Label> sib) {
-//        Preconditions.checkArgument(anc.size() == PQGramProfileUtil.getP(),
-//                "Too many ancestors for the specified p.");
-//        Preconditions.checkArgument(sib.size() == PQGramProfileUtil.getQ(),
-//                "Too many siblings for the specified q.");
         labels = new ArrayList<>();
         labels.addAll(anc);
         labels.addAll(sib);

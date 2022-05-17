@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -39,6 +39,7 @@ public class VariableInitializationRace extends AbstractIssueFinder {
     private static class InitializationInstance {
         private Script script;
         private CommonStmt statement;
+
         public InitializationInstance(Script script, CommonStmt commonStmt) {
             this.script = script;
             this.statement = commonStmt;
@@ -109,14 +110,10 @@ public class VariableInitializationRace extends AbstractIssueFinder {
             return;
         }
 
-        if (!variableMap.containsKey(currentEvent)) {
-            variableMap.put(currentEvent, new LinkedHashMap<>());
-        }
+        variableMap.computeIfAbsent(currentEvent, e -> new LinkedHashMap<>());
         Map<Identifier, Set<InitializationInstance>> theMap = variableMap.get(currentEvent);
 
-        if (!theMap.containsKey(identifier)) {
-            theMap.put(identifier, new LinkedHashSet<>());
-        }
+        theMap.computeIfAbsent(identifier, i -> new LinkedHashSet<>());
 
         Set<InitializationInstance> scriptSet = theMap.get(identifier);
         scriptSet.add(new InitializationInstance(currentScript, stmt));

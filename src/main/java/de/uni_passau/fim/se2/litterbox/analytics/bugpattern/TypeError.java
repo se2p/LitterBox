@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -59,7 +59,7 @@ public class TypeError extends AbstractIssueFinder {
 
     private Type type = null;
 
-    private enum Type {BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION}
+    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
 
     @Override
     public void visit(LessThan node) {

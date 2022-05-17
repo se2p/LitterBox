@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorParamMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
@@ -46,7 +45,7 @@ public class EmptySprite extends AbstractIssueFinder {
 
     @Override
     public void visit(ActorDefinition actor) {
-        if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
+        if (actor.getProcedureDefinitionList().getList().isEmpty() && actor.getScripts().getScriptList().isEmpty()
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());

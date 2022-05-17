@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
@@ -28,10 +46,14 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
         int populationSize = 10;
         int maxGen = 10;
+        int iterations = 9;
+        double hyperVolume = 2.0;
+        long programExtractionTime = 23;
+        long refactoringSearchTime = 42;
         Randomness.setSeed(132);
-        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness(program);
-        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness(program);
-        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness(program);
+        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
+        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
+        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
         Set<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedHashSet<>();
         fitnessFunctions.add(f1);
         fitnessFunctions.add(f2);
@@ -54,21 +76,25 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
         when(refactorSequence.getFitnessMap()).thenReturn((fitnessMap));
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
+        when(refactorSequence.getOriginalProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
         String fileName = tmpFile.getFileName().toString();
         String pathName = tmpFile.getParent().toString();
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(program, refactorSequence, populationSize, maxGen);
+        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(2);
-        assertThat(lines.get(0)).contains("project,population_size,max_generations,seed,hypervolume");
+        assertThat(lines.get(0)).contains(
+                "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
+                        + "program_extraction_time,refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,10,10,132,0");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
         assertThat(lines.get(1)).contains("2.11,3.11,4.11");
     }
 
@@ -77,10 +103,14 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
         int populationSize = 10;
         int maxGen = 10;
+        int iterations = 9;
+        double hyperVolume = 2.0;
+        long programExtractionTime = 23;
+        long refactoringSearchTime = 42;
         Randomness.setSeed(132);
-        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness(program);
-        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness(program);
-        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness(program);
+        FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
+        FitnessFunction<RefactorSequence> f2 = new NumberOfBlocksFitness();
+        FitnessFunction<RefactorSequence> f3 = new CategoryEntropyFitness();
         Set<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedHashSet<>();
         fitnessFunctions.add(f1);
         fitnessFunctions.add(f2);
@@ -103,26 +133,32 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
 
         when(refactorSequence.getExecutedRefactorings()).thenReturn(List.of(r1, r2, r3));
         when(refactorSequence.getFitnessMap()).thenReturn((fitnessMap));
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
+        when(refactorSequence.getOriginalProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
         String fileName = tmpFile.getFileName().toString();
         String pathName = tmpFile.getParent().toString();
 
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(program, refactorSequence, populationSize, maxGen);
+        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator.close();
 
         CSVRefactorReportGenerator reportGenerator2 = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator2.generateReport(program, refactorSequence, populationSize, maxGen);
+        reportGenerator2.generateReport(1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator2.close();
 
         List<String> lines = Files.readAllLines(tmpFile);
-        tmpFile.toFile().delete();
+        Files.delete(tmpFile);
 
         assertThat(lines).hasSize(3);
-        assertThat(lines.get(0)).contains("project,population_size,max_generations,seed,hypervolume");
+        assertThat(lines.get(0)).contains(
+                "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
+                        + "program_extraction_time,refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,10,10,132,0");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
         assertThat(lines.get(1)).contains("2.11,3.11,4.11");
+        assertThat(lines.get(2)).contains("helloBlockHelloBlockWithinControl,1,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(2)).contains("2.11,3.11,4.11");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,18 +22,40 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ImmediateStopAfterSay extends AbstractIssueFinder {
     public static final String NAME = "immediate_stop_after_say_think";
+    public static final String HINT_MULTIPLE = "immediate_stop_after_say_think_multiple";
+    public boolean hasMultipleActorsWithCode;
+
+    @Override
+    public void visit(Program node) {
+        List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
+        hasMultipleActorsWithCode = false;
+        int i = 0;
+        for (ActorDefinition actor : actors) {
+            List<Script> scripts = actor.getScripts().getScriptList();
+            List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
+            if (!scripts.isEmpty() || !procedures.isEmpty()) {
+                i++;
+            }
+        }
+        if (i > 1) {
+            hasMultipleActorsWithCode = true;
+        }
+        super.visit(node);
+    }
 
     @Override
     public void visit(StmtList node) {
@@ -41,7 +63,12 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
         // check size > 1 because there has to be room for a say/think AND a stop stmt
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof StopAll) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
-            Hint hint = new Hint(getName());
+            Hint hint;
+            if (hasMultipleActorsWithCode) {
+                hint = new Hint(HINT_MULTIPLE);
+            } else {
+                hint = new Hint(getName());
+            }
             if (questionableNode instanceof Say) {
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
                 addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
@@ -61,5 +88,13 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(HINT_MULTIPLE);
+        return keys;
     }
 }

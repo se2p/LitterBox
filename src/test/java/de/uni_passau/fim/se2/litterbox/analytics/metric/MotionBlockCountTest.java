@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,8 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,9 +28,6 @@ public class MotionBlockCountTest implements JsonTest {
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/allMotionBlocks.json");
-        MotionBlockCount parameterName = new MotionBlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(empty));
+        assertThatMetricReports(18, new MotionBlockCount<>(), "./src/test/fixtures/metrics/allMotionBlocks.json");
     }
-
 }

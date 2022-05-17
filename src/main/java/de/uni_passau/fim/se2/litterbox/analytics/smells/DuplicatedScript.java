@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,19 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DuplicatedScript extends TopBlockFinder {
+public class DuplicatedScript extends AbstractIssueFinder {
 
     private static final String NAME = "duplicated_script";
 
@@ -46,35 +45,41 @@ public class DuplicatedScript extends TopBlockFinder {
 
     @Override
     public void visit(ScriptList node) {
-        Set<Script> checked = new HashSet<>();
         List<Script> scripts;
         if (ignoreLooseBlocks) {
             scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
         } else {
             scripts = node.getScriptList();
         }
-        for (Script s : scripts) {
-            setHint = false;
-            currentScript = s;
+        for (int i = 0; i < scripts.size() - 1; i++) {
+            currentScript = scripts.get(i);
 
-            for (Script other : scripts) {
-                if (s == other || checked.contains(other)) {
-                    continue;
-                }
+            for (int j = i + 1; j < scripts.size(); j++) {
+                Script script2 = scripts.get(j);
 
-                if (s.equals(other)) {
-                    checked.add(s);
-                    setHint = true;
-                    if (!(s.getEvent() instanceof Never)) {
-                        Event event = s.getEvent();
-                        addIssue(event, event.getMetadata(), IssueSeverity.LOW);
+                //Todo: a change of equals/hash would break this
+                if (currentScript.equals(script2)) {
+                    ASTNode topBlockCurrent;
+                    if (!(currentScript.getEvent() instanceof Never)) {
+                        topBlockCurrent = currentScript.getEvent();
                     } else {
-                        s.getStmtList().getStmts().get(0).accept(this);
+                        topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
                     }
-
-                    break;
+                    addIssue(topBlockCurrent, topBlockCurrent.getMetadata());
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof DuplicatedScriptsCovering) {
+            return theIssue.getCodeLocation().equals(other.getCodeLocation());
+        }
+        return false;
     }
 }

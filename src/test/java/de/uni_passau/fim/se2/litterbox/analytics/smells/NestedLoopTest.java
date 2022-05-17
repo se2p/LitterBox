@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,24 +29,17 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class NestedLoopTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        NestedLoops parameterName = new NestedLoops();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new NestedLoops(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testNestedLoops() throws IOException, ParsingException {
-        Program nestedLoops = getAST("./src/test/fixtures/smells/nestedLoops.json");
-        NestedLoops parameterName = new NestedLoops();
-        Set<Issue> reports = parameterName.check(nestedLoops);
-        Assertions.assertEquals(3, reports.size());
+        assertThatFinderReports(3, new NestedLoops(), "./src/test/fixtures/smells/nestedLoops.json");
     }
 
     @Test

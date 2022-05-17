@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -51,10 +51,7 @@ public class MissingCloneInitializationTest implements JsonTest {
 
     @Test
     public void testCloningWithClicked() throws IOException, ParsingException {
-        Program clicked = getAST("src/test/fixtures/bugpattern/cloningWithClicked.json");
-        MissingCloneInitialization finder = new MissingCloneInitialization();
-        Set<Issue> reports = finder.check(clicked);
-        Truth.assertThat(reports).isEmpty();
+        assertThatFinderReports(0, new MissingCloneInitialization(), "src/test/fixtures/bugpattern/cloningWithClicked.json");
     }
 
     @Test
@@ -80,7 +77,6 @@ public class MissingCloneInitializationTest implements JsonTest {
         hint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
         hint.setParameter(Hint.EVENT_HANDLER, IssueTranslator.getInstance().getInfo("greenflag"));
         hint.setParameter(Hint.HINT_SPRITE, "Sprite1");
-        System.out.println(hint.getHintText());
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -44,7 +44,7 @@ public class Scratch3Parser {
 
     public Program parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
-        if ((FilenameUtils.getExtension(fileName)).toLowerCase().equals("json")) {
+        if ((FilenameUtils.getExtension(fileName)).equalsIgnoreCase("json")) {
             return parseJsonFile(fileEntry);
         } else {
             return parseSB3File(fileEntry);
@@ -74,6 +74,6 @@ public class Scratch3Parser {
     }
 
     private String getProgramName(String fileName) {
-        return fileName.substring(0, fileName.lastIndexOf("."));
+        return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 }

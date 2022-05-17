@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,12 +37,11 @@ class MessageNeverReceivedTest implements JsonTest {
     public void testMessageNeverReceived() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
         MessageNeverReceived finder = new MessageNeverReceived();
-        Set<Issue> reports = finder.check(program);
+        List<Issue> reports = new ArrayList<>(finder.check(program));
         Truth.assertThat(reports).hasSize(4);
-        // TODO: Restore this check
-//        Truth.assertThat(check.getPosition().get(2)).isEqualTo("Apple");
-//        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Sprite1");
-//        Truth.assertThat(check.getPosition().get(1)).isEqualTo("Abby");
+        Truth.assertThat(reports.get(2).getActorName()).isEqualTo("Apple");
+        Truth.assertThat(reports.get(0).getActorName()).isEqualTo("Sprite1");
+        Truth.assertThat(reports.get(1).getActorName()).isEqualTo("Abby");
     }
 
     @Test

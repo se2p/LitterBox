@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,10 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NoMetadata extends AbstractNode implements Metadata {
-
-    public NoMetadata() {
-        super();
-    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -45,12 +45,44 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.ROTATION);
     }
 
+    public static Attribute sizeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.SIZE);
+    }
+
+    public static Attribute visibilityOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VISIBILITY);
+    }
+
+    public static Attribute graphicEffectOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.GRAPHIC_EFFECT);
+    }
+
+    public static Attribute soundEffectOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.SOUND_EFFECT);
+    }
+
+    public static Attribute volumeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VOLUME);
+    }
+
+    public static Attribute layerOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.LAYER);
+    }
+
     public static Attribute costumeOf(LocalIdentifier actorIdentifier) {
         return new Attribute(actorIdentifier, AttributeType.COSTUME);
     }
 
-    public static Attribute sizeOf(LocalIdentifier actorIdentifier) {
-        return new Attribute(actorIdentifier, AttributeType.SIZE);
+    public static Attribute backdropOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.BACKDROP);
+    }
+
+    public static Attribute timerOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.TIMER);
+    }
+
+    public LocalIdentifier getActorIdentifier() {
+        return actorIdentifier;
     }
 
     public AttributeType getAttributeType() {
@@ -76,11 +108,6 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
-        // VISIBILITY, LAYER, EFFECT
+        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER //, BUBBLESTATE
     }
-
-    //public static Attribute backdropOf(ActorDefinition actor) {
-    //    return new Attribute(actor, AttributeType.BACKDROP);
-    //}
 }

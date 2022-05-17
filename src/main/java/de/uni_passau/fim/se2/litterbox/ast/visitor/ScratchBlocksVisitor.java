@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -160,7 +161,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     /**
-     *
      * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
      *                      i.e., without their context in a script.
      *                      This prevents certain blocks from not being printed as they have to be ignored if they
@@ -303,6 +303,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void visit(BackdropSwitchTo backdrop) {
         emitNoSpace("when backdrop switches to [");
         backdrop.getBackdrop().accept(this);
@@ -311,6 +312,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void visit(AttributeAboveValue node) {
         emitNoSpace("when [");
         node.getAttribute().accept(this);
@@ -1741,9 +1743,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(BiggerThan node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" > ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1751,9 +1753,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LessThan node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" < ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1761,9 +1763,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Equals node) {
         emitNoSpace("<");
-        node.getOperand1().accept(this);
+        visitAndEscapeQualified(node.getOperand1());
         emitNoSpace(" = ");
-        node.getOperand2().accept(this);
+        visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1960,7 +1962,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         List<Expression> parameters = node.getExpressions().getExpressions();
         for (Expression param : parameters) {
             int nextIndex = procedureName.indexOf('%');
-            String type = procedureName.substring(nextIndex, nextIndex + 1); // Todo: Unused variable?
             procedureName = procedureName.substring(0, nextIndex)
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);
@@ -1970,12 +1971,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         newLine();
     }
 
+    @Override
     public void begin() {
         emitNoSpace(SCRATCHBLOCKS_START);
         newLine();
         lineWrapped = true;
     }
 
+    @Override
     public void end() {
         if (!lineWrapped) {
             newLine();
@@ -1985,6 +1988,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         lineWrapped = true;
     }
 
+    @Override
     protected void emitNoSpace(String string) {
         printStream.append(string);
         lineWrapped = false;
@@ -1998,6 +2002,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         return byteStream.toString();
     }
 
+    @Override
     protected void newLine() {
         if (issueNote.size() == 1) {
             emitNoSpace(" // ");
@@ -2029,6 +2034,15 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                         issueNote.add(PERFUME_NOTE);
                     } else {
                         issueNote.add(BUG_NOTE);
+                    }
+                } else {
+                    List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
+                    if (node == (nodes.get(0))) {
+                        if (issue.getIssueType() == IssueType.PERFUME) {
+                            issueNote.add(PERFUME_NOTE);
+                        } else {
+                            issueNote.add(BUG_NOTE);
+                        }
                     }
                 }
                 // TODO: In theory there could be multiple messages here...
@@ -2073,5 +2087,16 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         String name = os.toString();
         printStream = origStream;
         return name;
+    }
+
+    private void visitAndEscapeQualified(ASTNode node) {
+        if (node instanceof Qualified) {
+            emitNoSpace("(");
+            node.accept(this);
+            storeNotesForIssue(node);
+            emitNoSpace(")");
+        } else {
+            node.accept(this);
+        }
     }
 }

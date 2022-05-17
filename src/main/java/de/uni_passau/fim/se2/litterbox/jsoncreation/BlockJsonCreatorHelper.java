@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -58,7 +58,7 @@ public abstract class BlockJsonCreatorHelper {
 
     public static StringBuilder createBlockAfterFields(StringBuilder jsonString, NonDataBlockMetadata meta) {
         createFieldValue(jsonString, SHADOW_KEY, meta.isShadow()).append(",");
-        createFieldValue(jsonString, TOPLEVEL_KEY, meta.isTopLevel());
+        createFieldValue(jsonString, TOPLEVEL_KEY, meta instanceof TopNonDataBlockMetadata);
         if (meta.getCommentId() != null) {
             jsonString.append(",");
             createFieldValue(jsonString, COMMENT_KEY, meta.getCommentId());
@@ -125,22 +125,22 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createStopMetadata(String tagName, boolean hasNext) {
+    public static String createStopMetadata(boolean hasNext) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, HAS_NEXT_KEY, hasNext);
         jsonString.append("}");
         return jsonString.toString();
     }
 
-    public static String createPrototypeMetadata(String tagName, String proccode, List<String> argumentId,
+    public static String createPrototypeMetadata(String proccode, List<String> argumentId,
                                                  List<ParameterInfo> parameterInfos,
                                                  boolean warp) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
         createField(jsonString, ARGUMENTIDS_KEY);
@@ -154,11 +154,11 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createCallMetadata(String tagName, String proccode, List<String> argumentId,
+    public static String createCallMetadata(String proccode, List<String> argumentId,
                                             boolean warp) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, "mutation").append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
         createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
         createField(jsonString, ARGUMENTIDS_KEY);
@@ -173,7 +173,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < parameterInfos.size() - 1; i++) {
             jsonString.append(parameterInfos.get(i).getDefaultValue()).append(",");
         }
-        if (parameterInfos.size() > 0) {
+        if (!parameterInfos.isEmpty()) {
             jsonString.append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue());
         }
         jsonString.append("]\"");
@@ -185,7 +185,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < parameterInfos.size() - 1; i++) {
             jsonString.append("\\\"").append(parameterInfos.get(i).getName()).append("\\\"").append(",");
         }
-        if (parameterInfos.size() > 0) {
+        if (!parameterInfos.isEmpty()) {
             jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getName()).append("\\\"");
         }
         jsonString.append("]\"");
@@ -197,7 +197,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < argumentId.size() - 1; i++) {
             jsonString.append("\\\"").append(argumentId.get(i)).append("\\\"").append(",");
         }
-        if (argumentId.size() > 0) {
+        if (!argumentId.isEmpty()) {
             jsonString.append("\\\"").append(argumentId.get(argumentId.size() - 1)).append("\\\"");
         }
         jsonString.append("]\"");
@@ -254,7 +254,7 @@ public abstract class BlockJsonCreatorHelper {
         for (int i = 0; i < inputsList.size() - 1; i++) {
             jsonString.append(inputsList.get(i)).append(",");
         }
-        if (inputsList.size() > 0) {
+        if (!inputsList.isEmpty()) {
             jsonString.append(inputsList.get(inputsList.size() - 1));
         }
         jsonString.append("}");
@@ -292,6 +292,7 @@ public abstract class BlockJsonCreatorHelper {
     public static String createReferenceType(int shadowIndicator, int typeNumber,
                                              String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
+        value = escape(value);
         jsonString.append("[").append(shadowIndicator)
                 .append(",")
                 .append("[")
@@ -317,5 +318,16 @@ public abstract class BlockJsonCreatorHelper {
             return createReferenceInput(inputName, INPUT_DIFF_BLOCK_SHADOW,
                     blockId, withDefault);
         }
+    }
+
+    public static String escape(String jsString) {
+        jsString = jsString.replace("\\", "\\\\");
+        jsString = jsString.replace("\"", "\\\"");
+        jsString = jsString.replace("\b", "\\b");
+        jsString = jsString.replace("\f", "\\f");
+        jsString = jsString.replace("\n", "\\n");
+        jsString = jsString.replace("\r", "\\r");
+        jsString = jsString.replace("\t", "\\t");
+        return jsString;
     }
 }

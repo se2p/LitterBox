@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -124,7 +124,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
             return;
         }
         currentScript = node;
-        if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof ReceptionOfMessage) {
+        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof ReceptionOfMessage) {
             ReceptionOfMessage event = (ReceptionOfMessage) node.getEvent();
             if (event.getMsg().getMessage() instanceof StringLiteral) {
                 final String msgName = ((StringLiteral) event.getMsg().getMessage()).getText();

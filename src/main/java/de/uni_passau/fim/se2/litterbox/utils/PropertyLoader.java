@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.utils;
 
 import de.uni_passau.fim.se2.litterbox.Main;
@@ -11,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class PropertyLoader {
+public final class PropertyLoader {
 
     static {
         setDefaultSystemProperties("litterbox.properties");
@@ -38,7 +56,20 @@ public class PropertyLoader {
             try {
                 return Integer.parseInt(stringValue);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The value for key " + name + " is not an integer value!");
+                throw new IllegalArgumentException("The value for key " + name + " is not an integer value!", e);
+            }
+        }
+    }
+
+    public static boolean getSystemBoolProperty(String name) {
+        String stringValue = System.getProperty(name);
+        if (stringValue == null) {
+            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+        } else {
+            try {
+                return Boolean.parseBoolean(stringValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("The value for key " + name + " is not a Boolean value!", e);
             }
         }
     }
@@ -59,7 +90,7 @@ public class PropertyLoader {
             try {
                 return Double.parseDouble(stringValue);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The value for key " + name + " is not a floating number!");
+                throw new IllegalArgumentException("The value for key " + name + " is not a floating number!", e);
             }
         }
     }
@@ -79,7 +110,7 @@ public class PropertyLoader {
             try {
                 return Optional.of(Long.parseLong(stringValue));
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("The specified seed is not a long.");
+                throw new IllegalArgumentException("The specified seed is not a long.", e);
             }
         }
     }

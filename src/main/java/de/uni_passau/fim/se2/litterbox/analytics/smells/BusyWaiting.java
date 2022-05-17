@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +56,7 @@ public class BusyWaiting extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideForeverWithOneStmt) {
+        if (insideForeverWithOneStmt && node.getParentNode().getParentNode() instanceof RepeatForeverStmt) {
             insideForeverAndIf = true;
             hasStop = false;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,11 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.LinkedHashSet;
@@ -33,7 +33,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     private Set<Attribute> definitions = new LinkedHashSet<>();
 
-    // TODO: Store LocalIdentifier instead of actor directly?
     private ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
@@ -49,6 +48,73 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     public void visit(ControlStmt node) {
         // Don't visit child statements
     }
+
+    //---------------------------------------------------------------
+    // Visibility
+    @Override
+    public void visit(Hide node) {
+        definitions.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(Show node) {
+        definitions.add(Attribute.visibilityOf(currentActor.getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Effect
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ClearGraphicEffects node) {
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ClearSoundEffects node) {
+        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetVolumeTo node) {
+        definitions.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        definitions.add(Attribute.volumeOf(currentActor.getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Layer
+    @Override
+    public void visit(ChangeLayerBy node) {
+        definitions.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GoToLayer node) {
+        definitions.add(Attribute.layerOf(currentActor.getIdent()));
+    }
+
 
     //---------------------------------------------------------------
     // Position
@@ -146,16 +212,33 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
+
     //---------------------------------------------------------------
     // Backdrop
-    //
-    //    @Override
-    //    public void visit(NextBackdrop node) {
-    //        definitions.add(Attribute.backdropOf(stageActor));
-    //    }
-    //
-    //    @Override
-    //    public void visit(BackdropSwitchTo node) {
-    //        definitions.add(Attribute.backdropOf(stageActor));
-    //    }
+
+    @Override
+    public void visit(NextBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdrop node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
+    //---------------------------------------------------------------
+    // Timer
+
+    @Override
+    public void visit(ResetTimer node) {
+        definitions.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+
 }

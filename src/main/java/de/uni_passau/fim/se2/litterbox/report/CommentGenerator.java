@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -54,21 +54,21 @@ public class CommentGenerator implements ReportGenerator {
     }
 
     private String formatHintText(String hintText) {
-        hintText= hintText.replace("[var]","'");
-        hintText= hintText.replace("[/var]","'");
-        hintText= hintText.replace("[/sbi]","'");
-        hintText= hintText.replace("[sbi]","'");
-        hintText= hintText.replace("[bc]","");
-        hintText= hintText.replace("[LEQ]","<");
-        hintText= hintText.replace("[GEQ]",">");
-        hintText= hintText.replace("[EQ]","=");
-        hintText= hintText.replace("[/bc]","");
-        hintText= hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
-        hintText= hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
-        hintText= hintText.replace("[","");
-        hintText= hintText.replace(" v]","");
-        hintText= hintText.replace(" ]","");
-        hintText= hintText.replace(" v)"," )");
+        hintText = hintText.replace("[var]","'");
+        hintText = hintText.replace("[/var]","'");
+        hintText = hintText.replace("[/sbi]","'");
+        hintText = hintText.replace("[sbi]","'");
+        hintText = hintText.replace("[bc]","");
+        hintText = hintText.replace("[LEQ]","<");
+        hintText = hintText.replace("[GEQ]",">");
+        hintText = hintText.replace("[EQ]","=");
+        hintText = hintText.replace("[/bc]","");
+        hintText = hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
+        hintText = hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
+        hintText = hintText.replace("[","");
+        hintText = hintText.replace(" v]","");
+        hintText = hintText.replace(" ]","");
+        hintText = hintText.replace(" v)"," )");
         hintText = hintText.replace("\"", "\\\"");
         return hintText;
     }

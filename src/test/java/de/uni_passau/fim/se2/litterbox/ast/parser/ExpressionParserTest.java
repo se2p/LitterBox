@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -146,16 +145,5 @@ public class ExpressionParserTest {
         String expectedMessage = " is an unexpected opcode for an expression";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    public void testItemOfListWithoutListId() throws Exception {
-        Program program = ProgramParser.parseProgram("Test", new ObjectMapper().readTree(new File("src/test/fixtures/missingListIdWithItemOf.json")));
-        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
-        Script script = definitions.get(1).getScripts().getScriptList().get(0);
-        List<Stmt> stmts = script.getStmtList().getStmts();
-        Stmt exprStmt = stmts.get(0);
-        Expression expr = ((ExpressionStmt) exprStmt).getExpression();
-        assertTrue(((ItemOfVariable) expr).getIdentifier() instanceof UnspecifiedId);
     }
 }

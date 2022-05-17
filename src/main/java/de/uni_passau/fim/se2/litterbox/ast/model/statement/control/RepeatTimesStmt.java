@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -40,6 +41,7 @@ public class RepeatTimesStmt extends AbstractNode implements LoopStmt {
         this.times = Preconditions.checkNotNull(times);
         this.stmtList = Preconditions.checkNotNull(stmtList);
         this.metadata = metadata;
+        Preconditions.checkArgument(metadata instanceof NonDataBlockMetadata);
     }
 
     @Override

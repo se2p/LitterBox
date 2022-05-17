@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,38 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class ParameterOutOfScopeTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new ParameterOutOfScope(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testOrphanedParameter() throws IOException, ParsingException {
-        Program orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParameter.json");
-        ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        Set<Issue> reports = parameterName.check(orphanedParam);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new ParameterOutOfScope(), "./src/test/fixtures/bugpattern/orphanedParameter.json");
     }
 
     @Test
     public void testOutsideParameter() throws IOException, ParsingException {
-        Program outsideParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
-        ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        Set<Issue> reports = parameterName.check(outsideParam);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new ParameterOutOfScope(), "./src/test/fixtures/bugpattern/parameterOutsideScope.json");
     }
 }

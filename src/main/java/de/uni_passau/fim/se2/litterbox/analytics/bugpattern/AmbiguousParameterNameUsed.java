@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,13 +24,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,7 +45,12 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
-    private LinkedList<String> paraNames = new LinkedList<>();
+    private List<String> paraNames = new LinkedList<>();
+
+    @Override
+    public void visit(Script node) {
+        //NOP should not be detected in Scripts
+    }
 
     @Override
     public Set<Issue> check(Program program) {
@@ -87,14 +93,14 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        if (node.getStmtList().getStmts().size() > 0) {
+        if (!node.getStmtList().getStmts().isEmpty()) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
         }
 
         visitChildren(node);
 
         if (used) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.MEDIUM);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
         }
 
         // TODO: This handling with used/found seems really error prone

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class IssueTranslator {
+public final class IssueTranslator {
 
     private static IssueTranslator instance;
     private ResourceBundle hints;
@@ -30,13 +30,32 @@ public class IssueTranslator {
     private ResourceBundle general;
     private Locale locale;
 
-    public static final String SIZE = "size";
-    public static final String POSITION = "position";
-    public static final String COSTUME = "costume";
-    public static final String ROTATION = "rotation";
-    public static final String VARIABLE = "variable";
-    public static final String LIST = "list";
-    public static final String ATTRIBUTE = "attribute";
+    public enum GeneralTerm {
+        SIZE("size"),
+        POSITION("position"),
+        COSTUME("costume"),
+        ROTATION("rotation"),
+        VISIBILITY("visibility"),
+        VARIABLE("variable"),
+        LIST("list"),
+        ATTRIBUTE("attribute"),
+        LAYER("layer"),
+        VOLUME("volume"),
+        SOUND_EFFECT("sound_effect"),
+        GRAPHIC_EFFECT("graphic_effect"),
+        BACKDROP("backdrop"),
+        TIMER("timer");
+
+        private final String key;
+
+        GeneralTerm(String label) {
+            this.key = label;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
 
     /**
      * Private constructor to avoid instatiation of singleton.
@@ -137,5 +156,9 @@ public class IssueTranslator {
         } else {
             return keyword;
         }
+    }
+
+    public String getInfo(GeneralTerm keyword) {
+        return getInfo(keyword.getKey());
     }
 }

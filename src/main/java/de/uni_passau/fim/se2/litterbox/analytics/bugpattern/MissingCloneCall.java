@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -92,7 +92,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
             return;
         }
         currentScript = node;
-        if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
+        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof StartedAsClone) {
             if (!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
@@ -113,7 +113,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
             return false;
         }
 
-        if (!first.getActor().equals(other.getActor())){
+        if (!first.getActor().equals(other.getActor())) {
             return false;
         }
 

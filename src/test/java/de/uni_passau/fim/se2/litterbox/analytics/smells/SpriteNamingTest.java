@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -28,14 +28,18 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class SpriteNamingTest implements JsonTest {
 
     @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        assertThatFinderReports(1, new SpriteNaming(), "./src/test/fixtures/emptyProject.json");
+    }
+
+    @Test
     public void testSpriteNaming() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/smells/spriteNaming.json");
-       SpriteNaming parameterName = new SpriteNaming();
+        SpriteNaming parameterName = new SpriteNaming();
         List<Issue> reports = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(2, reports.size());
         Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(1)));

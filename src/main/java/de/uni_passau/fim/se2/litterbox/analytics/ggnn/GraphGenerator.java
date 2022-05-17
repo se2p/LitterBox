@@ -8,7 +8,6 @@ import java.util.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteAndStageVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
@@ -16,7 +15,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
 public class GraphGenerator {
     Program program;
-    Map<ASTNode, List<ASTNode>> leafsMap;
+    Map<ActorDefinition, List<ASTNode>> leafsMap;
     private final boolean isStageIncluded;
     private final boolean isWholeProgram;
     private final boolean isDotStringGraph;
@@ -31,15 +30,9 @@ public class GraphGenerator {
     }
 
     public void extractGraphsPerSprite() {
-        if (isStageIncluded) {
-            ExtractSpriteAndStageVisitor spriteVisitor = new ExtractSpriteAndStageVisitor();
-            program.accept(spriteVisitor);
-            leafsMap = spriteVisitor.getLeafsCollector();
-        } else {
-            ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor();
-            program.accept(spriteVisitor);
-            leafsMap = spriteVisitor.getLeafsCollector();
-        }
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(isStageIncluded);
+        program.accept(spriteVisitor);
+        leafsMap = spriteVisitor.getLeafsCollector();
     }
 
     public void printLeafsPerSpite() {
@@ -97,7 +90,6 @@ public class GraphGenerator {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
-        // int slotIndex=0;
 
         if (isDotStringGraph) {
             return visitor1.getBuilderInDotString(cfg);

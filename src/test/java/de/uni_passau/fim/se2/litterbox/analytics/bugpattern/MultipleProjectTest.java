@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -33,18 +32,12 @@ public class MultipleProjectTest implements JsonTest {
 
     @Test
     public void testBoatRace() throws IOException, ParsingException {
-        Program boatrace = JsonTest.parseProgram("./src/test/fixtures/bugpattern/boatrace.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(boatrace);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/boatrace.json");
     }
 
     @Test
     public void testBallgame() throws IOException, ParsingException {
-        Program ballgame = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ballgame.json");
-        MissingLoopSensing parameterName = new MissingLoopSensing();
-        Set<Issue> reports = parameterName.check(ballgame);
-        Assertions.assertEquals(2, reports.size());
+        assertThatFinderReports(2, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/ballgame.json");
     }
 
     @Test

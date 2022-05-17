@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,29 +19,27 @@
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CodeClone {
 
-    public enum CloneType { TYPE1, TYPE2, TYPE3 };
+    public enum CloneType { TYPE1, TYPE2, TYPE3 }
 
     private CloneType type = CloneType.TYPE1;
 
-    private List<Stmt> copy1 = new ArrayList<>();
-    private List<Stmt> copy2 = new ArrayList<>();
+    private final List<Stmt> copy1 = new ArrayList<>();
+    private final List<Stmt> copy2 = new ArrayList<>();
 
-    private ActorDefinition actor;
+    private final ASTNode firstRoot;
+    private final ASTNode secondRoot;
 
-    private ASTNode firstRoot;
-    private ASTNode secondRoot;
-
-    public CodeClone(ActorDefinition actor, ASTNode root1, ASTNode root2) {
-        this.actor = actor;
+    public CodeClone(ASTNode root1, ASTNode root2) {
         this.firstRoot = root1;
         this.secondRoot = root2;
     }
@@ -85,5 +83,16 @@ public class CodeClone {
 
     public int size() {
         return copy1.size();
+    }
+
+    public boolean subsumes(CodeClone otherClone) {
+        // TODO: IdentifyHashSet does not handle removeAll properly, so using a workaround
+        Set<Integer> firstIDs = otherClone.getFirstStatements().stream().map(System::identityHashCode).collect(Collectors.toSet());
+        Set<Integer> secondIDs = otherClone.getSecondStatements().stream().map(System::identityHashCode).collect(Collectors.toSet());
+
+        copy1.stream().map(System::identityHashCode).forEach(firstIDs::remove);
+        copy2.stream().map(System::identityHashCode).forEach(secondIDs::remove);
+
+        return firstIDs.isEmpty() && secondIDs.isEmpty();
     }
 }

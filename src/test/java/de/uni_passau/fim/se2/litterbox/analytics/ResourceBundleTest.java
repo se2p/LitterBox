@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,15 +19,24 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 public class ResourceBundleTest {
+
+    private static final List<String> DOUBLE_TAGS = Arrays.asList("[sbi]", "[var]", "[list]", "[bc]");
+
+    private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]");
 
     @ParameterizedTest(name = "Testing existence of bug names for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
@@ -35,6 +44,7 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String bugFinder : IssueTool.getBugFinderNames()) {
             assertWithMessage("Language "+locale+", bug finder "+bugFinder +" not found in name resources").that(names.keySet()).contains(bugFinder);
+            checkEncodingProblems(names.getString(bugFinder));
         }
     }
 
@@ -44,6 +54,7 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String smellFinder : IssueTool.getSmellFinderNames()) {
             assertWithMessage("Language "+locale+", smell finder "+smellFinder +" not found in name resources").that(names.keySet()).contains(smellFinder);
+            checkEncodingProblems(names.getString(smellFinder));
         }
     }
 
@@ -53,6 +64,51 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
             assertWithMessage("Language "+locale+", perfume finder "+perfumeFinder +" not found in name resources").that(names.keySet()).contains(perfumeFinder);
+            checkEncodingProblems(names.getString(perfumeFinder));
+        }
+    }
+
+    private void checkEncodingProblems(String hint) {
+        List<String> invalidChars = Arrays.asList("Ã¶", "ÃŸ", "Ã¤", "Ã¼", "Ã„", "Ã–", "Ãœ");
+        for (String invalidChar : invalidChars) {
+            assertThat(hint).doesNotContain(invalidChar);
+        }
+    }
+
+    private void checkValidBrackets(String key, String hint) {
+        List<String> matches = Pattern.compile("\\[[^\\]]+\\]")
+                .matcher(hint)
+                .results()
+                .map(MatchResult::group)
+                .collect(Collectors.toList());
+        String currentToken = "";
+        for (int i = 0; i < matches.size(); i++) {
+            String match = matches.get(i);
+
+            if (!currentToken.isEmpty()) {
+                if (match.startsWith("[/")) {
+                    assertWithMessage("Found invalid tag " + match + " when expecting [/sbi] in hint for " + key).that(match.replace("/", "")).isEqualTo(currentToken);
+                    currentToken = "";
+                } else {
+                    assertWithMessage("Found invalid tag " + match + " when expecting [/sbi] in hint for " + key).that(currentToken).isEqualTo("[sbi]");
+                }
+            } else if (DOUBLE_TAGS.contains(match)) {
+                currentToken = match;
+            } else {
+                assertWithMessage("Found invalid tag " + match + " in hint for " + key).that(SINGLE_TAGS).contains(match);
+            }
+        }
+        assertWithMessage("Unmatched tag " + currentToken + " in hint for " + key).that(currentToken).isEmpty();
+    }
+
+    @ParameterizedTest(name = "Testing encoding of general terms for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void testEncodingInGeneralTerms(String locale) {
+        ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+
+        for (String key : hints.keySet()) {
+            String hint = hints.getString(key);
+            checkEncodingProblems(hint);
         }
     }
 
@@ -64,6 +120,8 @@ public class ResourceBundleTest {
         for (IssueFinder finder : bugFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
         }
     }
@@ -76,6 +134,8 @@ public class ResourceBundleTest {
         for (IssueFinder finder : smellFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
         }
     }
@@ -88,7 +148,20 @@ public class ResourceBundleTest {
         for (IssueFinder finder : perfumeFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                checkValidBrackets(key, hints.getString(key));
+                checkEncodingProblems(hints.getString(key));
             }
+        }
+    }
+
+    @ParameterizedTest(name = "Testing existence of general terms for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void checkGeneralTerms(String locale) {
+        ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+
+        for (IssueTranslator.GeneralTerm term : IssueTranslator.GeneralTerm.values()) {
+            assertWithMessage("Language "+locale+", general term "+ term.getKey() +" not found in resources").that(hints.keySet()).contains(term.getKey());
+            checkEncodingProblems(hints.getString(term.getKey()));
         }
     }
 
@@ -113,4 +186,15 @@ public class ResourceBundleTest {
             assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
         }
     }
+
+    // TODO: Cannot test this because keys are spread across many classes...
+//    @ParameterizedTest(name = "Testing for spurious general term keys for language {0}")
+//    @ValueSource(strings = {"de", "en", "es"})
+//    public void checkSpuriousGeneralTerms(String locale) {
+//        ResourceBundle names = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
+//        Set<String> hintKeys = Arrays.stream(IssueTranslator.GeneralTerm.values()).map(IssueTranslator.GeneralTerm::getLabel).collect(Collectors.toSet());
+//        for (String key : Collections.list(names.getKeys())) {
+//            assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
+//        }
+//    }
 }

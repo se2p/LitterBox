@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,20 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-
-import java.util.Set;
 
 /**
  * Script starting with a When I start as a clone event handler that contain a create clone of
@@ -40,14 +36,12 @@ import java.util.Set;
  */
 public class RecursiveCloning extends AbstractIssueFinder {
     public static final String NAME = "recursive_cloning";
-    private boolean startAsClone = false;
     private boolean secondVisit;
     private boolean foundDelete;
 
     @Override
-    public Set<Issue> check(Program program) {
-        startAsClone = false;
-        return super.check(program);
+    public void visit(ProcedureDefinition node) {
+        //NOP should not be detected in Procedure
     }
 
     @Override
@@ -57,7 +51,6 @@ public class RecursiveCloning extends AbstractIssueFinder {
             return;
         }
         if (node.getEvent() instanceof StartedAsClone) {
-            startAsClone = true;
             super.visit(node);
             /* the first visit is to make sure that the complete script is scanned for a delete clone
                in the second visit the create clone of blocks are collected in issues,
@@ -69,21 +62,19 @@ public class RecursiveCloning extends AbstractIssueFinder {
                 secondVisit = false;
             }
             foundDelete = false;
-            startAsClone = false;
         }
     }
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (startAsClone && secondVisit) {
+        if (secondVisit) {
             if (node.getStringExpr() instanceof AsString
                     && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
 
                 final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
 
                 if (spriteName.equals("_myself_") && !foundDelete) {
-                    CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-                    addIssue(node, metadata.getCloneBlockMetadata(), IssueSeverity.LOW);
+                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
                 }
             }
         }

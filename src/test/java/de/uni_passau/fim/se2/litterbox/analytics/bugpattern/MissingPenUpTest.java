@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,7 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 class MissingPenUpTest implements JsonTest {
 
@@ -34,10 +35,9 @@ class MissingPenUpTest implements JsonTest {
     public void testMissingPenUp() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/missingPenUp.json");
         MissingPenUp finder = new MissingPenUp();
-        Set<Issue> reports = finder.check(program);
+        List<Issue> reports = new ArrayList<>(finder.check(program));
         Truth.assertThat(reports).hasSize(2);
-        // TODO: Restore checks
-//        Truth.assertThat(result.getPosition().get(0)).isEqualTo("Sprite1");
-//        Truth.assertThat(result.getPosition().get(1)).isEqualTo("Apple");
+        Truth.assertThat(reports.get(0).getActorName()).isEqualTo("Sprite1");
+        Truth.assertThat(reports.get(1).getActorName()).isEqualTo("Apple");
     }
 }

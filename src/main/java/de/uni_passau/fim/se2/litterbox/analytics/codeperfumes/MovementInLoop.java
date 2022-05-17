@@ -1,15 +1,29 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -27,7 +41,6 @@ public class MovementInLoop extends AbstractIssueFinder {
     public static final String NAME = "movement_in_loop";
     private boolean hasKeyPressed;
     private boolean insideLoop;
-    private boolean insideGreenFlagClone;
     private boolean inCondition;
     private boolean subsequentMovement;
 
@@ -37,15 +50,12 @@ public class MovementInLoop extends AbstractIssueFinder {
             // Ignore unconnected blocks
             return;
         }
-        if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
-            insideGreenFlagClone = true;
-        }
+
         subsequentMovement = false;
         inCondition = false;
         insideLoop = false;
         hasKeyPressed = false;
         super.visit(node);
-        insideGreenFlagClone = false;
     }
 
     @Override
@@ -57,7 +67,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -68,7 +78,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideGreenFlagClone && insideLoop) {
+        if (insideLoop) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -103,6 +113,14 @@ public class MovementInLoop extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(PointInDirection node) {
+        if (hasKeyPressed && !subsequentMovement) {
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            subsequentMovement = true;
+        }
+    }
+
+    @Override
     public void visit(TurnRight node) {
         if (hasKeyPressed && !subsequentMovement) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
@@ -120,7 +138,7 @@ public class MovementInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
+        if (insideLoop && inCondition) {
             hasKeyPressed = true;
         }
     }

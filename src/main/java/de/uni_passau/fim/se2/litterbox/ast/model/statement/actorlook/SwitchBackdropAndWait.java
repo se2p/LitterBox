@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -64,5 +64,7 @@ public class SwitchBackdropAndWait extends AbstractNode implements ActorLookStmt
         return ActorLookStmtOpcode.looks_switchbackdroptoandwait;
     }
 
-    public Opcode getBackdropMenuOpcode(){return DependentBlockOpcode.looks_backdrops;}
+    public Opcode getBackdropMenuOpcode() {
+        return DependentBlockOpcode.looks_backdrops;
+    }
 }

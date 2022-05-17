@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
@@ -62,8 +62,7 @@ public class SetStmtParser {
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         if (ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).isEmpty()) {
-            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
-                    VALUE_KEY, allBlocks), metadata);
+            ProgramParser.symbolTable.addVariable(unique, variableName, new StringType(), true, "Stage");
         }
         VariableInfo info = ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).get();
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -29,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Objects;
 
-public class FixedAttribute extends AbstractNode implements ASTLeaf {
+public class FixedAttribute extends AbstractNode implements FixedNodeOption {
 
     public enum FixedAttributeType {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,21 +22,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 
 public class AttributeEventNode extends CFGNode {
 
     private EventAttribute attribute;
 
-    private NumExpr expression;
-
     private AttributeAboveValue node;
 
-    public AttributeEventNode(AttributeAboveValue node, ActorDefinition actor) {
+    public AttributeEventNode(AttributeAboveValue node, ActorDefinition actor, ASTNode scriptOrProcedure) {
         this.node = node;
         this.actor = actor;
         this.attribute = node.getAttribute();
-        this.expression = node.getValue();
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override

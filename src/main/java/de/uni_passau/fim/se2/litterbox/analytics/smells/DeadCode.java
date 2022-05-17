@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,26 +18,49 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 /**
  * Checks if the project has loose blocks without a head.
  */
-public class DeadCode extends TopBlockFinder {
+public class DeadCode extends AbstractIssueFinder {
 
     public static final String NAME = "dead_code";
 
     @Override
     public void visit(Script node) {
         currentScript = node;
-        if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
-            setHint = true;
-            node.getStmtList().getStmts().get(0).accept(this);
+        if (node.getEvent() instanceof Never && !node.getStmtList().getStmts().isEmpty()) {
+            ASTNode top = node.getStmtList().getStmts().get(0);
+            addIssue(top, top.getMetadata());
         }
-        setHint = false;
         currentScript = null;
+    }
+
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if (first.getFinder() instanceof DeadCode) {
+            // All instances of dead code are duplicates
+            return true;
+        }
+
+        return false;
     }
 
     @Override

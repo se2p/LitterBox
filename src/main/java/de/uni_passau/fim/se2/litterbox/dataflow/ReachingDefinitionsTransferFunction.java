@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,7 +32,7 @@ public class ReachingDefinitionsTransferFunction implements TransferFunction<Def
 
         // Remove all Definitions of variables that are defined here
         Set<Definition> definitions = node.getDefinitions();
-        result.removeIf(d -> definitions.contains(d));
+        result.removeIf(definitions::contains);
 
         // Add new Definitions of variables that are defined here
         result.addAll(definitions);

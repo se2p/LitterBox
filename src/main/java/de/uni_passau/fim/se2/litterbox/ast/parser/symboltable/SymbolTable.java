@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2019-2022 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,9 +30,9 @@ import java.util.Set;
 
 public class SymbolTable {
 
-    private LinkedHashMap<String, VariableInfo> variables;
-    private LinkedHashMap<String, MessageInfo> messages;
-    private LinkedHashMap<String, ExpressionListInfo> lists;
+    private Map<String, VariableInfo> variables;
+    private Map<String, MessageInfo> messages;
+    private Map<String, ExpressionListInfo> lists;
 
     /**
      * The symbol table collects all information about variable, lists and messages.
@@ -126,6 +126,22 @@ public class SymbolTable {
             return Optional.of(variables.get(stageKey));
         }
 
+        String identFromMap = getVariableIdentifierFromActorAndName(variableName, actorName);
+        if (identFromMap != null) {
+            key = identFromMap + variableName + actorName;
+            if (variables.containsKey(key)) {
+                return Optional.of(variables.get(key));
+            }
+        }
+
+        identFromMap = getVariableIdentifierFromActorAndName(variableName, "Stage");
+        if (identFromMap != null) {
+            key = identFromMap + variableName + "Stage";
+            if (variables.containsKey(key)) {
+                return Optional.of(variables.get(key));
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -150,6 +166,22 @@ public class SymbolTable {
         String stageKey = ident + listName + "Stage";
         if (lists.containsKey(stageKey)) {
             return Optional.of(lists.get(stageKey));
+        }
+
+        String identFromMap = getListIdentifierFromActorAndName(listName, actorName);
+        if (identFromMap != null) {
+            key = identFromMap + listName + actorName;
+            if (lists.containsKey(key)) {
+                return Optional.of(lists.get(key));
+            }
+        }
+
+        identFromMap = getListIdentifierFromActorAndName(listName, "Stage");
+        if (identFromMap != null) {
+            stageKey = identFromMap + listName + "Stage";
+            if (lists.containsKey(stageKey)) {
+                return Optional.of(lists.get(stageKey));
+            }
         }
 
         return Optional.empty();

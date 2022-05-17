@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2022 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
@@ -12,16 +30,17 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FastNonDominatedSortTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {
         MinimizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1);
@@ -32,7 +51,6 @@ class FastNonDominatedSortTest {
         List<RefactoringFinder> refactoringFinders = List.of(new MergeDoubleIfFinder());
 
         Program program = mock(Program.class);
-        when(program.deepCopy()).thenReturn(program);
 
         RefactorSequence solution = new RefactorSequence(program, mutation, crossover, new LinkedList<>(), refactoringFinders);
         when(function1.getFitness(solution)).thenReturn(1.0);
@@ -43,6 +61,7 @@ class FastNonDominatedSortTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testDominationCheck() {
         MaximizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfHelloBlocks.class);
         MinimizingFitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
@@ -63,17 +82,18 @@ class FastNonDominatedSortTest {
         when(c3.getFitness(function1)).thenReturn(0.7);
         when(c3.getFitness(function2)).thenReturn(0.8);
 
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
-        assertFalse(fastNonDominatedSort.dominates(c1, c2));
-        assertFalse(fastNonDominatedSort.dominates(c2, c1));
+        Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
+        assertFalse(dominance.test(c1, c2));
+        assertFalse(dominance.test(c2, c1));
 
-        assertTrue(fastNonDominatedSort.dominates(c3, c1));
-        assertTrue(fastNonDominatedSort.dominates(c3, c2));
+        assertTrue(dominance.test(c3, c1));
+        assertTrue(dominance.test(c3, c2));
 
-        assertFalse(fastNonDominatedSort.dominates(c3, c3));
+        assertFalse(dominance.test(c3, c3));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testFastNonDominatingSort() {
         RefactorSequence c1 = mock(RefactorSequence.class);
         RefactorSequence c2 = mock(RefactorSequence.class);
@@ -81,30 +101,28 @@ class FastNonDominatedSortTest {
         RefactorSequence c4 = mock(RefactorSequence.class);
         List<RefactorSequence> solutions = Lists.newArrayList(c1, c2, c3, c4);
 
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = mock(FastNonDominatedSort.class);
-        when(fastNonDominatedSort.dominates(c1, c1)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c2)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c1, c4)).thenReturn(false);
+        Dominance<RefactorSequence> dominance = mock(Dominance.class);
 
-        when(fastNonDominatedSort.dominates(c2, c1)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c2)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c2, c4)).thenReturn(false);
+        when(dominance.test(c1, c1)).thenReturn(false);
+        when(dominance.test(c1, c2)).thenReturn(false);
+        when(dominance.test(c1, c3)).thenReturn(false);
+        when(dominance.test(c1, c4)).thenReturn(false);
 
-        when(fastNonDominatedSort.dominates(c3, c1)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c3, c2)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c3, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c3, c4)).thenReturn(false);
+        when(dominance.test(c2, c1)).thenReturn(false);
+        when(dominance.test(c2, c2)).thenReturn(false);
+        when(dominance.test(c2, c3)).thenReturn(false);
+        when(dominance.test(c2, c4)).thenReturn(false);
 
-        when(fastNonDominatedSort.dominates(c4, c1)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c4, c2)).thenReturn(true);
-        when(fastNonDominatedSort.dominates(c4, c3)).thenReturn(false);
-        when(fastNonDominatedSort.dominates(c4, c4)).thenReturn(false);
+        when(dominance.test(c3, c1)).thenReturn(true);
+        when(dominance.test(c3, c2)).thenReturn(true);
+        when(dominance.test(c3, c3)).thenReturn(false);
+        when(dominance.test(c3, c4)).thenReturn(false);
 
-        doNothing().when(fastNonDominatedSort).calculateFitnessValuesForSolutions(solutions);
-
-        when(fastNonDominatedSort.fastNonDominatedSort(any())).thenCallRealMethod();
+        when(dominance.test(c4, c1)).thenReturn(true);
+        when(dominance.test(c4, c2)).thenReturn(true);
+        when(dominance.test(c4, c3)).thenReturn(false);
+        when(dominance.test(c4, c4)).thenReturn(false);
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(Collections.emptyList(), dominance);
 
         List<List<RefactorSequence>> fronts = fastNonDominatedSort.fastNonDominatedSort(solutions);
         assertEquals(2, fronts.size());
