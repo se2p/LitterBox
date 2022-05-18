@@ -1,33 +1,24 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
+import com.google.common.graph.EndpointPair;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import de.uni_passau.fim.se2.litterbox.utils.Triplet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
 
-import com.google.common.graph.EndpointPair;
+import java.util.*;
 
 public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
     //Variables
     long counter = 0;
     String backwardEdges = "";
     Integer countIndexOfVertices = 0;
-//	String slot="<slot>";
     //Objects
 
     Map<String, List<String>> astEdges = new HashMap<>();
@@ -42,8 +33,7 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
     Map<String, String> vertexMap = new HashMap<>();
     Map<String, String> vertexMapForFlowEdges = new HashMap<>();
     Map<String, String> vertexMapForDotString = new HashMap<>();
-
-    List<Triplet<String>> verticesList = new ArrayList<>();
+    List<Triple<String, String, String>> verticesList = new ArrayList<>();
 
     List<String> vertices = new ArrayList<>();
 
@@ -54,7 +44,7 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
             recordLeaf((ASTLeaf) node);
         } else {
             String name = String.valueOf(node.hashCode()); //This should only be a workaround this is a hack
-            verticesList.add(Triplet.of(String.valueOf(countIndexOfVertices), name, node.getUniqueName()));
+            verticesList.add(Triple.of(String.valueOf(countIndexOfVertices), name, node.getUniqueName()));
             countIndexOfVertices++;
 
             for (ASTNode child : node.getChildren()) {
@@ -73,7 +63,7 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
         List<String> vertexList = new ArrayList<>();
         String name = String.valueOf(node.hashCode());
 
-        verticesList.add(Triplet.of(String.valueOf(countIndexOfVertices), name, node.getUniqueName()));
+        verticesList.add(Triple.of(String.valueOf(countIndexOfVertices), name, node.getUniqueName()));
         countIndexOfVertices++;
 
         String[] simpleStrings = node.toSimpleStringArray();
@@ -90,7 +80,7 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
             vertexList.add(uniqueId);
             terminalVertices.add(uniqueId);
 
-            verticesList.add(Triplet.of(String.valueOf(countIndexOfVertices), uniqueId, simpleString));
+            verticesList.add(Triple.of(String.valueOf(countIndexOfVertices), uniqueId, simpleString));
             countIndexOfVertices++;
         }
         addSiblingEdges(vertexList, 0);
@@ -99,12 +89,12 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
     public void initialize() {
         backwardEdges = "";
         // Index, hash code and name
-        for (Triplet<String> triplet : verticesList) {
-            vertices.add(triplet.getSecond());//hash code
-            nodeLabels.add(triplet.getThird());//name
-            vertexMap.put(triplet.getSecond(), triplet.getFirst());//hash code and index
-            vertexMapForFlowEdges.put(triplet.getThird(), triplet.getSecond());//name and hash code
-            vertexMapForDotString.put(triplet.getSecond(), triplet.getThird());//hash code and name
+        for (Triple<String, String, String> triplet : verticesList) {
+            vertices.add(triplet.getMiddle());//hash code
+            nodeLabels.add(triplet.getRight());//name
+            vertexMap.put(triplet.getMiddle(), triplet.getLeft());//hash code and index
+            vertexMapForFlowEdges.put(triplet.getRight(), triplet.getMiddle());//name and hash code
+            vertexMapForDotString.put(triplet.getMiddle(), triplet.getRight());//hash code and name
         }
     }
 
@@ -149,31 +139,16 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
     }
 
     //Print Graph in console
-    public String printGraph(String fileName, ControlFlowGraph controlFlowGraph
-            , String correctLabel, String incorrectLabel, int spriteIndex, int lastIndex) {
+    public String printGraph(String fileName, ControlFlowGraph controlFlowGraph, String correctLabel, String incorrectLabel, int spriteIndex, int lastIndex) {
         return createBuilderForGNN(fileName, controlFlowGraph, correctLabel, incorrectLabel, spriteIndex, lastIndex);
     }
 
-//    //Save Graph
-//    public void saveGraph(String fileName,ControlFlowGraph controlFlowGraph
-//    		,String correctLabel,String incorrectLabel,String outFolderName,int spriteIndex, int lastIndex, string format) throws IOException {
-//    	Path pathToFolder = Path.of(outFolderName);
-//    	Path pathToFile = pathToFolder.resolve(correctLabel);
-//    	File file = new File(correctLabel);
-//        FileOutputStream fos = new FileOutputStream(file);
-//        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-//        bw.write(createBuilderForGNN( fileName, controlFlowGraph,correctLabel,incorrectLabel,spriteIndex,lastIndex));
-//        bw.close();
-//    }
-
     //String Builder for generating embeddings in string
-    private String createBuilderForGNN(String fileName, ControlFlowGraph controlFlowGraph,
-                                       String correctLabel, String incorrectLabel, int spriteIndex, int lastIndex) {
+    private String createBuilderForGNN(String fileName, ControlFlowGraph controlFlowGraph, String correctLabel, String incorrectLabel, int spriteIndex, int lastIndex) {
         List<String> terminalVertexList = new ArrayList<>(new HashSet<>(terminalVertices));
         initialize();
         StringBuilder builder = new StringBuilder();
         backwardEdges = "";
-
         builder.append("{\"filename\": \"" + fileName + "\", ");
         builder.append("\"ContextGraph\": {");
         builder.append("\"Edges\": {");
@@ -210,22 +185,22 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
         nodeTypes.addAll(nodeTypesWithoutDuplicates);
         builder.append(getNodes(nodeTypes));
         builder.append("},");
-//        builder.append("\"SlotDummyNode\":0,");
         builder.append("\"SymbolCandidates\":[");
-        String trimmedCorrectLabel = correctLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim();
-        trimmedCorrectLabel = (trimmedCorrectLabel == null && trimmedCorrectLabel.trim().isEmpty()) ? "blank" : trimmedCorrectLabel;
-        String trimmedIncorrectLabel = incorrectLabel.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim();
-        trimmedIncorrectLabel = (trimmedIncorrectLabel == null && trimmedIncorrectLabel.trim().isEmpty()) ? "blank" : trimmedIncorrectLabel;
-        builder.append(getSymbolCandidates(trimmedCorrectLabel, trimmedIncorrectLabel));
+        builder.append(getSymbolCandidates(replaceSpecialCharacters(correctLabel), replaceSpecialCharacters(incorrectLabel)));
         builder.append("]}");
         if (spriteIndex != lastIndex - 1) {
             builder.append("\n");
         }
-//        else {
-//        	builder.append("]");
-//		}
 
         return builder.toString();
+    }
+
+    private String replaceSpecialCharacters(final String label) {
+        if (label == null || label.isBlank()) {
+            return "blank";
+        } else {
+            return label.replaceAll("[^a-zA-Z0-9\\s|]", "|").trim();
+        }
     }
 
     //Return symbol candidates
@@ -251,12 +226,12 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
                 if (vertexMapForFlowEdges.containsKey(targetVertex)) {
                     secondVertex = String.valueOf(vertexMapForFlowEdges.get(targetVertex));
                 }
-                if (StringUtils.isBlank(firstVertex) == false && StringUtils.isBlank(secondVertex) == false) {
+                if (!StringUtils.isBlank(firstVertex) && !StringUtils.isBlank(secondVertex)) {
                     tempList.add(secondVertex);
                 }
             }
             tempListWithoutDuplicates = new LinkedHashSet<>(tempList);
-            if (StringUtils.isBlank(firstVertex) == false) {
+            if (!StringUtils.isBlank(firstVertex)) {
                 for (String string : tempListWithoutDuplicates) {
                     flowEdgesInHashCode.computeIfAbsent(firstVertex, k -> new ArrayList<>()).add(String.valueOf(secondVertex));
                 }
@@ -267,14 +242,14 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     //Return nodes in String
     private String getNodes(List<String> nodeTypes) {
-        String nodesInString = "";
+        StringBuilder nodesInString = new StringBuilder();
         int indexOfNodes = 0;
         for (String node : nodeTypes) {
-            nodesInString = nodesInString + "\"" + indexOfNodes + "\":";
-            nodesInString = nodesInString + "\"" + node + "\",";
+            nodesInString.append("\"").append(indexOfNodes).append("\":");
+            nodesInString.append("\"").append(node).append("\",");
             indexOfNodes++;
         }
-        return (nodesInString.length() > 0) ? nodesInString.substring(0, nodesInString.length() - 1) : nodesInString;
+        return (nodesInString.length() > 0) ? nodesInString.substring(0, nodesInString.length() - 1) : nodesInString.toString();
     }
 
     //Return Next Token edges
@@ -310,12 +285,12 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
     }
 
     //Get edges for Graph in string
-    private String getEdgesForGNN(Map<String, List<String>> edges, int typeOfEdge, Boolean isDotString, Boolean isSlotIncluded) {
-        String firstVertex = "0";
+    private String getEdgesForGNN(Map<String, List<String>> edges, int typeOfEdge, boolean isDotString, boolean isSlotIncluded) {
+        String firstVertex;
         String secondVertex;
-        String edgesInString = "";
+        StringBuilder edgesInString = new StringBuilder();
         String operatorSymbol = " -> ";
-        String backwardEdgesInString = "";
+        StringBuilder backwardEdgesInString = new StringBuilder();
         Map<String, String> vertexList;
         if (!isDotString) {
             operatorSymbol = ",";
@@ -324,8 +299,8 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
             vertexList = vertexMapForDotString;
         }
 
-        Integer numberOfedges = edges.size();
-        Integer edgeIndex = 0;
+        int numberOfedges = edges.size();
+        int edgeIndex = 0;
         List<String> edgeValues;
         for (Map.Entry<String, List<String>> entry : edges.entrySet()) {
             firstVertex = "";
@@ -333,35 +308,11 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
             if (vertexList.containsKey(entry.getKey())) {
                 firstVertex = (!isDotString) ? String.valueOf(vertexList.get(entry.getKey())) : entry.getKey();
                 if (isDotString) {
-                    edgesInString = edgesInString + firstVertex + " [label= \"" + String.valueOf(vertexList.get(entry.getKey()) + "\"];");
-                    edgesInString = edgesInString + "\n";
+                    edgesInString.append(firstVertex).append(" [label= \"").append(String.valueOf(vertexList.get(entry.getKey()) + "\"];"));
+                    edgesInString.append("\n");
                 }
             }
-//    		if(entry.getKey()==slot) {
-//    			firstVertex="0";
-//    			if(isDotString) {
-//    				edgesInString=edgesInString+firstVertex +" [label= \""+String.valueOf(entry.getKey()+"\"];");
-//        			edgesInString=edgesInString+"\n";
-//    			}
-//    		}
-//    		if(isSlotIncluded) {
-//    			if(!isDotString) {
-//        			edgesInString=edgesInString+"[";
-//        			backwardEdgesInString=backwardEdgesInString+"[";
-//        		}
-//    			slotVertex=String.valueOf(vertexList.get("0"));
-//    			edgesInString=edgesInString+ slotVertex +operatorSymbol+firstVertex;
-//        		backwardEdgesInString=backwardEdgesInString+ firstVertex +operatorSymbol+slotVertex;
-//
-//        		if(!isDotString) {
-//        			edgesInString=edgesInString+"]";
-//        			backwardEdgesInString=backwardEdgesInString+"]";
-//        		}
-//        		else {
-//        			edgesInString=edgesInString+"\n";
-//        			backwardEdgesInString=backwardEdgesInString+"\n";
-//        		}
-//    		}
+
             edgeValues = (!isDotString) ? entry.getValue() : new ArrayList<>(new HashSet<>(entry.getValue()));
             for (String targetVertex : edgeValues) {
                 secondVertex = "";
@@ -370,60 +321,45 @@ public class GraphVisitor implements ScratchVisitor, PenExtensionVisitor {
                     secondVertex = vertexList.get(targetVertex);
                     if (isDotString) {
                         secondVertex = targetVertex;
-                        edgesInString = edgesInString + secondVertex + " [label= \"" + String.valueOf(vertexList.get(secondVertex) + "\"];");
-                        edgesInString = edgesInString + "\n";
+                        edgesInString.append(secondVertex).append(" [label= \"").append(String.valueOf(vertexList.get(secondVertex) + "\"];"));
+                        edgesInString.append("\n");
                     }
-                }
-//        		if(isSlotIncluded) {
-//        			if(!isDotString) {
-//            			edgesInString=edgesInString+"[";
-//            			backwardEdgesInString=backwardEdgesInString+"[";
-//            		}
-//        			edgesInString=edgesInString+ slotVertex +operatorSymbol+secondVertex;
-//        			backwardEdgesInString=backwardEdgesInString+ secondVertex +operatorSymbol+slotVertex;
-//        			if(!isDotString) {
-//            			edgesInString=edgesInString+"]"+operatorSymbol;
-//            			backwardEdgesInString=backwardEdgesInString+"]"+operatorSymbol;
-//            		}
-//        			else {
-//        				edgesInString=edgesInString+"\n";
-//            			backwardEdgesInString=backwardEdgesInString+"\n";
-//        			}
-//        		}
-                if (!isDotString) {
-                    edgesInString = edgesInString + "[";
-                    backwardEdgesInString = backwardEdgesInString + "[";
-                }
-                if (typeOfEdge == 0) {
-                    //Child edge
-                    edgesInString = edgesInString + firstVertex + operatorSymbol + secondVertex;
-                    backwardEdgesInString = backwardEdgesInString + secondVertex + operatorSymbol + firstVertex;
-                } else if (typeOfEdge == 1) {
-                    //Parent edge
-                    edgesInString = edgesInString + secondVertex + operatorSymbol + firstVertex;
-                    backwardEdgesInString = backwardEdgesInString + firstVertex + operatorSymbol + secondVertex;
                 }
 
                 if (!isDotString) {
-                    edgesInString = edgesInString + "]";
-                    backwardEdgesInString = backwardEdgesInString + "]";
+                    edgesInString.append("[");
+                    backwardEdgesInString.append("[");
+                }
+                if (typeOfEdge == 0) {
+                    //Child edge
+                    edgesInString.append(firstVertex).append(operatorSymbol).append(secondVertex);
+                    backwardEdgesInString.append(secondVertex).append(operatorSymbol).append(firstVertex);
+                } else if (typeOfEdge == 1) {
+                    //Parent edge
+                    edgesInString.append(secondVertex).append(operatorSymbol).append(firstVertex);
+                    backwardEdgesInString.append(firstVertex).append(operatorSymbol).append(secondVertex);
+                }
+
+                if (!isDotString) {
+                    edgesInString.append("]");
+                    backwardEdgesInString.append("]");
                     if (edgeIndex <= numberOfedges) {
-                        edgesInString = edgesInString + operatorSymbol;
-                        backwardEdgesInString = backwardEdgesInString + operatorSymbol;
+                        edgesInString.append(operatorSymbol);
+                        backwardEdgesInString.append(operatorSymbol);
                     }
                 } else {
-                    edgesInString = edgesInString + "\n";
-                    backwardEdgesInString = backwardEdgesInString + "\n";
+                    edgesInString.append("\n");
+                    backwardEdgesInString.append("\n");
                 }
             }
         }
         backwardEdges = (backwardEdges.isEmpty()) ? backwardEdges + backwardEdgesInString : backwardEdges + ',' + backwardEdgesInString;
         if (!isDotString) {
-            edgesInString = (edgesInString.length() > 0) ? edgesInString.substring(0, edgesInString.length() - 1) : edgesInString;
+            edgesInString = new StringBuilder((edgesInString.length() > 0) ? edgesInString.substring(0, edgesInString.length() - 1) : edgesInString.toString());
             backwardEdges = (backwardEdges.length() > 0) ? backwardEdges.substring(0, backwardEdges.length() - 1) : backwardEdges;
         }
 
-        return edgesInString;
+        return edgesInString.toString();
     }
 
     @Override

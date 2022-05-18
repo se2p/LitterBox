@@ -83,17 +83,11 @@ public final class Main {
     private static final String WHOLE_PROGRAM = "wholeprogram";
     private static final String WHOLE_PROGRAM_SHORT = "whpro";
 
-    private static final String SAVE_TEXT_OUTPUT_PATH = "savetextoutputpath";
-    private static final String SAVE_TEXT_OUTPUT_PATH_SHORT = "satxtoutpath";
-
-    private static final String AS_DOT_STRING_GRAPH = "savedotstringgraph";
-    private static final String AS_DOT_STRING_GRAPH_SHORT = "sadotgraph";
-
     private static final String GRAPH = "graphdata";
     private static final String GRAPH_SHORT = "graph";
-
     private static final String LABEL_NAME = "labelname";
-    private static final String LABEL_NAME_SHORT = "lblname";
+    private static final String AS_DOT_STRING_GRAPH = "savedotstringgraph";
+    private static final String AS_DOT_STRING_GRAPH_SHORT = "sadotgraph";
 
     private Main() {
     }
@@ -106,12 +100,12 @@ public final class Main {
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
-        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
+        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for code2vec"));
         mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
-        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
-        mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generates text output for specified Scratch projects as input for Gated Graph Neural Network"));
-        mainMode.addOption(new Option(DETECTORS_LIST_SHORT, DETECTORS_LIST, false, "Print a list of all detectors implemented in LitterBox."));
+        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for code2vec"));
+        mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generates text output for specified Scratch projects as input for the Gated Graph Neural Network"));
+        mainMode.addOption(new Option(DETECTORS_LIST_SHORT, DETECTORS_LIST, false, "Print a list of all detectors implemented in LitterBox"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "Print this message"));
 
         Options options = new Options();
@@ -152,11 +146,12 @@ public final class Main {
 
         options.addOption(IGNORE_LOOSE_BLOCKS_SHORT, IGNORE_LOOSE_BLOCKS, false, "ignore loose blocks when checking bug patterns");
 
-        //parameters for Code2Vec
+        // Parameters for code2vec and GGNN
         options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
         options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
         options.addOption(INCLUDE_STAGE_SHORT, INCLUDE_STAGE, false, "generate paths for the stage sprite");
         options.addOption(WHOLE_PROGRAM_SHORT, WHOLE_PROGRAM, false, "generate paths between terminals across the whole program instead of per sprite");
+        options.addOption(AS_DOT_STRING_GRAPH_SHORT, AS_DOT_STRING_GRAPH, false, "generate a dotgraph representation of the graph");
 
         return options;
     }
@@ -278,30 +273,9 @@ public final class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    static void convertToGraph(CommandLine cmd) throws ParseException, IOException {
-    	 if (!cmd.hasOption(PROJECTPATH)) {
-             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
-         }
-
-         boolean isStageIncluded=(cmd.hasOption(INCLUDE_STAGE))?cmd.hasOption(INCLUDE_STAGE):false;
-         boolean isWholeProgram=(cmd.hasOption(WHOLE_PROGRAM))?cmd.hasOption(WHOLE_PROGRAM):false;
-         boolean isDotStringGraph=(cmd.hasOption(AS_DOT_STRING_GRAPH))?cmd.hasOption(AS_DOT_STRING_GRAPH):false;
-
-         String outputPath = cmd.getOptionValue(SAVE_TEXT_OUTPUT_PATH);
-         String input = cmd.getOptionValue(PROJECTPATH);
-         String labelName = cmd.getOptionValue(LABEL_NAME);
-
-         GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath,isStageIncluded,isWholeProgram,isDotStringGraph,labelName,cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
-         runAnalysis(cmd, analyzer);
-    }
-
     static void convertToCode2Vec(CommandLine cmd) throws ParseException, IOException {
-        int maxPathLength = 8; //default Value
-        String outputPath = "CONSOLE"; //if no outputPath was declared, it prints to console
-
-        if (cmd.hasOption(OUTPUT)) {
-            outputPath = cmd.getOptionValue(OUTPUT);
-        }
+        int maxPathLength = 8;
+        String outputPath = getMachineLearningPreprocessorOutputPath(cmd);
 
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
@@ -325,6 +299,32 @@ public final class Main {
         String input = cmd.getOptionValue(PROJECTPATH);
         Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, includeStage, wholeProgram, deleteAfterwards);
         runAnalysis(cmd, analyzer);
+    }
+
+    static void convertToGraph(CommandLine cmd) throws ParseException, IOException {
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+        boolean isStageIncluded = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
+        boolean isWholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
+        boolean isDotStringGraph = cmd.hasOption(AS_DOT_STRING_GRAPH) || cmd.hasOption(AS_DOT_STRING_GRAPH_SHORT);
+        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
+
+        String outputPath = getMachineLearningPreprocessorOutputPath(cmd);
+        String input = cmd.getOptionValue(PROJECTPATH);
+        String labelName = cmd.getOptionValue(LABEL_NAME);
+
+        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, isStageIncluded, isWholeProgram, isDotStringGraph, labelName, deleteAfterwards);
+        runAnalysis(cmd, analyzer);
+    }
+
+    private static String getMachineLearningPreprocessorOutputPath(CommandLine cmd) {
+        String outputPath = "CONSOLE"; // if no outputPath was declared, it prints to console
+        if (cmd.hasOption(OUTPUT)) {
+            outputPath = cmd.getOptionValue(OUTPUT);
+        }
+        return outputPath;
     }
 
     private static void featurePrograms(CommandLine cmd) throws ParseException, IOException {
@@ -373,12 +373,10 @@ public final class Main {
                 translatePrograms(cmd);
             } else if (cmd.hasOption(CODE2VEC)) {
                 convertToCode2Vec(cmd);
+            } else if (cmd.hasOption(GRAPH)) {
+                convertToGraph(cmd);
             } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
-            } else if (cmd.hasOption(GRAPH)) {
-            	convertToGraph(cmd);
-            } else if (cmd.hasOption(CODE2VEC)) {
-                convertToCode2Vec(cmd);
             } else if (cmd.hasOption(DETECTORS_LIST)) {
                 printDetectorList();
             } else {

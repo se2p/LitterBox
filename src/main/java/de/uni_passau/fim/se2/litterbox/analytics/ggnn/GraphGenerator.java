@@ -35,36 +35,23 @@ public class GraphGenerator {
         leafsMap = spriteVisitor.getLeafsCollector();
     }
 
-    public void printLeafsPerSpite() {
-        System.out.println("Anzahl der Sprites: " + leafsMap.keySet().size());
-        for (ASTNode key : leafsMap.keySet()) {
-            System.out.println("Actor Definition: " + ((ActorDefinition) key).getIdent().getName());
-            System.out.println("Anzahl an ASTLeafs für " + ((ActorDefinition) key).getIdent().getName() + ": " + leafsMap.get(key).size());
-            int i = 0;
-            for (ASTNode value : leafsMap.get(key)) {
-                System.out.println(i + "Blatt (Test): " + value.getUniqueName());
-                i++;
-            }
-        }
-    }
-
     public String generateGraphs(String inputPath) {
-        String graphData = "";
+        StringBuilder graphData = new StringBuilder();
 
         if (isWholeProgram) {
             File file = new File(inputPath);
             String name = (labelName == null || labelName.isEmpty()) ? file.getName() : labelName;
-            graphData = graphData + generateGraphsForWholeScratchProgram(program, name, inputPath);
+            graphData.append(generateGraphsForWholeScratchProgram(program, name, inputPath));
         } else {
             int countSprite = 0;
             String spriteName;
-            for (ASTNode sprite : leafsMap.keySet()) {
-                spriteName = (labelName == null || labelName.isEmpty()) ? ((ActorDefinition) sprite).getIdent().getName() : labelName;
-                graphData = graphData + generateGraphsPerSprite(sprite, spriteName, countSprite, inputPath);
+            for (ActorDefinition sprite : leafsMap.keySet()) {
+                spriteName = (labelName == null || labelName.isEmpty()) ? sprite.getIdent().getName() : labelName;
+                graphData.append(generateGraphsPerSprite(sprite, spriteName, countSprite, inputPath));
                 countSprite++;
             }
         }
-        return graphData;
+        return graphData.toString();
     }
 
     private String generateGraphsPerSprite(ASTNode sprite, String spriteName, int spriteIndex, String inputPath) {
