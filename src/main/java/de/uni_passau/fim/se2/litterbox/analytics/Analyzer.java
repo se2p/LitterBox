@@ -38,9 +38,9 @@ public abstract class Analyzer {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
 
-    Path input;
-    String output;
-    boolean delete;
+    protected Path input;
+    protected String output;
+    protected boolean delete;
 
     protected Analyzer(String input, String output, boolean delete) {
         this.input = Paths.get(input);
@@ -89,7 +89,7 @@ public abstract class Analyzer {
     public void analyzeMultiple(String listPath) {
         Path projectList = Paths.get(listPath);
 
-        try(Stream<String> lines = Files.lines(projectList)) {
+        try (Stream<String> lines = Files.lines(projectList)) {
             List<String> pids = lines.collect(Collectors.toList());
             for (String pid : pids) {
                 analyzeSingle(pid);

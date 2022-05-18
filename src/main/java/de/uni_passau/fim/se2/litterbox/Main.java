@@ -20,14 +20,17 @@ package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.code2vec.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -275,7 +278,7 @@ public final class Main {
 
     static void convertToCode2Vec(CommandLine cmd) throws ParseException, IOException {
         int maxPathLength = 8;
-        String outputPath = getMachineLearningPreprocessorOutputPath(cmd);
+        MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
 
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
@@ -297,7 +300,7 @@ public final class Main {
         boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
 
         String input = cmd.getOptionValue(PROJECTPATH);
-        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, includeStage, wholeProgram, deleteAfterwards);
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, deleteAfterwards, includeStage, wholeProgram, maxPathLength);
         runAnalysis(cmd, analyzer);
     }
 
@@ -311,20 +314,21 @@ public final class Main {
         boolean isDotStringGraph = cmd.hasOption(AS_DOT_STRING_GRAPH) || cmd.hasOption(AS_DOT_STRING_GRAPH_SHORT);
         boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
 
-        String outputPath = getMachineLearningPreprocessorOutputPath(cmd);
+        MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
         String input = cmd.getOptionValue(PROJECTPATH);
         String labelName = cmd.getOptionValue(LABEL_NAME);
 
-        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, isStageIncluded, isWholeProgram, isDotStringGraph, labelName, deleteAfterwards);
+        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, deleteAfterwards, isStageIncluded, isWholeProgram, isDotStringGraph, labelName);
         runAnalysis(cmd, analyzer);
     }
 
-    private static String getMachineLearningPreprocessorOutputPath(CommandLine cmd) {
-        String outputPath = "CONSOLE"; // if no outputPath was declared, it prints to console
+    private static MLOutputPath getMachineLearningPreprocessorOutputPath(CommandLine cmd) {
         if (cmd.hasOption(OUTPUT)) {
-            outputPath = cmd.getOptionValue(OUTPUT);
+            String outputPath = cmd.getOptionValue(OUTPUT);
+            return MLOutputPath.directory(Path.of(outputPath));
+        } else {
+            return MLOutputPath.console();
         }
-        return outputPath;
     }
 
     private static void featurePrograms(CommandLine cmd) throws ParseException, IOException {
