@@ -18,35 +18,82 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GenerateGraphTask {
     private final Path inputPath;
     private final Program program;
     private final boolean isStageIncluded;
     private final boolean isWholeProgram;
-    private final boolean isDotStringGraph;
     private final String labelName;
 
     public GenerateGraphTask(Program program, Path inputPath, boolean isStageIncluded, boolean isWholeProgram,
-                             boolean isDotStringGraph, String labelName) {
+                             String labelName) {
         this.inputPath = inputPath;
         this.program = program;
         this.isStageIncluded = isStageIncluded;
         this.isWholeProgram = isWholeProgram;
-        this.isDotStringGraph = isDotStringGraph;
-        this.labelName = labelName;
+        this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
 
-    public String generateGraphData() {
-        GraphGenerator graphGenerator = new GraphGenerator(program, isStageIncluded, isWholeProgram, isDotStringGraph,
-                                                           labelName);
-        if (!isWholeProgram) {
-            graphGenerator.extractGraphsPerSprite();
+    String generateDotGraphData(final List<GgnnProgramGraph> graphs) {
+        String label = FilenameUtils.removeExtension(inputPath.getFileName().toString());
+        return GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs, label);
+    }
+
+    String generateJsonGraphData(final List<GgnnProgramGraph> graphs) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return graphs.stream().flatMap(graph -> {
+            try {
+                return Stream.of(objectMapper.writeValueAsString(graph));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return Stream.empty();
+            }
+        }).collect(Collectors.joining("\n"));
+    }
+
+    List<GgnnProgramGraph> getProgramGraphs() {
+        List<GgnnProgramGraph> graphs;
+
+        if (isWholeProgram) {
+            String label = Objects.requireNonNullElseGet(labelName,
+                    () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
+
+            graphs = List.of(buildNodeGraph(program, label));
+        } else {
+            graphs = buildGraphs(program, labelName);
         }
 
-        return graphGenerator.generateGraphs(inputPath.toString());
+        return graphs;
+    }
+
+    private List<GgnnProgramGraph> buildGraphs(final Program program, String labelName) {
+        return program.getActorDefinitionList().getDefinitions()
+                .stream()
+                .filter(actor -> !actor.isStage() || isStageIncluded)
+                .map(actor -> {
+                    String actorLabel = Objects.requireNonNullElseGet(labelName,
+                            () -> StringUtil.replaceSpecialCharacters(actor.getIdent().getName()));
+                    return buildNodeGraph(actor, actorLabel);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private GgnnProgramGraph buildNodeGraph(final ASTNode node, String label) {
+        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder<>(node).build();
+        return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }
 }

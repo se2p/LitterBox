@@ -21,11 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -52,14 +52,18 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
         }
 
         GenerateGraphTask generateGraphTask = new GenerateGraphTask(program, input, includeStage, wholeProgram,
-                isDotStringGraph, labelName);
-        return Optional.of(generateGraphTask.generateGraphData());
+                labelName);
+        List<GgnnProgramGraph> graphs = generateGraphTask.getProgramGraphs();
+        if (isDotStringGraph) {
+            return Optional.of(generateGraphTask.generateDotGraphData(graphs));
+        } else {
+            return Optional.of(generateGraphTask.generateJsonGraphData(graphs));
+        }
     }
 
     @Override
     protected Path outputFileName(File inputFile) {
-        String format = (isDotStringGraph) ? ".dot" : ".txt";
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-        return Path.of("GraphData_" + timeStamp + format);
+        String format = (isDotStringGraph) ? ".dot" : ".jsonl";
+        return Path.of("GraphData_" + FilenameUtils.removeExtension(inputFile.getName()) + format);
     }
 }
