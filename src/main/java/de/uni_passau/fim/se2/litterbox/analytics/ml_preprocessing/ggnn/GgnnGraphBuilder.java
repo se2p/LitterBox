@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -246,21 +247,25 @@ public class GgnnGraphBuilder<T extends ASTNode> {
     private static class ComputedFromVisitor extends EdgesVisitor {
         @Override
         public void visit(ChangeVariableBy node) {
-            addEdges(node.getIdentifier(), node.getExpr());
+            if (node.getIdentifier() instanceof Qualified) {
+                addEdges((Qualified) node.getIdentifier(), node.getExpr());
+            }
         }
 
         @Override
         public void visit(SetVariableTo node) {
-            addEdges(node.getIdentifier(), node.getExpr());
+            if (node.getIdentifier() instanceof Qualified) {
+                addEdges((Qualified) node.getIdentifier(), node.getExpr());
+            }
         }
 
-        private void addEdges(final Identifier assignTo, final ASTNode expr) {
+        private void addEdges(final Qualified assignTo, final ASTNode expr) {
             Map<String, List<Variable>> computedFrom = VariableUsesVisitor.getVariables(expr);
 
             computedFrom.values()
                     .stream()
                     .flatMap(List::stream)
-                    .forEach(variable -> edges.add(Pair.of(assignTo, variable.getName())));
+                    .forEach(variable -> edges.add(Pair.of(assignTo.getSecond(), variable)));
         }
     }
 

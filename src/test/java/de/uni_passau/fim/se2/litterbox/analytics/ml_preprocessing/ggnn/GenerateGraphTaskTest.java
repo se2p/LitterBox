@@ -77,6 +77,23 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(labelledEdges).containsExactly(expectedEdge, expectedEdge, expectedEdge);
     }
 
+    @Test
+    void testVariablesComputedFrom() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "computed_from.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph spriteGraph = graphs.get(0);
+        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
+        Set<Pair<Integer>> guardEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.COMPUTED_FROM);
+        // two different variables on the right side
+        assertThat(guardEdges).hasSize(2);
+
+        List<Pair<String>> labelledEdges = labelledEdges(guardEdges, nodeLabels);
+        Pair<String> expectedEdge = Pair.of("Variable", "Variable");
+        assertThat(labelledEdges).containsExactly(expectedEdge, expectedEdge);
+    }
+
     private List<GgnnProgramGraph> getGraphs(Path fixturePath, boolean includeStage, boolean wholeProgram) throws Exception {
         Program program = getAST(fixturePath.toString());
         GenerateGraphTask graphTask = new GenerateGraphTask(program, fixturePath, includeStage, wholeProgram, null);
