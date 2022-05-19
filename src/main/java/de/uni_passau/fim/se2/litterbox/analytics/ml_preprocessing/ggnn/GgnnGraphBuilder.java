@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
@@ -32,12 +33,12 @@ public class GgnnGraphBuilder<T extends ASTNode> {
     }
 
     public GgnnProgramGraph.ContextGraph build() {
-        final Set<Pair<ASTNode>> childEdges = getEdges(new ChildEdgesVisitor());
-        final Set<Pair<ASTNode>> nextTokenEdges = getEdges(new NextTokenVisitor());
-        final Set<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
-        final Set<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
+        final List<Pair<ASTNode>> childEdges = getEdges(new ChildEdgesVisitor());
+        final List<Pair<ASTNode>> nextTokenEdges = getEdges(new NextTokenVisitor());
+        final List<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
+        final List<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
 
-        final Set<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges);
+        final List<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges);
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
         final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = new EnumMap<>(GgnnProgramGraph.EdgeType.class);
@@ -53,12 +54,18 @@ public class GgnnGraphBuilder<T extends ASTNode> {
     }
 
     @SafeVarargs
-    private Set<ASTNode> getAllNodes(final Set<Pair<ASTNode>>... nodes) {
-        return Arrays.stream(nodes).flatMap(Set::stream).flatMap(Pair::stream).collect(Collectors.toSet());
+    private List<ASTNode> getAllNodes(final List<Pair<ASTNode>>... nodes) {
+        final List<ASTNode> allNodes = new ArrayList<>();
+        Arrays.stream(nodes).flatMap(List::stream).flatMap(Pair::stream).forEach(node -> {
+            if (allNodes.stream().noneMatch(n -> n == node)) {
+                allNodes.add(node);
+            }
+        });
+        return allNodes;
     }
 
-    private Map<ASTNode, Integer> getNodeIndices(final Set<ASTNode> nodes) {
-        final Map<ASTNode, Integer> nodeIndices = new HashMap<>(nodes.size());
+    private Map<ASTNode, Integer> getNodeIndices(final List<ASTNode> nodes) {
+        final Map<ASTNode, Integer> nodeIndices = new IdentityHashMap<>(nodes.size());
         int idx = 0;
         for (ASTNode node : nodes) {
             nodeIndices.put(node, idx++);
@@ -66,13 +73,13 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         return nodeIndices;
     }
 
-    private Set<Pair<ASTNode>> getEdges(EdgesVisitor v) {
+    private List<Pair<ASTNode>> getEdges(EdgesVisitor v) {
         v.visit(sprite);
         return v.getEdges();
     }
 
     private Set<Pair<Integer>> getIndexedEdges(final Map<ASTNode, Integer> nodeIndices,
-                                               final Set<Pair<ASTNode>> edges) {
+                                               final List<Pair<ASTNode>> edges) {
         return edges.stream().map(edge -> {
             Integer idxFrom = nodeIndices.get(edge.getFst());
             Integer idxTo = nodeIndices.get(edge.getSnd());
@@ -118,9 +125,9 @@ public class GgnnGraphBuilder<T extends ASTNode> {
      */
 
     private abstract static class EdgesVisitor implements ScratchVisitor {
-        protected final Set<Pair<ASTNode>> edges = new HashSet<>();
+        protected final List<Pair<ASTNode>> edges = new ArrayList<>();
 
-        Set<Pair<ASTNode>> getEdges() {
+        List<Pair<ASTNode>> getEdges() {
             return edges;
         }
 
@@ -210,8 +217,8 @@ public class GgnnGraphBuilder<T extends ASTNode> {
             final Map<String, List<Variable>> thenBlockVars = VariableUsesVisitor.getVariables(node.getThenStmts());
             final Map<String, List<Variable>> elseBlockVars = VariableUsesVisitor.getVariables(node.getElseStmts());
 
-            connectVars(guards, thenBlockVars);
-            connectVars(guards, elseBlockVars);
+            connectVars(node.getBoolExpr(), guards, thenBlockVars);
+            connectVars(node.getBoolExpr(), guards, elseBlockVars);
         }
 
         @Override
@@ -219,23 +226,18 @@ public class GgnnGraphBuilder<T extends ASTNode> {
             final Map<String, List<Variable>> guards = VariableUsesVisitor.getVariables(node.getBoolExpr());
             final Map<String, List<Variable>> thenStmtVars = VariableUsesVisitor.getVariables(node.getThenStmts());
 
-            connectVars(guards, thenStmtVars);
+            connectVars(node.getBoolExpr(), guards, thenStmtVars);
         }
 
-        private void connectVars(final Map<String, List<Variable>> guards, final Map<String, List<Variable>> inBlock) {
-            for (Map.Entry<String, List<Variable>> guard : guards.entrySet()) {
-                String variableName = guard.getKey();
-                if (inBlock.containsKey(variableName)) {
-                    List<Variable> edgeStarts = guard.getValue();
-                    List<Variable> edgeEnds = inBlock.get(variableName);
+        private void connectVars(final BoolExpr guardExpression, final Map<String, List<Variable>> guards,
+                                 final Map<String, List<Variable>> inBlock) {
+            for (Map.Entry<String, List<Variable>> usedVar : inBlock.entrySet()) {
+                if (!guards.containsKey(usedVar.getKey())) {
+                    continue;
+                }
 
-                    for (Variable start : edgeStarts) {
-                        for (Variable end : edgeEnds) {
-                            if (start != end) {
-                                edges.add(Pair.of(start, end));
-                            }
-                        }
-                    }
+                for (Variable v : usedVar.getValue()) {
+                    edges.add(Pair.of(v, guardExpression));
                 }
             }
         }

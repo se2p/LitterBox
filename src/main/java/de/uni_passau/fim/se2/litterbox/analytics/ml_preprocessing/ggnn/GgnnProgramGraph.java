@@ -68,6 +68,10 @@ class GgnnProgramGraph {
             return edges;
         }
 
+        public Set<Pair<Integer>> getEdges(EdgeType edgeType) {
+            return edges.get(edgeType);
+        }
+
         public Map<Integer, String> getNodeLabels() {
             return nodeLabels;
         }
