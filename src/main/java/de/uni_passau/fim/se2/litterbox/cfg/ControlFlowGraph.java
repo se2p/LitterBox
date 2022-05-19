@@ -29,11 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -162,21 +158,6 @@ public class ControlFlowGraph {
 
         builder.append('}');
         return builder.toString();
-    }
-
-    public Map<String, List<String>> getFlowEdges() {
-        Map<String, List<String>> flowEdges = new HashMap<>();
-        for (EndpointPair<CFGNode> edge : graph.edges()) {
-            String[] nodeUTexts = edge.nodeU().toString().split("\\.");
-            String nodeU = nodeUTexts[nodeUTexts.length - 1].split("\\@")[0];
-            String[] nodeVTexts = edge.nodeV().toString().split("\\.");
-            String nodeV = nodeVTexts[nodeVTexts.length - 1].split("\\@")[0];
-
-            if (!"entry".equalsIgnoreCase(nodeU) && !"exit".equalsIgnoreCase(nodeV)) {
-                flowEdges.computeIfAbsent(nodeU, k -> new ArrayList<>()).add(nodeV);
-            }
-        }
-        return flowEdges;
     }
 
     public Set<Definition> getDefinitions() {
