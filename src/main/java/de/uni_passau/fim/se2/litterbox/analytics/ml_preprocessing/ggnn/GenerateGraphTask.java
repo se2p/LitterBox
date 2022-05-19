@@ -71,7 +71,7 @@ public class GenerateGraphTask {
             String label = Objects.requireNonNullElseGet(labelName,
                     () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
 
-            graphs = List.of(buildNodeGraph(program, label));
+            graphs = List.of(buildNodeGraph(program, program, label));
         } else {
             graphs = buildGraphs(program, labelName);
         }
@@ -86,13 +86,13 @@ public class GenerateGraphTask {
                 .map(actor -> {
                     String actorLabel = Objects.requireNonNullElseGet(labelName,
                             () -> StringUtil.replaceSpecialCharacters(actor.getIdent().getName()));
-                    return buildNodeGraph(actor, actorLabel);
+                    return buildNodeGraph(program, actor, actorLabel);
                 })
                 .collect(Collectors.toList());
     }
 
-    private GgnnProgramGraph buildNodeGraph(final ASTNode node, String label) {
-        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder<>(node).build();
+    private GgnnProgramGraph buildNodeGraph(final Program program, final ASTNode node, String label) {
+        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder<>(program, node).build();
         return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }
 }

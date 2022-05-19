@@ -31,7 +31,8 @@ public class GgnnProgramGraphDotGraphBuilder {
     public static String asDotGraph(final List<GgnnProgramGraph> graphs, final String label) {
         final StringBuilder sb = new StringBuilder();
         int graphId = 1;
-        sb.append("digraph ").append(label).append(" {\n");
+        sb.append("digraph \"").append(label).append("\" {\n");
+        sb.append("fontname=\"serif\";\n");
         sb.append("label=\"").append(label).append("\";\n");
         for (GgnnProgramGraph graph : graphs) {
             sb.append(GgnnProgramGraphDotGraphBuilder.asDotGraph(graph, graphId, true));
@@ -51,12 +52,14 @@ public class GgnnProgramGraphDotGraphBuilder {
         StringBuilder sb = new StringBuilder();
 
         if (isSubgraph) {
-            sb.append("subgraph cluster_");
+            sb.append("subgraph \"cluster_");
         } else {
-            sb.append("digraph ");
+            sb.append("digraph \"");
         }
-        sb.append(label).append(" {\n");
+        sb.append(label).append("\" {\n");
         sb.append("label=\"").append(label).append("\";\n");
+        sb.append("fontname=\"serif\";\n");
+        sb.append("node[fontname=\"serif\"];\n");
 
         for (Map.Entry<Integer, String> node : graph.getNodeLabels().entrySet()) {
             appendNode(sb, graphId, node.getKey());
@@ -96,6 +99,8 @@ public class GgnnProgramGraphDotGraphBuilder {
                 return "[color=orange]";
             case GUARDED_BY:
                 return "[color=maroon]";
+            case PARAMETER_PASSING:
+                return "[color=forestgreen]";
             default:
                 return "[color=red]";
         }

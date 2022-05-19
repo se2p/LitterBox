@@ -101,6 +101,10 @@ class GgnnProgramGraph {
         /**
          * Links variables occurring in an if-condition to their uses in the then- and else-blocks.
          */
-        GUARDED_BY;
+        GUARDED_BY,
+        /**
+         * Links arguments passed into custom blocks to the parameter definition.
+         */
+        PARAMETER_PASSING,
     }
 }

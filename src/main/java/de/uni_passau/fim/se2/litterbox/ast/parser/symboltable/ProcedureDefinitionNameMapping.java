@@ -21,11 +21,13 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProcedureDefinitionNameMapping {
 
@@ -88,9 +90,18 @@ public class ProcedureDefinitionNameMapping {
                 .findFirst().get();
     }
 
-    public ProcedureInfo getProcedureForName(String actorName, String jsonHash) {
+    public ProcedureInfo getProcedureForName(String actorName, String name) {
         Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
-        return procedureMap.values().stream().filter(p -> p.getName().equals(jsonHash)).findFirst().get();
+        return procedureMap.values().stream().filter(p -> p.getName().equals(name)).findFirst().get();
+    }
+
+    public List<Pair<LocalIdentifier, ProcedureInfo>> getProceduresForName(String actorName, String name) {
+        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
+        return procedureMap.entrySet()
+                .stream()
+                .filter(e -> e.getValue().getName().equals(name))
+                .map(Pair::of)
+                .collect(Collectors.toList());
     }
 
     public void addMalformated(String malformated) {

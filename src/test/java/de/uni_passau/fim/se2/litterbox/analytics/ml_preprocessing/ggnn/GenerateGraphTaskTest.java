@@ -34,21 +34,20 @@ import java.util.stream.Collectors;
 import static com.google.common.truth.Truth.assertThat;
 
 class GenerateGraphTaskTest implements JsonTest {
-     @ParameterizedTest
-     @ValueSource(booleans = {true, false})
-     void testGraphEmptyProgram(boolean wholeProgram) throws Exception {
-         List<GgnnProgramGraph> graphs = getGraphs(Path.of("src", "test", "fixtures", "emptyProject.json"), false, wholeProgram);
-         assertThat(graphs).hasSize(1);
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testGraphEmptyProgram(boolean wholeProgram) throws Exception {
+        List<GgnnProgramGraph> graphs = getGraphs(Path.of("src", "test", "fixtures", "emptyProject.json"), false, wholeProgram);
+        assertThat(graphs).hasSize(1);
 
-         int expectedNodeCount;
-         if (wholeProgram) {
-             expectedNodeCount = 20;
-         } else {
-             expectedNodeCount = 8;
-         }
-         assertThat(graphs.get(0).getContextGraph().getNodeLabels()).hasSize(expectedNodeCount);
-     }
-
+        int expectedNodeCount;
+        if (wholeProgram) {
+            expectedNodeCount = 20;
+        } else {
+            expectedNodeCount = 8;
+        }
+        assertThat(graphs.get(0).getContextGraph().getNodeLabels()).hasSize(expectedNodeCount);
+    }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
@@ -112,6 +111,27 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(labelledEdges).containsExactly(expectedEdge, expectedEdge);
     }
 
+    @Test
+    void testParameterPassing() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "parameter_passing.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph spriteGraph = graphs.get(0);
+        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
+        Set<Pair<Integer>> paramEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.PARAMETER_PASSING);
+        assertThat(paramEdges).hasSize(2);
+
+        List<Pair<String>> labelledEdges = labelledEdges(paramEdges, nodeLabels);
+        Pair<String> expectedEdge1 = Pair.of("some|text|input", "ParameterDefinition");
+        Pair<String> expectedEdge2 = Pair.of("BiggerThan", "ParameterDefinition");
+        assertThat(labelledEdges).containsExactly(expectedEdge1, expectedEdge2);
+
+        // two different parameter definitions as targets
+        Set<Integer> edgeTargets = paramEdges.stream().map(Pair::getSnd).collect(Collectors.toSet());
+        assertThat(edgeTargets).hasSize(2);
+    }
+
     private List<GgnnProgramGraph> getGraphs(Path fixturePath, boolean includeStage, boolean wholeProgram) throws Exception {
         Program program = getAST(fixturePath.toString());
         GenerateGraphTask graphTask = new GenerateGraphTask(program, fixturePath, includeStage, wholeProgram, null);
@@ -119,10 +139,10 @@ class GenerateGraphTaskTest implements JsonTest {
     }
 
     private List<Pair<String>> labelledEdges(final Set<Pair<Integer>> edges, final Map<Integer, String> labels) {
-         return edges.stream().map(e -> labelledEdge(labels, e)).collect(Collectors.toList());
+        return edges.stream().map(e -> labelledEdge(labels, e)).collect(Collectors.toList());
     }
 
     private Pair<String> labelledEdge(final Map<Integer, String> labels, final Pair<Integer> edge) {
-         return Pair.of(labels.get(edge.getFst()), labels.get(edge.getSnd()));
+        return Pair.of(labels.get(edge.getFst()), labels.get(edge.getSnd()));
     }
 }

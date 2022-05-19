@@ -21,16 +21,22 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
@@ -39,10 +45,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GgnnGraphBuilder<T extends ASTNode> {
+    private final Program program;
     private final T sprite;
     // private final ControlFlowGraph cfg;
 
-    public GgnnGraphBuilder(final T astRoot) {
+    public GgnnGraphBuilder(final Program program, final T astRoot) {
+        this.program = program;
         this.sprite = astRoot;
 
         // ControlFlowGraphVisitor cfgVisitor = new ControlFlowGraphVisitor();
@@ -55,8 +63,10 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         final List<Pair<ASTNode>> nextTokenEdges = getEdges(new NextTokenVisitor());
         final List<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
         final List<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
+        final List<Pair<ASTNode>> parameterPassingEdges = getEdges(new ParameterPassingVisitor(program));
 
-        final List<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges);
+        final List<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
+                parameterPassingEdges);
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
         final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = new EnumMap<>(GgnnProgramGraph.EdgeType.class);
@@ -65,6 +75,7 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         edges.put(GgnnProgramGraph.EdgeType.GUARDED_BY, getIndexedEdges(nodeIndices, guardedByEdges));
         edges.put(GgnnProgramGraph.EdgeType.COMPUTED_FROM, getIndexedEdges(nodeIndices, computedFromEdges));
         edges.put(GgnnProgramGraph.EdgeType.VARIABLE_USE, Collections.emptySet());
+        edges.put(GgnnProgramGraph.EdgeType.PARAMETER_PASSING, getIndexedEdges(nodeIndices, parameterPassingEdges));
 
         final Map<Integer, String> nodeLabels = getNodeLabels(nodeIndices, getUsedLabels(edges));
 
@@ -306,6 +317,55 @@ public class GgnnGraphBuilder<T extends ASTNode> {
             VariableUsesVisitor v = new VariableUsesVisitor();
             node.accept(v);
             return v.variables;
+        }
+    }
+
+    private static class ParameterPassingVisitor extends EdgesVisitor {
+        private final ProcedureDefinitionNameMapping procedureMapping;
+        private final Map<LocalIdentifier, ProcedureDefinition> procedures = new IdentityHashMap<>();
+
+        ParameterPassingVisitor(final Program program) {
+            this.procedureMapping = program.getProcedureMapping();
+        }
+
+        @Override
+        public void visit(ProcedureDefinitionList node) {
+            for (ProcedureDefinition procedureDefinition : node.getList()) {
+                procedures.put(procedureDefinition.getIdent(), procedureDefinition);
+            }
+            super.visit(node);
+        }
+
+        @Override
+        public void visit(CallStmt node) {
+            List<Expression> passedArguments = node.getExpressions().getExpressions();
+            String sprite = getCurrentSprite(node);
+            String procedureName = node.getIdent().getName();
+
+            procedureMapping.getProceduresForName(sprite, procedureName)
+                    .stream()
+                    .filter(p -> {
+                        int acceptingArgumentCount = p.getValue().getArguments().length;
+                        return passedArguments.size() == acceptingArgumentCount;
+                    })
+                    .map(org.apache.commons.lang3.tuple.Pair::getKey)
+                    .map(procedures::get)
+                    .map(procedure -> procedure.getParameterDefinitionList().getParameterDefinitions())
+                    .findFirst()
+                    .ifPresent(parameters -> {
+                        for (int i = 0; i < passedArguments.size(); ++i) {
+                            edges.add(Pair.of(passedArguments.get(i), parameters.get(i)));
+                        }
+                    });
+        }
+
+        private String getCurrentSprite(final ASTNode node) {
+            ASTNode actorDefinition = node;
+            while (!(actorDefinition instanceof ActorDefinition)) {
+                actorDefinition = actorDefinition.getParentNode();
+            }
+
+            return ((ActorDefinition) actorDefinition).getIdent().getName();
         }
     }
 }

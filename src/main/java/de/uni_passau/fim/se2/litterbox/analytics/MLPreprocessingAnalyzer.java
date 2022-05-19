@@ -83,11 +83,10 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         Path outputFile = outputPath.getPath().resolve(outName);
 
         try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-            log.info("Starting to print processing result of " + inputFile + " to file " + outputPath);
             bw.write(result);
             bw.flush();
-            log.info("Finished printing.");
         }
+        log.info("Wrote processing result of " + inputFile + " to file " + outputPath);
     }
 
     @Override
