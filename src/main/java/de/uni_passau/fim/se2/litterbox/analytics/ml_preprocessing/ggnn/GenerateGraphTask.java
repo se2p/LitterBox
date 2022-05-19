@@ -47,8 +47,7 @@ public class GenerateGraphTask {
         this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
 
-    String generateDotGraphData(final List<GgnnProgramGraph> graphs) {
-        String label = FilenameUtils.removeExtension(inputPath.getFileName().toString());
+    String generateDotGraphData(final List<GgnnProgramGraph> graphs, final String label) {
         return GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs, label);
     }
 

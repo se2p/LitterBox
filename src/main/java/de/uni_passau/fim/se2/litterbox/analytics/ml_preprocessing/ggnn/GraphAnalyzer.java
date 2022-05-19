@@ -55,7 +55,8 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
                 labelName);
         List<GgnnProgramGraph> graphs = generateGraphTask.getProgramGraphs();
         if (isDotStringGraph) {
-            return Optional.of(generateGraphTask.generateDotGraphData(graphs));
+            String label = FilenameUtils.removeExtension(inputFile.getName());
+            return Optional.of(generateGraphTask.generateDotGraphData(graphs, label));
         } else {
             return Optional.of(generateGraphTask.generateJsonGraphData(graphs));
         }

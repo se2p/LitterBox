@@ -13,7 +13,8 @@ public class GgnnProgramGraphDotGraphBuilder {
     public static String asDotGraph(final List<GgnnProgramGraph> graphs, final String label) {
         final StringBuilder sb = new StringBuilder();
         int graphId = 1;
-        sb.append("digraph ").append(label).append("{\n");
+        sb.append("digraph ").append(label).append(" {\n");
+        sb.append("label=\"").append(label).append("\";\n");
         for (GgnnProgramGraph graph : graphs) {
             sb.append(GgnnProgramGraphDotGraphBuilder.asDotGraph(graph, graphId, true));
             graphId += 1;
@@ -32,11 +33,12 @@ public class GgnnProgramGraphDotGraphBuilder {
         StringBuilder sb = new StringBuilder();
 
         if (isSubgraph) {
-            sb.append("subgraph ");
+            sb.append("subgraph cluster_");
         } else {
             sb.append("digraph ");
         }
         sb.append(label).append(" {\n");
+        sb.append("label=\"").append(label).append("\";\n");
 
         for (Map.Entry<Integer, String> node : graph.getNodeLabels().entrySet()) {
             appendNode(sb, graphId, node.getKey());
