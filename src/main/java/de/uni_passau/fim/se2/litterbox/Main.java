@@ -89,8 +89,7 @@ public final class Main {
     private static final String GRAPH = "graphdata";
     private static final String GRAPH_SHORT = "graph";
     private static final String LABEL_NAME = "labelname";
-    private static final String AS_DOT_STRING_GRAPH = "savedotstringgraph";
-    private static final String AS_DOT_STRING_GRAPH_SHORT = "sadotgraph";
+    private static final String AS_DOT_GRAPH = "dotgraph";
 
     private Main() {
     }
@@ -154,7 +153,7 @@ public final class Main {
         options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
         options.addOption(INCLUDE_STAGE_SHORT, INCLUDE_STAGE, false, "generate paths for the stage sprite");
         options.addOption(WHOLE_PROGRAM_SHORT, WHOLE_PROGRAM, false, "generate paths between terminals across the whole program instead of per sprite");
-        options.addOption(AS_DOT_STRING_GRAPH_SHORT, AS_DOT_STRING_GRAPH, false, "generate a dotgraph representation of the graph");
+        options.addOption(AS_DOT_GRAPH, false, "generate a dotgraph representation of the graph");
 
         return options;
     }
@@ -311,7 +310,7 @@ public final class Main {
 
         boolean isStageIncluded = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
         boolean isWholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
-        boolean isDotStringGraph = cmd.hasOption(AS_DOT_STRING_GRAPH) || cmd.hasOption(AS_DOT_STRING_GRAPH_SHORT);
+        boolean isDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
         boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
 
         MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
