@@ -34,16 +34,16 @@ import java.util.stream.Stream;
 public class GenerateGraphTask {
     private final Path inputPath;
     private final Program program;
-    private final boolean isStageIncluded;
-    private final boolean isWholeProgram;
+    private final boolean includeStage;
+    private final boolean wholeProgramAsSingleGraph;
     private final String labelName;
 
-    public GenerateGraphTask(Program program, Path inputPath, boolean isStageIncluded, boolean isWholeProgram,
+    public GenerateGraphTask(Program program, Path inputPath, boolean includeStage, boolean wholeProgramAsSingleGraph,
                              String labelName) {
         this.inputPath = inputPath;
         this.program = program;
-        this.isStageIncluded = isStageIncluded;
-        this.isWholeProgram = isWholeProgram;
+        this.includeStage = includeStage;
+        this.wholeProgramAsSingleGraph = wholeProgramAsSingleGraph;
         this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
 
@@ -67,7 +67,7 @@ public class GenerateGraphTask {
     List<GgnnProgramGraph> getProgramGraphs() {
         List<GgnnProgramGraph> graphs;
 
-        if (isWholeProgram) {
+        if (wholeProgramAsSingleGraph) {
             String label = Objects.requireNonNullElseGet(labelName,
                     () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
 
@@ -82,7 +82,7 @@ public class GenerateGraphTask {
     private List<GgnnProgramGraph> buildGraphs(final Program program, String labelName) {
         return program.getActorDefinitionList().getDefinitions()
                 .stream()
-                .filter(actor -> !actor.isStage() || isStageIncluded)
+                .filter(actor -> !actor.isStage() || includeStage)
                 .map(actor -> {
                     String actorLabel = Objects.requireNonNullElseGet(labelName,
                             () -> StringUtil.replaceSpecialCharacters(actor.getIdent().getName()));
@@ -92,7 +92,7 @@ public class GenerateGraphTask {
     }
 
     private GgnnProgramGraph buildNodeGraph(final Program program, final ASTNode node, String label) {
-        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder<>(program, node).build();
+        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, node).build();
         return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }
 }

@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -75,21 +76,25 @@ public final class Main {
     private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
     private static final String IGNORE_LOOSE_BLOCKS_SHORT = "g";
 
+    // code2vec options
     private static final String CODE2VEC = "code2vec";
     private static final String CODE2VEC_SHORT = "c2v";
     private static final String NOHASH = "nohash";
     private static final String NOHASH_SHORT = "nh";
     private static final String MAXPATHLENGTH = "maxpathlength";
     private static final String MAXPATHLENGTH_SHORT = "plength";
+
+    // GGNN options
+    private static final String GRAPH = "gatedgraphnn";
+    private static final String GRAPH_SHORT = "ggnn";
+    private static final String LABEL_NAME = "labelname";
+    private static final String AS_DOT_GRAPH = "dotgraph";
+
+    // shared machine learning preprocessor options
     private static final String INCLUDE_STAGE = "includestage";
     private static final String INCLUDE_STAGE_SHORT = "incstage";
     private static final String WHOLE_PROGRAM = "wholeprogram";
     private static final String WHOLE_PROGRAM_SHORT = "whpro";
-
-    private static final String GRAPH = "graphdata";
-    private static final String GRAPH_SHORT = "graph";
-    private static final String LABEL_NAME = "labelname";
-    private static final String AS_DOT_GRAPH = "dotgraph";
 
     private Main() {
     }
@@ -102,12 +107,10 @@ public final class Main {
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
-        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for code2vec"));
-        mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
-        mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
-        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for code2vec"));
-        mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generates text output for specified Scratch projects as input for the Gated Graph Neural Network"));
+        mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extract features for Scratch projects"));
         mainMode.addOption(new Option(DETECTORS_LIST_SHORT, DETECTORS_LIST, false, "Print a list of all detectors implemented in LitterBox"));
+        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generate text output for specified Scratch projects as input for code2vec"));
+        mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generate text output for specified Scratch projects as input for the Gated Graph Neural Network"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "Print this message"));
 
         Options options = new Options();
@@ -134,7 +137,9 @@ public final class Main {
                         + " is a folder path)\nusage with --leila: "
                         + "Path to file or folder for the resulting .sc file(s); "
                         + "has to be a folder if multiple projects are analysed "
-                        + "(file will be created if not existing yet, path has to exist)");
+                        + "(file will be created if not existing yet, path has to exist)"
+                        + "\nusage with machine learning preprocessors (e.g., --code2vec): "
+                        + "Path to a folder.");
         options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should"
                 + " be created");
         options.addOption(REFACTORED_PROJECTS_SHORT, REFACTORED_PROJECTS, true, "path where the refactored scratch projects should be created");
@@ -153,7 +158,8 @@ public final class Main {
         options.addOption(NOHASH_SHORT, NOHASH, false, "paths will not be converted to hashes");
         options.addOption(INCLUDE_STAGE_SHORT, INCLUDE_STAGE, false, "generate paths for the stage sprite");
         options.addOption(WHOLE_PROGRAM_SHORT, WHOLE_PROGRAM, false, "generate paths between terminals across the whole program instead of per sprite");
-        options.addOption(AS_DOT_GRAPH, false, "generate a dotgraph representation of the graph");
+        options.addOption(AS_DOT_GRAPH, false, "generate a dotgraph representation of the GGNN graph");
+        options.addOption(LABEL_NAME, false, "use a specific label name for the GGNN graph instead of the file name");
 
         return options;
     }
@@ -294,9 +300,9 @@ public final class Main {
             }
         }
 
+        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
         boolean includeStage = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
         boolean wholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
-        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
 
         String input = cmd.getOptionValue(PROJECTPATH);
         Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, deleteAfterwards, includeStage, wholeProgram, maxPathLength);
@@ -308,23 +314,27 @@ public final class Main {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
-        boolean isStageIncluded = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
-        boolean isWholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
-        boolean isDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
         boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
+        boolean includeStage = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
+        boolean wholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
+        boolean outputDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
 
         MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
         String input = cmd.getOptionValue(PROJECTPATH);
         String labelName = cmd.getOptionValue(LABEL_NAME);
 
-        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, deleteAfterwards, isStageIncluded, isWholeProgram, isDotStringGraph, labelName);
+        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, deleteAfterwards, includeStage, wholeProgram, outputDotStringGraph, labelName);
         runAnalysis(cmd, analyzer);
     }
 
-    private static MLOutputPath getMachineLearningPreprocessorOutputPath(CommandLine cmd) {
+    private static MLOutputPath getMachineLearningPreprocessorOutputPath(CommandLine cmd) throws ParseException {
         if (cmd.hasOption(OUTPUT)) {
-            String outputPath = cmd.getOptionValue(OUTPUT);
-            return MLOutputPath.directory(Path.of(outputPath));
+            Path outputPath = Path.of(cmd.getOptionValue(OUTPUT));
+            File output = outputPath.toFile();
+            if (output.exists() && !output.isDirectory()) {
+                throw new ParseException("The output path for a machine learning preprocessor must be a directory.");
+            }
+            return MLOutputPath.directory(outputPath);
         } else {
             return MLOutputPath.console();
         }

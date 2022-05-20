@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -38,24 +38,28 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
+import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class GgnnGraphBuilder<T extends ASTNode> {
+public class GgnnGraphBuilder {
     private final Program program;
-    private final T sprite;
-    // private final ControlFlowGraph cfg;
+    private final ASTNode astRoot;
 
-    public GgnnGraphBuilder(final Program program, final T astRoot) {
+    public GgnnGraphBuilder(final Program program, final ASTNode astRoot) {
+        Preconditions.checkAllArgsNotNull(List.of(program, astRoot));
+        Preconditions.checkArgument(astRoot instanceof Program || astRoot instanceof ActorDefinition,
+                "Ggnn graphs can only be built either for entire programs or for actors.");
+
         this.program = program;
-        this.sprite = astRoot;
-
-        // ControlFlowGraphVisitor cfgVisitor = new ControlFlowGraphVisitor();
-        // astRoot.accept(cfgVisitor);
-        // this.cfg = cfgVisitor.getControlFlowGraph();
+        this.astRoot = astRoot;
     }
 
     public GgnnProgramGraph.ContextGraph build() {
@@ -64,9 +68,10 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         final List<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
         final List<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
         final List<Pair<ASTNode>> parameterPassingEdges = getEdges(new ParameterPassingVisitor(program));
+        final List<Pair<ASTNode>> variableDataDependencies = getVariableDataDependencies();
 
-        final List<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
-                parameterPassingEdges);
+        final Set<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
+                parameterPassingEdges, variableDataDependencies);
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
         final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = new EnumMap<>(GgnnProgramGraph.EdgeType.class);
@@ -74,26 +79,27 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         edges.put(GgnnProgramGraph.EdgeType.NEXT_TOKEN, getIndexedEdges(nodeIndices, nextTokenEdges));
         edges.put(GgnnProgramGraph.EdgeType.GUARDED_BY, getIndexedEdges(nodeIndices, guardedByEdges));
         edges.put(GgnnProgramGraph.EdgeType.COMPUTED_FROM, getIndexedEdges(nodeIndices, computedFromEdges));
-        edges.put(GgnnProgramGraph.EdgeType.VARIABLE_USE, Collections.emptySet());
+        edges.put(GgnnProgramGraph.EdgeType.VARIABLE_USE, getIndexedEdges(nodeIndices, variableDataDependencies));
         edges.put(GgnnProgramGraph.EdgeType.PARAMETER_PASSING, getIndexedEdges(nodeIndices, parameterPassingEdges));
 
-        final Map<Integer, String> nodeLabels = getNodeLabels(nodeIndices, getUsedLabels(edges));
+        Set<Integer> usedNodes = getUsedNodes(edges);
+        final Map<Integer, String> nodeLabels = getNodeLabels(nodeIndices, usedNodes);
+        final Map<Integer, String> nodeTypes = getNodeTypes(nodeIndices, usedNodes);
 
-        return new GgnnProgramGraph.ContextGraph(edges, nodeLabels, Map.of());
+        return new GgnnProgramGraph.ContextGraph(edges, nodeLabels, nodeTypes);
     }
 
     @SafeVarargs
-    private List<ASTNode> getAllNodes(final List<Pair<ASTNode>>... nodes) {
-        final List<ASTNode> allNodes = new ArrayList<>();
-        Arrays.stream(nodes).flatMap(List::stream).flatMap(Pair::stream).forEach(node -> {
-            if (allNodes.stream().noneMatch(n -> n == node)) {
-                allNodes.add(node);
-            }
-        });
-        return allNodes;
+    private Set<ASTNode> getAllNodes(final List<Pair<ASTNode>>... nodes) {
+        // identity hash set instead of regular set, as variable nodes with the same name have the same hash code
+        final Supplier<Set<ASTNode>> allNodesSet = () -> Collections.newSetFromMap(new IdentityHashMap<>());
+        return Arrays.stream(nodes)
+                .flatMap(List::stream)
+                .flatMap(Pair::stream)
+                .collect(Collectors.toCollection(allNodesSet));
     }
 
-    private Map<ASTNode, Integer> getNodeIndices(final List<ASTNode> nodes) {
+    private Map<ASTNode, Integer> getNodeIndices(final Collection<ASTNode> nodes) {
         final Map<ASTNode, Integer> nodeIndices = new IdentityHashMap<>(nodes.size());
         int idx = 0;
         for (ASTNode node : nodes) {
@@ -103,7 +109,7 @@ public class GgnnGraphBuilder<T extends ASTNode> {
     }
 
     private List<Pair<ASTNode>> getEdges(EdgesVisitor v) {
-        v.visit(sprite);
+        v.visit(astRoot);
         return v.getEdges();
     }
 
@@ -116,7 +122,7 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         }).collect(Collectors.toSet());
     }
 
-    private Set<Integer> getUsedLabels(final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges) {
+    private Set<Integer> getUsedNodes(final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges) {
         return edges.values()
                 .stream()
                 .flatMap(Set::stream)
@@ -126,14 +132,23 @@ public class GgnnGraphBuilder<T extends ASTNode> {
 
     private Map<Integer, String> getNodeLabels(final Map<ASTNode, Integer> nodeIndices,
                                                final Set<Integer> usedIndices) {
+        return getNodeInformation(nodeIndices, usedIndices, StringUtil::getToken);
+    }
+
+    private Map<Integer, String> getNodeTypes(final Map<ASTNode, Integer> nodeIndices, final Set<Integer> usedIndices) {
+        return getNodeInformation(nodeIndices, usedIndices, node -> node.getClass().getSimpleName());
+    }
+
+    private Map<Integer, String> getNodeInformation(final Map<ASTNode, Integer> nodeMap, final Set<Integer> usedIndices,
+                                                    final Function<ASTNode, String> infoExtractor) {
         final Map<Integer, String> nodeLabels = new HashMap<>();
 
-        for (Map.Entry<ASTNode, Integer> entry : nodeIndices.entrySet()) {
+        for (Map.Entry<ASTNode, Integer> entry : nodeMap.entrySet()) {
             ASTNode node = entry.getKey();
             Integer idx = entry.getValue();
 
             if (usedIndices.contains(idx)) {
-                String label = StringUtil.replaceSpecialCharacters(StringUtil.getToken(node));
+                String label = infoExtractor.apply(node);
                 nodeLabels.put(idx, label);
             }
         }
@@ -141,17 +156,45 @@ public class GgnnGraphBuilder<T extends ASTNode> {
         return nodeLabels;
     }
 
-    /*
-    private Set<Pair<ASTNode>> getDefUseEdges() {
-        final Set<Pair<ASTNode>> edges = new HashSet<>();
-
-        for (EndpointPair<CFGNode> edge : new DataDependenceGraph(cfg).getEdges()) {
-            edges.add(Pair.of(edge.source().getASTNode(), edge.target().getASTNode()));
+    private List<Pair<ASTNode>> getVariableDataDependencies() {
+        if (astRoot instanceof Program) {
+            return ((Program) astRoot).getActorDefinitionList().getDefinitions()
+                    .stream()
+                    .flatMap(this::getVariableDataDependencies)
+                    .collect(Collectors.toList());
+        } else if (astRoot instanceof ActorDefinition) {
+            return getVariableDataDependencies((ActorDefinition) astRoot).collect(Collectors.toList());
+        } else {
+            throw new UnsupportedOperationException();
         }
-
-        return edges;
     }
-     */
+
+    private Stream<Pair<ASTNode>> getVariableDataDependencies(final ActorDefinition actor) {
+        ControlFlowGraphVisitor v = new ControlFlowGraphVisitor(program, actor);
+        actor.accept(v);
+        ControlFlowGraph cfg = v.getControlFlowGraph();
+
+        DataDependenceGraph ddg = new DataDependenceGraph(cfg);
+        return ddg.getEdges().stream()
+                .filter(edge -> hasVariableDataDependency(edge.source(), edge.target()))
+                .map(edge -> Pair.of(edge.source().getASTNode(), edge.target().getASTNode()));
+    }
+
+    private boolean hasVariableDataDependency(final CFGNode source, final CFGNode target) {
+        Set<Identifier> sourceIdentifiers = variableIdentifiers(source);
+        Set<Identifier> targetIdentifiers = variableIdentifiers(target);
+        return sourceIdentifiers.stream().anyMatch(targetIdentifiers::contains);
+    }
+
+    private Set<Identifier> variableIdentifiers(final CFGNode node) {
+        Stream<Defineable> definitions = node.getDefinitions().stream().map(Definition::getDefinable);
+        Stream<Defineable> uses = node.getUses().stream().map(Use::getDefinable);
+
+        return Stream.concat(definitions, uses)
+                .filter(de.uni_passau.fim.se2.litterbox.cfg.Variable.class::isInstance)
+                .map(v -> ((de.uni_passau.fim.se2.litterbox.cfg.Variable) v).getIdentifier())
+                .collect(Collectors.toSet());
+    }
 
     private abstract static class EdgesVisitor implements ScratchVisitor {
         protected final List<Pair<ASTNode>> edges = new ArrayList<>();
@@ -181,31 +224,6 @@ public class GgnnGraphBuilder<T extends ASTNode> {
 
         @Override
         public void visit(Metadata node) {
-            // intentionally empty
-        }
-
-        @Override
-        public void visit(CommentMetadataList node) {
-            // intentionally empty
-        }
-
-        @Override
-        public void visit(ImageMetadataList node) {
-            // intentionally empty
-        }
-
-        @Override
-        public void visit(MonitorMetadataList node) {
-            // intentionally empty
-        }
-
-        @Override
-        public void visit(MonitorParamMetadataList node) {
-            // intentionally empty
-        }
-
-        @Override
-        public void visit(SoundMetadataList node) {
             // intentionally empty
         }
 

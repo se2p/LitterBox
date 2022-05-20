@@ -45,7 +45,7 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
      */
     protected MLPreprocessingAnalyzer(String input, MLOutputPath outputPath, boolean deleteAfterwards,
                                       boolean includeStage, boolean wholeProgram) {
-        super(input, outputPath.pathAsString(), deleteAfterwards);
+        super(input, outputPath.toString(), deleteAfterwards);
 
         this.outputPath = outputPath;
         this.includeStage = includeStage;
@@ -86,7 +86,7 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
             bw.write(result);
             bw.flush();
         }
-        log.info("Wrote processing result of " + inputFile + " to file " + outputPath);
+        log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
     }
 
     @Override

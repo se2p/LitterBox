@@ -63,6 +63,27 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphJsonl.lines().collect(Collectors.toList())).hasSize(1);
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testGraphIncludeStage(boolean includeStage) throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        Program program = getAST(inputPath.toString());
+        GenerateGraphTask graphTask = new GenerateGraphTask(program, inputPath, includeStage, false, null);
+
+        int expectedSprites;
+        if (includeStage) {
+            expectedSprites = 3;
+        } else {
+            expectedSprites = 2;
+        }
+
+        List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
+        assertThat(graphs).hasSize(expectedSprites);
+
+        String graphJsonl = graphTask.generateJsonGraphData(graphs);
+        assertThat(graphJsonl.lines().collect(Collectors.toList())).hasSize(expectedSprites);
+    }
+
     @Test
     void testVariableGuardedBy() throws Exception {
         Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by.json");
@@ -70,11 +91,9 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphs).hasSize(1);
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
-        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
-        Set<Pair<Integer>> guardEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.GUARDED_BY);
-        assertThat(guardEdges).hasSize(1);
 
-        assertThat(labelledEdges(guardEdges, nodeLabels)).contains(Pair.of("Variable", "BiggerThan"));
+        Pair<String> edge = Pair.of("Variable", "BiggerThan");
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, List.of(edge));
     }
 
     @Test
@@ -84,14 +103,11 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphs).hasSize(1);
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
-        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
-        Set<Pair<Integer>> guardEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.GUARDED_BY);
-        // three different variables are connected to the expression
-        assertThat(guardEdges).hasSize(3);
 
-        List<Pair<String>> labelledEdges = labelledEdges(guardEdges, nodeLabels);
-        Pair<String> expectedEdge = Pair.of("Variable", "BiggerThan");
-        assertThat(labelledEdges).containsExactly(expectedEdge, expectedEdge, expectedEdge);
+        // three different variables are connected to the expression
+        Pair<String> edge = Pair.of("Variable", "BiggerThan");
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, List.of(edge, edge, edge));
+        assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 3);
     }
 
     @Test
@@ -101,14 +117,11 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphs).hasSize(1);
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
-        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
-        Set<Pair<Integer>> guardEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.COMPUTED_FROM);
-        // two different variables on the right side
-        assertThat(guardEdges).hasSize(2);
 
-        List<Pair<String>> labelledEdges = labelledEdges(guardEdges, nodeLabels);
-        Pair<String> expectedEdge = Pair.of("Variable", "Variable");
-        assertThat(labelledEdges).containsExactly(expectedEdge, expectedEdge);
+        // two different variables on the right side
+        Pair<String> edge = Pair.of("Variable", "Variable");
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, List.of(edge, edge));
+        assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, 2);
     }
 
     @Test
@@ -118,18 +131,54 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphs).hasSize(1);
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
-        Map<Integer, String> nodeLabels = spriteGraph.getContextGraph().getNodeLabels();
-        Set<Pair<Integer>> paramEdges = spriteGraph.getContextGraph().getEdges(GgnnProgramGraph.EdgeType.PARAMETER_PASSING);
-        assertThat(paramEdges).hasSize(2);
 
-        List<Pair<String>> labelledEdges = labelledEdges(paramEdges, nodeLabels);
-        Pair<String> expectedEdge1 = Pair.of("some|text|input", "ParameterDefinition");
+        Pair<String> expectedEdge1 = Pair.of("some_text_input", "ParameterDefinition");
         Pair<String> expectedEdge2 = Pair.of("BiggerThan", "ParameterDefinition");
-        assertThat(labelledEdges).containsExactly(expectedEdge1, expectedEdge2);
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.PARAMETER_PASSING, List.of(expectedEdge1, expectedEdge2));
 
         // two different parameter definitions as targets
-        Set<Integer> edgeTargets = paramEdges.stream().map(Pair::getSnd).collect(Collectors.toSet());
-        assertThat(edgeTargets).hasSize(2);
+        assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.PARAMETER_PASSING, 2);
+    }
+
+    @Test
+    void testVariableDependency() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "variable_dependency.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph stageGraph = graphs.get(0);
+
+        Pair<String> expectedEdge1 = Pair.of("SetVariableTo", "ChangeVariableBy");
+        Pair<String> expectedEdge2 = Pair.of("SetVariableTo", "SetVariableTo");
+        Pair<String> expectedEdge3 = Pair.of("ChangeVariableBy", "ChangeVariableBy");
+        Pair<String> expectedEdge4 = Pair.of("ChangeVariableBy", "SetVariableTo");
+
+        assertHasEdges(stageGraph, GgnnProgramGraph.EdgeType.VARIABLE_USE,
+                List.of(expectedEdge1, expectedEdge2, expectedEdge3, expectedEdge4));
+    }
+
+    private void assertHasEdges(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType,
+                                final List<Pair<String>> expectedEdges) {
+        Set<Pair<Integer>> edges = graph.getContextGraph().getEdges(edgeType);
+        Map<Integer, String> nodeLabels = graph.getContextGraph().getNodeLabels();
+        List<Pair<String>> labelledEdges = labelledEdges(edges, nodeLabels);
+        assertThat(labelledEdges).containsExactlyElementsIn(expectedEdges);
+    }
+
+    private void assertDifferentEdgeStartsCount(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount) {
+        assertDifferentEdgeCounts(graph, edgeType, expectedCount, true);
+    }
+
+    private void assertDifferentEdgeTargetsCount(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount) {
+        assertDifferentEdgeCounts(graph, edgeType, expectedCount, false);
+    }
+
+    private void assertDifferentEdgeCounts(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount, boolean start) {
+        Set<Pair<Integer>> paramEdges = graph.getContextGraph().getEdges(edgeType);
+        Set<Integer> edgeTargets = paramEdges.stream()
+                .map(p -> start ? p.getFst() : p.getSnd())
+                .collect(Collectors.toSet());
+        assertThat(edgeTargets).hasSize(expectedCount);
     }
 
     private List<GgnnProgramGraph> getGraphs(Path fixturePath, boolean includeStage, boolean wholeProgram) throws Exception {

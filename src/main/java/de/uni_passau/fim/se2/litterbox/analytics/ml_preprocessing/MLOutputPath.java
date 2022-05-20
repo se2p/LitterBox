@@ -30,7 +30,8 @@ public class MLOutputPath {
         return path;
     }
 
-    public String pathAsString() {
+    @Override
+    public String toString() {
         if (MLOutputPathType.CONSOLE.equals(pathType)) {
             return "CONSOLE";
         } else {

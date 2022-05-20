@@ -35,7 +35,7 @@ public class GgnnProgramGraphDotGraphBuilder {
         sb.append("fontname=\"serif\";\n");
         sb.append("label=\"").append(label).append("\";\n");
         for (GgnnProgramGraph graph : graphs) {
-            sb.append(GgnnProgramGraphDotGraphBuilder.asDotGraph(graph, graphId, true));
+            sb.append(GgnnProgramGraphDotGraphBuilder.asDotSubgraph(graph, graphId));
             graphId += 1;
         }
         sb.append("}\n");
@@ -43,8 +43,12 @@ public class GgnnProgramGraphDotGraphBuilder {
         return sb.toString();
     }
 
-    public static String asDotGraph(final GgnnProgramGraph programGraph, int graphId, boolean isSubgraph) {
-        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), graphId, isSubgraph);
+    public static String asDotGraph(final GgnnProgramGraph programGraph, int graphId) {
+        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), graphId, false);
+    }
+
+    public static String asDotSubgraph(final GgnnProgramGraph programGraph, int graphId) {
+        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), graphId, true);
     }
 
     private static String asDotGraph(final GgnnProgramGraph.ContextGraph graph, final String label, int graphId,
@@ -78,7 +82,7 @@ public class GgnnProgramGraphDotGraphBuilder {
             }
         }
 
-        sb.append("}");
+        sb.append("}\n");
 
         return sb.toString();
     }
@@ -102,7 +106,7 @@ public class GgnnProgramGraphDotGraphBuilder {
             case PARAMETER_PASSING:
                 return "[color=forestgreen]";
             default:
-                return "[color=red]";
+                throw new UnsupportedOperationException("Missing edge color definition!");
         }
     }
 }

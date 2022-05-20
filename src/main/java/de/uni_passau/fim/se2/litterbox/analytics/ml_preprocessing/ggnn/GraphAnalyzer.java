@@ -35,9 +35,9 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
     private final boolean isDotStringGraph;
     private final String labelName;
 
-    public GraphAnalyzer(String input, MLOutputPath output, boolean delete, boolean includeStage, boolean wholeProgram,
-                         boolean outputDotStringGraph, String labelName) {
-        super(input, output, delete, includeStage, wholeProgram);
+    public GraphAnalyzer(String input, MLOutputPath output, boolean delete, boolean includeStage,
+                         boolean wholeProgramAsSingleGraph, boolean outputDotStringGraph, String labelName) {
+        super(input, output, delete, includeStage, wholeProgramAsSingleGraph);
 
         this.isDotStringGraph = outputDotStringGraph;
         this.labelName = labelName;
