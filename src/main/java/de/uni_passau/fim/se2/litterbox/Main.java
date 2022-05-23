@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GraphAnalyzer;
@@ -282,12 +283,8 @@ public final class Main {
     }
 
     static void convertToCode2Vec(CommandLine cmd) throws ParseException, IOException {
+        MLPreprocessorCommonOptions commonOptions = getMLPreprocessorCommonOptions(cmd);
         int maxPathLength = 8;
-        MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
-
-        if (!cmd.hasOption(PROJECTPATH)) {
-            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
-        }
 
         if (cmd.hasOption(NOHASH)) {
             ProgramRelation.setNoHash();
@@ -300,34 +297,35 @@ public final class Main {
             }
         }
 
-        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
-        boolean includeStage = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
-        boolean wholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
-
-        String input = cmd.getOptionValue(PROJECTPATH);
-        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, deleteAfterwards, includeStage, wholeProgram, maxPathLength);
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(commonOptions, maxPathLength);
         runAnalysis(cmd, analyzer);
     }
 
     static void convertToGraph(CommandLine cmd) throws ParseException, IOException {
+        MLPreprocessorCommonOptions commonOptions = getMLPreprocessorCommonOptions(cmd);
+        boolean outputDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
+        String labelName = cmd.getOptionValue(LABEL_NAME);
+
+        GraphAnalyzer analyzer = new GraphAnalyzer(commonOptions, outputDotStringGraph, labelName);
+        runAnalysis(cmd, analyzer);
+    }
+
+    private static MLPreprocessorCommonOptions getMLPreprocessorCommonOptions(CommandLine cmd) throws ParseException {
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
-        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS) || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
+        String inputPath = cmd.getOptionValue(PROJECTPATH);
+        MLOutputPath outputPath = getMLPreprocessorOutputPath(cmd);
+        boolean deleteAfterwards = cmd.hasOption(DELETE_PROJECT_AFTERWARDS)
+                || cmd.hasOption(DELETE_PROJECT_AFTERWARDS_SHORT);
         boolean includeStage = cmd.hasOption(INCLUDE_STAGE) || cmd.hasOption(INCLUDE_STAGE_SHORT);
         boolean wholeProgram = cmd.hasOption(WHOLE_PROGRAM) || cmd.hasOption(WHOLE_PROGRAM_SHORT);
-        boolean outputDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
 
-        MLOutputPath outputPath = getMachineLearningPreprocessorOutputPath(cmd);
-        String input = cmd.getOptionValue(PROJECTPATH);
-        String labelName = cmd.getOptionValue(LABEL_NAME);
-
-        GraphAnalyzer analyzer = new GraphAnalyzer(input, outputPath, deleteAfterwards, includeStage, wholeProgram, outputDotStringGraph, labelName);
-        runAnalysis(cmd, analyzer);
+        return new MLPreprocessorCommonOptions(inputPath, outputPath, deleteAfterwards, includeStage, wholeProgram);
     }
 
-    private static MLOutputPath getMachineLearningPreprocessorOutputPath(CommandLine cmd) throws ParseException {
+    private static MLOutputPath getMLPreprocessorOutputPath(CommandLine cmd) throws ParseException {
         if (cmd.hasOption(OUTPUT)) {
             Path outputPath = Path.of(cmd.getOptionValue(OUTPUT));
             File output = outputPath.toFile();

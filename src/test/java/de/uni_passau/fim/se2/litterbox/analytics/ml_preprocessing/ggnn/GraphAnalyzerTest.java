@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,8 +17,9 @@ class GraphAnalyzerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void testProduceOutput(boolean toDotGraph, @TempDir Path outputDir) throws IOException {
-        GraphAnalyzer analyzer = new GraphAnalyzer("src/test/fixtures/multipleSprites.json",
-                MLOutputPath.directory(outputDir), false, true, false, toDotGraph, null);
+        MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
+                "src/test/fixtures/multipleSprites.json", MLOutputPath.directory(outputDir), false, true, false);
+        GraphAnalyzer analyzer = new GraphAnalyzer(commonOptions, toDotGraph, null);
         analyzer.analyzeFile();
 
         Path expectedOutputFile = outputDir.resolve(expectedOutputFilename("multipleSprites", toDotGraph));

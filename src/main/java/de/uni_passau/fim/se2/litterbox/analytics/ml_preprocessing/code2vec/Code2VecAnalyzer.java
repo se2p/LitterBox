@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.*;
@@ -31,9 +32,8 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
 
-    public Code2VecAnalyzer(String input, MLOutputPath output, boolean delete, boolean includeStage,
-                            boolean wholeProgram, int maxPathLength) {
-        super(input, output, delete, includeStage, wholeProgram);
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
+        super(commonOptions);
         this.maxPathLength = maxPathLength;
     }
 

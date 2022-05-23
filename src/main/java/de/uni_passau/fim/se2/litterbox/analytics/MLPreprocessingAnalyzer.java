@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -36,20 +37,14 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
     /**
      * Sets up an analyzer that extracts the necessary information for a machine learning model from a program.
      *
-     * @param input            The input file that should be processed.
-     * @param outputPath       The output (console or some directory) to which the result should be written.
-     * @param deleteAfterwards If the input file should be deleted after processing.
-     * @param includeStage     If the stage sprite should be included in the analysis.
-     * @param wholeProgram     If the program should be treated as a single entity instead of performing the analysis
-     *                         per sprite.
+     * @param commonOptions Some common options used for all machine learning preprocessors.
      */
-    protected MLPreprocessingAnalyzer(String input, MLOutputPath outputPath, boolean deleteAfterwards,
-                                      boolean includeStage, boolean wholeProgram) {
-        super(input, outputPath.toString(), deleteAfterwards);
+    protected MLPreprocessingAnalyzer(final MLPreprocessorCommonOptions commonOptions) {
+        super(commonOptions.getInputPath(), commonOptions.getOutputPath().toString(), commonOptions.deleteAfterwards());
 
-        this.outputPath = outputPath;
-        this.includeStage = includeStage;
-        this.wholeProgram = wholeProgram;
+        this.outputPath = commonOptions.getOutputPath();
+        this.includeStage = commonOptions.includeStage();
+        this.wholeProgram = commonOptions.wholeProgram();
     }
 
     protected abstract Optional<String> process(File inputFile) throws IOException;

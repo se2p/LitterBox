@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
@@ -35,9 +36,9 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
     private final boolean isDotStringGraph;
     private final String labelName;
 
-    public GraphAnalyzer(String input, MLOutputPath output, boolean delete, boolean includeStage,
-                         boolean wholeProgramAsSingleGraph, boolean outputDotStringGraph, String labelName) {
-        super(input, output, delete, includeStage, wholeProgramAsSingleGraph);
+    public GraphAnalyzer(final MLPreprocessorCommonOptions commonOptions, boolean outputDotStringGraph,
+                         String labelName) {
+        super(commonOptions);
 
         this.isDotStringGraph = outputDotStringGraph;
         this.labelName = labelName;
