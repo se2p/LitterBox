@@ -43,8 +43,8 @@ public class GgnnProgramGraphDotGraphBuilder {
         return sb.toString();
     }
 
-    public static String asDotGraph(final GgnnProgramGraph programGraph, int graphId) {
-        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), graphId, false);
+    public static String asDotGraph(final GgnnProgramGraph programGraph) {
+        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), 0, false);
     }
 
     public static String asDotSubgraph(final GgnnProgramGraph programGraph, int graphId) {

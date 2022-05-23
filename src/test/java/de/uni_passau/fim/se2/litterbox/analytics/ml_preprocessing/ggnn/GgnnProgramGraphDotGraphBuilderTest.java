@@ -48,6 +48,18 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         assertThat(substringCount(dotGraph, "->")).isEqualTo(totalEdges);
     }
 
+    @Test
+    void testSingleGraph() throws Exception {
+        Path filePath = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        Program program = getAST(filePath.toString());
+        GenerateGraphTask graphTask = new GenerateGraphTask(program, filePath, true, true, null);
+        List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
+        assertThat(graphs).hasSize(1);
+
+        String dotGraph = GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs.get(0));
+        assertThat(dotGraph).startsWith("digraph \"multipleSprites\" {");
+    }
+
     private int substringCount(String searchIn, String substring) {
         return (searchIn.length() - searchIn.replace(substring, "").length()) / substring.length();
     }
