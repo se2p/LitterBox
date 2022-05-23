@@ -53,10 +53,16 @@ public class GgnnGraphBuilder {
     private final Program program;
     private final ASTNode astRoot;
 
-    public GgnnGraphBuilder(final Program program, final ASTNode astRoot) {
+    public GgnnGraphBuilder(final Program program) {
+        this(program, program);
+    }
+
+    public GgnnGraphBuilder(final Program program, final ActorDefinition astRoot) {
+        this(program, (ASTNode) astRoot);
+    }
+
+    private GgnnGraphBuilder(final Program program, final ASTNode astRoot) {
         Preconditions.checkAllArgsNotNull(List.of(program, astRoot));
-        Preconditions.checkArgument(astRoot instanceof Program || astRoot instanceof ActorDefinition,
-                "Ggnn graphs can only be built either for entire programs or for actors.");
 
         this.program = program;
         this.astRoot = astRoot;

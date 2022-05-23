@@ -36,6 +36,30 @@ import static com.google.common.truth.Truth.assertThat;
 class GenerateGraphTaskTest implements JsonTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
+    void testBlankLabel(boolean wholeProgram) throws Exception {
+        Path fixture = Path.of("src", "test", "fixtures", "emptyProject.json");
+        List<GgnnProgramGraph> graphs = getGraphs(fixture, false, wholeProgram, "  \t\n  ");
+
+        String actualLabel = graphs.get(0).getLabel();
+        if (wholeProgram) {
+            assertThat(actualLabel).isEqualTo("emptyProject");
+        } else {
+            assertThat(actualLabel).isEqualTo("Sprite1");
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testFixedLabel(boolean wholeProgram) throws Exception {
+        Path fixture = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        List<GgnnProgramGraph> graphs = getGraphs(fixture, true, wholeProgram, "fixed");
+        for (GgnnProgramGraph g : graphs) {
+            assertThat(g.getLabel()).isEqualTo("fixed");
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
     void testGraphEmptyProgram(boolean wholeProgram) throws Exception {
         List<GgnnProgramGraph> graphs = getGraphs(Path.of("src", "test", "fixtures", "emptyProject.json"), false, wholeProgram);
         assertThat(graphs).hasSize(1);
@@ -91,6 +115,9 @@ class GenerateGraphTaskTest implements JsonTest {
         assertThat(graphs).hasSize(1);
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
+        assertThat(spriteGraph.getLabel()).isEqualTo("Sprite1");
+        assertThat(spriteGraph.getFilename()).endsWith("guarded_by.json");
+        assertThat(spriteGraph.getContextGraph().getNodeLabels()).hasSize(spriteGraph.getContextGraph().getNodeTypes().size());
 
         Pair<String> edge = Pair.of("Variable", "BiggerThan");
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, List.of(edge));
@@ -182,8 +209,12 @@ class GenerateGraphTaskTest implements JsonTest {
     }
 
     private List<GgnnProgramGraph> getGraphs(Path fixturePath, boolean includeStage, boolean wholeProgram) throws Exception {
+        return getGraphs(fixturePath, includeStage, wholeProgram, null);
+    }
+
+    private List<GgnnProgramGraph> getGraphs(Path fixturePath, boolean includeStage, boolean wholeProgram, String label) throws Exception {
         Program program = getAST(fixturePath.toString());
-        GenerateGraphTask graphTask = new GenerateGraphTask(program, fixturePath, includeStage, wholeProgram, null);
+        GenerateGraphTask graphTask = new GenerateGraphTask(program, fixturePath, includeStage, wholeProgram, label);
         return graphTask.getProgramGraphs();
     }
 

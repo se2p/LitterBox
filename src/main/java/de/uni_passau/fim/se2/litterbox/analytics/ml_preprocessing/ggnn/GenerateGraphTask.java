@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
@@ -70,8 +70,7 @@ public class GenerateGraphTask {
         if (wholeProgramAsSingleGraph) {
             String label = Objects.requireNonNullElseGet(labelName,
                     () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
-
-            graphs = List.of(buildNodeGraph(program, program, label));
+            graphs = List.of(buildNodeGraph(program, label));
         } else {
             graphs = buildGraphs(program, labelName);
         }
@@ -91,8 +90,13 @@ public class GenerateGraphTask {
                 .collect(Collectors.toList());
     }
 
-    private GgnnProgramGraph buildNodeGraph(final Program program, final ASTNode node, String label) {
-        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, node).build();
+    private GgnnProgramGraph buildNodeGraph(final Program program, String label) {
+        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program).build();
+        return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
+    }
+
+    private GgnnProgramGraph buildNodeGraph(final Program program, final ActorDefinition actor, String label) {
+        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, actor).build();
         return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }
 }
