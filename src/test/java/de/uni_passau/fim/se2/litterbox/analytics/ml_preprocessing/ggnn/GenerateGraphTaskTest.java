@@ -83,7 +83,7 @@ class GenerateGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(1);
 
-        String graphJsonl = graphTask.generateJsonGraphData(graphs);
+        String graphJsonl = graphTask.generateJsonGraphData();
         assertThat(graphJsonl.lines().collect(Collectors.toList())).hasSize(1);
     }
 
@@ -104,7 +104,7 @@ class GenerateGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(expectedSprites);
 
-        String graphJsonl = graphTask.generateJsonGraphData(graphs);
+        String graphJsonl = graphTask.generateJsonGraphData();
         assertThat(graphJsonl.lines().collect(Collectors.toList())).hasSize(expectedSprites);
     }
 

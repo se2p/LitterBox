@@ -47,12 +47,14 @@ public class GenerateGraphTask {
         this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
 
-    String generateDotGraphData(final List<GgnnProgramGraph> graphs, final String label) {
+    String generateDotGraphData(final String label) {
+        final List<GgnnProgramGraph> graphs = getProgramGraphs();
         return GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs, label);
     }
 
-    String generateJsonGraphData(final List<GgnnProgramGraph> graphs) {
-        ObjectMapper objectMapper = new ObjectMapper();
+    String generateJsonGraphData() {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final List<GgnnProgramGraph> graphs = getProgramGraphs();
 
         return graphs.stream().flatMap(graph -> {
             try {
@@ -70,7 +72,7 @@ public class GenerateGraphTask {
         if (wholeProgramAsSingleGraph) {
             String label = Objects.requireNonNullElseGet(labelName,
                     () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
-            graphs = List.of(buildNodeGraph(program, label));
+            graphs = List.of(buildProgramGraph(program, label));
         } else {
             graphs = buildGraphs(program, labelName);
         }
@@ -85,17 +87,17 @@ public class GenerateGraphTask {
                 .map(actor -> {
                     String actorLabel = Objects.requireNonNullElseGet(labelName,
                             () -> StringUtil.replaceSpecialCharacters(actor.getIdent().getName()));
-                    return buildNodeGraph(program, actor, actorLabel);
+                    return buildProgramGraph(program, actor, actorLabel);
                 })
                 .collect(Collectors.toList());
     }
 
-    private GgnnProgramGraph buildNodeGraph(final Program program, String label) {
+    private GgnnProgramGraph buildProgramGraph(final Program program, String label) {
         GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program).build();
         return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }
 
-    private GgnnProgramGraph buildNodeGraph(final Program program, final ActorDefinition actor, String label) {
+    private GgnnProgramGraph buildProgramGraph(final Program program, final ActorDefinition actor, String label) {
         GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, actor).build();
         return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
     }

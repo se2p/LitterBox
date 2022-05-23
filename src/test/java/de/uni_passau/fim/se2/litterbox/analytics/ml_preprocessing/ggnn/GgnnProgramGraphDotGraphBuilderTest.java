@@ -38,7 +38,7 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(3);
 
-        String dotGraph = graphTask.generateDotGraphData(graphs, "multipleSprites");
+        String dotGraph = graphTask.generateDotGraphData("multipleSprites");
         // one subgraph per sprite
         assertThat(substringCount(dotGraph, "subgraph")).isEqualTo(3);
 

@@ -102,7 +102,7 @@ public class PathGenerator {
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
         final List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
-        return Optional.ofNullable(programFeatures).filter(features -> !features.isEmpty());
+        return Optional.of(programFeatures).filter(features -> !features.isEmpty());
     }
 
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {

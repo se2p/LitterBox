@@ -19,9 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -51,7 +51,6 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
 
     @Override
     protected Path outputFileName(File inputFile) {
-        String fileName = inputFile.getName();
-        return Path.of(fileName.substring(0, fileName.lastIndexOf(".")));
+        return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
     }
 }

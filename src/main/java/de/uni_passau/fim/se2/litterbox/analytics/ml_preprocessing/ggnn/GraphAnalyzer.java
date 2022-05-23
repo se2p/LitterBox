@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
@@ -54,12 +53,11 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
 
         GenerateGraphTask generateGraphTask = new GenerateGraphTask(program, input, includeStage, wholeProgram,
                 labelName);
-        List<GgnnProgramGraph> graphs = generateGraphTask.getProgramGraphs();
         if (isDotStringGraph) {
             String label = FilenameUtils.removeExtension(inputFile.getName());
-            return Optional.of(generateGraphTask.generateDotGraphData(graphs, label));
+            return Optional.of(generateGraphTask.generateDotGraphData(label));
         } else {
-            return Optional.of(generateGraphTask.generateJsonGraphData(graphs));
+            return Optional.of(generateGraphTask.generateJsonGraphData());
         }
     }
 

@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProgramFeatures {
-    private String name;
+    private final String name;
 
-    private List<ProgramRelation> features = new ArrayList<>();
+    private final List<ProgramRelation> features = new ArrayList<>();
 
     public ProgramFeatures(String name) {
         this.name = name;
@@ -33,12 +33,7 @@ public class ProgramFeatures {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(name).append(' ');
-        stringBuilder.append(features.stream().map(ProgramRelation::toString)
-                .collect(Collectors.joining(" ")));
-
-        return stringBuilder.toString();
+        return name + ' ' + features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
     }
 
     public void addFeature(String source, String path, String target) {

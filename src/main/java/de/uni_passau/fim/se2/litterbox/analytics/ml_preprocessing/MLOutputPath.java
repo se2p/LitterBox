@@ -63,6 +63,6 @@ public class MLOutputPath {
 
     private enum MLOutputPathType {
         CONSOLE,
-        PATH;
+        PATH
     }
 }
