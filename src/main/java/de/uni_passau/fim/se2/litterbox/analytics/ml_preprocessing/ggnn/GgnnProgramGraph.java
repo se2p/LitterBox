@@ -91,15 +91,15 @@ class GgnnProgramGraph {
          */
         NEXT_TOKEN,
         /**
-         * Links uses of the same variable.
+         * Links nodes with data dependencies.
          */
-        VARIABLE_USE,
+        DATA_DEPENDENCY,
         /**
-         * Links all variables in the right-hand side of an assignment to the variable on the left.
+         * Links all variables and attributes on the right-hand side of an assignment to the variable on the left.
          */
         COMPUTED_FROM,
         /**
-         * Links variables occurring in an if-condition to their uses in the then- and else-blocks.
+         * Links variables and attributes occurring in an if-condition to their uses in the then- and else-blocks.
          */
         GUARDED_BY,
         /**

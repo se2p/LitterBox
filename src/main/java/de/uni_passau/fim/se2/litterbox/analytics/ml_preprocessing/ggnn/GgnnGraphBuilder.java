@@ -20,10 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
@@ -34,6 +38,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariable
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
@@ -74,10 +80,10 @@ public class GgnnGraphBuilder {
         final List<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
         final List<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
         final List<Pair<ASTNode>> parameterPassingEdges = getEdges(new ParameterPassingVisitor(program));
-        final List<Pair<ASTNode>> variableDataDependencies = getVariableDataDependencies();
+        final List<Pair<ASTNode>> dataDependencies = getDataDependencies();
 
         final Set<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
-                parameterPassingEdges, variableDataDependencies);
+                parameterPassingEdges, dataDependencies);
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
         final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = new EnumMap<>(GgnnProgramGraph.EdgeType.class);
@@ -85,7 +91,7 @@ public class GgnnGraphBuilder {
         edges.put(GgnnProgramGraph.EdgeType.NEXT_TOKEN, getIndexedEdges(nodeIndices, nextTokenEdges));
         edges.put(GgnnProgramGraph.EdgeType.GUARDED_BY, getIndexedEdges(nodeIndices, guardedByEdges));
         edges.put(GgnnProgramGraph.EdgeType.COMPUTED_FROM, getIndexedEdges(nodeIndices, computedFromEdges));
-        edges.put(GgnnProgramGraph.EdgeType.VARIABLE_USE, getIndexedEdges(nodeIndices, variableDataDependencies));
+        edges.put(GgnnProgramGraph.EdgeType.DATA_DEPENDENCY, getIndexedEdges(nodeIndices, dataDependencies));
         edges.put(GgnnProgramGraph.EdgeType.PARAMETER_PASSING, getIndexedEdges(nodeIndices, parameterPassingEdges));
 
         Set<Integer> usedNodes = getUsedNodes(edges);
@@ -162,44 +168,26 @@ public class GgnnGraphBuilder {
         return nodeLabels;
     }
 
-    private List<Pair<ASTNode>> getVariableDataDependencies() {
+    private List<Pair<ASTNode>> getDataDependencies() {
         if (astRoot instanceof Program) {
             return ((Program) astRoot).getActorDefinitionList().getDefinitions()
                     .stream()
-                    .flatMap(this::getVariableDataDependencies)
+                    .flatMap(this::getDataDependencies)
                     .collect(Collectors.toList());
         } else if (astRoot instanceof ActorDefinition) {
-            return getVariableDataDependencies((ActorDefinition) astRoot).collect(Collectors.toList());
+            return getDataDependencies((ActorDefinition) astRoot).collect(Collectors.toList());
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Can only extract data dependencies from programs and actors!");
         }
     }
 
-    private Stream<Pair<ASTNode>> getVariableDataDependencies(final ActorDefinition actor) {
+    private Stream<Pair<ASTNode>> getDataDependencies(final ActorDefinition actor) {
         ControlFlowGraphVisitor v = new ControlFlowGraphVisitor(program, actor);
         actor.accept(v);
         ControlFlowGraph cfg = v.getControlFlowGraph();
-
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
-        return ddg.getEdges().stream()
-                .filter(edge -> hasVariableDataDependency(edge.source(), edge.target()))
-                .map(edge -> Pair.of(edge.source().getASTNode(), edge.target().getASTNode()));
-    }
 
-    private boolean hasVariableDataDependency(final CFGNode source, final CFGNode target) {
-        Set<Identifier> sourceIdentifiers = variableIdentifiers(source);
-        Set<Identifier> targetIdentifiers = variableIdentifiers(target);
-        return sourceIdentifiers.stream().anyMatch(targetIdentifiers::contains);
-    }
-
-    private Set<Identifier> variableIdentifiers(final CFGNode node) {
-        Stream<Defineable> definitions = node.getDefinitions().stream().map(Definition::getDefinable);
-        Stream<Defineable> uses = node.getUses().stream().map(Use::getDefinable);
-
-        return Stream.concat(definitions, uses)
-                .filter(de.uni_passau.fim.se2.litterbox.cfg.Variable.class::isInstance)
-                .map(v -> ((de.uni_passau.fim.se2.litterbox.cfg.Variable) v).getIdentifier())
-                .collect(Collectors.toSet());
+        return ddg.getEdges().stream().map(edge -> Pair.of(edge.source().getASTNode(), edge.target().getASTNode()));
     }
 
     private abstract static class EdgesVisitor implements ScratchVisitor {
@@ -266,23 +254,41 @@ public class GgnnGraphBuilder {
     private static class GuardedByVisitor extends EdgesVisitor {
         @Override
         public void visit(IfElseStmt node) {
-            final Map<String, List<Variable>> guards = VariableUsesVisitor.getVariables(node.getBoolExpr());
-            final Map<String, List<Variable>> thenBlockVars = VariableUsesVisitor.getVariables(node.getThenStmts());
-            final Map<String, List<Variable>> elseBlockVars = VariableUsesVisitor.getVariables(node.getElseStmts());
+            DefineableUsesVisitor guardsVisitor = DefineableUsesVisitor.visitNode(node.getBoolExpr());
+            DefineableUsesVisitor thenStmtVisitor = DefineableUsesVisitor.visitNode(node.getThenStmts());
+            DefineableUsesVisitor elseStmtVisitor = DefineableUsesVisitor.visitNode(node.getElseStmts());
 
-            connectVars(node.getBoolExpr(), guards, thenBlockVars);
-            connectVars(node.getBoolExpr(), guards, elseBlockVars);
+            connectVars(node.getBoolExpr(), guardsVisitor.getVariables(), thenStmtVisitor.getVariables());
+            connectAttributes(node.getBoolExpr(), guardsVisitor.getAttributes(), thenStmtVisitor.getAttributes());
+
+            connectVars(node.getBoolExpr(), guardsVisitor.getVariables(), elseStmtVisitor.getVariables());
+            connectAttributes(node.getBoolExpr(), guardsVisitor.getAttributes(), elseStmtVisitor.getAttributes());
         }
 
         @Override
         public void visit(IfThenStmt node) {
-            final Map<String, List<Variable>> guards = VariableUsesVisitor.getVariables(node.getBoolExpr());
-            final Map<String, List<Variable>> thenStmtVars = VariableUsesVisitor.getVariables(node.getThenStmts());
-
-            connectVars(node.getBoolExpr(), guards, thenStmtVars);
+            guardedByCBlock(node.getBoolExpr(), node.getThenStmts());
         }
 
-        private void connectVars(final BoolExpr guardExpression, final Map<String, List<Variable>> guards,
+        @Override
+        public void visit(RepeatTimesStmt node) {
+            guardedByCBlock(node.getTimes(), node.getStmtList());
+        }
+
+        @Override
+        public void visit(UntilStmt node) {
+            guardedByCBlock(node.getBoolExpr(), node.getStmtList());
+        }
+
+        private void guardedByCBlock(final Expression guardExpression, final ASTNode body) {
+            DefineableUsesVisitor guardsVisitor = DefineableUsesVisitor.visitNode(guardExpression);
+            DefineableUsesVisitor usesVisitor = DefineableUsesVisitor.visitNode(body);
+
+            connectVars(guardExpression, guardsVisitor.getVariables(), usesVisitor.getVariables());
+            connectAttributes(guardExpression, guardsVisitor.getAttributes(), usesVisitor.getAttributes());
+        }
+
+        private void connectVars(final Expression guardExpression, final Map<String, List<Variable>> guards,
                                  final Map<String, List<Variable>> inBlock) {
             for (Map.Entry<String, List<Variable>> usedVar : inBlock.entrySet()) {
                 if (!guards.containsKey(usedVar.getKey())) {
@@ -291,6 +297,17 @@ public class GgnnGraphBuilder {
 
                 for (Variable v : usedVar.getValue()) {
                     edges.add(Pair.of(v, guardExpression));
+                }
+            }
+        }
+
+        private void connectAttributes(final Expression guardExpression, final List<ASTNode> guards,
+                                       final List<ASTNode> inBlock) {
+            for (ASTNode guard : guards) {
+                for (ASTNode used : inBlock) {
+                    if (guard.equals(used)) {
+                        edges.add(Pair.of(used, guardExpression));
+                    }
                 }
             }
         }
@@ -312,35 +329,12 @@ public class GgnnGraphBuilder {
         }
 
         private void addEdges(final Qualified assignTo, final ASTNode expr) {
-            Map<String, List<Variable>> computedFrom = VariableUsesVisitor.getVariables(expr);
+            DefineableUsesVisitor v = DefineableUsesVisitor.visitNode(expr);
+            Stream<Variable> variables = v.getVariables().values().stream().flatMap(List::stream);
+            Stream<ASTNode> attributes = v.getAttributes().stream();
 
-            computedFrom.values()
-                    .stream()
-                    .flatMap(List::stream)
+            Stream.concat(variables, attributes)
                     .forEach(variable -> edges.add(Pair.of(assignTo.getSecond(), variable)));
-        }
-    }
-
-    private static class VariableUsesVisitor implements ScratchVisitor {
-        private final Map<String, List<Variable>> variables = new HashMap<>();
-
-        @Override
-        public void visit(Variable node) {
-            variables.compute(node.getName().getName(), (name, vars) -> {
-                if (vars == null) {
-                    vars = new ArrayList<>();
-                }
-                vars.add(node);
-                return vars;
-            });
-
-            ScratchVisitor.super.visit(node);
-        }
-
-        public static Map<String, List<Variable>> getVariables(final ASTNode node) {
-            VariableUsesVisitor v = new VariableUsesVisitor();
-            node.accept(v);
-            return v.variables;
         }
     }
 
@@ -390,6 +384,127 @@ public class GgnnGraphBuilder {
             }
 
             return ((ActorDefinition) actorDefinition).getIdent().getName();
+        }
+    }
+
+    private static class DefineableUsesVisitor implements ScratchVisitor {
+        private final Map<String, List<Variable>> variables = new HashMap<>();
+        private final List<ASTNode> attributes = new ArrayList<>();
+
+        public static DefineableUsesVisitor visitNode(final ASTNode node) {
+            DefineableUsesVisitor v = new DefineableUsesVisitor();
+            node.accept(v);
+            return v;
+        }
+
+        public Map<String, List<Variable>> getVariables() {
+            return variables;
+        }
+
+        public List<ASTNode> getAttributes() {
+            return attributes;
+        }
+
+        @Override
+        public void visit(Variable node) {
+            variables.compute(node.getName().getName(), (name, vars) -> {
+                if (vars == null) {
+                    vars = new ArrayList<>();
+                }
+                vars.add(node);
+                return vars;
+            });
+
+            ScratchVisitor.super.visit(node);
+        }
+
+        @Override
+        public void visit(Backdrop node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Costume node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Direction node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Loudness node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(PositionX node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(PositionY node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Size node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Volume node) {
+            attributes.add(node);
+        }
+
+        // not directly attributes but external values:
+        // included as they can be used like variables and attributes within expressions and therefore are of interest
+        // especially for COMPUTED_FROM and GUARDED_BY edges
+
+        @Override
+        public void visit(Answer node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(AttributeOf node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Current node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(DaysSince2000 node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(DistanceTo node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(MouseX node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(MouseY node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Timer node) {
+            attributes.add(node);
+        }
+
+        @Override
+        public void visit(Username node) {
+            attributes.add(node);
         }
     }
 }

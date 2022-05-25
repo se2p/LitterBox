@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,16 +11,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class GraphAnalyzerTest {
+class GgnnGraphAnalyzerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void testProduceOutput(boolean toDotGraph, @TempDir Path outputDir) throws IOException {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
                 "src/test/fixtures/multipleSprites.json", MLOutputPath.directory(outputDir), false, true, false);
-        GraphAnalyzer analyzer = new GraphAnalyzer(commonOptions, toDotGraph, null);
+        GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, toDotGraph, null);
         analyzer.analyzeFile();
 
         Path expectedOutputFile = outputDir.resolve(expectedOutputFilename("multipleSprites", toDotGraph));
@@ -31,6 +33,15 @@ class GraphAnalyzerTest {
         } else {
             assertThat(output.get(0)).startsWith("digraph");
         }
+    }
+
+    @Test
+    void testInvalidInput() {
+        MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions("", MLOutputPath.console(), false, false, false);
+        GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
+
+        Optional<String> result = analyzer.process(Path.of("non_existing").toFile());
+        assertThat(result).isEqualTo(Optional.empty());
     }
 
     private String expectedOutputFilename(String inputFile, boolean dotGraph) {

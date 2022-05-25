@@ -31,15 +31,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class GenerateGraphTask {
+public class GenerateGgnnGraphTask {
     private final Path inputPath;
     private final Program program;
     private final boolean includeStage;
     private final boolean wholeProgramAsSingleGraph;
     private final String labelName;
 
-    public GenerateGraphTask(Program program, Path inputPath, boolean includeStage, boolean wholeProgramAsSingleGraph,
-                             String labelName) {
+    public GenerateGgnnGraphTask(Program program, Path inputPath, boolean includeStage,
+                                 boolean wholeProgramAsSingleGraph, String labelName) {
         this.inputPath = inputPath;
         this.program = program;
         this.includeStage = includeStage;

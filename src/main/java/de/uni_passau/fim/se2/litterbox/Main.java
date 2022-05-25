@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GraphAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -306,7 +306,7 @@ public final class Main {
         boolean outputDotStringGraph = cmd.hasOption(AS_DOT_GRAPH);
         String labelName = cmd.getOptionValue(LABEL_NAME);
 
-        GraphAnalyzer analyzer = new GraphAnalyzer(commonOptions, outputDotStringGraph, labelName);
+        GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, outputDotStringGraph, labelName);
         runAnalysis(cmd, analyzer);
     }
 

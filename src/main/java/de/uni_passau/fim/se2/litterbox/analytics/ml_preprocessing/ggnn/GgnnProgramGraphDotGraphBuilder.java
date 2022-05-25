@@ -97,7 +97,7 @@ public class GgnnProgramGraphDotGraphBuilder {
                 return "[color=black]";
             case NEXT_TOKEN:
                 return "[color=blue]";
-            case VARIABLE_USE:
+            case DATA_DEPENDENCY:
                 return "[color=green]";
             case COMPUTED_FROM:
                 return "[color=orange]";

@@ -25,18 +25,17 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-public class GraphAnalyzer extends MLPreprocessingAnalyzer {
-    private static final Logger log = Logger.getLogger(GraphAnalyzer.class.getName());
+public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer {
+    private static final Logger log = Logger.getLogger(GgnnGraphAnalyzer.class.getName());
 
     private final boolean isDotStringGraph;
     private final String labelName;
 
-    public GraphAnalyzer(final MLPreprocessorCommonOptions commonOptions, boolean outputDotStringGraph,
-                         String labelName) {
+    public GgnnGraphAnalyzer(final MLPreprocessorCommonOptions commonOptions, boolean outputDotStringGraph,
+                             String labelName) {
         super(commonOptions);
 
         this.isDotStringGraph = outputDotStringGraph;
@@ -51,13 +50,13 @@ public class GraphAnalyzer extends MLPreprocessingAnalyzer {
             return Optional.empty();
         }
 
-        GenerateGraphTask generateGraphTask = new GenerateGraphTask(program, input, includeStage, wholeProgram,
-                labelName);
+        GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(program, input, includeStage,
+                                                                                wholeProgram, labelName);
         if (isDotStringGraph) {
             String label = FilenameUtils.removeExtension(inputFile.getName());
-            return Optional.of(generateGraphTask.generateDotGraphData(label));
+            return Optional.of(generateGgnnGraphTask.generateDotGraphData(label));
         } else {
-            return Optional.of(generateGraphTask.generateJsonGraphData());
+            return Optional.of(generateGgnnGraphTask.generateJsonGraphData());
         }
     }
 
