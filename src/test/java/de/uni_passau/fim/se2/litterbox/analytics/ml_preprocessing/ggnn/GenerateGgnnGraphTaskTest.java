@@ -232,6 +232,18 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     }
 
     @Test
+    void testParameterPassingNoParameters() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "parameterless_procedure.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph spriteGraph = graphs.get(0);
+
+        Pair<String> expectedEdge = Pair.of("CallStmt", "ProcedureDefinition");
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.PARAMETER_PASSING, List.of(expectedEdge));
+    }
+
+    @Test
     void testMessagePassing() throws Exception {
         Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "message_passing.json");
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);

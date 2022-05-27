@@ -104,7 +104,7 @@ public class GgnnProgramGraphDotGraphBuilder {
             case GUARDED_BY:
                 return "[color=maroon]";
             case PARAMETER_PASSING:
-                return "[color=forestgreen]";
+                return "[color=purple]";
             case MESSAGE_PASSING:
                 return "[color=darkcyan]";
             default:

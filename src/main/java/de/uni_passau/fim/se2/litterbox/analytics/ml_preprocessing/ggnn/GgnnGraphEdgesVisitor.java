@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -42,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
@@ -242,25 +244,38 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
 
         @Override
         public void visit(CallStmt node) {
-            List<Expression> passedArguments = node.getExpressions().getExpressions();
-            String sprite = getCurrentSprite(node);
-            String procedureName = node.getIdent().getName();
+            findCalledProcedure(node).ifPresent(procedure -> connectParameters(node, procedure));
+        }
 
-            procedureMapping.getProceduresForName(sprite, procedureName)
+        private Optional<ProcedureDefinition> findCalledProcedure(final CallStmt callStmt) {
+            String procedureName = callStmt.getIdent().getName();
+            String sprite = getCurrentSprite(callStmt);
+
+            return procedureMapping.getProceduresForName(sprite, procedureName)
                     .stream()
-                    .filter(p -> {
-                        int acceptingArgumentCount = p.getValue().getArguments().length;
-                        return passedArguments.size() == acceptingArgumentCount;
-                    })
+                    .filter(procedure -> hasMatchingParameterCount(callStmt, procedure.getRight()))
                     .map(org.apache.commons.lang3.tuple.Pair::getKey)
                     .map(procedures::get)
-                    .map(procedure -> procedure.getParameterDefinitionList().getParameterDefinitions())
-                    .findFirst()
-                    .ifPresent(parameters -> {
-                        for (int i = 0; i < passedArguments.size(); ++i) {
-                            edges.add(Pair.of(passedArguments.get(i), parameters.get(i)));
-                        }
-                    });
+                    .findFirst();
+        }
+
+        private boolean hasMatchingParameterCount(final CallStmt callStmt, final ProcedureInfo procedure) {
+            int passedArgumentCount = callStmt.getExpressions().getExpressions().size();
+            int acceptingArgumentCount = procedure.getArguments().length;
+            return passedArgumentCount == acceptingArgumentCount;
+        }
+
+        private void connectParameters(final CallStmt callStmt, final ProcedureDefinition procedure) {
+            List<Expression> passedArguments = callStmt.getExpressions().getExpressions();
+            List<ParameterDefinition> parameters = procedure.getParameterDefinitionList().getParameterDefinitions();
+
+            if (passedArguments.isEmpty()) {
+                edges.add(Pair.of(callStmt, procedure));
+            } else {
+                for (int i = 0; i < passedArguments.size(); ++i) {
+                    edges.add(Pair.of(passedArguments.get(i), parameters.get(i)));
+                }
+            }
         }
 
         private String getCurrentSprite(final ASTNode node) {
