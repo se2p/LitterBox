@@ -232,6 +232,24 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     }
 
     @Test
+    void testMessagePassing() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "message_passing.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph spriteGraph = graphs.get(0);
+
+        Pair<String> expectedEdge1 = Pair.of("Broadcast", "ReceptionOfMessage");
+        Pair<String> expectedEdge2 = Pair.of("Broadcast", "ReceptionOfMessage");
+        Pair<String> expectedEdge3 = Pair.of("BroadcastAndWait", "ReceptionOfMessage");
+        List<Pair<String>> expectedEdges = List.of(expectedEdge1, expectedEdge2, expectedEdge3);
+        assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.MESSAGE_PASSING, expectedEdges);
+
+        assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.MESSAGE_PASSING, 2);
+        assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.MESSAGE_PASSING, 3);
+    }
+
+    @Test
     void testVariableDependency() throws Exception {
         Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "variable_dependency.json");
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, false);

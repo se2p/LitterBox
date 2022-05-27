@@ -105,6 +105,8 @@ public class GgnnProgramGraphDotGraphBuilder {
                 return "[color=maroon]";
             case PARAMETER_PASSING:
                 return "[color=forestgreen]";
+            case MESSAGE_PASSING:
+                return "[color=darkcyan]";
             default:
                 throw new UnsupportedOperationException("Missing edge color definition!");
         }

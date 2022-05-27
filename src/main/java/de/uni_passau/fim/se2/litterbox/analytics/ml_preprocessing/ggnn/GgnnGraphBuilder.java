@@ -20,10 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
@@ -34,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -80,10 +80,11 @@ public class GgnnGraphBuilder {
         final List<Pair<ASTNode>> guardedByEdges = getEdges(new GuardedByVisitor());
         final List<Pair<ASTNode>> computedFromEdges = getEdges(new ComputedFromVisitor());
         final List<Pair<ASTNode>> parameterPassingEdges = getEdges(new ParameterPassingVisitor(program));
+        final List<Pair<ASTNode>> messagePassingEdges = getEdges(new MessagePassingVisitor());
         final List<Pair<ASTNode>> dataDependencies = getDataDependencies();
 
         final Set<ASTNode> allNodes = getAllNodes(childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
-                parameterPassingEdges, dataDependencies);
+                parameterPassingEdges, messagePassingEdges, dataDependencies);
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
         final Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = new EnumMap<>(GgnnProgramGraph.EdgeType.class);
@@ -93,6 +94,7 @@ public class GgnnGraphBuilder {
         edges.put(GgnnProgramGraph.EdgeType.COMPUTED_FROM, getIndexedEdges(nodeIndices, computedFromEdges));
         edges.put(GgnnProgramGraph.EdgeType.DATA_DEPENDENCY, getIndexedEdges(nodeIndices, dataDependencies));
         edges.put(GgnnProgramGraph.EdgeType.PARAMETER_PASSING, getIndexedEdges(nodeIndices, parameterPassingEdges));
+        edges.put(GgnnProgramGraph.EdgeType.MESSAGE_PASSING, getIndexedEdges(nodeIndices, messagePassingEdges));
 
         Set<Integer> usedNodes = getUsedNodes(edges);
         final Map<Integer, String> nodeLabels = getNodeLabels(nodeIndices, usedNodes);
@@ -387,6 +389,60 @@ public class GgnnGraphBuilder {
         }
     }
 
+    private static class MessagePassingVisitor extends EdgesVisitor {
+        private final Map<String, List<ASTNode>> senders = new HashMap<>();
+        private final Map<String, List<ReceptionOfMessage>> receivers = new HashMap<>();
+
+        @Override
+        List<Pair<ASTNode>> getEdges() {
+            List<Pair<ASTNode>> edges = new ArrayList<>();
+
+            for (Map.Entry<String, List<ASTNode>> messageSenders : senders.entrySet()) {
+                String message = messageSenders.getKey();
+                if (!receivers.containsKey(message)) {
+                    continue;
+                }
+
+                List<ASTNode> sendingNodes = messageSenders.getValue();
+                List<ReceptionOfMessage> receivingNodes = receivers.get(message);
+
+                for (ASTNode sender : sendingNodes) {
+                    for (ASTNode receiver : receivingNodes) {
+                        edges.add(Pair.of(sender, receiver));
+                    }
+                }
+            }
+
+            return edges;
+        }
+
+        @Override
+        public void visit(ReceptionOfMessage node) {
+            addReceiver(node.getMsg().getMessage().toString(), node);
+            super.visit(node);
+        }
+
+        @Override
+        public void visit(Broadcast node) {
+            addSender(node.getMessage().getMessage().toString(), node);
+            super.visit(node);
+        }
+
+        @Override
+        public void visit(BroadcastAndWait node) {
+            addSender(node.getMessage().getMessage().toString(), node);
+            super.visit(node);
+        }
+
+        private void addSender(String message, ASTNode sender) {
+            senders.compute(message, (msg, senderList) -> addToListOrCreate(senderList, sender));
+        }
+
+        private void addReceiver(String message, ReceptionOfMessage receiver) {
+            receivers.compute(message, (msg, receiverList) -> addToListOrCreate(receiverList, receiver));
+        }
+    }
+
     private static class DefineableUsesVisitor implements ScratchVisitor {
         private final Map<String, List<Variable>> variables = new HashMap<>();
         private final List<ASTNode> attributes = new ArrayList<>();
@@ -407,14 +463,7 @@ public class GgnnGraphBuilder {
 
         @Override
         public void visit(Variable node) {
-            variables.compute(node.getName().getName(), (name, vars) -> {
-                if (vars == null) {
-                    vars = new ArrayList<>();
-                }
-                vars.add(node);
-                return vars;
-            });
-
+            variables.compute(node.getName().getName(), (name, vars) -> addToListOrCreate(vars, node));
             ScratchVisitor.super.visit(node);
         }
 
@@ -506,5 +555,14 @@ public class GgnnGraphBuilder {
         public void visit(Username node) {
             attributes.add(node);
         }
+    }
+
+    private static <T> List<T> addToListOrCreate(List<T> list, T element) {
+        List<T> nonNullList = list;
+        if (list == null) {
+            nonNullList = new ArrayList<>();
+        }
+        nonNullList.add(element);
+        return nonNullList;
     }
 }

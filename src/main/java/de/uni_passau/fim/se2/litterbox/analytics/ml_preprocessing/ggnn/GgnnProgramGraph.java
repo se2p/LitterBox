@@ -106,5 +106,9 @@ class GgnnProgramGraph {
          * Links arguments passed into custom blocks to the parameter definition.
          */
         PARAMETER_PASSING,
+        /**
+         * Links sending and receiving blocks of messages.
+         */
+        MESSAGE_PASSING,
     }
 }
