@@ -55,6 +55,11 @@ public interface JsonTest {
         return parser.parseFile(fileName);
     }
 
+    default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
+        Program prog = getAST(filePath);
+        return finder.check(prog);
+    }
+
     default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         Set<Issue> reports = finder.check(prog);

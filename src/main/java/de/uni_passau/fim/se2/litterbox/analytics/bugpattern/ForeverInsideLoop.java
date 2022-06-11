@@ -19,15 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
@@ -36,25 +41,25 @@ import java.util.List;
  */
 public class ForeverInsideLoop extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_loop";
-    private int loopcounter;
     private boolean blocksAfter;
     private boolean blocksBefore;
     private boolean insideIfElse;
+    private Stack<LoopStmt> loopStack = new Stack<>();
 
     @Override
     public void visit(ActorDefinition actor) {
-        loopcounter = 0;
         blocksAfter = false;
         blocksBefore = false;
+        loopStack.clear();
         super.visit(actor);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        loopcounter++;
+        loopStack.push(node);
         checkPosition(node);
         visitChildren(node);
-        loopcounter--;
+        loopStack.pop();
     }
 
     private void checkPosition(ASTNode node) {
@@ -64,7 +69,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
         for (int i = 0; i < list.size(); i++) {
             if (node == list.get(i)) {
                 //blocks before the first loop should not be counted because they would never be repeated and have already been executed
-                if (loopcounter >= 1 && i > 0) {
+                if (!loopStack.isEmpty() && i > 0) {
                     blocksBefore = true;
                 }
                 if (i < list.size() - 1) {
@@ -77,26 +82,58 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (loopcounter > 0 && (blocksAfter || blocksBefore || insideIfElse)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
+        if (!loopStack.isEmpty() && (blocksAfter || blocksBefore || insideIfElse)) {
+
+            IssueBuilder builder = prepareIssueBuilder(node)
+                    .withSeverity(IssueSeverity.HIGH)
+                    .withHint(getName())
+                    .withRefactoring(getRefactoring(node, loopStack.peek()));
+            addIssue(builder);
         }
-        loopcounter++;
+        loopStack.push(node);
         checkPosition(node);
         visitChildren(node);
-        loopcounter--;
+        loopStack.pop();
+    }
+
+    private ScriptEntity getRefactoring(RepeatForeverStmt loop, LoopStmt outerLoop) {
+        // W
+        // Loop 1:
+        //   X
+        //   Forever loop:
+        //     Y
+        // Z
+        //
+        // Is replaced with:
+        // W
+        // X
+        // Forever loop:
+        //   Y
+
+        StmtList outerList = (StmtList) outerLoop.getParentNode();
+
+
+        List<Stmt> outerStatements = new ArrayList<>(outerList.getStmts());
+        int pos = outerStatements.indexOf(outerLoop); // Location of Loop 1
+        outerStatements = outerStatements.subList(0, pos); // Delete anything following Loop 1
+        outerStatements.addAll(outerLoop.getStmtList().getStmts()); // Add X and Forever loop
+
+        NodeReplacementVisitor visitor = new NodeReplacementVisitor(outerList, new StmtList(outerStatements));
+
+        return visitor.apply(getCurrentScriptEntity());
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        loopcounter++;
+        loopStack.push(node);
         checkPosition(node);
         visitChildren(node);
-        loopcounter--;
+        loopStack.pop();
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (loopcounter >= 1) {
+        if (!loopStack.isEmpty()) {
             checkPosition(node);
         }
         visitChildren(node);
@@ -105,7 +142,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         insideIfElse = true;
-        if (loopcounter >= 1) {
+        if (!loopStack.isEmpty()) {
             checkPosition(node);
         }
         visitChildren(node);

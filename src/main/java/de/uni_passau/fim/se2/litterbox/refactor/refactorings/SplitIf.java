@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -85,8 +86,8 @@ public class SplitIf extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(new StatementReplacementVisitor(ifThenStmt, replacementIf1, replacementIf2));
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(new StatementReplacementVisitor(ifThenStmt, replacementIf1, replacementIf2));
     }
 
     @Override

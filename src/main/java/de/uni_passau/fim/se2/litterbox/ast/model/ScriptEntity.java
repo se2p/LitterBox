@@ -16,25 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
+package de.uni_passau.fim.se2.litterbox.ast.model;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
-/**
- * Interface for all Refactorings.
- */
-public interface Refactoring {
-
-    /**
-     * Apply the refactoring onto the given program and return the new modified program tree. Note to only apply the
-     * refactoring after a deep copy of the original program was made with the {@code deepCopy()} method to avoid
-     * transformations on the original program tree!
-     *
-     * @param node The program before the refactoring.
-     * @return The refactored program.
-     */
-    <T extends ASTNode> T apply(T node);
-
-    String getName();
+public interface ScriptEntity extends ASTNode {
 }

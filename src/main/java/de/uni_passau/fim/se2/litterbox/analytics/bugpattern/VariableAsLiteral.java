@@ -22,7 +22,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -34,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
@@ -72,13 +78,28 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
+            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(currentMetadata);
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_VARIABLE, node.getText());
             if (currentExpression != null) {
-                addIssue(currentExpression, currentMetadata, IssueSeverity.HIGH, hint);
+                builder = builder.withCurrentNode(currentExpression);
             } else {
-                addIssue(currentStatement, currentMetadata,IssueSeverity.HIGH, hint);
+                builder = builder.withCurrentNode(currentStatement);
             }
+
+            Qualified qualified = new Qualified(currentActor.getIdent(), new Variable(new StrId(literal)));
+            if (node.getParentNode() instanceof BoolExpr) {
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(node, qualified);
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                builder = builder.withRefactoring(refactoring);
+            } else {
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(node, new AsString(qualified));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                builder = builder.withRefactoring(refactoring);
+            }
+            // TODO: Check for NumberExpr?
+
+            addIssue(builder.withHint(hint));
         }
     }
 
@@ -147,21 +168,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         }
         actor.getScripts().accept(this);
         actor.getProcedureDefinitionList().accept(this);
-    }
-
-    @Override
-    public boolean isSubsumedBy(Issue theIssue, Issue other) {
-        if (theIssue.getFinder() != this) {
-            return super.isSubsumedBy(theIssue, other);
-        }
-
-        if (other.getFinder() instanceof ComparingLiterals) {
-            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override

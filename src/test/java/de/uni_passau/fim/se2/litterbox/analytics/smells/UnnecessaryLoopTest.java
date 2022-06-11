@@ -23,12 +23,17 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class UnnecessaryLoopTest implements JsonTest {
     @Test
@@ -38,7 +43,16 @@ public class UnnecessaryLoopTest implements JsonTest {
 
     @Test
     public void testUnnecessary() throws IOException, ParsingException {
-        assertThatFinderReports(2, new UnnecessaryLoop(), "./src/test/fixtures/smells/loopOne.json");
+        Program program = getAST("src/test/fixtures/smells/loopOne.json");
+        UnnecessaryLoop finder = new UnnecessaryLoop();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(2);
+        for (Issue issue : issues) {
+            ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+            Program refactoredProgram = (Program) program.accept(visitor);
+            Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+            assertThat(refactoredIssues).hasSize(1);
+        }
     }
 
     @Test

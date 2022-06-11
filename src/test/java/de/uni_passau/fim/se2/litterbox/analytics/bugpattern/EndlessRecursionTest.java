@@ -22,7 +22,9 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,23 +41,38 @@ public class EndlessRecursionTest implements JsonTest {
 
     @Test
     public void testEndlessRecursion() throws IOException, ParsingException {
-        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/recursiveProcedure.json");
-        EndlessRecursion parameterName = new EndlessRecursion();
-        Set<Issue> reports = parameterName.check(endlessRecursion);
-        Assertions.assertEquals(1, reports.size());
+        Program program = getAST("src/test/fixtures/bugpattern/recursiveProcedure.json");
+        EndlessRecursion finder = new EndlessRecursion();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
 
         // Check the procedure is correctly set
-        Issue issue = reports.iterator().next();
+        Issue issue = issues.iterator().next();
         assertThat(issue.getProcedure().getIdent().getName()).isEqualTo("u(.tD,]^yo1^B?8TSwez");
+
+        NodeReplacementVisitor visitor = new NodeReplacementVisitor(issue.getProcedure(), issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test
     public void testRecursion() throws IOException, ParsingException {
-        assertThatFinderReports(0, new EndlessRecursion(), "./src/test/fixtures/bugpattern/recursion.json");
+        assertThatFinderReports(0, new EndlessRecursion(), "src/test/fixtures/bugpattern/recursion.json");
     }
 
     @Test
     public void testEndlessBroadcast() throws IOException, ParsingException {
-        assertThatFinderReports(1, new EndlessRecursion(), "./src/test/fixtures/bugpattern/endlessBroadcast.json");
+        Program program = getAST("src/test/fixtures/bugpattern/endlessBroadcast.json");
+        EndlessRecursion finder = new EndlessRecursion();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        // Check the script is correctly set
+        Issue issue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(issue.getScript(), (Script) issue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 }

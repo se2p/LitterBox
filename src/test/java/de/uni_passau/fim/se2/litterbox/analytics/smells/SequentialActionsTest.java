@@ -19,10 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 // All these tests make the assumption that a sequence has to consist of at least 2 statements, and must occur at least 3 times
 public class SequentialActionsTest implements JsonTest {
@@ -34,7 +41,16 @@ public class SequentialActionsTest implements JsonTest {
 
     @Test
     public void testThreeTimesTwoStatements() throws IOException, ParsingException {
-        assertThatFinderReports(1, new SequentialActions(), "./src/test/fixtures/smells/sequenceOfThreePairs.json");
+        Program program = getAST("src/test/fixtures/smells/sequenceOfThreePairs.json");
+        SequentialActions finder = new SequentialActions();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test

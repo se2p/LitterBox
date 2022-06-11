@@ -21,10 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -63,15 +67,29 @@ public class StutteringMovement extends AbstractIssueFinder {
                 if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
-                    Hint hint = new Hint(getName());
-                    hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
+
+                    IssueBuilder builder = prepareIssueBuilder(stmt)
+                            .withSeverity(IssueSeverity.HIGH)
+                            .withHint(getName())
+                            .withHintParameter(Hint.HINT_KEY, key)
+                            .withRefactoring(getRefactoring(script));
+
+                    addIssue(builder);
                 }
             }
         }
         hasPositionMove = false;
         hasRotation = false;
         currentScript = null;
+    }
+
+    private Script getRefactoring(Script oldScript) {
+        Stmt firstStatement = oldScript.getStmtList().getStatement(0);
+        IfThenStmt ifThen = new IfThenStmt(new IsKeyPressed(((KeyPressed) oldScript.getEvent()).getKey(), firstStatement.getMetadata()), oldScript.getStmtList(), firstStatement.getMetadata());
+        RepeatForeverStmt forever = new RepeatForeverStmt(new StmtList(ifThen), firstStatement.getMetadata());
+        StmtList stmtList = new StmtList(forever);
+        Script refactoredScript = new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);
+        return refactoredScript;
     }
 
     @Override

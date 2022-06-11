@@ -80,8 +80,8 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(this);
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(this);
     }
 
     @Override

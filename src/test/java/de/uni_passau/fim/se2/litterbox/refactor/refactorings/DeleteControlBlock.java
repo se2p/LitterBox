@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
@@ -39,8 +38,8 @@ public class DeleteControlBlock extends CloneVisitor implements Refactoring {
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(this);
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(this);
     }
 
     @Override

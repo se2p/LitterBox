@@ -23,18 +23,33 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class StutteringMovementTest implements JsonTest {
 
     @Test
     public void testStutteringMovement() throws IOException, ParsingException {
-        assertThatFinderReports(5, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringMovement.json");
+        Program program = getAST("src/test/fixtures/bugpattern/stutteringMovement.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(5);
+
+        for (Issue theIssue : issues) {
+            ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+            Program refactoredProgram = (Program) program.accept(visitor);
+            Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+            assertThat(refactoredIssues).hasSize(4);
+        }
     }
 
     @Test
@@ -44,12 +59,31 @@ public class StutteringMovementTest implements JsonTest {
 
     @Test
     public void testStutteringRotation() throws IOException, ParsingException {
-        assertThatFinderReports(2, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringRotation.json");
+        Program program = getAST("src/test/fixtures/bugpattern/stutteringRotation.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(2);
+
+        for (Issue theIssue : issues) {
+            ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+            Program refactoredProgram = (Program) program.accept(visitor);
+            Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+            assertThat(refactoredIssues).hasSize(1);
+        }
     }
 
     @Test
     public void testStutteringMovementReset() throws IOException, ParsingException {
-        assertThatFinderReports(1, new StutteringMovement(), "./src/test/fixtures/bugpattern/stutteringMovementBug.json");
+        Program program = getAST("src/test/fixtures/bugpattern/stutteringMovementBug.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> issues = finder.check(program);
+        assertThat(issues).hasSize(1);
+
+        Issue theIssue = issues.iterator().next();
+        ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
+        Program refactoredProgram = (Program) program.accept(visitor);
+        Set<Issue> refactoredIssues = finder.check(refactoredProgram);
+        assertThat(refactoredIssues).isEmpty();
     }
 
     @Test

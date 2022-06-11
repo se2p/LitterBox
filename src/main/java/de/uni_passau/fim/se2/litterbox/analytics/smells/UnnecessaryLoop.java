@@ -20,8 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementDeletionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,11 +42,17 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
     public void visit(RepeatTimesStmt node) {
         if (node.getTimes() instanceof NumberLiteral) {
             if (((NumberLiteral) node.getTimes()).getValue() == 1) {
-                Hint hint = new Hint(ONE_HINT);
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW).withHint(ONE_HINT);
+                // TODO: Statements are not copied, is this important?
+                StatementReplacementVisitor visitor = new StatementReplacementVisitor(node, node.getStmtList().getStmts());
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                addIssue(builder.withRefactoring(refactoring));
             } else if (((NumberLiteral) node.getTimes()).getValue() == 0) {
-                Hint hint = new Hint(ZERO_HINT);
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW).withHint(ZERO_HINT);
+                // TODO: Resulting script may be empty?
+                StatementDeletionVisitor visitor = new StatementDeletionVisitor(node);
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                addIssue(builder.withRefactoring(refactoring));
             }
         }
     }

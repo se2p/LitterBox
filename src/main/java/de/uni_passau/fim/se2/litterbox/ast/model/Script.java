@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class Script extends AbstractNode {
+public class Script extends AbstractNode implements ScriptEntity {
 
     private final Event event;
     private final StmtList stmtList;

@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.ComparingLiteralsHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -155,6 +152,19 @@ public class ComparingLiterals extends AbstractIssueFinder {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof VariableAsLiteral) {
+            return theIssue.getCodeLocation().equals(other.getCodeLocation());
+        }
+
+        return false;
     }
 
     @Override

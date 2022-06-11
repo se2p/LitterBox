@@ -18,15 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,29 +41,40 @@ public class BusyWaiting extends AbstractIssueFinder {
     public static final String ALL_HINT = "busy_waiting_all";
     public static final String SCRIPT_HINT = "busy_waiting_script";
     public static final String CLONE_HINT = "busy_waiting_clone";
-    private boolean insideForeverWithOneStmt;
     private boolean insideForeverAndIf;
     private boolean hasStop;
+    private RepeatForeverStmt foreverLoop;
     private Hint hint;
 
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().size() == 1) {
-            insideForeverWithOneStmt = true;
+            foreverLoop = node;
         }
         visitChildren(node);
-        insideForeverWithOneStmt = false;
+        foreverLoop = null;
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideForeverWithOneStmt && node.getParentNode().getParentNode() instanceof RepeatForeverStmt) {
+        if (foreverLoop != null && node.getParentNode().getParentNode() instanceof RepeatForeverStmt) {
             insideForeverAndIf = true;
             hasStop = false;
         }
         visitChildren(node);
-        if (insideForeverWithOneStmt && hasStop) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        if (foreverLoop != null && hasStop) {
+
+            List<Stmt> statements = new ArrayList<>(node.getThenStmts().getStmts());
+            statements.remove(statements.size() - 1); // stop statement
+            WaitUntil waitUntil = new WaitUntil(node.getBoolExpr(), node.getMetadata());
+            statements.add(0, waitUntil);
+            StatementReplacementVisitor visitor = new StatementReplacementVisitor(foreverLoop, statements);
+            ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+            IssueBuilder builder = prepareIssueBuilder(node)
+                    .withSeverity(IssueSeverity.LOW)
+                    .withHint(hint)
+                    .withRefactoring(refactoring);
+            addIssue(builder);
             hasStop = false;
         }
         insideForeverAndIf = false;

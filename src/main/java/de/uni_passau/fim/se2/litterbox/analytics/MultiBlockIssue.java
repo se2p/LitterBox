@@ -20,12 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,13 +32,8 @@ public class MultiBlockIssue extends Issue {
 
     private List<ASTNode> normalizedNodes;
 
-    public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
+    public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
         super(finder, severity, program, actor, script, nodes.get(0), metaData, hint);
-        this.nodes.addAll(nodes);
-    }
-
-    public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure, List<ASTNode> nodes, Metadata metaData, Hint hint) {
-        super(finder, severity, program, actor, procedure, nodes.get(0), metaData, hint);
         this.nodes.addAll(nodes);
     }
 

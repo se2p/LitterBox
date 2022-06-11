@@ -18,15 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,23 +45,45 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
     public void visit(Equals equals) {
         if (isBooleanExpression(equals.getOperand1())) {
             if (isBooleanTrueLiteral(equals.getOperand2())) {
-                Hint hint = new Hint(HINT_TRUE);
-                hint.setParameter("VALUE", getBooleanLiteral(equals.getOperand2()));
-                addIssue(equals, equals.getMetadata(), hint);
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, getBooleanExpression(equals.getOperand1()));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                IssueBuilder builder = prepareIssueBuilder(equals)
+                        .withHint(HINT_TRUE)
+                        .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand2()))
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withRefactoring(refactoring);
+                addIssue(builder);
+
             } else if (isBooleanFalseLiteral(equals.getOperand2())) {
-                Hint hint = new Hint(HINT_FALSE);
-                hint.setParameter("VALUE", getBooleanLiteral(equals.getOperand2()));
-                addIssue(equals, equals.getMetadata(), hint);
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand1()), equals.getMetadata()));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                IssueBuilder builder = prepareIssueBuilder(equals)
+                        .withHint(HINT_FALSE)
+                        .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand2()))
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withRefactoring(refactoring);
+                addIssue(builder);
+
             }
         } else if (isBooleanExpression(equals.getOperand2())) {
             if (isBooleanTrueLiteral(equals.getOperand1())) {
-                Hint hint = new Hint(HINT_TRUE);
-                hint.setParameter("VALUE", getBooleanLiteral(equals.getOperand1()));
-                addIssue(equals, equals.getMetadata(), hint);
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, getBooleanExpression(equals.getOperand2()));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                IssueBuilder builder = prepareIssueBuilder(equals)
+                        .withHint(HINT_TRUE)
+                        .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand1()))
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withRefactoring(refactoring);
+                addIssue(builder);
             } else if (isBooleanFalseLiteral(equals.getOperand1())) {
-                Hint hint = new Hint(HINT_FALSE);
-                hint.setParameter("VALUE", getBooleanLiteral(equals.getOperand1()));
-                addIssue(equals, equals.getMetadata(), hint);
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand2()), equals.getMetadata()));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                IssueBuilder builder = prepareIssueBuilder(equals)
+                        .withHint(HINT_FALSE)
+                        .withHintParameter("VALUE", getBooleanLiteral(equals.getOperand1()))
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withRefactoring(refactoring);
+                addIssue(builder);
             }
         }
     }
@@ -116,6 +139,10 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             }
         }
         return false;
+    }
+
+    private BoolExpr getBooleanExpression(ComparableExpr expr) {
+        return (BoolExpr) ((AsString) expr).getOperand1();
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -58,8 +59,8 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
     }
 
     @Override
-    public Program apply(Program program) {
-        return (Program) program.accept(new StatementReplacementVisitor(foreverLoop, replacement));
+    public <T extends ASTNode> T apply(T node) {
+        return (T) node.accept(new StatementReplacementVisitor(foreverLoop, replacement));
     }
 
     @Override
