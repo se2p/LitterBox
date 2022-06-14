@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProgramFeatures {
-    private String name;
+    private final String name;
 
-    private List<ProgramRelation> features = new ArrayList<>();
+    private final List<ProgramRelation> features = new ArrayList<>();
 
     public ProgramFeatures(String name) {
         this.name = name;
@@ -33,12 +33,7 @@ public class ProgramFeatures {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(name).append(' ');
-        stringBuilder.append(features.stream().map(ProgramRelation::toString)
-                .collect(Collectors.joining(" ")));
-
-        return stringBuilder.toString();
+        return name + ' ' + features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
     }
 
     public void addFeature(String source, String path, String target) {

@@ -55,6 +55,11 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         builder.setCurrentActor(actor);
     }
 
+    public ControlFlowGraphVisitor(Program program, ActorDefinition actor) {
+        this(actor);
+        this.program = program;
+    }
+
     @Override
     public void visit(Program node) {
         this.program = node;

@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
+
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +27,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StringUtil {
+    private StringUtil() {
+    }
+
     public static String normalizeName(String original) {
-        original = original.toLowerCase().replaceAll("\\\\n", "") // escaped new lines
+        original = original.toLowerCase()
+                .replace("\\n", "") // new lines
                 .replaceAll("//s+", "") // whitespaces
-                .replaceAll("[\"',]", "") // quotes, apostrophies, commas
+                .replaceAll("[\"',]", "") // quotes, apostrophes, commas
                 .replaceAll("\\P{Print}", ""); // unicode weird characters
         String stripped = original.replaceAll("[^A-Za-z]", "");
         if (stripped.length() == 0) {
@@ -39,8 +46,28 @@ public class StringUtil {
 
     public static List<String> splitToSubtokens(String str1) {
         String str2 = str1.trim();
-        return Stream.of(str2.split("(?<=[a-z])(?=[A-Z])|_|-|[0-9]|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"))
+        return Stream.of(str2.split("(?<=[a-z])(?=[A-Z])|_|-|\\d|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"))
                 .filter(s -> s.length() > 0).map(StringUtil::normalizeName)
                 .filter(s -> s.length() > 0).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public static String replaceSpecialCharacters(final String label) {
+        if (label == null || label.isBlank()) {
+            return "blank";
+        } else {
+            return label.replaceAll("[^a-zA-Z\\d\\s|]", "|").trim();
+        }
+    }
+
+    /**
+     * Retrieve the actual literal represented by a node.
+     *
+     * @param node A node of the AST.
+     * @return The literal value of the given node.
+     */
+    public static String getToken(final ASTNode node) {
+        TokenVisitor visitor = new TokenVisitor();
+        node.accept(visitor);
+        return visitor.getToken();
     }
 }

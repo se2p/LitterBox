@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -41,7 +42,7 @@ public class PathGenerator {
             "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
             "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
             "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
-        ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
+    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
     public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
         this.maxPathLength = maxPathLength;
@@ -66,14 +67,15 @@ public class PathGenerator {
             System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + getToken(value));
+                System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
                 i++;
             }
         }
     }
 
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(this::getToken).collect(Collectors.toList());
+        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
+                .collect(Collectors.toList());
     }
 
     public List<ProgramFeatures> generatePaths() {
@@ -100,7 +102,7 @@ public class PathGenerator {
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
         final List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
-        return Optional.ofNullable(programFeatures).filter(features -> !features.isEmpty());
+        return Optional.of(programFeatures).filter(features -> !features.isEmpty());
     }
 
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
@@ -121,8 +123,8 @@ public class PathGenerator {
                 ASTNode target = astLeafs.get(j);
                 String path = generatePath(source, target);
                 if (!path.isEmpty()) {
-                    String sourceLiteral = getToken(source);
-                    String targetLiteral = getToken(target);
+                    String sourceLiteral = StringUtil.getToken(source);
+                    String targetLiteral = StringUtil.getToken(target);
                     if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
                         programFeatures.addFeature(sourceLiteral, path, targetLiteral);
                     }
@@ -213,17 +215,5 @@ public class PathGenerator {
 
     private static boolean isDefaultName(String normalizedSpriteLabel) {
         return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
-    }
-
-    /**
-     * Retrieve the actual literal represented by this node.
-     *
-     * @param leaf A leaf of the AST.
-     * @return The literal value of the given leaf.
-     */
-    private String getToken(ASTNode leaf) {
-        TokenVisitor visitor = new TokenVisitor();
-        leaf.accept(visitor);
-        return visitor.getToken();
     }
 }
