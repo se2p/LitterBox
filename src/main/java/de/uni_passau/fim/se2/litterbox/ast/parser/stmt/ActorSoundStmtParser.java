@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -43,7 +44,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorSoundStmtParser {
 
-    public static ActorSoundStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static ActorSoundStmt parse(final ProgramParserState state, String blockId, JsonNode current,
+                                       JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -57,11 +59,11 @@ public class ActorSoundStmtParser {
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         switch (opcode) {
             case sound_playuntildone:
-                elementChoice = getSoundElement(current, allBlocks);
+                elementChoice = getSoundElement(state, current, allBlocks);
                 return new PlaySoundUntilDone(elementChoice, metadata);
 
             case sound_play:
-                elementChoice = getSoundElement(current, allBlocks);
+                elementChoice = getSoundElement(state, current, allBlocks);
                 return new StartSound(elementChoice, metadata);
 
             case sound_cleareffects:
@@ -71,15 +73,14 @@ public class ActorSoundStmtParser {
                 return new StopAllSounds(metadata);
 
             case sound_setvolumeto:
-                return parseSetVolumeTo(current, allBlocks, metadata);
+                return parseSetVolumeTo(state, current, allBlocks, metadata);
             case sound_seteffectto:
-                return parseSetSoundEffect(current, allBlocks, metadata);
+                return parseSetSoundEffect(state, current, allBlocks, metadata);
             case sound_changevolumeby:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, VOLUME_KEY_CAPS,
-                        allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(state, current, VOLUME_KEY_CAPS, allBlocks);
                 return new ChangeVolumeBy(numExpr, metadata);
             case sound_changeeffectby:
-                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, VALUE_KEY, allBlocks);
                 String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
                 return new ChangeSoundEffectBy(new SoundEffect(effectName), numExpr, metadata);
 
@@ -88,7 +89,8 @@ public class ActorSoundStmtParser {
         }
     }
 
-    private static ElementChoice getSoundElement(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static ElementChoice getSoundElement(final ProgramParserState state, JsonNode current,
+                                                 JsonNode allBlocks) throws ParsingException {
         //Make a list of all elements in inputs
         List<JsonNode> inputsList = new ArrayList<>();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
@@ -101,7 +103,7 @@ public class ActorSoundStmtParser {
 
             return new WithExpr(new StrId(soundValue), metadata);
         } else {
-            final Expression expression = ExpressionParser.parseExpr(current, SOUND_MENU, allBlocks);
+            final Expression expression = ExpressionParser.parseExpr(state, current, SOUND_MENU, allBlocks);
             return new WithExpr(expression, new NoBlockMetadata());
         }
     }
@@ -110,16 +112,18 @@ public class ActorSoundStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static ActorSoundStmt parseSetVolumeTo(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                                   BlockMetadata metadata)
             throws ParsingException {
-        return new SetVolumeTo(NumExprParser.parseNumExpr(current, VOLUME_KEY_CAPS, allBlocks), metadata);
+        return new SetVolumeTo(NumExprParser.parseNumExpr(state, current, VOLUME_KEY_CAPS, allBlocks), metadata);
     }
 
-    private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static ActorSoundStmt parseSetSoundEffect(final ProgramParserState state, JsonNode current,
+                                                      JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.SoundEffectType.contains(effect));
-        return new SetSoundEffectTo(new SoundEffect(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        return new SetSoundEffectTo(new SoundEffect(effect), NumExprParser.parseNumExpr(state, current, VALUE_KEY,
                 allBlocks), metadata);
     }
 }

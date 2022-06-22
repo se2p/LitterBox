@@ -45,28 +45,30 @@ public class ScriptParser {
     public static final String OPCODE = "opcode";
 
     /**
-     * Returns a script where blockID is the ID of the first block in this script. It is expected that blockID points to
+     * Returns a script where blockId is the ID of the first block in this script. It is expected that blockId points to
      * a topLevel block.
      *
-     * @param blockID of the first block in this script
+     * @param state   the current state of the parser
+     * @param blockId of the first block in this script
      * @param blocks  all blocks in the {@link ActorDefinition} of this
      *                {@link de.uni_passau.fim.se2.litterbox.ast.model.Script}
      * @return Script that was parsed
      */
-    public static Script parse(String blockID, JsonNode blocks) throws ParsingException {
-        Preconditions.checkNotNull(blockID);
+    public static Script parse(final ProgramParserState state, String blockId, JsonNode blocks)
+            throws ParsingException {
+        Preconditions.checkNotNull(blockId);
         Preconditions.checkNotNull(blocks);
 
-        final JsonNode current = blocks.get(blockID);
+        final JsonNode current = blocks.get(blockId);
         final Event event;
         final StmtList stmtList;
 
         if (isEvent(current)) {
-            event = EventParser.parse(blockID, blocks);
-            stmtList = parseStmtList(current.get(NEXT_KEY).asText(), blocks);
+            event = EventParser.parse(state, blockId, blocks);
+            stmtList = parseStmtList(state, current.get(NEXT_KEY).asText(), blocks);
         } else {
             event = new Never();
-            stmtList = parseStmtList(blockID, blocks);
+            stmtList = parseStmtList(state, blockId, blocks);
             if (stmtList == null) {
                 return null;
             }
@@ -83,12 +85,13 @@ public class ScriptParser {
         return false;
     }
 
-    public static StmtList parseStmtList(String blockId, JsonNode blocks) throws ParsingException {
+    public static StmtList parseStmtList(final ProgramParserState state, String blockId, JsonNode blocks)
+            throws ParsingException {
         List<Stmt> list = new LinkedList<>();
         JsonNode current = blocks.get(blockId);
 
         if (current instanceof ArrayNode) {
-            Stmt stmt = StmtParser.parse(blockId, blocks);
+            Stmt stmt = StmtParser.parse(state, blockId, blocks);
             list.add(stmt);
         } else {
 
@@ -104,12 +107,12 @@ public class ScriptParser {
                         // Only parameters that are not shadows are dead code
                         return null;
                     } else {
-                        Stmt stmt = StmtParser.parse(blockId, blocks);
+                        Stmt stmt = StmtParser.parse(state, blockId, blocks);
                         list.add(stmt);
                     }
                 } catch (ParsingException e) {
                     Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
-                            + current.get(OPCODE_KEY) + ". "+e.getMessage());
+                            + current.get(OPCODE_KEY) + ". " + e.getMessage());
                 }
                 blockId = current.get(NEXT_KEY).asText();
                 current = blocks.get(blockId);

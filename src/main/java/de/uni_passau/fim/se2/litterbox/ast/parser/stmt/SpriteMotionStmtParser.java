@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -34,7 +35,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SpriteMotionStmtParser {
 
-    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks)
+    public static SpriteMotionStmt parse(final ProgramParserState state, String identifier, JsonNode current,
+                                         JsonNode allBlocks)
             throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -50,47 +52,47 @@ public class SpriteMotionStmtParser {
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
         switch (opcode) {
             case motion_movesteps:
-                numExpr = NumExprParser.parseNumExpr(current, STEPS_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, STEPS_KEY, allBlocks);
                 return new MoveSteps(numExpr, metadata);
             case motion_turnright:
-                numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, DEGREES_KEY, allBlocks);
                 return new TurnRight(numExpr, metadata);
             case motion_turnleft:
-                numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, DEGREES_KEY, allBlocks);
                 return new TurnLeft(numExpr, metadata);
             case motion_gotoxy:
-                NumExpr xExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
-                NumExpr yExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
+                NumExpr xExpr = NumExprParser.parseNumExpr(state, current, X, allBlocks);
+                NumExpr yExpr = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
                 return new GoToPosXY(xExpr, yExpr, metadata);
             case motion_goto:
-                position = PositionParser.parse(current, allBlocks);
+                position = PositionParser.parse(state, current, allBlocks);
                 return new GoToPos(position, metadata);
             case motion_glidesecstoxy:
-                NumExpr secs = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
-                NumExpr x = NumExprParser.parseNumExpr(current, X, allBlocks);
-                NumExpr y = NumExprParser.parseNumExpr(current, Y, allBlocks);
+                NumExpr secs = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
+                NumExpr x = NumExprParser.parseNumExpr(state, current, X, allBlocks);
+                NumExpr y = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
                 return new GlideSecsToXY(secs, x, y, metadata);
             case motion_glideto:
-                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
-                position = PositionParser.parse(current, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
+                position = PositionParser.parse(state, current, allBlocks);
                 return new GlideSecsTo(numExpr, position, metadata);
             case motion_pointindirection:
-                numExpr = NumExprParser.parseNumExpr(current, DIRECTION_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, DIRECTION_KEY_CAP, allBlocks);
                 return new PointInDirection(numExpr, metadata);
             case motion_pointtowards:
-                position = PositionParser.parse(current, allBlocks);
+                position = PositionParser.parse(state, current, allBlocks);
                 return new PointTowards(position, metadata);
             case motion_changexby:
-                numExpr = NumExprParser.parseNumExpr(current, DX_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, DX_KEY, allBlocks);
                 return new ChangeXBy(numExpr, metadata);
             case motion_changeyby:
-                numExpr = NumExprParser.parseNumExpr(current, DY_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, DY_KEY, allBlocks);
                 return new ChangeYBy(numExpr, metadata);
             case motion_setx:
-                numExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, X, allBlocks);
                 return new SetXTo(numExpr, metadata);
             case motion_sety:
-                numExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
                 return new SetYTo(numExpr, metadata);
             case motion_ifonedgebounce:
                 return new IfOnEdgeBounce(metadata);

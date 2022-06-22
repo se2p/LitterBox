@@ -27,8 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProgramMetadataParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
@@ -43,15 +41,11 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ProgramParser {
 
-    public static SymbolTable symbolTable;
-    static ProcedureDefinitionNameMapping procDefMap;
-
     public static Program parseProgram(String programName, JsonNode programNode) throws ParsingException {
+        final ProgramParserState state = new ProgramParserState();
+
         Preconditions.checkNotNull(programName);
         Preconditions.checkNotNull(programNode);
-
-        symbolTable = new SymbolTable();
-        procDefMap = new ProcedureDefinitionNameMapping();
 
         LocalIdentifier ident = new StrId(programName);
 
@@ -64,26 +58,32 @@ public class ProgramParser {
         Optional<JsonNode> stageNode = stream.filter(node -> node.get(IS_STAGE_KEY).asBoolean())
                 .findFirst(); //Is it necessary to check that only one stage exists?
 
-        if (!stageNode.isPresent()) {
+        if (stageNode.isEmpty()) {
             throw new ParsingException("Program has no Stage");
         }
 
-        ActorDefinition stage = ActorDefinitionParser.parse(stageNode.get());
+        List<ActorDefinition> actorDefinitions = getActorDefinitions(state, programNode, stageNode.get());
 
-        iterable = () -> programNode.get(TARGETS_KEY).iterator();
-        stream = StreamSupport.stream(iterable.spliterator(), false);
+        ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
+        ProgramMetadata metadata = ProgramMetadataParser.parse(programNode);
+        return new Program(ident, actorDefinitionList, state.getSymbolTable(), state.getProcDefMap(), metadata);
+    }
+
+    private static List<ActorDefinition> getActorDefinitions(final ProgramParserState state, JsonNode programNode,
+                                                             JsonNode stageNode) throws ParsingException {
+        ActorDefinition stage = ActorDefinitionParser.parse(state, stageNode);
+
+        Iterable<JsonNode> iterable = () -> programNode.get(TARGETS_KEY).iterator();
+        Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
         List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get(IS_STAGE_KEY).asBoolean()))
                 .collect(Collectors.toList());
 
         List<ActorDefinition> actorDefinitions = new LinkedList<>();
         actorDefinitions.add(stage);
         for (JsonNode nonStageNode : nonStageNodes) {
-            ActorDefinition group = ActorDefinitionParser.parse(nonStageNode);
+            ActorDefinition group = ActorDefinitionParser.parse(state, nonStageNode);
             actorDefinitions.add(group);
         }
-
-        ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
-        ProgramMetadata metadata = ProgramMetadataParser.parse(programNode);
-        return new Program(ident, actorDefinitionList, symbolTable, procDefMap, metadata);
+        return actorDefinitions;
     }
 }

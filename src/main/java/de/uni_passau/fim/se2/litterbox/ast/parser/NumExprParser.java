@@ -56,7 +56,7 @@ public class NumExprParser {
      *                        to be checked.
      * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
-     * @return True iff the the input of the containing block is parsable as NumExpr.
+     * @return True iff the input of the containing block is parsable as NumExpr.
      * @throws ParsingException If the JSON is malformed.
      */
     @SuppressWarnings("unused")
@@ -101,13 +101,15 @@ public class NumExprParser {
      * If the input does not contain a NumExpr calls the ExpressionParser
      * and wraps the result as NumExpr.
      *
+     * @param state           The current state of the parser.
      * @param containingBlock The block inputs of which contain the expression to be parsed.
      * @param inputKey        The key of the input which contains the expression.
      * @param allBlocks       All blocks of the actor definition currently parsed.
      * @return The expression identified by the inputKey.
      * @throws ParsingException If parsing fails.
      */
-    public static NumExpr parseNumExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
+    public static NumExpr parseNumExpr(final ProgramParserState state, JsonNode containingBlock, String inputKey,
+                                       JsonNode allBlocks)
             throws ParsingException {
         if (parsableAsNumExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
@@ -122,10 +124,10 @@ public class NumExprParser {
                 }
             } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
                 String identifier = exprArray.get(POS_BLOCK_ID).asText();
-                return parseBlockNumExpr(identifier, allBlocks.get(identifier), allBlocks);
+                return parseBlockNumExpr(state, identifier, allBlocks.get(identifier), allBlocks);
             }
         } else {
-            return new AsNumber(ExpressionParser.parseExpr(containingBlock, inputKey, allBlocks));
+            return new AsNumber(ExpressionParser.parseExpr(state, containingBlock, inputKey, allBlocks));
         }
         throw new ParsingException("Could not parse NumExpr.");
     }
@@ -134,20 +136,22 @@ public class NumExprParser {
      * Parses a single NumExpression corresponding to a reporter block.
      * The opcode of the block has to be a NumExprOpcode.
      *
+     * @param state     The current state of the parser.
      * @param exprBlock The JsonNode of the reporter block.
      * @param allBlocks All blocks of the actor definition currently analysed.
      * @return The parsed expression.
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static NumExpr parseBlockNumExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+    static NumExpr parseBlockNumExpr(final ProgramParserState state, String blockId, JsonNode exprBlock,
+                                     JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
                 opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        String currentActorName = state.getCurrentActor().getName();
         switch (opcode) {
             case sound_volume:
                 return new Volume(metadata);
@@ -170,68 +174,74 @@ public class NumExprParser {
             case sensing_loudness:
                 return new Loudness(metadata);
             case operator_round:
-                NumExpr num = parseNumExpr(exprBlock, NUM_KEY, allBlocks);
+                NumExpr num = parseNumExpr(state, exprBlock, NUM_KEY, allBlocks);
                 return new Round(num, metadata);
             case operator_length:
-                return new LengthOfString(StringExprParser.parseStringExpr(exprBlock, STRING_KEY, allBlocks), metadata);
+                return new LengthOfString(StringExprParser.parseStringExpr(state, exprBlock, STRING_KEY, allBlocks),
+                        metadata);
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 String listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                Identifier var;
-                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                Identifier variable;
+                if (state.getSymbolTable().getList(identifier, listName, currentActorName).isEmpty()) {
                     List<Expression> listEx = new ArrayList<>();
                     ExpressionList expressionList = new ExpressionList(listEx);
-                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
+                    state.getSymbolTable().addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+                Optional<ExpressionListInfo> list = state.getSymbolTable().getList(identifier, listName,
+                        currentActorName);
 
                 Preconditions.checkArgument(list.isPresent());
                 ExpressionListInfo variableInfo = list.get();
-                var = new Qualified(new StrId(variableInfo.getActor()),
+                variable = new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName())));
-                return new LengthOfVar(var, metadata);
+                return new LengthOfVar(variable, metadata);
             case sensing_current:
                 TimeComp timeComp = TimecompParser.parse(exprBlock);
                 return new Current(timeComp, metadata);
             case sensing_distanceto:
-                Position pos = PositionParser.parse(exprBlock, allBlocks);
+                Position pos = PositionParser.parse(state, exprBlock, allBlocks);
                 return new DistanceTo(pos, metadata);
             case operator_add:
-                return buildNumExprWithTwoNumExprInputs(Add.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks, metadata);
+                return buildNumExprWithTwoNumExprInputs(state, Add.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
+                        metadata);
             case operator_subtract:
-                return buildNumExprWithTwoNumExprInputs(Minus.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
+                return buildNumExprWithTwoNumExprInputs(state, Minus.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
                         metadata);
             case operator_multiply:
-                return buildNumExprWithTwoNumExprInputs(Mult.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks, metadata);
+                return buildNumExprWithTwoNumExprInputs(state, Mult.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
+                        metadata);
             case operator_divide:
-                return buildNumExprWithTwoNumExprInputs(Div.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks, metadata);
+                return buildNumExprWithTwoNumExprInputs(state, Div.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
+                        metadata);
             case operator_mod:
-                return buildNumExprWithTwoNumExprInputs(Mod.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks, metadata);
+                return buildNumExprWithTwoNumExprInputs(state, Mod.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks,
+                        metadata);
             case operator_random:
-                return buildNumExprWithTwoNumExprInputs(PickRandom.class, exprBlock, FROM_KEY, TO_KEY, allBlocks,
+                return buildNumExprWithTwoNumExprInputs(state, PickRandom.class, exprBlock, FROM_KEY, TO_KEY, allBlocks,
                         metadata);
             case operator_mathop:
                 NumFunct funct = parseNumFunct(exprBlock.get(FIELDS_KEY));
-                NumExpr numExpr = parseNumExpr(exprBlock, NUM_KEY, allBlocks);
+                NumExpr numExpr = parseNumExpr(state, exprBlock, NUM_KEY, allBlocks);
                 return new NumFunctOf(funct, numExpr, metadata);
             case data_itemnumoflist:
-                Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
+                Expression item = parseExpr(state, exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                if (state.getSymbolTable().getList(identifier, listName, currentActorName).isEmpty()) {
                     List<Expression> listEx = new ArrayList<>();
                     ExpressionList expressionList = new ExpressionList(listEx);
-                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
+                    state.getSymbolTable().addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
-                list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+                list = state.getSymbolTable().getList(identifier, listName, currentActorName);
 
                 Preconditions.checkArgument(list.isPresent());
                 variableInfo = list.get();
-                var = new Qualified(new StrId(variableInfo.getActor()),
+                variable = new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName())));
-                return new IndexOf(item, var, metadata);
+                return new IndexOf(item, variable, metadata);
             default:
                 throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
         }
@@ -241,6 +251,7 @@ public class NumExprParser {
      * Parses the inputs of the NumExpr the identifier of which is handed over and returns the NumExpr holding its two
      * inputs.
      *
+     * @param state     The current state of the parser.
      * @param clazz     The class implementing NumExpr of which an instance is to be created.
      * @param exprBlock The JsonNode of the NumExpr.
      * @param allBlocks All blocks of the actor definition currently analysed.
@@ -248,7 +259,8 @@ public class NumExprParser {
      * @return A new T instance holding the NumExpr inputs specified by their names.
      * @throws ParsingException If creating the new T instance goes wrong.
      */
-    private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz,
+    private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(final ProgramParserState state,
+                                                                                Class<T> clazz,
                                                                                 JsonNode exprBlock,
                                                                                 String firstInputName,
                                                                                 String secondInputName,
@@ -256,8 +268,8 @@ public class NumExprParser {
                                                                                 BlockMetadata metadata)
             throws ParsingException {
 
-        NumExpr first = parseNumExpr(exprBlock, firstInputName, allBlocks);
-        NumExpr second = parseNumExpr(exprBlock, secondInputName, allBlocks);
+        NumExpr first = parseNumExpr(state, exprBlock, firstInputName, allBlocks);
+        NumExpr second = parseNumExpr(state, exprBlock, secondInputName, allBlocks);
         try {
             return clazz.getConstructor(NumExpr.class, NumExpr.class, BlockMetadata.class).newInstance(first, second,
                     metadata);

@@ -43,7 +43,8 @@ public class KeyParser {
     public static final int SPACE = 32;
     public static final int ANYKEY = 0;
 
-    public static Key parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Key parse(final ProgramParserState state, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
 
         JsonNode block;
         final String opcodeString = current.get(OPCODE_KEY).asText();
@@ -59,7 +60,7 @@ public class KeyParser {
                 metadata = BlockMetadataParser.parse(menuBlockId, block);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
-                final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);
+                final NumExpr numExpr = NumExprParser.parseNumExpr(state, current, KEY_OPTION, allBlocks);
                 return new Key(numExpr, new NoBlockMetadata());
             }
         } else {

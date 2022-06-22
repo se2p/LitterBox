@@ -38,7 +38,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
 
 public class CostumeChoiceParser {
 
-    public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static ElementChoice parse(final ProgramParserState state, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -50,7 +51,8 @@ public class CostumeChoiceParser {
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getCostumeChoiceFromMenu(allBlocks, inputsNode);
         } else {
-            return new WithExpr(ExpressionParser.parseExpr(current, COSTUME_INPUT, allBlocks), new NoBlockMetadata());
+            NoBlockMetadata metadata = new NoBlockMetadata();
+            return new WithExpr(ExpressionParser.parseExpr(state, current, COSTUME_INPUT, allBlocks), metadata);
         }
     }
 

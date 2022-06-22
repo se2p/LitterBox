@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TextToSpeechOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -50,7 +51,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class TextToSpeechParser {
 
-    public static Stmt parse(String blockId, JsonNode current, JsonNode blocks) throws ParsingException {
+    public static Stmt parse(final ProgramParserState state, String blockId, JsonNode current, JsonNode blocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(blocks);
         final String opCodeString = current.get(Constants.OPCODE_KEY).asText();
@@ -64,18 +66,19 @@ public class TextToSpeechParser {
         switch (opcode) {
 
             case text2speech_setVoice:
-                return parseSetVoice(current, metadata, blocks);
+                return parseSetVoice(state, current, metadata, blocks);
             case text2speech_speakAndWait:
-                StringExpr expr = StringExprParser.parseStringExpr(current, WORDS_KEY, blocks);
+                StringExpr expr = StringExprParser.parseStringExpr(state, current, WORDS_KEY, blocks);
                 return new Speak(expr, metadata);
             case text2speech_setLanguage:
-                return parseSetLanguage(current, metadata, blocks);
+                return parseSetLanguage(state, current, metadata, blocks);
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
     }
 
-    private static Stmt parseSetLanguage(JsonNode current, BlockMetadata metadata, JsonNode blocks) throws ParsingException {
+    private static Stmt parseSetLanguage(final ProgramParserState state, JsonNode current, BlockMetadata metadata,
+                                         JsonNode blocks) throws ParsingException {
         Language lang;
         BlockMetadata paramMetadata;
         List<JsonNode> inputsList = new ArrayList<>();
@@ -94,19 +97,20 @@ public class TextToSpeechParser {
                 lang = new FixedLanguage(attribute, paramMetadata);
             } else {
                 paramMetadata = new NoBlockMetadata();
-                Expression expr = ExpressionParser.parseExpr(current, LANGUAGE_INPUT_KEY, blocks);
+                Expression expr = ExpressionParser.parseExpr(state, current, LANGUAGE_INPUT_KEY, blocks);
                 lang = new ExprLanguage(expr, paramMetadata);
             }
         } else {
             paramMetadata = new NoBlockMetadata();
-            Expression expr = ExpressionParser.parseExpr(current, LANGUAGE_INPUT_KEY, blocks);
+            Expression expr = ExpressionParser.parseExpr(state, current, LANGUAGE_INPUT_KEY, blocks);
             lang = new ExprLanguage(expr, paramMetadata);
         }
 
         return new SetLanguage(lang, metadata);
     }
 
-    private static Stmt parseSetVoice(JsonNode current, BlockMetadata metadata, JsonNode blocks) throws ParsingException {
+    private static Stmt parseSetVoice(final ProgramParserState state, JsonNode current, BlockMetadata metadata,
+                                      JsonNode blocks) throws ParsingException {
         Voice voice;
         BlockMetadata paramMetadata;
         List<JsonNode> inputsList = new ArrayList<>();
@@ -125,12 +129,12 @@ public class TextToSpeechParser {
                 voice = new FixedVoice(attribute, paramMetadata);
             } else {
                 paramMetadata = new NoBlockMetadata();
-                Expression expr = ExpressionParser.parseExpr(current, VOICE_INPUT_KEY, blocks);
+                Expression expr = ExpressionParser.parseExpr(state, current, VOICE_INPUT_KEY, blocks);
                 voice = new ExprVoice(expr, paramMetadata);
             }
         } else {
             paramMetadata = new NoBlockMetadata();
-            Expression expr = ExpressionParser.parseExpr(current, VOICE_INPUT_KEY, blocks);
+            Expression expr = ExpressionParser.parseExpr(state, current, VOICE_INPUT_KEY, blocks);
             voice = new ExprVoice(expr, paramMetadata);
         }
 

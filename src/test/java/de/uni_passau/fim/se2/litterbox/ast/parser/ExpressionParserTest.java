@@ -19,24 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
 import static org.junit.Assert.assertEquals;
@@ -56,6 +47,8 @@ public class ExpressionParserTest {
     private static JsonNode divBlock;
     private static JsonNode multBlock;
 
+    private static ProgramParserState state;
+
     @BeforeAll
     public static void setup() throws IOException {
         moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/movesteps.json");
@@ -68,6 +61,9 @@ public class ExpressionParserTest {
         minusBlock = twoNumExprSlotsNumExprs.get("kNxFx|sm51cAUYf?x(cR");
         divBlock = twoNumExprSlotsNumExprs.get("b2JumU`zm:?3szh/07O(");
         multBlock = twoNumExprSlotsNumExprs.get("IBYSC9r)0ccPx;?l-2M|");
+
+        state = new ProgramParserState();
+        state.setCurrentActor(new StrId("actor"));
     }
 
     @Test
@@ -79,19 +75,19 @@ public class ExpressionParserTest {
 
     @Test
     public void testParseNumExprLiteral() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(literalBlock, STEPS_KEY, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExpr(state, literalBlock, STEPS_KEY, allExprTypesScript);
         assertTrue(numExpr instanceof NumberLiteral);
     }
 
     @Test
     public void testParseNumExprBlock() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(containingBlock, STEPS_KEY, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExpr(state, containingBlock, STEPS_KEY, allExprTypesScript);
         assertTrue(numExpr instanceof MouseX);
     }
 
     @Test
     public void testAdd() throws ParsingException {
-        NumExpr add = NumExprParser.parseNumExpr(addBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
+        NumExpr add = NumExprParser.parseNumExpr(state, addBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand2()).getValue()));
@@ -99,7 +95,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMinus() throws ParsingException {
-        NumExpr minus = NumExprParser.parseNumExpr(minusBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
+        NumExpr minus = NumExprParser.parseNumExpr(state, minusBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand2()).getValue()));
@@ -107,7 +103,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMult() throws ParsingException {
-        NumExpr mult = NumExprParser.parseNumExpr(multBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
+        NumExpr mult = NumExprParser.parseNumExpr(state, multBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand2()).getValue()));
@@ -115,7 +111,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testDiv() throws ParsingException {
-        NumExpr div = NumExprParser.parseNumExpr(divBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
+        NumExpr div = NumExprParser.parseNumExpr(state, divBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getOperand1();
         assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getOperand1())).getValue()));
@@ -140,7 +136,7 @@ public class ExpressionParserTest {
         JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
 
         Exception exception = assertThrows(ParsingException.class, () -> {
-            ExpressionParser.parseExprBlock(".-Id3Zrhoe,6;Z+v_;IB", ifBlock, script);
+            ExpressionParser.parseExprBlock(state, ".-Id3Zrhoe,6;Z+v_;IB", ifBlock, script);
         });
         String expectedMessage = " is an unexpected opcode for an expression";
         String actualMessage = exception.getMessage();

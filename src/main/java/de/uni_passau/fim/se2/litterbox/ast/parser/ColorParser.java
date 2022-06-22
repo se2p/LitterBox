@@ -29,7 +29,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ColorParser {
 
-    public static Color parseColor(JsonNode current, String inputName, JsonNode allBlocks) throws ParsingException {
+    public static Color parseColor(final ProgramParserState state, JsonNode current, String inputName,
+                                   JsonNode allBlocks) throws ParsingException {
         //FIXME parse inputs that are not a text color as a "FromNumber" color
 
         JsonNode inputs = current.get(INPUTS_KEY);
@@ -46,7 +47,7 @@ public class ColorParser {
 
             return new ColorLiteral(rNumber, gNumber, bNumber);
         } else {
-            final NumExpr numExpr = NumExprParser.parseNumExpr(current, inputName, allBlocks);
+            final NumExpr numExpr = NumExprParser.parseNumExpr(state, current, inputName, allBlocks);
             return new FromNumber(numExpr);
         }
     }

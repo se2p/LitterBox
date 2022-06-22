@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -50,13 +51,15 @@ public class ActorLookStmtParser {
     /**
      * Parses an ActorLookStmt for a given block id.
      *
+     * @param state     The current parser state.
      * @param blockId   of the block to be parsed
      * @param current   JsonNode the contains the ActorLookStmt
      * @param allBlocks of this program
      * @return the parsed ActorLookStmt
      * @throws ParsingException if the block cannot be parsed into an ActorLookStmt
      */
-    public static ActorLookStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static ActorLookStmt parse(final ProgramParserState state, String blockId, JsonNode current,
+                                      JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -72,24 +75,25 @@ public class ActorLookStmtParser {
         String variableId;
         VariableInfo variableInfo;
         String actorName;
-        Identifier var;
+        Identifier variable;
         ExpressionListInfo expressionListInfo;
 
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        final String currentActorName = state.getCurrentActor().getName();
+        final SymbolTable symbolTable = state.getSymbolTable();
 
         switch (opcode) {
             case sensing_askandwait:
-                StringExpr question = StringExprParser.parseStringExpr(current, QUESTION_KEY, allBlocks);
+                StringExpr question = StringExprParser.parseStringExpr(state, current, QUESTION_KEY, allBlocks);
                 return new AskAndWait(question, metadata);
 
             case looks_nextbackdrop:
                 return new NextBackdrop(metadata);
             case looks_switchbackdropto:
-                ElementChoice elementChoice = ElementChoiceParser.parse(current, allBlocks);
+                ElementChoice elementChoice = ElementChoiceParser.parse(state, current, allBlocks);
                 return new SwitchBackdrop(elementChoice, metadata);
 
             case looks_switchbackdroptoandwait:
-                elementChoice = ElementChoiceParser.parse(current, allBlocks);
+                elementChoice = ElementChoiceParser.parse(state, current, allBlocks);
                 return new SwitchBackdropAndWait(elementChoice, metadata);
 
             case looks_cleargraphiceffects:
@@ -98,61 +102,56 @@ public class ActorLookStmtParser {
             case data_hidevariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-                    ProgramParser.symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
+                if (symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
+                    symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
                 }
-                variableInfo
-                        = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+                variableInfo = symbolTable.getVariable(variableId, variableName, currentActorName).get();
                 actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
+                variable = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
 
-                return new HideVariable(var, metadata);
+                return new HideVariable(variable, metadata);
 
             case data_showvariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-                    ProgramParser.symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
+                if (symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
+                    symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
                 }
-                variableInfo
-                        = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+                variableInfo = symbolTable.getVariable(variableId, variableName, currentActorName).get();
                 actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName),
-                        new Variable(new StrId(variableName)));
+                variable = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
 
-                return new ShowVariable(var, metadata);
+                return new ShowVariable(variable, metadata);
 
             case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
-                    createNewList(variableId, variableName);
+                if (symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
+                    createNewList(state, variableId, variableName);
                 }
-                expressionListInfo
-                        = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
+                expressionListInfo = symbolTable.getList(variableId, variableName, currentActorName).get();
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
+                variable = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
 
-                return new ShowList(var, metadata);
+                return new ShowList(variable, metadata);
 
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
-                    createNewList(variableId, variableName);
+                if (symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
+                    createNewList(state, variableId, variableName);
                 }
-                expressionListInfo
-                        = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
+                expressionListInfo = symbolTable.getList(variableId, variableName, currentActorName).get();
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
+                variable = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
 
-                return new HideList(var, metadata);
+                return new HideList(variable, metadata);
 
             case looks_seteffectto:
-                return parseSetLookEffect(current, allBlocks, metadata);
+                return parseSetLookEffect(state, current, allBlocks, metadata);
 
             case looks_changeeffectby:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(state, current, CHANGE_KEY, allBlocks);
                 String effectName = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
                 return new ChangeGraphicEffectBy(new GraphicEffect(effectName), numExpr, metadata);
             default:
@@ -160,18 +159,19 @@ public class ActorLookStmtParser {
         }
     }
 
-    private static ActorLookStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static ActorLookStmt parseSetLookEffect(final ProgramParserState state, JsonNode current,
+                                                    JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
 
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.GraphicEffectType.contains(effect));
-        return new SetGraphicEffectTo(new GraphicEffect(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        return new SetGraphicEffectTo(new GraphicEffect(effect), NumExprParser.parseNumExpr(state, current, VALUE_KEY,
                 allBlocks), metadata);
     }
 
-    private static void createNewList(String identifier, String name) {
+    private static void createNewList(final ProgramParserState state, String identifier, String name) {
         List<Expression> list = new ArrayList<>();
         ExpressionList expressionList = new ExpressionList(list);
-        ProgramParser.symbolTable.addExpressionListInfo(identifier, name, expressionList, true, "Stage");
+        state.getSymbolTable().addExpressionListInfo(identifier, name, expressionList, true, "Stage");
     }
 }

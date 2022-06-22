@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ScriptParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -41,7 +42,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ControlStmtParser {
 
-    public static Stmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Stmt parse(final ProgramParserState state, String identifier, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -56,28 +58,28 @@ public class ControlStmtParser {
 
         switch (opcode) {
             case control_if:
-                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
-                boolExpr = getCondition(current, allBlocks, inputs);
+                stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
+                boolExpr = getCondition(state, current, allBlocks, inputs);
                 return new IfThenStmt(boolExpr, stmtList, metadata);
 
             case control_if_else:
-                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
-                boolExpr = getCondition(current, allBlocks, inputs);
-                elseStmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK2_KEY);
+                stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
+                boolExpr = getCondition(state, current, allBlocks, inputs);
+                elseStmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK2_KEY);
                 return new IfElseStmt(boolExpr, stmtList, elseStmtList, metadata);
 
             case control_repeat:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, TIMES_KEY, allBlocks);
-                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
+                NumExpr numExpr = NumExprParser.parseNumExpr(state, current, TIMES_KEY, allBlocks);
+                stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatTimesStmt(numExpr, stmtList, metadata);
 
             case control_repeat_until:
-                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
-                boolExpr = getCondition(current, allBlocks, inputs);
+                stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
+                boolExpr = getCondition(state, current, allBlocks, inputs);
                 return new UntilStmt(boolExpr, stmtList, metadata);
 
             case control_forever:
-                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
+                stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatForeverStmt(stmtList, metadata);
 
             default:
@@ -85,23 +87,24 @@ public class ControlStmtParser {
         }
     }
 
-    private static BoolExpr getCondition(JsonNode current, JsonNode allBlocks, JsonNode inputs)
-            throws ParsingException {
+    private static BoolExpr getCondition(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                         JsonNode inputs) throws ParsingException {
 
         if (inputs.has(CONDITION_KEY)) {
-            return BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
+            return BoolExprParser.parseBoolExpr(state, current, CONDITION_KEY, allBlocks);
         } else {
             return new UnspecifiedBoolExpr();
         }
     }
 
-    private static StmtList getSubstackStmtList(JsonNode allBlocks, JsonNode inputs, String inputSubstack)
+    private static StmtList getSubstackStmtList(final ProgramParserState state, JsonNode allBlocks, JsonNode inputs,
+                                                String inputSubstack)
             throws ParsingException {
         JsonNode substackNode;
 
         if (inputs.has(inputSubstack)) {
             substackNode = inputs.get(inputSubstack).get(Constants.POS_INPUT_VALUE);
-            return ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
+            return ScriptParser.parseStmtList(state, substackNode.asText(), allBlocks);
         } else {
             return new StmtList(new ArrayList<>());
         }

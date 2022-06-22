@@ -43,7 +43,8 @@ public class EventParser {
     public static final String GREATER_THAN_MENU = "WHENGREATERTHANMENU";
     public static final String BACKDROP = "BACKDROP";
 
-    public static Event parse(String blockId, JsonNode allBlocks) throws ParsingException {
+    public static Event parse(final ProgramParserState state, String blockId, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(blockId);
         Preconditions.checkNotNull(allBlocks);
 
@@ -57,7 +58,7 @@ public class EventParser {
         if (opcode.equals(event_whenflagclicked)) {
             return new GreenFlag(metadata);
         } else if (opcode.equals(event_whenkeypressed)) {
-            Key key = KeyParser.parse(current, allBlocks);
+            Key key = KeyParser.parse(state, current, allBlocks);
             return new KeyPressed(key, metadata);
         } else if (opcode.equals(event_whenthisspriteclicked)) {
             return new SpriteClicked(metadata);
@@ -73,7 +74,7 @@ public class EventParser {
         } else if (opcode.equals(event_whengreaterthan)) {
             String variableValue = current.get(FIELDS_KEY).get(GREATER_THAN_MENU).get(0).asText();
             EventAttribute attr = new EventAttribute(variableValue.toLowerCase());
-            NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+            NumExpr fieldValue = NumExprParser.parseNumExpr(state, current, VALUE_KEY, allBlocks);
             return new AttributeAboveValue(attr, fieldValue, metadata);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);

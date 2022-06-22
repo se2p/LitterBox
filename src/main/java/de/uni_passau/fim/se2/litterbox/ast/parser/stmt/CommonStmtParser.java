@@ -61,7 +61,8 @@ public class CommonStmtParser {
      * @return the parsed CommonStmt
      * @throws ParsingException if the block cannot be parsed into an CommonStmt
      */
-    public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static CommonStmt parse(final ProgramParserState state, String blockId, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -74,77 +75,81 @@ public class CommonStmtParser {
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         switch (opcode) {
             case control_wait:
-                return parseWaitSeconds(current, allBlocks, metadata);
+                return parseWaitSeconds(state, current, allBlocks, metadata);
 
             case control_wait_until:
-                return parseWaitUntil(current, allBlocks, metadata);
+                return parseWaitUntil(state, current, allBlocks, metadata);
 
             case control_stop:
                 return parseControlStop(current, metadata);
 
             case control_create_clone_of:
-                return parseCreateCloneOf(current, allBlocks, blockId);
+                return parseCreateCloneOf(state, current, allBlocks, blockId);
 
             case event_broadcast:
-                return parseBroadcast(current, allBlocks, metadata);
+                return parseBroadcast(state, current, allBlocks, metadata);
 
             case event_broadcastandwait:
-                return parseBroadcastAndWait(current, allBlocks, metadata);
+                return parseBroadcastAndWait(state, current, allBlocks, metadata);
 
             case sensing_resettimer:
                 return new ResetTimer(metadata);
 
             case data_changevariableby:
-                return parseChangeVariableBy(current, allBlocks, metadata);
+                return parseChangeVariableBy(state, current, allBlocks, metadata);
 
             default:
                 throw new RuntimeException("Not Implemented yet");
         }
     }
 
-    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static CommonStmt parseChangeVariableBy(final ProgramParserState state, JsonNode current,
+                                                    JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
 
-        Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+        Expression numExpr = NumExprParser.parseNumExpr(state, current, VALUE_KEY, allBlocks);
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
-            ProgramParser.symbolTable.addVariable(variableId, variableName, new StringType(), true, "Stage");
+        String currentActorName = state.getCurrentActor().getName();
+        if (state.getSymbolTable().getVariable(variableId, variableName, currentActorName).isEmpty()) {
+            state.getSymbolTable().addVariable(variableId, variableName, new StringType(), true, "Stage");
         }
         VariableInfo variableInfo
-                = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+                = state.getSymbolTable().getVariable(variableId, variableName, currentActorName).get();
         String actorName = variableInfo.getActor();
         var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
 
         return new ChangeVariableBy(var, numExpr, metadata);
     }
 
-    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static CommonStmt parseBroadcast(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                             BlockMetadata metadata)
             throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
+        StringExpr messageName = StringExprParser.parseStringExpr(state, current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
         return new Broadcast(message, metadata);
     }
 
-    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static CommonStmt parseBroadcastAndWait(final ProgramParserState state, JsonNode current,
+                                                    JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
 
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
+        StringExpr messageName = StringExprParser.parseStringExpr(state, current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
         return new BroadcastAndWait(message, metadata);
     }
 
-    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, String blockId)
+    private static CommonStmt parseCreateCloneOf(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                                 String blockId)
             throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         List<JsonNode> inputsList = new ArrayList<>();
@@ -159,26 +164,27 @@ public class CommonStmtParser {
             BlockMetadata metadata = BlockMetadataParser.parseParamBlock(blockId, current, cloneMenuMetadata);
             return new CreateCloneOf(new AsString(ident), metadata);
         } else {
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(state, current, CLONE_OPTION, allBlocks);
             BlockMetadata metadata = BlockMetadataParser.parseParamBlock(blockId, current, new NoBlockMetadata());
             return new CreateCloneOf(stringExpr, metadata);
         }
     }
 
-    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
-            throws ParsingException {
+    private static WaitUntil parseWaitUntil(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                            BlockMetadata metadata) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.has(CONDITION_KEY)) {
-            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
+            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(state, current, CONDITION_KEY, allBlocks);
             return new WaitUntil(boolExpr, metadata);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr(), metadata);
         }
     }
 
-    private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static WaitSeconds parseWaitSeconds(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                                BlockMetadata metadata)
             throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(state, current, DURATION_KEY, allBlocks);
         return new WaitSeconds(numExpr, metadata);
     }
 
