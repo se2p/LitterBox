@@ -44,9 +44,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorDefinitionParser {
 
-    private static LocalIdentifier currentActor;
-
-    public static ActorDefinition parse(JsonNode actorDefinitionNode) throws ParsingException {
+    public static ActorDefinition parse(final ProgramParserState state, JsonNode actorDefinitionNode)
+            throws ParsingException {
         Preconditions.checkNotNull(actorDefinitionNode);
         Preconditions.checkArgument(actorDefinitionNode.has(IS_STAGE_KEY), "Missing field isStage in ScriptGroup");
         Preconditions.checkArgument(actorDefinitionNode.has(NAME_KEY), "Missing field name in ScriptGroup");
@@ -58,17 +57,17 @@ public class ActorDefinitionParser {
             actorType = ActorType.getSprite();
         }
 
-        LocalIdentifier localIdentifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
-        currentActor = localIdentifier;
+        LocalIdentifier currentActor = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
+        state.setCurrentActor(currentActor);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-                .parseLists(actorDefinitionNode.get(LISTS_KEY), localIdentifier.getName(),
+                .parseLists(state, actorDefinitionNode.get(LISTS_KEY), currentActor.getName(),
                         actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
-        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get(BROADCASTS_KEY),
-                localIdentifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(state, actorDefinitionNode.get(BROADCASTS_KEY),
+                currentActor.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
-        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get(VARIABLES_KEY),
-                localIdentifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseVariables(state, actorDefinitionNode.get(VARIABLES_KEY),
+                currentActor.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
 
@@ -89,33 +88,24 @@ public class ActorDefinitionParser {
 
         List<Script> scripts = new LinkedList<>();
         for (String topLevelid : topLevelNodes) {
-            Script script = ScriptParser.parse(topLevelid, allBlocks);
+            Script script = ScriptParser.parse(state, topLevelid, allBlocks);
             if (script != null) {
                 scripts.add(script);
             }
         }
         ScriptList scriptList = new ScriptList(scripts);
 
-        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks, localIdentifier.getName());
+        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(state, allBlocks);
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get(LISTS_KEY),
-                localIdentifier.getName()));
+                currentActor.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(
-                actorDefinitionNode.get(VARIABLES_KEY), localIdentifier.getName()));
+                actorDefinitionNode.get(VARIABLES_KEY), currentActor.getName()));
         ActorMetadata metadata = ActorMetadataParser.parse(actorDefinitionNode);
 
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
-        return new ActorDefinition(actorType, localIdentifier, declarations, new SetStmtList(setStmtList),
+        return new ActorDefinition(actorType, currentActor, declarations, new SetStmtList(setStmtList),
                 procDeclList, scriptList, metadata);
-    }
-
-    /**
-     * This may be a temporary solution.
-     *
-     * @return
-     */
-    public static LocalIdentifier getCurrentActor() {
-        return new StrId(currentActor.getName());
     }
 }

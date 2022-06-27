@@ -32,13 +32,14 @@ import java.util.logging.Logger;
 public final class PropertyLoader {
 
     static {
+        log = Logger.getLogger(PropertyLoader.class.getName());
         setDefaultSystemProperties("litterbox.properties");
     }
 
     private PropertyLoader() {
     }
 
-    private static final Logger log = Logger.getLogger(PropertyLoader.class.getName());
+    private static final Logger log;
 
     /**
      * Load the string value of the given key from the system properties.
@@ -51,7 +52,7 @@ public final class PropertyLoader {
     public static int getSystemIntProperty(String name) {
         String stringValue = System.getProperty(name);
         if (stringValue == null) {
-            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+            throw getMissingValueForKeyException(name);
         } else {
             try {
                 return Integer.parseInt(stringValue);
@@ -64,7 +65,7 @@ public final class PropertyLoader {
     public static boolean getSystemBoolProperty(String name) {
         String stringValue = System.getProperty(name);
         if (stringValue == null) {
-            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+            throw getMissingValueForKeyException(name);
         } else {
             try {
                 return Boolean.parseBoolean(stringValue);
@@ -85,7 +86,7 @@ public final class PropertyLoader {
     public static double getSystemDoubleProperty(String name) {
         String stringValue = System.getProperty(name);
         if (stringValue == null) {
-            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+            throw getMissingValueForKeyException(name);
         } else {
             try {
                 return Double.parseDouble(stringValue);
@@ -162,5 +163,9 @@ public final class PropertyLoader {
         for (Handler handler : rootLogger.getHandlers()) {
             handler.setLevel(level);
         }
+    }
+
+    private static IllegalArgumentException getMissingValueForKeyException(String key) {
+        return new IllegalArgumentException("The value for key " + key + " is not set in the system properties!");
     }
 }

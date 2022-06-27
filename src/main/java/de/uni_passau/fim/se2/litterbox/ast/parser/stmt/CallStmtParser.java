@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -43,6 +44,7 @@ public class CallStmtParser {
     /**
      * This method parses the call to a procedure.
      *
+     * @param state      the current state of the parser.
      * @param identifier the id of the call block in the JSON.
      * @param current    the call block in the JSON.
      * @param blocks     the whole blocks node of the current Actor.
@@ -51,7 +53,8 @@ public class CallStmtParser {
      *                          argument ids defined than it has inputs or the parsing of used expressions
      *                          does not work.
      */
-    public static CallStmt parse(String identifier, JsonNode current, JsonNode blocks) throws ParsingException {
+    public static CallStmt parse(final ProgramParserState state, String identifier, JsonNode current, JsonNode blocks)
+            throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
         JsonNode argumentIds = current.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
         ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +72,7 @@ public class CallStmtParser {
         for (JsonNode id :
                 argumentsArray) {
             if (inputNode.has(id.asText())) {
-                expressions.add(ExpressionParser.parseExpr(current, id.asText(), blocks));
+                expressions.add(ExpressionParser.parseExpr(state, current, id.asText(), blocks));
             } else {
                 expressions.add(new UnspecifiedBoolExpr());
             }

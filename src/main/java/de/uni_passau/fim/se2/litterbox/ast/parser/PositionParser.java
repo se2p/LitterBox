@@ -43,22 +43,24 @@ import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode
 
 public class PositionParser {
 
-    public static Position parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Position parse(final ProgramParserState state, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         if (current.get(Constants.INPUTS_KEY).has(TO_KEY)
                 || current.get(Constants.INPUTS_KEY).has(TOWARDS_KEY)
                 || current.get(Constants.INPUTS_KEY).has(DISTANCETOMENU_KEY)) {
-            return parseRelativePos(current, allBlocks);
+            return parseRelativePos(state, current, allBlocks);
         } else {
-            throw new ParsingException("Could not parse block " + current.toString());
+            throw new ParsingException("Could not parse block " + current);
         }
     }
 
-    private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static Position parseRelativePos(final ProgramParserState state, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         JsonNode inputsArray = current.get(INPUTS_KEY);
 
-        JsonNode menuID;
+        JsonNode menuId;
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
         String positionInputKey;
         if (SpriteMotionStmtOpcode.contains(opcodeString)) {
@@ -66,10 +68,10 @@ public class PositionParser {
 
             if (motion_goto.equals(opcode) || motion_glideto.equals(opcode)) {
                 positionInputKey = TO_KEY;
-                menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
+                menuId = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
             } else if (motion_pointtowards.equals(opcode)) {
                 positionInputKey = TOWARDS_KEY;
-                menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
+                menuId = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
             } else {
                 throw new ParsingException(
                         "Cannot parse relative coordinates for a block with opcode "
@@ -77,7 +79,7 @@ public class PositionParser {
             }
         } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
             positionInputKey = DISTANCETOMENU_KEY;
-            menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
+            menuId = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
         } else {
             throw new ParsingException(
                     "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
@@ -85,9 +87,9 @@ public class PositionParser {
 
         if (getShadowIndicator((ArrayNode) inputsArray.get(positionInputKey)) == 1) {
             ArrayList<JsonNode> fields = new ArrayList<>();
-            allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
+            allBlocks.get(menuId.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
             String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
-            BlockMetadata metadata = BlockMetadataParser.parse(menuID.asText(), allBlocks.get(menuID.asText()));
+            BlockMetadata metadata = BlockMetadataParser.parse(menuId.asText(), allBlocks.get(menuId.asText()));
 
             if (posString.equals(MOUSE)) {
                 return new MousePos(metadata);
@@ -106,7 +108,7 @@ public class PositionParser {
                 posName = DISTANCETOMENU_KEY;
             }
 
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(state, current, posName, allBlocks);
             return new FromExpression(stringExpr, new NoBlockMetadata());
         }
     }

@@ -35,6 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
 import java.util.Optional;
@@ -53,25 +54,27 @@ public class ExpressionParser {
      * may not directly correspond to a reporter block but can also be a literal,
      * for example.
      *
+     * @param state           The current parser state.
      * @param containingBlock The block inputs of which contain the expression to be parsed.
      * @param inputKey        The key identifying the expression input.
      * @param allBlocks       All blocks of the actor definition currently parsed.
      * @return The expression identified by the inputKey.
      * @throws ParsingException If parsing fails.
      */
-    public static Expression parseExpr(JsonNode containingBlock,
+    public static Expression parseExpr(final ProgramParserState state,
+                                       JsonNode containingBlock,
                                        String inputKey,
                                        JsonNode allBlocks)
             throws ParsingException {
         Expression expr = null;
         if (parsableAsNumExpr(containingBlock, inputKey, allBlocks)) {
-            expr = NumExprParser.parseNumExpr(containingBlock, inputKey, allBlocks);
+            expr = NumExprParser.parseNumExpr(state, containingBlock, inputKey, allBlocks);
         } else if (parsableAsStringExpr(containingBlock, inputKey, allBlocks)) {
-            expr = StringExprParser.parseStringExpr(containingBlock, inputKey, allBlocks);
+            expr = StringExprParser.parseStringExpr(state, containingBlock, inputKey, allBlocks);
         } else if (parsableAsBoolExpr(containingBlock, inputKey, allBlocks)) {
-            expr = BoolExprParser.parseBoolExpr(containingBlock, inputKey, allBlocks);
+            expr = BoolExprParser.parseBoolExpr(state, containingBlock, inputKey, allBlocks);
         } else if (parsableAsDataExpr(containingBlock, inputKey, allBlocks)) {
-            expr = DataExprParser.parseDataExpr(containingBlock, inputKey, allBlocks);
+            expr = DataExprParser.parseDataExpr(state, containingBlock, inputKey, allBlocks);
         }
         if (expr != null) {
             return expr;
@@ -83,29 +86,30 @@ public class ExpressionParser {
     /**
      * Parses a single expression corresponding to a reporter block.
      *
+     * @param state     The current parser state.
      * @param exprBlock The JsonNode of the reporter block.
      * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks)
-            throws ParsingException {
+    public static Expression parseExprBlock(final ProgramParserState state, String blockId, JsonNode exprBlock,
+                                            JsonNode allBlocks) throws ParsingException {
+        final SymbolTable symbolTable = state.getSymbolTable();
+
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
             String idString = exprBlock.get(2).asText(); // TODO: 2 is identifier pos
             String idName = exprBlock.get(1).asText(); // TODO: 1 is identifier name
             BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
 
-            String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-            if (ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).isPresent()) {
-                VariableInfo variableInfo
-                        = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).get();
+            String currentActorName = state.getCurrentActor().getName();
+            if (symbolTable.getVariable(idString, idName, currentActorName).isPresent()) {
+                VariableInfo variableInfo = symbolTable.getVariable(idString, idName, currentActorName).get();
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new Variable(new StrId(variableInfo.getVariableName()), metadata));
-            } else if (ProgramParser.symbolTable.getList(idString, idName, currentActorName).isPresent()) {
-                Optional<ExpressionListInfo> listOptional
-                        = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+            } else if (symbolTable.getList(idString, idName, currentActorName).isPresent()) {
+                Optional<ExpressionListInfo> listOptional = symbolTable.getList(idString, idName, currentActorName);
                 ExpressionListInfo variableInfo = listOptional.get();
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
@@ -115,11 +119,11 @@ public class ExpressionParser {
             // it's a normal reporter block
             String opcode = exprBlock.get(OPCODE_KEY).asText();
             if (NumExprOpcode.contains(opcode)) {
-                return NumExprParser.parseBlockNumExpr(blockId, exprBlock, allBlocks);
+                return NumExprParser.parseBlockNumExpr(state, blockId, exprBlock, allBlocks);
             } else if (StringExprOpcode.contains(opcode)) {
-                return StringExprParser.parseBlockStringExpr(blockId, exprBlock, allBlocks);
+                return StringExprParser.parseBlockStringExpr(state, blockId, exprBlock, allBlocks);
             } else if (BoolExprOpcode.contains(opcode)) {
-                return BoolExprParser.parseBlockBoolExpr(blockId, exprBlock, allBlocks);
+                return BoolExprParser.parseBlockBoolExpr(state, blockId, exprBlock, allBlocks);
             } else {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }

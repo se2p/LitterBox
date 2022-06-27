@@ -29,9 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -40,7 +39,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SetStmtParser {
 
-    public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Stmt parse(final ProgramParserState state, String blockId, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -51,22 +51,22 @@ public class SetStmtParser {
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         if (opcode == SetStmtOpcode.data_setvariableto) {
-            return parseSetVariable(current, allBlocks, metadata);
+            return parseSetVariable(state, current, allBlocks, metadata);
         }
         throw new RuntimeException("Not Implemented yet");
     }
 
-    private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
-            throws ParsingException {
+    private static SetStmt parseSetVariable(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                            BlockMetadata metadata) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        if (ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).isEmpty()) {
-            ProgramParser.symbolTable.addVariable(unique, variableName, new StringType(), true, "Stage");
+        String currentActorName = state.getCurrentActor().getName();
+        if (state.getSymbolTable().getVariable(unique, variableName, currentActorName).isEmpty()) {
+            state.getSymbolTable().addVariable(unique, variableName, new StringType(), true, "Stage");
         }
-        VariableInfo info = ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).get();
+        VariableInfo info = state.getSymbolTable().getVariable(unique, variableName, currentActorName).get();
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
+                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(state, current,
                 VALUE_KEY, allBlocks), metadata);
     }
 }

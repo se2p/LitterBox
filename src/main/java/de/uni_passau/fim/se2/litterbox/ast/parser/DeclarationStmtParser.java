@@ -53,7 +53,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class DeclarationStmtParser {
 
-    public static List<DeclarationStmt> parseVariables(JsonNode variableNode, String actorName, boolean isStage) {
+    public static List<DeclarationStmt> parseVariables(final ProgramParserState state, JsonNode variableNode,
+                                                       String actorName, boolean isStage) {
         Preconditions.checkNotNull(variableNode);
         List<DeclarationStmt> parsedVariables = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();
@@ -62,21 +63,21 @@ public class DeclarationStmtParser {
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
-                ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
+                state.getSymbolTable().addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new NumberType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
                         new Variable(new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText())),
                         new NumberType()));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
-                ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
+                state.getSymbolTable().addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new BooleanType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
                         new Variable(new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText())),
                         new BooleanType()));
             } else {
-                ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
+                state.getSymbolTable().addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new StringType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
@@ -116,7 +117,8 @@ public class DeclarationStmtParser {
         return parsedVariables;
     }
 
-    public static List<DeclarationStmt> parseLists(JsonNode listsNode, String actorName, boolean isStage) {
+    public static List<DeclarationStmt> parseLists(final ProgramParserState state, JsonNode listsNode, String actorName,
+                                                   boolean isStage) {
         Preconditions.checkNotNull(listsNode);
         List<DeclarationStmt> parsedLists = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = listsNode.fields();
@@ -128,7 +130,7 @@ public class DeclarationStmtParser {
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             ExpressionList expressionList = new ExpressionList(makeExpressionList((ArrayNode) listValues));
-            ProgramParser.symbolTable.addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
+            state.getSymbolTable().addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
                     actorName);
             parsedLists.add(new DeclarationIdentAsTypeStmt(new ScratchList(new StrId(listName)), new ListType()));
         }
@@ -162,14 +164,14 @@ public class DeclarationStmtParser {
         return parsedLists;
     }
 
-    public static List<DeclarationStmt> parseBroadcasts(JsonNode broadcastsNode, String actorName,
-                                                        boolean isStage) {
+    public static List<DeclarationStmt> parseBroadcasts(final ProgramParserState state, JsonNode broadcastsNode,
+                                                        String actorName, boolean isStage) {
         Preconditions.checkNotNull(broadcastsNode);
         List<DeclarationStmt> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
-            ProgramParser.symbolTable.addMessage(current.getValue().asText(),
+            state.getSymbolTable().addMessage(current.getValue().asText(),
                     new Message(new StringLiteral(current.getValue().asText())), isStage,
                     actorName, current.getKey());
             parsedBroadcasts.add(new DeclarationBroadcastStmt(new StrId(current.getValue().asText()),

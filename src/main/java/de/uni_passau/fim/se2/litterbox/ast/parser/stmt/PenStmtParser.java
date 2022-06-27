@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -45,7 +46,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 public class PenStmtParser {
     private static BlockMetadata paramMetadata = new NoBlockMetadata();
 
-    public static Stmt parse(String blockId, JsonNode current, JsonNode blocks) throws ParsingException {
+    public static Stmt parse(final ProgramParserState state, String blockId, JsonNode current, JsonNode blocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(blocks);
         final String opCodeString = current.get(Constants.OPCODE_KEY).asText();
@@ -71,30 +73,30 @@ public class PenStmtParser {
                 return new PenStampStmt(metadata);
             case pen_setPenColorToColor:
                 metadata = BlockMetadataParser.parse(blockId, current);
-                return new SetPenColorToColorStmt(ColorParser.parseColor(current, COLOR_KEY, blocks), metadata);
+                return new SetPenColorToColorStmt(ColorParser.parseColor(state, current, COLOR_KEY, blocks), metadata);
             case pen_changePenColorParamBy:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
-                StringExpr param = parseParam(current, blocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(state, current, VALUE_KEY, blocks);
+                StringExpr param = parseParam(state, current, blocks);
                 metadata = BlockMetadataParser.parseParamBlock(blockId, current, paramMetadata);
                 return new ChangePenColorParamBy(numExpr, param, metadata);
             case pen_setPenColorParamTo:
-                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
-                param = parseParam(current, blocks);
+                numExpr = NumExprParser.parseNumExpr(state, current, VALUE_KEY, blocks);
+                param = parseParam(state, current, blocks);
                 metadata = BlockMetadataParser.parseParamBlock(blockId, current, paramMetadata);
                 return new SetPenColorParamTo(numExpr, param, metadata);
             case pen_setPenSizeTo:
                 metadata = BlockMetadataParser.parse(blockId, current);
-                return parseSetPenSizeTo(current, blocks, metadata);
+                return parseSetPenSizeTo(state, current, blocks, metadata);
             case pen_changePenSizeBy:
                 metadata = BlockMetadataParser.parse(blockId, current);
-                return new ChangePenSizeBy(NumExprParser.parseNumExpr(current, SIZE_KEY_CAP,
-                        blocks), metadata);
+                return new ChangePenSizeBy(NumExprParser.parseNumExpr(state, current, SIZE_KEY_CAP, blocks), metadata);
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
     }
 
-    private static StringExpr parseParam(JsonNode current, JsonNode blocks) throws ParsingException {
+    private static StringExpr parseParam(final ProgramParserState state, JsonNode current, JsonNode blocks)
+            throws ParsingException {
         List<JsonNode> inputsList = new ArrayList<>();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
@@ -110,11 +112,11 @@ public class PenStmtParser {
                 expr = new StringLiteral(attribute);
                 paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
             } else {
-                expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);
+                expr = StringExprParser.parseStringExpr(state, current, COLOR_PARAM_BIG_KEY, blocks);
                 paramMetadata = new NoBlockMetadata();
             }
         } else {
-            expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);
+            expr = StringExprParser.parseStringExpr(state, current, COLOR_PARAM_BIG_KEY, blocks);
             paramMetadata = new NoBlockMetadata();
         }
 
@@ -125,9 +127,9 @@ public class PenStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+    private static PenStmt parseSetPenSizeTo(final ProgramParserState state, JsonNode current, JsonNode allBlocks,
+                                             BlockMetadata metadata)
             throws ParsingException {
-        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, SIZE_KEY_CAP,
-                allBlocks), metadata);
+        return new SetPenSizeTo(NumExprParser.parseNumExpr(state, current, SIZE_KEY_CAP, allBlocks), metadata);
     }
 }

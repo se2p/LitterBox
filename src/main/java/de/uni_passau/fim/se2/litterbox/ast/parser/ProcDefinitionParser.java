@@ -57,14 +57,15 @@ public class ProcDefinitionParser {
     /**
      * This method creates the {@link ProcedureDefinition}s for one {@link ActorDefinition} in a Scratch project.
      *
+     * @param state     The parser state.
      * @param blocks    The blocks node of the targeted Actor.
-     * @param actorName The name of the targeted Actor.
      * @return ProcedureDefinitionList containing all procedures that are specified in the blocks node
      * @throws ParsingException when a procedure is malformated. This can be the case when the procedure has more
      *                          argument ids defined than it has inputs or when the procedure definition does not
      *                          have a prototype attached or vice versa.
      */
-    public static ProcedureDefinitionList parse(JsonNode blocks, String actorName) throws ParsingException {
+    public static ProcedureDefinitionList parse(final ProgramParserState state, JsonNode blocks)
+            throws ParsingException {
         Preconditions.checkNotNull(blocks);
         Iterator<JsonNode> iter = blocks.elements();
         List<JsonNode> defBlock = new ArrayList<>();
@@ -92,13 +93,13 @@ public class ProcDefinitionParser {
 
         List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
-            procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
+            procdecls.add(parseProcDecl(state, jsonNode, blocks));
         }
 
         return new ProcedureDefinitionList(procdecls);
     }
 
-    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks, String actorName)
+    private static ProcedureDefinition parseProcDecl(final ProgramParserState state, JsonNode def, JsonNode blocks)
             throws ParsingException {
         JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
@@ -107,33 +108,75 @@ public class ProcDefinitionParser {
         JsonNode proto = blocks.get(protoReference);
         ArrayList<ParameterDefinition> inputs = new ArrayList<>();
 
-        JsonNode argumentIds = proto.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
         ObjectMapper mapper = new ObjectMapper();
+
+        final ArrayNode argumentIdsNode = getArgumentIdsNode(proto, mapper);
+        final ArrayNode argumentDefaultsNode = getArgumentDefaultsNode(proto, mapper);
+
+        List<Type> paraTypes = new ArrayList<>();
+        List<BlockMetadata> paramMeta = new ArrayList<>();
+        collectParameters(paraTypes, paramMeta, blocks, proto, argumentIdsNode, argumentDefaultsNode);
+
+        String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
+        LocalIdentifier ident = getProcedureIdentifier(def, blocks, proto);
+
+        final String actorName = state.getCurrentActor().getName();
+
+        if (ident == null) {
+            state.getProcDefMap().addMalformated(actorName + methodName);
+            throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
+        }
+
+        JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
+        String[] arguments = getArgumentNames(state, mapper, methodName, actorName, argumentNamesNode);
+
+        Type[] typeArray = new Type[paraTypes.size()];
+        state.getProcDefMap().addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
+
+        for (int i = 0; i < paraTypes.size(); i++) {
+            inputs.add(new ParameterDefinition(new StrId(arguments[i]), paraTypes.get(i), paramMeta.get(i)));
+        }
+        ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
+        StmtList stmtList = ScriptParser.parseStmtList(state, def.get(NEXT_KEY).asText(), blocks);
+        ProcedureMetadata meta = ProcedureMetadataParser.parse(ident.getName(), protoReference, blocks);
+        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList, meta);
+    }
+
+
+    private static ArrayNode getArgumentIdsNode(JsonNode proto, ObjectMapper mapper) throws ParsingException {
+        JsonNode argumentIds = proto.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
         final ArrayNode argumentIdsNode;
         try {
             argumentIdsNode = (ArrayNode) mapper.readTree(argumentIds.asText());
         } catch (IOException e) {
             throw new ParsingException("Could not read argument ids of a procedure", e);
         }
+        return argumentIdsNode;
+    }
 
-        JsonNode argumentDefaults = proto.get(MUTATION_KEY).get(ARGUMENT_DEFAULTS_KEY);
+    private static ArrayNode getArgumentDefaultsNode(JsonNode proto, ObjectMapper mapper) throws ParsingException {
         final ArrayNode argumentDefaultsNode;
+        JsonNode argumentDefaults = proto.get(MUTATION_KEY).get(ARGUMENT_DEFAULTS_KEY);
         try {
             argumentDefaultsNode = (ArrayNode) mapper.readTree(argumentDefaults.asText());
         } catch (IOException e) {
             throw new ParsingException("Could not read argument defaults of a procedure", e);
         }
+        return argumentDefaultsNode;
+    }
 
-        List<Type> paraTypes = new ArrayList<>();
-        List<BlockMetadata> paramMeta = new ArrayList<>();
+    private static void collectParameters(final List<Type> paraTypes, final List<BlockMetadata> paramMeta,
+                                          JsonNode blocks, JsonNode proto, ArrayNode argumentIdsNode,
+                                          ArrayNode argumentDefaultsNode) throws ParsingException {
         JsonNode prototypeInputs = proto.get(INPUTS_KEY);
+
         for (int i = 0; i < argumentIdsNode.size(); i++) {
             if (!prototypeInputs.has(argumentIdsNode.get(i).asText())) {
                 paramMeta.add(new NoBlockMetadata());
-                if (argumentDefaultsNode.get(i).asText().equals(BOOLEAN_DEFAULT)) {
+                if (BOOLEAN_DEFAULT.equals(argumentDefaultsNode.get(i).asText())) {
                     paraTypes.add(new BooleanType());
-                } else if (argumentDefaultsNode.get(i).asText().equals(STRING_NUMBER_DEFAULT)
-                        || argumentDefaultsNode.get(i).asText().equals(NUMBER_DEFAULT)) {
+                } else if (STRING_NUMBER_DEFAULT.equals(argumentDefaultsNode.get(i).asText())
+                        || NUMBER_DEFAULT.equals(argumentDefaultsNode.get(i).asText())) {
                     paraTypes.add(new StringType());
                 } else {
                     throw new ParsingException("Procedure has unknown default type");
@@ -143,13 +186,14 @@ public class ProcDefinitionParser {
                 Preconditions.checkArgument(currentInput.isArray());
                 ArrayNode currentAsArray = (ArrayNode) currentInput;
 
-                if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
+                if (!"null".equals(currentAsArray.get(PARAMETER_REFERENCE_POS).asText())) {
                     addType(blocks, paraTypes, paramMeta, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
                 }
             }
         }
+    }
 
-        String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
+    private static LocalIdentifier getProcedureIdentifier(JsonNode def, JsonNode blocks, JsonNode proto) {
         LocalIdentifier ident = null;
         if (proto.has(PARENT_KEY)) {
             ident = new StrId(proto.get(PARENT_KEY).asText());
@@ -163,17 +207,16 @@ public class ProcDefinitionParser {
                 }
             }
         }
-        if (ident == null) {
-            ProgramParser.procDefMap.addMalformated(actorName + methodName);
-            throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
-        }
-        JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
+        return ident;
+    }
 
+    private static String[] getArgumentNames(final ProgramParserState state, ObjectMapper mapper, String methodName,
+                                             String actorName, JsonNode argumentNamesNode) throws ParsingException {
         final JsonNode argumentsNode;
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
-            ProgramParser.procDefMap.addMalformated(actorName + methodName);
+            state.getProcDefMap().addMalformated(actorName + methodName);
             throw new ParsingException("Could not read argument names of a procedure", e);
         }
 
@@ -184,17 +227,7 @@ public class ProcDefinitionParser {
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = argumentsArray.get(i).asText();
         }
-
-        Type[] typeArray = new Type[paraTypes.size()];
-        ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
-
-        for (int i = 0; i < paraTypes.size(); i++) {
-            inputs.add(new ParameterDefinition(new StrId(arguments[i]), paraTypes.get(i), paramMeta.get(i)));
-        }
-        ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
-        StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
-        ProcedureMetadata meta = ProcedureMetadataParser.parse(ident.getName(), protoReference, blocks);
-        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList, meta);
+        return arguments;
     }
 
     private static void addType(JsonNode blocks, List<Type> types,

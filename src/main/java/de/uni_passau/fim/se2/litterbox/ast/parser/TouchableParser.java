@@ -37,7 +37,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class TouchableParser {
 
-    public static Touchable parseTouchable(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Touchable parseTouchable(final ProgramParserState state, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         final String opcodeString = current.get(OPCODE_KEY).asText();
@@ -48,11 +49,11 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                Expression expr = ExpressionParser.parseExpr(current, TOUCHINGOBJECTMENU, allBlocks);
+                Expression expr = ExpressionParser.parseExpr(state, current, TOUCHINGOBJECTMENU, allBlocks);
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
-            return ColorParser.parseColor(current, COLOR_KEY, allBlocks);
+            return ColorParser.parseColor(state, current, COLOR_KEY, allBlocks);
         } else {
             throw new RuntimeException("Not implemented yet");
         }

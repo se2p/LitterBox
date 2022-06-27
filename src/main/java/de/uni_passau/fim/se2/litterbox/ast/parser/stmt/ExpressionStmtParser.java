@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parseDeadParameter;
 
@@ -37,14 +38,16 @@ public class ExpressionStmtParser {
     /**
      * Parses a single reporter block and puts it into a new ExpressionStmt.
      *
+     * @param state     The current parser state.
      * @param current   The JsonNode of the reporter block.
      * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
      * @return A new ExpressionStmt holding the expression corresponding to the
      *       reporter block.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new ExpressionStmt(ExpressionParser.parseExprBlock(blockId, current, allBlocks));
+    public static Stmt parse(final ProgramParserState state, String blockId, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
+        return new ExpressionStmt(ExpressionParser.parseExprBlock(state, blockId, current, allBlocks));
     }
 
     /**

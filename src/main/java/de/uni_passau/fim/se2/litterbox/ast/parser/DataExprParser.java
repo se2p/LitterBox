@@ -53,7 +53,7 @@ public class DataExprParser {
      *                        to be checked.
      * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
-     * @return True iff the the input of the containing block is parsable as DataExpr.
+     * @return True iff the input of the containing block is parsable as DataExpr.
      */
     public static boolean parsableAsDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) {
         ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
@@ -81,13 +81,14 @@ public class DataExprParser {
     /**
      * Parses the DataExpr of the input of the block.
      *
+     * @param state           The current parser state.
      * @param containingBlock The block the input of which contains a DataExpr.
      * @param inputKey        Key of the input holding the DataExpr.
      * @param allBlocks       All blocks of the actor definition currently analysed.
      * @return The DataExpr - either a Parameter, Variable or ScratchList.
      */
-    public static Expression parseDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
-            throws ParsingException {
+    public static Expression parseDataExpr(final ProgramParserState state, JsonNode containingBlock, String inputKey,
+                                           JsonNode allBlocks) throws ParsingException {
         Preconditions.checkArgument(parsableAsDataExpr(containingBlock, inputKey, allBlocks));
         ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
@@ -102,18 +103,18 @@ public class DataExprParser {
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
             String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
-            String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-            Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
-            Optional<VariableInfo> variable = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
+            String currentActorName = state.getCurrentActor().getName();
+            Optional<ExpressionListInfo> list = state.getSymbolTable().getList(idString, idName, currentActorName);
+            Optional<VariableInfo> variable = state.getSymbolTable().getVariable(idString, idName, currentActorName);
             boolean isVariable = variable.isPresent();
             boolean isList = list.isPresent();
             if (isVariable) {
-                return parseVariable(exprArray);
+                return parseVariable(state, exprArray);
             } else if (isList) {
-                return parseScratchList(exprArray);
+                return parseScratchList(state, exprArray);
             } else {
-                ProgramParser.symbolTable.addVariable(idString, idName, new StringType(), true, "Stage");
-                return parseVariable(exprArray);
+                state.getSymbolTable().addVariable(idString, idName, new StringType(), true, "Stage");
+                return parseVariable(state, exprArray);
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");
@@ -163,14 +164,15 @@ public class DataExprParser {
     /**
      * Parses the ScratchList stored in the expression array.
      *
+     * @param state     The current state of the parser.
      * @param exprArray The expression array containing the ScratchList.
      * @return The ScratchList wrapped as Qualified.
      */
-    private static Qualified parseScratchList(ArrayNode exprArray) {
+    private static Qualified parseScratchList(final ProgramParserState state, ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+        String currentActorName = state.getCurrentActor().getName();
+        Optional<ExpressionListInfo> list = state.getSymbolTable().getList(idString, idName, currentActorName);
         Preconditions.checkArgument(list.isPresent());
         ExpressionListInfo variableInfo = list.get();
         return new Qualified(
@@ -181,14 +183,15 @@ public class DataExprParser {
     /**
      * Parses the Variable stored in the expression array.
      *
+     * @param state     The current parser state.
      * @param exprArray The expression array containing the Variable.
      * @return The Variable wrapped as Qualified.
      */
-    private static Qualified parseVariable(ArrayNode exprArray) {
+    private static Qualified parseVariable(final ProgramParserState state, ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
-        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        Optional<VariableInfo> infoOptional = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
+        String currentActorName = state.getCurrentActor().getName();
+        Optional<VariableInfo> infoOptional = state.getSymbolTable().getVariable(idString, idName, currentActorName);
         Preconditions.checkArgument(infoOptional.isPresent());
         VariableInfo variableInfo = infoOptional.get();
         return new Qualified(

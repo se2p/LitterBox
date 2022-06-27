@@ -25,56 +25,51 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class StmtParser {
 
-    public static Stmt parse(String blockId, JsonNode blocks) throws ParsingException {
+    private static final String STOP_OPTION = "STOP_OPTION";
+
+    public static Stmt parse(final ProgramParserState state, String blockId, JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(blockId);
         Preconditions.checkNotNull(blocks);
         Preconditions.checkState(blocks.has(blockId), "No block for id %s", blockId);
 
         JsonNode current = blocks.get(blockId);
         if (current instanceof ArrayNode) {
-            return ExpressionStmtParser.parse(blockId, current, blocks);
+            return ExpressionStmtParser.parse(state, blockId, current, blocks);
         } else {
             final String opcode = current.get(Constants.OPCODE_KEY).asText();
 
-            if (TerminationStmtOpcode.contains(opcode)) {
-                if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
-                        && (current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
-                        .equals("other scripts in sprite")
-                        || current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
-                        .equals("other scripts in stage")))) {
-                    return TerminationStmtParser.parseTerminationStmt(blockId, current, blocks);
-                }
-            }
-
-            if (ActorLookStmtOpcode.contains(opcode)) {
-                return ActorLookStmtParser.parse(blockId, current, blocks);
+            if (isTerminationStmt(current, opcode)) {
+                return TerminationStmtParser.parseTerminationStmt(blockId, current, blocks);
+            } else if (ActorLookStmtOpcode.contains(opcode)) {
+                return ActorLookStmtParser.parse(state, blockId, current, blocks);
             } else if (ControlStmtOpcode.contains(opcode)) {
-                return ControlStmtParser.parse(blockId, current, blocks);
+                return ControlStmtParser.parse(state, blockId, current, blocks);
             } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
                     .contains(opcode)) {
-                return ExpressionStmtParser.parse(blockId, current, blocks);
+                return ExpressionStmtParser.parse(state, blockId, current, blocks);
             } else if (CommonStmtOpcode.contains(opcode)) {
-                return CommonStmtParser.parse(blockId, current, blocks);
+                return CommonStmtParser.parse(state, blockId, current, blocks);
             } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-                return SpriteMotionStmtParser.parse(blockId, current, blocks);
+                return SpriteMotionStmtParser.parse(state, blockId, current, blocks);
             } else if (SpriteLookStmtOpcode.contains(opcode)) {
-                return SpriteLookStmtParser.parse(blockId, current, blocks);
+                return SpriteLookStmtParser.parse(state, blockId, current, blocks);
             } else if (ActorSoundStmtOpcode.contains(opcode)) {
-                return ActorSoundStmtParser.parse(blockId, current, blocks);
+                return ActorSoundStmtParser.parse(state, blockId, current, blocks);
             } else if (CallStmtOpcode.contains(opcode)) {
-                return CallStmtParser.parse(blockId, current, blocks);
+                return CallStmtParser.parse(state, blockId, current, blocks);
             } else if (ListStmtOpcode.contains(opcode)) {
-                return ListStmtParser.parse(blockId, current, blocks);
+                return ListStmtParser.parse(state, blockId, current, blocks);
             } else if (SetStmtOpcode.contains(opcode)) {
-                return SetStmtParser.parse(blockId, current, blocks);
+                return SetStmtParser.parse(state, blockId, current, blocks);
             } else if (PenOpcode.contains(opcode)) {
-                return PenStmtParser.parse(blockId, current, blocks);
+                return PenStmtParser.parse(state, blockId, current, blocks);
             } else if (TextToSpeechOpcode.contains(opcode)) {
-                return TextToSpeechParser.parse(blockId, current, blocks);
+                return TextToSpeechParser.parse(state, blockId, current, blocks);
             } else if (ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
                     || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)) {
 
@@ -83,5 +78,18 @@ public class StmtParser {
                 return new UnspecifiedStmt();
             }
         }
+    }
+
+    private static boolean isTerminationStmt(JsonNode current, String opcode) {
+        boolean hasStopOption = current.get(Constants.FIELDS_KEY).has(STOP_OPTION);
+        boolean otherScriptsExist = hasStopOption && (
+                hasStopOptionFieldValue(current, "other scripts in sprite")
+                        || hasStopOptionFieldValue(current, "other scripts in stage")
+        );
+        return TerminationStmtOpcode.contains(opcode) && !otherScriptsExist;
+    }
+
+    private static boolean hasStopOptionFieldValue(final JsonNode node, final String value) {
+        return value.equals(node.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE).asText());
     }
 }

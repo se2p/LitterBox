@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  * Collision detects if the Sprite Look or Sprite Motion changes after a touch event occurs. There must be a IfThenStmt
- * in a RepeatForeverStmt to continuously check for the the touch event.
+ * in a RepeatForeverStmt to continuously check for the touch event.
  */
 public class Collision extends AbstractIssueFinder {
     public static final String NAME = "collision";

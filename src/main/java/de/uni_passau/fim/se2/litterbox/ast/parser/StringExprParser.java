@@ -64,7 +64,7 @@ public class StringExprParser {
      *                        to be checked.
      * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
-     * @return True iff the the input of the containing block is parsable as StringExpr.
+     * @return True iff the input of the containing block is parsable as StringExpr.
      */
     public static boolean parsableAsStringExpr(JsonNode containingBlock,
                                                String inputKey, JsonNode allBlocks) {
@@ -102,13 +102,15 @@ public class StringExprParser {
      * If the input does not contain a StringExpr calls the ExpressionParser
      * and wraps the result as StringExpr.
      *
+     * @param state           The current parser state.
      * @param containingBlock The block inputs of which contain the expression to be parsed.
      * @param inputKey        The key of the input which contains the expression.
      * @param allBlocks       All blocks of the actor definition currently parsed.
      * @return The expression identified by the inputKey.
      * @throws ParsingException If parsing fails.
      */
-    public static StringExpr parseStringExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
+    public static StringExpr parseStringExpr(final ProgramParserState state, JsonNode containingBlock, String inputKey,
+                                             JsonNode allBlocks)
             throws ParsingException {
         if (parsableAsStringExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
@@ -123,10 +125,10 @@ public class StringExprParser {
                 }
             } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
                 String identifier = exprArray.get(POS_BLOCK_ID).asText();
-                return parseBlockStringExpr(identifier, allBlocks.get(identifier), allBlocks);
+                return parseBlockStringExpr(state, identifier, allBlocks.get(identifier), allBlocks);
             }
         } else {
-            return new AsString(ExpressionParser.parseExpr(containingBlock, inputKey, allBlocks));
+            return new AsString(ExpressionParser.parseExpr(state, containingBlock, inputKey, allBlocks));
         }
         throw new ParsingException("Could not parse StringExpr");
     }
@@ -135,13 +137,15 @@ public class StringExprParser {
      * Parses a single StringExpr corresponding to a reporter block.
      * The opcode of the block has to be a StringExprOpcode.
      *
+     * @param state     The current parser state.
      * @param exprBlock The JsonNode of the reporter block.
      * @param allBlocks All blocks of the actor definition currently analysed.
      * @return The parsed expression.
      * @throws ParsingException If the opcode of the block is no StringExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+    static StringExpr parseBlockStringExpr(final ProgramParserState state, String blockId, JsonNode exprBlock,
+                                           JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
@@ -150,34 +154,35 @@ public class StringExprParser {
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         switch (opcode) {
             case operator_join:
-                StringExpr first = parseStringExpr(exprBlock, STRING1_KEY, allBlocks);
-                StringExpr second = parseStringExpr(exprBlock, STRING2_KEY, allBlocks);
+                StringExpr first = parseStringExpr(state, exprBlock, STRING1_KEY, allBlocks);
+                StringExpr second = parseStringExpr(state, exprBlock, STRING2_KEY, allBlocks);
                 return new Join(first, second, metadata);
             case operator_letter_of:
-                NumExpr num = NumExprParser.parseNumExpr(exprBlock, LETTER_KEY, allBlocks);
-                StringExpr word = parseStringExpr(exprBlock, STRING_KEY, allBlocks);
+                NumExpr num = NumExprParser.parseNumExpr(state, exprBlock, LETTER_KEY, allBlocks);
+                StringExpr word = parseStringExpr(state, exprBlock, STRING_KEY, allBlocks);
                 return new LetterOf(num, word, metadata);
             case sensing_username:
                 return new Username(metadata);
             case data_itemoflist:
-                NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
+                NumExpr index = NumExprParser.parseNumExpr(state, exprBlock, INDEX_KEY, allBlocks);
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 String listName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                Identifier var;
-                String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-                if (ProgramParser.symbolTable.getList(identifier, listName, currentActorName).isEmpty()) {
+                Identifier variable;
+                String currentActorName = state.getCurrentActor().getName();
+                if (state.getSymbolTable().getList(identifier, listName, currentActorName).isEmpty()) {
                     List<Expression> listEx = new ArrayList<>();
                     ExpressionList expressionList = new ExpressionList(listEx);
-                    ProgramParser.symbolTable.addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
+                    state.getSymbolTable().addExpressionListInfo(identifier, listName, expressionList, true, "Stage");
                 }
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+                Optional<ExpressionListInfo> list = state.getSymbolTable().getList(identifier, listName,
+                        currentActorName);
 
                 Preconditions.checkArgument(list.isPresent());
                 ExpressionListInfo variableInfo = list.get();
-                var = new Qualified(new StrId(variableInfo.getActor()),
+                variable = new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId((variableInfo.getVariableName()))));
-                return new ItemOfVariable(index, var, metadata);
+                return new ItemOfVariable(index, variable, metadata);
             case looks_costumenumbername:
                 String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
                 return new Costume(new NameNum(numberName), metadata);
@@ -200,11 +205,11 @@ public class StringExprParser {
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
                                         .asText()), metadataMenu);
                     } else {
-                        elem = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                        elem = new WithExpr(ExpressionParser.parseExpr(state, exprBlock, OBJECT_KEY, allBlocks),
                                 new NoBlockMetadata());
                     }
                 } else {
-                    elem = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                    elem = new WithExpr(ExpressionParser.parseExpr(state, exprBlock, OBJECT_KEY, allBlocks),
                             new NoBlockMetadata());
                 }
 
