@@ -1,0 +1,845 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "(CMl@#QmOo0a8h)Kl=MN": [
+                    "TEMPERATURA",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "aac3eece9160c4dc41de9d2319bf753d",
+                    "name": "City1",
+                    "bitmapResolution": 1,
+                    "md5ext": "aac3eece9160c4dc41de9d2319bf753d.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "83975e99a2e6d53207f599f6dccfc4bc",
+                    "name": "Bedroom1",
+                    "bitmapResolution": 1,
+                    "md5ext": "83975e99a2e6d53207f599f6dccfc4bc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "aac3eece9160c4dc41de9d2319bf753d",
+                    "name": "City2",
+                    "bitmapResolution": 1,
+                    "md5ext": "aac3eece9160c4dc41de9d2319bf753d.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "aac3eece9160c4dc41de9d2319bf753d",
+                    "name": "City3",
+                    "bitmapResolution": 1,
+                    "md5ext": "aac3eece9160c4dc41de9d2319bf753d.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "aac3eece9160c4dc41de9d2319bf753d",
+                    "name": "City4",
+                    "bitmapResolution": 1,
+                    "md5ext": "aac3eece9160c4dc41de9d2319bf753d.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "aac3eece9160c4dc41de9d2319bf753d",
+                    "name": "City5",
+                    "bitmapResolution": 1,
+                    "md5ext": "aac3eece9160c4dc41de9d2319bf753d.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "y(YkW2@r,cfn;8/cCr4U": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "C~Q3Epi@=XomOZ(SpAAt",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -7,
+                    "y": -975
+                },
+                "C~Q3Epi@=XomOZ(SpAAt": {
+                    "opcode": "sprites_data_chart.open_chart",
+                    "next": "/Z5;/c3HTpA-31!2|~G!",
+                    "parent": "y(YkW2@r,cfn;8/cCr4U",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/Z5;/c3HTpA-31!2|~G!": {
+                    "opcode": "sprites_data_chart.set_chart_name",
+                    "next": "^N4EmtpVc3%(_1UwNCB7",
+                    "parent": "C~Q3Epi@=XomOZ(SpAAt",
+                    "inputs": {
+                        "data": [
+                            1,
+                            [
+                                10,
+                                "Temperatura de la Semana en Guasave"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^N4EmtpVc3%(_1UwNCB7": {
+                    "opcode": "sprites_data_chart.set_chart_type",
+                    "next": "h[E[dAK{U?A!oUO94X*o",
+                    "parent": "/Z5;/c3HTpA-31!2|~G!",
+                    "inputs": {},
+                    "fields": {
+                        "type": [
+                            "pie",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "h[E[dAK{U?A!oUO94X*o": {
+                    "opcode": "sprites_data_chart.set_axis_name",
+                    "next": "x~1D{@Jm_#ry#u/P2!RB",
+                    "parent": "^N4EmtpVc3%(_1UwNCB7",
+                    "inputs": {
+                        "xName": [
+                            1,
+                            [
+                                10,
+                                "Día "
+                            ]
+                        ],
+                        "yName": [
+                            1,
+                            [
+                                10,
+                                "Temperatura"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "x~1D{@Jm_#ry#u/P2!RB": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "@~?q?-Xgpa3uisJYTfw`",
+                    "parent": "h[E[dAK{U?A!oUO94X*o",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Máxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Lunes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "35"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@~?q?-Xgpa3uisJYTfw`": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": ".e{MGWJ8pr}i)6bk(RTW",
+                    "parent": "x~1D{@Jm_#ry#u/P2!RB",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Lunes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "25"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8EbeO+qR?bZDk_maF2SH": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "n,%~GK;QiO_BAGTp@6qA",
+                    "parent": ".e{MGWJ8pr}i)6bk(RTW",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Martes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".e{MGWJ8pr}i)6bk(RTW": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "8EbeO+qR?bZDk_maF2SH",
+                    "parent": "@~?q?-Xgpa3uisJYTfw`",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Máxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Martes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "37"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "n,%~GK;QiO_BAGTp@6qA": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "ZYh^]!V4w}bs,IwEY-|}",
+                    "parent": "8EbeO+qR?bZDk_maF2SH",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Máxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Miercoles"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "25"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZYh^]!V4w}bs,IwEY-|}": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "wFZ^5vOM]}70:tTf}Ca7",
+                    "parent": "n,%~GK;QiO_BAGTp@6qA",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Miércoles"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "21"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "wFZ^5vOM]}70:tTf}Ca7": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "65dY3bK8uUz,z|icUWAF",
+                    "parent": "ZYh^]!V4w}bs,IwEY-|}",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Maxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Jueves"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "36"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "65dY3bK8uUz,z|icUWAF": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "((;,8pWvu#FFFMlbxit$",
+                    "parent": "wFZ^5vOM]}70:tTf}Ca7",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Jueves"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "22"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "((;,8pWvu#FFFMlbxit$": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "%?t58nFmE@F}jJ,H*4d=",
+                    "parent": "65dY3bK8uUz,z|icUWAF",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Maxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Viernes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%?t58nFmE@F}jJ,H*4d=": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "o=M/G:Dh%zck,tGaBp_|",
+                    "parent": "((;,8pWvu#FFFMlbxit$",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Minimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Viernes"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "o=M/G:Dh%zck,tGaBp_|": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "8[6;[L:b_pl^sb}s)]OF",
+                    "parent": "%?t58nFmE@F}jJ,H*4d=",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Maxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Sabado"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "38"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8[6;[L:b_pl^sb}s)]OF": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": ")`3o|y#S=T%VCOe62Ia.",
+                    "parent": "o=M/G:Dh%zck,tGaBp_|",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Sabado"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "23"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ")`3o|y#S=T%VCOe62Ia.": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": "1,e$jySt~(7Jp]EUxm3.",
+                    "parent": "8[6;[L:b_pl^sb}s)]OF",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Maxima"
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Domingo"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "42"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1,e$jySt~(7Jp]EUxm3.": {
+                    "opcode": "sprites_data_chart.set_data_handler",
+                    "next": null,
+                    "parent": ")`3o|y#S=T%VCOe62Ia.",
+                    "inputs": {
+                        "type": [
+                            1,
+                            [
+                                10,
+                                "Temperatura Mínimo "
+                            ]
+                        ],
+                        "xData": [
+                            1,
+                            [
+                                10,
+                                "Domingo"
+                            ]
+                        ],
+                        "yData": [
+                            1,
+                            [
+                                4,
+                                "27"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 1,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": -77,
+            "y": -100,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "left-right"
+        },
+        {
+            "isStage": false,
+            "name": "auriga",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "z:dGplcf#Nk@vgg$B:rp": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "U)66eXrLdK734si5J1.e",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -162,
+                    "y": -56
+                },
+                "U)66eXrLdK734si5J1.e": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "z:dGplcf#Nk@vgg$B:rp",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "2DvI],xw6I]EcRRKKe6."
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "2DvI],xw6I]EcRRKKe6.": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "U)66eXrLdK734si5J1.e",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "9eck,CuIK{x=lL(H9tPI",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "TEMPERATURA",
+                            "(CMl@#QmOo0a8h)Kl=MN"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "9eck,CuIK{x=lL(H9tPI": {
+                    "opcode": "auriga_all.auriga_detec_temperature",
+                    "next": null,
+                    "parent": "2DvI],xw6I]EcRRKKe6.",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "6",
+                            null
+                        ],
+                        "SLOT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "auriga",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "(CMl@#QmOo0a8h)Kl=MN",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "TEMPERATURA"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "(CMl@#QmOo0a8h)Kl=MN",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "(CMl@#QmOo0a8h)Kl=MN",
+                            "value": "TEMPERATURA",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "iH%pW^6gYEBHLSxtil~-auriga_all.auriga_detec_temperature_6_1",
+            "mode": "default",
+            "opcode": "auriga_all.auriga_detec_temperature",
+            "params": {
+                "PORT": "6",
+                "SLOT": "1"
+            },
+            "spriteName": "auriga",
+            "value": "",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "iH%pW^6gYEBHLSxtil~-auriga_all.auriga_detec_temperature_6_1",
+                    "opcode": "auriga_all.auriga_detec_temperature",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": {
+                            "name": "PORT",
+                            "value": "6"
+                        },
+                        "SLOT": {
+                            "name": "SLOT",
+                            "value": "1"
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": 49,
+                    "y": 2760,
+                    "isMonitored": true,
+                    "targetId": "iH%pW^6gYEBHLSxtil~-"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "sprites",
+        "auriga"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

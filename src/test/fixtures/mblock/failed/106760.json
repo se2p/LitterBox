@@ -1,0 +1,1919 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                ":crnO@Jh8WE+WJS_S/^~": [
+                    "speed",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "1lN9TVBcnNy2ek5VQB)I": {
+                    "opcode": "mcore.mcore_when_board_launch",
+                    "next": "4Z}$*0Ao|C7XWFhrLh4`",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 188,
+                    "y": -382
+                },
+                "C#XzH:mSi5d))LG/YtoB": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "?1)Qb?P(JmpTHwWQ^I,6",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "*Agxcv8MPhY+!@CPBpvV"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*Agxcv8MPhY+!@CPBpvV": {
+                    "opcode": "control_if",
+                    "next": "}v{$*0Ic}}:y`38rn,Jb",
+                    "parent": "C#XzH:mSi5d))LG/YtoB",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "XU3x/}6CfUEeznpMT2Y^"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "?qHN%n79W/f]kGowrvLf"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "XU3x/}6CfUEeznpMT2Y^": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "*Agxcv8MPhY+!@CPBpvV",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "69",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "r*u?@_Mnu$Gkee*,O.],": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "%s!V5Fn/2aR5$/p-K9PT",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "70",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "}v{$*0Ic}}:y`38rn,Jb": {
+                    "opcode": "mcore.mcore_move",
+                    "next": "7iD2.vo%_pa2)jV%l6Hs",
+                    "parent": "*Agxcv8MPhY+!@CPBpvV",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                4,
+                                "65"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MOVE_DIRECTION": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "pqk6S|h*CK+MsCJ-$vyA": {
+                    "opcode": "mcore.mcore_detect_external_ultrasonic",
+                    "next": null,
+                    "parent": "FYGw|EWh);SFh0b.edW-",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "FYGw|EWh);SFh0b.edW-": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "7iD2.vo%_pa2)jV%l6Hs",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "15"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            "pqk6S|h*CK+MsCJ-$vyA",
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7iD2.vo%_pa2)jV%l6Hs": {
+                    "opcode": "control_if",
+                    "next": "QA[@Tq}P`W[1.c[-0m!@",
+                    "parent": "}v{$*0Ic}}:y`38rn,Jb",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "FYGw|EWh);SFh0b.edW-"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Q-b?,du=One-PYZ(cxJY"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Q-b?,du=One-PYZ(cxJY": {
+                    "opcode": "control_repeat_until",
+                    "next": null,
+                    "parent": "7iD2.vo%_pa2)jV%l6Hs",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "2,!58HA|VRUE:g!d=?]g"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "@=BA98ULCe0W4}G3GKWn"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B#X]}JM);048$@ke3M(K": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "2,!58HA|VRUE:g!d=?]g",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "15"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            "zfSd3perF78wL}brS1XS",
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "zfSd3perF78wL}brS1XS": {
+                    "opcode": "mcore.mcore_detect_external_ultrasonic",
+                    "next": null,
+                    "parent": "B#X]}JM);048$@ke3M(K",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "2,!58HA|VRUE:g!d=?]g": {
+                    "opcode": "operator_not",
+                    "next": null,
+                    "parent": "Q-b?,du=One-PYZ(cxJY",
+                    "inputs": {
+                        "OPERAND": [
+                            2,
+                            "B#X]}JM);048$@ke3M(K"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "r|?eXH#i8QE2{;ej`)V#": {
+                    "opcode": "mcore.mcore_move_stop",
+                    "next": "%s!V5Fn/2aR5$/p-K9PT",
+                    "parent": "az517PVF.mjgA|/PL^mm",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "HU^GHF0/kurQ3nhhG$xX": {
+                    "opcode": "control_if",
+                    "next": "_]:DQTA7AyX.pFWtlpv]",
+                    "parent": "X)y0$sE=9rC/v`Ct5I;=",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "fq[+lM:gf2m81|:?4bje"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "uGhCCR,nNi+4F`#(Lf:~"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "fq[+lM:gf2m81|:?4bje": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "HU^GHF0/kurQ3nhhG$xX",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "12",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uGhCCR,nNi+4F`#(Lf:~": {
+                    "opcode": "data_setvariableto",
+                    "next": "/BwH,?{,9xJsJ3CH#W3F",
+                    "parent": "HU^GHF0/kurQ3nhhG$xX",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_]:DQTA7AyX.pFWtlpv]": {
+                    "opcode": "control_if",
+                    "next": "(z;tZg,%CuQv}p@wn,~_",
+                    "parent": "HU^GHF0/kurQ3nhhG$xX",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "3%Us~d[~5zl9TpkNl7T;"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "E%@,;ZkV,I64IzFXD2Qq"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3%Us~d[~5zl9TpkNl7T;": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "_]:DQTA7AyX.pFWtlpv]",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "24",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "E%@,;ZkV,I64IzFXD2Qq": {
+                    "opcode": "data_setvariableto",
+                    "next": "BfpmVcPu+6T^l9z}Np]M",
+                    "parent": "_]:DQTA7AyX.pFWtlpv]",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "55"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "(z;tZg,%CuQv}p@wn,~_": {
+                    "opcode": "control_if",
+                    "next": "VDmz}p=7-V=ww2LEuWAf",
+                    "parent": "_]:DQTA7AyX.pFWtlpv]",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ".+]pr0UpDH#G0|!VX$2="
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "=HgodN0Q+R%JSxtl-OUm"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".+]pr0UpDH#G0|!VX$2=": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "(z;tZg,%CuQv}p@wn,~_",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "94",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=HgodN0Q+R%JSxtl-OUm": {
+                    "opcode": "data_setvariableto",
+                    "next": "D?l~dUgv=6R]2uj_%O)4",
+                    "parent": "(z;tZg,%CuQv}p@wn,~_",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "VDmz}p=7-V=ww2LEuWAf": {
+                    "opcode": "control_if",
+                    "next": "k_-@Eb^-.=/Yi-]/-s7B",
+                    "parent": "(z;tZg,%CuQv}p@wn,~_",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "5Or)pvG;R=){!pbVp=Q;"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "jqaYx^}h[LukFK,6*iQ~"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5Or)pvG;R=){!pbVp=Q;": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "VDmz}p=7-V=ww2LEuWAf",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "8",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "jqaYx^}h[LukFK,6*iQ~": {
+                    "opcode": "data_setvariableto",
+                    "next": "B~{^LwaAp7{}a]Temq/u",
+                    "parent": "VDmz}p=7-V=ww2LEuWAf",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "65"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "k_-@Eb^-.=/Yi-]/-s7B": {
+                    "opcode": "control_if",
+                    "next": "ua9m6Gp$*cgP7CU[%Xcc",
+                    "parent": "VDmz}p=7-V=ww2LEuWAf",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "-ACsQ0cRXLG{xRoEBi%F"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "4sff3dlZIjwIJI=uMnf1"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "-ACsQ0cRXLG{xRoEBi%F": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "k_-@Eb^-.=/Yi-]/-s7B",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "28",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "4sff3dlZIjwIJI=uMnf1": {
+                    "opcode": "data_setvariableto",
+                    "next": "y324b@rS7rCTJeLX]ZUM",
+                    "parent": "k_-@Eb^-.=/Yi-]/-s7B",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "70"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ua9m6Gp$*cgP7CU[%Xcc": {
+                    "opcode": "control_if",
+                    "next": "Dn/bCpjFqXBKrnn4Qf2X",
+                    "parent": "k_-@Eb^-.=/Yi-]/-s7B",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "FpcR..,,|3+Qi06Rc#pk"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "b]2[m.SXz+[Oz_A.+giW"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "FpcR..,,|3+Qi06Rc#pk": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "ua9m6Gp$*cgP7CU[%Xcc",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "90",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "b]2[m.SXz+[Oz_A.+giW": {
+                    "opcode": "data_setvariableto",
+                    "next": "T|J**Co_SfL1zW0vOo92",
+                    "parent": "ua9m6Gp$*cgP7CU[%Xcc",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "75"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Dn/bCpjFqXBKrnn4Qf2X": {
+                    "opcode": "control_if",
+                    "next": "d#{TkaLCd+aPXT%u{5}@",
+                    "parent": "ua9m6Gp$*cgP7CU[%Xcc",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "74.{08R]Sy68:6/ivGBw"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "-5zr-!Zy74|fv#UhzGVx"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "74.{08R]Sy68:6/ivGBw": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "Dn/bCpjFqXBKrnn4Qf2X",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "66",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "-5zr-!Zy74|fv#UhzGVx": {
+                    "opcode": "data_setvariableto",
+                    "next": "%/,2O58D#lSP}|Zd}d*^",
+                    "parent": "Dn/bCpjFqXBKrnn4Qf2X",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "80"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "d#{TkaLCd+aPXT%u{5}@": {
+                    "opcode": "control_if",
+                    "next": "ZqH3toRIhR5;Tk7Uz(}m",
+                    "parent": "Dn/bCpjFqXBKrnn4Qf2X",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "wV1Rad)=FOPYOhb,*7Vu"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ",F`DLH#jZ|lR[E^gGkV-"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "wV1Rad)=FOPYOhb,*7Vu": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "d#{TkaLCd+aPXT%u{5}@",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "82",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",F`DLH#jZ|lR[E^gGkV-": {
+                    "opcode": "data_setvariableto",
+                    "next": "lb*0b`)dJNL?x:|Ya;$I",
+                    "parent": "d#{TkaLCd+aPXT%u{5}@",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "85"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZqH3toRIhR5;Tk7Uz(}m": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "d#{TkaLCd+aPXT%u{5}@",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ";0R(nzHrpEEIk%Fz$~TM"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Pzy__(qdi1k)fU~^@:.Q"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";0R(nzHrpEEIk%Fz$~TM": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "ZqH3toRIhR5;Tk7Uz(}m",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "74",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Pzy__(qdi1k)fU~^@:.Q": {
+                    "opcode": "data_setvariableto",
+                    "next": "nhE(yFPRtx3J$nAk4)*N",
+                    "parent": "ZqH3toRIhR5;Tk7Uz(}m",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "90"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?1)Qb?P(JmpTHwWQ^I,6": {
+                    "opcode": "data_setvariableto",
+                    "next": "C#XzH:mSi5d))LG/YtoB",
+                    "parent": "4Z}$*0Ao|C7XWFhrLh4`",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "65"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "speed",
+                            ":crnO@Jh8WE+WJS_S/^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/BwH,?{,9xJsJ3CH#W3F": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "uGhCCR,nNi+4F`#(Lf:~",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "D?l~dUgv=6R]2uj_%O)4": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "=HgodN0Q+R%JSxtl-OUm",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "BfpmVcPu+6T^l9z}Np]M": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "E%@,;ZkV,I64IzFXD2Qq",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B~{^LwaAp7{}a]Temq/u": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "jqaYx^}h[LukFK,6*iQ~",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "y324b@rS7rCTJeLX]ZUM": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "4sff3dlZIjwIJI=uMnf1",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "T|J**Co_SfL1zW0vOo92": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "b]2[m.SXz+[Oz_A.+giW",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%/,2O58D#lSP}|Zd}d*^": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": "8jgkl0,utQ+tTsRV1tA+",
+                    "parent": "-5zr-!Zy74|fv#UhzGVx",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8jgkl0,utQ+tTsRV1tA+": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "%/,2O58D#lSP}|Zd}d*^",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "220",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "lb*0b`)dJNL?x:|Ya;$I": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": "@V33!iZZa+fF6Bgki3TI",
+                    "parent": ",F`DLH#jZ|lR[E^gGkV-",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@V33!iZZa+fF6Bgki3TI": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "lb*0b`)dJNL?x:|Ya;$I",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "220",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nhE(yFPRtx3J$nAk4)*N": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": "g6LOah]pQ,p5Gs$tK}@8",
+                    "parent": "Pzy__(qdi1k)fU~^@:.Q",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "349",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "g6LOah]pQ,p5Gs$tK}@8": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": null,
+                    "parent": "nhE(yFPRtx3J$nAk4)*N",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "220",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+keVGJuI`gUSFO9:XH!l": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "{~D~*KV:/]%4*!_bsT$_",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "21",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%s!V5Fn/2aR5$/p-K9PT": {
+                    "opcode": "control_repeat_until",
+                    "next": null,
+                    "parent": "r|?eXH#i8QE2{;ej`)V#",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "r*u?@_Mnu$Gkee*,O.],"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "f=+aDbZUy;@];%/M;$^A"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "f=+aDbZUy;@];%/M;$^A": {
+                    "opcode": "control_if",
+                    "next": "VA=%ghHZ#.CaLc?Q*NXS",
+                    "parent": "%s!V5Fn/2aR5$/p-K9PT",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "vC:iW|z(ImthSR@|zDR|"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$JEq*,|?,zjF#PFFg+Qy"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "vC:iW|z(ImthSR@|zDR|": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "f=+aDbZUy;@];%/M;$^A",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "64",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$JEq*,|?,zjF#PFFg+Qy": {
+                    "opcode": "mcore.mcore_move",
+                    "next": null,
+                    "parent": "f=+aDbZUy;@];%/M;$^A",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MOVE_DIRECTION": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "VA=%ghHZ#.CaLc?Q*NXS": {
+                    "opcode": "control_if",
+                    "next": "Ka/RGC_zo@}j}{,1Ya(7",
+                    "parent": "f=+aDbZUy;@];%/M;$^A",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "aM$Uz]YvG,S#qgH7JW|q"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "D16RYC!TKgg76x_(70[4"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "aM$Uz]YvG,S#qgH7JW|q": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "VA=%ghHZ#.CaLc?Q*NXS",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "25",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "D16RYC!TKgg76x_(70[4": {
+                    "opcode": "mcore.mcore_move",
+                    "next": null,
+                    "parent": "VA=%ghHZ#.CaLc?Q*NXS",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MOVE_DIRECTION": [
+                            "2",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Ka/RGC_zo@}j}{,1Ya(7": {
+                    "opcode": "control_if",
+                    "next": "ns1KJ7GvK`=OT%;yHjso",
+                    "parent": "VA=%ghHZ#.CaLc?Q*NXS",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "MwwZ:90:72,Nj4x0*L.G"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "6CHlyb}JV,UD0]G40Cep"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "MwwZ:90:72,Nj4x0*L.G": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "Ka/RGC_zo@}j}{,1Ya(7",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "7",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6CHlyb}JV,UD0]G40Cep": {
+                    "opcode": "mcore.mcore_move",
+                    "next": null,
+                    "parent": "Ka/RGC_zo@}j}{,1Ya(7",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MOVE_DIRECTION": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ns1KJ7GvK`=OT%;yHjso": {
+                    "opcode": "control_if",
+                    "next": "+|bsoj}d7*)Yc}F**1{m",
+                    "parent": "Ka/RGC_zo@}j}{,1Ya(7",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "L:1=e$5$|EEk5zBM*Y#h"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "A{X^z_$)MIDm4oVF:E%`"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "L:1=e$5$|EEk5zBM*Y#h": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "ns1KJ7GvK`=OT%;yHjso",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "A{X^z_$)MIDm4oVF:E%`": {
+                    "opcode": "mcore.mcore_move",
+                    "next": null,
+                    "parent": "ns1KJ7GvK`=OT%;yHjso",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MOVE_DIRECTION": [
+                            "4",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+|bsoj}d7*)Yc}F**1{m": {
+                    "opcode": "control_if",
+                    "next": "/-2DCRJfF-TVBi(O#ol;",
+                    "parent": "ns1KJ7GvK`=OT%;yHjso",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "H9/K:6I.)Hb|0^7)b|hW"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "EMN(2ak2cMww{(LaTR2_"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "H9/K:6I.)Hb|0^7)b|hW": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "+|bsoj}d7*)Yc}F**1{m",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "21",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "EMN(2ak2cMww{(LaTR2_": {
+                    "opcode": "mcore.mcore_move_stop",
+                    "next": null,
+                    "parent": "+|bsoj}d7*)Yc}F**1{m",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "X)y0$sE=9rC/v`Ct5I;=": {
+                    "opcode": "procedures_definition",
+                    "next": "HU^GHF0/kurQ3nhhG$xX",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "X_vJVs`xwkLFv261l)XB"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 1045,
+                    "y": 1136
+                },
+                "X_vJVs`xwkLFv261l)XB": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "X)y0$sE=9rC/v`Ct5I;=",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "speed_buttons",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "true"
+                    }
+                },
+                "QA[@Tq}P`W[1.c[-0m!@": {
+                    "opcode": "procedures_call",
+                    "next": "IB!ANr#hM;F/H/$X17Tt",
+                    "parent": "7iD2.vo%_pa2)jV%l6Hs",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "speed_buttons",
+                        "argumentids": "[]",
+                        "warp": "true"
+                    },
+                    "comment": "[k8p~5IRYP$L^JLRhr|k"
+                },
+                "IB!ANr#hM;F/H/$X17Tt": {
+                    "opcode": "control_if",
+                    "next": "{~D~*KV:/]%4*!_bsT$_",
+                    "parent": "QA[@Tq}P`W[1.c[-0m!@",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "PKQEV)gWKlc1:oJQ3Es?"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Hhz14VWS*hLaTn^oxByy"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".q]8y*l%[mPTDbEyk5?=": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "PKQEV)gWKlc1:oJQ3Es?",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "=wE:-(B},.=CX-GFNcqw",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=wE:-(B},.=CX-GFNcqw": {
+                    "opcode": "mcore.mcore_detect_timer",
+                    "next": null,
+                    "parent": ".q]8y*l%[mPTDbEyk5?=",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "PKQEV)gWKlc1:oJQ3Es?": {
+                    "opcode": "operator_and",
+                    "next": null,
+                    "parent": "IB!ANr#hM;F/H/$X17Tt",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            ".q]8y*l%[mPTDbEyk5?="
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "SFs%REILwtIF![]QXn(9"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "SFs%REILwtIF![]QXn(9": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "PKQEV)gWKlc1:oJQ3Es?",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "speed",
+                                ":crnO@Jh8WE+WJS_S/^~"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "70"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Hhz14VWS*hLaTn^oxByy": {
+                    "opcode": "mcore.mcore_show_led_time",
+                    "next": "/uCX2ew`r3|mJXl9f.pW",
+                    "parent": "IB!ANr#hM;F/H/$X17Tt",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#ff0000"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/uCX2ew`r3|mJXl9f.pW": {
+                    "opcode": "mcore.mcore_reset_timer",
+                    "next": null,
+                    "parent": "Hhz14VWS*hLaTn^oxByy",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?qHN%n79W/f]kGowrvLf": {
+                    "opcode": "mcore.mcore_show_led",
+                    "next": "az517PVF.mjgA|/PL^mm",
+                    "parent": "*Agxcv8MPhY+!@CPBpvV",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#009cd6"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "2",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "az517PVF.mjgA|/PL^mm": {
+                    "opcode": "mcore.mcore_show_led",
+                    "next": "r|?eXH#i8QE2{;ej`)V#",
+                    "parent": "?qHN%n79W/f]kGowrvLf",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#8800d8"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/-2DCRJfF-TVBi(O#ol;": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "+|bsoj}d7*)Yc}F**1{m",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "speed_buttons",
+                        "argumentids": "[]",
+                        "warp": "true"
+                    }
+                },
+                "4Z}$*0Ao|C7XWFhrLh4`": {
+                    "opcode": "control_wait_until",
+                    "next": "?1)Qb?P(JmpTHwWQ^I,6",
+                    "parent": "1lN9TVBcnNy2ek5VQB)I",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "YsVHIkMExV#P_{/UDQ|~"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "PBU|a@#?=SmC`|hdCocw"
+                },
+                "YsVHIkMExV#P_{/UDQ|~": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "4Z}$*0Ao|C7XWFhrLh4`",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "68",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "{~D~*KV:/]%4*!_bsT$_": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "IB!ANr#hM;F/H/$X17Tt",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "+keVGJuI`gUSFO9:XH!l"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "hw}g-Wj0R+4So`tnT+Or"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "hw}g-Wj0R+4So`tnT+Or": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "{~D~*KV:/]%4*!_bsT$_",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "65"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@=BA98ULCe0W4}G3GKWn": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "Q-b?,du=One-PYZ(cxJY",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "65"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {
+                "A.W+fjT=6Ew3$ok?0:}d": {
+                    "blockId": "!j!Xn;q5UQVu:uzh^*]$",
+                    "x": 804,
+                    "y": 1557,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "M+4m!G6LZAx|73*zIGS!": {
+                    "blockId": "}7R1Wx4m+t5KMrbsXG;W",
+                    "x": 804,
+                    "y": 1781,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "c/c3l@qjesmwtFEu;U`A": {
+                    "blockId": "%ZP$D-P:8L5z|!s~6jm%",
+                    "x": 804,
+                    "y": 2005,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "th{5L$}A$*yybp9H)*pN": {
+                    "blockId": "~/h@c-3s~e~.D,w1kdsH",
+                    "x": 801,
+                    "y": 2231,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "K%h-vk2g%JfW}?a0})YU": {
+                    "blockId": "tqVyK6DQ/2%)J=z/K2[*",
+                    "x": 803,
+                    "y": 2445,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "r!oy*kxL~+E;yUoh%XN)": {
+                    "blockId": "tNEoq19Y-%@,iwAQC{Ma",
+                    "x": 803,
+                    "y": 2669,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "play twice to warn of high speed"
+                },
+                "[k8p~5IRYP$L^JLRhr|k": {
+                    "blockId": "QA[@Tq}P`W[1.c[-0m!@",
+                    "x": 351.36790466308596,
+                    "y": 1126,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": true,
+                    "text": "Run speed buttons twice in case of change during auto-drive or remote drive."
+                },
+                "5u3}.C}xsPS^uYxnC9f!": {
+                    "blockId": "6ao?tUrRd__Ivpkx-+x}",
+                    "x": 383.36790466308596,
+                    "y": 630,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": true,
+                    "text": "Run speed buttons twice in case of change during auto-drive or remote drive."
+                },
+                "PBU|a@#?=SmC`|hdCocw": {
+                    "blockId": "4Z}$*0Ao|C7XWFhrLh4`",
+                    "x": 707.6685951374195,
+                    "y": -93.55555555555557,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "Press 'D' key so that upload doesn't cause motors to start "
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": ":crnO@Jh8WE+WJS_S/^~",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "speed"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": ":crnO@Jh8WE+WJS_S/^~",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": ":crnO@Jh8WE+WJS_S/^~",
+                            "value": "speed",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

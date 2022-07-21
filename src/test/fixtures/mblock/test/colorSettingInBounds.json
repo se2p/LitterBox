@@ -1,0 +1,325 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "G:FE;4~d:%qg{}LllG8}": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": "_,I`Fc{Cb_}49WCb}#~m",
+                    "parent": "gepYeoQ;[2jfUwa%GX?m",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "234"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "gepYeoQ;[2jfUwa%GX?m": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "G:FE;4~d:%qg{}LllG8}",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 182,
+                    "y": 474
+                },
+                "_,I`Fc{Cb_}49WCb}#~m": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": ".gw/)S@K6A;7*Z83299B",
+                    "parent": "G:FE;4~d:%qg{}LllG8}",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "green",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".gw/)S@K6A;7*Z83299B": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": null,
+                    "parent": "_,I`Fc{Cb_}49WCb}#~m",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "blue",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "1hT7e+^-aECi6,6Z]%Gx": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "UPJ=Y0Hss/b)ACnQ*oK#",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 117,
+                    "y": 533
+                },
+                "UPJ=Y0Hss/b)ACnQ*oK#": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": "gYkhMgc[37Lw^eFa1))v",
+                    "parent": "1hT7e+^-aECi6,6Z]%Gx",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "gYkhMgc[37Lw^eFa1))v": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": null,
+                    "parent": "UPJ=Y0Hss/b)ACnQ*oK#",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "300"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "codey.meos",
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

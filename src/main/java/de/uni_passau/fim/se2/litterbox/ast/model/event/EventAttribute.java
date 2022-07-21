@@ -57,6 +57,12 @@ public class EventAttribute extends AbstractNode implements FixedNodeOption {
     private EventAttributeType type;
 
     public EventAttribute(String typeName) {
+        if (typeName.equals("on_sound_over")) {
+            typeName = "loudness";
+        } else if (typeName.equals("on_time_out")) {
+            typeName = "timer";
+        }
+
         this.type = EventAttributeType.fromString(typeName);
     }
 

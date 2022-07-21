@@ -1,0 +1,95 @@
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes;
+
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.GyroRollAngle;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+
+public class RollAngleInBounds extends AbstractRobotFinder {
+    private static final String NAME = "roll_angle_in_bounds";
+    private static final int ROLL_ANGLE_MAX = 90;
+    private static final int ROLL_ANGLE_MIN = -90;
+    private boolean insideComparison;
+    private boolean hasRollAngle;
+    private double sensorValue;
+    private boolean setValue;
+    private boolean firstHasRollAngle;
+    private boolean secondHasRollAngle;
+    private boolean visitFirst;
+    private boolean visitSecond;
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void visit(BiggerThan node) {
+        visitComp(node);
+        if (setValue && hasRollAngle) {
+            if (((firstHasRollAngle && sensorValue >= ROLL_ANGLE_MIN && sensorValue < ROLL_ANGLE_MAX)
+                    || (secondHasRollAngle && sensorValue <= ROLL_ANGLE_MAX && sensorValue > ROLL_ANGLE_MIN)) && (sensorValue % 1) == 0) {
+                addIssue(node, IssueSeverity.LOW);
+            }
+        }
+        insideComparison = false;
+        hasRollAngle = false;
+        firstHasRollAngle = false;
+        secondHasRollAngle = false;
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        visitComp(node);
+        if (setValue && hasRollAngle) {
+            if (((firstHasRollAngle && sensorValue <= ROLL_ANGLE_MAX && sensorValue > ROLL_ANGLE_MIN)
+                    || (secondHasRollAngle && sensorValue >= ROLL_ANGLE_MIN && sensorValue < ROLL_ANGLE_MAX)) && (sensorValue % 1) == 0) {
+                addIssue(node, IssueSeverity.LOW);
+            }
+        }
+        insideComparison = false;
+        hasRollAngle = false;
+        firstHasRollAngle = false;
+        secondHasRollAngle = false;
+    }
+
+    private void visitComp(BinaryExpression node) {
+        insideComparison = true;
+        setValue = false;
+        visitFirst = true;
+        node.getOperand1().accept(this);
+        visitFirst = false;
+        visitSecond = true;
+        node.getOperand2().accept(this);
+        visitSecond = false;
+    }
+
+    @Override
+    public void visit(GyroRollAngle node) {
+        if (insideComparison) {
+            hasRollAngle = true;
+        }
+        if (visitFirst) {
+            firstHasRollAngle = true;
+        } else if (visitSecond) {
+            secondHasRollAngle = true;
+        }
+    }
+
+    @Override
+    public void visit(NumberLiteral node) {
+        if (insideComparison && !setValue) {
+            setValue = true;
+            sensorValue = node.getValue();
+        }
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.PERFUME;
+    }
+}
