@@ -1,12 +1,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.MBlockExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
@@ -25,9 +21,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.res
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-public interface MBlockVisitor extends ScratchVisitor {
+public interface MBlockVisitor {
 
     // MBlockNode
 
@@ -56,7 +51,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      *             be iterated
      */
     default void visit(MBlockEvent node) {
-        visit((Event) node);
+        visitParentVisitor(node);
     }
 
     /**
@@ -143,6 +138,19 @@ public interface MBlockVisitor extends ScratchVisitor {
         visit((MBlockEvent) node);
     }
 
+    /**
+     * Default implementation of visit method for {@link MBlockExpr}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MBlockBoolExpr Node of which the children will be iterated
+     */
+    default void visit(MBlockExpr node) {
+        visitParentVisitor(node);
+    }
+
     // MBlockBoolExpr
 
     /**
@@ -155,7 +163,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      * @param node MBlockBoolExpr Node of which the children will be iterated
      */
     default void visit(MBlockBoolExpr node) {
-        visit((BoolExpr) node);
+        visit((MBlockExpr) node);
     }
 
     /**
@@ -313,7 +321,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      * @param node MBlockNumExpr Node of which the children will be iterated
      */
     default void visit(MBlockNumExpr node) {
-        visit((NumExpr) node);
+        visit((MBlockExpr) node);
     }
 
     /**
@@ -588,7 +596,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      * @param node MBlockStringExpr Node of which the children will be iterated
      */
     default void visit(MBlockStringExpr node) {
-        visit((StringExpr) node);
+        visit((MBlockExpr) node);
     }
 
     /**
@@ -616,7 +624,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      * @param node MBlockOption Node of which the children will be iterated
      */
     default void visit(MBlockOption node) {
-        visit((ASTNode) node);
+        visitParentVisitor(node);
     }
 
     /**
@@ -836,7 +844,7 @@ public interface MBlockVisitor extends ScratchVisitor {
      *             be iterated
      */
     default void visit(MBlockStmt node) {
-        visit((Stmt) node);
+        visitParentVisitor(node);
     }
 
     // EmotionStmt
@@ -2042,4 +2050,6 @@ public interface MBlockVisitor extends ScratchVisitor {
     default void visit(StopAllSounds2 node) {
         visit((SpeakerStmt) node);
     }
+
+    void visitParentVisitor(MBlockNode node);
 }

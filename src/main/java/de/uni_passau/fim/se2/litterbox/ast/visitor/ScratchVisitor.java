@@ -3421,7 +3421,7 @@ public interface ScratchVisitor {
 
     default void visit(MBlockNode node) {
         if (this instanceof MBlockVisitor) {
-            this.visit(node);
+            ((MBlockVisitor) this).visit(node);
         } else {
             visitDefaultVisitor(node);
         }
