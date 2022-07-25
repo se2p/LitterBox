@@ -4,7 +4,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.MovingEmotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -86,7 +85,12 @@ public abstract class AbstractRobotFinder extends AbstractIssueFinder implements
 
     @Override
     public void visit(MBlockNode node) {
-        node.accept(this);
+        node.accept((MBlockVisitor) this);
+    }
+
+    @Override
+    public void visitParentVisitor(MBlockNode node) {
+        visitDefaultVisitor(node);
     }
 
     @Override

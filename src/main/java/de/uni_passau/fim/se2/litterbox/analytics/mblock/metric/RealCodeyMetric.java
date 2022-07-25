@@ -1,6 +1,5 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -8,17 +7,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.MBlockEvent;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.MBlockExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBlockStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
 
 import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.CODEY;
 import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
 
-public class RealCodeyMetric implements MetricExtractor<Program>, MBlockVisitor {
+public class RealCodeyMetric extends AbstractRobotMetric<Program> {
 
     public static final String NAME = "real_codey_program";
     private boolean robot = false;
@@ -81,10 +78,5 @@ public class RealCodeyMetric implements MetricExtractor<Program>, MBlockVisitor 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(MBlockNode node) {
-        node.accept(this);
     }
 }

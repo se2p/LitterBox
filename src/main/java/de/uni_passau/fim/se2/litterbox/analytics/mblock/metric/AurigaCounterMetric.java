@@ -5,11 +5,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.AURIGA;
 import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
 
-public class AurigaCounterMetric implements MetricExtractor<Program>, MBlockVisitor {
+public class AurigaCounterMetric implements MetricExtractor<Program>, ScratchVisitor, MBlockVisitor {
 
     public static final String NAME = "robot_auriga_counter";
     private int aurigaCounter = 0;
@@ -28,12 +29,17 @@ public class AurigaCounterMetric implements MetricExtractor<Program>, MBlockVisi
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public void visit(MBlockNode node) {
+        node.accept((MBlockVisitor) this);
     }
 
     @Override
-    public void visit(MBlockNode node) {
-        node.accept(this);
+    public void visitParentVisitor(MBlockNode node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }
