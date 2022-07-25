@@ -51,4 +51,9 @@ public class UnnecessaryTimeTest implements JsonTest {
             assertThat(refactoredIssues).hasSize(9);
         }
     }
+
+    @Test
+    public void testUnnecessaryTimeNegative() throws IOException, ParsingException {
+        assertThatFinderReports(2, new UnnecessaryTime(), "./src/test/fixtures/smells/unnecessaryTimeNegative.json");
+    }
 }
