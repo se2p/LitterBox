@@ -63,6 +63,11 @@ public class MissingLoopSensingTest implements JsonTest {
     }
 
     @Test
+    public void testMissingLoopSensingInsideLoopAfterLoop() throws IOException, ParsingException {
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/missingLoopInsideAfterLoop.json");
+    }
+
+    @Test
     public void testGetName() {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Assertions.assertEquals("missing_loop_sensing", parameterName.getName());
