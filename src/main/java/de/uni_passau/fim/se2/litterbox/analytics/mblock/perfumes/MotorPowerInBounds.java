@@ -10,7 +10,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.mov
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.SinglePower;
 
 import static de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity.LOW;
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.MCORE;
 
 public class MotorPowerInBounds extends AbstractRobotFinder {
 

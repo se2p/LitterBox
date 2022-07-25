@@ -34,18 +34,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.MoveDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.MoveSides;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.MoveStop;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute;
 
@@ -54,7 +44,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.cfg.Attribute.AttributeType.*;
 import static de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute.AttributeType.*;
 
 /**

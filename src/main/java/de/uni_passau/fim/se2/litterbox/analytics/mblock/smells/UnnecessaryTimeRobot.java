@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
@@ -27,20 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.LEDColorTimedPosition;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.FaceTimed;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.FaceTimedPort;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.LEDTimePort;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.PlayFrequency;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This finder looks if a wait block waits for 0 seconds and thus is unnecessary.

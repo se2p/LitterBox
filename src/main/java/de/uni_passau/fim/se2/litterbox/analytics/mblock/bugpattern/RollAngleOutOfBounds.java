@@ -8,7 +8,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.GyroRollAngle;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.Potentiometer;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 
 public class RollAngleOutOfBounds extends AbstractRobotFinder {
