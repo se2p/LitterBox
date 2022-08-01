@@ -20,16 +20,32 @@ package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
 public enum StringExprOpcode implements Opcode {
 
-    operator_join, operator_letter_of, sensing_username, data_itemoflist,
-    looks_costumenumbername, looks_backdropnumbername, sensing_answer, sensing_of;
+    operator_join,
+    operator_letter_of,
+    sensing_username,
+    data_itemoflist,
+    looks_costumenumbername,
+    looks_backdropnumbername,
+    sensing_answer,
+    sensing_of,
+
+    //mBlock String Opcode
+    comm_receive_ir,    // codey
+    detect_ir;          // mcore
 
     public static boolean contains(String opcode) {
+        opcode = Opcode.removePrefix(opcode);
         for (StringExprOpcode value : StringExprOpcode.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static StringExprOpcode getOpcode(String opcode) {
+        opcode = Opcode.removePrefix(opcode);
+        return valueOf(opcode);
     }
 
     @Override

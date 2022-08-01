@@ -26,10 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
-import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
-import de.uni_passau.fim.se2.litterbox.cfg.ListVariable;
-import de.uni_passau.fim.se2.litterbox.cfg.Variable;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -106,6 +103,18 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssue(Issue issue) {
         issues.add(issue);
+    }
+
+    protected void addIssue(ASTNode node, IssueSeverity severity) {
+        addIssue(node, node.getMetadata(), severity, new Hint(getName()));
+    }
+
+    protected void addIssue(ASTNode node, IssueSeverity severity, Hint hint) {
+        addIssue(node, node.getMetadata(), severity, hint);
+    }
+
+    protected void addIssue(ASTNode node) {
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
@@ -212,7 +221,29 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                     throw new RuntimeException("Unknown attribute type: " + attr.getAttributeType());
             }
             builder.append("\"");
+        } else if (def instanceof RobotAttribute) {
+            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+            builder.append(" \"");
+            RobotAttribute attr = (RobotAttribute) def;
+            switch (attr.getAttributeType()) {
+                case MATRIX:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.MATRIX));
+                    break;
+                case MOTOR_POWER:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.MOTOR_POWER));
+                    break;
+                case LED:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LED));
+                    break;
+                case ROCKY_LIGHT:
+                    builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ROCKY_LIGHT));
+                    break;
+                default:
+                    throw new RuntimeException("Unknown attribute type: " + attr.getAttributeType());
+            }
+            builder.append("\"");
         }
+
         return builder.toString();
     }
 
@@ -322,7 +353,6 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public boolean areCoupled(Issue first, Issue other) {
         return false;
     }
-
 
     protected ScriptEntity getCurrentScriptEntity() {
         if (currentScript != null) {

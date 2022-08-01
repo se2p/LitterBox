@@ -1,0 +1,397 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "a-x5.%QP;#Luu)+dGqqI": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "-p%Z-r44()eTz_$R.M}T",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 177,
+                    "y": 911
+                },
+                "-p%Z-r44()eTz_$R.M}T": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": "!:OSL+]p#SIlQ2M{r)tD",
+                    "parent": "a-x5.%QP;#Luu)+dGqqI",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "-20"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!:OSL+]p#SIlQ2M{r)tD": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": "|v}fsdIGu|U^Q%!/{X.,",
+                    "parent": "-p%Z-r44()eTz_$R.M}T",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "266"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "|v}fsdIGu|U^Q%!/{X.,": {
+                    "opcode": "codey.meos_show_led_rgb",
+                    "next": null,
+                    "parent": "!:OSL+]p#SIlQ2M{r)tD",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "RGB": [
+                            "green",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "zNUDeF,1f?._W@8w[$rc": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": "aIJw;71[M$hOAkr%ANG4",
+                    "parent": ".h)tG3RtQg%vR%:=tO?(",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "-10"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "aIJw;71[M$hOAkr%ANG4": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": "WO}[rus-R134M}rEekt/",
+                    "parent": "zNUDeF,1f?._W@8w[$rc",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "255"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "266"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "WO}[rus-R134M}rEekt/": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": "E#wi6sl)B-=0lIg7zATa",
+                    "parent": "aIJw;71[M$hOAkr%ANG4",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "-1"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "E#wi6sl)B-=0lIg7zATa": {
+                    "opcode": "mcore.mcore_show_led_rgb",
+                    "next": null,
+                    "parent": "WO}[rus-R134M}rEekt/",
+                    "inputs": {
+                        "R": [
+                            1,
+                            [
+                                4,
+                                "-1"
+                            ]
+                        ],
+                        "G": [
+                            1,
+                            [
+                                4,
+                                "-2"
+                            ]
+                        ],
+                        "B": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".h)tG3RtQg%vR%:=tO?(": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "zNUDeF,1f?._W@8w[$rc",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 298,
+                    "y": -11
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "codey.meos",
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

@@ -94,6 +94,21 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitio
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -3481,5 +3496,1849 @@ public class CloneVisitor {
      */
     public ASTNode visit(ExprVoice node) {
         return new ExprVoice(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    // MBlockNodes
+    // MBlockEvents
+
+    /**
+     * Default implementation of visit method for {@link BoardButtonAction}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BoardButtonAction  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BoardButtonAction node) {
+        return new BoardButtonAction(apply(node.getPressed()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link BoardLaunch}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BoardLaunch Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BoardLaunch node) {
+        return new BoardLaunch(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link BoardShaken}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BoardShaken  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BoardShaken node) {
+        return new BoardShaken(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link BoardTilted}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BoardTilted  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BoardTilted node) {
+        return new BoardTilted(apply(node.getDirection()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link BrightnessLess}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BrightnessLess  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BrightnessLess node) {
+        return new BrightnessLess(apply(node.getValue()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LaunchButton}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LaunchButton  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LaunchButton node) {
+        return new LaunchButton(apply(node.getButton()), apply(node.getMetadata()));
+    }
+
+    // MBlockBoolExpr
+
+    /**
+     * Default implementation of visit method for {@link BoardButtonPressed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BoardButtonPressed  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BoardButtonPressed node) {
+        return new BoardButtonPressed(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ConnectRobot}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ConnectRobot Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ConnectRobot node) {
+        return new ConnectRobot(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link IRButtonPressed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node IRButtonPressed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(IRButtonPressed node) {
+        return new IRButtonPressed(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDMatrixPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDMatrixPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDMatrixPosition node) {
+        return new LEDMatrixPosition(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ObstaclesAhead}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ObstaclesAhead Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ObstaclesAhead node) {
+        return new ObstaclesAhead(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link OrientateTo}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node OrientateTo Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(OrientateTo node) {
+        return new OrientateTo(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link PortOnLine}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PortOnLine Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PortOnLine node) {
+        return new PortOnLine(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getOperand3()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotButtonPressed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotButtonPressed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotButtonPressed node) {
+        return new RobotButtonPressed(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotShaken}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotShaken Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotShaken node) {
+        return new RobotShaken(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotTilted}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotTilted Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotTilted node) {
+        return new RobotTilted(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SeeColor}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SeeColor Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SeeColor node) {
+        return new SeeColor(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    // MBlockNumExpr
+
+    /**
+     * Default implementation of visit method for {@link AmbientLight}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node AmbientLight Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(AmbientLight node) {
+        return new AmbientLight(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link BatteryEnergy}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BatteryEnergy Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BatteryEnergy node) {
+        return new BatteryEnergy(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectAmbientLight}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectAmbientLight Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectAmbientLight node) {
+        return new DetectAmbientLight(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectAmbientLightPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectAmbientLightPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectAmbientLightPort node) {
+        return new DetectAmbientLightPort(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectDistancePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectDistancePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectDistancePort node) {
+        return new DetectDistancePort(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectGrey}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectGrey Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectGrey node) {
+        return new DetectGrey(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectIRReflection}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectIRReflection Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectIRReflection node) {
+        return new DetectIRReflection(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectLinePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectLinePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectLinePort node) {
+        return new DetectLinePort(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectReflection}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectReflection Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectReflection node) {
+        return new DetectReflection(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link DetectRGBValue}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node DetectRGBValue Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(DetectRGBValue node) {
+        return new DetectRGBValue(apply(node.getOperand1()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link GyroPitchAngle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node GyroPitchAngle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(GyroPitchAngle node) {
+        return new GyroPitchAngle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link GyroRollAngle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node GyroRollAngle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(GyroRollAngle node) {
+        return new GyroRollAngle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Potentiometer}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Potentiometer Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Potentiometer node) {
+        return new Potentiometer(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotTimer}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotTimer Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotTimer node) {
+        return new RobotTimer(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RotateXAngle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RotateXAngle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RotateXAngle node) {
+        return new RotateXAngle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RotateYAngle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RotateYAngle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RotateYAngle node) {
+        return new RotateYAngle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RotateZAngle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RotateZAngle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RotateZAngle node) {
+        return new RotateZAngle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ShakingStrength}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ShakingStrength Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ShakingStrength node) {
+        return new ShakingStrength(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundVolume}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SoundVolume Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SoundVolume node) {
+        return new SoundVolume(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SpeakerVolume}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SpeakerVolume Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SpeakerVolume node) {
+        return new SpeakerVolume(apply(node.getMetadata()));
+    }
+
+    // MBlockStringExpr
+
+    /**
+     * Default implementation of visit method for {@link IRMessage}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node IRMessage Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(IRMessage node) {
+        return new IRMessage(apply(node.getMetadata()));
+    }
+
+    // MBlockOptions
+
+    /**
+     * Default implementation of visit method for {@link BlackWhite}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node BlackWhite Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(BlackWhite node) {
+        return new BlackWhite(node.getBlackWhiteDefinition());
+    }
+
+    /**
+     * Default implementation of visit method for {@link IRRemoteButton}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node IRRemoteButton Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(IRRemoteButton node) {
+        return new IRRemoteButton(node.getButtonName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDColor}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDColor Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDColor node) {
+        return new LEDColor(node.getColorName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDMatrix}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDMatrix Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDMatrix node) {
+        return new LEDMatrix(node.getFaceString());
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDPosition node) {
+        return new LEDPosition(node.getPortDefinition());
+    }
+
+    /**
+     * Default implementation of visit method for {@link LineFollowState}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LineFollowState Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LineFollowState node) {
+        return new LineFollowState(node.getLineFollowDefinition());
+    }
+
+    /**
+     * Default implementation of visit method for {@link MCorePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MCorePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MCorePort node) {
+        return new MCorePort(node.getPortDefinition());
+    }
+
+    /**
+     * Default implementation of visit method for {@link PadOrientation}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PadOrientation Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PadOrientation node) {
+        return new PadOrientation(node.getOrientationName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link PressedState}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PressedState  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PressedState node) {
+        return new PressedState(node.getPressedState());
+    }
+
+    /**
+     * Default implementation of visit method for {@link RGB}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RGB Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RGB node) {
+        return new RGB(node.getRGBName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotAxis}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotAxis Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotAxis node) {
+        return new RobotAxis(node.getAxisName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotButton}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotButton Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotButton node) {
+        return new RobotButton(node.getButtonName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link RobotDirection}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RobotDirection Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RobotDirection node) {
+        return new RobotDirection(node.getDirectionName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundList}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SoundList Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SoundList node) {
+        return new SoundList(node.getFileName());
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundNote}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SoundNote Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SoundNote node) {
+        return new SoundNote(node.getNoteName());
+    }
+
+    // MBlockEmotionStmt
+
+    /**
+     * Default implementation of visit method for {@link Aggrieved}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Aggrieved Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Aggrieved node) {
+        return new Aggrieved(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Agree}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Agree Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Agree node) {
+        return new Agree(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Angry}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Angry Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Angry node) {
+        return new Angry(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Awkward}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Awkward Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Awkward node) {
+        return new Awkward(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Coquetry}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Coquetry Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Coquetry node) {
+        return new Coquetry(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Deny}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Deny Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Deny node) {
+        return new Deny(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Dizzy}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Dizzy Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Dizzy node) {
+        return new Dizzy(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Exclaim}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Exclaim Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Exclaim node) {
+        return new Exclaim(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Greeting}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Greeting Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Greeting node) {
+        return new Greeting(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LookAround}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LookAround Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LookAround node) {
+        return new LookAround(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LookDown}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LookDown Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LookDown node) {
+        return new LookDown(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LookLeft}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LookLeft Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LookLeft node) {
+        return new LookLeft(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LookRight}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LookRight Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LookRight node) {
+        return new LookRight(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LookUp}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LookUp Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LookUp node) {
+        return new LookUp(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Naughty}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Naughty Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Naughty node) {
+        return new Naughty(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Proud}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Proud Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Proud node) {
+        return new Proud(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Revive}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Revive Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Revive node) {
+        return new Revive(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Sad}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Sad Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Sad node) {
+        return new Sad(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Shiver}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Shiver Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Shiver node) {
+        return new Shiver(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Sleeping}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Sleeping Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Sleeping node) {
+        return new Sleeping(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Sleepy}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Sleepy Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Sleepy node) {
+        return new Sleepy(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Smile}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Smile Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Smile node) {
+        return new Smile(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Sprint}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Sprint  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Sprint node) {
+        return new Sprint(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Startle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Startle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Startle node) {
+        return new Startle(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Wink}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Wink Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Wink node) {
+        return new Wink(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Yeah}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Yeah Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Yeah node) {
+        return new Yeah(apply(node.getMetadata()));
+    }
+
+    // MBlockIRStmt
+
+    /**
+     * Default implementation of visit method for {@link LearnWithTime}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LearnWithTime Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LearnWithTime node) {
+        return new LearnWithTime(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SendIR}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SendIR Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SendIR node) {
+        return new SendIR(apply(node.getText()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SendLearnResult}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SendLearnResult Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SendLearnResult node) {
+        return new SendLearnResult(apply(node.getMetadata()));
+    }
+
+    // MBlockLEDStmt
+
+    /**
+     * Default implementation of visit method for {@link LEDColorShow}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDColorShow Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDColorShow node) {
+        return new LEDColorShow(apply(node.getColorString()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDColorShowPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDColorShowPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDColorShowPosition node) {
+        return new LEDColorShowPosition(apply(node.getPosition()), apply(node.getColorString()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDColorTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDColorTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDColorTimed node) {
+        return new LEDColorTimed(apply(node.getColorString()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDColorTimedPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDColorTimedPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDColorTimedPosition node) {
+        return new LEDColorTimedPosition(apply(node.getPosition()), apply(node.getColorString()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDOff}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDOff Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDOff node) {
+        return new LEDOff(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RGBValue}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RGBValue Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RGBValue node) {
+        return new RGBValue(apply(node.getRgb()), apply(node.getValue()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RGBValuesPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RGBValuesPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RGBValuesPosition node) {
+        return new RGBValuesPosition(apply(node.getPosition()), apply(node.getRed()), apply(node.getGreen()), apply(node.getBlue()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RockyLight}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RockyLight  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RockyLight node) {
+        return new RockyLight(apply(node.getColor()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link RockyLightOff}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node RockyLightOff  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(RockyLightOff node) {
+        return new RockyLightOff(apply(node.getMetadata()));
+    }
+
+    // MBlockLEDMatrixStmt
+
+    /**
+     * Default implementation of visit method for {@link FacePosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FacePosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FacePosition node) {
+        return new FacePosition(apply(node.getLedMatrix()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FacePositionPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FacePositionPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FacePositionPort node) {
+        return new FacePositionPort(apply(node.getPort()), apply(node.getLedMatrix()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FaceTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FaceTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FaceTimed node) {
+        return new FaceTimed(apply(node.getLedMatrix()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FaceTimedPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FaceTimedPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FaceTimedPort node) {
+        return new FaceTimedPort(apply(node.getPort()), apply(node.getLedMatrix()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDNumPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDNumPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDNumPort node) {
+        return new LEDNumPort(apply(node.getPort()), apply(node.getNumber()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDString}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDString Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDString node) {
+        return new LEDString(apply(node.getText()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDStringPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDStringPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDStringPort node) {
+        return new LEDStringPort(apply(node.getPort()), apply(node.getText()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDStringPosition}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDStringPosition Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDStringPosition node) {
+        return new LEDStringPosition(apply(node.getText()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDStringPositionPort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDStringPositionPort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDStringPositionPort node) {
+        return new LEDStringPositionPort(apply(node.getPort()), apply(node.getText()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDStringScrolling}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDStringScrolling Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDStringScrolling node) {
+        return new LEDStringScrolling(apply(node.getText()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDSwitchOff}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDSwitchOff Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDSwitchOff node) {
+        return new LEDSwitchOff(apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDSwitchOn}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDSwitchOn Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDSwitchOn node) {
+        return new LEDSwitchOn(apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDTimePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDTimePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDTimePort node) {
+        return new LEDTimePort(apply(node.getPort()), apply(node.getHour()), apply(node.getMinute()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link LEDToggle}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node LEDToggle Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(LEDToggle node) {
+        return new LEDToggle(apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ShowFace}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ShowFace Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ShowFace node) {
+        return new ShowFace(apply(node.getLedMatrix()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ShowFacePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ShowFacePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ShowFacePort node) {
+        return new ShowFacePort(apply(node.getPort()), apply(node.getLedMatrix()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnOffFace}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnOffFace Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnOffFace node) {
+        return new TurnOffFace(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnOffFacePort}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnOffFacePort Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnOffFacePort node) {
+        return new TurnOffFacePort(apply(node.getPort()), apply(node.getMetadata()));
+    }
+
+    // MBlockRobotMoveStmt
+
+    /**
+     * Default implementation of visit method for {@link KeepBackwardTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node KeepBackwardTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(KeepBackwardTimed node) {
+        return new KeepBackwardTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link KeepForwardTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node KeepForwardTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(KeepForwardTimed node) {
+        return new KeepForwardTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveBackwardTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MoveBackwardTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MoveBackwardTimed node) {
+        return new MoveBackwardTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveDirection}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MoveDirection Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MoveDirection node) {
+        return new MoveDirection(apply(node.getDirection()), apply(node.getPercent()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveForwardTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MoveForwardTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MoveForwardTimed node) {
+        return new MoveForwardTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveSides}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MoveSides Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MoveSides node) {
+        return new MoveSides(apply(node.getLeftPower()), apply(node.getRightPower()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveStop}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node MoveStop Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(MoveStop node) {
+        return new MoveStop(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnLeft2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnLeft2 Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnLeft2 node) {
+        return new TurnLeft2(apply(node.getDegree()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnLeftTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnLeftTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnLeftTimed node) {
+        return new TurnLeftTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnRight2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnRight2 Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnRight2 node) {
+        return new TurnRight2(apply(node.getDegree()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnRightTimed}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnRightTimed Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnRightTimed node) {
+        return new TurnRightTimed(apply(node.getPercent()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    // MBlockResetStmt
+
+    /**
+     * Default implementation of visit method for {@link ResetAxis}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ResetAxis Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ResetAxis node) {
+        return new ResetAxis(apply(node.getAxis()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ResetTimer2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ResetTimer2 Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ResetTimer2 node) {
+        return new ResetTimer2(apply(node.getMetadata()));
+    }
+    // MBlockRobotSpeaker
+
+    /**
+     * Default implementation of visit method for {@link ChangeVolumeBy2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ChangeVolumeBy2 Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ChangeVolumeBy2 node) {
+        return new ChangeVolumeBy2(apply(node.getVolumeValue()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Pause}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Pause Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Pause node) {
+        return new Pause(apply(node.getBeat()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link PlayFrequency}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PlayFrequency Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PlayFrequency node) {
+        return new PlayFrequency(apply(node.getFrequency()), apply(node.getTime()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link PlayNote}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PlayNote  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PlayNote node) {
+        return new PlayNote(apply(node.getNote()), apply(node.getBeat()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link PlaySound}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PlaySound  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PlaySound node) {
+        return new PlaySound(apply(node.getSoundList()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link PlaySoundWait}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node PlaySoundWait  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(PlaySoundWait node) {
+        return new PlaySoundWait(apply(node.getSoundList()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetVolumeTo2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SetVolumeTo2  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SetVolumeTo2 node) {
+        return new SetVolumeTo2(apply(node.getVolumeValue()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link StopAllSounds2}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node StopAllSounds2  Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(StopAllSounds2 node) {
+        return new StopAllSounds2(apply(node.getMetadata()));
     }
 }

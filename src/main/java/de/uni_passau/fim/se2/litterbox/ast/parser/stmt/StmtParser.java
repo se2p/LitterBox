@@ -25,8 +25,15 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+
+import java.util.logging.Logger;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 
 public class StmtParser {
 
@@ -74,7 +81,27 @@ public class StmtParser {
                     || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)) {
 
                 return ExpressionStmtParser.parseParameter(blockId, current);
+            }             // mBlock Opcodes
+            else if (EmotionStmtOpcode.contains(opcode)) {
+                return EmotionStmtParser.parse(blockId, current, blocks);
+            } else if (LEDMatrixStmtOpcode.contains(opcode)) {
+                return LEDMatrixStmtParser.parse(state, blockId, current, blocks);
+            } else if (LEDStmtOpcode.contains(opcode)) {
+                return LEDStmtParser.parse(state, blockId, current, blocks);
+            } else if (SpeakerStmtOpcode.contains(opcode)) {
+                return SpeakerStmtParser.parse(state, blockId, current, blocks);
+            } else if (RobotMoveStmtOpcode.contains(opcode)) {
+                return RobotMoveStmtParser.parse(state, blockId, current, blocks);
+            } else if (ResetStmtOpcode.contains(opcode)) {
+                return ResetStmtParser.parse(blockId, current, blocks);
+            } else if (IRStmtOpcode.contains(opcode)) {
+                return IRStmtParser.parse(state, blockId, current, blocks);
             } else {
+                if (PropertyLoader.getSystemBooleanProperty("parser.log_unknown_opcode")) {
+                    Logger.getGlobal().warning("Block with ID " + blockId + " and unknown opcode "
+                            + current.get(OPCODE_KEY) + ". ");
+                }
+
                 return new UnspecifiedStmt();
             }
         }

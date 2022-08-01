@@ -82,6 +82,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
+        checkPosition(node);
         if (!loopStack.isEmpty() && (blocksAfter || blocksBefore || insideIfElse)) {
 
             IssueBuilder builder = prepareIssueBuilder(node)
@@ -91,7 +92,6 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
             addIssue(builder);
         }
         loopStack.push(node);
-        checkPosition(node);
         visitChildren(node);
         loopStack.pop();
     }

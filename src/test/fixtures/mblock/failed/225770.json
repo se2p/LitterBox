@@ -1,0 +1,436 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "h;JK2Rr`v#ouRzOb1js]": [
+                    "Geschwindigkeit v",
+                    0
+                ],
+                "M{/S!ls+IY##y*Uh:$M;": [
+                    "Beschleunigung",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "Dv!d}9or/uI%S2e4pda^": {
+                    "opcode": "codey.meos_when_button_press",
+                    "next": "]P)udCIUeXnNrH,.k+ip",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 254,
+                    "y": 226
+                },
+                "@zgiGBc4-:OUO9x*N),j": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "{k):mjYaKa5|HVecLA8n",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Beschleunigung",
+                            "M{/S!ls+IY##y*Uh:$M;"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ")Fh~w+}H)OKm;BHZ3-?`": {
+                    "opcode": "codey.meos_move",
+                    "next": "yp,$$Zn0tJXJ+Xu!pI%b",
+                    "parent": "5HJ/RLcp^yyo%,^.zeZ:",
+                    "inputs": {
+                        "POWER": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit v",
+                                "h;JK2Rr`v#ouRzOb1js]"
+                            ],
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "DIRECTION": [
+                            "forward",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "yp,$$Zn0tJXJ+Xu!pI%b": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": null,
+                    "parent": ")Fh~w+}H)OKm;BHZ3-?`",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit v",
+                                "h;JK2Rr`v#ouRzOb1js]"
+                            ],
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "]P)udCIUeXnNrH,.k+ip": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "Dv!d}9or/uI%S2e4pda^",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "{k):mjYaKa5|HVecLA8n"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "{k):mjYaKa5|HVecLA8n": {
+                    "opcode": "control_if",
+                    "next": "29E{L%(m=z!s(#?Q:-=6",
+                    "parent": "]P)udCIUeXnNrH,.k+ip",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "@zgiGBc4-:OUO9x*N),j"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "O_7+t8B;vP_@3$=4A^%*"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "O_7+t8B;vP_@3$=4A^%*": {
+                    "opcode": "codey.meos_event_is_color",
+                    "next": null,
+                    "parent": "{k):mjYaKa5|HVecLA8n",
+                    "inputs": {},
+                    "fields": {
+                        "COLOR": [
+                            "'green'",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "29E{L%(m=z!s(#?Q:-=6": {
+                    "opcode": "control_if",
+                    "next": "5HJ/RLcp^yyo%,^.zeZ:",
+                    "parent": "{k):mjYaKa5|HVecLA8n",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "tw#yirJou_O2LwF?7LR0"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ".8$@r@#qaS;.H!!Ia++^"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "tw#yirJou_O2LwF?7LR0": {
+                    "opcode": "codey.meos_event_is_color",
+                    "next": null,
+                    "parent": "29E{L%(m=z!s(#?Q:-=6",
+                    "inputs": {},
+                    "fields": {
+                        "COLOR": [
+                            "'red'",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".8$@r@#qaS;.H!!Ia++^": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "29E{L%(m=z!s(#?Q:-=6",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "-1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Beschleunigung",
+                            "M{/S!ls+IY##y*Uh:$M;"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5HJ/RLcp^yyo%,^.zeZ:": {
+                    "opcode": "data_changevariableby",
+                    "next": ")Fh~w+}H)OKm;BHZ3-?`",
+                    "parent": "29E{L%(m=z!s(#?Q:-=6",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "Beschleunigung",
+                                "M{/S!ls+IY##y*Uh:$M;"
+                            ],
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit v",
+                            "h;JK2Rr`v#ouRzOb1js]"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "h;JK2Rr`v#ouRzOb1js]",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Geschwindigkeit v"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "h;JK2Rr`v#ouRzOb1js]",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "h;JK2Rr`v#ouRzOb1js]",
+                            "value": "Geschwindigkeit v",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "M{/S!ls+IY##y*Uh:$M;",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Beschleunigung"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "M{/S!ls+IY##y*Uh:$M;",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "M{/S!ls+IY##y*Uh:$M;",
+                            "value": "Beschleunigung",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "codey.meos"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}
