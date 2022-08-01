@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -35,74 +37,102 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetricTool {
+    private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
+    private static final boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
-    private List<MetricExtractor> metrics = Arrays.asList(
-            new AvgBlockStatementCount<Program>(),
-            new AvgScriptWidthCount<>(),
-            new AvgVariableLengthCount<>(),
-            new BackdropCount<>(),
-            new BlockCount<Program>(),
-            new CategoryEntropy<Program>(),
-            new Cohesion<Program>(),
-            new ComputationalThinkingAverageScore(),
-            new ComputationalThinkingScore(),
-            new ComputationalThinkingScoreAbstraction(),
-            new ComputationalThinkingScoreDataRepresentation(),
-            new ComputationalThinkingScoreFlowControl(),
-            new ComputationalThinkingScoreLogic(),
-            new ComputationalThinkingScoreParallelization(),
-            new ComputationalThinkingScoreSynchronization(),
-            new ComputationalThinkingScoreUserInteractivity(),
-            new ControlBlockCount<Program>(),
-            new CostumeCount<>(),
-            new EventsBlockCount<Program>(),
-            new HalsteadDifficulty<Program>(),
-            new HalsteadEffort<Program>(),
-            new HalsteadLength<Program>(),
-            new HalsteadVocabulary<Program>(),
-            new HalsteadVolume<Program>(),
-            new HatCount<Program>(),
-            new InterproceduralCyclomaticComplexity<Program>(),
-            new InterproceduralSliceCoverage<Program>(),
-            new LengthLongestScript<Program>(),
-            new LooksBlockCount<Program>(),
-            new MostComplexScript<Program>(),
-            new MotionBlockCount<Program>(),
-            new MyBlocksBlockCount<Program>(),
-            new NestedBlockCount<Program>(),
-            new OperatorsBlockCount<Program>(),
-            new PenBlockCount<Program>(),
-            new ProcedureCount<Program>(),
-            new ProgramUsingPen<Program>(),
-            new ScriptCount<Program>(),
-            new SensingBlockCount<Program>(),
-            new SoundBlockCount<Program>(),
-            new SpriteCount<Program>(),
-            new StackedStatementCount<Program>(),
-            new StatementCount<Program>(),
-            new TokenEntropy<Program>(),
-            new VariableCount<Program>(),
-            new VariablesBlockCount<Program>(),
-            new WeightedMethodCount<Program>(),
-            new WeightedMethodCountStrict<Program>());
+    private List<MetricExtractor> getMetrics() {
+        List<MetricExtractor> metricList = new ArrayList<>();
+        if (LOAD_GENERAL) {
+            metricList.add(new AvgBlockStatementCount<Program>());
+            metricList.add(new AvgScriptWidthCount<>());
+            metricList.add(new AvgVariableLengthCount<>());
+            metricList.add(new BackdropCount<>());
+            metricList.add(new BlockCount<Program>());
+            metricList.add(new CategoryEntropy<Program>());
+            metricList.add(new Cohesion<Program>());
+            metricList.add(new ComputationalThinkingAverageScore());
+            metricList.add(new ComputationalThinkingScore());
+            metricList.add(new ComputationalThinkingScoreAbstraction());
+            metricList.add(new ComputationalThinkingScoreDataRepresentation());
+            metricList.add(new ComputationalThinkingScoreFlowControl());
+            metricList.add(new ComputationalThinkingScoreLogic());
+            metricList.add(new ComputationalThinkingScoreParallelization());
+            metricList.add(new ComputationalThinkingScoreSynchronization());
+            metricList.add(new ComputationalThinkingScoreUserInteractivity());
+            metricList.add(new ControlBlockCount<Program>());
+            metricList.add(new CostumeCount<>());
+            metricList.add(new EventsBlockCount<Program>());
+            metricList.add(new HalsteadDifficulty<Program>());
+            metricList.add(new HalsteadEffort<Program>());
+            metricList.add(new HalsteadLength<Program>());
+            metricList.add(new HalsteadVocabulary<Program>());
+            metricList.add(new HalsteadVolume<Program>());
+            metricList.add(new HatCount<Program>());
+            metricList.add(new InterproceduralCyclomaticComplexity<Program>());
+            metricList.add(new InterproceduralSliceCoverage<Program>());
+            metricList.add(new LengthLongestScript<Program>());
+            metricList.add(new LooksBlockCount<Program>());
+            metricList.add(new MostComplexScript<Program>());
+            metricList.add(new MotionBlockCount<Program>());
+            metricList.add(new MyBlocksBlockCount<Program>());
+            metricList.add(new NestedBlockCount<Program>());
+            metricList.add(new OperatorsBlockCount<Program>());
+            metricList.add(new PenBlockCount<Program>());
+            metricList.add(new ProcedureCount<Program>());
+            metricList.add(new ProgramUsingPen<Program>());
+            metricList.add(new ScriptCount<Program>());
+            metricList.add(new SensingBlockCount<Program>());
+            metricList.add(new SoundBlockCount<Program>());
+            metricList.add(new SpriteCount<Program>());
+            metricList.add(new StackedStatementCount<Program>());
+            metricList.add(new StatementCount<Program>());
+            metricList.add(new TokenEntropy<Program>());
+            metricList.add(new VariableCount<Program>());
+            metricList.add(new VariablesBlockCount<Program>());
+            metricList.add(new WeightedMethodCount<Program>());
+            metricList.add(new WeightedMethodCountStrict<Program>());
+        }
+        if (LOAD_MBLOCK) {  // MBlock
+            metricList.add(new AmbientLightBlockCount<>());
+            metricList.add(new AurigaCounterMetric());
+            metricList.add(new BatteryBlockCount<>());
+            metricList.add(new CodeyCounterMetric());
+            metricList.add(new ColorDetectionBlockCount<>());
+            metricList.add(new DistanceBlockCount<>());
+            metricList.add(new GearPotentiometerBlockCount<>());
+            metricList.add(new GyroBlockCount<>());
+            metricList.add(new LineFollowingBlockCount<>());
+            metricList.add(new LoudnessBlockCount<>());
+            metricList.add(new MBlockCount<>());
+            metricList.add(new MCoreCounterMetric());
+            metricList.add(new MegapiCounterMetric());
+            metricList.add(new RealCodeyMetric());
+            metricList.add(new RealMCoreMetric());
+            metricList.add(new RealRobotMetric());
+            metricList.add(new RobotCodeMetric());
+            metricList.add(new RockyLightUsed<>());
+            metricList.add(new ShakingStrengthBlockCount<>());
+        }
+        return metricList;
+    }
 
     public List<String> getMetricNames() {
-        return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
+        return getMetrics().stream().map(MetricExtractor::getName).collect(Collectors.toList());
     }
 
     public List<MetricExtractor> getAnalyzers() {
-        return Collections.unmodifiableList(metrics);
+        return Collections.unmodifiableList(getMetrics());
     }
 
     public void createCSVFile(Program program, String fileName) throws IOException {
         List<String> headers = new ArrayList<>();
         headers.add("project");
-        metrics.stream().map(MetricExtractor::getName).forEach(headers::add);
+        getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
         CSVPrinter printer = getNewPrinter(fileName, headers);
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
-        for (MetricExtractor extractor : metrics) {
+        for (MetricExtractor extractor : getMetrics()) {
             row.add(Double.toString(extractor.calculateMetric(program)));
         }
         printer.printRecord(row);

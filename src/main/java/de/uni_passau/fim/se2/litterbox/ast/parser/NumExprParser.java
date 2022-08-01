@@ -37,6 +37,9 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.MCorePort;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -149,7 +152,7 @@ public class NumExprParser {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
                 opcodeString + " is not a NumExprOpcode.");
-        NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
+        NumExprOpcode opcode = NumExprOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         String currentActorName = state.getCurrentActor().getName();
         switch (opcode) {
@@ -242,6 +245,75 @@ public class NumExprParser {
                 variable = new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName())));
                 return new IndexOf(item, variable, metadata);
+            case detect_sound_volume:
+                return new SpeakerVolume(metadata);
+
+            case detect_potentiometer:
+                return new Potentiometer(metadata);
+
+            case detect_volume:
+                return new SoundVolume(metadata);
+
+            case detect_lightness:
+                return new AmbientLight(metadata);
+
+            case dump_energy:
+                return new BatteryEnergy(metadata);
+
+            case detect_shaked_strength:
+                return new ShakingStrength(metadata);
+
+            case detect_gyro_roll_angle:
+                return new GyroRollAngle(metadata);
+
+            case detect_gyro_pitch_angle:
+                return new GyroPitchAngle(metadata);
+
+            case detect_rotatex_angle:
+                return new RotateXAngle(metadata);
+
+            case detect_rotatey_angle:
+                return new RotateYAngle(metadata);
+
+            case detect_rotatez_angle:
+                return new RotateZAngle(metadata);
+
+            case detect_timer:
+            case detect_time:
+                return new RobotTimer(metadata);
+
+            case rocky_detect_rgb:
+                String rgbName = exprBlock.get(FIELDS_KEY).get(RGB_KEY).get(0).asText();
+                RGB rgb = new RGB(rgbName);
+                return new DetectRGBValue(rgb, metadata);
+
+            case rocky_detect_lightness:
+                return new DetectAmbientLight(metadata);
+
+            case rocky_detect_reflection:
+                return new DetectReflection(metadata);
+
+            case rocky_detect_ir_reflection:
+                return new DetectIRReflection(metadata);
+
+            case rocky_detect_grey:
+                return new DetectGrey(metadata);
+
+            case detect_external_light:
+                String portNumber = exprBlock.get(FIELDS_KEY).get(PORT_KEY).get(0).asText();
+                MCorePort port = new MCorePort(portNumber);
+                return new DetectAmbientLightPort(port, metadata);
+
+            case detect_external_ultrasonic:
+                portNumber = exprBlock.get(FIELDS_KEY).get(PORT_KEY).get(0).asText();
+                port = new MCorePort(portNumber);
+                return new DetectDistancePort(port, metadata);
+
+            case detect_external_linefollower:
+                portNumber = exprBlock.get(FIELDS_KEY).get(PORT_KEY).get(0).asText();
+                port = new MCorePort(portNumber);
+                return new DetectLinePort(port, metadata);
+
             default:
                 throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
         }

@@ -29,14 +29,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 public interface JsonTest {
+    boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
+    boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
     default Program getAST(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
@@ -80,5 +86,23 @@ public interface JsonTest {
         Program prog = getAST(filePath);
         ActorDefinitionList list = prog.getActorDefinitionList();
         Truth.assertThat(list.getDefinitions().size()).isEqualTo(expectedActors);
+    }
+
+    default Set<Issue> runFinder(Program program, IssueFinder issueFinder, boolean ignoreLooseBlocks) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
+        issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+        issues.addAll(issueFinder.check(program));
+        return issues;
+    }
+
+    default Set<Issue> runFinders(Program program, List<IssueFinder> issueFinders, boolean ignoreLooseBlocks) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
+        for (IssueFinder iF : issueFinders) {
+            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(iF.check(program));
+        }
+        return issues;
     }
 }

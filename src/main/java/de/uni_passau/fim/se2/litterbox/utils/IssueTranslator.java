@@ -44,6 +44,11 @@ public final class IssueTranslator {
         SOUND_EFFECT("sound_effect"),
         GRAPHIC_EFFECT("graphic_effect"),
         BACKDROP("backdrop"),
+        MATRIX("matrix"),
+        LED("led"),
+        ROCKY_LIGHT("rocky_light"),
+        MOTOR_POWER("motor_power"),
+
         TIMER("timer");
 
         private final String key;

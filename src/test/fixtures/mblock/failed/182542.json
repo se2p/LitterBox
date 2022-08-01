@@ -1,0 +1,1267 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "cb~q/8)sI_pJ*ns:#+ou": [
+                    "minuti",
+                    11
+                ],
+                "5ZQc2iSviV9tb;M8(cB}": [
+                    "ore",
+                    "14"
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "~IcS`asgyjG9:Q;Swx%V": {
+                    "opcode": "mcore.mcore_reset_timer",
+                    "next": "A[X_m(t*Cnb!e/Ob#tjw",
+                    "parent": "==_Z5q,7vw#+6pvfi[9V",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1)[,]R^Z58mJuDZr}w`4": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "hrge/sp#vI~dwvtm-GZa",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            ":`MKXui4N6IVBCIbAX(_"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "mM#WRpTk(.]I.ai:~SWU"
+                },
+                ":`MKXui4N6IVBCIbAX(_": {
+                    "opcode": "control_if",
+                    "next": "Gz6hlA4Fm$i/UN:/hM5`",
+                    "parent": "1)[,]R^Z58mJuDZr}w`4",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "JI6FVslUmy@Vy|l1nn*~"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Y[/}}?O3D?AOIcdAR]jg"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "OE!;$,`ho6:/w6R{8z6x": {
+                    "opcode": "mcore.mcore_detect_timer",
+                    "next": null,
+                    "parent": "q[/g!A:`^RiDo@O~/IbG",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Y[/}}?O3D?AOIcdAR]jg": {
+                    "opcode": "mcore.mcore_reset_timer",
+                    "next": "?{/Q|^8ImUM;0/Pmi.ur",
+                    "parent": ":`MKXui4N6IVBCIbAX(_",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?{/Q|^8ImUM;0/Pmi.ur": {
+                    "opcode": "data_changevariableby",
+                    "next": "nUc?w9C*ZeT|~3KFJLmS",
+                    "parent": "Y[/}}?O3D?AOIcdAR]jg",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "minuti",
+                            "cb~q/8)sI_pJ*ns:#+ou"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "61aFJ^*-3@eU@aPcTM7E": {
+                    "opcode": "control_if",
+                    "next": "Q+qCG90ty$NV23YEefN:",
+                    "parent": "nUc?w9C*ZeT|~3KFJLmS",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "kHm8mC4~LLu)1|_#HWYH"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "N?xLF]]UbWwS`ODd`t3]"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kHm8mC4~LLu)1|_#HWYH": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "61aFJ^*-3@eU@aPcTM7E",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "minuti",
+                                "cb~q/8)sI_pJ*ns:#+ou"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kJ36QH,aU5LB6UYu);{B": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "N?xLF]]UbWwS`ODd`t3]",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "minuti",
+                            "cb~q/8)sI_pJ*ns:#+ou"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "N?xLF]]UbWwS`ODd`t3]": {
+                    "opcode": "data_setvariableto",
+                    "next": "kJ36QH,aU5LB6UYu);{B",
+                    "parent": "61aFJ^*-3@eU@aPcTM7E",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "S+pD7N-8N./C[!rp!-I{",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "ore",
+                            "5ZQc2iSviV9tb;M8(cB}"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "q[/g!A:`^RiDo@O~/IbG": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "JI6FVslUmy@Vy|l1nn*~",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "OE!;$,`ho6:/w6R{8z6x",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "JI6FVslUmy@Vy|l1nn*~": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": ":`MKXui4N6IVBCIbAX(_",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "FN/c7cO(65]7@ZL1lL2v"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "q[/g!A:`^RiDo@O~/IbG"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "FN/c7cO(65]7@ZL1lL2v": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "JI6FVslUmy@Vy|l1nn*~",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "%DzCN1OOvV~23.Ttgnci",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%DzCN1OOvV~23.Ttgnci": {
+                    "opcode": "mcore.mcore_detect_timer",
+                    "next": null,
+                    "parent": "FN/c7cO(65]7@ZL1lL2v",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "yS$19tvg7~NlDdbOk^]i": {
+                    "opcode": "mcore.mcore_show_time",
+                    "next": null,
+                    "parent": "Gz6hlA4Fm$i/UN:/hM5`",
+                    "inputs": {
+                        "NUMBER1": [
+                            3,
+                            [
+                                12,
+                                "ore",
+                                "5ZQc2iSviV9tb;M8(cB}"
+                            ],
+                            [
+                                4,
+                                "12"
+                            ]
+                        ],
+                        "NUMBER2": [
+                            3,
+                            [
+                                12,
+                                "minuti",
+                                "cb~q/8)sI_pJ*ns:#+ou"
+                            ],
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "A[X_m(t*Cnb!e/Ob#tjw": {
+                    "opcode": "data_setvariableto",
+                    "next": "hrge/sp#vI~dwvtm-GZa",
+                    "parent": "~IcS`asgyjG9:Q;Swx%V",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "minuti",
+                            "cb~q/8)sI_pJ*ns:#+ou"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "hrge/sp#vI~dwvtm-GZa": {
+                    "opcode": "data_setvariableto",
+                    "next": "1)[,]R^Z58mJuDZr}w`4",
+                    "parent": "A[X_m(t*Cnb!e/Ob#tjw",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "14"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "ore",
+                            "5ZQc2iSviV9tb;M8(cB}"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nUc?w9C*ZeT|~3KFJLmS": {
+                    "opcode": "mcore.mcore_show_face_off",
+                    "next": "61aFJ^*-3@eU@aPcTM7E",
+                    "parent": "?{/Q|^8ImUM;0/Pmi.ur",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Gz6hlA4Fm$i/UN:/hM5`": {
+                    "opcode": "control_if",
+                    "next": "#Kl3s%@gZ=K@~KUPe(1/",
+                    "parent": ":`MKXui4N6IVBCIbAX(_",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "!l49I;xx7i3$/gE|1bFd"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "yS$19tvg7~NlDdbOk^]i"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "n?r)4vh$.yxNzyottt;}"
+                },
+                "!l49I;xx7i3$/gE|1bFd": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "Gz6hlA4Fm$i/UN:/hM5`",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "LjEd%5qR)ia;=W2`jI-M",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "350"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "LjEd%5qR)ia;=W2`jI-M": {
+                    "opcode": "mcore_light_sound.mcore_detect_external_loudness",
+                    "next": null,
+                    "parent": "!l49I;xx7i3$/gE|1bFd",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "==_Z5q,7vw#+6pvfi[9V": {
+                    "opcode": "mcore.mcore_send_ir",
+                    "next": "~IcS`asgyjG9:Q;Swx%V",
+                    "parent": "7snK^z2rfADv|[P.IwcZ",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7snK^z2rfADv|[P.IwcZ": {
+                    "opcode": "mcore.mcore_show_face_off",
+                    "next": "==_Z5q,7vw#+6pvfi[9V",
+                    "parent": "sxlW|5HmI!~sZBA3x4Zw",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S+pD7N-8N./C[!rp!-I{": {
+                    "opcode": "operator_mod",
+                    "next": null,
+                    "parent": "N?xLF]]UbWwS`ODd`t3]",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "$`tSu)WTH[j;PbB?x:Dh",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "24"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$`tSu)WTH[j;PbB?x:Dh": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "S+pD7N-8N./C[!rp!-I{",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "ore",
+                                "5ZQc2iSviV9tb;M8(cB}"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#Kl3s%@gZ=K@~KUPe(1/": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "Gz6hlA4Fm$i/UN:/hM5`",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "nFk3Ysz4Nu]133$5U#SO"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "AuhHuR)B{=-@}Ckk1xap"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nFk3Ysz4Nu]133$5U#SO": {
+                    "opcode": "mcore.mcore_event_board_button_pressed",
+                    "next": null,
+                    "parent": "#Kl3s%@gZ=K@~KUPe(1/",
+                    "inputs": {},
+                    "fields": {
+                        "OPTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "C7m+bb}Bh](/gGbVB1yA": {
+                    "opcode": "mcore.mcore_show_time",
+                    "next": "$`voB}^bvtG5.!=2z-mS",
+                    "parent": "Lqiszm)iV~@oixlZaHu;",
+                    "inputs": {
+                        "NUMBER1": [
+                            3,
+                            [
+                                12,
+                                "ore",
+                                "5ZQc2iSviV9tb;M8(cB}"
+                            ],
+                            [
+                                4,
+                                "12"
+                            ]
+                        ],
+                        "NUMBER2": [
+                            3,
+                            [
+                                12,
+                                "minuti",
+                                "cb~q/8)sI_pJ*ns:#+ou"
+                            ],
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "AuhHuR)B{=-@}Ckk1xap": {
+                    "opcode": "control_repeat_until",
+                    "next": null,
+                    "parent": "#Kl3s%@gZ=K@~KUPe(1/",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "{Mw_w#QvhNAE}Y:L.hMp"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "n[C2_bg(k6AK?CQO-|dj"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "{Mw_w#QvhNAE}Y:L.hMp": {
+                    "opcode": "mcore.mcore_event_ir_remote",
+                    "next": null,
+                    "parent": "AuhHuR)B{=-@}Ckk1xap",
+                    "inputs": {},
+                    "fields": {
+                        "REMOTE_KEY": [
+                            "21",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "n[C2_bg(k6AK?CQO-|dj": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "AuhHuR)B{=-@}Ckk1xap",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "8--%~?_4gK9QGwn!`+vM"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Lqiszm)iV~@oixlZaHu;"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Lqiszm)iV~@oixlZaHu;": {
+                    "opcode": "data_changevariableby",
+                    "next": "C7m+bb}Bh](/gGbVB1yA",
+                    "parent": "n[C2_bg(k6AK?CQO-|dj",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "minuti",
+                            "cb~q/8)sI_pJ*ns:#+ou"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$`voB}^bvtG5.!=2z-mS": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "C7m+bb}Bh](/gGbVB1yA",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ",EAM$h?pP8aBBD~55O/1"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "NZRi3y[{~~y_K@l+qOt]"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",EAM$h?pP8aBBD~55O/1": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "$`voB}^bvtG5.!=2z-mS",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "minuti",
+                                "cb~q/8)sI_pJ*ns:#+ou"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NZRi3y[{~~y_K@l+qOt]": {
+                    "opcode": "data_setvariableto",
+                    "next": "*CFbr-(%Ky~J8%Jp|e9]",
+                    "parent": "$`voB}^bvtG5.!=2z-mS",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "88`ogrNFLq(*}I6_j_[p",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "ore",
+                            "5ZQc2iSviV9tb;M8(cB}"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "88`ogrNFLq(*}I6_j_[p": {
+                    "opcode": "operator_mod",
+                    "next": null,
+                    "parent": "NZRi3y[{~~y_K@l+qOt]",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "j(pRYu)UW@HMNFMM=|g:",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "24"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "j(pRYu)UW@HMNFMM=|g:": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "88`ogrNFLq(*}I6_j_[p",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "ore",
+                                "5ZQc2iSviV9tb;M8(cB}"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*CFbr-(%Ky~J8%Jp|e9]": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "NZRi3y[{~~y_K@l+qOt]",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "minuti",
+                            "cb~q/8)sI_pJ*ns:#+ou"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8--%~?_4gK9QGwn!`+vM": {
+                    "opcode": "mcore.mcore_event_board_button_pressed",
+                    "next": null,
+                    "parent": "n[C2_bg(k6AK?CQO-|dj",
+                    "inputs": {},
+                    "fields": {
+                        "OPTION": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Q+qCG90ty$NV23YEefN:": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "61aFJ^*-3@eU@aPcTM7E",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "uu(H|%{_jKOZPSsC9{.)"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "3-G?S%IlvA0s4V/.Nlxl"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^,BQSwQ|RxGSK|i*mTL+": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "uu(H|%{_jKOZPSsC9{.)",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "minuti",
+                                "cb~q/8)sI_pJ*ns:#+ou"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "30"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B*oQN+4d_PME3C4%oDFN": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "uu(H|%{_jKOZPSsC9{.)",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "ore",
+                                "5ZQc2iSviV9tb;M8(cB}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "8"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uu(H|%{_jKOZPSsC9{.)": {
+                    "opcode": "operator_and",
+                    "next": null,
+                    "parent": "Q+qCG90ty$NV23YEefN:",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "B*oQN+4d_PME3C4%oDFN"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "^,BQSwQ|RxGSK|i*mTL+"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "~v7c*@6_qB]P0l(eagZ-": {
+                    "opcode": "mcore.mcore_sound_play_note",
+                    "next": "Dl`:P)Qs%Tb@4X`aDn.Q",
+                    "parent": "3-G?S%IlvA0s4V/.Nlxl",
+                    "inputs": {
+                        "BEAT": [
+                            1,
+                            [
+                                4,
+                                "0.25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "NOTE": [
+                            "262",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Dl`:P)Qs%Tb@4X`aDn.Q": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": "~v7c*@6_qB]P0l(eagZ-",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3-G?S%IlvA0s4V/.Nlxl": {
+                    "opcode": "control_repeat",
+                    "next": null,
+                    "parent": "Q+qCG90ty$NV23YEefN:",
+                    "inputs": {
+                        "TIMES": [
+                            1,
+                            [
+                                6,
+                                "10"
+                            ]
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "~v7c*@6_qB]P0l(eagZ-"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "sxlW|5HmI!~sZBA3x4Zw": {
+                    "opcode": "mcore.mcore_when_board_launch",
+                    "next": "7snK^z2rfADv|[P.IwcZ",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -1248,
+                    "y": -285
+                }
+            },
+            "comments": {
+                "CM^}sgoD$Ghk60#~2d@,": {
+                    "blockId": "afe+bJy]ly!)Xcqt~hdU",
+                    "x": -680.5340574288074,
+                    "y": -200.12345679012348,
+                    "width": 141.3580322265625,
+                    "height": 108.02467346191406,
+                    "minimized": false,
+                    "text": "this is the main program"
+                },
+                "[a$g4}f])1VCm,rpN8b=": {
+                    "blockId": "O=1v~`YlAcjd,Ch-T!Su",
+                    "x": 421.62465441668476,
+                    "y": -169.64197530864193,
+                    "width": 192.592529296875,
+                    "height": 177.77780151367188,
+                    "minimized": false,
+                    "text": "mentre entrando qui si riesce ad impostare l'ora, ma qualcosa ultimamente non funzionava..."
+                },
+                "qOBWR7dG(QJv$4[nfH]w": {
+                    "blockId": "W#{FNrHE6YJqPM{*:N3_",
+                    "x": 148.11111111111112,
+                    "y": -225.1111111111111,
+                    "width": 182.098876953125,
+                    "height": 82.7161865234375,
+                    "minimized": false,
+                    "text": "display current time"
+                },
+                "u$anKoixz6b|ol2cgBB[": {
+                    "blockId": null,
+                    "x": -400.44444444444448,
+                    "y": 289.85185185185187,
+                    "width": 150.6173095703125,
+                    "height": 107.40737915039063,
+                    "minimized": false,
+                    "text": "never put a wait inside this loop"
+                },
+                "mM#WRpTk(.]I.ai:~SWU": {
+                    "blockId": "1)[,]R^Z58mJuDZr}w`4",
+                    "x": -637.2592592592592,
+                    "y": -131.30864197530864,
+                    "width": 170.370361328125,
+                    "height": 101.85186767578125,
+                    "minimized": false,
+                    "text": "this loop counts hours and minutes"
+                },
+                "n?r)4vh$.yxNzyottt;}": {
+                    "blockId": "Gz6hlA4Fm$i/UN:/hM5`",
+                    "x": -530.6746263150815,
+                    "y": 577.4074074074074,
+                    "width": 179.629638671875,
+                    "height": 153.7037353515625,
+                    "minimized": false,
+                    "text": "if a sound is detected we send a message to display the current time"
+                },
+                "M|Eq.oLHrul/bD-;b3w%": {
+                    "blockId": "1FrGvSXs_]RlE=ZWa=F-",
+                    "x": -531,
+                    "y": 529,
+                    "width": 179,
+                    "height": 153,
+                    "minimized": false,
+                    "text": "if a sound is detected we send a message to display the current time"
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "iV!5Z@C)h2YX`OC#ITM8mcore.mcore_detect_timer",
+            "mode": "default",
+            "opcode": "mcore.mcore_detect_timer",
+            "params": {},
+            "spriteName": "mcore",
+            "value": "62.510",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "iV!5Z@C)h2YX`OC#ITM8mcore.mcore_detect_timer",
+                    "opcode": "mcore.mcore_detect_timer",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true,
+                    "targetId": "iV!5Z@C)h2YX`OC#ITM8"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "cb~q/8)sI_pJ*ns:#+ou",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "minuti"
+            },
+            "spriteName": null,
+            "value": 11,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "cb~q/8)sI_pJ*ns:#+ou",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "cb~q/8)sI_pJ*ns:#+ou",
+                            "value": "minuti",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "5ZQc2iSviV9tb;M8(cB}",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ore"
+            },
+            "spriteName": null,
+            "value": "14",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 67,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "5ZQc2iSviV9tb;M8(cB}",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "5ZQc2iSviV9tb;M8(cB}",
+                            "value": "ore",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "iV!5Z@C)h2YX`OC#ITM8mcore_light_sound.mcore_detect_external_loudness_3",
+            "mode": "default",
+            "opcode": "mcore_light_sound.mcore_detect_external_loudness",
+            "params": {
+                "PORT": "3"
+            },
+            "spriteName": "mcore",
+            "value": 164,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 98,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "iV!5Z@C)h2YX`OC#ITM8mcore_light_sound.mcore_detect_external_loudness_3",
+                    "opcode": "mcore_light_sound.mcore_detect_external_loudness",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": {
+                            "name": "PORT",
+                            "value": "3"
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": 49,
+                    "y": 316,
+                    "isMonitored": true,
+                    "targetId": "iV!5Z@C)h2YX`OC#ITM8"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "mcore.mcore",
+        "mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

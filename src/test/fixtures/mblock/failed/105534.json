@@ -1,0 +1,1732 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "o;7-VE/l[/D9P#;vx|_@": [
+                    "Distancia bloque 1",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": -61.719008264462818,
+            "y": -9.670329670329665,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "/5,5BGE;UbsjP.e577Ow": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_init",
+                    "next": "Z;Q^*Z#TxkqOs._iANDE",
+                    "parent": "hcl1ae5G?FSDUgcdDC.@",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "PORT": [
+                            "2",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "hcl1ae5G?FSDUgcdDC.@": {
+                    "opcode": "mcore.mcore_when_board_launch",
+                    "next": "/5,5BGE;UbsjP.e577Ow",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 314,
+                    "y": -195
+                },
+                "*N,$^tgOLhL+B_h)1{6w": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "Z;Q^*Z#TxkqOs._iANDE",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Line-follower",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "-,^aljH{y,s|I_X5VVlS": {
+                    "opcode": "procedures_definition",
+                    "next": "Ra2tL?|#*Ig.7g3a|)tc",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "Aj$ZMj~ko;$3p)W$DT*h"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 1154,
+                    "y": -193
+                },
+                "Aj$ZMj~ko;$3p)W$DT*h": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "-,^aljH{y,s|I_X5VVlS",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Line-follower",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "false"
+                    }
+                },
+                "Ra2tL?|#*Ig.7g3a|)tc": {
+                    "opcode": "control_if",
+                    "next": "lLhw{=F[Lq-(I$,lI#Od",
+                    "parent": "-,^aljH{y,s|I_X5VVlS",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ";@v)W)6!u7%RJ};(sJM#"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "_qWLtg5FN)-/;Y@yU#1="
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";@v)W)6!u7%RJ};(sJM#": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "Ra2tL?|#*Ig.7g3a|)tc",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_qWLtg5FN)-/;Y@yU#1=": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": null,
+                    "parent": "Ra2tL?|#*Ig.7g3a|)tc",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "yw~w9/(V_U|%z~Tijvx:": {
+                    "opcode": "control_if",
+                    "next": "0eqZ:E{^,D=}zMRBg33]",
+                    "parent": "g]Dqpf1K?0[g?ui)togT",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "u7,L{h]{;ad.QQLof1Tp"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "^~P]AQ*p}K;Lw?uxVlLE"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "u7,L{h]{;ad.QQLof1Tp": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "yw~w9/(V_U|%z~Tijvx:",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "8",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$1CkI@U0Ap99fC-e3U0*": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "$o/s?o,oD|KI?6l1eA*/",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0eqZ:E{^,D=}zMRBg33]": {
+                    "opcode": "control_if",
+                    "next": "ZrW2L}au_LMWpaI%sEaS",
+                    "parent": "yw~w9/(V_U|%z~Tijvx:",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "lxB:?C~dgb8)#L04vi6b"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ":69I_,%SmJ6X-d*krVUB"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "lxB:?C~dgb8)#L04vi6b": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "0eqZ:E{^,D=}zMRBg33]",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "12",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "36qfFS-Q|w~YE%8%_#wg": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "?YQ]N`t$p4t_M`lZs$#/",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZrW2L}au_LMWpaI%sEaS": {
+                    "opcode": "control_if",
+                    "next": "krhX~b2Ta1%5x;]T7V~s",
+                    "parent": "0eqZ:E{^,D=}zMRBg33]",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "U3*knI8eRc0oRifr{V-j"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ":+.3--xrxOpBd|9P.h7*"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "U3*knI8eRc0oRifr{V-j": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "ZrW2L}au_LMWpaI%sEaS",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "14",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$Wq0BT5pXBO(l]O8cjW6": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "cn?Vruu+e:_{s1gc5VF]",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "krhX~b2Ta1%5x;]T7V~s": {
+                    "opcode": "control_if",
+                    "next": "cn?Vruu+e:_{s1gc5VF]",
+                    "parent": "ZrW2L}au_LMWpaI%sEaS",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "]:7;n#P+B+JCv7/K:#QI"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "AJu4w79hq%+,2.$:^SZ)"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "]:7;n#P+B+JCv7/K:#QI": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "krhX~b2Ta1%5x;]T7V~s",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "15",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "AJu4w79hq%+,2.$:^SZ)": {
+                    "opcode": "mcore.mcore_move_stop",
+                    "next": null,
+                    "parent": "krhX~b2Ta1%5x;]T7V~s",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "cn?Vruu+e:_{s1gc5VF]": {
+                    "opcode": "control_if",
+                    "next": "?YQ]N`t$p4t_M`lZs$#/",
+                    "parent": "krhX~b2Ta1%5x;]T7V~s",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "8oR#kSx_LoW@p-{,x)?@"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$Wq0BT5pXBO(l]O8cjW6"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8oR#kSx_LoW@p-{,x)?@": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "cn?Vruu+e:_{s1gc5VF]",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":+.3--xrxOpBd|9P.h7*": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": "ZrW2L}au_LMWpaI%sEaS",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?YQ]N`t$p4t_M`lZs$#/": {
+                    "opcode": "control_if",
+                    "next": "$o/s?o,oD|KI?6l1eA*/",
+                    "parent": "cn?Vruu+e:_{s1gc5VF]",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "0nLi7bCb`a`d|N[+=c+Q"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "36qfFS-Q|w~YE%8%_#wg"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0nLi7bCb`a`d|N[+=c+Q": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "?YQ]N`t$p4t_M`lZs$#/",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":69I_,%SmJ6X-d*krVUB": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": "0eqZ:E{^,D=}zMRBg33]",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$o/s?o,oD|KI?6l1eA*/": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "?YQ]N`t$p4t_M`lZs$#/",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "XQ!7:P:*mTu:RaY/,c!^"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$1CkI@U0Ap99fC-e3U0*"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "XQ!7:P:*mTu:RaY/,c!^": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "$o/s?o,oD|KI?6l1eA*/",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "7",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^~P]AQ*p}K;Lw?uxVlLE": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": "yw~w9/(V_U|%z~Tijvx:",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "lLhw{=F[Lq-(I$,lI#Od": {
+                    "opcode": "control_if",
+                    "next": "g]Dqpf1K?0[g?ui)togT",
+                    "parent": "Ra2tL?|#*Ig.7g3a|)tc",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "rhn3@^;D?F0JtmEjhVgH"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "j,R^hVFg1stLZ[wUU]yZ"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "rhn3@^;D?F0JtmEjhVgH": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "lLhw{=F[Lq-(I$,lI#Od",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "11",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "g]Dqpf1K?0[g?ui)togT": {
+                    "opcode": "control_if",
+                    "next": "yw~w9/(V_U|%z~Tijvx:",
+                    "parent": "lLhw{=F[Lq-(I$,lI#Od",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ".}T^$PARW;?v906T3:uA"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "`:^.DCyvR*!:/e*G0hE|"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".}T^$PARW;?v906T3:uA": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "g]Dqpf1K?0[g?ui)togT",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "13",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "`:^.DCyvR*!:/e*G0hE|": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": "g]Dqpf1K?0[g?ui)togT",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "j,R^hVFg1stLZ[wUU]yZ": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "lLhw{=F[Lq-(I$,lI#Od",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Z;Q^*Z#TxkqOs._iANDE": {
+                    "opcode": "control_repeat_until",
+                    "next": "s*Zu(nys+z2GQD:Fc@*l",
+                    "parent": "/5,5BGE;UbsjP.e577Ow",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "*N,$^tgOLhL+B_h)1{6w"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "0W0_c!_prMR1;)s+:/uW"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0W0_c!_prMR1;)s+:/uW": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "Z;Q^*Z#TxkqOs._iANDE",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",P+/2gVhR]Ad8YA9KNz,": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": "8!P$d!+?g(pmpiD*`K;Q",
+                    "parent": "s*Zu(nys+z2GQD:Fc@*l",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "MGs8%%7-P(k3/DgI{@u/": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": "K)vg}BXeV9AGpr-J6SrO",
+                    "parent": "W8=!7.CXt_Y-My_cY~zs",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Q43l=W~-)ca9x*7xRHXo": {
+                    "opcode": "data_setvariableto",
+                    "next": "W8=!7.CXt_Y-My_cY~zs",
+                    "parent": "8!P$d!+?g(pmpiD*`K;Q",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "NW,RJWx_qJ~K^9R4!Y_5",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Distancia bloque 1",
+                            "o;7-VE/l[/D9P#;vx|_@"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NW,RJWx_qJ~K^9R4!Y_5": {
+                    "opcode": "mcore.mcore_detect_external_ultrasonic",
+                    "next": null,
+                    "parent": "Q43l=W~-)ca9x*7xRHXo",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "W8=!7.CXt_Y-My_cY~zs": {
+                    "opcode": "control_wait",
+                    "next": "MGs8%%7-P(k3/DgI{@u/",
+                    "parent": "Q43l=W~-)ca9x*7xRHXo",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "s*Zu(nys+z2GQD:Fc@*l": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": ",P+/2gVhR]Ad8YA9KNz,",
+                    "parent": "Z;Q^*Z#TxkqOs._iANDE",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "d13IQ-;V|w}kX)J=hF]B": {
+                    "opcode": "control_repeat_until",
+                    "next": "S#94sWW=ZNTV8@/_2$~t",
+                    "parent": "K)vg}BXeV9AGpr-J6SrO",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Er[{^3bYT-GkVb}?IGd*"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "bhxVJQWhXE,cw6pnpMqv"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Er[{^3bYT-GkVb}?IGd*": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "d13IQ-;V|w}kX)J=hF]B",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "bhxVJQWhXE,cw6pnpMqv": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "d13IQ-;V|w}kX)J=hF]B",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Line-follower",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "8!P$d!+?g(pmpiD*`K;Q": {
+                    "opcode": "control_repeat_until",
+                    "next": "Q43l=W~-)ca9x*7xRHXo",
+                    "parent": ",P+/2gVhR]Ad8YA9KNz,",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "0LCIx}?Kyqc%e=]?F=3#"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "3.w()?L?l|Y-j]drMEo$"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0LCIx}?Kyqc%e=]?F=3#": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "8!P$d!+?g(pmpiD*`K;Q",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3.w()?L?l|Y-j]drMEo$": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "8!P$d!+?g(pmpiD*`K;Q",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "K)vg}BXeV9AGpr-J6SrO": {
+                    "opcode": "control_repeat_until",
+                    "next": "d13IQ-;V|w}kX)J=hF]B",
+                    "parent": "MGs8%%7-P(k3/DgI{@u/",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "8bTl/.^)(l2j{Z%[+F;H"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$oFwKE.gu2YklHo@buw?"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8bTl/.^)(l2j{Z%[+F;H": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "K)vg}BXeV9AGpr-J6SrO",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$oFwKE.gu2YklHo@buw?": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": "K)vg}BXeV9AGpr-J6SrO",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S#94sWW=ZNTV8@/_2$~t": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": "*CZU*PQx4HeU0a25%0H7",
+                    "parent": "d13IQ-;V|w}kX)J=hF]B",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*CZU*PQx4HeU0a25%0H7": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": "3GqxIaxa[Eq^=Rrd.8i+",
+                    "parent": "S#94sWW=ZNTV8@/_2$~t",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3GqxIaxa[Eq^=Rrd.8i+": {
+                    "opcode": "control_repeat_until",
+                    "next": "^Oom3$:_SaYEF-*)8/(h",
+                    "parent": "*CZU*PQx4HeU0a25%0H7",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Ps92e[Gp%D~#i8]YZC]W"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "K@b]pC9xw/Wprs?#U84C"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Ps92e[Gp%D~#i8]YZC]W": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "3GqxIaxa[Eq^=Rrd.8i+",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "K@b]pC9xw/Wprs?#U84C": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": null,
+                    "parent": "3GqxIaxa[Eq^=Rrd.8i+",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",K32x+V1=q=/27)4xw}q": {
+                    "opcode": "control_wait",
+                    "next": "?1ybl|%(sCv_CeP$@!q[",
+                    "parent": "^Oom3$:_SaYEF-*)8/(h",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "F`I^}Od|s!$]`}!C9/3U": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": ",(/cBfnI*G@QipNf#9+r",
+                    "parent": "QPh57Y[1s)L2]3++hk3)",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",(/cBfnI*G@QipNf#9+r": {
+                    "opcode": "control_repeat_until",
+                    "next": "JqlLZzJ@(Bjx^0/:@l3|",
+                    "parent": "F`I^}Od|s!$]`}!C9/3U",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "w#pSTI]f%q3-Y%gPe;re"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "H.Vuz1[=VbpmOBslVXS7"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "w#pSTI]f%q3-Y%gPe;re": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": ",(/cBfnI*G@QipNf#9+r",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "9",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "H.Vuz1[=VbpmOBslVXS7": {
+                    "opcode": "mcore.mcore_turnleft_time",
+                    "next": null,
+                    "parent": ",(/cBfnI*G@QipNf#9+r",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?1ybl|%(sCv_CeP$@!q[": {
+                    "opcode": "mcore.mcore_backward_time",
+                    "next": "QPh57Y[1s)L2]3++hk3)",
+                    "parent": ",K32x+V1=q=/27)4xw}q",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "QPh57Y[1s)L2]3++hk3)": {
+                    "opcode": "control_if_else",
+                    "next": "F`I^}Od|s!$]`}!C9/3U",
+                    "parent": "?1ybl|%(sCv_CeP$@!q[",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "ZDgU2W7vq$JkIP-i+@Tc"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "*=N=eV76,wVp*(/IR9xZ"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "_n+9FV1/bD%-70u+~~n:"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZDgU2W7vq$JkIP-i+@Tc": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "QPh57Y[1s)L2]3++hk3)",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Distancia bloque 1",
+                                "o;7-VE/l[/D9P#;vx|_@"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "21"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*=N=eV76,wVp*(/IR9xZ": {
+                    "opcode": "control_if_else",
+                    "next": null,
+                    "parent": "QPh57Y[1s)L2]3++hk3)",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "xnN=H;dRshqD~[c(73,0"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "tpE-Egdht%@LoeOUra=}"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            ".Jry*.gA|[5l2aCp`vo5"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "xnN=H;dRshqD~[c(73,0": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "*=N=eV76,wVp*(/IR9xZ",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Distancia bloque 1",
+                                "o;7-VE/l[/D9P#;vx|_@"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "30"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_n+9FV1/bD%-70u+~~n:": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": "kdhHUEBzdo*mgs(tp}d)",
+                    "parent": "QPh57Y[1s)L2]3++hk3)",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "tpE-Egdht%@LoeOUra=}": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": "81S7%*riuJkg1]rIaQ4(",
+                    "parent": "*=N=eV76,wVp*(/IR9xZ",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".Jry*.gA|[5l2aCp`vo5": {
+                    "opcode": "mcore.mcore_forward_time",
+                    "next": "HJFJ]dmjq6U2ol2ITcu4",
+                    "parent": "*=N=eV76,wVp*(/IR9xZ",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kdhHUEBzdo*mgs(tp}d)": {
+                    "opcode": "mcore.mcore_backward_time",
+                    "next": null,
+                    "parent": "_n+9FV1/bD%-70u+~~n:",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "81S7%*riuJkg1]rIaQ4(": {
+                    "opcode": "mcore.mcore_backward_time",
+                    "next": null,
+                    "parent": "tpE-Egdht%@LoeOUra=}",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "HJFJ]dmjq6U2ol2ITcu4": {
+                    "opcode": "mcore.mcore_backward_time",
+                    "next": null,
+                    "parent": ".Jry*.gA|[5l2aCp`vo5",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^Oom3$:_SaYEF-*)8/(h": {
+                    "opcode": "mcore.mcore_turnright_time",
+                    "next": ",K32x+V1=q=/27)4xw}q",
+                    "parent": "3GqxIaxa[Eq^=Rrd.8i+",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "30"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.05"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^v=](3Ow5k=T%%oAz;4H": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "JqlLZzJ@(Bjx^0/:@l3|",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Line-follower",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "JqlLZzJ@(Bjx^0/:@l3|": {
+                    "opcode": "control_repeat_until",
+                    "next": null,
+                    "parent": ",(/cBfnI*G@QipNf#9+r",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "^v=](3Ow5k=T%%oAz;4H"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "GzKi`cSd%$0Kt!ySezOF"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "GzKi`cSd%$0Kt!ySezOF": {
+                    "opcode": "rgb_linefollower_rj25.rgb_linefollow_sensor_status",
+                    "next": null,
+                    "parent": "JqlLZzJ@(Bjx^0/:@l3|",
+                    "inputs": {},
+                    "fields": {
+                        "SENSOR_ID": [
+                            "1",
+                            null
+                        ],
+                        "SENSOR_STATUS": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "o;7-VE/l[/D9P#;vx|_@",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Distancia bloque 1"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "o;7-VE/l[/D9P#;vx|_@",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "o;7-VE/l[/D9P#;vx|_@",
+                            "value": "Distancia bloque 1",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "rgb",
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

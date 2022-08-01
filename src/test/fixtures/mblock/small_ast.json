@@ -1,0 +1,124 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "q{@viLaJKV}n8$y3_b#|": {
+                    "opcode": "codey.meos_when_board_launch",
+                    "next": "tCI@]xTGZ]LlA8LdA+1q",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 282,
+                    "y": 248
+                },
+                "tCI@]xTGZ]LlA8LdA+1q": {
+                    "opcode": "codey.meos_move",
+                    "next": "SCt3qP/MrdBPyii{}{#G",
+                    "parent": "q{@viLaJKV}n8$y3_b#|",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "DIRECTION": [
+                            "forward",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "SCt3qP/MrdBPyii{}{#G": {
+                    "opcode": "codey.meos_move_stop",
+                    "next": null,
+                    "parent": "tCI@]xTGZ]LlA8LdA+1q",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "codey.meos"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

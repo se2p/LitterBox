@@ -1,0 +1,446 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "B.`^2!_ADSD:h/Q8hak!": {
+                    "opcode": "codey.meos_rocky_event_obstacles_ahead",
+                    "next": null,
+                    "parent": "S-;_jp=qIOQ.OeM:_i|m",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S-;_jp=qIOQ.OeM:_i|m": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ",1Ro0LhA#)@%W.DdwtNL",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "B.`^2!_ADSD:h/Q8hak!"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "UkG@T@V[n!g;I@*|(?zJ"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",1Ro0LhA#)@%W.DdwtNL": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "!8b2rC2ib6I(XGMLIADX",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "S-;_jp=qIOQ.OeM:_i|m"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!8b2rC2ib6I(XGMLIADX": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ",1Ro0LhA#)@%W.DdwtNL",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 135,
+                    "y": 1308
+                },
+                "UkG@T@V[n!g;I@*|(?zJ": {
+                    "opcode": "codey.meos_move_forward_with_time",
+                    "next": null,
+                    "parent": "S-;_jp=qIOQ.OeM:_i|m",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "v^dLV5Rt{KnLD-2dAA:O": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "(`Nmt1r|(hHS%f[zwqoe",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 741,
+                    "y": 1060
+                },
+                "(`Nmt1r|(hHS%f[zwqoe": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "v^dLV5Rt{KnLD-2dAA:O",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "RMK=;{xztAz~EE.-XsO["
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "RMK=;{xztAz~EE.-XsO[": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "(`Nmt1r|(hHS%f[zwqoe",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "H*#V~*9-a1^_LBj(|oEL"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$XI%KmS%m|dn^MkI-Oiv"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$XI%KmS%m|dn^MkI-Oiv": {
+                    "opcode": "codey.meos_move_forward_with_time",
+                    "next": null,
+                    "parent": "RMK=;{xztAz~EE.-XsO[",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "H*#V~*9-a1^_LBj(|oEL": {
+                    "opcode": "codey.meos_event_button_pressed",
+                    "next": null,
+                    "parent": "RMK=;{xztAz~EE.-XsO[",
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Har1t=K4Mp66=!_,G{zp": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ")~:9$a!~1_gG,AH]]DO7",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 871,
+                    "y": 1521
+                },
+                ")~:9$a!~1_gG,AH]]DO7": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "Har1t=K4Mp66=!_,G{zp",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "0PlbV-QLh2+OA$thk}8n"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0PlbV-QLh2+OA$thk}8n": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ")~:9$a!~1_gG,AH]]DO7",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "^vP-77f*0nPt,AAQmfG!"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "+ne}.x(%_cqNyAWK3_jN"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^vP-77f*0nPt,AAQmfG!": {
+                    "opcode": "codey.meos_event_button_pressed",
+                    "next": null,
+                    "parent": "0PlbV-QLh2+OA$thk}8n",
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+ne}.x(%_cqNyAWK3_jN": {
+                    "opcode": "codey.meos_show_play_hz",
+                    "next": null,
+                    "parent": "0PlbV-QLh2+OA$thk}8n",
+                    "inputs": {
+                        "HZ": [
+                            1,
+                            [
+                                4,
+                                "700"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "a-x5.%QP;#Luu)+dGqqI": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ",le2!.f*Buz`abmiThAC",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 169,
+                    "y": 1760
+                },
+                ",le2!.f*Buz`abmiThAC": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "a-x5.%QP;#Luu)+dGqqI",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "mfH[}i*(wSCf0ib[NCE_"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "mfH[}i*(wSCf0ib[NCE_": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ",le2!.f*Buz`abmiThAC",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "Vc.BGZ/[*3LF2cRz6V.9"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "ZvOLF*bt5yJh#EoL]Uz}"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Vc.BGZ/[*3LF2cRz6V.9": {
+                    "opcode": "codey.meos_rocky_event_obstacles_ahead",
+                    "next": null,
+                    "parent": "mfH[}i*(wSCf0ib[NCE_",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZvOLF*bt5yJh#EoL]Uz}": {
+                    "opcode": "codey.meos_show_led_with_time",
+                    "next": null,
+                    "parent": "mfH[}i*(wSCf0ib[NCE_",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#ff0000"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "codey.meos"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

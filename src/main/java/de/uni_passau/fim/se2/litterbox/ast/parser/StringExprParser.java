@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -150,7 +151,7 @@ public class StringExprParser {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
-        StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
+        StringExprOpcode opcode = StringExprOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         switch (opcode) {
             case operator_join:
@@ -231,6 +232,10 @@ public class StringExprParser {
                         property = new AttributeFromVariable(new Variable(new StrId(prop)));
                 }
                 return new AttributeOf(property, elem, metadata);
+            case detect_ir:
+            case comm_receive_ir:
+                return new IRMessage(metadata);
+
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }

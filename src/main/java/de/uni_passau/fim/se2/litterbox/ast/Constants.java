@@ -325,4 +325,13 @@ public class Constants {
     public static final String VOICE_FIELDS_KEY = "voices";
     public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
     public static final String LANGUAGE_FIELDS_KEY = "languages";
+
+    public static final String RGB_KEY = "RGB";
+    public static final String TIME_KEY = "TIME";
+    public static final String BUTTONS_KEY = "BUTTONS";
+    public static final String PORT_KEY = "PORT";
+    public static final String TEXT_KEY_CAPS = "TEXT";
+    public static final String NUMBER_KEY = "NUMBER";
+    public static final String NUMBER1_KEY = "NUMBER1";
+    public static final String NUMBER2_KEY = "NUMBER2";
 }

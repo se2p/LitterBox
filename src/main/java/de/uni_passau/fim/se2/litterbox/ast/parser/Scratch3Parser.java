@@ -24,11 +24,13 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class Scratch3Parser {
 
@@ -44,6 +46,10 @@ public class Scratch3Parser {
 
     public Program parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
+        if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {
+            Logger.getGlobal().info("Now parsing program file: " + fileName);
+        }
+
         if ((FilenameUtils.getExtension(fileName)).equalsIgnoreCase("json")) {
             return parseJsonFile(fileEntry);
         } else {

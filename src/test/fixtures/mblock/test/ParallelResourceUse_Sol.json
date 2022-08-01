@@ -1,0 +1,446 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "(1Z~8~)G[7g#?(!HAZ7%": [
+                    "aas",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "M=6r5R?7v@:(Ak`?N=;/": {
+                    "opcode": "codey.meos_rocky_keep_absolute_forward",
+                    "next": ".%HqoM[Gb#`rt$Mt^M1~",
+                    "parent": "=7#oNH2WCFyhhBg(U(Dw",
+                    "inputs": {
+                        "POWER": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=7#oNH2WCFyhhBg(U(Dw": {
+                    "opcode": "codey.meos_when_button_press",
+                    "next": "M=6r5R?7v@:(Ak`?N=;/",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 74,
+                    "y": 327
+                },
+                ".%HqoM[Gb#`rt$Mt^M1~": {
+                    "opcode": "codey.meos_rocky_show_led_color",
+                    "next": "oz-=BMEuaP5WUP2Q4aL3",
+                    "parent": "M=6r5R?7v@:(Ak`?N=;/",
+                    "inputs": {},
+                    "fields": {
+                        "COLORLIST": [
+                            "'red'",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oz-=BMEuaP5WUP2Q4aL3": {
+                    "opcode": "codey.meos_show_play_sound",
+                    "next": null,
+                    "parent": ".%HqoM[Gb#`rt$Mt^M1~",
+                    "inputs": {},
+                    "fields": {
+                        "SOUNDLIST": [
+                            "hello.wav",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "$|-7M=@SK[[K|rZ?q}}r": {
+                    "opcode": "mcore.mcore_when_board_button",
+                    "next": "C_eXLrI8fHE.Z)|Sg*LQ",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "IS_PRESS": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 163,
+                    "y": 326
+                },
+                "C_eXLrI8fHE.Z)|Sg*LQ": {
+                    "opcode": "mcore.mcore_show_face_time",
+                    "next": "v]p,z0|p^D%P6YuHL*.*",
+                    "parent": "$|-7M=@SK[[K|rZ?q}}r",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ],
+                        "FACE_PANEL": [
+                            "00000000000000000011110001111110011111100011110000000000000000000000000000000000001111000111111001111110001111000000000000000000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "v]p,z0|p^D%P6YuHL*.*": {
+                    "opcode": "mcore.mcore_show_face",
+                    "next": "@WoNvH+8t7c2cc|8IE3}",
+                    "parent": "C_eXLrI8fHE.Z)|Sg*LQ",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "2",
+                            null
+                        ],
+                        "FACE_PANEL": [
+                            "00000000000000000011110001111110011111100011110000000000000000000000000000000000001111000111111001111110001111000000000000000000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@WoNvH+8t7c2cc|8IE3}": {
+                    "opcode": "mcore.mcore_show_face_position",
+                    "next": "Pl#%W5kW-#H05OS!U:|b",
+                    "parent": "v]p,z0|p^D%P6YuHL*.*",
+                    "inputs": {
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ],
+                        "FACE_PANEL": [
+                            "00000000000000000011110001111110011111100011110000000000000000000000000000000000001111000111111001111110001111000000000000000000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Pl#%W5kW-#H05OS!U:|b": {
+                    "opcode": "mcore.mcore_show_text",
+                    "next": "!zVl|t3CJ=03y]Vpp(U=",
+                    "parent": "@WoNvH+8t7c2cc|8IE3}",
+                    "inputs": {
+                        "TEXT": [
+                            1,
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "4",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!zVl|t3CJ=03y]Vpp(U=": {
+                    "opcode": "mcore.mcore_show_led_time",
+                    "next": "m(OM7`rFsD).7DLypq}y",
+                    "parent": "Pl#%W5kW-#H05OS!U:|b",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#ff0000"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "m(OM7`rFsD).7DLypq}y": {
+                    "opcode": "mcore.mcore_show_led",
+                    "next": null,
+                    "parent": "!zVl|t3CJ=03y]Vpp(U=",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#ff0000"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LED_POSTION": [
+                            "2",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "(1Z~8~)G[7g#?(!HAZ7%",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "aas"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "(1Z~8~)G[7g#?(!HAZ7%",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "(1Z~8~)G[7g#?(!HAZ7%",
+                            "value": "aas",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true,
+                    "targetId": null
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "codey.meos",
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

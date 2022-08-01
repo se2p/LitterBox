@@ -1,0 +1,5367 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "WCeCVg{+a0Te;dWgrzuN": [
+                    "Maximalgeschwindigkeit v_max",
+                    "75"
+                ],
+                "=8S?xfU75V4FTr#2,WoV": [
+                    "Radius",
+                    "50"
+                ],
+                "OPyaqwh}g+[9;X[Q501f": [
+                    "Reflexion auf Linie",
+                    "32"
+                ],
+                "Ns]be%pqV,ypf%kzf}|0": [
+                    "Reflektion ohne Linie",
+                    "2"
+                ],
+                "S0$^+YH}5%Jl^0DL^~-]": [
+                    "Reflektierte Lichtstärke",
+                    0
+                ],
+                "93m9[^?5!LRH5tD@!l0a": [
+                    "Richtung",
+                    50
+                ],
+                ",3+OE{8fZFaICHzN}Mpo": [
+                    "Abweichung",
+                    0
+                ],
+                "0p]^TY,;Adl:cLCX+=0(": [
+                    "Stärke der Reaktion",
+                    0
+                ],
+                "Nw)Q4(7]95;8,Xpv%400": [
+                    "Stärke der Raktion Außen",
+                    "2"
+                ],
+                "1vG4lsecYKaqgOJy76]q": [
+                    "Bremswirkung",
+                    0
+                ],
+                "}No+k.2KWiG=={WZ%^YW": [
+                    "Änderung des Abstands",
+                    0
+                ],
+                "Y4DSk`UHGN7rbf1KeJ#0": [
+                    "Geschwindigkeit",
+                    "75"
+                ],
+                "wOnEByny%mwSzh,N0FI^": [
+                    "Abstand zuvor",
+                    0
+                ],
+                "?u~%Y8glSVmM]ffVu|yk": [
+                    "Winkel",
+                    3.6
+                ],
+                "W%DkN7!D^;ta/QCeq;R7": [
+                    "Start Winkel",
+                    "0"
+                ],
+                "aDzM^~AeOC4Im%H|eJlq": [
+                    "V_begrenzt",
+                    120
+                ],
+                "RJ$Ys$A1t;[rum|w!Th0": [
+                    "V_frei",
+                    0
+                ],
+                "j(TRhPP#_3E@BwubmvKq": [
+                    "Beschleunigung a",
+                    "0.5"
+                ],
+                ":$$,P2cZ)(Ku0T+@(32q": [
+                    "Effektive Fahrzeuglänge l",
+                    "12"
+                ],
+                "JjUheMDb/_Y2[)7/f%(~": [
+                    "Freifluss Distanz x_max",
+                    "35"
+                ],
+                "-QS*gT[j5s2,`139.1#Z": [
+                    "m",
+                    3.260869565217391
+                ],
+                "Mm:}-Z,-IeFJoD/[l;^~": [
+                    "b",
+                    39.130434782608698
+                ],
+                "5+,~!6MF8*o}cfgjW-o-": [
+                    "Abweichung L",
+                    0
+                ],
+                "v_qfp^o#hS5s}s=%K5lg": [
+                    "Abweichung R",
+                    0
+                ],
+                "k9ZH8*$Eqf#ot_lMriLt": [
+                    "rechtes Rad minimum",
+                    0
+                ],
+                "t#.iV?hmRK8BT:Jp2g46": [
+                    "Winkel Codey/Sensor",
+                    "19"
+                ],
+                "7qh#97KikB!iYBeJ;:ZH": [
+                    "Radius Kreis r",
+                    "31.8"
+                ],
+                "r!aOgmy`FoCFZHpsnT2!": [
+                    "Winkel zwischen 2 Codey",
+                    86.38607404454749
+                ],
+                "[f{;%?f(J`2qnAQ?-dy}": [
+                    "Radialer Abstand in [cm]",
+                    36.342250108665719
+                ],
+                "dsYDShziijuu_N=qRy*P": [
+                    "k",
+                    "1"
+                ],
+                "3].rvk8%KsApMFk|odG=": [
+                    "l",
+                    "-1"
+                ],
+                "zB5g:srvE4--gE+O}_-j": [
+                    "x1",
+                    0.35530144304088
+                ],
+                "GwD*T?Oa:m3Pfyj80D?|": [
+                    "x2",
+                    1.000988884933349
+                ],
+                "V0k;+nw664m.^y(y)fb6": [
+                    "y1",
+                    0.29583486595912
+                ],
+                "7O~G8shxiaopb2e}dd;w": [
+                    "y2",
+                    0.955756567879874
+                ],
+                "#%zlTtO18x}UlcS=,Mlp": [
+                    "x1a",
+                    -0.00968021187747
+                ],
+                "SWH-RsPUVn6Cjk{@KgI9": [
+                    "x2a",
+                    0
+                ],
+                "nt$nCAT[*,y1Ou%}:`/l": [
+                    "US-Sensor",
+                    0
+                ]
+            },
+            "lists": {
+                "$L$b;ol+6UNXY_|dKpHy": [
+                    "minimaler Autoabstand",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "x{z:;Ne3Qg45qae|?GKa": {
+                    "opcode": "codey.meos_when_button_press",
+                    "next": "|C{Hy=D2-HU$Ni[O}W,`",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 120,
+                    "y": -9156
+                },
+                "^l^~[/b?%+Ejo1bH|w!C": {
+                    "opcode": "data_setvariableto",
+                    "next": "ZGRz,wJ-{Fr=ktk,wo(.",
+                    "parent": "Ti9Z!UNebedQClz5%=T+",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "75"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Maximalgeschwindigkeit v_max",
+                            "WCeCVg{+a0Te;dWgrzuN"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Ax4K=ZB;z:aFMgFL~#:w": {
+                    "opcode": "data_setvariableto",
+                    "next": ",{aN7Yz_rb?)OA;J|!QO",
+                    "parent": "?mxTw_|NH#_y=NUMM|%(",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "45"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Reflexion auf Linie",
+                            "OPyaqwh}g+[9;X[Q501f"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "3C/Ypn`7lxMXL[!gF7%;"
+                },
+                ",{aN7Yz_rb?)OA;J|!QO": {
+                    "opcode": "data_setvariableto",
+                    "next": "flg6}v4qAP:*JQ/{m+%y",
+                    "parent": "Ax4K=ZB;z:aFMgFL~#:w",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Reflektion ohne Linie",
+                            "Ns]be%pqV,ypf%kzf}|0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "I;vp@3?S+$3UXIe^@dv8": {
+                    "opcode": "codey.meos_move_stop",
+                    "next": null,
+                    "parent": "y%Y!^lTl;8EEl|l-$xWs",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "y%Y!^lTl;8EEl|l-$xWs": {
+                    "opcode": "control_repeat_until",
+                    "next": "I;vp@3?S+$3UXIe^@dv8",
+                    "parent": "v%*|IypSVpDdGKyYC7dr",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "c(7c1@+kW|%#G[Up[h7X"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "VGpT8VSKvmO%5ylm(h6c"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "VGpT8VSKvmO%5ylm(h6c": {
+                    "opcode": "codey.meos_event_button_pressed",
+                    "next": null,
+                    "parent": "y%Y!^lTl;8EEl|l-$xWs",
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "c",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "QPls.6Lo|DM[jk=9d5`f": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "flaf!s[~0aoMUxbm;14D",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Reflexion auf Linie",
+                                "OPyaqwh}g+[9;X[Q501f"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            ":EIj3+In,fOWIDlJloLZ",
+                            [
+                                4,
+                                "7"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":EIj3+In,fOWIDlJloLZ": {
+                    "opcode": "codey.meos_rocky_detect_reflection",
+                    "next": null,
+                    "parent": "QPls.6Lo|DM[jk=9d5`f",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NHe),;uixPnfl~SkuYQN": {
+                    "opcode": "codey.meos_move_with_motors",
+                    "next": "=M4r:vR^/WPrl%m+HDYj",
+                    "parent": "fJ`96Vqro|c%@o(8L9II",
+                    "inputs": {
+                        "LEFT_POWER": [
+                            3,
+                            "=}q)7|v%7qd:0e_j#K/p",
+                            [
+                                4,
+                                "50"
+                            ]
+                        ],
+                        "RIGHT_POWER": [
+                            3,
+                            "6mBuIlzIqN$Cong?y(Xp",
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=}q)7|v%7qd:0e_j#K/p": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "NHe),;uixPnfl~SkuYQN",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Abweichung L",
+                                "5+,~!6MF8*o}cfgjW-o-"
+                            ],
+                            [
+                                4,
+                                "55"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "flaf!s[~0aoMUxbm;14D": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "U]GJ#F}G=yLBnP=8NPu%",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "QPls.6Lo|DM[jk=9d5`f",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Stärke der Reaktion",
+                                "0p]^TY,;Adl:cLCX+=0("
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "t8fDXX.-n,!alA^nTn!I": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "FT.yQ4T5{3)~PXM)]=jl",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "qWwJ5WegP=2gCpe5)ya(",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "qWwJ5WegP=2gCpe5)ya(": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "t8fDXX.-n,!alA^nTn!I",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "24"
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "1000"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?mxTw_|NH#_y=NUMM|%(": {
+                    "opcode": "data_setvariableto",
+                    "next": "Ax4K=ZB;z:aFMgFL~#:w",
+                    "parent": "|C{Hy=D2-HU$Ni[O}W,`",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "Maximalgeschwindigkeit v_max",
+                                "WCeCVg{+a0Te;dWgrzuN"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=M4r:vR^/WPrl%m+HDYj": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": null,
+                    "parent": "NHe),;uixPnfl~SkuYQN",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "KPT+L?`vi6[%sAyUF]1~": {
+                    "opcode": "control_if",
+                    "next": ",D4F@n%!v`UIv_qx=L*S",
+                    "parent": "IKO#y^*o~D27RH;ND.QO",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "5BKH@;-wCJs5TotF/~tc"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "#0xZ;)dtT[yd%$:|`43C"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "_*0JKwx]Q[#CwIjJESHv"
+                },
+                "9t`mI-(bUUcs03}1%^jN": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "5BKH@;-wCJs5TotF/~tc",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Effektive Fahrzeuglänge l",
+                                ":$$,P2cZ)(Ku0T+@(32q"
+                            ],
+                            [
+                                10,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#0xZ;)dtT[yd%$:|`43C": {
+                    "opcode": "data_setvariableto",
+                    "next": "bRG[p|[eJ2}~)BE_}B(F",
+                    "parent": "KPT+L?`vi6[%sAyUF]1~",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",D4F@n%!v`UIv_qx=L*S": {
+                    "opcode": "control_if",
+                    "next": "6hS.rPD1*pnX23Lch|VK",
+                    "parent": "KPT+L?`vi6[%sAyUF]1~",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "7|XMm[(q_ZXVuXIifU@Z"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ",G3|Wo=-28/$su|y|[wO"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "HG|Wcs3uph3)Ui*B]#ak"
+                },
+                "XO5EB[WPkAp6g07rG56a": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "7|XMm[(q_ZXVuXIifU@Z",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Effektive Fahrzeuglänge l",
+                                ":$$,P2cZ)(Ku0T+@(32q"
+                            ],
+                            [
+                                10,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7|XMm[(q_ZXVuXIifU@Z": {
+                    "opcode": "operator_and",
+                    "next": null,
+                    "parent": ",D4F@n%!v`UIv_qx=L*S",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "XO5EB[WPkAp6g07rG56a"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            ":Y:nL}Jt/~VS$Nf5wy*B"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":Y:nL}Jt/~VS$Nf5wy*B": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "7|XMm[(q_ZXVuXIifU@Z",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Freifluss Distanz x_max",
+                                "JjUheMDb/_Y2[)7/f%(~"
+                            ],
+                            [
+                                10,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",G3|Wo=-28/$su|y|[wO": {
+                    "opcode": "data_setvariableto",
+                    "next": "Lj!.7@;?[JGzz2BAoIbq",
+                    "parent": ",D4F@n%!v`UIv_qx=L*S",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "-`guwZt1)/3v-Aj,Q|8f",
+                            [
+                                10,
+                                "30"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "V_begrenzt",
+                            "aDzM^~AeOC4Im%H|eJlq"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Lj!.7@;?[JGzz2BAoIbq": {
+                    "opcode": "data_setvariableto",
+                    "next": "^2jxAvU(2Nww,84j1@J1",
+                    "parent": ",G3|Wo=-28/$su|y|[wO",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "a:7b{;WL8}MBUi11=,XX",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "V_frei",
+                            "RJ$Ys$A1t;[rum|w!Th0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "a:7b{;WL8}MBUi11=,XX": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "Lj!.7@;?[JGzz2BAoIbq",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Beschleunigung a",
+                                "j(TRhPP#_3E@BwubmvKq"
+                            ],
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^2jxAvU(2Nww,84j1@J1": {
+                    "opcode": "control_if_else",
+                    "next": "4[vBHjklN=2s6r!HGhpa",
+                    "parent": "Lj!.7@;?[JGzz2BAoIbq",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "WT9(g#Xv7_;jStb0HHB_"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "c,ESJ$iu6c9]t/v^9+Gk"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "dI2,HS|c6B#[7Beyn-fa"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "WT9(g#Xv7_;jStb0HHB_": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "^2jxAvU(2Nww,84j1@J1",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "V_frei",
+                                "RJ$Ys$A1t;[rum|w!Th0"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "V_begrenzt",
+                                "aDzM^~AeOC4Im%H|eJlq"
+                            ],
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "c,ESJ$iu6c9]t/v^9+Gk": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "^2jxAvU(2Nww,84j1@J1",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "V_begrenzt",
+                                "aDzM^~AeOC4Im%H|eJlq"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "dI2,HS|c6B#[7Beyn-fa": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "^2jxAvU(2Nww,84j1@J1",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "V_frei",
+                                "RJ$Ys$A1t;[rum|w!Th0"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6hS.rPD1*pnX23Lch|VK": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ",D4F@n%!v`UIv_qx=L*S",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "F`hGxpzbalM#Ck,NW~T}"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Str5dlHl/Y^[/RCI{7h!"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "w6A])4%Pq{n!HlW-`V+2"
+                },
+                "sqU4Qg8GXU,70HanLIAJ": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "F`hGxpzbalM#Ck,NW~T}",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Freifluss Distanz x_max",
+                                "JjUheMDb/_Y2[)7/f%(~"
+                            ],
+                            [
+                                10,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "RVDXcC$rW.w;}hzgN[;a": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "Str5dlHl/Y^[/RCI{7h!",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "Maximalgeschwindigkeit v_max",
+                                "WCeCVg{+a0Te;dWgrzuN"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Str5dlHl/Y^[/RCI{7h!": {
+                    "opcode": "control_if_else",
+                    "next": "W-Q[XmI!zo/1:@^`?%[K",
+                    "parent": "6hS.rPD1*pnX23Lch|VK",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "ThBg7AgIm+_!.F`$.Z+q"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "RVDXcC$rW.w;}hzgN[;a"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "Fx**o9:{/`1]UIg4`jD5"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Fx**o9:{/`1]UIg4`jD5": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "Str5dlHl/Y^[/RCI{7h!",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Maximalgeschwindigkeit v_max",
+                                "WCeCVg{+a0Te;dWgrzuN"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ThBg7AgIm+_!.F`$.Z+q": {
+                    "opcode": "data_changevariableby",
+                    "next": null,
+                    "parent": "Str5dlHl/Y^[/RCI{7h!",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "Beschleunigung a",
+                                "j(TRhPP#_3E@BwubmvKq"
+                            ],
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZGRz,wJ-{Fr=ktk,wo(.": {
+                    "opcode": "data_setvariableto",
+                    "next": "+mdeG{nr5xjQ]#,h=CrG",
+                    "parent": "^l^~[/b?%+Ejo1bH|w!C",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Beschleunigung a",
+                            "j(TRhPP#_3E@BwubmvKq"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5BKH@;-wCJs5TotF/~tc": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "KPT+L?`vi6[%sAyUF]1~",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "9t`mI-(bUUcs03}1%^jN"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "`%3pFIl4R`z.Q!C,F)P5"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "`%3pFIl4R`z.Q!C,F)P5": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "5BKH@;-wCJs5TotF/~tc",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Effektive Fahrzeuglänge l",
+                                ":$$,P2cZ)(Ku0T+@(32q"
+                            ],
+                            [
+                                10,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "F`hGxpzbalM#Ck,NW~T}": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "6hS.rPD1*pnX23Lch|VK",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "sqU4Qg8GXU,70HanLIAJ"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "aKV+F_7b3h}Mo?+4Ljvn"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "aKV+F_7b3h}Mo?+4Ljvn": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "F`hGxpzbalM#Ck,NW~T}",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            [
+                                12,
+                                "Freifluss Distanz x_max",
+                                "JjUheMDb/_Y2[)7/f%(~"
+                            ],
+                            [
+                                10,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "W-Q[XmI!zo/1:@^`?%[K": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "Str5dlHl/Y^[/RCI{7h!",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "7ZS,2?;*aqO#mG3bwWwj"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "^H,[IeNAgO|1tp(a)-X]"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7ZS,2?;*aqO#mG3bwWwj": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "W-Q[XmI!zo/1:@^`?%[K",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^H,[IeNAgO|1tp(a)-X]": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "W-Q[XmI!zo/1:@^`?%[K",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "Maximalgeschwindigkeit v_max",
+                                "WCeCVg{+a0Te;dWgrzuN"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "-`guwZt1)/3v-Aj,Q|8f": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": ",G3|Wo=-28/$su|y|[wO",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "l?V5Do3h]%O|8f8FB6dw",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "b",
+                                "Mm:}-Z,-IeFJoD/[l;^~"
+                            ],
+                            [
+                                4,
+                                "75"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "l?V5Do3h]%O|8f8FB6dw": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "-`guwZt1)/3v-Aj,Q|8f",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "m",
+                                "-QS*gT[j5s2,`139.1#Z"
+                            ],
+                            [
+                                4,
+                                "7.5"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radialer Abstand in [cm]",
+                                "[f{;%?f(J`2qnAQ?-dy}"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "4[vBHjklN=2s6r!HGhpa": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "^2jxAvU(2Nww,84j1@J1",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "L{`TP,B()dA%x]r}S;vf"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "*PS|*q/ECBzu1O6ENldL"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "L{`TP,B()dA%x]r}S;vf": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "4[vBHjklN=2s6r!HGhpa",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*PS|*q/ECBzu1O6ENldL": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "4[vBHjklN=2s6r!HGhpa",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "V_begrenzt",
+                                "aDzM^~AeOC4Im%H|eJlq"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "bRG[p|[eJ2}~)BE_}B(F": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "#0xZ;)dtT[yd%$:|`43C",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "QM0VZ#WWsS61mwX}C$W@"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "*4%t3EHRX`-5VRPT?=uv"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "}84)I%L%Ri_FH9H_rS)F"
+                },
+                "QM0VZ#WWsS61mwX}C$W@": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "bRG[p|[eJ2}~)BE_}B(F",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*4%t3EHRX`-5VRPT?=uv": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "bRG[p|[eJ2}~)BE_}B(F",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Geschwindigkeit",
+                            "Y4DSk`UHGN7rbf1KeJ#0"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+mdeG{nr5xjQ]#,h=CrG": {
+                    "opcode": "data_setvariableto",
+                    "next": ";8Lx^gVon,UfYE@n5Lvm",
+                    "parent": "ZGRz,wJ-{Fr=ktk,wo(.",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "11"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Effektive Fahrzeuglänge l",
+                            ":$$,P2cZ)(Ku0T+@(32q"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";8Lx^gVon,UfYE@n5Lvm": {
+                    "opcode": "data_setvariableto",
+                    "next": "@CQ0tYeN}m:p32ys()XS",
+                    "parent": "+mdeG{nr5xjQ]#,h=CrG",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "18"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Freifluss Distanz x_max",
+                            "JjUheMDb/_Y2[)7/f%(~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "A8rD/MuuD,:q9G8$;Yn4"
+                },
+                "iqAe20+GB{z[.Vi_WEyY": {
+                    "opcode": "data_setvariableto",
+                    "next": "PwHX,U)Fgy#/gdiu[U~u",
+                    "parent": "@CQ0tYeN}m:p32ys()XS",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "afKec:18#KCM;/`^]$q5",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "m",
+                            "-QS*gT[j5s2,`139.1#Z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": ":n4aw_D])akkG,-h_RTK"
+                },
+                "vYR/CSPB_k6-nupFD~%7": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "afKec:18#KCM;/`^]$q5",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Maximalgeschwindigkeit v_max",
+                                "WCeCVg{+a0Te;dWgrzuN"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "afKec:18#KCM;/`^]$q5": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "iqAe20+GB{z[.Vi_WEyY",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "vYR/CSPB_k6-nupFD~%7",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "SdT%^|vJ{$8wRRz)f:eV",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "SdT%^|vJ{$8wRRz)f:eV": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "afKec:18#KCM;/`^]$q5",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Freifluss Distanz x_max",
+                                "JjUheMDb/_Y2[)7/f%(~"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Effektive Fahrzeuglänge l",
+                                ":$$,P2cZ)(Ku0T+@(32q"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "PwHX,U)Fgy#/gdiu[U~u": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "iqAe20+GB{z[.Vi_WEyY",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "%;J~AIP6J8s4m$qw/?u5",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "b",
+                            "Mm:}-Z,-IeFJoD/[l;^~"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%;J~AIP6J8s4m$qw/?u5": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "PwHX,U)Fgy#/gdiu[U~u",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "m",
+                                "-QS*gT[j5s2,`139.1#Z"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Effektive Fahrzeuglänge l",
+                                ":$$,P2cZ)(Ku0T+@(32q"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "U]GJ#F}G=yLBnP=8NPu%": {
+                    "opcode": "data_setvariableto",
+                    "next": "fJ`96Vqro|c%@o(8L9II",
+                    "parent": "FT.yQ4T5{3)~PXM)]=jl",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "flaf!s[~0aoMUxbm;14D",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Abweichung L",
+                            "5+,~!6MF8*o}cfgjW-o-"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "-NqX3F5q.Gqb.k*-BTbJ"
+                },
+                "fJ`96Vqro|c%@o(8L9II": {
+                    "opcode": "data_setvariableto",
+                    "next": "NHe),;uixPnfl~SkuYQN",
+                    "parent": "U]GJ#F}G=yLBnP=8NPu%",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "/T${FW!j@%sFO{#qRNhO",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Abweichung R",
+                            "v_qfp^o#hS5s}s=%K5lg"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/T${FW!j@%sFO{#qRNhO": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "fJ`96Vqro|c%@o(8L9II",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "W/@$SF$r_U-)u(;$+Lz]",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Stärke der Reaktion",
+                                "0p]^TY,;Adl:cLCX+=0("
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "W/@$SF$r_U-)u(;$+Lz]": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "/T${FW!j@%sFO{#qRNhO",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Reflexion auf Linie",
+                                "OPyaqwh}g+[9;X[Q501f"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "3avVQl7pZJ*fvK7K4d7u",
+                            [
+                                4,
+                                "7"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3avVQl7pZJ*fvK7K4d7u": {
+                    "opcode": "codey.meos_rocky_detect_reflection",
+                    "next": null,
+                    "parent": "W/@$SF$r_U-)u(;$+Lz]",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "FT.yQ4T5{3)~PXM)]=jl": {
+                    "opcode": "data_setvariableto",
+                    "next": "U]GJ#F}G=yLBnP=8NPu%",
+                    "parent": "tYS{FbD@722TMgKLh-CD",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "t8fDXX.-n,!alA^nTn!I",
+                            [
+                                10,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Stärke der Reaktion",
+                            "0p]^TY,;Adl:cLCX+=0("
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "52B.f@Yj+xmPAZHYEA40"
+                },
+                "6mBuIlzIqN$Cong?y(Xp": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "NHe),;uixPnfl~SkuYQN",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Geschwindigkeit",
+                                "Y4DSk`UHGN7rbf1KeJ#0"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Abweichung R",
+                                "v_qfp^o#hS5s}s=%K5lg"
+                            ],
+                            [
+                                4,
+                                "55"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3BH)i?$QnDF7psvOEaMW": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "``Z9sO5@L(pZl~6m]pHc",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Winkel zwischen 2 Codey",
+                                "r!aOgmy`FoCFZHpsnT2!"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "^zH[62rcpL0iM69_.HY~",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^zH[62rcpL0iM69_.HY~": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "3BH)i?$QnDF7psvOEaMW",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "3.1415926"
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                "180"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "``Z9sO5@L(pZl~6m]pHc": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "/`|2zu!l2QRS[ONN?ETD",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "3BH)i?$QnDF7psvOEaMW",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ",*d(q@}!$[rt(5F`))5a": {
+                    "opcode": "data_setvariableto",
+                    "next": "/`|2zu!l2QRS[ONN?ETD",
+                    "parent": "c(7c1@+kW|%#G[Up[h7X",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "ozn|XB;l#.DQ~/^q|V3x",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Winkel zwischen 2 Codey",
+                            "r!aOgmy`FoCFZHpsnT2!"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/`|2zu!l2QRS[ONN?ETD": {
+                    "opcode": "data_setvariableto",
+                    "next": "tYS{FbD@722TMgKLh-CD",
+                    "parent": ",*d(q@}!$[rt(5F`))5a",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "``Z9sO5@L(pZl~6m]pHc",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Radialer Abstand in [cm]",
+                            "[f{;%?f(J`2qnAQ?-dy}"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/6;GbjK^d2e|09udZD~8": {
+                    "opcode": "data_setvariableto",
+                    "next": "tragN{7?8Y_]0:l0x3n%",
+                    "parent": "O$PpUwT4vRElcZ:IB-D*",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "19"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Winkel Codey/Sensor",
+                            "t#.iV?hmRK8BT:Jp2g46"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "flg6}v4qAP:*JQ/{m+%y": {
+                    "opcode": "data_setvariableto",
+                    "next": "O$PpUwT4vRElcZ:IB-D*",
+                    "parent": ",{aN7Yz_rb?)OA;J|!QO",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "k",
+                            "dsYDShziijuu_N=qRy*P"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "O$PpUwT4vRElcZ:IB-D*": {
+                    "opcode": "data_setvariableto",
+                    "next": "/6;GbjK^d2e|09udZD~8",
+                    "parent": "flg6}v4qAP:*JQ/{m+%y",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "-1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "l",
+                            "3].rvk8%KsApMFk|odG="
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@CQ0tYeN}m:p32ys()XS": {
+                    "opcode": "data_setvariableto",
+                    "next": "iqAe20+GB{z[.Vi_WEyY",
+                    "parent": ";8Lx^gVon,UfYE@n5Lvm",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "31.8"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "Radius Kreis r",
+                            "7qh#97KikB!iYBeJ;:ZH"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "tragN{7?8Y_]0:l0x3n%": {
+                    "opcode": "data_setvariableto",
+                    "next": "zy[(^G[zp:+n_h/8h|n)",
+                    "parent": "/6;GbjK^d2e|09udZD~8",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            ":gc/OFG390*eI[hBC5!$",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "x1",
+                            "zB5g:srvE4--gE+O}_-j"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":gc/OFG390*eI[hBC5!$": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "tragN{7?8Y_]0:l0x3n%",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "ISF/Ytf8L;G+n5s9x!dk",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "tm1BzqE!$YkO|r4#NIL3",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ISF/Ytf8L;G+n5s9x!dk": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": ":gc/OFG390*eI[hBC5!$",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "al,[V0x5{N2xWXwmJCD^",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "ZN3bLeSIFCp0ZR@lFabD",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "al,[V0x5{N2xWXwmJCD^": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "ISF/Ytf8L;G+n5s9x!dk",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "k",
+                                "dsYDShziijuu_N=qRy*P"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZN3bLeSIFCp0ZR@lFabD": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "ISF/Ytf8L;G+n5s9x!dk",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "cos",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "tm1BzqE!$YkO|r4#NIL3": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": ":gc/OFG390*eI[hBC5!$",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "sin",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "zy[(^G[zp:+n_h/8h|n)": {
+                    "opcode": "data_setvariableto",
+                    "next": ":OJU9osA#Nc*v!2ikC](",
+                    "parent": "tragN{7?8Y_]0:l0x3n%",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "S4pyy*UsCtRRyik94Gtl",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "x2",
+                            "GwD*T?Oa:m3Pfyj80D?|"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "a!p1OcCxH~TCcg%_C==:": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "S4pyy*UsCtRRyik94Gtl",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "d.Im]w^tnMHrT?r((xo$",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "a73=Ip{ec2_}XU5!.%aN",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "d.Im]w^tnMHrT?r((xo$": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "a!p1OcCxH~TCcg%_C==:",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "l",
+                                "3].rvk8%KsApMFk|odG="
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "l",
+                                "3].rvk8%KsApMFk|odG="
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "a73=Ip{ec2_}XU5!.%aN": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "a!p1OcCxH~TCcg%_C==:",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S4pyy*UsCtRRyik94Gtl": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "zy[(^G[zp:+n_h/8h|n)",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "a!p1OcCxH~TCcg%_C==:",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "jDx($nJL*EI#h$S?ojD3": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "ozn|XB;l#.DQ~/^q|V3x",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "LEM%xgw|0b@1ZQd.o@eE",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "asin",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":OJU9osA#Nc*v!2ikC](": {
+                    "opcode": "data_setvariableto",
+                    "next": "T9Jzl|A]zL5@qW]JC4C)",
+                    "parent": "zy[(^G[zp:+n_h/8h|n)",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "oPww*VzxSDSf)j9j-7aG",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "x1a",
+                            "#%zlTtO18x}UlcS=,Mlp"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "),krK@IIMVF)3IxnyX=8": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "5ubi;2BSWj/2Q`_Al%I$",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "l",
+                                "3].rvk8%KsApMFk|odG="
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5ubi;2BSWj/2Q`_Al%I$": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": ")Dqv)E9JLXooSR?6`={9",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "),krK@IIMVF)3IxnyX=8",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "N:6{wPl1^#*I+fQVpv8^",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "N:6{wPl1^#*I+fQVpv8^": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "5ubi;2BSWj/2Q`_Al%I$",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "cos",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kO9fKHrKXjPQfk@{E9Fw": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": ")Dqv)E9JLXooSR?6`={9",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "[=195?i6Wl+T(QBd1TID",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "sin",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "[=195?i6Wl+T(QBd1TID": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "kO9fKHrKXjPQfk@{E9Fw",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "180"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ozn|XB;l#.DQ~/^q|V3x": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": ",*d(q@}!$[rt(5F`))5a",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "jDx($nJL*EI#h$S?ojD3",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "!MD_/;=W/sto1x0ZCz#I",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "C{yj5%04?bRHcvpn1YO:"
+                },
+                "!MD_/;=W/sto1x0ZCz#I": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "ozn|XB;l#.DQ~/^q|V3x",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "_Z9+*W3gP-yC^wlQv)aN",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "atan",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "T9Jzl|A]zL5@qW]JC4C)": {
+                    "opcode": "data_setvariableto",
+                    "next": "v%*|IypSVpDdGKyYC7dr",
+                    "parent": ":OJU9osA#Nc*v!2ikC](",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "C)lZqc14LDO.lr;e+v*=",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "y1",
+                            "V0k;+nw664m.^y(y)fb6"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "C)lZqc14LDO.lr;e+v*=": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "T9Jzl|A]zL5@qW]JC4C)",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "M|EAwVx{+@^,xk=)G(IN",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "cb_EU@+d@?t[W!t(xHx~",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "M|EAwVx{+@^,xk=)G(IN": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "C)lZqc14LDO.lr;e+v*=",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "j.o%FXZrUKhp9Yz.Ojn=",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "sin",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "j.o%FXZrUKhp9Yz.Ojn=": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "M|EAwVx{+@^,xk=)G(IN",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "180"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "m=V;Ns:D}$`[li^(Fs+O": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "W40)4JFOFo@|s_#j1Ye6",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "US-Sensor",
+                                "nt$nCAT[*,y1Ou%}:`/l"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "cb_EU@+d@?t[W!t(xHx~": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "C)lZqc14LDO.lr;e+v*=",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "HrOhwZGQAl;,*DBX?{|r",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "Pq6_;%h;a]v8`iO8RgdR",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "HrOhwZGQAl;,*DBX?{|r": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "cb_EU@+d@?t[W!t(xHx~",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "l",
+                                "3].rvk8%KsApMFk|odG="
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Pq6_;%h;a]v8`iO8RgdR": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "cb_EU@+d@?t[W!t(xHx~",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "cos",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "v%*|IypSVpDdGKyYC7dr": {
+                    "opcode": "data_setvariableto",
+                    "next": "y%Y!^lTl;8EEl|l-$xWs",
+                    "parent": "T9Jzl|A]zL5@qW]JC4C)",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "p/Sff*n[AWN%|s^K=w@j",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "y2",
+                            "7O~G8shxiaopb2e}dd;w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "p/Sff*n[AWN%|s^K=w@j": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "v%*|IypSVpDdGKyYC7dr",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "x$zqoyX5V?Lo|Ni#]CNi",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "Ktp[sT-`JHc[P.3;}%q7",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "x$zqoyX5V?Lo|Ni#]CNi": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "p/Sff*n[AWN%|s^K=w@j",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "v[d.o,y+je{Px?yG{N^)",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "v[d.o,y+je{Px?yG{N^)": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "x$zqoyX5V?Lo|Ni#]CNi",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "kAR|@RESfbTin`cW(-))",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "cos",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kAR|@RESfbTin`cW(-))": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "v[d.o,y+je{Px?yG{N^)",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "180"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Ktp[sT-`JHc[P.3;}%q7": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "p/Sff*n[AWN%|s^K=w@j",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "3Pz$`e-1Ri,2ojahWbHz",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "oTeI]Ad9?|#,`)#Z^AtO",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3Pz$`e-1Ri,2ojahWbHz": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "Ktp[sT-`JHc[P.3;}%q7",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "l",
+                                "3].rvk8%KsApMFk|odG="
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oTeI]Ad9?|#,`)#Z^AtO": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "Ktp[sT-`JHc[P.3;}%q7",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            [
+                                12,
+                                "Winkel Codey/Sensor",
+                                "t#.iV?hmRK8BT:Jp2g46"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "sin",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_Z9+*W3gP-yC^wlQv)aN": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "!MD_/;=W/sto1x0ZCz#I",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "W40)4JFOFo@|s_#j1Ye6",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "y2",
+                                "7O~G8shxiaopb2e}dd;w"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "W40)4JFOFo@|s_#j1Ye6": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": "_Z9+*W3gP-yC^wlQv)aN",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "y1",
+                                "V0k;+nw664m.^y(y)fb6"
+                            ],
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "m=V;Ns:D}$`[li^(Fs+O",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "LEM%xgw|0b@1ZQd.o@eE": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "jDx($nJL*EI#h$S?ojD3",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "x1",
+                                "zB5g:srvE4--gE+O}_-j"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "R=%D!b[%#9$%oH.@nb^v",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "R=%D!b[%#9$%oH.@nb^v": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": "LEM%xgw|0b@1ZQd.o@eE",
+                    "inputs": {
+                        "NUM": [
+                            3,
+                            "NE[U+xDY#KTH/(cMH8!3",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "sqrt",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/j4N#LiFLL2G.Rh|=$zW": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "n#!7iNiRwyHAiN=g/nAR",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "x1a",
+                                "#%zlTtO18x}UlcS=,Mlp"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "PL~;4Hnj]kRaLqLjhjTh",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "n#!7iNiRwyHAiN=g/nAR": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "NE[U+xDY#KTH/(cMH8!3",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "x2",
+                                "GwD*T?Oa:m3Pfyj80D?|"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "/j4N#LiFLL2G.Rh|=$zW",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "PL~;4Hnj]kRaLqLjhjTh": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "/j4N#LiFLL2G.Rh|=$zW",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "%tN1oO5z|Iw+rnc8G3Io",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NE[U+xDY#KTH/(cMH8!3": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "R=%D!b[%#9$%oH.@nb^v",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "n#!7iNiRwyHAiN=g/nAR",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "3pl];zr)8N~;c6e`kRwS",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3pl];zr)8N~;c6e`kRwS": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "NE[U+xDY#KTH/(cMH8!3",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "ev@D6hY_[T8}$Yxaow7}",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "i:BaFV+M1]9EMm|^4rpq",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ev@D6hY_[T8}$Yxaow7}": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "3pl];zr)8N~;c6e`kRwS",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "US-Sensor",
+                                "nt$nCAT[*,y1Ou%}:`/l"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "US-Sensor",
+                                "nt$nCAT[*,y1Ou%}:`/l"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "i:BaFV+M1]9EMm|^4rpq": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "3pl];zr)8N~;c6e`kRwS",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%tN1oO5z|Iw+rnc8G3Io": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": "PL~;4Hnj]kRaLqLjhjTh",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "US-Sensor",
+                                "nt$nCAT[*,y1Ou%}:`/l"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "Radius Kreis r",
+                                "7qh#97KikB!iYBeJ;:ZH"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ")Dqv)E9JLXooSR?6`={9": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "oPww*VzxSDSf)j9j-7aG",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            "5ubi;2BSWj/2Q`_Al%I$",
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "kO9fKHrKXjPQfk@{E9Fw",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oPww*VzxSDSf)j9j-7aG": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": ":OJU9osA#Nc*v!2ikC](",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            ")Dqv)E9JLXooSR?6`={9",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "c(7c1@+kW|%#G[Up[h7X": {
+                    "opcode": "data_setvariableto",
+                    "next": ",*d(q@}!$[rt(5F`))5a",
+                    "parent": "y%Y!^lTl;8EEl|l-$xWs",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "1)96~?W%g(dSI,`TU+R{",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "US-Sensor",
+                            "nt$nCAT[*,y1Ou%}:`/l"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1)96~?W%g(dSI,`TU+R{": {
+                    "opcode": "codeyneuron.codey_neuron_detect_ultrasonic",
+                    "next": null,
+                    "parent": "c(7c1@+kW|%#G[Up[h7X",
+                    "inputs": {
+                        "ID": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "IKO#y^*o~D27RH;ND.QO": {
+                    "opcode": "procedures_definition",
+                    "next": "KPT+L?`vi6[%sAyUF]1~",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "1sXPE_9uDe)T[)v1@Z-U"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 79,
+                    "y": -7120,
+                    "comment": "6$4MK.8n0Urn$aIwTK_B"
+                },
+                "1sXPE_9uDe)T[)v1@Z-U": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "IKO#y^*o~D27RH;ND.QO",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Geschwindigkeitsberechnung",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[\"todo\",\"todo\",\"todo\"]",
+                        "warp": "false"
+                    }
+                },
+                "tYS{FbD@722TMgKLh-CD": {
+                    "opcode": "procedures_call",
+                    "next": "FT.yQ4T5{3)~PXM)]=jl",
+                    "parent": "/`|2zu!l2QRS[ONN?ETD",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Geschwindigkeitsberechnung",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "Ti9Z!UNebedQClz5%=T+": {
+                    "opcode": "procedures_definition",
+                    "next": "^l^~[/b?%+Ejo1bH|w!C",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "t@8(z+q=L//enIs{kCGB"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 103,
+                    "y": -9807
+                },
+                "t@8(z+q=L//enIs{kCGB": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "Ti9Z!UNebedQClz5%=T+",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Kontrollparameter",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "false"
+                    }
+                },
+                "|C{Hy=D2-HU$Ni[O}W,`": {
+                    "opcode": "procedures_call",
+                    "next": "?mxTw_|NH#_y=NUMM|%(",
+                    "parent": "x{z:;Ne3Qg45qae|?GKa",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "Kontrollparameter",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                }
+            },
+            "comments": {
+                "A8rD/MuuD,:q9G8$;Yn4": {
+                    "blockId": ";8Lx^gVon,UfYE@n5Lvm",
+                    "x": 789.6666666666697,
+                    "y": -9899.11111111106,
+                    "width": 521.1480712890625,
+                    "height": 376.77777099609377,
+                    "minimized": false,
+                    "text": "Die ersten vier Variablen bestimmen das Fahrverhalten. Sie sind vor jedem Experiment frei wählbar. \n\nStart/Maximalgeschwindigkeit: Wunschgewindigkeit bei freier Fahrbahn\n\nBeschleunigung: maximale Beschleunigung\n\nminimaler Autoabstand: länge Codey Rocky + Sicherheitsabstand (es eignet sich ein Wert von 11-13cm)\n\nmaximale Sichtweite: Abstand über welchem Fahrbahn als frei angesehen wird."
+                },
+                ":n4aw_D])akkG,-h_RTK": {
+                    "blockId": "iqAe20+GB{z[.Vi_WEyY",
+                    "x": 1103.7453131322507,
+                    "y": -9345.740740740737,
+                    "width": 517.037109375,
+                    "height": 257.77777099609377,
+                    "minimized": false,
+                    "text": "Das Programm berechnet eine lineare Funktion der Form y=mx+b aus dem minimalen Autoabstand, der maximalen Sichtweite und der Maximalgeschwindigkeit.\n\nDabei gilt:\nx = minimaler Autoabstand --> y = 0\nx = maximale Sichtweite --> y = Maximalgeschwindigkeit"
+                },
+                "3C/Ypn`7lxMXL[!gF7%;": {
+                    "blockId": "Ax4K=ZB;z:aFMgFL~#:w",
+                    "x": 1514.4444444444444,
+                    "y": -9028.333333333334,
+                    "width": 491.8519287109375,
+                    "height": 337.77777099609377,
+                    "minimized": false,
+                    "text": "Codey Rocky fährt auf Kreislinie. Dafür müssen einmalig folgende Einstellungen angepasst werden.\n\nReflexion auf Linie: Wert von <Die reflektierte Lichtstärke des Farbsensors> wenn Roboter auf Linie steht\n\nReflektion ohne Linie: Wert von <Die reflektierte Lichtstärke des Farbsensors> wenn Roboter nicht auf Linie steht\n\nRadius Kreis: Radius des Kreises auf dem Codey Rocky fährt\n\n(k,l sind kleine Korrekturen da Ultraschallsensor Breite hat)\n\nWinkel Codey/Sensor: Neigung, mit welcher Ultraschallsensor auf Codey befestigt ist (in Grad)\n\n--> das Programm berechnet im Folgenden aus dem gemessenen Abstand den realen (radialen) Abstand.\n\n(***Bilder in Programmbeschreibung***)"
+                },
+                "C{yj5%04?bRHcvpn1YO:": {
+                    "blockId": "ozn|XB;l#.DQ~/^q|V3x",
+                    "x": 2166.5185185185184,
+                    "y": -7954.888888888875,
+                    "width": 485.9259033203125,
+                    "height": 308.148193359375,
+                    "minimized": false,
+                    "text": "Ultraschallsensor misst Distanz zum vorrausfahrendem Fahrzeug. Programm berechnet realen Abstand.\n\nDafür benötigt es unteranderem den Radius vom Kreis und die Neigung des Ultraschallsensors.\nDetaillierte Beschreibung in meiner Masterarbeit\n"
+                },
+                "_*0JKwx]Q[#CwIjJESHv": {
+                    "blockId": "KPT+L?`vi6[%sAyUF]1~",
+                    "x": 1529.2592592592594,
+                    "y": -7041.185185185185,
+                    "width": 505.1851806640625,
+                    "height": 171.851806640625,
+                    "minimized": false,
+                    "text": "a) ist der gemessene Abstand kleiner oder gleich dem minimalen Abstand, wird wird die Geschwindigkeit sofort auf 0 gesetzt"
+                },
+                "}84)I%L%Ri_FH9H_rS)F": {
+                    "blockId": "bRG[p|[eJ2}~)BE_}B(F",
+                    "x": 1500.9259259259259,
+                    "y": -6918.2962962962969,
+                    "width": 555.5555419921875,
+                    "height": 213.33331298828126,
+                    "minimized": false,
+                    "text": "manchmal springt die interne Geschwindigkeit des Codey Rockys auf sehr große negative Werte. Ich vermute den Fehler in der eigenen Programmierung der Roboter.\n\nUm diesem Fehler entgegenzuwirken wird die Geschwindigkeit, wenn sie negativ ist, korrigert. (auch in teil b) und c) )"
+                },
+                "HG|Wcs3uph3)Ui*B]#ak": {
+                    "blockId": ",D4F@n%!v`UIv_qx=L*S",
+                    "x": 1499.3703703703705,
+                    "y": -6762.222222222223,
+                    "width": 601.4814453125,
+                    "height": 560,
+                    "minimized": false,
+                    "text": "b) ist der gemessene Abstand größer als der minimale Abstand, aber kleiner als die maximale Sichtweite, wählt das Programm den kleineren Wert aus zwei Geschwindigkeiten aus:\n\n1. die aus der Geraden y=mx+b berechneten Geschwindigkeit. \n(y= Geschwindigkeit ; x= vom Ultraschallsensor gemessener Abstand)\n2. die Geschwindigkeit aus aktueller Geschwindigkeit und der zu beginn gewählten Beschleunigung.\n\nBewegt sich Codey Rocky auf ein Hindernis zu, verringert sich der Abstand zu diesem. Der verringerte Abstand führt dazu, dass x kleiner wird und somit auch die Geschwingkeit y\n\nBewegt sich das Hindernis von Codey Rocky weg, wird der Abstand x größer. Dem entsprechend wird auch die Geschwindigkeit y größer. Für den Fall, dass sich das Hindernis sehr schnell von Codey Rocky weg bewegt, würde die Geschwindigkeit y sehr schnell steigen, Codey Rocky also sehr stark beschleunigen. \nUm eine endliche Beschleunigung zu realisieren, wählt das Programm nun den kleineren Wert aus \"y=mx+b und Geschwindigkeit + Beschleunigung\" aus."
+                },
+                "w6A])4%Pq{n!HlW-`V+2": {
+                    "blockId": "6hS.rPD1*pnX23Lch|VK",
+                    "x": 1509.3703703703705,
+                    "y": -6163.555555555556,
+                    "width": 517.037109375,
+                    "height": 324.4444580078125,
+                    "minimized": false,
+                    "text": "c) Das gleiche wie in b) nur das der aus y=mx+b berechneten Geschwindigkeit, die maximale Geschwingkeit gewählt wird.\n\nD.h. für den Fall, dass das Hindernis abrupt verschwindet beschleunigt der Roboter solange bis die maximale Geschwindigkeit erreicht ist."
+                },
+                "52B.f@Yj+xmPAZHYEA40": {
+                    "blockId": "FT.yQ4T5{3)~PXM)]=jl",
+                    "x": 1501.037037037037,
+                    "y": -8049.444444444442,
+                    "width": 354.073974609375,
+                    "height": 303.70367431640627,
+                    "minimized": false,
+                    "text": "Stärke der Reaktion passt an, wie stark Codey Rocky reagieren soll, wenn er den Kreis verlässt.\n\nZu starkes Reagieren lässt Codey Rocky ruckelig fahren.\nZu schwaches Reagieren lässt Codey Rocky die Linie nicht halten.\n\n24/1000 ist ein guter Wert."
+                },
+                "-NqX3F5q.Gqb.k*-BTbJ": {
+                    "blockId": "U]GJ#F}G=yLBnP=8NPu%",
+                    "x": 1406,
+                    "y": -7697.444444444442,
+                    "width": 511.111083984375,
+                    "height": 524.4444580078125,
+                    "minimized": false,
+                    "text": "Damit Codey Rocky auf der Linie bleibt, misst er mit <Die reflektierte Lichtstärke des Farbsensors> die reflektierte Lichtstärke des Untergrunds. \n\n!! Dafür muss der Sensor an Rocky nach unten gedreht werden !!\n\nin meinem Experiment ist eine weiße Linie auf schwarzen Untergrund geklebt. \n\nCodey Rocky passt die Geschwindigkeit des linken und rechten Reifens so an, dass er auf der Linie bleibt. Dabei ist zu beachten, dass er (in diesem Programm) nur Rechtskurven fahren kann, sprich im Uhrzeigersinn.  "
+                },
+                "6$4MK.8n0Urn$aIwTK_B": {
+                    "blockId": "IKO#y^*o~D27RH;ND.QO",
+                    "x": 838.5555555555557,
+                    "y": -7493.62962962963,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": "Das Programm berechnet die Geschwindigkeit, mit welchem Codey Rocky fahren soll, nur aus dem gemessenen Abstand zum vorrausfahrendem Fahrzeug.\nDabei ist es in 3 Teile aufgeteilt. \na) der gemessene Abstand ist kleiner oder gleich dem minimalen Abstand\nb) der gemessene Abstand ist größer als der minimale Abstand, aber kleiner als die maximale Sichtweite\nc) der gemessene Abstand ist größer als die maximale Sichtweite"
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "sInZ7b22u3)K!+eBT2}/codey.meos_detect_shaked_strength",
+            "mode": "default",
+            "opcode": "codey.meos_detect_shaked_strength",
+            "params": {},
+            "spriteName": "codey",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "blocksInfo": [
+                {
+                    "id": "sInZ7b22u3)K!+eBT2}/codey.meos_detect_shaked_strength",
+                    "opcode": "codey.meos_detect_shaked_strength",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": false,
+                    "targetId": "sInZ7b22u3)K!+eBT2}/"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "WCeCVg{+a0Te;dWgrzuN",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Maximalgeschwindigkeit v_max"
+            },
+            "spriteName": null,
+            "value": "75",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "WCeCVg{+a0Te;dWgrzuN",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "WCeCVg{+a0Te;dWgrzuN",
+                            "value": "Maximalgeschwindigkeit v_max",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "=8S?xfU75V4FTr#2,WoV",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Radius"
+            },
+            "spriteName": null,
+            "value": "50",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "=8S?xfU75V4FTr#2,WoV",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "=8S?xfU75V4FTr#2,WoV",
+                            "value": "Radius",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "OPyaqwh}g+[9;X[Q501f",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Reflexion auf Linie"
+            },
+            "spriteName": null,
+            "value": "32",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 67,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "OPyaqwh}g+[9;X[Q501f",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "OPyaqwh}g+[9;X[Q501f",
+                            "value": "Reflexion auf Linie",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Ns]be%pqV,ypf%kzf}|0",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Reflektion ohne Linie"
+            },
+            "spriteName": null,
+            "value": "2",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 98,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "Ns]be%pqV,ypf%kzf}|0",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "Ns]be%pqV,ypf%kzf}|0",
+                            "value": "Reflektion ohne Linie",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "S0$^+YH}5%Jl^0DL^~-]",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Reflektierte Lichtstärke"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 129,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "S0$^+YH}5%Jl^0DL^~-]",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "S0$^+YH}5%Jl^0DL^~-]",
+                            "value": "Reflektierte Lichtstärke",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "93m9[^?5!LRH5tD@!l0a",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Richtung"
+            },
+            "spriteName": null,
+            "value": 50,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 160,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "93m9[^?5!LRH5tD@!l0a",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "93m9[^?5!LRH5tD@!l0a",
+                            "value": "Richtung",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ",3+OE{8fZFaICHzN}Mpo",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Abweichung"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 191,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": ",3+OE{8fZFaICHzN}Mpo",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": ",3+OE{8fZFaICHzN}Mpo",
+                            "value": "Abweichung",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "0p]^TY,;Adl:cLCX+=0(",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Stärke der Reaktion"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 222,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "0p]^TY,;Adl:cLCX+=0(",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "0p]^TY,;Adl:cLCX+=0(",
+                            "value": "Stärke der Reaktion",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Nw)Q4(7]95;8,Xpv%400",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Stärke der Raktion Außen"
+            },
+            "spriteName": null,
+            "value": "2",
+            "width": 0,
+            "height": 0,
+            "x": 155,
+            "y": 160,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "Nw)Q4(7]95;8,Xpv%400",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "Nw)Q4(7]95;8,Xpv%400",
+                            "value": "Stärke der Raktion Außen",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "1vG4lsecYKaqgOJy76]q",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Bremswirkung"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 155,
+            "y": 191,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "1vG4lsecYKaqgOJy76]q",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "1vG4lsecYKaqgOJy76]q",
+                            "value": "Bremswirkung",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "}No+k.2KWiG=={WZ%^YW",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Änderung des Abstands"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 253,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "}No+k.2KWiG=={WZ%^YW",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "}No+k.2KWiG=={WZ%^YW",
+                            "value": "Änderung des Abstands",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Y4DSk`UHGN7rbf1KeJ#0",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Geschwindigkeit"
+            },
+            "spriteName": null,
+            "value": "75",
+            "width": 0,
+            "height": 0,
+            "x": 155,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "Y4DSk`UHGN7rbf1KeJ#0",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "Y4DSk`UHGN7rbf1KeJ#0",
+                            "value": "Geschwindigkeit",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "wOnEByny%mwSzh,N0FI^",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Abstand zuvor"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 205,
+            "y": 67,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "wOnEByny%mwSzh,N0FI^",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "wOnEByny%mwSzh,N0FI^",
+                            "value": "Abstand zuvor",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "?u~%Y8glSVmM]ffVu|yk",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Winkel"
+            },
+            "spriteName": null,
+            "value": 3.6,
+            "width": 0,
+            "height": 0,
+            "x": 205,
+            "y": 98,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "?u~%Y8glSVmM]ffVu|yk",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "?u~%Y8glSVmM]ffVu|yk",
+                            "value": "Winkel",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "W%DkN7!D^;ta/QCeq;R7",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Start Winkel"
+            },
+            "spriteName": null,
+            "value": "0",
+            "width": 0,
+            "height": 0,
+            "x": 205,
+            "y": 222,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "W%DkN7!D^;ta/QCeq;R7",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "W%DkN7!D^;ta/QCeq;R7",
+                            "value": "Start Winkel",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "aDzM^~AeOC4Im%H|eJlq",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "V_begrenzt"
+            },
+            "spriteName": null,
+            "value": 120,
+            "width": 0,
+            "height": 0,
+            "x": 255,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "aDzM^~AeOC4Im%H|eJlq",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "aDzM^~AeOC4Im%H|eJlq",
+                            "value": "V_begrenzt",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "RJ$Ys$A1t;[rum|w!Th0",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "V_frei"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 255,
+            "y": 129,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "RJ$Ys$A1t;[rum|w!Th0",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "RJ$Ys$A1t;[rum|w!Th0",
+                            "value": "V_frei",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "j(TRhPP#_3E@BwubmvKq",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Beschleunigung a"
+            },
+            "spriteName": null,
+            "value": "0.5",
+            "width": 0,
+            "height": 0,
+            "x": 255,
+            "y": 253,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "j(TRhPP#_3E@BwubmvKq",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "j(TRhPP#_3E@BwubmvKq",
+                            "value": "Beschleunigung a",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ":$$,P2cZ)(Ku0T+@(32q",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Effektive Fahrzeuglänge l"
+            },
+            "spriteName": null,
+            "value": "12",
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": ":$$,P2cZ)(Ku0T+@(32q",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": ":$$,P2cZ)(Ku0T+@(32q",
+                            "value": "Effektive Fahrzeuglänge l",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "JjUheMDb/_Y2[)7/f%(~",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Freifluss Distanz x_max"
+            },
+            "spriteName": null,
+            "value": "35",
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 98,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "JjUheMDb/_Y2[)7/f%(~",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "JjUheMDb/_Y2[)7/f%(~",
+                            "value": "Freifluss Distanz x_max",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "-QS*gT[j5s2,`139.1#Z",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "m"
+            },
+            "spriteName": null,
+            "value": 3.260869565217391,
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 191,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "-QS*gT[j5s2,`139.1#Z",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "-QS*gT[j5s2,`139.1#Z",
+                            "value": "m",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Mm:}-Z,-IeFJoD/[l;^~",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "b"
+            },
+            "spriteName": null,
+            "value": 39.130434782608698,
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 222,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "Mm:}-Z,-IeFJoD/[l;^~",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "Mm:}-Z,-IeFJoD/[l;^~",
+                            "value": "b",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "5+,~!6MF8*o}cfgjW-o-",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Abweichung L"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "5+,~!6MF8*o}cfgjW-o-",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "5+,~!6MF8*o}cfgjW-o-",
+                            "value": "Abweichung L",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "v_qfp^o#hS5s}s=%K5lg",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Abweichung R"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 355,
+            "y": 129,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "v_qfp^o#hS5s}s=%K5lg",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "v_qfp^o#hS5s}s=%K5lg",
+                            "value": "Abweichung R",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "k9ZH8*$Eqf#ot_lMriLt",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "rechtes Rad minimum"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 191,
+            "y": 217,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "k9ZH8*$Eqf#ot_lMriLt",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "k9ZH8*$Eqf#ot_lMriLt",
+                            "value": "rechtes Rad minimum",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "t#.iV?hmRK8BT:Jp2g46",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Winkel Codey/Sensor"
+            },
+            "spriteName": null,
+            "value": "19",
+            "width": 0,
+            "height": 0,
+            "x": 118,
+            "y": 24,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "t#.iV?hmRK8BT:Jp2g46",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "t#.iV?hmRK8BT:Jp2g46",
+                            "value": "Winkel Codey/Sensor",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "7qh#97KikB!iYBeJ;:ZH",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Radius Kreis r"
+            },
+            "spriteName": null,
+            "value": "31.8",
+            "width": 0,
+            "height": 0,
+            "x": 40,
+            "y": 129,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "7qh#97KikB!iYBeJ;:ZH",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "7qh#97KikB!iYBeJ;:ZH",
+                            "value": "Radius Kreis r",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "r!aOgmy`FoCFZHpsnT2!",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Winkel zwischen 2 Codey"
+            },
+            "spriteName": null,
+            "value": 86.38607404454749,
+            "width": 0,
+            "height": 0,
+            "x": 82,
+            "y": 168,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "r!aOgmy`FoCFZHpsnT2!",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "r!aOgmy`FoCFZHpsnT2!",
+                            "value": "Winkel zwischen 2 Codey",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "[f{;%?f(J`2qnAQ?-dy}",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Radialer Abstand in [cm]"
+            },
+            "spriteName": null,
+            "value": 36.342250108665719,
+            "width": 0,
+            "height": 0,
+            "x": 137,
+            "y": 207,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "[f{;%?f(J`2qnAQ?-dy}",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "[f{;%?f(J`2qnAQ?-dy}",
+                            "value": "Radialer Abstand in [cm]",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "dsYDShziijuu_N=qRy*P",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "k"
+            },
+            "spriteName": null,
+            "value": "1",
+            "width": 0,
+            "height": 0,
+            "x": 196,
+            "y": 62,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "dsYDShziijuu_N=qRy*P",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "dsYDShziijuu_N=qRy*P",
+                            "value": "k",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "3].rvk8%KsApMFk|odG=",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "l"
+            },
+            "spriteName": null,
+            "value": "-1",
+            "width": 0,
+            "height": 0,
+            "x": 182,
+            "y": 158,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "3].rvk8%KsApMFk|odG=",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "3].rvk8%KsApMFk|odG=",
+                            "value": "l",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "zB5g:srvE4--gE+O}_-j",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "x1"
+            },
+            "spriteName": null,
+            "value": 0.35530144304088,
+            "width": 0,
+            "height": 0,
+            "x": 93,
+            "y": 167,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "zB5g:srvE4--gE+O}_-j",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "zB5g:srvE4--gE+O}_-j",
+                            "value": "x1",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "GwD*T?Oa:m3Pfyj80D?|",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "x2"
+            },
+            "spriteName": null,
+            "value": 1.000988884933349,
+            "width": 0,
+            "height": 0,
+            "x": 108,
+            "y": 27,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "GwD*T?Oa:m3Pfyj80D?|",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "GwD*T?Oa:m3Pfyj80D?|",
+                            "value": "x2",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "V0k;+nw664m.^y(y)fb6",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "y1"
+            },
+            "spriteName": null,
+            "value": 0.29583486595912,
+            "width": 0,
+            "height": 0,
+            "x": 81,
+            "y": 159,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "V0k;+nw664m.^y(y)fb6",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "V0k;+nw664m.^y(y)fb6",
+                            "value": "y1",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "7O~G8shxiaopb2e}dd;w",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "y2"
+            },
+            "spriteName": null,
+            "value": 0.955756567879874,
+            "width": 0,
+            "height": 0,
+            "x": 159,
+            "y": 251,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "7O~G8shxiaopb2e}dd;w",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "7O~G8shxiaopb2e}dd;w",
+                            "value": "y2",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "#%zlTtO18x}UlcS=,Mlp",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "x1a"
+            },
+            "spriteName": null,
+            "value": -0.00968021187747,
+            "width": 0,
+            "height": 0,
+            "x": 137,
+            "y": 45,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "#%zlTtO18x}UlcS=,Mlp",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "#%zlTtO18x}UlcS=,Mlp",
+                            "value": "x1a",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "SWH-RsPUVn6Cjk{@KgI9",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "x2a"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 132,
+            "y": 246,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "SWH-RsPUVn6Cjk{@KgI9",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "SWH-RsPUVn6Cjk{@KgI9",
+                            "value": "x2a",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "nt$nCAT[*,y1Ou%}:`/l",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "US-Sensor"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 95,
+            "y": 157,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "nt$nCAT[*,y1Ou%}:`/l",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "nt$nCAT[*,y1Ou%}:`/l",
+                            "value": "US-Sensor",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "codey.meos",
+        "codeyneuron.codey"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

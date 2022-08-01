@@ -1,0 +1,636 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "bfINr2dmo!)O:vYDx;rH": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "@yPZS!#)tA[Jt47llw@v",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 118,
+                    "y": 270
+                },
+                "@yPZS!#)tA[Jt47llw@v": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "bfINr2dmo!)O:vYDx;rH",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "Whp|t$@LI8.(O`DXt0qs"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "k*OvEcwfzt3i@D9z-9cB": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": "*4QyM#NKJ,079sv9O+l$",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Whp|t$@LI8.(O`DXt0qs": {
+                    "opcode": "control_if",
+                    "next": "bhEi:db~{sz%y4aBB.s6",
+                    "parent": "@yPZS!#)tA[Jt47llw@v",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "*4QyM#NKJ,079sv9O+l$"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "bhEi:db~{sz%y4aBB.s6": {
+                    "opcode": "control_if",
+                    "next": "57Bcd~$f7!bsEa,]w2wk",
+                    "parent": "Whp|t$@LI8.(O`DXt0qs",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "lpAxY3U6a4h*[#SAFYID"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "57Bcd~$f7!bsEa,]w2wk": {
+                    "opcode": "control_if",
+                    "next": "8(=;%+DKdD,_G#m33r;*",
+                    "parent": "bhEi:db~{sz%y4aBB.s6",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "%?Dl#6EP%rPRZw}Va)jE"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8(=;%+DKdD,_G#m33r;*": {
+                    "opcode": "control_if",
+                    "next": ":xv`-.V28iW8$fxo83!f",
+                    "parent": "57Bcd~$f7!bsEa,]w2wk",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ":!AV{|XG.Z4BI+Q!]lgi"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":xv`-.V28iW8$fxo83!f": {
+                    "opcode": "control_if",
+                    "next": "sr~rhZZa:zE#8cg/GxVc",
+                    "parent": "8(=;%+DKdD,_G#m33r;*",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "+go,MuET:(i!S#pa~Hzl"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "sr~rhZZa:zE#8cg/GxVc": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ":xv`-.V28iW8$fxo83!f",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "djz6[m^O;@;mdw(c8XT4"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*4QyM#NKJ,079sv9O+l$": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "Whp|t$@LI8.(O`DXt0qs",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            "k*OvEcwfzt3i@D9z-9cB",
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "lpAxY3U6a4h*[#SAFYID": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": "bhEi:db~{sz%y4aBB.s6",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            ".?V1wTv9b|cQBv@gpKpM",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "255"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%?Dl#6EP%rPRZw}Va)jE": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "57Bcd~$f7!bsEa,]w2wk",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "255"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            3,
+                            "^v;Z2;wDE*Pcv00~~F|,",
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ":!AV{|XG.Z4BI+Q!]lgi": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "8(=;%+DKdD,_G#m33r;*",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "0YExc+)D@{/{Nj5^TYcT",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+go,MuET:(i!S#pa~Hzl": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": ":xv`-.V28iW8$fxo83!f",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "Dg1%3.yD[=tZyv?aitE*",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "256"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "djz6[m^O;@;mdw(c8XT4": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "sr~rhZZa:zE#8cg/GxVc",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "uQ;9a,s2qYtHFyzs.vUs",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "-1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".?V1wTv9b|cQBv@gpKpM": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": "lpAxY3U6a4h*[#SAFYID",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^v;Z2;wDE*Pcv00~~F|,": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": "%?Dl#6EP%rPRZw}Va)jE",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "0YExc+)D@{/{Nj5^TYcT": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": ":!AV{|XG.Z4BI+Q!]lgi",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Dg1%3.yD[=tZyv?aitE*": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": "+go,MuET:(i!S#pa~Hzl",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uQ;9a,s2qYtHFyzs.vUs": {
+                    "opcode": "codey.meos_rocky_detect_rgb",
+                    "next": null,
+                    "parent": "djz6[m^O;@;mdw(c8XT4",
+                    "inputs": {},
+                    "fields": {
+                        "RGB": [
+                            "red",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_potentiometer",
+            "mode": "default",
+            "opcode": "codey.meos_detect_potentiometer",
+            "params": {},
+            "spriteName": "codey",
+            "value": 51,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "blocksInfo": [
+                {
+                    "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_potentiometer",
+                    "opcode": "codey.meos_detect_potentiometer",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": false,
+                    "targetId": "ZkHEiQo6f^K9O`KuM=+`"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_gyro_roll_angle",
+            "mode": "default",
+            "opcode": "codey.meos_detect_gyro_roll_angle",
+            "params": {},
+            "spriteName": "codey",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "blocksInfo": [
+                {
+                    "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_gyro_roll_angle",
+                    "opcode": "codey.meos_detect_gyro_roll_angle",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": false,
+                    "targetId": "ZkHEiQo6f^K9O`KuM=+`"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_gyro_pitch_angle",
+            "mode": "default",
+            "opcode": "codey.meos_detect_gyro_pitch_angle",
+            "params": {},
+            "spriteName": "codey",
+            "value": 50,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "blocksInfo": [
+                {
+                    "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_gyro_pitch_angle",
+                    "opcode": "codey.meos_detect_gyro_pitch_angle",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": false,
+                    "targetId": "ZkHEiQo6f^K9O`KuM=+`"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_rotatex_angle",
+            "mode": "default",
+            "opcode": "codey.meos_detect_rotatex_angle",
+            "params": {},
+            "spriteName": "codey",
+            "value": -2878,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_rotatex_angle",
+                    "opcode": "codey.meos_detect_rotatex_angle",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true,
+                    "targetId": "ZkHEiQo6f^K9O`KuM=+`"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_time",
+            "mode": "default",
+            "opcode": "codey.meos_detect_time",
+            "params": {},
+            "spriteName": "codey",
+            "value": "1629.5",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 36,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "ZkHEiQo6f^K9O`KuM=+`codey.meos_detect_time",
+                    "opcode": "codey.meos_detect_time",
+                    "inputs": {},
+                    "fields": {},
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true,
+                    "targetId": "ZkHEiQo6f^K9O`KuM=+`"
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "codey.meos"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}
