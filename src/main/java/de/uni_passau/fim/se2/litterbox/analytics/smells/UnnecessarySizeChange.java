@@ -28,7 +28,7 @@ public class UnnecessarySizeChange extends AbstractIssueFinder {
         NumExpr expr = node.getNum();
         if (expr instanceof NumberLiteral) {
             double value = ((NumberLiteral) expr).getValue();
-            if (value == 0 || value >= 540 || value <= -540) {
+            if (value == 0 || value >= MAX_SIZE || value <= -MAX_SIZE) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
