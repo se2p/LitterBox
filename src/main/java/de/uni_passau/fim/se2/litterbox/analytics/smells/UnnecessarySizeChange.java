@@ -10,7 +10,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 
 public class UnnecessarySizeChange extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_size_change";
-    private final int MAX_SIZE = 540;
+    private static final int MAX_SIZE = 540;
 
     @Override
     public void visit(SetSizeTo node) {

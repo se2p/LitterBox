@@ -45,7 +45,7 @@ import java.util.Stack;
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
     public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
-    private final Stack<LoopStmt> loopStack = new Stack<>();
+    private Stack<LoopStmt> loopStack = new Stack<>();
     private boolean inCondition = false;
     private boolean insideEquals = false;
     private boolean hasVariable = false;
@@ -59,6 +59,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             inCondition = false;
+            loopStack = new Stack<>();
             super.visit(node);
             afterWaitUntil = false;
         }
