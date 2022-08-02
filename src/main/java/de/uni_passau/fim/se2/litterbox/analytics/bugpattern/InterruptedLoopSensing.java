@@ -62,10 +62,11 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     private String blockName;
     private ASTNode variableName;
     private boolean checkingVariable;
+    private boolean visitOuter;
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !visitOuter) {
             insideForever = true;
             visitChildren(node);
             insideForever = false;
@@ -74,7 +75,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(UntilStmt node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !visitOuter) {
+            blockName = IssueTranslator.getInstance().getInfo("until");
             inCondition = true;
             node.getBoolExpr().accept(this);
             if (variableName != null) {
@@ -83,7 +85,6 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             inCondition = false;
             checkForStop(node.getStmtList());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("until");
             node.getStmtList().accept(this);
             insideControl = false;
             sensingCollision = false;
@@ -93,8 +94,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (!checkingVariable && !checkingStop) {
+        if (!checkingVariable && !checkingStop && !visitOuter) {
             if (insideForever) {
+                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 inCondition = true;
                 node.getBoolExpr().accept(this);
                 if (variableName != null) {
@@ -105,14 +107,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
                 insideControl = true;
-                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
                 insideControl = false;
                 sensingCollision = false;
                 sensingOther = false;
             }
-        } else if (!hasStop && checkingStop) {
+        } else if (!hasStop && checkingStop && !visitOuter) {
             node.getThenStmts().accept(this);
             if (hasStop) {
                 hasStop = false;
@@ -127,7 +128,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (!checkingVariable && !checkingStop && insideForever) {
+        if (!checkingVariable && !checkingStop && insideForever && !visitOuter) {
+            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
             inCondition = true;
             node.getBoolExpr().accept(this);
             if (variableName != null) {
@@ -136,7 +138,6 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             inCondition = false;
             checkForStop(node.getThenStmts());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
             node.getThenStmts().accept(this);
             insideControl = false;
             sensingCollision = false;
@@ -237,6 +238,12 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        }
     }
 
     @Override
@@ -248,6 +255,12 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
+        }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
@@ -261,6 +274,12 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        }
     }
 
     @Override
@@ -272,6 +291,12 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
+        }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
@@ -285,6 +310,12 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("play_sound_until_done"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        }
     }
 
     @Override
@@ -297,19 +328,39 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
+        if (visitOuter) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        }
     }
 
     @Override
     public void visit(IsKeyPressed node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingOther = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
+    }
+
+    private StmtList getStmtList(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (!(parent instanceof StmtList)) {
+            parent = parent.getParentNode();
+        }
+        return (StmtList) parent;
     }
 
     @Override
     public void visit(Touching node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingCollision = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
     }
 
@@ -317,6 +368,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IsMouseDown node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingOther = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
     }
 
@@ -324,6 +378,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(ColorTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingCollision = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
     }
 
@@ -331,6 +388,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(SpriteTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingCollision = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
     }
 
@@ -338,6 +398,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         if (!checkingVariable && !checkingStop && inCondition) {
             sensingCollision = true;
+            visitOuter = true;
+            getStmtList(node).accept(this);
+            visitOuter = false;
         }
     }
 
