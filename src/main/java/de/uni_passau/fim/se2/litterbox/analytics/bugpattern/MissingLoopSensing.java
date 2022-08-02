@@ -29,15 +29,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
@@ -47,7 +45,7 @@ import java.util.List;
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
     public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
-    private boolean insideLoop = false;
+    private Stack<LoopStmt> loopStack = new Stack<>();
     private boolean inCondition = false;
     private boolean insideEquals = false;
     private boolean hasVariable = false;
@@ -61,6 +59,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             inCondition = false;
+            loopStack = new Stack<>();
             super.visit(node);
             afterWaitUntil = false;
         }
@@ -73,21 +72,21 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        insideLoop = true;
+        loopStack.push(node);
         visitChildren(node);
-        insideLoop = false;
+        loopStack.pop();
     }
 
     @Override
     public void visit(UntilStmt node) {
-        insideLoop = true;
+        loopStack.push(node);
         visitChildren(node);
-        insideLoop = false;
+        loopStack.pop();
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (!insideLoop) {
+        if (loopStack.isEmpty()) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);
@@ -168,7 +167,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (!insideLoop) {
+        if (loopStack.isEmpty()) {
             inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
             boolExpr.accept(this);

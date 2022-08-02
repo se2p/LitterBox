@@ -167,6 +167,9 @@ public class IssueTool {
             registerSmellFinder(new UnnecessaryIf(), smellFinders);
             registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
+            registerSmellFinder(new UnnecessaryMove(), smellFinders);
+            registerSmellFinder(new UnnecessaryRotation(),smellFinders);
+            registerSmellFinder(new UnnecessarySizeChange(), smellFinders);
             registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
             registerSmellFinder(new UnnecessaryTime(), smellFinders);
             registerSmellFinder(new UnusedCustomBlock(), smellFinders);
