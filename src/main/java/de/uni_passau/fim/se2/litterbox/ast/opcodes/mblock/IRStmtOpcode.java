@@ -1,18 +1,18 @@
-package de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock;
 
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 
-public enum ResetStmtOpcode implements Opcode {
-    // codey
-    reset_angle,
-    show_reset_time,
+public enum IRStmtOpcode implements Opcode {
+    comm_send_ir,
+    comm_learn_with_time,
+    comm_send_learn_result,
 
     // mcore
-    reset_timer;
+    send_ir;
 
     public static boolean contains(String opcode) {
         opcode = Opcode.removePrefix(opcode);
-        for (ResetStmtOpcode value : ResetStmtOpcode.values()) {
+        for (IRStmtOpcode value : IRStmtOpcode.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }
@@ -20,7 +20,7 @@ public enum ResetStmtOpcode implements Opcode {
         return false;
     }
 
-    public static ResetStmtOpcode getOpcode(String opcode) {
+    public static IRStmtOpcode getOpcode(String opcode) {
         opcode = Opcode.removePrefix(opcode);
         return valueOf(opcode);
     }

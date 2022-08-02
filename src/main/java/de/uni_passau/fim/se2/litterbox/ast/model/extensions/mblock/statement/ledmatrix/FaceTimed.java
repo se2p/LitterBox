@@ -8,7 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDMat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.LEDMatrixStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.LEDMatrixStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;

@@ -6,7 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.EmotionStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.EmotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;

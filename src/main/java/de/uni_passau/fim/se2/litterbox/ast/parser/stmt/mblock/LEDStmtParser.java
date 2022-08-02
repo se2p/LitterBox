@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mblock;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -9,7 +9,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDPos
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.LEDStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.LEDStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
