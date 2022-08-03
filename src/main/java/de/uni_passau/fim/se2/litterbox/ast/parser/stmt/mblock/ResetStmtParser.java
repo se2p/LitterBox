@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mblock;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -7,7 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.res
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.ResetStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.ResetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 

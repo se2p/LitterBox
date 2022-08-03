@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mblock;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -8,7 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.IRStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.IRStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;

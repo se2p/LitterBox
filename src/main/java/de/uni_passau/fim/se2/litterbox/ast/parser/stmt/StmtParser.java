@@ -25,9 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
-import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mblock.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 

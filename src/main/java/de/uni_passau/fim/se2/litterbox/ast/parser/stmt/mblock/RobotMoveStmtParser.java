@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.parser.stmt.mblock;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -6,7 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock.RobotMoveStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.RobotMoveStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;

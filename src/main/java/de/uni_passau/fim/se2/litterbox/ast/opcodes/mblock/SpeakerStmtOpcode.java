@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.opcodes.mBlock;
+package de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock;
 
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 
