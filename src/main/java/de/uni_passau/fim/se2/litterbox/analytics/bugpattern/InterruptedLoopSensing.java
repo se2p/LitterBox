@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundU
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -338,7 +339,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -356,7 +357,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Touching node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -366,7 +367,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsMouseDown node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -376,7 +377,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -386,7 +387,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -396,7 +397,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(DistanceTo node) {
-        if (!checkingVariable && !checkingStop && inCondition) {
+        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
             visitOuter = true;
             getStmtList(node).accept(this);
@@ -417,7 +418,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        if (!checkingVariable && !checkingStop && insideEquals) {
+        if (!checkingVariable && !checkingStop && insideEquals && !visitOuter) {
             sensingOther = true;
             variableName = node.getParentNode();
         }
@@ -425,7 +426,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ItemOfVariable node) {
-        if (!checkingVariable && !checkingStop && insideEquals) {
+        if (!checkingVariable && !checkingStop && insideEquals && !visitOuter) {
             sensingOther = true;
             variableName = node.getIdentifier();
         }
@@ -442,6 +443,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(StopThisScript node) {
         if (checkingStop) {
             hasStop = true;
+        }
+    }
+
+    @Override
+    public void visit(WaitUntil node) {
+        if (!visitOuter) {
+            visitChildren(node);
         }
     }
 
