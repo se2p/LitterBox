@@ -1840,11 +1840,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SpriteTouchable node) {
-        emitNoSpace("(");
-        // TODO: Why is the signature a StringExpr if it is always set to a StringLiteral
-        StringLiteral literal = (StringLiteral) node.getStringExpr();
-        emitNoSpace(literal.getText());
-        emitNoSpace(" v)");
+        if (node.getStringExpr() instanceof StringLiteral) {
+            emitNoSpace("(");
+            StringLiteral literal = (StringLiteral) node.getStringExpr();
+            emitNoSpace(literal.getText());
+            emitNoSpace(" v)");
+        } else {
+            node.getStringExpr().accept(this);
+        }
     }
 
     @Override
