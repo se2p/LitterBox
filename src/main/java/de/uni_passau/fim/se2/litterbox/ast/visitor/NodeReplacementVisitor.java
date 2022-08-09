@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -39,8 +36,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoic
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.Language;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.Voice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -59,6 +58,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
@@ -79,10 +79,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
@@ -393,7 +390,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ColorLiteral node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -545,7 +546,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ColorTouchingColor node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -553,7 +558,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Touching node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -641,7 +650,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Next node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof ElementChoice) {
+                return replacement;
+            } else {
+                return new WithExpr((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -649,7 +662,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Prev node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof ElementChoice) {
+                return replacement;
+            } else {
+                return new WithExpr((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -657,7 +674,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Random node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof ElementChoice) {
+                return replacement;
+            } else {
+                return new WithExpr((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -665,7 +686,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(WithExpr node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof ElementChoice) {
+                return replacement;
+            } else {
+                return new WithExpr((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -697,7 +722,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(StringContains node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -705,7 +734,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(IsKeyPressed node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -713,7 +746,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(IsMouseDown node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -721,7 +758,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(UnspecifiedBoolExpr node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -729,7 +770,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(FromNumber node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -737,7 +782,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Add node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -745,7 +794,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(AsNumber node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -753,7 +806,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Current node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -761,7 +818,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(DaysSince2000 node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -769,7 +830,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(DistanceTo node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -777,7 +842,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Div node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -785,7 +854,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(IndexOf node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -793,7 +866,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(LengthOfString node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -801,7 +878,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(LengthOfVar node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -809,7 +890,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Loudness node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -817,7 +902,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Minus node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -825,7 +914,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Mod node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -833,7 +926,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(MouseX node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -841,7 +938,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(MouseY node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -849,7 +950,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Mult node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -865,7 +970,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(NumFunctOf node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -873,7 +982,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(PickRandom node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -881,7 +994,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Round node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -889,7 +1006,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Timer node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -897,7 +1018,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(UnspecifiedNumExpr node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -905,7 +1030,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(AsString node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -913,7 +1042,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(AttributeOf node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -921,7 +1054,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ItemOfVariable node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -929,7 +1066,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Join node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -937,7 +1078,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(LetterOf node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -945,7 +1090,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(UnspecifiedStringExpr node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -953,7 +1102,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Username node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -961,7 +1114,15 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(MousePos node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Position) {
+                return replacement;
+            } else {
+                if (replacement instanceof StringExpr) {
+                    return new FromExpression((StringExpr) replacement, new NoBlockMetadata());
+                } else {
+                    return new FromExpression(new AsString((Expression) replacement), new NoBlockMetadata());
+                }
+            }
         }
         return super.visit(node);
     }
@@ -969,7 +1130,15 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(FromExpression node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Position) {
+                return replacement;
+            } else {
+                if (replacement instanceof StringExpr) {
+                    return new FromExpression((StringExpr) replacement, new NoBlockMetadata());
+                } else {
+                    return new FromExpression(new AsString((Expression) replacement), new NoBlockMetadata());
+                }
+            }
         }
         return super.visit(node);
     }
@@ -977,7 +1146,15 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(RandomPos node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Position) {
+                return replacement;
+            } else {
+                if (replacement instanceof StringExpr) {
+                    return new FromExpression((StringExpr) replacement, new NoBlockMetadata());
+                } else {
+                    return new FromExpression(new AsString((Expression) replacement), new NoBlockMetadata());
+                }
+            }
         }
         return super.visit(node);
     }
@@ -1377,7 +1554,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Edge node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1385,7 +1566,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(MousePointer node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1393,7 +1578,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(SpriteTouchable node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1433,7 +1622,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(AsBool node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1441,7 +1634,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(AsTouchable node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Touchable) {
+                return replacement;
+            } else {
+                return new AsTouchable((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1473,7 +1670,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Costume node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1481,7 +1682,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Backdrop node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1489,7 +1694,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Direction node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1497,7 +1706,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(PositionX node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1505,7 +1718,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(PositionY node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1513,7 +1730,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Size node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1521,7 +1742,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Volume node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1529,7 +1754,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Answer node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1689,7 +1918,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(SpriteTouchingColor node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1721,7 +1954,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ListContains node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -1961,7 +2198,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ExprLanguage node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Language) {
+                return replacement;
+            } else {
+                return new ExprLanguage((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -1969,7 +2210,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(FixedLanguage node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Language) {
+                return replacement;
+            } else {
+                return new ExprLanguage((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -1993,7 +2238,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(FixedVoice node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Voice) {
+                return replacement;
+            } else {
+                return new ExprVoice((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
@@ -2001,7 +2250,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ExprVoice node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof Voice) {
+                return replacement;
+            } else {
+                return new ExprVoice((Expression) replacement, new NoBlockMetadata());
+            }
         }
         return super.visit(node);
     }
