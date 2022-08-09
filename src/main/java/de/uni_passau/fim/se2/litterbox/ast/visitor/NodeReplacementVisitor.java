@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
@@ -140,7 +141,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Equals node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -148,7 +153,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(LessThan node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -156,7 +165,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(BiggerThan node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -236,7 +249,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Not node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -244,7 +261,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(And node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -252,7 +273,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(Or node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -332,7 +357,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(StringLiteral node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof StringExpr) {
+                return replacement;
+            } else {
+                return new AsString((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -340,7 +369,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(BoolLiteral node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof BoolExpr) {
+                return replacement;
+            } else {
+                return new AsBool((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
@@ -348,7 +381,11 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(NumberLiteral node) {
         if (isTargetNode(node)) {
-            return replacement;
+            if (replacement instanceof NumExpr) {
+                return replacement;
+            } else {
+                return new AsNumber((Expression) replacement);
+            }
         }
         return super.visit(node);
     }
