@@ -124,7 +124,6 @@ java -jar Litterbox-1.8.jar --check --path <path/to/project.json> --detectors en
 
 A full list of available bug checkers can be retrieved using:
 
-
 ```
 java -jar Litterbox-1.8.jar --help
 ```
@@ -132,7 +131,14 @@ java -jar Litterbox-1.8.jar --help
 To select all bug patterns, you can also use the term `bugs` in the
 list; to select all code smell checks use `smells`.
 
+### Activating robot finders
 
+To activate finders for the mBlock and Codey Rocky robots set the flag
+in the litterbox.properties file to true.
+
+```
+issues.load_mblock=true
+```
 
 ### Collecting statistics
 
