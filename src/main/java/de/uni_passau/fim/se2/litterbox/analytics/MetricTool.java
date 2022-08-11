@@ -71,6 +71,7 @@ public class MetricTool {
             metricList.add(new InterproceduralCyclomaticComplexity<Program>());
             metricList.add(new InterproceduralSliceCoverage<Program>());
             metricList.add(new LengthLongestScript<Program>());
+            metricList.add(new ListBlockCountOnlyDirectList<Program>());
             metricList.add(new LooksBlockCount<Program>());
             metricList.add(new MostComplexScript<Program>());
             metricList.add(new MotionBlockCount<Program>());
@@ -89,6 +90,7 @@ public class MetricTool {
             metricList.add(new TokenEntropy<Program>());
             metricList.add(new VariableCount<Program>());
             metricList.add(new VariablesBlockCount<Program>());
+            metricList.add(new VariablesBlockCountOnlyDirectVariable<Program>());
             metricList.add(new WeightedMethodCount<Program>());
             metricList.add(new WeightedMethodCountStrict<Program>());
         }
