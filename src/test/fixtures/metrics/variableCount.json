@@ -1,0 +1,260 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "ETX..%~U$g$,q;5Q.as5": {
+                    "opcode": "data_setvariableto",
+                    "next": "ADTaYlPQ^y+G%!{d6.:{",
+                    "parent": "B-p8v*?vbw@-2G(Aks+U",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ADTaYlPQ^y+G%!{d6.:{": {
+                    "opcode": "data_changevariableby",
+                    "next": "}^^O5eOX_0guEZ(Qd]_U",
+                    "parent": "ETX..%~U$g$,q;5Q.as5",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "}^^O5eOX_0guEZ(Qd]_U": {
+                    "opcode": "data_showvariable",
+                    "next": "9)n-J;h]fcw]*Q:~M{gi",
+                    "parent": "ADTaYlPQ^y+G%!{d6.:{",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "9)n-J;h]fcw]*Q:~M{gi": {
+                    "opcode": "data_hidevariable",
+                    "next": "%;zWJKn?rAxRK6g_v)JX",
+                    "parent": "}^^O5eOX_0guEZ(Qd]_U",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B-p8v*?vbw@-2G(Aks+U": {
+                    "opcode": "motion_movesteps",
+                    "next": "ETX..%~U$g$,q;5Q.as5",
+                    "parent": "Pi:5do{7Gbfhw+%c},R,",
+                    "inputs": {
+                        "STEPS": [
+                            3,
+                            [
+                                12,
+                                "my variable",
+                                "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                            ],
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Pi:5do{7Gbfhw+%c},R,": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "B-p8v*?vbw@-2G(Aks+U",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 168,
+                    "y": 268
+                },
+                "%;zWJKn?rAxRK6g_v)JX": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": "9)n-J;h]fcw]*Q:~M{gi",
+                    "inputs": {
+                        "DURATION": [
+                            3,
+                            "6Ee4_bom#(|yn#U,Ppmx",
+                            [
+                                5,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6Ee4_bom#(|yn#U,Ppmx": {
+                    "opcode": "sensing_of",
+                    "next": null,
+                    "parent": "%;zWJKn?rAxRK6g_v)JX",
+                    "inputs": {
+                        "OBJECT": [
+                            1,
+                            "#feKim6#lcn4l)CNoHYa"
+                        ]
+                    },
+                    "fields": {
+                        "PROPERTY": [
+                            "my variable",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#feKim6#lcn4l)CNoHYa": {
+                    "opcode": "sensing_of_object_menu",
+                    "next": null,
+                    "parent": "6Ee4_bom#(|yn#U,Ppmx",
+                    "inputs": {},
+                    "fields": {
+                        "OBJECT": [
+                            "_stage_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.0.1",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+    }
+}
