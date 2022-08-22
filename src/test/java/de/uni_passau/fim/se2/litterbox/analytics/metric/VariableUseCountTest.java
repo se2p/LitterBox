@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class VariablesBlockCountOnlyDirectVariableTest implements JsonTest {
+public class VariableUseCountTest implements JsonTest {
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(1, new VariablesBlockCountOnlyDirectVariable<>(), "./src/test/fixtures/metrics/variableCount.json");
+        assertThatMetricReports(1, new VariableUseCount<>(), "./src/test/fixtures/metrics/variableCount.json");
     }
 }

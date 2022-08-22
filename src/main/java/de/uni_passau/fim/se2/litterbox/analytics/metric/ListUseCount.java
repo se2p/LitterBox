@@ -21,18 +21,21 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class VariablesBlockCountOnlyDirectVariable<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
-    public static final String NAME = "variables_block_count_only_direct_variable";
+public class ListUseCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+    public static final String NAME = "list_block_count_only_direct_list";
 
     private int count = 0;
     private boolean insideScript = false;
@@ -61,32 +64,67 @@ public class VariablesBlockCountOnlyDirectVariable<T extends ASTNode> implements
     }
 
     @Override
-    public void visit(SetVariableTo node) {
+    public void visit(ScratchList node) {
         if (insideScript || insideProcedure) {
-            node.getExpr().accept(this);
+            count++;
         }
     }
 
     @Override
-    public void visit(ChangeVariableBy node) {
+    public void visit(AddTo node) {
+        node.getString().accept(this);
+    }
+
+    @Override
+    public void visit(DeleteAllOf node) {
+        //NOP
+    }
+
+    @Override
+    public void visit(DeleteOf node) {
+        node.getNum().accept(this);
+    }
+
+    @Override
+    public void visit(InsertAt node) {
+        node.getString().accept(this);
+        node.getIndex().accept(this);
+    }
+
+    @Override
+    public void visit(ReplaceItem node) {
+        node.getString().accept(this);
+        node.getIndex().accept(this);
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        node.getNum().accept(this);
+    }
+
+    @Override
+    public void visit(IndexOf node) {
         node.getExpr().accept(this);
     }
 
     @Override
-    public void visit(ShowVariable node) {
+    public void visit(LengthOfVar node) {
         //NOP
     }
 
     @Override
-    public void visit(HideVariable node) {
+    public void visit(ListContains node) {
+        node.getElement().accept(this);
+    }
+
+    @Override
+    public void visit(ShowList node) {
         //NOP
     }
 
     @Override
-    public void visit(Variable node) {
-        if (insideScript || insideProcedure) {
-            count++;
-        }
+    public void visit(HideList node) {
+        //NOP
     }
 
     @Override
@@ -99,4 +137,3 @@ public class VariablesBlockCountOnlyDirectVariable<T extends ASTNode> implements
         return NAME;
     }
 }
-

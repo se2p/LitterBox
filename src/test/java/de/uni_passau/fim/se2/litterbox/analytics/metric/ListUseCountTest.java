@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class ListBlockCountOnlyDirectListTest implements JsonTest {
+public class ListUseCountTest implements JsonTest {
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(1, new ListBlockCountOnlyDirectList<>(), "./src/test/fixtures/metrics/listCount.json");
+        assertThatMetricReports(1, new ListUseCount<>(), "./src/test/fixtures/metrics/listCount.json");
     }
 }
