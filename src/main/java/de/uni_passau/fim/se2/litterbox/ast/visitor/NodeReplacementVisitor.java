@@ -362,14 +362,12 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(NumberLiteral node) {
         if (isTargetNode(node)) {
-
             return replaceNumExpression();
         }
         return super.visit(node);
     }
 
     private ASTNode replaceNumExpression() {
-
         if (replacement instanceof NumExpr) {
             return replacement;
         } else {
@@ -380,14 +378,12 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     @Override
     public ASTNode visit(ColorLiteral node) {
         if (isTargetNode(node)) {
-
             return replaceTouchableNode();
         }
         return super.visit(node);
     }
 
     private ASTNode replaceTouchableNode() {
-
         if (replacement instanceof Touchable) {
             return replacement;
         } else {
@@ -541,12 +537,18 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
 
     @Override
     public ASTNode visit(ColorTouchingColor node) {
-        return replaceBooleanNode();
+        if (isTargetNode(node)) {
+            return replaceBooleanNode();
+        }
+        return super.visit(node);
     }
 
     @Override
     public ASTNode visit(Touching node) {
-        return replaceBooleanNode();
+        if (isTargetNode(node)) {
+            return replaceBooleanNode();
+        }
+        return super.visit(node);
     }
 
     @Override
@@ -638,7 +640,6 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     }
 
     private ASTNode replaceElementChoiceNode(ElementChoice node) {
-
         if (replacement instanceof ElementChoice) {
             return replacement;
         } else {
