@@ -131,13 +131,13 @@ java -jar Litterbox-1.8.jar --help
 To select all bug patterns, you can also use the term `bugs` in the
 list; to select all code smell checks use `smells`.
 
-### Activating robot finders
+### Deactivating robot finders
 
-To activate finders for the mBlock and Codey Rocky robots set the flag
-in the litterbox.properties file to true.
+To deactivate finders for the mBlock and Codey Rocky robots set the flag
+in the litterbox.properties file to false.
 
 ```
-issues.load_mblock=true
+issues.load_mblock=false
 ```
 
 ### Collecting statistics
@@ -207,12 +207,21 @@ in Proceedings of the IEEE/ACM 43rd International Conference on Software Enginee
 To learn more about bug patterns, see the following paper:
 
 C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
- the 25th Annual Conference on Innovation and Technology in Computer
- Science Education (ITiCSE), pages 89-95, ACM, 2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
+the 25th Annual Conference on Innovation and Technology in Computer
+Science Education (ITiCSE), pages 89-95, ACM,
+2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
 
 To learn more about code perfumes, see the following paper:
 
-F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM, 2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
+F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage
+Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM,
+2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
+
+To learn more about code patterns in mBlock robot programs, see the following paper:
+
+F. Obermüller, R. Pernerstorfer, L. Bailey, U. Heuer, and G. Fraser, "Common Patterns in Block-Based Robot Programs",
+in Proceedings of the 17th Workshop in Primary and Secondary Computing Education (WiPSCE ’22). ACM,
+2022. [https://doi.org/10.1145/3556787.3556859](https://doi.org/10.1145/3556787.3556859)
 
 ## Contributors
 
