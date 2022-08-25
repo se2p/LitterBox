@@ -56,8 +56,8 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(UntilStmt node) {
-        checkPosition(node);
         loopStack.push(node);
+        checkPosition(node);
         visitChildren(node);
         loopStack.pop();
     }
