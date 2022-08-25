@@ -84,4 +84,9 @@ public class ForeverInsideLoopTest implements JsonTest {
         Set<Issue> refactoredIssues = finder.check(refactoredProgram);
         assertThat(refactoredIssues).isEmpty();
     }
+
+    @Test
+    public void testForeverInLoopBlockBeforeUntil() throws IOException, ParsingException {
+        assertThatFinderReports(1, new ForeverInsideLoop(), "./src/test/fixtures/bugpattern/foreverInsideLoopBlockBeforeUntil.json");
+    }
 }
