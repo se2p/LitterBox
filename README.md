@@ -134,7 +134,8 @@ list; to select all code smell checks use `smells`.
 ### Deactivating robot finders
 
 To deactivate finders for the mBlock and Codey Rocky robots set the flag
-in the litterbox.properties file to false.
+in the litterbox.properties file to false. This can reduce the run time of
+the analysis and the size of a resulting CSV file.
 
 ```
 issues.load_mblock=false
