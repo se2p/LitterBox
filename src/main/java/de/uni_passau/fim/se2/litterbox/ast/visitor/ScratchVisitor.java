@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -289,7 +290,7 @@ public interface ScratchVisitor {
      * @param node UntilStmt Node of which the children will be iterated
      */
     default void visit(UntilStmt node) {
-        visit((ControlStmt) node);
+        visit((LoopStmt) node);
     }
 
     /**
@@ -380,7 +381,7 @@ public interface ScratchVisitor {
      * @param node RepeatForeverStmt Node of which the children will be iterated
      */
     default void visit(RepeatForeverStmt node) {
-        visit((ControlStmt) node);
+        visit((LoopStmt) node);
     }
 
     /**
@@ -445,7 +446,7 @@ public interface ScratchVisitor {
      * @param node RepeatTimesStmt Node of which the children will be iterated
      */
     default void visit(RepeatTimesStmt node) {
-        visit((ControlStmt) node);
+        visit((LoopStmt) node);
     }
 
     /**
@@ -3384,6 +3385,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link LoopStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node LoopStmt  Node of which the children will be iterated
+     */
+    default void visit(LoopStmt node) {
+        visit((ControlStmt) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link ExtensionBlock}.
      *
      * <p>
@@ -3402,6 +3416,14 @@ public interface ScratchVisitor {
             ((PenExtensionVisitor) this).visit(node);
         } else {
             visit((Stmt) node);
+        }
+    }
+
+    default void visit(MBlockNode node) {
+        if (this instanceof MBlockVisitor) {
+            ((MBlockVisitor) this).visit(node);
+        } else {
+            visitDefaultVisitor(node);
         }
     }
 

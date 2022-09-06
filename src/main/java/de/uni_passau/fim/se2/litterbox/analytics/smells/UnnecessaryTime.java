@@ -103,7 +103,7 @@ public class UnnecessaryTime extends AbstractIssueFinder {
     private boolean checkTime(NumExpr node) {
         if (node instanceof NumberLiteral) {
             NumberLiteral num = (NumberLiteral) node;
-            return num.getValue() == 0;
+            return num.getValue() <= 0;
         } else if (node instanceof AsNumber) {
             if (((AsNumber) node).getOperand1() instanceof StringLiteral) {
                 return ((StringLiteral) ((AsNumber) node).getOperand1()).getText().equals("");

@@ -1,0 +1,388 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "(1Z~8~)G[7g#?(!HAZ7%": [
+                    "aas",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "off",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 60,
+                    "rotationCenterY": 60
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "=7#oNH2WCFyhhBg(U(Dw": {
+                    "opcode": "codey.meos_when_button_press",
+                    "next": "B%/RY?d2p,*(^WSJU^2}",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 74,
+                    "y": 327
+                },
+                "UK::WEP111hS[tA_rr*L": {
+                    "opcode": "codey.meos_detect_volume",
+                    "next": null,
+                    "parent": "YsZi|z4ml6|RJ##.fKc=",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "YsZi|z4ml6|RJ##.fKc=": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "B%/RY?d2p,*(^WSJU^2}",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "UK::WEP111hS[tA_rr*L",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B%/RY?d2p,*(^WSJU^2}": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "=7#oNH2WCFyhhBg(U(Dw",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "YsZi|z4ml6|RJ##.fKc="
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "I2jh-g6=2)P}xO2W+2J5"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "I2jh-g6=2)P}xO2W+2J5": {
+                    "opcode": "codey.meos_show_led_matrix_turn_off",
+                    "next": null,
+                    "parent": "B%/RY?d2p,*(^WSJU^2}",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "mcore",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "$|-7M=@SK[[K|rZ?q}}r": {
+                    "opcode": "mcore.mcore_when_board_button",
+                    "next": "`-o:B?amlDlinwc9Pd~V",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "IS_PRESS": [
+                            "0",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 202,
+                    "y": 213
+                },
+                "C_eXLrI8fHE.Z)|Sg*LQ": {
+                    "opcode": "mcore.mcore_show_face_time",
+                    "next": null,
+                    "parent": "`-o:B?amlDlinwc9Pd~V",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "PORT": [
+                            "1",
+                            null
+                        ],
+                        "FACE_PANEL": [
+                            "00000000000000000011110001111110011111100011110000000000000000000000000000000000001111000111111001111110001111000000000000000000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "`-o:B?amlDlinwc9Pd~V": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "$|-7M=@SK[[K|rZ?q}}r",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            ";z`J|AN*lc=dj+9ZAio("
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "C_eXLrI8fHE.Z)|Sg*LQ"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";z`J|AN*lc=dj+9ZAio(": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "`-o:B?amlDlinwc9Pd~V",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "COrLg(;[f!dxVjjf^vHU",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "COrLg(;[f!dxVjjf^vHU": {
+                    "opcode": "mcore.mcore_detect_external_ultrasonic",
+                    "next": null,
+                    "parent": ";z`J|AN*lc=dj+9ZAio(",
+                    "inputs": {},
+                    "fields": {
+                        "PORT": [
+                            "3",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "06d70cb3d65abe36615f0d51e08c3404",
+                    "name": "mcore",
+                    "bitmapResolution": 1,
+                    "md5ext": "06d70cb3d65abe36615f0d51e08c3404.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "(1Z~8~)G[7g#?(!HAZ7%",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "aas"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "blocksInfo": [
+                {
+                    "id": "(1Z~8~)G[7g#?(!HAZ7%",
+                    "opcode": "data_variable",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": {
+                            "name": "VARIABLE",
+                            "id": "(1Z~8~)G[7g#?(!HAZ7%",
+                            "value": "aas",
+                            "variableType": ""
+                        }
+                    },
+                    "next": null,
+                    "topLevel": true,
+                    "parent": null,
+                    "shadow": false,
+                    "x": "0",
+                    "y": "0",
+                    "isMonitored": true,
+                    "targetId": null
+                }
+            ],
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "codey.meos",
+        "mcore.mcore"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
+    }
+}

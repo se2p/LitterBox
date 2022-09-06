@@ -1,0 +1,1572 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "797b03bdb8cf6ccfc30c0692d533d998",
+                    "name": "backdrop1",
+                    "bitmapResolution": 2,
+                    "md5ext": "797b03bdb8cf6ccfc30c0692d533d998.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": "fr"
+        },
+        {
+            "isStage": false,
+            "name": "codey",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "|lvezl,nSnEf;Bv1w6Pi": {
+                    "opcode": "codey.meos_when_board_launch",
+                    "next": "_R.li~;Pbmcpue#{GHro",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 39,
+                    "y": -365
+                },
+                "cJT=K,Koufb.bGOdVI1?": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SUBSTACK": [
+                            1,
+                            null
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 901,
+                    "y": 1013
+                },
+                "2Xn!g#?HU)!pPTkZ7./G": {
+                    "opcode": "codey.meos_detect_rotatex_angle",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 964,
+                    "y": 942
+                },
+                "WD?0*,T|s?`HkL@c_Q`z": {
+                    "opcode": "codey.meos_detect_rotatey_angle",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 828,
+                    "y": 865
+                },
+                ",i5jTQR9lsJDUbYEVFA1": {
+                    "opcode": "codey.meos_detect_rotatez_angle",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 389,
+                    "y": 774
+                },
+                "KlwZ`AyW(QeL]=DNfE8.": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 915,
+                    "y": 1185
+                },
+                "_R.li~;Pbmcpue#{GHro": {
+                    "opcode": "iot.iot_connect_network_new",
+                    "next": "Up|HtWdb/PG7rrn;?%V$",
+                    "parent": "|lvezl,nSnEf;Bv1w6Pi",
+                    "inputs": {
+                        "SSID": [
+                            1,
+                            [
+                                10,
+                                "ussvaillant"
+                            ]
+                        ],
+                        "PASSWORD": [
+                            1,
+                            [
+                                10,
+                                "6869386368"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "upj`eG#U)!g(m@(C*wL9": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "4",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"géolocalisation\",\"\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 915,
+                    "y": 748
+                },
+                "^HECg}g5M=^n`G)k6$W!": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "e=}ZJQIKB[;ZcCz0ZyO]",
+                    "parent": "Up|HtWdb/PG7rrn;?%V$",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "e=}ZJQIKB[;ZcCz0ZyO]": {
+                    "opcode": "codey.meos_reset_angle",
+                    "next": "d8/TZd8E[2^;WXt`j|_[",
+                    "parent": "^HECg}g5M=^n`G)k6$W!",
+                    "inputs": {},
+                    "fields": {
+                        "AXIS": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_eDN_UWFPe/kvdPeY?o8": {
+                    "opcode": "control_if",
+                    "next": "uDm.%0@m@zKNcM8L_$s5",
+                    "parent": "s1$idau!H~wR/0Y31~~:",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "euw34PH7M50@mw-R93%z"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "$($FEJl,ntTY4LvCY;~l"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "euw34PH7M50@mw-R93%z": {
+                    "opcode": "iot.iot_if_connect_network",
+                    "next": null,
+                    "parent": "_eDN_UWFPe/kvdPeY?o8",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$($FEJl,ntTY4LvCY;~l": {
+                    "opcode": "codey.meos_show_play_note_with_string",
+                    "next": null,
+                    "parent": "_eDN_UWFPe/kvdPeY?o8",
+                    "inputs": {
+                        "SOUNDBEAT": [
+                            1,
+                            [
+                                4,
+                                "0.03"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "SOUNDNOTE": [
+                            "103",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uyqeYQOpd,O4ViA~hq#^": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "Sdk?4uSHr2$F6*cyFg@^",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "py2-e6IyC9c_QfgVzG1S"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "py2-e6IyC9c_QfgVzG1S": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "?W)5U*.dw{p9ar]E3(Hg",
+                    "parent": "uyqeYQOpd,O4ViA~hq#^",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "}fmb5xX4_e2R{uM)k{YN",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "}fmb5xX4_e2R{uM)k{YN": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": "py2-e6IyC9c_QfgVzG1S",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "4",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"90771381\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?W)5U*.dw{p9ar]E3(Hg": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "eGbDQS$^F%oI`R;~vq7k",
+                    "parent": "py2-e6IyC9c_QfgVzG1S",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "4"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "k_P{M_IA@wM~cGUTXnAb": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "aL=+lN}z*g^r6yeQAx+6",
+                    "parent": "ZXyd%3v-Z5IGXn$oR^se",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "49e`lrC/V`cr^PDQSu`K",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*f3V8h2/fGP%7P^B1XL0": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "1Vt35BocD7GE$]y/.eL5",
+                    "parent": "%6xAL-c(_K:)v[|HwxYl",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "IFR/=Vw9lUe)-1kcOFEI",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*0F|g^V[]6aw%2I$R4l:": {
+                    "opcode": "iot.iot_sun",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "sunrise",
+                            null
+                        ],
+                        "TIME": [
+                            "time",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 776,
+                    "y": 93
+                },
+                "UMsSizE^-*]m7pm*JP3{": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 782,
+                    "y": 453
+                },
+                "1Vt35BocD7GE$]y/.eL5": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "-J{Z6Da)*|u9-ylUC+Bj",
+                    "parent": "*f3V8h2/fGP%7P^B1XL0",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "IFR/=Vw9lUe)-1kcOFEI": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": "*f3V8h2/fGP%7P^B1XL0",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "0",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "eGbDQS$^F%oI`R;~vq7k": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "%6xAL-c(_K:)v[|HwxYl",
+                    "parent": "?W)5U*.dw{p9ar]E3(Hg",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "max"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "-J{Z6Da)*|u9-ylUC+Bj": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "zs0K:P~ebk[a3*-oJwf,",
+                    "parent": "1Vt35BocD7GE$]y/.eL5",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "min"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "V_HMGg$3T!yBEG-hDb;w": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "Fus$7SZGw0_-#,tA_UUm",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 682,
+                    "y": 572
+                },
+                "Fus$7SZGw0_-#,tA_UUm": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": "V_HMGg$3T!yBEG-hDb;w",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "0",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Wxlu?qV]I{2Z9oHN{ac`": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "uO8kk4#Vc@FR}N,l^aw~",
+                    "parent": "zs0K:P~ebk[a3*-oJwf,",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "spbL$K~}iw!1Qs;]0,`4",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "spbL$K~}iw!1Qs;]0,`4": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": "Wxlu?qV]I{2Z9oHN{ac`",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "1",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uO8kk4#Vc@FR}N,l^aw~": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "GGLmQ{Ez)?BNU|zP4i6X",
+                    "parent": "Wxlu?qV]I{2Z9oHN{ac`",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "49e`lrC/V`cr^PDQSu`K": {
+                    "opcode": "iot.iot_air",
+                    "next": null,
+                    "parent": "k_P{M_IA@wM~cGUTXnAb",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "aqi",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Rd934 Coulommiers, Paris\",\"3094\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "GGLmQ{Ez)?BNU|zP4i6X": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "ZXyd%3v-Z5IGXn$oR^se",
+                    "parent": "uO8kk4#Vc@FR}N,l^aw~",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "air"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "HI0enHM.%K2_p?p`,A@w": {
+                    "opcode": "iot.iot_weather",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "0",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 765,
+                    "y": 150
+                },
+                "aL=+lN}z*g^r6yeQAx+6": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "3%L!YaDd|RK7dIsNGQ^g",
+                    "parent": "k_P{M_IA@wM~cGUTXnAb",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "d8/TZd8E[2^;WXt`j|_[": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "Ik{K`GOwSfwen?8^i.f+",
+                    "parent": "e=}ZJQIKB[;ZcCz0ZyO]",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "bat"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nBS:5@os}TBk;x#^e3@]": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "s1$idau!H~wR/0Y31~~:",
+                    "parent": "Ik{K`GOwSfwen?8^i.f+",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "pHuAN!E+B6,6h^Xu8($I",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "IZO:WfW(04Vh1^4Hk_v6": {
+                    "opcode": "codey.meos_dump_energy",
+                    "next": null,
+                    "parent": "6JgTW+Y!m/|j;(]uoG=)",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3%L!YaDd|RK7dIsNGQ^g": {
+                    "opcode": "control_if",
+                    "next": "|;P}pIcI*?72{+8KZ?dG",
+                    "parent": "aL=+lN}z*g^r6yeQAx+6",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "6JgTW+Y!m/|j;(]uoG=)"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "YyiiX$VUC8V{bl$PB[f_"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "pHuAN!E+B6,6h^Xu8($I": {
+                    "opcode": "codey.meos_dump_energy",
+                    "next": null,
+                    "parent": "nBS:5@os}TBk;x#^e3@]",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6JgTW+Y!m/|j;(]uoG=)": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": "3%L!YaDd|RK7dIsNGQ^g",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "IZO:WfW(04Vh1^4Hk_v6",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "11"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "YyiiX$VUC8V{bl$PB[f_": {
+                    "opcode": "codey.meos_show_play_hz",
+                    "next": "u@1owj-pgr3tS)@`ND7}",
+                    "parent": "3%L!YaDd|RK7dIsNGQ^g",
+                    "inputs": {
+                        "HZ": [
+                            1,
+                            [
+                                4,
+                                "70"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "u@1owj-pgr3tS)@`ND7}": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": null,
+                    "parent": "YyiiX$VUC8V{bl$PB[f_",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "battery low   "
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "|;P}pIcI*?72{+8KZ?dG": {
+                    "opcode": "control_if_else",
+                    "next": null,
+                    "parent": "3%L!YaDd|RK7dIsNGQ^g",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "^2D$v=`yYKn/,Z3h8BCn"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "H#I_s:,KJlCvpK1Be3/="
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "YJ`Q|4/=+E@bv~ota/$R"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "^2D$v=`yYKn/,Z3h8BCn": {
+                    "opcode": "iot.iot_if_connect_network",
+                    "next": null,
+                    "parent": "|;P}pIcI*?72{+8KZ?dG",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "H#I_s:,KJlCvpK1Be3/=": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "=)9=1izrn`U+R.(:Lbd7",
+                    "parent": "|;P}pIcI*?72{+8KZ?dG",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "connexion lost ! ! ! "
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5D5ksG{~t;8T`:UT9Du8": {
+                    "opcode": "codey.meos_when_volume_over",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SOUNDVOLUME": [
+                            1,
+                            [
+                                4,
+                                "5"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MENU_LIST": [
+                            "on_time_out",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 795,
+                    "y": 1924
+                },
+                "Eb-r~*s,}x9~d$gzV=*U": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 798,
+                    "y": 2024
+                },
+                "YJ`Q|4/=+E@bv~ota/$R": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": "|;P}pIcI*?72{+8KZ?dG",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.01"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "=)9=1izrn`U+R.(:Lbd7": {
+                    "opcode": "codey.meos_show_play_hz",
+                    "next": "Xh~qkCsQ=g*Y~C1qiqKZ",
+                    "parent": "H#I_s:,KJlCvpK1Be3/=",
+                    "inputs": {
+                        "HZ": [
+                            1,
+                            [
+                                4,
+                                "40"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%6xAL-c(_K:)v[|HwxYl": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "*f3V8h2/fGP%7P^B1XL0",
+                    "parent": "eGbDQS$^F%oI`R;~vq7k",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "zs0K:P~ebk[a3*-oJwf,": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "Wxlu?qV]I{2Z9oHN{ac`",
+                    "parent": "-J{Z6Da)*|u9-ylUC+Bj",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZXyd%3v-Z5IGXn$oR^se": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "k_P{M_IA@wM~cGUTXnAb",
+                    "parent": "GGLmQ{Ez)?BNU|zP4i6X",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "|;o-cw@+^52Xl0u^jp4q": {
+                    "opcode": "codey.meos_show_reset_time",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 912,
+                    "y": 1860
+                },
+                "Xh~qkCsQ=g*Y~C1qiqKZ": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": "=)9=1izrn`U+R.(:Lbd7",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "8"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "s1$idau!H~wR/0Y31~~:": {
+                    "opcode": "control_wait",
+                    "next": "_eDN_UWFPe/kvdPeY?o8",
+                    "parent": "nBS:5@os}TBk;x#^e3@]",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Ik{K`GOwSfwen?8^i.f+": {
+                    "opcode": "control_wait",
+                    "next": "nBS:5@os}TBk;x#^e3@]",
+                    "parent": "d8/TZd8E[2^;WXt`j|_[",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "IZ]Da9sP]C!L5FV!$[bg": {
+                    "opcode": "codey.meos_show_play_sound",
+                    "next": "Sdk?4uSHr2$F6*cyFg@^",
+                    "parent": "1nS@o_T|FA7@xJ1._%*I",
+                    "inputs": {},
+                    "fields": {
+                        "SOUNDLIST": [
+                            "prompt tone.wav",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Up|HtWdb/PG7rrn;?%V$": {
+                    "opcode": "codey.meos_show_led_matrix_face",
+                    "next": "^HECg}g5M=^n`G)k6$W!",
+                    "parent": "_R.li~;Pbmcpue#{GHro",
+                    "inputs": {},
+                    "fields": {
+                        "PANEL": [
+                            "00000000010000100001100000111100001111000001100001000010000000000001000100111010011110010111101001111001011110100011100000010000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1nS@o_T|FA7@xJ1._%*I": {
+                    "opcode": "codey.meos_show_led_matrix_face",
+                    "next": "IZ]Da9sP]C!L5FV!$[bg",
+                    "parent": "wrNRGkrpHs[oDgaS3:!l",
+                    "inputs": {},
+                    "fields": {
+                        "PANEL": [
+                            "00010000001111000011111000111110001111100011111000111100000100000001000000111100001111100011111000111110001111100011110000010000",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Sdk?4uSHr2$F6*cyFg@^": {
+                    "opcode": "control_wait",
+                    "next": "uyqeYQOpd,O4ViA~hq#^",
+                    "parent": "IZ]Da9sP]C!L5FV!$[bg",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uDm.%0@m@zKNcM8L_$s5": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "wrNRGkrpHs[oDgaS3:!l",
+                    "parent": "_eDN_UWFPe/kvdPeY?o8",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "welcome          "
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "wrNRGkrpHs[oDgaS3:!l": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "1nS@o_T|FA7@xJ1._%*I",
+                    "parent": "uDm.%0@m@zKNcM8L_$s5",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "4"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?damJ_7yd@jcG2#n^OWC": {
+                    "opcode": "codey.meos_when_button_press",
+                    "next": "MjrF,z2e8^Ls5G.Sw,rC",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BUTTONS": [
+                            "a",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -49,
+                    "y": 1976
+                },
+                "MjrF,z2e8^Ls5G.Sw,rC": {
+                    "opcode": "codey.meos_show_play_sound",
+                    "next": "X7WL3]H6LGLpb.5;7l~c",
+                    "parent": "?damJ_7yd@jcG2#n^OWC",
+                    "inputs": {},
+                    "fields": {
+                        "SOUNDLIST": [
+                            "switch.wav",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "XXkWZw({aVDTd-7?0b(5": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "rTVAmUj}!22d0~V%qFL@",
+                    "parent": "ZJ%2u9b-QJyT.e47aW-4",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "x5JOwWk]^q`j%qyu-f,+",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "x5JOwWk]^q`j%qyu-f,+": {
+                    "opcode": "iot.iot_sun",
+                    "next": null,
+                    "parent": "XXkWZw({aVDTd-7?0b(5",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "sunrise",
+                            null
+                        ],
+                        "TIME": [
+                            "time",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NXg-KG~75`0i($f3s1Jg": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 946,
+                    "y": 2251
+                },
+                "X7WL3]H6LGLpb.5;7l~c": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "ZJ%2u9b-QJyT.e47aW-4",
+                    "parent": "MjrF,z2e8^Ls5G.Sw,rC",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "leve"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "J;QPeb-mgUAa^pGol4A*": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 633,
+                    "y": 1707
+                },
+                "Dt8r)2Q@Jh=Ir0E)P8Zv": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                5,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 625,
+                    "y": 1820
+                },
+                "UEwd4N5VB~ODog8G.laS": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "5nzD{Q$fgz(-C=327RRh",
+                    "parent": "rTVAmUj}!22d0~V%qFL@",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "couche"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "4GlEuW@ZKD,6_z@J3.g6": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "]UrfFdK7[H#)oP~KQ:;d",
+                    "parent": "5nzD{Q$fgz(-C=327RRh",
+                    "inputs": {
+                        "STRING": [
+                            3,
+                            "#B|n%Nw*jiNsm1FRHX~u",
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#B|n%Nw*jiNsm1FRHX~u": {
+                    "opcode": "iot.iot_sun",
+                    "next": null,
+                    "parent": "4GlEuW@ZKD,6_z@J3.g6",
+                    "inputs": {},
+                    "fields": {
+                        "WEATHER_TYPE": [
+                            "sunset",
+                            null
+                        ],
+                        "TIME": [
+                            "time",
+                            null
+                        ],
+                        "LOCATION": [
+                            "[\"Paris, Ile-de-France, FR\",\"615702\"]",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZJ%2u9b-QJyT.e47aW-4": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "XXkWZw({aVDTd-7?0b(5",
+                    "parent": "X7WL3]H6LGLpb.5;7l~c",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "rTVAmUj}!22d0~V%qFL@": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "UEwd4N5VB~ODog8G.laS",
+                    "parent": "XXkWZw({aVDTd-7?0b(5",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5nzD{Q$fgz(-C=327RRh": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": "4GlEuW@ZKD,6_z@J3.g6",
+                    "parent": "UEwd4N5VB~ODog8G.laS",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "3"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "]UrfFdK7[H#)oP~KQ:;d": {
+                    "opcode": "codey.meos_show_pause_note",
+                    "next": null,
+                    "parent": "4GlEuW@ZKD,6_z@J3.g6",
+                    "inputs": {
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "o7_(B)b1j$I8J_st$ITv": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "other scripts in sprite",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 567,
+                    "y": 2106,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "true"
+                    }
+                },
+                "/AM^h!0eef4}~m_]n^Y@": {
+                    "opcode": "codey.meos_when_board_shake",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 721,
+                    "y": 2469
+                },
+                "WZ3U*jZ(@6R:-%OXMJ+u": {
+                    "opcode": "codey.meos_show_play_hz",
+                    "next": null,
+                    "parent": "z1=UK;EjS9u!1sYqDq..",
+                    "inputs": {
+                        "HZ": [
+                            1,
+                            [
+                                4,
+                                "709"
+                            ]
+                        ],
+                        "TIME": [
+                            1,
+                            [
+                                4,
+                                "0.09"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5cE9FIQt[xL/i_qA/(mD": {
+                    "opcode": "codey.meos_when_board_tilt",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "DIRECTION": [
+                            "left",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 669,
+                    "y": 2553
+                },
+                "~U]nq*Zxbxt.3eW]P8Pp": {
+                    "opcode": "codey.meos_when_volume_over",
+                    "next": "z1=UK;EjS9u!1sYqDq..",
+                    "parent": null,
+                    "inputs": {
+                        "SOUNDVOLUME": [
+                            1,
+                            [
+                                4,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "MENU_LIST": [
+                            "on_sound_over",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -52,
+                    "y": 2517
+                },
+                "z1=UK;EjS9u!1sYqDq..": {
+                    "opcode": "codey.meos_show_led_matrix",
+                    "next": "WZ3U*jZ(@6R:-%OXMJ+u",
+                    "parent": "~U]nq*Zxbxt.3eW]P8Pp",
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                " bruit    "
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "00000000000000000000000000000000",
+                    "name": "codey",
+                    "bitmapResolution": 1,
+                    "md5ext": "00000000000000000000000000000000.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Panda",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "11111111111111111111111111111111",
+                    "name": "Panda1",
+                    "bitmapResolution": 1,
+                    "md5ext": "11111111111111111111111111111111.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                },
+                {
+                    "assetId": "22222222222222222222222222222222",
+                    "name": "Panda2",
+                    "bitmapResolution": 1,
+                    "md5ext": "22222222222222222222222222222222.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 47,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "codey.meos",
+        "iot.iot"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.7.0-202006091540",
+        "agent": "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+    }
+}

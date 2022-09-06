@@ -20,4 +20,24 @@ package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
 public interface Opcode {
     String getName();
+
+    /**
+     * Method to remove the prefixes used by mBlock.
+     *
+     * @param longString original opcode
+     * @return opcode without the prefix
+     */
+    static String removePrefix(String longString) {
+        if (longString.contains(".")) {
+            // splits first part away
+            longString = longString.split("\\.")[1];
+            // removes second part of prefix depending on robot
+            longString = longString.replace("meos_", "");   // codey.meos
+            longString = longString.replace("codey_", "");  // codey.codey
+            longString = longString.replace("mcore_", "");  // mcore.mcore
+            longString = longString.replace("auriga_", ""); // auriga.auriga
+            longString = longString.replace("megapi_", ""); // megapi_robot.megapi; megapi.megapi
+        }
+        return longString;
+    }
 }

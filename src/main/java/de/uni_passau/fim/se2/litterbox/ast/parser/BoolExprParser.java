@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.LEDMatrixPosition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -45,6 +46,8 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,11 @@ import java.util.Optional;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BoolExprParser {
+    private static final String ORIENTATE_CAP = "ORIENTATE";
+    private static final String LINEFOLLOW_STATE_KEY = "LINEFOLLOW_STATE";
+    private static final String BLACK_WHITE_KEY = "BLACK_WHITE";
+    private static final String OPTION_KEY = "OPTION";
+    private static final String REMOTE_KEY_KEY = "REMOTE_KEY";
 
     /**
      * Returns true iff the input of the containing block is parsable as BoolExpr,
@@ -143,7 +151,7 @@ public class BoolExprParser {
         Preconditions
                 .checkArgument(BoolExprOpcode.contains(opcodeString),
                         opcodeString + " is not a BoolExprOpcode.");
-        final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
+        final BoolExprOpcode opcode = BoolExprOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         switch (opcode) {
 
@@ -223,6 +231,60 @@ public class BoolExprParser {
                         new ScratchList(new StrId((variableInfo.getVariableName()))));
                 contained = StringExprParser.parseStringExpr(state, exprBlock, ITEM_KEY, allBlocks);
                 return new ListContains(containingVar, contained, metadata);
+
+            case event_led_matrix_position_is_light:
+                NumExpr xCoordinate = NumExprParser.parseNumExpr(state, exprBlock, X, allBlocks);
+                NumExpr yCoordinate = NumExprParser.parseNumExpr(state, exprBlock, Y, allBlocks);
+                return new LEDMatrixPosition(xCoordinate, yCoordinate, metadata);
+
+            case event_button_pressed:
+                String buttonName = exprBlock.get(FIELDS_KEY).get(BUTTONS_KEY).get(0).asText();
+                RobotButton button = new RobotButton(buttonName);
+                return new RobotButtonPressed(button, metadata);
+
+            case event_connect_rocky:
+                return new ConnectRobot(metadata);
+
+            case event_is_shaked:
+                return new RobotShaken(metadata);
+
+            case event_is_tilt:
+                String tiltDirection = exprBlock.get(FIELDS_KEY).get(DIRECTION_KEY_CAP).get(0).asText();
+                RobotDirection direction = new RobotDirection(tiltDirection);
+                return new RobotTilted(direction, metadata);
+
+            case event_is_orientate_to:
+                String facing = exprBlock.get(FIELDS_KEY).get(ORIENTATE_CAP).get(0).asText();
+                PadOrientation orientation = new PadOrientation(facing);
+                return new OrientateTo(orientation, metadata);
+
+            case rocky_event_obstacles_ahead:
+                return new ObstaclesAhead(metadata);
+
+            case event_is_color:
+                String colorName = exprBlock.get(FIELDS_KEY).get(COLOR_KEY).get(0).asText();
+                LEDColor ledColor = new LEDColor(colorName);
+                return new SeeColor(ledColor, metadata);
+
+            case event_external_linefollower:
+                String portName = exprBlock.get(FIELDS_KEY).get(PORT_KEY).get(0).asText();
+                MCorePort port = new MCorePort(portName);
+                String stateName = exprBlock.get(FIELDS_KEY).get(LINEFOLLOW_STATE_KEY).get(0).asText();
+                LineFollowState lfState = new LineFollowState(stateName);
+                String bwName = exprBlock.get(FIELDS_KEY).get(BLACK_WHITE_KEY).get(0).asText();
+                BlackWhite blackWhite = new BlackWhite(bwName);
+                return new PortOnLine(port, lfState, blackWhite, metadata);
+
+            case event_board_button_pressed:
+                String pressedState = exprBlock.get(FIELDS_KEY).get(OPTION_KEY).get(0).asText();
+                PressedState pressed = new PressedState(pressedState);
+                return new BoardButtonPressed(pressed, metadata);
+
+            case event_ir_remote:
+                String irButtonName = exprBlock.get(FIELDS_KEY).get(REMOTE_KEY_KEY).get(0).asText();
+                IRRemoteButton irButton = new IRRemoteButton(irButtonName);
+                return new IRButtonPressed(irButton, metadata);
+
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockExpr");
         }

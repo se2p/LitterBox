@@ -168,4 +168,25 @@ public final class PropertyLoader {
     private static IllegalArgumentException getMissingValueForKeyException(String key) {
         return new IllegalArgumentException("The value for key " + key + " is not set in the system properties!");
     }
+
+    /**
+     * Load the string value of the given key from the system properties.
+     * If the key has a value assigned, that is a parsable boolean value, return that value as a boolean.
+     * Otherwise, write a warning to the logs and return false.
+     *
+     * @param name The key to the system variable.
+     * @return The value to the given key as boolean or false otherwise.
+     */
+    public static boolean getSystemBooleanProperty(String name) {
+        String stringValue = System.getProperty(name);
+        if (stringValue == null) {
+            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
+        } else {
+            try {
+                return Boolean.parseBoolean(stringValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("The value for key " + name + " is not a boolean value!");
+            }
+        }
+    }
 }
