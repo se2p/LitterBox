@@ -18,11 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class CallWithoutDefinitionTest implements JsonTest {
 
@@ -54,5 +59,31 @@ public class CallWithoutDefinitionTest implements JsonTest {
     @Test
     public void testDerpyAnimal() throws IOException, ParsingException {
         assertThatFinderReports(0, new CallWithoutDefinition(), "./src/test/fixtures/bugpattern/derpyAnimal.json");
+    }
+
+    @Test
+    public void testHintText() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/callWithoutDefinitionMessage.json");
+        CallWithoutDefinition finder = new CallWithoutDefinition();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        Hint hint = new Hint(finder.getName());
+        hint.setParameter(Hint.BLOCK_NAME,"block name ()");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
+    }
+
+    @Test
+    public void testHintTextTwoParams() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/callWithoutDefinitionBoth.json");
+        CallWithoutDefinition finder = new CallWithoutDefinition();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        Hint hint = new Hint(finder.getName());
+        hint.setParameter(Hint.BLOCK_NAME,"block name () <>");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
     }
 }
