@@ -19,10 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmptyScriptTest implements JsonTest {
 
@@ -34,5 +40,16 @@ public class EmptyScriptTest implements JsonTest {
     @Test
     public void testEmptyScript() throws IOException, ParsingException {
         assertThatFinderReports(2, new EmptyScript(), "./src/test/fixtures/smells/emptyScript.json");
+    }
+
+    @Test
+    public void testHint() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/smells/emptyScriptHint.json");
+        EmptyScript parameterName = new EmptyScript();
+        List<Issue> reports = new ArrayList<>(parameterName.check(empty));
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(parameterName.getName());
+        hint.setParameter(Hint.BLOCK_NAME, "when I start as a clone");
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
     }
 }
