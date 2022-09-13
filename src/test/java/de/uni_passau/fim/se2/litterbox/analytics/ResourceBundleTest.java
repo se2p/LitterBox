@@ -34,9 +34,9 @@ import static com.google.common.truth.Truth.assertWithMessage;
 
 public class ResourceBundleTest {
 
-    private static final List<String> DOUBLE_TAGS = Arrays.asList("[sbi]", "[var]", "[list]", "[bc]");
+    private static final List<String> DOUBLE_TAGS = Arrays.asList("[sbi]", "[var]", "[list]", "[bc]", "[item]", "[b]", "[i]", "[u]", "[s]");
 
-    private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]");
+    private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]", "[newLine]");
 
     @ParameterizedTest(name = "Testing existence of bug names for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
