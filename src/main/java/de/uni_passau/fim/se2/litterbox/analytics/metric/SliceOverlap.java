@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
@@ -29,12 +30,22 @@ public class SliceOverlap<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public double calculateMetric(T node) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        ActorDefinition parent = findParentActor(node);
+
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(parent);
         node.accept(visitor);
-        ControlFlowGraph cfg =  visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
         return sliceProfile.getOverlap();
+    }
+
+    private ActorDefinition findParentActor(T node) {
+        ASTNode parent = node;
+        while (!(parent instanceof ActorDefinition) && parent != null) {
+            parent = parent.getParentNode();
+        }
+        return (ActorDefinition) parent;
     }
 
     @Override

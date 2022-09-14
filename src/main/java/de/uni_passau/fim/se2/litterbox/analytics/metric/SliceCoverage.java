@@ -40,12 +40,24 @@ public class SliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public double calculateMetric(T node) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(actor);
+        ActorDefinition parent = actor;
+        if (!(node instanceof ActorDefinition) && parent == null) {
+            parent = findParentActor(node);
+        }
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(parent);
         node.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
         return sliceProfile.getCoverage();
+    }
+
+    private ActorDefinition findParentActor(T node) {
+        ASTNode parent = node;
+        while (!(parent instanceof ActorDefinition) && parent != null) {
+            parent = parent.getParentNode();
+        }
+        return (ActorDefinition) parent;
     }
 
     @Override
