@@ -30,22 +30,12 @@ public class SliceTightness<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public double calculateMetric(T node) {
-        ActorDefinition parent = findParentActor(node);
-
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(parent);
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
         return sliceProfile.getTightness();
-    }
-
-    private ActorDefinition findParentActor(T node) {
-        ASTNode parent = node;
-        while (!(parent instanceof ActorDefinition) && parent != null) {
-            parent = parent.getParentNode();
-        }
-        return (ActorDefinition) parent;
     }
 
     @Override

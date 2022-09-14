@@ -285,4 +285,8 @@ public class ControlFlowGraphBuilder {
         CFGNode node = addStatement(stmt);
         cfg.addEdgeToExit(node);
     }
+
+    public ActorDefinition getCurrentActor() {
+        return currentActor;
+    }
 }
