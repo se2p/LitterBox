@@ -107,8 +107,8 @@ public final class Main {
         mainMode.addOption(new Option(REFACTOR_SHORT, REFACTOR, false, "Refactor specified Scratch projects"));
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
-        mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract project metrics (see also -f)"));
-        mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extract script features from Scratch projects (see also -s)"));
+        mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract project metrics (see also -" + FEATURE_SHORT + ")"));
+        mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extract script features from Scratch projects (see also -" + STATS_SHORT + ")"));
         mainMode.addOption(new Option(DETECTORS_LIST_SHORT, DETECTORS_LIST, false, "Print a list of all detectors implemented in LitterBox"));
         mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generate text output for specified Scratch projects as input for code2vec"));
         mainMode.addOption(new Option(GRAPH_SHORT, GRAPH, false, "Generate text output for specified Scratch projects as input for the Gated Graph Neural Network"));
