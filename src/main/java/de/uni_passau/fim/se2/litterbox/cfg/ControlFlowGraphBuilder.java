@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -49,7 +52,7 @@ public class ControlFlowGraphBuilder {
 
     private Map<CFGNode, CFGNode> procedureCallMap = new LinkedHashMap<>();
 
-    private List<CFGNode> expressionBroadcasts  = new ArrayList<>();
+    private List<CFGNode> expressionBroadcasts = new ArrayList<>();
 
     private List<CFGNode> receivedMessages = new ArrayList<>();
 
@@ -97,7 +100,6 @@ public class ControlFlowGraphBuilder {
                 cfg.addEdge(broadcastNode, handlerNode);
             }
         }
-
     }
 
     public void setActors(Collection<ActorDefinition> actors) {
@@ -284,5 +286,9 @@ public class ControlFlowGraphBuilder {
     public void addStopStatement(Stmt stmt) {
         CFGNode node = addStatement(stmt);
         cfg.addEdgeToExit(node);
+    }
+
+    public ActorDefinition getCurrentActor() {
+        return currentActor;
     }
 }
