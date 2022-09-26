@@ -33,6 +33,27 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.MBlockExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.MBlockStringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBlockStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.IRStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -104,7 +125,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -2101,5 +2122,857 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         } else {
             node.accept(this);
         }
+    }
+
+    // mBlock: CodeyRocky and mBot
+
+    @java.lang.Override
+    public void visit(BoardButtonAction node) {
+        emitNoSpace("when on-board button [");
+        PressedState pressed = node.getPressed();
+        emitNoSpace(pressed.getPressedState());
+        storeNotesForIssue(pressed);
+        emitNoSpace(" v] :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(BoardLaunch node) {
+        emitNoSpace("when Codey starts up :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(BoardShaken node) {
+        emitNoSpace("when Codey is shaking :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(BoardTilted node) {
+        emitNoSpace("when Codey is [");
+        RobotDirection direction = node.getDirection();
+        String directionName = direction.getDirectionName();
+        switch(directionName)
+        {
+            case "left":
+            case "right":
+                emitNoSpace("tilted to the " + directionName);
+                break;
+            case "forward":
+                emitNoSpace("ears up");
+                break;
+            case "backward":
+                emitNoSpace("ears down");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
+        }
+        storeNotesForIssue(direction);
+        emitNoSpace(" v] tilted :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(BrightnessLess node) {
+        emitNoSpace("when light intensity \\< (");
+        assert (node.getValue() instanceof NumberLiteral);
+        NumberLiteral num = (NumberLiteral) node.getValue();
+        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
+        emitNoSpace(" ) :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(LaunchButton node) {
+        emitNoSpace("when on-board button [");
+        PressedState pressed = node.getPressed();
+        emitNoSpace(pressed.getPressedState());
+        storeNotesForIssue(pressed);
+        emitNoSpace(" v] :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(MBlockExpr node) {
+        // TODO ?
+    }
+
+    @java.lang.Override
+    public void visit(MBlockBoolExpr node) {
+        // TODO ?
+    }
+
+    @java.lang.Override
+    public void visit(BoardButtonPressed node) {
+        // TODO Which button is this?
+    }
+
+    @java.lang.Override
+    public void visit(ConnectRobot node) {
+        emitNoSpace("<@codeyB when Codey connected to Rocky :: sensing> ");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(IRButtonPressed node) {
+        emitNoSpace("<@mBot IR remote [");
+        IRRemoteButton button = node.getOperand1();
+        emitNoSpace(button.getButtonName());
+        storeNotesForIssue(button);
+        emitNoSpace(" v] pressed :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(LEDMatrixPosition node) {
+        emitNoSpace("<@codeyB x: (");
+        assert (node.getOperand1() instanceof NumberLiteral);
+        assert (node.getOperand2() instanceof NumberLiteral);
+        NumberLiteral x = (NumberLiteral) node.getOperand1();
+        NumberLiteral y = (NumberLiteral) node.getOperand2();
+        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) x.getValue()));
+        emitNoSpace(") y: (");
+        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) y.getValue()));
+        emitNoSpace(") is it lighted up? :: looks>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(ObstaclesAhead node) {
+        emitNoSpace("<@mBot obstacles ahead? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(OrientateTo node) {
+        emitNoSpace("<@codeyB Codey positioned as [");
+        PadOrientation orientation = node.getOperand1();
+        String orientationName = orientation.getOrientationName();
+        switch(orientationName)
+        {
+            case "screen_up":
+                emitNoSpace("face up");
+                break;
+            case "screen_down":
+                emitNoSpace("face down");
+                break;
+            case "upright":
+                emitNoSpace("stand on desk");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid orientation: " + orientationName);
+        }
+        storeNotesForIssue(orientation);
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(PortOnLine node) {
+        emitNoSpace("<@mBot line follower sensor [port");
+        MCorePort port = node.getOperand1();
+        emitNoSpace(port.getPortType().getDefinition());
+        storeNotesForIssue(port);
+        emitNoSpace(" v] detects [");
+        LineFollowState state = node.getOperand2();
+        String lineType = state.getLineFollowType().getDefinition();
+        switch(lineType)
+        {
+            case "0":
+                emitNoSpace("none");
+                break;
+            case "1":
+                emitNoSpace("rightside");
+                break;
+            case "2":
+                emitNoSpace("leftside");
+                break;
+            case "3":
+                emitNoSpace("all");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid line follow type: " + lineType);
+        }
+        storeNotesForIssue(state);
+        emitNoSpace(" v] being [");
+        BlackWhite color = node.getOperand3();
+        String colorType = color.getBlackWhiteType().getDefinition();
+        switch(colorType)
+        {
+            case "0":
+                emitNoSpace("black");
+                break;
+            case "1":
+                emitNoSpace("white");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid color type: " + colorType);
+        }
+        storeNotesForIssue(color);
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @java.lang.Override
+    public void visit(RobotButtonPressed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotShaken node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotTilted node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SeeColor node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MBlockNumExpr node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(AmbientLight node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(BatteryEnergy node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectAmbientLight node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectAmbientLightPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectDistancePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectGrey node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectIRReflection node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectLinePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectReflection node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(DetectRGBValue node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(GyroPitchAngle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(GyroRollAngle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Potentiometer node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotTimer node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RotateXAngle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RotateYAngle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RotateZAngle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ShakingStrength node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SoundVolume node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SpeakerVolume node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MBlockStringExpr node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(IRMessage node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MBlockOption node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(BlackWhite node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(IRRemoteButton node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDColor node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDMatrix node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDPosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LineFollowState node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MCorePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PadOrientation node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PressedState node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RGB node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotAxis node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotButton node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotDirection node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SoundList node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SoundNote node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MBlockStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(EmotionStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MovingEmotion node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Aggrieved node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Agree node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Angry node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Awkward node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Coquetry node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Deny node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Dizzy node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Exclaim node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Greeting node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LookAround node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LookDown node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LookLeft node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LookRight node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LookUp node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Naughty node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Proud node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Revive node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Sad node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Shiver node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Sleeping node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Sleepy node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Smile node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Sprint node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Startle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Wink node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Yeah node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(IRStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LearnWithTime node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SendIR node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SendLearnResult node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDColorShow node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDColorShowPosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDColorTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDColorTimedPosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDOff node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RGBValue node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RGBValuesPosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RockyLight node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RockyLightOff node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDMatrixStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(FacePosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(FacePositionPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(FaceTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(FaceTimedPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDNumPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDString node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDStringPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDStringPosition node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDStringPositionPort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDStringScrolling node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDSwitchOff node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDSwitchOn node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDTimePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(LEDToggle node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ShowFace node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ShowFacePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnOffFace node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnOffFacePort node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(RobotMoveStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(KeepBackwardTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(KeepForwardTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MoveBackwardTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MoveDirection node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MoveForwardTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MoveSides node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(MoveStop node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnLeft2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnLeftTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnRight2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(TurnRightTimed node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ResetStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ResetAxis node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ResetTimer2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SpeakerStmt node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(ChangeVolumeBy2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(Pause node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PlayFrequency node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PlayNote node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PlaySound node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(PlaySoundWait node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(SetVolumeTo2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visit(StopAllSounds2 node) {
+        MBlockVisitor.super.visit(node);
+    }
+
+    @java.lang.Override
+    public void visitParentVisitor(MBlockNode node) {
+
     }
 }
