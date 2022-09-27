@@ -33,6 +33,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -104,7 +120,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -1291,6 +1307,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
+    public void visit(NumExpr number) {
+        assert (number instanceof NumberLiteral);
+        NumberLiteral num = (NumberLiteral) number;
+        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
+    }
+
+    @Override
     public void visit(AttributeOf node) {
         emitNoSpace("([");
         node.getAttribute().accept(this);
@@ -1429,6 +1452,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             emitNoSpace("]");
             storeNotesForIssue(stringLiteral);
         }
+    }
+
+    @Override
+    public void visit(StringExpr string) {
+        emitNoSpace(string.toString());
     }
 
     @Override
@@ -2101,5 +2129,1215 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         } else {
             node.accept(this);
         }
+    }
+
+    // mBlock: CodeyRocky and mBot
+
+    @Override
+    public void visit(BoardButtonAction node) {
+        emitNoSpace("when on-board button [");
+        visit(node.getPressed());
+        emitNoSpace(" v] :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BoardLaunch node) {
+        emitNoSpace("when Codey starts up :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BoardShaken node) {
+        emitNoSpace("when Codey is shaking :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BoardTilted node) {
+        emitNoSpace("when Codey is [");
+        visit(node.getDirection());
+        emitNoSpace(" v] tilted :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BrightnessLess node) {
+        emitNoSpace("when light intensity \\< (");
+        visit(node.getValue());
+        emitNoSpace(" ) :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LaunchButton node) {
+        emitNoSpace("when on-board button [");
+        visit(node.getButton());
+        emitNoSpace(" v] :: events hat");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BoardButtonPressed node) {
+        emitNoSpace("<when on-board button [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ConnectRobot node) {
+        emitNoSpace("<@codeyB when Codey connected to Rocky :: sensing> ");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(IRButtonPressed node) {
+        emitNoSpace("<@mBot IR remote [");
+        IRRemoteButton button = node.getOperand1();
+        emitNoSpace(button.getButtonName());
+        storeNotesForIssue(button);
+        emitNoSpace(" v] pressed :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDMatrixPosition node) {
+        emitNoSpace("<@codeyB x: (");
+        visit(node.getOperand1());
+        emitNoSpace(") y: (");
+        visit(node.getOperand2());
+        emitNoSpace(") is it lighted up? :: looks>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ObstaclesAhead node) {
+        emitNoSpace("<@mBot obstacles ahead? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(OrientateTo node) {
+        emitNoSpace("<@codeyB Codey positioned as [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PortOnLine node) {
+        emitNoSpace("<@mBot line follower sensor [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] detects [");
+        visit(node.getOperand2());
+        emitNoSpace(" v] being [");
+        visit(node.getOperand3());
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RobotButtonPressed node) {
+        emitNoSpace("@CodeyB button [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] is pressed? :: sensing");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RobotShaken node) {
+        emitNoSpace("<@codeyB shaken ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RobotTilted node) {
+        emitNoSpace("<@codeyB Codey [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] tilted? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SeeColor node) {
+        emitNoSpace("<@codeyB the color detected is [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] ? :: sensing>");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(AmbientLight node) {
+        emitNoSpace("(@codeyB ambient light intensity :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BatteryEnergy node) {
+        emitNoSpace("(@codeyB battery level :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectAmbientLight node) {
+        emitNoSpace("(@codeyB color sensor ambient light intensity :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectAmbientLightPort node) {
+        emitNoSpace("(@mBot light sensor [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] light intensity :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectDistancePort node) {
+        emitNoSpace("(@mBot ultrasonic sensor [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] distance \\(cm\\) :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectGrey node) {
+        emitNoSpace("(@codeyB color sensor grey-scale value :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectIRReflection node) {
+        emitNoSpace("(@codeyB color sensor reflected infrared light intensity :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectLinePort node) {
+        emitNoSpace("(@mBot line follower sensor [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] value :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectReflection node) {
+        emitNoSpace("(@codeyB color sensor reflected light intensity :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(DetectRGBValue node) {
+        emitNoSpace("(@codeyB [");
+        visit(node.getOperand1());
+        emitNoSpace(" v] color value detected :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(GyroPitchAngle node) {
+        emitNoSpace("(@codeyB pitch angle° :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(GyroRollAngle node) {
+        emitNoSpace("(@codeyB roll angle° :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Potentiometer node) {
+        emitNoSpace("(@codeyB gear potentiometer value :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RobotTimer node) {
+        emitNoSpace("(@codeyB timer :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RotateXAngle node) {
+        emitNoSpace("(@codeyB rotation angle around x :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RotateYAngle node) {
+        emitNoSpace("(@codeyB rotation angle around y :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RotateZAngle node) {
+        emitNoSpace("(@codeyB rotation angle around z :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ShakingStrength node) {
+        emitNoSpace("(@codeyB shaking strength :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SoundVolume node) {
+        emitNoSpace("(@codeyB loudness :: sensing)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SpeakerVolume node) {
+        emitNoSpace("(@codeyB volume :: infrared)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(IRMessage node) {
+        emitNoSpace("(@codeyB IR message received :: infrared)");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(BlackWhite node) {
+        String colorType = node.getBlackWhiteType().getDefinition();
+        switch (colorType) {
+            case "0":
+                emitNoSpace("black");
+                break;
+            case "1":
+                emitNoSpace("white");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid color type: " + colorType);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(IRRemoteButton node) {
+        emitNoSpace(node.getButtonName());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(LEDColor node) {
+        emitNoSpace(node.getColorType().getName());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(LEDMatrix node) {
+        emitNoSpace("@matrix");
+        // TODO individual matrices
+    }
+
+    @Override
+    public void visit(LEDPosition node) {
+        String position = node.getPositionType().getDefinition();
+        switch (position) {
+            case "0":
+                emitNoSpace("all");
+                break;
+            case "1":
+                emitNoSpace("right");
+                break;
+            case "2":
+                emitNoSpace("left");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid position: " + position);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(LineFollowState node) {
+        String lineType = node.getLineFollowType().getDefinition();
+        switch (lineType) {
+            case "0":
+                emitNoSpace("none");
+                break;
+            case "1":
+                emitNoSpace("rightside");
+                break;
+            case "2":
+                emitNoSpace("leftside");
+                break;
+            case "3":
+                emitNoSpace("all");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid line follow type: " + lineType);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(MCorePort node) {
+        emitNoSpace("port" + node.getPortType().getDefinition());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(PadOrientation node) {
+        String orientationName = node.getOrientationName();
+        switch (orientationName) {
+            case "screen_up":
+                emitNoSpace("face up");
+                break;
+            case "screen_down":
+                emitNoSpace("face down");
+                break;
+            case "upright":
+                emitNoSpace("stand on desk");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid orientation: " + orientationName);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(PressedState node) {
+        emitNoSpace(node.getPressedState());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(RGB node) {
+        emitNoSpace(node.getRGBType().getName());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(RobotAxis node) {
+        String axisName = node.getAxisName();
+        switch (axisName) {
+            case "all":
+                emitNoSpace("ALL");
+                break;
+            case "x":
+                emitNoSpace("X");
+                break;
+            case "y":
+                emitNoSpace("Y");
+                break;
+            case "z":
+                emitNoSpace("Z");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid axis name: " + axisName);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(RobotButton node) {
+        String buttonName = node.getButtonType().getName();
+        switch (buttonName) {
+            case "a":
+                emitNoSpace("A");
+                break;
+            case "b":
+                emitNoSpace("B");
+                break;
+            case "c":
+                emitNoSpace("C");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid button name: " + buttonName);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(RobotDirection node) {
+        String directionName = node.getDirectionName();
+        switch (directionName) {
+            case "left":
+            case "right":
+                emitNoSpace("tilted to the " + directionName);
+                break;
+            case "forward":
+                emitNoSpace("ears up");
+                break;
+            case "backward":
+                emitNoSpace("ears down");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(SoundList node) {
+        emitNoSpace(node.getFileName());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(SoundNote node) {
+        emitNoSpace(node.getNoteName());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(Aggrieved node) {
+        emitNoSpace("@codeyA hurt :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Agree node) {
+        emitNoSpace("@codeyA yes :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Angry node) {
+        emitNoSpace("@codeyA angry :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Awkward node) {
+        emitNoSpace("@codeyA uh_oh :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Coquetry node) {
+        emitNoSpace("@codeyA yummy :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Deny node) {
+        emitNoSpace("@codeyA no :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Dizzy node) {
+        emitNoSpace("@codeyA dizzy :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Exclaim node) {
+        emitNoSpace("@codeyA wow :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Greeting node) {
+        emitNoSpace("@codeyA hello :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LookAround node) {
+        emitNoSpace("@codeyA look around :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LookDown node) {
+        emitNoSpace("@codeyA look down :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LookLeft node) {
+        emitNoSpace("@codeyA look left :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LookRight node) {
+        emitNoSpace("@codeyA look right :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LookUp node) {
+        emitNoSpace("@codeyA look up :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Naughty node) {
+        emitNoSpace("@codeyA naughty :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Proud node) {
+        emitNoSpace("@codeyA proud :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Revive node) {
+        emitNoSpace("@codeyA wake :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Sad node) {
+        emitNoSpace("@codeyA sad :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Shiver node) {
+        emitNoSpace("@codeyA shiver :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Sleeping node) {
+        emitNoSpace("@codeyA sleep :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Sleepy node) {
+        emitNoSpace("@codeyA yawn :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Smile node) {
+        emitNoSpace("@codeyA smile :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Sprint node) {
+        emitNoSpace("@codeyA sprint :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Startle node) {
+        emitNoSpace("@codeyA scared :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Wink node) {
+        emitNoSpace("@codeyA blink :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Yeah node) {
+        emitNoSpace("@codeyA yeah :: emotion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LearnWithTime node) {
+        emitNoSpace("@codeyB record home appliances remote signal 3 secs :: infrared");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SendIR node) {
+        emitNoSpace("@codeyB send IR message (");
+        visit(node.getText());
+        emitNoSpace(") :: infrared");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SendLearnResult node) {
+        emitNoSpace("@codeyB send home appliances remote signal :: infrared");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDColorShow node) {
+        emitNoSpace("@codeyA RGB LED lights up (#");
+        visit(node.getColorString());
+        emitNoSpace(") :: lighting");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDColorShowPosition node) {
+        emitNoSpace("@mBot LED [");
+        visit(node.getPosition());
+        emitNoSpace(" v] shows color (#");
+        visit(node.getColorString());
+        emitNoSpace(") :: show");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDColorTimed node) {
+        emitNoSpace("@codeyA RGB LED lights up (#");
+        visit(node.getColorString());
+        emitNoSpace(") for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: lighting");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDColorTimedPosition node) {
+        emitNoSpace("@mBot LED [");
+        visit(node.getPosition());
+        emitNoSpace(" v] shows color (#");
+        visit(node.getColorString());
+        emitNoSpace(") for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: show");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDOff node) {
+        emitNoSpace("@codeyB RGB LED lights off :: lighting");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RGBValue node) {
+        emitNoSpace("@codeyB set the indicator [");
+        visit(node.getRgb());
+        emitNoSpace(" v] with color value (");
+        visit(node.getValue());
+        emitNoSpace(") :: lighting");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RGBValuesPosition node) {
+        emitNoSpace("@mBot turn on [");
+        visit(node.getPosition());
+        emitNoSpace(" v] light with color red (");
+        visit(node.getRed());
+        emitNoSpace(") green (");
+        visit(node.getGreen());
+        emitNoSpace(") blue (");
+        visit(node.getBlue());
+        emitNoSpace(") :: show");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RockyLight node) {
+        emitNoSpace("@codeyB set Rocky's light with color [");
+        visit(node.getColor());
+        emitNoSpace(" v] :: lighting");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(RockyLightOff node) {
+        emitNoSpace("@codeyB Rocky lights off");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(FacePosition node) {
+        // TODO show individual matrices
+        emitNoSpace("@codeyB show image @matrix at the x:");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(FacePositionPort node) {
+        // TODO show individual matrices
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows image @matrix at x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(FaceTimed node) {
+        // TODO show individual matrices
+        emitNoSpace("@codeyB show image @matrix for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(FaceTimedPort node) {
+        // TODO show individual matrices
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows image @matrix for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDNumPort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows number (");
+        visit(node.getNumber());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDString node) {
+        emitNoSpace("@codeyB show (");
+        visit(node.getText());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDStringPort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows text (");
+        visit(node.getText());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDStringPosition node) {
+        // TODO show individual matrices
+        emitNoSpace("@codeyB show image @matrix at the x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDStringPositionPort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows text (");
+        visit(node.getText());
+        emitNoSpace(") at x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDStringScrolling node) {
+        emitNoSpace("@codeyB show (");
+        visit(node.getText());
+        emitNoSpace(") until scroll done :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDSwitchOff node) {
+        emitNoSpace("@codeyB light off x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDSwitchOn node) {
+        emitNoSpace("@codeyB light up x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDTimePort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows time (");
+        visit(node.getHour());
+        emitNoSpace(") : (");
+        visit(node.getMinute());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(LEDToggle node) {
+        emitNoSpace("@codeyB switch between light-up and light-off x: (");
+        visit(node.getxAxis());
+        emitNoSpace(") y: (");
+        visit(node.getyAxis());
+        emitNoSpace(") :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ShowFace node) {
+        // TODO show individual matrices
+        emitNoSpace("@codeyB show image @matrix :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ShowFacePort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] shows image @matrix :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnOffFace node) {
+        emitNoSpace("@codeyB turn off screen :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnOffFacePort node) {
+        emitNoSpace("@mBot LED panel [");
+        visit(node.getPort());
+        emitNoSpace(" v] clears screen :: looks");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(KeepBackwardTimed node) {
+        emitNoSpace("@codeyA keep straight backward at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(KeepForwardTimed node) {
+        emitNoSpace("@codeyA keep straight forward at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(MoveBackwardTimed node) {
+        emitNoSpace("@codeyA move backward at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(MoveDirection node) {
+        emitNoSpace("@codeyA [");
+        String directionName = node.getDirection().getDirectionName();
+        switch (directionName) {
+            case "left":
+            case "right":
+                emitNoSpace("turn " + directionName);
+                break;
+            case "forward":
+            case "backward":
+                emitNoSpace("move " + directionName);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
+        }
+        emitNoSpace(" v] at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(MoveForwardTimed node) {
+        emitNoSpace("@codeyA move forward at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(MoveSides node) {
+        emitNoSpace("@codeyA left wheel turns at power (");
+        visit(node.getLeftPower());
+        emitNoSpace(") % and right wheel turns at power (");
+        visit(node.getRightPower());
+        emitNoSpace(") % :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(MoveStop node) {
+        emitNoSpace("@codeyA stop moving :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnLeft2 node) {
+        emitNoSpace("@codeyA turn left @turnLeft (");
+        visit(node.getDegree());
+        emitNoSpace(") degrees until done :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnLeftTimed node) {
+        emitNoSpace("@codeyA turn left at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnRight2 node) {
+        emitNoSpace("@codeyA turn right @turnRight (");
+        visit(node.getDegree());
+        emitNoSpace(") degrees until done :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(TurnRightTimed node) {
+        emitNoSpace("@codeyA turn right at power (");
+        visit(node.getPercent());
+        emitNoSpace(") % for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: motion");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ResetAxis node) {
+        emitNoSpace("@codeyA reset the [");
+        visit(node.getAxis());
+        emitNoSpace(" v] rotation angle° :: sensing");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ResetTimer2 node) {
+        emitNoSpace("@codeyA reset timer :: sensing");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy2 node) {
+        emitNoSpace("@codeyB change volume by (");
+        visit(node.getVolumeValue());
+        emitNoSpace(") :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(Pause node) {
+        emitNoSpace("@codeyB rest for (");
+        visit(node.getBeat());
+        emitNoSpace(") beats :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayFrequency node) {
+        emitNoSpace("@codeyB play sound at frequency of (");
+        visit(node.getFrequency());
+        emitNoSpace(") HZ for (");
+        visit(node.getTime());
+        emitNoSpace(") secs :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayNote node) {
+        emitNoSpace("@codeyB play note [");
+        visit(node.getNote());
+        emitNoSpace(" v] for (");
+        visit(node.getBeat());
+        emitNoSpace(") beats :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlaySound node) {
+        emitNoSpace("@codeyB play sound [");
+        visit(node.getSoundList());
+        emitNoSpace(" v] :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlaySoundWait node) {
+        emitNoSpace("@codeyB play sound [");
+        visit(node.getSoundList());
+        emitNoSpace(" v] until done :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetVolumeTo2 node) {
+        emitNoSpace("@codeyB set volume to (");
+        visit(node.getVolumeValue());
+        emitNoSpace(") % :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(StopAllSounds2 node) {
+        emitNoSpace("@codeyB stop all sounds :: speaker");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visitParentVisitor(MBlockNode node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(MBlockNode node) {
+        node.accept((MBlockVisitor) this);
     }
 }
