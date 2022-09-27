@@ -1307,8 +1307,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(NumExpr number)
-    {
+    public void visit(NumExpr number) {
         assert (number instanceof NumberLiteral);
         NumberLiteral num = (NumberLiteral) number;
         emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
@@ -2443,8 +2442,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(BlackWhite node) {
         String colorType = node.getBlackWhiteType().getDefinition();
-        switch(colorType)
-        {
+        switch (colorType) {
             case "0":
                 emitNoSpace("black");
                 break;
@@ -2478,8 +2476,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LEDPosition node) {
         String position = node.getPositionType().getDefinition();
-        switch(position)
-        {
+        switch (position) {
             case "0":
                 emitNoSpace("all");
                 break;
@@ -2498,8 +2495,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LineFollowState node) {
         String lineType = node.getLineFollowType().getDefinition();
-        switch(lineType)
-        {
+        switch (lineType) {
             case "0":
                 emitNoSpace("none");
                 break;
@@ -2527,8 +2523,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(PadOrientation node) {
         String orientationName = node.getOrientationName();
-        switch(orientationName)
-        {
+        switch (orientationName) {
             case "screen_up":
                 emitNoSpace("face up");
                 break;
@@ -2559,8 +2554,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(RobotAxis node) {
         String axisName = node.getAxisName();
-        switch(axisName)
-        {
+        switch (axisName) {
             case "all":
                 emitNoSpace("ALL");
                 break;
@@ -2582,8 +2576,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(RobotButton node) {
         String buttonName = node.getButtonType().getName();
-        switch(buttonName)
-        {
+        switch (buttonName) {
             case "a":
                 emitNoSpace("A");
                 break;
@@ -2602,8 +2595,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(RobotDirection node) {
         String directionName = node.getDirectionName();
-        switch(directionName)
-        {
+        switch (directionName) {
             case "left":
             case "right":
                 emitNoSpace("tilted to the " + directionName);
@@ -3161,8 +3153,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(MoveDirection node) {
         emitNoSpace("@codeyA [");
         String directionName = node.getDirection().getDirectionName();
-        switch(directionName)
-        {
+        switch (directionName) {
             case "left":
             case "right":
                 emitNoSpace("turn " + directionName);
@@ -3342,11 +3333,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visitParentVisitor(MBlockNode node) {
-        super.visit(node);
+        visitDefaultVisitor(node);
     }
 
     @Override
     public void visit(MBlockNode node) {
-        super.visit(node);
+        node.accept((MBlockVisitor) this);
     }
 }
