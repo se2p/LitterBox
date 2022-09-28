@@ -2196,7 +2196,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(ConnectRobot node) {
         emitNoSpace("<@codeyB when Codey connected to Rocky :: sensing> ");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2207,7 +2206,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         storeNotesForIssue(button);
         emitNoSpace(" v] pressed :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2218,14 +2216,12 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand2());
         emitNoSpace(") is it lighted up? :: looks>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(ObstaclesAhead node) {
         emitNoSpace("<@mBot obstacles ahead? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2234,7 +2230,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] ? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2247,23 +2242,20 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand3());
         emitNoSpace(" v] ? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RobotButtonPressed node) {
-        emitNoSpace("@CodeyB button [");
+        emitNoSpace("<@CodeyB button [");
         visit(node.getOperand1());
-        emitNoSpace(" v] is pressed? :: sensing");
+        emitNoSpace(" v] is pressed? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RobotShaken node) {
         emitNoSpace("<@codeyB shaken ? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2272,7 +2264,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] tilted? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2281,28 +2272,24 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] ? :: sensing>");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(AmbientLight node) {
         emitNoSpace("(@codeyB ambient light intensity :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(BatteryEnergy node) {
         emitNoSpace("(@codeyB battery level :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(DetectAmbientLight node) {
         emitNoSpace("(@codeyB color sensor ambient light intensity :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2311,7 +2298,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] light intensity :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2320,21 +2306,18 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] distance \\(cm\\) :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(DetectGrey node) {
         emitNoSpace("(@codeyB color sensor grey-scale value :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(DetectIRReflection node) {
         emitNoSpace("(@codeyB color sensor reflected infrared light intensity :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2343,14 +2326,12 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] value :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(DetectReflection node) {
         emitNoSpace("(@codeyB color sensor reflected light intensity :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
@@ -2359,84 +2340,72 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         visit(node.getOperand1());
         emitNoSpace(" v] color value detected :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(GyroPitchAngle node) {
         emitNoSpace("(@codeyB pitch angle° :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(GyroRollAngle node) {
         emitNoSpace("(@codeyB roll angle° :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(Potentiometer node) {
         emitNoSpace("(@codeyB gear potentiometer value :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RobotTimer node) {
         emitNoSpace("(@codeyB timer :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RotateXAngle node) {
         emitNoSpace("(@codeyB rotation angle around x :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RotateYAngle node) {
         emitNoSpace("(@codeyB rotation angle around y :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(RotateZAngle node) {
         emitNoSpace("(@codeyB rotation angle around z :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(ShakingStrength node) {
         emitNoSpace("(@codeyB shaking strength :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(SoundVolume node) {
         emitNoSpace("(@codeyB loudness :: sensing)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(SpeakerVolume node) {
         emitNoSpace("(@codeyB volume :: infrared)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
     public void visit(IRMessage node) {
         emitNoSpace("(@codeyB IR message received :: infrared)");
         storeNotesForIssue(node);
-        newLine();
     }
 
     @Override
