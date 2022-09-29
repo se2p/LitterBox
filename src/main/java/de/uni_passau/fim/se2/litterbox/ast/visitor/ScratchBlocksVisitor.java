@@ -1307,13 +1307,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(NumExpr number) {
-        assert (number instanceof NumberLiteral);
-        NumberLiteral num = (NumberLiteral) number;
-        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
-    }
-
-    @Override
     public void visit(AttributeOf node) {
         emitNoSpace("([");
         node.getAttribute().accept(this);
