@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
@@ -113,8 +112,10 @@ public class BugAnalyzer extends Analyzer {
                 commentGenerator.generateReport(program, issues);
                 if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
                     JSONFileCreator.writeJsonFromProgram(program, annotatePath, "_annotated");
-                } else {
+                } else if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("sb3")) {
                     JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, "_annotated");
+                } else {
+                    JSONFileCreator.writeMBlockFromProgram(program, annotatePath, fileEntry, "_annotated");
                 }
             } catch (IOException e) {
                 log.warning(e.getMessage());
