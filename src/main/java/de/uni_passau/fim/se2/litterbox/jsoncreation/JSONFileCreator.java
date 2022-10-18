@@ -39,6 +39,7 @@ public final class JSONFileCreator {
 
     private static final String JSON = ".json";
     private static final String SB3 = ".sb3";
+    private static final String MBLOCK = ".mblock";
 
     public static void writeJsonFromProgram(Program program, String postfix) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
@@ -57,16 +58,20 @@ public final class JSONFileCreator {
     }
 
     public static void writeSb3FromProgram(Program program, String outputPath, File sourceSB3File, String postfix) throws IOException {
+        writeBinary(program, outputPath, sourceSB3File, postfix, SB3);
+    }
+
+    private static void writeBinary(Program program, String outputPath, File sourceFile, String postfix, String fileExtension) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        String destinationPath = Paths.get(outputPath, program.getIdent().getName() + postfix + SB3).toString();
+        String destinationPath = Paths.get(outputPath, program.getIdent().getName() + postfix + fileExtension).toString();
         Path tmp = Files.createTempDirectory("litterbox_");
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
 
-        try (ZipFile zipFile = new ZipFile(sourceSB3File)) {
+        try (ZipFile zipFile = new ZipFile(sourceFile)) {
             zipFile.extractAll(String.valueOf(tmp));
 
             File tempProj = new File(tmp + "/project.json");
@@ -85,5 +90,9 @@ public final class JSONFileCreator {
 
             FileUtils.deleteDirectory(tempDir);
         }
+    }
+
+    public static void writeMBlockFromProgram(Program program, String outputPath, File sourceSB3File, String postfix) throws IOException {
+        writeBinary(program, outputPath, sourceSB3File, postfix, MBLOCK);
     }
 }
