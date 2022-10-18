@@ -19,14 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSet;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.NumValueVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDPosition.PositionType;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.MCorePort.PortType;
@@ -202,15 +199,15 @@ public class ParallelResourceUse extends AbstractRobotFinder {
     }
 
     private void detectIssue(Map<Script, Stmt> map) {
-        List<Script> scriptList = new LinkedList<>(map.keySet());
+        List<ScriptEntity> scriptList = new LinkedList<>(map.keySet());
         List<ASTNode> nodeList = new LinkedList<>(map.values());
         List<Metadata> metadataList = new LinkedList<>();
         nodeList.forEach((node) -> {
             metadataList.add(node.getMetadata());
         });
         if (nodeList.size() >= 2) {
-            IssueSet issue = new IssueSet(this, MEDIUM, program, List.of(currentActor), scriptList, nodeList,
-                    metadataList, new Hint(getName()));
+            MultiBlockIssue issue = new MultiBlockIssue(this, MEDIUM, program, currentActor, scriptList, nodeList,
+                    nodeList.get(0).getMetadata(), new Hint(getName()));
             addIssue(issue);
         }
     }

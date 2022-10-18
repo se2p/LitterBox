@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSet;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
@@ -2061,8 +2060,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                         issueNote.add(BUG_NOTE);
                     }
                 } else {
-                    // TODO: The IssueSet class shouldn't even exist, it should be merged with MultiBlockIssue
-                    List<ASTNode> nodes = issue instanceof MultiBlockIssue ? ((MultiBlockIssue) issue).getNodes() : ((IssueSet) issue).getNodes();
+                    List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
                     if (node == (nodes.get(0))) {
                         if (issue.getIssueType() == IssueType.PERFUME) {
                             issueNote.add(PERFUME_NOTE);
