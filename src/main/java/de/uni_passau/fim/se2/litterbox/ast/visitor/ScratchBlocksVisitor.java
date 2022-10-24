@@ -2157,9 +2157,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(BrightnessLess node) {
-        emitNoSpace("when light intensity \\< (");
+        emitNoSpace("when light intensity \\< ");
         node.getValue().accept(this);
-        emitNoSpace(" ) :: events hat");
+        emitNoSpace("  :: events hat");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2199,11 +2199,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(LEDMatrixPosition node) {
-        emitNoSpace("<@codeyB x: (");
+        emitNoSpace("<@codeyB x: ");
         node.getOperand1().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getOperand2().accept(this);
-        emitNoSpace(") is it lighted up? :: looks>");
+        emitNoSpace(" is it lighted up? :: looks>");
         storeNotesForIssue(node);
     }
 
@@ -2778,9 +2778,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SendIR node) {
-        emitNoSpace("@codeyB send IR message (");
+        emitNoSpace("@codeyB send IR message ");
         node.getText().accept(this);
-        emitNoSpace(") :: infrared");
+        emitNoSpace(" :: infrared");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2816,9 +2816,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LEDColorTimed node) {
         emitNoSpace("@codeyA RGB LED lights up ");
         node.getColorString().accept(this);
-        emitNoSpace(" for (");
+        emitNoSpace(" for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: lighting");
+        emitNoSpace(" secs :: lighting");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2829,9 +2829,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         node.getPosition().accept((MBlockVisitor) this);
         emitNoSpace(" v] shows color (#");
         node.getColorString().accept(this);
-        emitNoSpace(") for (");
+        emitNoSpace(") for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: show");
+        emitNoSpace(" secs :: show");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2847,9 +2847,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(RGBValue node) {
         emitNoSpace("@codeyB set the indicator [");
         node.getRgb().accept((MBlockVisitor) this);
-        emitNoSpace(" v] with color value (");
+        emitNoSpace(" v] with color value ");
         node.getValue().accept(this);
-        emitNoSpace(") :: lighting");
+        emitNoSpace(" :: lighting");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2858,13 +2858,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(RGBValuesPosition node) {
         emitNoSpace("@mBot turn on [");
         node.getPosition().accept((MBlockVisitor) this);
-        emitNoSpace(" v] light with color red (");
+        emitNoSpace(" v] light with color red ");
         node.getRed().accept(this);
-        emitNoSpace(") green (");
+        emitNoSpace(" green ");
         node.getGreen().accept(this);
-        emitNoSpace(") blue (");
+        emitNoSpace(" blue ");
         node.getBlue().accept(this);
-        emitNoSpace(") :: show");
+        emitNoSpace(" :: show");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2890,9 +2890,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         // TODO show individual matrices
         emitNoSpace("@codeyB show image @matrix at the x:");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2902,11 +2902,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         // TODO show individual matrices
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows image @matrix at x: (");
+        emitNoSpace(" v] shows image @matrix at x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2914,9 +2914,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(FaceTimed node) {
         // TODO show individual matrices
-        emitNoSpace("@codeyB show image @matrix for (");
+        emitNoSpace("@codeyB show image @matrix for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: looks");
+        emitNoSpace(" secs :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2926,9 +2926,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         // TODO show individual matrices
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows image @matrix for (");
+        emitNoSpace(" v] shows image @matrix for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: looks");
+        emitNoSpace(" secs :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2937,18 +2937,18 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LEDNumPort node) {
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows number (");
+        emitNoSpace(" v] shows number ");
         node.getNumber().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(LEDString node) {
-        emitNoSpace("@codeyB show (");
+        emitNoSpace("@codeyB show ");
         node.getText().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2957,9 +2957,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LEDStringPort node) {
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows text (");
+        emitNoSpace(" v] shows text ");
         node.getText().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2967,11 +2967,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(LEDStringPosition node) {
         // TODO show individual matrices
-        emitNoSpace("@codeyB show image @matrix at the x: (");
+        emitNoSpace("@codeyB show image @matrix at the x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -2980,44 +2980,44 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LEDStringPositionPort node) {
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows text (");
+        emitNoSpace(" v] shows text ");
         node.getText().accept(this);
-        emitNoSpace(") at x: (");
+        emitNoSpace(" at x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(LEDStringScrolling node) {
-        emitNoSpace("@codeyB show (");
+        emitNoSpace("@codeyB show ");
         node.getText().accept(this);
-        emitNoSpace(") until scroll done :: looks");
+        emitNoSpace(" until scroll done :: looks");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(LEDSwitchOff node) {
-        emitNoSpace("@codeyB light off x: (");
+        emitNoSpace("@codeyB light off x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(LEDSwitchOn node) {
-        emitNoSpace("@codeyB light up x: (");
+        emitNoSpace("@codeyB light up x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3026,22 +3026,22 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LEDTimePort node) {
         emitNoSpace("@mBot LED panel [");
         node.getPort().accept((MBlockVisitor) this);
-        emitNoSpace(" v] shows time (");
+        emitNoSpace(" v] shows time ");
         node.getHour().accept(this);
-        emitNoSpace(") : (");
+        emitNoSpace(" : ");
         node.getMinute().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(LEDToggle node) {
-        emitNoSpace("@codeyB switch between light-up and light-off x: (");
+        emitNoSpace("@codeyB switch between light-up and light-off x: ");
         node.getxAxis().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getyAxis().accept(this);
-        emitNoSpace(") :: looks");
+        emitNoSpace(" :: looks");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3081,33 +3081,33 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(KeepBackwardTimed node) {
-        emitNoSpace("@codeyA keep straight backward at power (");
+        emitNoSpace("@codeyA keep straight backward at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(KeepForwardTimed node) {
-        emitNoSpace("@codeyA keep straight forward at power (");
+        emitNoSpace("@codeyA keep straight forward at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(MoveBackwardTimed node) {
-        emitNoSpace("@codeyA move backward at power (");
+        emitNoSpace("@codeyA move backward at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3128,31 +3128,31 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             default:
                 throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
         }
-        emitNoSpace(" v] at power (");
+        emitNoSpace(" v] at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % :: motion");
+        emitNoSpace(" % :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(MoveForwardTimed node) {
-        emitNoSpace("@codeyA move forward at power (");
+        emitNoSpace("@codeyA move forward at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(MoveSides node) {
-        emitNoSpace("@codeyA left wheel turns at power (");
+        emitNoSpace("@codeyA left wheel turns at power ");
         node.getLeftPower().accept(this);
-        emitNoSpace(") % and right wheel turns at power (");
+        emitNoSpace("");
         node.getRightPower().accept(this);
-        emitNoSpace(") % :: motion");
+        emitNoSpace(" % :: motion");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3166,40 +3166,40 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(TurnLeft2 node) {
-        emitNoSpace("@codeyA turn left @turnLeft (");
+        emitNoSpace("@codeyA turn left @turnLeft ");
         node.getDegree().accept(this);
-        emitNoSpace(") degrees until done :: motion");
+        emitNoSpace(" degrees until done :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(TurnLeftTimed node) {
-        emitNoSpace("@codeyA turn left at power (");
+        emitNoSpace("@codeyA turn left at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(TurnRight2 node) {
-        emitNoSpace("@codeyA turn right @turnRight (");
+        emitNoSpace("@codeyA turn right @turnRight ");
         node.getDegree().accept(this);
-        emitNoSpace(") degrees until done :: motion");
+        emitNoSpace(" degrees until done :: motion");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(TurnRightTimed node) {
-        emitNoSpace("@codeyA turn right at power (");
+        emitNoSpace("@codeyA turn right at power ");
         node.getPercent().accept(this);
-        emitNoSpace(") % for (");
+        emitNoSpace(" % for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: motion");
+        emitNoSpace(" secs :: motion");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3222,29 +3222,29 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(ChangeVolumeBy2 node) {
-        emitNoSpace("@codeyB change volume by (");
+        emitNoSpace("@codeyB change volume by ");
         node.getVolumeValue().accept(this);
-        emitNoSpace(") :: speaker");
+        emitNoSpace(" :: speaker");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(Pause node) {
-        emitNoSpace("@codeyB rest for (");
+        emitNoSpace("@codeyB rest for ");
         node.getBeat().accept(this);
-        emitNoSpace(") beats :: speaker");
+        emitNoSpace(" beats :: speaker");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(PlayFrequency node) {
-        emitNoSpace("@codeyB play sound at frequency of (");
+        emitNoSpace("@codeyB play sound at frequency of ");
         node.getFrequency().accept(this);
-        emitNoSpace(") HZ for (");
+        emitNoSpace(" HZ for ");
         node.getTime().accept(this);
-        emitNoSpace(") secs :: speaker");
+        emitNoSpace(" secs :: speaker");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3253,9 +3253,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(PlayNote node) {
         emitNoSpace("@codeyB play note [");
         node.getNote().accept((MBlockVisitor) this);
-        emitNoSpace(" v] for (");
+        emitNoSpace(" v] for ");
         node.getBeat().accept(this);
-        emitNoSpace(") beats :: speaker");
+        emitNoSpace(" beats :: speaker");
         storeNotesForIssue(node);
         newLine();
     }
@@ -3280,9 +3280,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SetVolumeTo2 node) {
-        emitNoSpace("@codeyB set volume to (");
+        emitNoSpace("@codeyB set volume to ");
         node.getVolumeValue().accept(this);
-        emitNoSpace(") % :: speaker");
+        emitNoSpace(" % :: speaker");
         storeNotesForIssue(node);
         newLine();
     }
