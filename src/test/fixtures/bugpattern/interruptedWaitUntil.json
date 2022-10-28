@@ -1,0 +1,393 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 1,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "32b2316fd375faa18088f6c57ebb1c8d",
+                    "name": "Space City 2",
+                    "bitmapResolution": 2,
+                    "md5ext": "32b2316fd375faa18088f6c57ebb1c8d.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Astronaut",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "W=5YlE:SZm[:iGC3kGD!": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "wg**xVFTL!:PHDwth_x`",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": true,
+                    "x": 256,
+                    "y": 148
+                },
+                "wg**xVFTL!:PHDwth_x`": {
+                    "opcode": "motion_gotoxy",
+                    "next": ";xL;lN7-3d78P(l-fkd/",
+                    "parent": "W=5YlE:SZm[:iGC3kGD!",
+                    "inputs": {
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "-150"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "-50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                ";xL;lN7-3d78P(l-fkd/": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "wg**xVFTL!:PHDwth_x`",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "jiOS$lb-~;Pk{1TS{KvY"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "jiOS$lb-~;Pk{1TS{KvY": {
+                    "opcode": "motion_glideto",
+                    "next": "q-z3J-y}Y]mw]%R!Lq%Q",
+                    "parent": ";xL;lN7-3d78P(l-fkd/",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "TO": [
+                            1,
+                            "nrb4dpbR_)hyT0;h7?4X"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "nrb4dpbR_)hyT0;h7?4X": {
+                    "opcode": "motion_glideto_menu",
+                    "next": null,
+                    "parent": "jiOS$lb-~;Pk{1TS{KvY",
+                    "inputs": {},
+                    "fields": {
+                        "TO": [
+                            "_random_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "q-z3J-y}Y]mw]%R!Lq%Q": {
+                    "opcode": "control_wait_until",
+                    "next": null,
+                    "parent": "jiOS$lb-~;Pk{1TS{KvY",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "UxB%TVDnhNR!goF:+?%k"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "UxB%TVDnhNR!goF:+?%k": {
+                    "opcode": "operator_not",
+                    "next": null,
+                    "parent": "q-z3J-y}Y]mw]%R!Lq%Q",
+                    "inputs": {
+                        "OPERAND": [
+                            2,
+                            "p.mgSNB#;gxGB5Zp@l+9"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "p.mgSNB#;gxGB5Zp@l+9": {
+                    "opcode": "sensing_touchingobject",
+                    "next": null,
+                    "parent": "UxB%TVDnhNR!goF:+?%k",
+                    "inputs": {
+                        "TOUCHINGOBJECTMENU": [
+                            1,
+                            "SFaX/HLj/~OOp#wX%Zs("
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "breakpoint": false,
+                    "topLevel": false
+                },
+                "SFaX/HLj/~OOp#wX%Zs(": {
+                    "opcode": "sensing_touchingobjectmenu",
+                    "next": null,
+                    "parent": "p.mgSNB#;gxGB5Zp@l+9",
+                    "inputs": {},
+                    "fields": {
+                        "TOUCHINGOBJECTMENU": [
+                            "Raumschiff",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "breakpoint": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "e751d0a781694897f75046eb2810e9a5",
+                    "name": "ripley-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "e751d0a781694897f75046eb2810e9a5.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 57,
+                    "rotationCenterY": 89
+                },
+                {
+                    "assetId": "3ab169f52ea3783270d28ef035a5a7c5",
+                    "name": "ripley-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "3ab169f52ea3783270d28ef035a5a7c5.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 57,
+                    "rotationCenterY": 89
+                },
+                {
+                    "assetId": "043373c51689f3df8bf50eb12c4e3d39",
+                    "name": "ripley-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "043373c51689f3df8bf50eb12c4e3d39.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 57,
+                    "rotationCenterY": 89
+                },
+                {
+                    "assetId": "8e173178d886d1cb272877e8923d651b",
+                    "name": "ripley-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "8e173178d886d1cb272877e8923d651b.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 85,
+                    "rotationCenterY": 89
+                },
+                {
+                    "assetId": "f798adaf44e8891c5e2f1b2a82a613b2",
+                    "name": "ripley-e",
+                    "bitmapResolution": 1,
+                    "md5ext": "f798adaf44e8891c5e2f1b2a82a613b2.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 56,
+                    "rotationCenterY": 89
+                },
+                {
+                    "assetId": "90feaffe3d0c4d31287d57bd1bc64afa",
+                    "name": "ripley-f",
+                    "bitmapResolution": 1,
+                    "md5ext": "90feaffe3d0c4d31287d57bd1bc64afa.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 58,
+                    "rotationCenterY": 90
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": -150,
+            "y": -50,
+            "size": 50,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Raumschiff",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 4,
+            "costumes": [
+                {
+                    "assetId": "525c06ceb3a351244bcd810c9ba951c7",
+                    "name": "rocketship-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "525c06ceb3a351244bcd810c9ba951c7.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 63,
+                    "rotationCenterY": 92
+                },
+                {
+                    "assetId": "10f83786e5ee34f40ee43b49bba89ee2",
+                    "name": "rocketship-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "10f83786e5ee34f40ee43b49bba89ee2.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54,
+                    "rotationCenterY": 92
+                },
+                {
+                    "assetId": "a6ff2f1344a18cc0a4bcc945e00afaf4",
+                    "name": "rocketship-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "a6ff2f1344a18cc0a4bcc945e00afaf4.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 58.746896096779665,
+                    "rotationCenterY": 90.91206944356854
+                },
+                {
+                    "assetId": "5682c68af2cc8aea791f0373e9ed03d8",
+                    "name": "rocketship-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "5682c68af2cc8aea791f0373e9ed03d8.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 65,
+                    "rotationCenterY": 91
+                },
+                {
+                    "assetId": "49ee475c516a444d8a512724063b8b98",
+                    "name": "rocketship-e",
+                    "bitmapResolution": 1,
+                    "md5ext": "49ee475c516a444d8a512724063b8b98.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 57.220799012796846,
+                    "rotationCenterY": 85.12261084456834
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "ff8b8c3bf841a11fd5fe3afaa92be1b5",
+                    "name": "space ripple",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 179153,
+                    "md5ext": "ff8b8c3bf841a11fd5fe3afaa92be1b5.wav"
+                },
+                {
+                    "assetId": "46571f8ec0f2cc91666c80e312579082",
+                    "name": "laser1",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 2247,
+                    "md5ext": "46571f8ec0f2cc91666c80e312579082.wav"
+                },
+                {
+                    "assetId": "27654ed2e3224f0a3f77c244e4fae9aa",
+                    "name": "laser2",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 3288,
+                    "md5ext": "27654ed2e3224f0a3f77c244e4fae9aa.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": -18,
+            "y": -51,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0"
+    }
+}

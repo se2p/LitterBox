@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSet;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -91,8 +91,8 @@ public class MBlockBugpatternTest implements JsonTest {
         assertThatFinderReports(1, new ParallelBoardLaunchScriptMCore(), "./src/test/fixtures/mblock/test/ParallelBoardLaunchScriptMCore.json");
         Program program = getAST("./src/test/fixtures/mblock/test/ParallelBoardLaunchScriptMCore.json");
         Set<Issue> issues = runFinder(program, new ParallelBoardLaunchScriptMCore(), false);
-        Assertions.assertTrue(issues.stream().allMatch(c -> c instanceof IssueSet));
-        Assertions.assertTrue(issues.stream().allMatch(c -> ((IssueSet) c).getScripts().size() == 3));
+        Assertions.assertTrue(issues.stream().allMatch(c -> c instanceof MultiBlockIssue));
+        Assertions.assertTrue(issues.stream().allMatch(c -> ((MultiBlockIssue) c).getScriptEntities().size() == 3));
     }
 
     @Test

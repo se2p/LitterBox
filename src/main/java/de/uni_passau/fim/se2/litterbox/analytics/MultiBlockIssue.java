@@ -22,19 +22,28 @@ import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class MultiBlockIssue extends Issue {
 
-    private List<ASTNode> nodes = new ArrayList<>();
+    private final List<ASTNode> nodes = new ArrayList<>();
+    private final List<ScriptEntity> scripts = new ArrayList<>();
 
     private List<ASTNode> normalizedNodes;
 
     public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
         super(finder, severity, program, actor, script, nodes.get(0), metaData, hint);
         this.nodes.addAll(nodes);
+        scripts.add(script);
+    }
+
+    public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, List<ScriptEntity> scripts, List<ASTNode> nodes, Metadata metaData, Hint hint) {
+        super(finder, severity, program, actor, scripts.get(0), nodes.get(0), metaData, hint);
+        this.nodes.addAll(nodes);
+        this.scripts.addAll(scripts);
     }
 
     @Override
@@ -48,6 +57,25 @@ public class MultiBlockIssue extends Issue {
     @Override
     public boolean hasMultipleBlocks() {
         return nodes.size() > 1;
+    }
+
+    public List<ScriptEntity> getScriptEntities() {
+        return Collections.unmodifiableList(scripts);
+    }
+
+    @Override
+    public Script getScript() {
+        return scripts.get(0) instanceof Script ? (Script) scripts.get(0) : null;
+    }
+
+    @Override
+    public ProcedureDefinition getProcedure() {
+        return scripts.get(0) instanceof ProcedureDefinition ? (ProcedureDefinition) scripts.get(0) : null;
+    }
+
+    @Override
+    public ScriptEntity getScriptOrProcedureDefinition() {
+        return scripts.get(0);
     }
 
     public List<ASTNode> getNodes() {
