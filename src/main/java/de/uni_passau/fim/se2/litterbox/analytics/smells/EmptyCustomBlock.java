@@ -19,10 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
@@ -37,7 +39,11 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW);
+            String name = procMap.get(node.getIdent()).getName().replace("%s", "()");
+            name = IssueTranslator.getInstance().getInfo("define") + " " + name.replace("%b", "<>");
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.BLOCK_NAME, name);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW, hint);
         }
         visitChildren(node);
         currentProcedure = null;
