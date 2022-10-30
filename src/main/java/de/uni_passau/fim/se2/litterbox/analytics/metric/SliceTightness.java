@@ -31,7 +31,7 @@ public class SliceTightness<T extends ASTNode> implements MetricExtractor<T> {
     public double calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg =  visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
         return sliceProfile.getTightness();

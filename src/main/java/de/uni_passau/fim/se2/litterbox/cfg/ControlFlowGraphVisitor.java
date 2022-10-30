@@ -71,10 +71,21 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(Script node) {
         inScript = true;
+        if (builder.getCurrentActor() == null) {
+            builder.setCurrentActor(findParentActor(node));
+        }
         builder.setCurrentScriptOrProcedure(node);
         visit((ASTNode) node);
         inScript = false;
         builder.addEdgeToExit();
+    }
+
+    private ActorDefinition findParentActor(ScriptEntity node) {
+        ASTNode parent = node.getParentNode();
+        while (!(parent instanceof ActorDefinition) && parent != null) {
+            parent = parent.getParentNode();
+        }
+        return (ActorDefinition) parent;
     }
 
     @Override
@@ -105,6 +116,9 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         builder.addProcedure(program, node);
+        if (builder.getCurrentActor() == null) {
+            builder.setCurrentActor(findParentActor(node));
+        }
         builder.setCurrentScriptOrProcedure(node);
         inScript = true;
         node.getStmtList().accept(this);

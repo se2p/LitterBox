@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSet;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -62,8 +62,8 @@ public class MBlockSmellsTest implements JsonTest {
         assertThatFinderReports(9, new ParallelResourceUse(), "./src/test/fixtures/mblock/test/ParallelResourceUse.json");
         Program program = getAST("./src/test/fixtures/mblock/test/ParallelResourceUse.json");
         Set<Issue> issues = runFinder(program, new ParallelBoardLaunchScriptMCore(), false);
-        Assertions.assertTrue(issues.stream().allMatch(c -> c instanceof IssueSet));
-        Assertions.assertTrue(issues.stream().allMatch(c -> ((IssueSet) c).getScripts().size() == 2));
+        Assertions.assertTrue(issues.stream().allMatch(c -> c instanceof MultiBlockIssue));
+        Assertions.assertTrue(issues.stream().allMatch(c -> ((MultiBlockIssue) c).getScriptEntities().size() == 2));
     }
 
     @Test
