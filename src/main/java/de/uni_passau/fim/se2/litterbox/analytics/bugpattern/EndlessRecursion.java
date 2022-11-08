@@ -84,13 +84,14 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                Hint hint = new Hint(BROADCAST_HINT);
+                hint.setParameter(Hint.HINT_MESSAGE, currentMessageName);
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
-                        .withHint(BROADCAST_HINT)
+                        .withHint(hint)
                         .withRefactoring(getBroadcastRefactoring(node));
 
                 addIssue(builder);
-
             }
         }
     }
@@ -99,9 +100,11 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                Hint hint = new Hint(BROADCAST_HINT);
+                hint.setParameter(Hint.HINT_MESSAGE, currentMessageName);
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
-                        .withHint(BROADCAST_HINT)
+                        .withHint(hint)
                         .withRefactoring(getBroadcastRefactoring(node));
 
                 addIssue(builder);
@@ -114,9 +117,11 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
+                Hint hint = new Hint(PROCEDURE_HINT);
+                hint.setParameter(Hint.BLOCK_NAME, call);
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
-                        .withHint(PROCEDURE_HINT)
+                        .withHint(hint)
                         .withRefactoring(getProcedureRefactoring(node));
 
                 addIssue(builder);
@@ -125,7 +130,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     }
 
     private ProcedureDefinition getProcedureRefactoring(CallStmt node) {
-        List<Stmt> stmtList = ((StmtList)node.getParentNode()).getStmts();
+        List<Stmt> stmtList = ((StmtList) node.getParentNode()).getStmts();
         int position = stmtList.indexOf(node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
@@ -135,7 +140,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     private ScriptEntity getBroadcastRefactoring(ASTNode node) {
         // Note that this is a valid local refactoring, but if there are other receivers this
         // would break the program
-        List<Stmt> stmtList = ((StmtList)node.getParentNode()).getStmts();
+        List<Stmt> stmtList = ((StmtList) node.getParentNode()).getStmts();
         int position = stmtList.indexOf(node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
