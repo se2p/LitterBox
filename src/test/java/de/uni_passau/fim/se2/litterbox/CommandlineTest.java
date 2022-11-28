@@ -22,11 +22,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,22 +41,24 @@ public class CommandlineTest {
     private final ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
     private final ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
 
+    private CommandLine commandLine;
+
     @Test
     public void testInvalidOptionPrintsAnError() {
-        Main.parseCommandLine(new String[]{"--optionthatdefinitelydoesntexist"});
-        assertThat(mockErr.toString(Charset.forName("UTF-8"))).isNotEmpty();
+        commandLine.execute("--optionthatdefinitelydoesntexist");
+        assertThat(getErrorOutput()).isNotEmpty();
     }
 
     @Test
     public void testPrintHelp() {
-        Main.parseCommandLine(new String[]{"--output", "foobar"});
-        assertThat(mockOut.toString(Charset.forName("UTF-8"))).contains("usage: LitterBox");
+        commandLine.execute("--output", "foobar");
+        assertThatStdErrContains("Usage: LitterBox");
     }
 
     @Test
     public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
         String inputPath = tempFile.getAbsolutePath();
-        Main.parseCommandLine(new String[] {"-leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number"});
+        commandLine.execute("leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number");
         Path path = Paths.get(inputPath, "I am not a number" + ".json");
         File file = new File(path.toString());
         assertThat(file.exists()).isFalse();
@@ -63,14 +66,14 @@ public class CommandlineTest {
 
     @Test
     public void testLeilaWithoutOutput() {
-        Main.parseCommandLine(new String[] {"-leila"});
-        assertThat(mockErr.toString(Charset.forName("UTF-8"))).contains("Invalid option: Output path option 'output' required");
+        commandLine.execute("leila", "--path", "foobar");
+        assertThatStdErrContains("Output path option '--output' required");
     }
 
     @Test
     public void testLeilaWithoutPath() {
-        Main.parseCommandLine(new String[] {"-leila", "--output", "foobar"});
-        assertThat(mockErr.toString(Charset.forName("UTF-8"))).contains("Input path option 'path' required");
+        commandLine.execute("leila", "--output", "foobar");
+        assertThatStdErrContains("Input path option '--path' required");
     }
 
     @Test
@@ -78,9 +81,17 @@ public class CommandlineTest {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
         String outFile = tempFile.getAbsolutePath();
-        Main.parseCommandLine(new String[] {"-leila", "--path", path, "-o", outFile});
+        commandLine.execute("leila", "--path", path, "-o", outFile);
         String output = Files.readString(Paths.get(outFile, "emptyProject.sc"));
-        assertThat(output.contains("program emptyProject"));
+        assertThat(output).contains("program emptyProject");
+    }
+
+    private void assertThatStdErrContains(String expected) {
+        assertThat(getErrorOutput()).contains(expected);
+    }
+
+    private String getErrorOutput() {
+        return mockErr.toString(StandardCharsets.UTF_8);
     }
 
     @AfterEach
@@ -96,7 +107,9 @@ public class CommandlineTest {
         mockErr.reset();
         mockOut.reset();
 
-        System.setOut(new PrintStream(mockOut, true, Charset.forName("UTF-8")));
-        System.setErr(new PrintStream(mockErr, true, Charset.forName("UTF-8")));
+        System.setOut(new PrintStream(mockOut, true, StandardCharsets.UTF_8));
+        System.setErr(new PrintStream(mockErr, true, StandardCharsets.UTF_8));
+
+        commandLine = new CommandLine(new Main());
     }
 }
