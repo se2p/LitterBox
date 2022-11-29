@@ -32,6 +32,7 @@ import java.nio.file.Path;
  * @param wholeProgram If the whole program should be treated as a single entity instead of performing the analysis per
  *                     sprite.
  * @param includeDefaultSprites If output should be generated for sprites that have the default name, e.g. ‘Sprite1’.
+ * @param abstractTokens If literals and variable names should be replaced by generic placeholders, e.g. {@code var}.
  */
 public record MLPreprocessorCommonOptions(
         Path inputPath,
@@ -40,5 +41,6 @@ public record MLPreprocessorCommonOptions(
         boolean includeStage,
         boolean wholeProgram,
         boolean includeDefaultSprites,
+        boolean abstractTokens,
         ActorNameNormalizer actorNameNormalizer
 ) {}

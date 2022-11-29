@@ -38,6 +38,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     protected final boolean includeStage;
     protected final boolean wholeProgram;
     protected final boolean includeDefaultSprites;
+    protected final boolean abstractTokens;
     protected final ActorNameNormalizer actorNameNormalizer;
 
     /**
@@ -52,6 +53,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
         this.includeStage = commonOptions.includeStage();
         this.wholeProgram = commonOptions.wholeProgram();
         this.includeDefaultSprites = commonOptions.includeDefaultSprites();
+        this.abstractTokens = commonOptions.abstractTokens();
         this.actorNameNormalizer = commonOptions.actorNameNormalizer();
     }
 

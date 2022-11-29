@@ -56,4 +56,3 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
         ScratchVisitor.super.visit(node);
     }
 }
-

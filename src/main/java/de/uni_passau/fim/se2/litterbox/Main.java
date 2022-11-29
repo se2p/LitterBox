@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.AstnnAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2SeqAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
@@ -54,9 +55,10 @@ import java.util.concurrent.Callable;
                 Main.DotSubcommand.class,
                 Main.ExtractSubcommand.class,
                 // machine learning preprocessors
+                Main.AstnnSubcommand.class,
+                Main.Code2SeqSubcommand.class,
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
-                Main.Code2SeqSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -438,6 +440,13 @@ public class Main implements Callable<Integer> {
         boolean includeDefaultSprites;
 
         @CommandLine.Option(
+                names = {"--abstract-tokens"},
+                description = "Replaces literal values and variable names with abstract tokens. "
+                        + "E.g., '1.0' -> 'numberliteral'."
+        )
+        boolean abstractTokens = false;
+
+        @CommandLine.Option(
                 names = {"--latin-only-sprite-names"},
                 description = "Normalise sprite names to include characters in the latin base alphabet (a-z) only."
         )
@@ -463,7 +472,7 @@ public class Main implements Callable<Integer> {
 
             final MLOutputPath outputPath = getOutputPath();
             return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
-                    includeDefaultSprites, buildActorNameNormalizer());
+                    includeDefaultSprites, abstractTokens, buildActorNameNormalizer());
         }
 
         private ActorNameNormalizer buildActorNameNormalizer() {
@@ -472,6 +481,18 @@ public class Main implements Callable<Integer> {
             } else {
                 return ActorNameNormalizer.getDefault();
             }
+        }
+    }
+
+    @CommandLine.Command(
+            name = "astnn",
+            description = "Transform Scratch projects into the ASTNN input format."
+    )
+    static class AstnnSubcommand extends MLPreprocessorSubcommand {
+
+        @Override
+        protected AstnnAnalyzer getAnalyzer() {
+            return new AstnnAnalyzer(getCommonOptions());
         }
     }
 

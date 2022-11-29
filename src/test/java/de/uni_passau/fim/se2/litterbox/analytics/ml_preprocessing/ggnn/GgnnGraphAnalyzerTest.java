@@ -42,7 +42,7 @@ class GgnnGraphAnalyzerTest {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
                 Path.of("src/test/fixtures/multipleSprites.json"),
                 MLOutputPath.directory(outputDir),
-                false, true, false, true,
+                false, true, false, false, true,
                 ActorNameNormalizer.getDefault()
         );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, toDotGraph, null);
@@ -62,7 +62,7 @@ class GgnnGraphAnalyzerTest {
     @Test
     void testInvalidInput() {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
-                Path.of(""), MLOutputPath.console(), false, false, false, true, ActorNameNormalizer.getDefault()
+                Path.of(""), MLOutputPath.console(), false, false, false, true, false, ActorNameNormalizer.getDefault()
         );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
 
