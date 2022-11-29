@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class MLPreprocessingAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(MLPreprocessingAnalyzer.class.getName());
@@ -47,14 +49,15 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         this.wholeProgram = commonOptions.wholeProgram();
     }
 
-    protected abstract Optional<String> process(File inputFile) throws IOException;
+    protected abstract Stream<String> process(File inputFile) throws IOException;
 
     protected abstract Path outputFileName(File inputFile);
 
     private void runProcessingSteps(File inputFile) throws IOException {
-        Optional<String> output = process(inputFile);
-        if (output.isPresent()) {
-            writeResultToOutput(inputFile, output.get());
+        final Stream<String> output = process(inputFile);
+        final String joined = output.collect(Collectors.joining(System.lineSeparator()));
+        if (!joined.isBlank()) {
+            writeResultToOutput(inputFile, joined);
         }
     }
 

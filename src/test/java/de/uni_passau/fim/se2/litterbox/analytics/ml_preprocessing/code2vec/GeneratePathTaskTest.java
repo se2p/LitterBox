@@ -26,8 +26,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.google.common.truth.Truth.assertThat;
 
 class GeneratePathTaskTest implements JsonTest {
 
@@ -39,8 +41,8 @@ class GeneratePathTaskTest implements JsonTest {
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         GeneratePathTask generatePathTask = new GeneratePathTask(program, 8, true, true);
-        String pathContextForCode2Vec = generatePathTask.createContextForCode2Vec();
-        assertEquals("", pathContextForCode2Vec);
+        String pathContextForCode2Vec = generatePathTask.createContextForCode2Vec().collect(Collectors.joining());
+        assertThat(pathContextForCode2Vec).isEmpty();
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
@@ -49,22 +51,21 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         GeneratePathTask generatePathTask = new GeneratePathTask(program, 8, includeStage, false);
 
-        String pathContextForCode2Vec = generatePathTask.createContextForCode2Vec();
-        String[] outputLines = pathContextForCode2Vec.split("\n");
+        List<String> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec().collect(Collectors.toList());
 
         if (includeStage) {
-            assertEquals(3, outputLines.length);
+            assertThat(pathContextsForCode2Vec).hasSize(3);
         } else {
-            assertEquals(2, outputLines.length);
+            assertThat(pathContextsForCode2Vec).hasSize(2);
         }
 
-        assertTrue(pathContextForCode2Vec.contains(CAT_PATHS));
-        assertTrue(pathContextForCode2Vec.contains(ABBY_PATHS));
+        assertThat(pathContextsForCode2Vec).contains(CAT_PATHS);
+        assertThat(pathContextsForCode2Vec).contains(ABBY_PATHS);
 
         if (includeStage) {
-            assertTrue(pathContextForCode2Vec.contains(STAGE_PATHS));
+            assertThat(pathContextsForCode2Vec).contains(STAGE_PATHS);
         } else {
-            assertFalse(pathContextForCode2Vec.contains(STAGE_PATHS));
+            assertThat(pathContextsForCode2Vec).doesNotContain(STAGE_PATHS);
         }
     }
 }
