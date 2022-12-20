@@ -88,7 +88,7 @@ public class LoudnessOutOfBounds extends AbstractRobotFinder {
         secondHasLoudness = false;
     }
 
-    private void visitComp(BinaryExpression node) {
+    private void visitComp(BinaryExpression<?, ?> node) {
         insideComparison = true;
         setValue = false;
         visitFirst = true;

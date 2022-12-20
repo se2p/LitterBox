@@ -58,9 +58,7 @@ public class ScriptReplacementVisitor extends OnlyCodeCloneVisitor {
         List<Script> scripts = new ArrayList<>();
         for (Script script : node.getScriptList()) {
             if (isTargetScript(script)) {
-                for (Script replacement : replacementScripts) {
-                    scripts.add(replacement);
-                }
+                scripts.addAll(replacementScripts);
             } else if (!otherTargets.contains(script)) {
                 scripts.add(apply(script));
             }

@@ -22,7 +22,6 @@ import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyCustomBlock;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;

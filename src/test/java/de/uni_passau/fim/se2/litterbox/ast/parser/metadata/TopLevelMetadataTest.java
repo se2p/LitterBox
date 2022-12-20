@@ -38,8 +38,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
-
 public class TopLevelMetadataTest implements JsonTest {
     private static Program program;
 

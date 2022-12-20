@@ -121,7 +121,7 @@ public class RefactoringAnalyzer extends Analyzer {
             Program refactored = solutions.get(i).getRefactoredProgram();
             StringBuilder sb = new StringBuilder();
             sb.append("Solution,");
-            sb.append(refactored.getIdent().getName() + "_refactored_" + i);
+            sb.append(refactored.getIdent().getName()).append("_refactored_").append(i);
             sb.append(',');
             sb.append(solutions.get(i).getExecutedRefactorings().size());
             sb.append(',');
