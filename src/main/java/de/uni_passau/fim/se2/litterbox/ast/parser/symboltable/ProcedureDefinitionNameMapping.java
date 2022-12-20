@@ -18,8 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -87,12 +90,13 @@ public class ProcedureDefinitionNameMapping {
                 .stream()
                 .filter(e -> e.getKey().getName().equals(jsonHash))
                 .map(Map.Entry::getValue)
-                .findFirst().get();
+                .findFirst()
+                .orElseThrow();
     }
 
     public ProcedureInfo getProcedureForName(String actorName, String name) {
         Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
-        return procedureMap.values().stream().filter(p -> p.getName().equals(name)).findFirst().get();
+        return procedureMap.values().stream().filter(p -> p.getName().equals(name)).findFirst().orElseThrow();
     }
 
     public List<Pair<LocalIdentifier, ProcedureInfo>> getProceduresForName(String actorName, String name) {
@@ -102,6 +106,13 @@ public class ProcedureDefinitionNameMapping {
                 .filter(e -> e.getValue().getName().equals(name))
                 .map(Pair::of)
                 .collect(Collectors.toList());
+    }
+
+    public ProcedureInfo getProcedureInfo(final ProcedureDefinition procedureDefinition) {
+        final ActorDefinition actor = AstNodeUtil.findActor(procedureDefinition)
+                .orElseThrow(() -> new IllegalStateException("Invalid AST: Could not find actor for procedure."));
+        final String hash =  procedureDefinition.getIdent().getName();
+        return getProcedureForHash(actor.getIdent().getName(), hash);
     }
 
     public void addMalformated(String malformated) {

@@ -19,14 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 public class AstNodeUtil {
     private AstNodeUtil() {
+        throw new IllegalCallerException("utility class");
     }
 
     public static boolean isMetadata(final ASTNode node) {
@@ -35,5 +42,53 @@ public class AstNodeUtil {
                 || node instanceof ImageMetadataList
                 || node instanceof MonitorMetadataList
                 || node instanceof SoundMetadataList;
+    }
+
+    public static List<ActorDefinition> getActors(final Program program, boolean includeStage) {
+        return program.getActorDefinitionList()
+                .getDefinitions()
+                .stream()
+                .filter(actor -> includeStage || actor.isSprite())
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Finds the actor the given node belongs to.
+     * @param node Some {@link ASTNode}.
+     * @return The actor the node belongs to, empty if the node belongs to no actor.
+     */
+    public static Optional<ActorDefinition> findActor(final ASTNode node) {
+        ASTNode currentNode = node;
+
+        while (currentNode != null) {
+            if (currentNode instanceof ActorDefinition) {
+                return Optional.of((ActorDefinition) currentNode);
+            }
+            currentNode = currentNode.getParentNode();
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Replaces all parameter placeholders with the given substitution.
+     *
+     * <p>Replaces
+     * <ul>
+     *     <li>string parameters ({@code %s})</li>
+     *     <li>boolean parameters ({@code %b})</li>
+     *     <li>numeric parameters ({@code %n})</li>
+     * </ul>
+     *
+     * @param procedureName The name of the procedure including the parameter placeholders.
+     * @param replacement The substitution string.
+     * @return The procedure name with replaced parameter placeholders.
+     */
+    public static String replaceProcedureParams(final String procedureName, final String replacement) {
+        return procedureName.replace("%s", replacement)
+                .replace("%b", replacement)
+                .replace("%n", replacement)
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 }

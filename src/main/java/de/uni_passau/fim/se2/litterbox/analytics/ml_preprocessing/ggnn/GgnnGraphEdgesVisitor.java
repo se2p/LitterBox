@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -249,7 +248,7 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
 
         private Optional<ProcedureDefinition> findCalledProcedure(final CallStmt callStmt) {
             String procedureName = callStmt.getIdent().getName();
-            String sprite = getCurrentSprite(callStmt);
+            String sprite = AstNodeUtil.findActor(callStmt).orElseThrow().getIdent().getName();
 
             return procedureMapping.getProceduresForName(sprite, procedureName)
                     .stream()
@@ -276,15 +275,6 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
                     edges.add(Pair.of(passedArguments.get(i), parameters.get(i)));
                 }
             }
-        }
-
-        private String getCurrentSprite(final ASTNode node) {
-            ASTNode actorDefinition = node;
-            while (!(actorDefinition instanceof ActorDefinition)) {
-                actorDefinition = actorDefinition.getParentNode();
-            }
-
-            return ((ActorDefinition) actorDefinition).getIdent().getName();
         }
     }
 
