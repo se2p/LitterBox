@@ -91,7 +91,7 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
     private void addSimilarIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
-                .collect(Collectors.toMap(issue -> issue, issue -> theIssue.getDistanceTo(issue)))
+                .collect(Collectors.toMap(issue -> issue, theIssue::getDistanceTo))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)

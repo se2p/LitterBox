@@ -39,6 +39,6 @@ public class GeneralMBlockTest implements JsonTest {
             e.printStackTrace();
             fail(e.getMessage());
         }
-        Assertions.assertTrue(program != null);
+        Assertions.assertNotNull(program);
     }
 }

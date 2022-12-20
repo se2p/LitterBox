@@ -39,7 +39,7 @@ public class Downloader {
             return json;
         } else {
             Path path = Paths.get(projectout, projectid + ".json");
-            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            return Files.readString(path, StandardCharsets.UTF_8);
         }
     }
 

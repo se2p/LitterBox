@@ -81,9 +81,7 @@ public class ResourceBundleTest {
                 .map(MatchResult::group)
                 .collect(Collectors.toList());
         String currentToken = "";
-        for (int i = 0; i < matches.size(); i++) {
-            String match = matches.get(i);
-
+        for (String match : matches) {
             if (!currentToken.isEmpty()) {
                 if (match.startsWith("[/")) {
                     assertWithMessage("Found invalid tag " + match + " when expecting [/sbi] in hint for " + key).that(match.replace("/", "")).isEqualTo(currentToken);

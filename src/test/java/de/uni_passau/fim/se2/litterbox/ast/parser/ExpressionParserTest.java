@@ -127,7 +127,7 @@ public class ExpressionParserTest {
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
 
-        assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType().equals(NumFunct.NumFunctType.POW10));
+        assertEquals(NumFunct.NumFunctType.POW10, (NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType());
     }
 
     @Test

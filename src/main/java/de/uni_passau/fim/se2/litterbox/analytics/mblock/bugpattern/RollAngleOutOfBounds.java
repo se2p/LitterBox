@@ -94,7 +94,7 @@ public class RollAngleOutOfBounds extends AbstractRobotFinder {
         secondHasRollAngle = false;
     }
 
-    private void visitComp(BinaryExpression node) {
+    private void visitComp(BinaryExpression<?, ?> node) {
         insideComparison = true;
         setValue = false;
         visitFirst = true;
