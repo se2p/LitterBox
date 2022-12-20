@@ -65,6 +65,7 @@ public class ForwardBackwardChoice extends AbstractNode implements FixedNodeOpti
         return type;
     }
 
+    @Override
     public String getTypeName() {
         return type.getType();
     }

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.timecomp;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
@@ -70,6 +69,7 @@ public class TimeComp extends AbstractNode implements FixedNodeOption {
         return type;
     }
 
+    @Override
     public String getTypeName() {
         return type.getLabel();
     }

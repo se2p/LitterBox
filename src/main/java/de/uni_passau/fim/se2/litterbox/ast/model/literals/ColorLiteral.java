@@ -51,6 +51,17 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
         return green;
     }
 
+    /**
+     * Formats the colour in the canonical six digit hexadecimal RGB format.
+     *
+     * <p>Example: red=255, green=128, blue=0 will be formatted as {@code #ff8000}.
+     *
+     * @return The colour.
+     */
+    public String getRGB() {
+        return String.format("#%02x%02x%02x", red, green, blue);
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

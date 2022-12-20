@@ -16,8 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model;
+package de.uni_passau.fim.se2.litterbox.ast.model.literals;
 
-public interface FixedNodeOption extends ASTLeaf {
-    String getTypeName();
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class ColorLiteralTest {
+    @Test
+    void formatRGBWhite() {
+        final ColorLiteral color = new ColorLiteral(255, 255, 255);
+        assertEquals("#ffffff", color.getRGB());
+    }
+
+    @Test
+    void formatRGBBlack() {
+        final ColorLiteral color = new ColorLiteral(0, 0, 0);
+        assertEquals("#000000", color.getRGB());
+    }
+
+    @Test
+    void formatRGB() {
+        final ColorLiteral color = new ColorLiteral(243, 146, 0);
+        assertEquals("#f39200", color.getRGB());
+    }
 }
