@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExpressionParserTest {
 

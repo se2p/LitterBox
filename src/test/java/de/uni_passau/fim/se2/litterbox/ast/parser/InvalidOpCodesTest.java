@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InvalidOpCodesTest implements JsonTest {
 
@@ -40,7 +40,7 @@ public class InvalidOpCodesTest implements JsonTest {
         ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         for (Script s : sprite.getScripts().getScriptList()) {
             Stmt stmt = s.getStmtList().getStmts().get(0);
-            assertTrue("Sprite may not contain any stmts except Unspecifiedstmt", stmt instanceof UnspecifiedStmt);
+            assertTrue(stmt instanceof UnspecifiedStmt, "Sprite may not contain any stmts except Unspecifiedstmt");
         }
     }
 }
