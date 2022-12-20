@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.CodeyCounterMetri
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.MCoreCounterMetric;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.RealCodeyMetric;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.RobotCodeMetric;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.MotorPowerOutOfBounds;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 
