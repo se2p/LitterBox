@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class TokenVisitorTest implements JsonTest {
+public class TokenizerTest implements JsonTest {
 
     @Test
     public void testFourBlocks() throws IOException, ParsingException {

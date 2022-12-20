@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2Seq
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer.TokenizingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -59,6 +60,7 @@ import java.util.concurrent.Callable;
                 Main.Code2SeqSubcommand.class,
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
+                Main.TokenizerSubcommand.class
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -572,6 +574,32 @@ public class Main implements Callable<Integer> {
         @Override
         protected GgnnGraphAnalyzer getAnalyzer() {
             return new GgnnGraphAnalyzer(getCommonOptions(), dotGraph, label);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "tokenizer",
+            description = "Transforms each Scratch project into a token sequence."
+    )
+    static class TokenizerSubcommand extends MLPreprocessorSubcommand {
+
+        @CommandLine.Option(
+                names = {"--sequence-per-script"},
+                description = "Generate one token sequence per script instead of per sprite/program."
+                        + "Custom procedure definitions count as scripts."
+        )
+        boolean sequencePerScript = false;
+
+        @Override
+        protected TokenizingAnalyzer getAnalyzer() {
+            if (wholeProgram && sequencePerScript) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "Cannot generate one sequence for the whole program and sequences per script at the same time."
+                );
+            }
+
+            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript);
         }
     }
 }
