@@ -27,6 +27,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
@@ -38,15 +39,15 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     }
 
     @Override
-    public Optional<String> process(File inputFile) {
-        Program program = extractProgram(inputFile);
+    public Stream<String> process(File inputFile) {
+        final Program program = extractProgram(inputFile);
         if (program == null) {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Optional.empty();
+            return Stream.empty();
         }
 
         GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram);
-        return Optional.of(generatePathTask.createContextForCode2Vec());
+        return generatePathTask.createContextForCode2Vec();
     }
 
     @Override

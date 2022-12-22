@@ -50,11 +50,9 @@ test:
         echo "]" >> "$output"
   artifacts:
       paths:
-          - target/surefire-reports/
           - target/site/jacoco/
-          - checkstyle-report.json
       reports:
           codequality:
               - checkstyle-report.json
-
-
+          junit:
+              - target/surefire-reports/TEST-*.xml

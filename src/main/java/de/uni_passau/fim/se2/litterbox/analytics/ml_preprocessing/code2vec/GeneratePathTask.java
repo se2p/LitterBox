@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GeneratePathTask {
 
@@ -38,30 +39,18 @@ public class GeneratePathTask {
         this.wholeProgram = wholeProgram;
     }
 
-    public String createContextForCode2Vec() {
+    public Stream<String> createContextForCode2Vec() {
         PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram);
         // pathGenerator.printLeafsPerSprite();
         List<ProgramFeatures> programs = pathGenerator.generatePaths();
         return featuresToString(programs);
     }
 
-    private String featuresToString(List<ProgramFeatures> features) {
-        if (features == null || features.isEmpty()) {
-            return "";
+    private Stream<String> featuresToString(List<ProgramFeatures> features) {
+        if (features == null) {
+            return Stream.empty();
         }
 
-        List<String> spriteOutputs = new ArrayList<>();
-
-        for (ProgramFeatures singleSpriteFeatures : features) {
-            StringBuilder builder = new StringBuilder();
-
-            String toPrint;
-            toPrint = singleSpriteFeatures.toString();
-            builder.append(toPrint);
-
-            spriteOutputs.add(builder.toString());
-        }
-
-        return StringUtils.join(spriteOutputs, "\n");
+        return features.stream().map(ProgramFeatures::toString);
     }
 }
