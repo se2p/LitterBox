@@ -75,7 +75,7 @@ public class PitchAngleInBounds extends AbstractRobotFinder {
         secondHasPitchAngle = false;
     }
 
-    private void visitComp(BinaryExpression node) {
+    private void visitComp(BinaryExpression<?, ?> node) {
         insideComparison = true;
         setValue = false;
         visitFirst = true;

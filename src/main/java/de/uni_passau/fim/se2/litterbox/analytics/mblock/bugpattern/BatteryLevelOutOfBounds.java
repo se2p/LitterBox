@@ -88,7 +88,7 @@ public class BatteryLevelOutOfBounds extends AbstractRobotFinder {
         secondHasBattery = false;
     }
 
-    private void visitComp(BinaryExpression node) {
+    private void visitComp(BinaryExpression<?, ?> node) {
         insideComparison = true;
         setValue = false;
         visitFirst = true;

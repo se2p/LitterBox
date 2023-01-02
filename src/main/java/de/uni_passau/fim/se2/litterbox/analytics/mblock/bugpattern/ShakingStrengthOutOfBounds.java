@@ -94,7 +94,7 @@ public class ShakingStrengthOutOfBounds extends AbstractRobotFinder {
         secondHasShaking = false;
     }
 
-    private void visitComp(BinaryExpression node) {
+    private void visitComp(BinaryExpression<?, ?> node) {
         insideComparison = true;
         setValue = false;
         visitFirst = true;

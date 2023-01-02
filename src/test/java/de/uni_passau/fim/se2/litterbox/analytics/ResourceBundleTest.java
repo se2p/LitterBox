@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
-import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -82,9 +81,7 @@ public class ResourceBundleTest {
                 .map(MatchResult::group)
                 .collect(Collectors.toList());
         String currentToken = "";
-        for (int i = 0; i < matches.size(); i++) {
-            String match = matches.get(i);
-
+        for (String match : matches) {
             if (!currentToken.isEmpty()) {
                 if (match.startsWith("[/")) {
                     assertWithMessage("Found invalid tag " + match + " when expecting [/sbi] in hint for " + key).that(match.replace("/", "")).isEqualTo(currentToken);

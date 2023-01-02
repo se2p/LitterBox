@@ -139,7 +139,7 @@ public class ControlFlowGraphBuilder {
 
     public void setCurrentStatement(CFGNode... nodes) {
         currentNodes.clear();
-        Arrays.stream(nodes).forEach(s -> currentNodes.add(s));
+        currentNodes.addAll(Arrays.asList(nodes));
     }
 
     public void addCurrentStatement(CFGNode node) {

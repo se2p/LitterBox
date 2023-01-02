@@ -25,8 +25,8 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(GgnnGraphAnalyzer.class.getName());
@@ -43,20 +43,20 @@ public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer {
     }
 
     @Override
-    protected Optional<String> process(File inputFile) {
+    protected Stream<String> process(File inputFile) {
         Program program = extractProgram(inputFile);
         if (program == null) {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Optional.empty();
+            return Stream.empty();
         }
 
         GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(program, input, includeStage,
                                                                                 wholeProgram, labelName);
         if (isDotStringGraph) {
             String label = FilenameUtils.removeExtension(inputFile.getName());
-            return Optional.of(generateGgnnGraphTask.generateDotGraphData(label));
+            return Stream.of(generateGgnnGraphTask.generateDotGraphData(label));
         } else {
-            return Optional.of(generateGgnnGraphTask.generateJsonGraphData());
+            return generateGgnnGraphTask.generateJsonGraphData();
         }
     }
 

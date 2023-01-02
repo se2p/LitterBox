@@ -29,33 +29,64 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Downloader {
+public final class Downloader {
 
-    public static String downloadAndSaveProject(String projectid, String projectout) throws IOException {
-        if (!isAlreadyDownloaded(projectid, projectout)) {
-            String json = downloadProjectJSON(projectid);
-            saveDownloadedProject(json, projectid, projectout);
+    /**
+     * The first capturing group contains the actual project token value.
+     */
+    private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
+
+    private Downloader() {
+        throw new IllegalCallerException("utility class");
+    }
+
+    public static String downloadAndSaveProject(String projectId, String projectOut) throws IOException {
+        if (!isAlreadyDownloaded(projectId, projectOut)) {
+            String json = downloadProjectJSON(projectId);
+            saveDownloadedProject(json, projectId, projectOut);
             return json;
         } else {
-            Path path = Paths.get(projectout, projectid + ".json");
-            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            Path path = Paths.get(projectOut, projectId + ".json");
+            return Files.readString(path, StandardCharsets.UTF_8);
         }
     }
 
-    public static String downloadProjectJSON(String projectid) throws IOException {
-        String url = "https://projects.scratch.mit.edu/" + projectid + "/all";
+    public static String downloadProjectJSON(String projectId) throws IOException {
+        final String projectAccessToken = getProjectToken(projectId);
+        final String url = "https://projects.scratch.mit.edu/" + projectId + "/?token=" + projectAccessToken;
 
-        try (InputStream is = new URL(url).openStream()) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            int cp;
-            cp = br.read();
+        return readFromUrl(url);
+    }
+
+    private static String getProjectToken(String projectId) throws IOException {
+        final String url = "https://api.scratch.mit.edu/projects/" + projectId;
+        final String projectInfo = readFromUrl(url);
+
+        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfo);
+        if (matcher.find() && matcher.groupCount() == 1) {
+            return matcher.group(1);
+        } else {
+            throw new IOException("Cannot extract download token from project metadata.");
+        }
+    }
+
+    private static String readFromUrl(String url) throws IOException {
+        try (
+                InputStream is = new URL(url).openStream();
+                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr)
+        ) {
+            final StringBuilder sb = new StringBuilder();
+
+            int cp = br.read();
             while (cp != -1) {
                 sb.append(((char) cp));
                 cp = br.read();
             }
-            br.close();
+
             return sb.toString();
         }
     }

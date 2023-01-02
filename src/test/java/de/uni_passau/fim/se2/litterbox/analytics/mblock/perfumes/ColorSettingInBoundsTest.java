@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.ColorSettingOutOfBounds;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 

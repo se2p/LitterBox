@@ -52,7 +52,7 @@ public class GenerateGgnnGraphTask {
         return GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs, label);
     }
 
-    String generateJsonGraphData() {
+    Stream<String> generateJsonGraphData() {
         final ObjectMapper objectMapper = new ObjectMapper();
         final List<GgnnProgramGraph> graphs = getProgramGraphs();
 
@@ -63,7 +63,7 @@ public class GenerateGgnnGraphTask {
                 e.printStackTrace();
                 return Stream.empty();
             }
-        }).collect(Collectors.joining("\n"));
+        });
     }
 
     List<GgnnProgramGraph> getProgramGraphs() {

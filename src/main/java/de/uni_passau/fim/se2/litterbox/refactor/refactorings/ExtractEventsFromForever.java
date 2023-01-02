@@ -71,10 +71,7 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
             }
         }
 
-        // Add all scripts
-        for (Script currentScript : eventScripts) {
-            scripts.add(currentScript);
-        }
+        scripts.addAll(eventScripts);
 
         return new ScriptList(scripts);
     }

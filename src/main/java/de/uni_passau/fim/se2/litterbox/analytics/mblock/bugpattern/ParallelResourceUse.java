@@ -202,9 +202,7 @@ public class ParallelResourceUse extends AbstractRobotFinder {
         List<ScriptEntity> scriptList = new LinkedList<>(map.keySet());
         List<ASTNode> nodeList = new LinkedList<>(map.values());
         List<Metadata> metadataList = new LinkedList<>();
-        nodeList.forEach((node) -> {
-            metadataList.add(node.getMetadata());
-        });
+        nodeList.forEach((node) -> metadataList.add(node.getMetadata()));
         if (nodeList.size() >= 2) {
             MultiBlockIssue issue = new MultiBlockIssue(this, MEDIUM, program, currentActor, scriptList, nodeList,
                     nodeList.get(0).getMetadata(), new Hint(getName()));

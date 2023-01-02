@@ -16,17 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.metric;
+package de.uni_passau.fim.se2.litterbox.ast.model.literals;
 
-import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class VariableUseCountTest implements JsonTest {
+class ColorLiteralTest {
     @Test
-    public void testAll() throws IOException, ParsingException {
-        assertThatMetricReports(1, new VariableUseCount<>(), "./src/test/fixtures/metrics/variableCount.json");
+    void formatRGBWhite() {
+        final ColorLiteral color = new ColorLiteral(255, 255, 255);
+        assertEquals("#ffffff", color.getRGB());
+    }
+
+    @Test
+    void formatRGBBlack() {
+        final ColorLiteral color = new ColorLiteral(0, 0, 0);
+        assertEquals("#000000", color.getRGB());
+    }
+
+    @Test
+    void formatRGB() {
+        final ColorLiteral color = new ColorLiteral(243, 146, 0);
+        assertEquals("#f39200", color.getRGB());
     }
 }

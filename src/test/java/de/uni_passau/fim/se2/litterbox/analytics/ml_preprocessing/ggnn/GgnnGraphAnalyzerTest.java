@@ -30,6 +30,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -58,8 +60,8 @@ class GgnnGraphAnalyzerTest {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions("", MLOutputPath.console(), false, false, false);
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
 
-        Optional<String> result = analyzer.process(Path.of("non_existing").toFile());
-        assertThat(result).isEqualTo(Optional.empty());
+        Stream<String> result = analyzer.process(Path.of("non_existing").toFile());
+        assertThat(result.collect(Collectors.toList())).isEmpty();
     }
 
     private String expectedOutputFilename(String inputFile, boolean dotGraph) {

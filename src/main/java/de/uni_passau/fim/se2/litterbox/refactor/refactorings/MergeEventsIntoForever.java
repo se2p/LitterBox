@@ -112,8 +112,10 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         }
 
         for (int i = 0; i < this.scriptList.size(); i++) {
-            if (this.scriptList.get(i).equals(that.scriptList.get(i)))
+            if (!this.scriptList.get(i).equals(that.scriptList.get(i))) {
                 equals = false;
+                break;
+            }
         }
         return equals && Objects.equals(this.replacement, that.replacement);
     }

@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExpressionParserTest {
 
@@ -127,7 +127,7 @@ public class ExpressionParserTest {
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
 
-        assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType().equals(NumFunct.NumFunctType.POW10));
+        assertEquals(NumFunct.NumFunctType.POW10, (NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType());
     }
 
     @Test

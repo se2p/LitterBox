@@ -41,13 +41,13 @@ public class EqualsTest {
         list.add(goTo);
         RepeatTimesStmt repeat = new RepeatTimesStmt(num, new StmtList(list), NonDataBlockMetadata.emptyNonBlockMetadata());
         NumberLiteral num2 = new NumberLiteral(2);
-        Assertions.assertTrue(num.equals(num2));
+        Assertions.assertEquals(num, num2);
         MoveSteps goTo2 = new MoveSteps(new NumberLiteral(12), new NoBlockMetadata());
-        Assertions.assertTrue(goTo.equals(goTo2));
+        Assertions.assertEquals(goTo, goTo2);
         List<Stmt> list2 = new ArrayList<>();
         list2.add(goTo2);
 
         RepeatTimesStmt repeat2 = new RepeatTimesStmt(num2, new StmtList(list2), NonDataBlockMetadata.emptyNonBlockMetadata());
-        Assertions.assertTrue(repeat.equals(repeat2));
+        Assertions.assertEquals(repeat, repeat2);
     }
 }
