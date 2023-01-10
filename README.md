@@ -59,7 +59,7 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```
-java -jar Litterbox-1.8.jar check --projectid <projectid> --path <path/to/store/downloaded/project>
+java -jar Litterbox-1.8.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
@@ -75,7 +75,7 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```
-java -jar Litterbox-1.8.jar check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
+java -jar Litterbox-1.8.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -103,7 +103,7 @@ analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
 ```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json> --annotate <result.json>
+java -jar Litterbox-1.8.jar check --path <path/to/project.json> --annotate <results/>
 ```
 
 
@@ -156,7 +156,7 @@ Since version 1.7 Litterbox can automatically refactor a given Scratch project t
 
 ```
 java -jar Litterbox-1.8.jar \
-    refactor \
+    refactoring \
     --path <path/to/project.json> \
     --refactored-projects <path/to/output-dir>
 ```
@@ -173,7 +173,7 @@ Litterbox produces a file with exactly these rules. It's like a Scratch extracto
 multiple projects and produces the output to the declared output folder.
 
 ```
-java -jar Litterbox-1.8.jar code2vec -output <path/to/folder/for/the/output> -path <path/to/json/project/or/folder/with/projects>
+java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --path <path/to/json/project/or/folder/with/projects>
 ```
 
 There are some differences between Scratch and "normal" programming languages like Java, but the most important is,
