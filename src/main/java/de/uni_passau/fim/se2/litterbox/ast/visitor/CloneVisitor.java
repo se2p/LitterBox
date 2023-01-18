@@ -32,6 +32,28 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -94,21 +116,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitio
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -5340,5 +5347,59 @@ public class CloneVisitor {
      */
     public ASTNode visit(StopAllSounds2 node) {
         return new StopAllSounds2(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(Tempo node) {
+        return new Tempo(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(ChangeTempo node) {
+        return new ChangeTempo(apply(node.getTempo()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(SetTempoTo node) {
+        return new SetTempoTo(apply(node.getTempo()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(SetInstrument node) {
+        return new SetInstrument(apply(node.getInstrument()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(PlayDrumForBeats node) {
+        return new PlayDrumForBeats(apply(node.getDrum()), apply(node.getBeats()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(PlayNoteForBeats node) {
+        return new PlayNoteForBeats(apply(node.getNote()), apply(node.getBeats()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(RestForBeats node) {
+        return new RestForBeats(apply(node.getBeats()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(FixedNote node) {
+        return new FixedNote(node.getNote(), node.getMetadata());
+    }
+
+    public ASTNode visit(ExprNote node) {
+        return new ExprNote(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(FixedInstrument node) {
+
+        return new FixedInstrument(node.getType().getType(), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(ExprInstrument node) {
+
+        return new ExprInstrument(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(FixedDrum node) {
+        return new FixedDrum(node.getType().getType(), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(ExprDrum node) {
+        return new ExprDrum(apply(node.getExpr()), apply(node.getMetadata()));
     }
 }

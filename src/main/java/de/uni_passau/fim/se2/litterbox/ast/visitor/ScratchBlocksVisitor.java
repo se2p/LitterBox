@@ -49,6 +49,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.mov
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -120,7 +127,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -1103,7 +1110,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Speak node) {
-        emitNoSpace("set voice to ");
+        emitNoSpace("speak ");
         node.getText().accept(this);
         emitNoSpace(" :: tts");
         storeNotesForIssue(node);
@@ -3300,5 +3307,234 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(MBlockNode node) {
         node.accept((MBlockVisitor) this);
+    }
+
+    // music extension
+    @Override
+    public void visit(MusicBlock node) {
+        node.accept((MusicExtensionVisitor) this);
+    }
+
+    @Override
+    public void visitParentVisitor(MusicBlock node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(Tempo node) {
+        emitNoSpace("(Tempo");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(RestForBeats node) {
+        emitNoSpace("rest for ");
+        node.getBeats().accept(this);
+        emitNoSpace(" beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetTempoTo node) {
+        emitNoSpace("set tempo to ");
+        node.getTempo().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeTempo node) {
+        emitNoSpace("change tempo by ");
+        node.getTempo().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayNoteForBeats node) {
+        emitNoSpace("play note ");
+        node.getNote().accept((MusicExtensionVisitor) this);
+        emitNoSpace(" for ");
+        node.getBeats().accept(this);
+        emitNoSpace("beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayDrumForBeats node) {
+        emitNoSpace("play drum ");
+        node.getDrum().accept((MusicExtensionVisitor) this);
+        emitNoSpace(" for ");
+        node.getBeats().accept(this);
+        emitNoSpace("beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetInstrument node) {
+        emitNoSpace("set instrument to ");
+        node.getInstrument().accept((MusicExtensionVisitor) this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        emitNoSpace("(");
+        switch (node.getType()) {
+
+            case ONE:
+                emitNoSpace("(1) Piano");
+                break;
+            case TWO:
+                emitNoSpace("(2) Electric Piano");
+                break;
+            case THREE:
+                emitNoSpace("(3) Organ");
+                break;
+            case FOUR:
+                emitNoSpace("(4) Guitar");
+                break;
+            case FIVE:
+                emitNoSpace("(5) Electric Guitar");
+                break;
+            case SIX:
+                emitNoSpace("(6) Bass");
+                break;
+            case SEVEN:
+                emitNoSpace("(7) Pizzicato");
+                break;
+            case EIGHT:
+                emitNoSpace("(8) Cello");
+                break;
+            case NINE:
+                emitNoSpace("(9) Trombone");
+                break;
+            case TEN:
+                emitNoSpace("(10) Clarinet");
+                break;
+            case ELEVEN:
+                emitNoSpace("(11) Saxophone");
+                break;
+            case TWELVE:
+                emitNoSpace("(12) Flute");
+                break;
+            case THIRTEEN:
+                emitNoSpace("(13) Wooden Flute");
+                break;
+            case FOURTEEN:
+                emitNoSpace("(14) Bassoon");
+                break;
+            case FIFTEEN:
+                emitNoSpace("(15) Choir");
+                break;
+            case SIXTEEN:
+                emitNoSpace("(16) Vibraphone");
+                break;
+            case SEVENTEEN:
+                emitNoSpace("(17) Music Box");
+                break;
+            case EIGHTEEN:
+                emitNoSpace("(18) Steel Drum");
+                break;
+            case NINETEEN:
+                emitNoSpace("(19) Marimba");
+                break;
+            case TWENTY:
+                emitNoSpace("(20) Synth Lead");
+                break;
+            case TWENTYONE:
+                emitNoSpace("(21) Synth Pad");
+                break;
+        }
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        emitNoSpace("(" + node.getNote());
+        storeNotesForIssue(node);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        emitNoSpace("(");
+        switch (node.getType()) {
+            case ONE:
+                emitNoSpace("(1) Snare Drum");
+                break;
+            case TWO:
+                emitNoSpace("(2) Bass Drum");
+                break;
+            case THREE:
+                emitNoSpace("(3) Side Stick");
+                break;
+            case FOUR:
+                emitNoSpace("(4) Crash Cymbal");
+                break;
+            case FIVE:
+                emitNoSpace("(5) Open Hi-Hat");
+                break;
+            case SIX:
+                emitNoSpace("(6) Closed Hi-Hat");
+                break;
+            case SEVEN:
+                emitNoSpace("(7) Tambourine");
+                break;
+            case EIGHT:
+                emitNoSpace("(8) Hand Clap");
+                break;
+            case NINE:
+                emitNoSpace("(9) CLaves");
+                break;
+            case TEN:
+                emitNoSpace("(10) Wood Block");
+                break;
+            case ELEVEN:
+                emitNoSpace("(11) Cowbell");
+                break;
+            case TWELVE:
+                emitNoSpace("(12) Triangle");
+                break;
+            case THIRTEEN:
+                emitNoSpace("(13) Bongo");
+                break;
+            case FOURTEEN:
+                emitNoSpace("(14) Conga");
+                break;
+            case FIFTEEN:
+                emitNoSpace("(15) Cabasa");
+                break;
+            case SIXTEEN:
+                emitNoSpace("(16) Guiro");
+                break;
+            case SEVENTEEN:
+                emitNoSpace("(17) Vibraslap");
+                break;
+            case EIGHTEEN:
+                emitNoSpace("(18) Cuica");
+                break;
+        }
+
+        emitNoSpace(" v)");
     }
 }
