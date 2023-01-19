@@ -334,4 +334,11 @@ public class Constants {
     public static final String NUMBER_KEY = "NUMBER";
     public static final String NUMBER1_KEY = "NUMBER1";
     public static final String NUMBER2_KEY = "NUMBER2";
+
+    public static final String BEATS_KEY = "BEATS";
+    public static final String TEMPO_BIG_KEY = "TEMPO";
+
+    public static final String INSTRUMENT_KEY = "INSTRUMENT";
+    public static final String NOTE_KEY = "NOTE";
+    public static final String DRUM_KEY = "DRUM";
 }

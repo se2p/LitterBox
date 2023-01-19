@@ -67,7 +67,10 @@ public enum NumExprOpcode implements Opcode {
     detect_external_light,
     detect_external_ultrasonic,
     detect_external_linefollower,
-    detect_timer;
+    detect_timer,
+
+    //music
+    music_getTempo;
 
     public static boolean contains(String opcode) {
         opcode = Opcode.removePrefix(opcode);

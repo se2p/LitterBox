@@ -32,6 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
@@ -61,11 +68,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor {
+public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -581,6 +589,53 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     public void visit(ExprVoice node) {
         //only visit the children/the node that is inside the voice block
         visitChildren(node);
+    }
+
+    // Music Blocks
+
+    @Override
+    public void visit(FixedDrum node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(MusicBlock node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+    }
+
+    @Override
+    public void visitParentVisitor(MusicBlock node) {
+        visitDefaultVisitor(node);
     }
 }
 
