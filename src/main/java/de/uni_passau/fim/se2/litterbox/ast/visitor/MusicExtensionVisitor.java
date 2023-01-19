@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.In
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.Note;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 
 public interface MusicExtensionVisitor {
 
@@ -49,7 +48,7 @@ public interface MusicExtensionVisitor {
         visit((MusicExpression) node);
     }
 
-    default void visit(ChangeTempo node) {
+    default void visit(ChangeTempoBy node) {
         visit((MusicStmt) node);
     }
 
@@ -57,7 +56,7 @@ public interface MusicExtensionVisitor {
         visit((MusicStmt) node);
     }
 
-    default void visit(SetInstrument node) {
+    default void visit(SetInstrumentTo node) {
         visit((MusicStmt) node);
     }
 

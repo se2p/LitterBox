@@ -21,16 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MusicBlockCount <T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, MusicExtensionVisitor {
+public class MusicBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, MusicExtensionVisitor {
 
     public static final String NAME = "music_block_count";
     private int count = 0;
@@ -65,7 +60,7 @@ public class MusicBlockCount <T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public void visit(ChangeTempo node) {
+    public void visit(ChangeTempoBy node) {
         count++;
         visitChildren(node);
     }
@@ -89,7 +84,7 @@ public class MusicBlockCount <T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public void visit(SetInstrument node) {
+    public void visit(SetInstrumentTo node) {
         count++;
         visitChildren(node);
     }

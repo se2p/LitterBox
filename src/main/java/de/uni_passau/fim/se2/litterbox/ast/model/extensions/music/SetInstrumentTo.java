@@ -20,26 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.Instrument;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.MusicOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ChangeTempo extends AbstractNode implements MusicStmt {
-    private final NumExpr tempo;
+public class SetInstrumentTo extends AbstractNode implements MusicStmt {
+    private final Instrument instrument;
     private final BlockMetadata metadata;
 
-    public ChangeTempo(NumExpr tempo, BlockMetadata metadata) {
-        super(tempo, metadata);
-        this.tempo = tempo;
+    public SetInstrumentTo(Instrument instrument, BlockMetadata metadata) {
+        super(instrument, metadata);
+        this.instrument = instrument;
         this.metadata = metadata;
     }
 
-    public NumExpr getTempo() {
-        return tempo;
+    public Instrument getInstrument() {
+        return instrument;
     }
 
     @Override
@@ -64,6 +65,10 @@ public class ChangeTempo extends AbstractNode implements MusicStmt {
 
     @Override
     public Opcode getOpcode() {
-        return MusicOpcode.music_changeTempo;
+        return MusicOpcode.music_setInstrument;
+    }
+
+    public Opcode getMenuInstrumentOpcode() {
+        return DependentBlockOpcode.music_menu_INSTRUMENT;
     }
 }

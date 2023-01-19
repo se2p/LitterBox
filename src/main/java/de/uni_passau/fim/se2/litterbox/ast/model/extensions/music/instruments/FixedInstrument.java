@@ -83,6 +83,76 @@ public class FixedInstrument extends AbstractNode implements Instrument, ASTLeaf
             throw new IllegalArgumentException("Unknown FixedInstrument: " + type);
         }
 
+        public String getName(){
+            switch (this) {
+
+                case ONE:
+                    return"(1) Piano";
+
+                case TWO:
+                    return"(2) Electric Piano";
+
+                case THREE:
+                    return"(3) Organ";
+
+                case FOUR:
+                    return"(4) Guitar";
+
+                case FIVE:
+                    return"(5) Electric Guitar";
+
+                case SIX:
+                    return"(6) Bass";
+
+                case SEVEN:
+                    return"(7) Pizzicato";
+
+                case EIGHT:
+                    return"(8) Cello";
+
+                case NINE:
+                    return"(9) Trombone";
+
+                case TEN:
+                    return"(10) Clarinet";
+
+                case ELEVEN:
+                    return"(11) Saxophone";
+
+                case TWELVE:
+                    return"(12) Flute";
+
+                case THIRTEEN:
+                    return"(13) Wooden Flute";
+
+                case FOURTEEN:
+                    return"(14) Bassoon";
+
+                case FIFTEEN:
+                    return"(15) Choir";
+
+                case SIXTEEN:
+                    return"(16) Vibraphone";
+
+                case SEVENTEEN:
+                    return"(17) Music Box";
+
+                case EIGHTEEN:
+                    return"(18) Steel Drum";
+
+                case NINETEEN:
+                    return"(19) Marimba";
+
+                case TWENTY:
+                    return"(20) Synth Lead";
+
+                case TWENTYONE:
+                    return"(21) Synth Pad";
+                default:
+                    throw new IllegalArgumentException("Unknown FixedInstrument: " + type);
+            }
+        }
+
         public String getType() {
             return type;
         }

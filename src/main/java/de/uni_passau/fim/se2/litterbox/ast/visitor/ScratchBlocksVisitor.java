@@ -3345,7 +3345,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(ChangeTempo node) {
+    public void visit(ChangeTempoBy node) {
         emitNoSpace("change tempo by ");
         node.getTempo().accept(this);
         storeNotesForIssue(node);
@@ -3375,7 +3375,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(SetInstrument node) {
+    public void visit(SetInstrumentTo node) {
         emitNoSpace("set instrument to ");
         node.getInstrument().accept((MusicExtensionVisitor) this);
         storeNotesForIssue(node);
@@ -3390,72 +3390,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(FixedInstrument node) {
         emitNoSpace("(");
-        switch (node.getType()) {
-
-            case ONE:
-                emitNoSpace("(1) Piano");
-                break;
-            case TWO:
-                emitNoSpace("(2) Electric Piano");
-                break;
-            case THREE:
-                emitNoSpace("(3) Organ");
-                break;
-            case FOUR:
-                emitNoSpace("(4) Guitar");
-                break;
-            case FIVE:
-                emitNoSpace("(5) Electric Guitar");
-                break;
-            case SIX:
-                emitNoSpace("(6) Bass");
-                break;
-            case SEVEN:
-                emitNoSpace("(7) Pizzicato");
-                break;
-            case EIGHT:
-                emitNoSpace("(8) Cello");
-                break;
-            case NINE:
-                emitNoSpace("(9) Trombone");
-                break;
-            case TEN:
-                emitNoSpace("(10) Clarinet");
-                break;
-            case ELEVEN:
-                emitNoSpace("(11) Saxophone");
-                break;
-            case TWELVE:
-                emitNoSpace("(12) Flute");
-                break;
-            case THIRTEEN:
-                emitNoSpace("(13) Wooden Flute");
-                break;
-            case FOURTEEN:
-                emitNoSpace("(14) Bassoon");
-                break;
-            case FIFTEEN:
-                emitNoSpace("(15) Choir");
-                break;
-            case SIXTEEN:
-                emitNoSpace("(16) Vibraphone");
-                break;
-            case SEVENTEEN:
-                emitNoSpace("(17) Music Box");
-                break;
-            case EIGHTEEN:
-                emitNoSpace("(18) Steel Drum");
-                break;
-            case NINETEEN:
-                emitNoSpace("(19) Marimba");
-                break;
-            case TWENTY:
-                emitNoSpace("(20) Synth Lead");
-                break;
-            case TWENTYONE:
-                emitNoSpace("(21) Synth Pad");
-                break;
-        }
+        emitNoSpace(node.getType().getName());
+        emitNoSpace(" v)");
     }
 
     @Override
@@ -3484,63 +3420,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(FixedDrum node) {
         emitNoSpace("(");
-        switch (node.getType()) {
-            case ONE:
-                emitNoSpace("(1) Snare Drum");
-                break;
-            case TWO:
-                emitNoSpace("(2) Bass Drum");
-                break;
-            case THREE:
-                emitNoSpace("(3) Side Stick");
-                break;
-            case FOUR:
-                emitNoSpace("(4) Crash Cymbal");
-                break;
-            case FIVE:
-                emitNoSpace("(5) Open Hi-Hat");
-                break;
-            case SIX:
-                emitNoSpace("(6) Closed Hi-Hat");
-                break;
-            case SEVEN:
-                emitNoSpace("(7) Tambourine");
-                break;
-            case EIGHT:
-                emitNoSpace("(8) Hand Clap");
-                break;
-            case NINE:
-                emitNoSpace("(9) CLaves");
-                break;
-            case TEN:
-                emitNoSpace("(10) Wood Block");
-                break;
-            case ELEVEN:
-                emitNoSpace("(11) Cowbell");
-                break;
-            case TWELVE:
-                emitNoSpace("(12) Triangle");
-                break;
-            case THIRTEEN:
-                emitNoSpace("(13) Bongo");
-                break;
-            case FOURTEEN:
-                emitNoSpace("(14) Conga");
-                break;
-            case FIFTEEN:
-                emitNoSpace("(15) Cabasa");
-                break;
-            case SIXTEEN:
-                emitNoSpace("(16) Guiro");
-                break;
-            case SEVENTEEN:
-                emitNoSpace("(17) Vibraslap");
-                break;
-            case EIGHTEEN:
-                emitNoSpace("(18) Cuica");
-                break;
-        }
-
+        emitNoSpace(node.getType().getName());
         emitNoSpace(" v)");
     }
 }

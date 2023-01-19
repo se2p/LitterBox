@@ -74,6 +74,7 @@ public class MetricTool {
             metricList.add(new LooksBlockCount<Program>());
             metricList.add(new MostComplexScript<Program>());
             metricList.add(new MotionBlockCount<Program>());
+            metricList.add(new MusicBlockCount<Program>());
             metricList.add(new MyBlocksBlockCount<Program>());
             metricList.add(new NestedBlockCount<Program>());
             metricList.add(new OperatorsBlockCount<Program>());

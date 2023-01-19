@@ -80,9 +80,9 @@ public class MusicStmtParser {
                 return new SetTempoTo(expr, metadata);
             case music_changeTempo:
                 expr = NumExprParser.parseNumExpr(state, current, TEMPO_BIG_KEY, blocks);
-                return new ChangeTempo(expr, metadata);
+                return new ChangeTempoBy(expr, metadata);
             default:
-                throw new RuntimeException("Not implemented yet for opcode " + opcode);
+                throw new ParsingException("Not implemented yet for opcode " + opcode);
         }
     }
 
@@ -115,7 +115,7 @@ public class MusicStmtParser {
             instrument = new ExprInstrument(expr, paramMetadata);
         }
 
-        return new SetInstrument(instrument, metadata);
+        return new SetInstrumentTo(instrument, metadata);
     }
 
     private static Stmt parseNoteForBeats(final ProgramParserState state, JsonNode current, BlockMetadata metadata,

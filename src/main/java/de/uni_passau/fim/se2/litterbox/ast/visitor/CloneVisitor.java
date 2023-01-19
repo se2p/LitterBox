@@ -5353,16 +5353,16 @@ public class CloneVisitor {
         return new Tempo(apply(node.getMetadata()));
     }
 
-    public ASTNode visit(ChangeTempo node) {
-        return new ChangeTempo(apply(node.getTempo()), apply(node.getMetadata()));
+    public ASTNode visit(ChangeTempoBy node) {
+        return new ChangeTempoBy(apply(node.getTempo()), apply(node.getMetadata()));
     }
 
     public ASTNode visit(SetTempoTo node) {
         return new SetTempoTo(apply(node.getTempo()), apply(node.getMetadata()));
     }
 
-    public ASTNode visit(SetInstrument node) {
-        return new SetInstrument(apply(node.getInstrument()), apply(node.getMetadata()));
+    public ASTNode visit(SetInstrumentTo node) {
+        return new SetInstrumentTo(apply(node.getInstrument()), apply(node.getMetadata()));
     }
 
     public ASTNode visit(PlayDrumForBeats node) {
