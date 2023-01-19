@@ -63,10 +63,10 @@ public class FixedInstrument extends AbstractNode implements Instrument, ASTLeaf
 
     public enum FixedInstrumentType {
 
-        ONE("1"), TWO("2"), THREE("3"), FOUR("4"), FIVE("5"), SIX("6"),
-        SEVEN("7"), EIGHT("8"), NINE("9"), TEN("10"), ELEVEN("11"), TWELVE("12"),
-        THIRTEEN("13"), FOURTEEN("14"), FIFTEEN("15"), SIXTEEN("16"), SEVENTEEN("17"), EIGHTEEN("18"),
-        NINETEEN("19"), TWENTY("20"), TWENTYONE("21");
+        PIANO("1"), ELECTRIC_PIANO("2"), ORGAN("3"), GUITAR("4"), ELECTRIC_GUITAR("5"), BASS("6"),
+        PIZZICATO("7"), CELLO("8"), TROMBONE("9"), CLARINET("10"), SAXOPHONE("11"), FLUTE("12"),
+        WOODEN_FLUTE("13"), BASSOON("14"), CHOIR("15"), VIBRAPHONE("16"), MUSIC_BOX("17"), STEEL_DRUM("18"),
+        MARIMBA("19"), SYNTH_LEAD("20"), SYNTH_PAD("21");
 
         private final String type;
 
@@ -86,67 +86,67 @@ public class FixedInstrument extends AbstractNode implements Instrument, ASTLeaf
         public String getName(){
             switch (this) {
 
-                case ONE:
+                case PIANO:
                     return"(1) Piano";
 
-                case TWO:
+                case ELECTRIC_PIANO:
                     return"(2) Electric Piano";
 
-                case THREE:
+                case ORGAN:
                     return"(3) Organ";
 
-                case FOUR:
+                case GUITAR:
                     return"(4) Guitar";
 
-                case FIVE:
+                case ELECTRIC_GUITAR:
                     return"(5) Electric Guitar";
 
-                case SIX:
+                case BASS:
                     return"(6) Bass";
 
-                case SEVEN:
+                case PIZZICATO:
                     return"(7) Pizzicato";
 
-                case EIGHT:
+                case CELLO:
                     return"(8) Cello";
 
-                case NINE:
+                case TROMBONE:
                     return"(9) Trombone";
 
-                case TEN:
+                case CLARINET:
                     return"(10) Clarinet";
 
-                case ELEVEN:
+                case SAXOPHONE:
                     return"(11) Saxophone";
 
-                case TWELVE:
+                case FLUTE:
                     return"(12) Flute";
 
-                case THIRTEEN:
+                case WOODEN_FLUTE:
                     return"(13) Wooden Flute";
 
-                case FOURTEEN:
+                case BASSOON:
                     return"(14) Bassoon";
 
-                case FIFTEEN:
+                case CHOIR:
                     return"(15) Choir";
 
-                case SIXTEEN:
+                case VIBRAPHONE:
                     return"(16) Vibraphone";
 
-                case SEVENTEEN:
+                case MUSIC_BOX:
                     return"(17) Music Box";
 
-                case EIGHTEEN:
+                case STEEL_DRUM:
                     return"(18) Steel Drum";
 
-                case NINETEEN:
+                case MARIMBA:
                     return"(19) Marimba";
 
-                case TWENTY:
+                case SYNTH_LEAD:
                     return"(20) Synth Lead";
 
-                case TWENTYONE:
+                case SYNTH_PAD:
                     return"(21) Synth Pad";
                 default:
                     throw new IllegalArgumentException("Unknown FixedInstrument: " + type);
