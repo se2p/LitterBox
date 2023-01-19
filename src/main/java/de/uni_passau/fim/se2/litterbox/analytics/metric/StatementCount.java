@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -72,6 +73,11 @@ public class StatementCount<T extends ASTNode> implements MetricExtractor<T>, Sc
         }
         count++;
         visitChildren(node);
+    }
+
+    @Override
+    public void visit(ExpressionStmt node){
+        //NOP do not count
     }
 
     @Override

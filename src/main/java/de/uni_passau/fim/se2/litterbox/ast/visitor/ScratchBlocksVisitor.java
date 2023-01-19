@@ -3465,7 +3465,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(FixedNote node) {
-        emitNoSpace("(" + node.getNote());
+        emitNoSpace("(");
+        double num = node.getNote();
+        if (num % 1 == 0) {
+            emitNoSpace(Integer.toString((int) num));
+        } else {
+            emitNoSpace(String.valueOf(num));
+        }
         storeNotesForIssue(node);
         emitNoSpace(")");
     }

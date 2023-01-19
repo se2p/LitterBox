@@ -54,4 +54,9 @@ public class StatementCountTest implements JsonTest {
     public void testPenAndTTS() throws IOException, ParsingException {
         assertThatMetricReports(4, new StatementCount<>(), "./src/test/fixtures/metrics/penAndTTS.json");
     }
+
+    @Test
+    public void testMusic() throws IOException, ParsingException {
+        assertThatMetricReports(6, new StatementCount<>(), "./src/test/fixtures/metrics/allMusicBlocks.json");
+    }
 }

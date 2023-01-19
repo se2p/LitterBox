@@ -16,9 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import org.junit.jupiter.api.Test;
 
-public interface Drum extends MusicBlock {
+import java.io.IOException;
+
+public class MusicBlockCountTest implements JsonTest {
+
+    @Test
+    public void testAll() throws IOException, ParsingException {
+        assertThatMetricReports(8, new MusicBlockCount<>(), "./src/test/fixtures/metrics/wrappedMusicBlocks.json");
+    }
+
+    @Test
+    public void testMusic() throws IOException, ParsingException {
+        assertThatMetricReports(7, new MusicBlockCount<>(), "./src/test/fixtures/metrics/allMusicBlocks.json");
+    }
 }
