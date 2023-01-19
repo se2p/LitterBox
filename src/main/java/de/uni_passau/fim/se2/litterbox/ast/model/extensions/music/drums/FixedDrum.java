@@ -63,9 +63,9 @@ public class FixedDrum extends AbstractNode implements Drum, ASTLeaf {
 
     public enum FixedDrumType {
 
-        ONE("1"), TWO("2"), THREE("3"), FOUR("4"), FIVE("5"), SIX("6"),
-        SEVEN("7"), EIGHT("8"), NINE("9"), TEN("10"), ELEVEN("11"), TWELVE("12"),
-        THIRTEEN("13"), FOURTEEN("14"), FIFTEEN("15"), SIXTEEN("16"), SEVENTEEN("17"), EIGHTEEN("18");
+        SNARE_DRUM("1"), BASS_DRUM("2"), SIDE_STICK("3"), CRASH_CYMBAL("4"), OPEN_HI_HAT("5"), CLOSED_HI_HAT("6"),
+        TAMBOURINE("7"), HAND_CLAP("8"), CLAVES("9"), WOOD_BLOCK("10"), COWBELL("11"), TRIANGLE("12"),
+        BONGO("13"), CONGA("14"), CABASA("15"), GUIRO("16"), VIBRASLAP("17"), CUICA("18");
 
         private final String type;
 
