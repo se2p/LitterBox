@@ -18,16 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class FixedDrum extends AbstractNode implements Drum, ASTLeaf {
+public class FixedDrum extends AbstractNode implements Drum, FixedNodeOption {
     private final BlockMetadata metadata;
     private final FixedDrum.FixedDrumType type;
 
@@ -59,6 +59,11 @@ public class FixedDrum extends AbstractNode implements Drum, ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String getTypeName() {
+        return type.getName();
     }
 
     public enum FixedDrumType {

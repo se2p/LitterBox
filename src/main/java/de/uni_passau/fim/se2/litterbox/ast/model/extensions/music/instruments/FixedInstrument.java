@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class FixedInstrument extends AbstractNode implements Instrument, ASTLeaf {
+public class FixedInstrument extends AbstractNode implements Instrument, FixedNodeOption {
     private final BlockMetadata metadata;
-    private FixedInstrumentType type;
+    private final FixedInstrumentType type;
 
     public FixedInstrument(String typeName, BlockMetadata metadata) {
         super(metadata);
@@ -59,6 +59,11 @@ public class FixedInstrument extends AbstractNode implements Instrument, ASTLeaf
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String getTypeName() {
+        return type.getName();
     }
 
     public enum FixedInstrumentType {
