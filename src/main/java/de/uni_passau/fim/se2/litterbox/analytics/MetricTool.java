@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.*;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -84,6 +84,7 @@ public class MetricTool {
             metricList.add(new StackedStatementCount<>());
             metricList.add(new StatementCount<>());
             metricList.add(new TokenEntropy<>());
+            metricList.add(new TranslateBlockCount<>());
             metricList.add(new VariableCount<>());
             metricList.add(new VariablesBlockCount<>());
             metricList.add(new VariableUseCount<>());

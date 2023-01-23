@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -3452,6 +3453,14 @@ public interface ScratchVisitor {
     default void visit(MusicBlock node) {
         if (this instanceof MusicExtensionVisitor) {
             ((MusicExtensionVisitor) this).visit(node);
+        } else {
+            visitDefaultVisitor(node);
+        }
+    }
+
+    default void visit(TranslateBlock node) {
+        if (this instanceof TranslateExtensionVisitor) {
+            ((TranslateExtensionVisitor) this).visit(node);
         } else {
             visitDefaultVisitor(node);
         }

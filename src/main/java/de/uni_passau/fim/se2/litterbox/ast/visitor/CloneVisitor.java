@@ -62,6 +62,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -5401,5 +5405,25 @@ public class CloneVisitor {
 
     public ASTNode visit(ExprDrum node) {
         return new ExprDrum(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    //Translate
+
+    public ASTNode visit(TFixedLanguage node) {
+
+        return new TFixedLanguage(node.getType().getType(), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(TExprLanguage node) {
+
+        return new TExprLanguage(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(TranslateTo node) {
+        return new TranslateTo(apply(node.getText()), apply(node.getLanguage()), apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(ViewerLanguage node) {
+        return new ViewerLanguage(apply(node.getMetadata()));
     }
 }

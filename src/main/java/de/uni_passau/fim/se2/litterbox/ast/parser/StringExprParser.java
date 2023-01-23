@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
@@ -33,6 +34,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -41,6 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -235,10 +242,47 @@ public class StringExprParser {
             case detect_ir:
             case comm_receive_ir:
                 return new IRMessage(metadata);
+            case translate_getTranslate:
+                return parseTranslate(state, exprBlock, metadata, allBlocks);
+            case translate_getViewerLanguage:
+                return new ViewerLanguage(metadata);
 
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }
+    }
+
+    private static StringExpr parseTranslate(ProgramParserState state, JsonNode exprBlock, BlockMetadata metadata, JsonNode blocks) throws ParsingException {
+        TLanguage language;
+        BlockMetadata paramMetadata;
+        List<JsonNode> inputsList = new ArrayList<>();
+        exprBlock.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
+
+        if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
+            String reference = exprBlock.get(INPUTS_KEY).get(LANGUAGE_INPUT_KEY).get(POS_INPUT_VALUE).asText();
+            JsonNode referredBlock = blocks.get(reference);
+            Preconditions.checkNotNull(referredBlock);
+
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.note.name())) {
+                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_INPUT_KEY);
+                Preconditions.checkArgument(languageParamNode.isArray());
+                String attribute = languageParamNode.get(FIELD_VALUE).asText();
+                paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
+                language = new TFixedLanguage(attribute, paramMetadata);
+            } else {
+                paramMetadata = new NoBlockMetadata();
+                Expression expr = ExpressionParser.parseExpr(state, exprBlock, LANGUAGE_INPUT_KEY, blocks);
+                language = new TExprLanguage(expr, paramMetadata);
+            }
+        } else {
+            paramMetadata = new NoBlockMetadata();
+            Expression expr = ExpressionParser.parseExpr(state, exprBlock, LANGUAGE_INPUT_KEY, blocks);
+            language = new TExprLanguage(expr, paramMetadata);
+        }
+
+        StringExpr expr = StringExprParser.parseStringExpr(state, exprBlock, WORDS_KEY, blocks);
+
+        return new TranslateTo(expr, language, metadata);
     }
 
     private static StringLiteral parseStr(JsonNode inputs, String inputKey) throws ParsingException {
