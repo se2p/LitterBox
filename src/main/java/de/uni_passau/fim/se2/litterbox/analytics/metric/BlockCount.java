@@ -44,6 +44,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -71,9 +74,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
+public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -562,6 +566,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         if (insideScript || insideProcedure) {
             count++;
         }
+        visitChildren(node);
     }
 
     @Override
@@ -631,10 +636,37 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         if (insideScript || insideProcedure) {
             count++;
         }
+        visitChildren(node);
     }
 
     @Override
     public void visitParentVisitor(MusicBlock node) {
+        visitDefaultVisitor(node);
+    }
+
+    // Translate Blocks
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TranslateBlock node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visitParentVisitor(TranslateBlock node) {
         visitDefaultVisitor(node);
     }
 }

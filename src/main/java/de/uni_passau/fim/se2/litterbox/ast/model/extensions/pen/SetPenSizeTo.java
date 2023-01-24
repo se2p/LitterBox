@@ -50,7 +50,11 @@ public class SetPenSizeTo extends AbstractNode implements PenStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof PenExtensionVisitor) {
+            ((PenExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit(this);
+        }
     }
 
     @Override

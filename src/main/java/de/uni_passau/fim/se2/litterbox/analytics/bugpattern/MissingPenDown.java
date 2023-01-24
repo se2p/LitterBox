@@ -78,7 +78,7 @@ public class MissingPenDown extends AbstractIssueFinder implements PenExtensionV
 
     @Override
     public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
+        visitParentVisitor(node);
     }
 
     @Override

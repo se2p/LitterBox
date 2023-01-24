@@ -47,7 +47,11 @@ public class ExprNote extends AbstractNode implements Note {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof MusicExtensionVisitor) {
+            ((MusicExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit(this);
+        }
     }
 
     @Override
