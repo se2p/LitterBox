@@ -27,7 +27,7 @@ import java.io.IOException;
 public class TranslateBlockCountTest implements JsonTest {
 
     @Test
-    public void testAll() throws IOException, ParsingException {
+    public void testAllCounted() throws IOException, ParsingException {
         assertThatMetricReports(4, new TranslateBlockCount<>(), "./src/test/fixtures/metrics/nestedTranslate.json");
     }
 }

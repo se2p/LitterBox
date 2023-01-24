@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.
 public interface TranslateExtensionVisitor {
 
     /**
-     * @param node Music Node of which the children will be iterated
+     * @param node Translate node of which the children will be iterated
      */
     void visit(TranslateBlock node);
 

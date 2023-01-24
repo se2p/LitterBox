@@ -101,70 +101,50 @@ public class TFixedLanguage extends AbstractNode implements TLanguage, FixedNode
 
         public String getName() {
             switch (this) {
-
                 case ALBANIAN:
                     return "Albanian";
-
                 case AMHARIC:
                     return "Amharic";
-
                 case ARABIC:
                     return "Arabic";
-
                 case ARMENIAN:
                     return "Armenian";
-
                 case AZERBAIJANI:
                     return "Azerbaijani";
-
                 case BASQUE:
                     return "Basque";
-
                 case BELARUSIAN:
                     return "Belarusian";
-
                 case BULGARIAN:
                     return "Bulgarian";
-
                 case CATALAN:
                     return "Catalan";
-
                 case CHINESE_TRADITIONAL:
                     return "Chinese (Traditional)";
-
                 case CROATIAN:
                     return "Croatian";
-
                 case CZECH:
                     return "Czech";
-
                 case DANISH:
                     return "Danish";
-
                 case DUTCH:
                     return "Dutch";
-
                 case ENGLISH:
                     return "English";
-
                 case ESPERANTO:
                     return "Esperanto";
                 case ESTONIAN:
                     return "Estonian";
-
                 case FINNISH:
                     return "Finnish";
-
                 case FRENCH:
                     return "French";
-
                 case GALICIAN:
                     return "Galician";
-
                 case GERMAN:
                     return "German";
                 case GREEK:
-                    return "";
+                    return "Greek";
                 case HAITIAN_CREOLE:
                     return "Haitian Creole";
                 case HINDI:
