@@ -49,7 +49,11 @@ public class Speak extends AbstractNode implements TextToSpeechStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit((TextToSpeechBlock) this);
+        if (visitor instanceof TextToSpeechExtensionVisitor) {
+            ((TextToSpeechExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit((TextToSpeechBlock) this);
+        }
     }
 
     @Override

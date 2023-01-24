@@ -659,13 +659,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
-    public void visit(TranslateTo node) {
-        count++;
-        node.getText().accept(this);
-        node.getLanguage().accept((TranslateExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(TranslateBlock node) {
         if (insideScript || insideProcedure) {
             count++;

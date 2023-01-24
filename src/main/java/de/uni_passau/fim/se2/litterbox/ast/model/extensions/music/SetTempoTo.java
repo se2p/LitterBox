@@ -49,7 +49,11 @@ public class SetTempoTo extends AbstractNode implements MusicStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit((MusicBlock) this);
+        if (visitor instanceof MusicExtensionVisitor) {
+            ((MusicExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit((MusicBlock) this);
+        }
     }
 
     @Override

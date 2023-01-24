@@ -16,9 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import org.junit.jupiter.api.Test;
 
-public interface TLanguage extends TranslateBlock {
+import java.io.IOException;
+
+public class TranslateBlockCountTest implements JsonTest {
+
+    @Test
+    public void testAll() throws IOException, ParsingException {
+        assertThatMetricReports(4, new TranslateBlockCount<>(), "./src/test/fixtures/metrics/nestedTranslate.json");
+    }
 }

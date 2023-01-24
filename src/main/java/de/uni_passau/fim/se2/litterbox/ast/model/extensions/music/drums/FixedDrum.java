@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
@@ -48,7 +49,12 @@ public class FixedDrum extends AbstractNode implements Drum, FixedNodeOption {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+
+        if (visitor instanceof MusicExtensionVisitor) {
+            ((MusicExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit(this);
+        }
     }
 
     @Override

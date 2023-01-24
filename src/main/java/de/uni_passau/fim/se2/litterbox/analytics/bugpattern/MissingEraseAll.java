@@ -94,7 +94,7 @@ public class MissingEraseAll extends AbstractIssueFinder implements PenExtension
 
     @Override
     public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
+        visitParentVisitor(node);
     }
 
     @Override

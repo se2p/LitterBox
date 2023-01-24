@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
@@ -47,7 +48,11 @@ public class ExprInstrument extends AbstractNode implements Instrument {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof MusicExtensionVisitor) {
+            ((MusicExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit((MusicBlock) this);
+        }
     }
 
     @Override

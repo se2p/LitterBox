@@ -37,7 +37,7 @@ public interface PenExtensionVisitor {
      * @param node PenDownStmt of which the children will be iterated
      */
     default void visit(PenDownStmt node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -50,7 +50,7 @@ public interface PenExtensionVisitor {
      * @param node PenUpStmt of which the children will be iterated
      */
     default void visit(PenUpStmt node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -63,7 +63,7 @@ public interface PenExtensionVisitor {
      * @param node PenUpStmt of which the children will be iterated
      */
     default void visit(PenClearStmt node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -76,7 +76,7 @@ public interface PenExtensionVisitor {
      * @param node SetPenColorToColorStmt  Node of which the children will be iterated
      */
     default void visit(SetPenColorToColorStmt node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -89,7 +89,7 @@ public interface PenExtensionVisitor {
      * @param node PenStampStmt  Node of which the children will be iterated
      */
     default void visit(PenStampStmt node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -102,7 +102,7 @@ public interface PenExtensionVisitor {
      * @param node ChangePenColorParamBy  Node of which the children will be iterated
      */
     default void visit(ChangePenColorParamBy node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -115,7 +115,7 @@ public interface PenExtensionVisitor {
      * @param node SetPenColorParamTo Node of which the children will be iterated
      */
     default void visit(SetPenColorParamTo node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -128,7 +128,7 @@ public interface PenExtensionVisitor {
      * @param node SetPenSizeTo Node of which the children will be iterated
      */
     default void visit(SetPenSizeTo node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     /**
@@ -141,7 +141,7 @@ public interface PenExtensionVisitor {
      * @param node ChangePenSizeBy Node of which the children will be iterated
      */
     default void visit(ChangePenSizeBy node) {
-        visitParentVisitor(node);
+        visit((PenStmt) node);
     }
 
     void visitParentVisitor(PenStmt node);
