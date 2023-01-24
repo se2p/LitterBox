@@ -45,7 +45,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
