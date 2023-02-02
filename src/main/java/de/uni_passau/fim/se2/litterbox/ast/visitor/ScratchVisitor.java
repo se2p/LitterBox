@@ -3400,36 +3400,11 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ExtensionBlock}.
+     * All blocks are either {@link Expression expressions}, {@link Stmt statements}, or {@link Event events}.
+     * Other nodes that are for drop down menus are handled as {@link ASTNode AST nodes}.
      *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ExtensionBlock Node of which the children will
-     *             be iterated
+     * @param node A node that should be visited.
      */
-    default void visit(ExtensionBlock node) {
-        visit((ASTNode) node);
-    }
-
-    default void visit(PenStmt node) {
-        if (this instanceof PenExtensionVisitor) {
-            ((PenExtensionVisitor) this).visit(node);
-        } else {
-            visit((Stmt) node);
-        }
-    }
-
-    default void visit(MBlockNode node) {
-        if (this instanceof MBlockVisitor) {
-            ((MBlockVisitor) this).visit(node);
-        } else {
-            visitDefaultVisitor(node);
-        }
-    }
-
-    //all blocks are either Expressions, Stmts or Events, other Nodes that are for drop down menus are handled as ASTNodes
     default void visitDefaultVisitor(ASTNode node) {
         if (node instanceof Stmt) {
             visit((Stmt) node);
@@ -3442,27 +3417,41 @@ public interface ScratchVisitor {
         }
     }
 
-    default void visit(TextToSpeechBlock node) {
-        if (this instanceof TextToSpeechExtensionVisitor) {
-            ((TextToSpeechExtensionVisitor) this).visit(node);
+    /**
+     * Default implementation of visit method for {@link ExtensionBlock}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExtensionBlock Node of which the children will
+     *             be iterated
+     */
+    default void visit(ExtensionBlock node) {
+        visitDefaultVisitor(node);
+    }
+
+    default void visit(MBlockNode node) {
+        if (this instanceof MBlockVisitor) {
+            ((MBlockVisitor) this).visit(node);
         } else {
             visitDefaultVisitor(node);
         }
     }
 
     default void visit(MusicBlock node) {
-        if (this instanceof MusicExtensionVisitor) {
-            ((MusicExtensionVisitor) this).visit(node);
-        } else {
-            visitDefaultVisitor(node);
-        }
+        visitDefaultVisitor(node);
+    }
+
+    default void visit(PenStmt node) {
+        visitDefaultVisitor(node);
+    }
+
+    default void visit(TextToSpeechBlock node) {
+        visitDefaultVisitor(node);
     }
 
     default void visit(TranslateBlock node) {
-        if (this instanceof TranslateExtensionVisitor) {
-            ((TranslateExtensionVisitor) this).visit(node);
-        } else {
-            visitDefaultVisitor(node);
-        }
+        visitDefaultVisitor(node);
     }
 }

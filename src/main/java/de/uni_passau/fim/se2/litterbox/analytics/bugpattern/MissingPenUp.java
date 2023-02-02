@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
@@ -74,12 +73,6 @@ public class MissingPenUp extends AbstractIssueFinder implements PenExtensionVis
         return IssueType.BUG;
     }
 
-
-    @Override
-    public void visit(PenStmt node) {
-        visitParentVisitor(node);
-    }
-
     @Override
     public void visit(PenDownStmt node) {
         if (!addComment) {
@@ -97,10 +90,5 @@ public class MissingPenUp extends AbstractIssueFinder implements PenExtensionVis
             penUpSet = true;
             visitChildren(node);
         }
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
     }
 }

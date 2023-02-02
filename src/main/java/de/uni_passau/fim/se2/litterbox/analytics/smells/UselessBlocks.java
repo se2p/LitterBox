@@ -217,16 +217,6 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(PenDownStmt node) {
         if (isCurrentStage) {
             Hint hint = new Hint(HINT_STAGE);

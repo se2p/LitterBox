@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -62,11 +61,6 @@ public class MissingEraseAll extends AbstractIssueFinder implements PenExtension
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         visitChildren(actor);
@@ -90,11 +84,6 @@ public class MissingEraseAll extends AbstractIssueFinder implements PenExtension
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
-    }
-
-    @Override
-    public void visit(PenStmt node) {
-        visitParentVisitor(node);
     }
 
     @Override

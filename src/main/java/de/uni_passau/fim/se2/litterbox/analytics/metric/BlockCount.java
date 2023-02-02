@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
@@ -575,11 +574,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(ExprLanguage node) {
         //only visit the children/the node that is inside the language block
         visitChildren(node);
@@ -631,19 +625,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         visitChildren(node);
     }
 
-    @Override
-    public void visit(MusicBlock node) {
-        if (insideScript || insideProcedure) {
-            count++;
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visitParentVisitor(MusicBlock node) {
-        visitDefaultVisitor(node);
-    }
-
     // Translate Blocks
 
     @Override
@@ -663,11 +644,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
             count++;
         }
         visitChildren(node);
-    }
-
-    @Override
-    public void visitParentVisitor(TranslateBlock node) {
-        visitDefaultVisitor(node);
     }
 }
 

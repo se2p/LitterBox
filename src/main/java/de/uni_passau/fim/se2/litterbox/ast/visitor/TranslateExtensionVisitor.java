@@ -26,12 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TLanguage;
 
-public interface TranslateExtensionVisitor {
-
-    /**
-     * @param node Translate node of which the children will be iterated
-     */
-    void visit(TranslateBlock node);
+public interface TranslateExtensionVisitor extends ScratchVisitor {
 
     default void visit(TranslateExpression node) {
         visit((TranslateBlock) node);
@@ -46,7 +41,7 @@ public interface TranslateExtensionVisitor {
     }
 
     default void visit(TLanguage node) {
-        visitParentVisitor(node);
+        visit((TranslateBlock) node);
     }
 
     default void visit(TFixedLanguage node) {
@@ -56,6 +51,4 @@ public interface TranslateExtensionVisitor {
     default void visit(TExprLanguage node) {
         visit((TLanguage) node);
     }
-
-    void visitParentVisitor(TranslateBlock node);
 }

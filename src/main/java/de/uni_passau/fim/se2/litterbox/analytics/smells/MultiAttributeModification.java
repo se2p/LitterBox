@@ -395,11 +395,6 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(SetPenSizeTo node) {
         if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
@@ -450,11 +445,6 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
             }
         }
         prevNode = node;
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
     }
 
     @Override

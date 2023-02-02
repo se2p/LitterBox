@@ -20,12 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 
-public interface PenExtensionVisitor {
-
-    /**
-     * @param node PenStmt  Node of which the children will be iterated
-     */
-    void visit(PenStmt node);
+public interface PenExtensionVisitor extends ScratchVisitor {
 
     /**
      * Default implementation of visit method for PenDownStmt.
@@ -143,6 +138,4 @@ public interface PenExtensionVisitor {
     default void visit(ChangePenSizeBy node) {
         visit((PenStmt) node);
     }
-
-    void visitParentVisitor(PenStmt node);
 }

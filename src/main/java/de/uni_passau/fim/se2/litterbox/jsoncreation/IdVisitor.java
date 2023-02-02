@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
@@ -410,11 +409,6 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
     //Pen
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(SetPenSizeTo node) {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
@@ -459,22 +453,7 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
     //Text to Speech
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
 
     @Override
     public void visit(FixedLanguage node) {

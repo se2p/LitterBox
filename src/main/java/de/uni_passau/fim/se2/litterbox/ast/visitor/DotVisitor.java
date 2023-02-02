@@ -100,16 +100,6 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(PenDownStmt node) {
         if (node != null) {
             recordLeaf(node);

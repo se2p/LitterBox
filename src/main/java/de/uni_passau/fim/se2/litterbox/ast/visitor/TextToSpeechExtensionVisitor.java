@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.E
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.Voice;
 
-public interface TextToSpeechExtensionVisitor {
+public interface TextToSpeechExtensionVisitor extends ScratchVisitor {
 
     /**
      * @param node TextToSpeech  Node of which the children will be iterated
@@ -34,11 +34,6 @@ public interface TextToSpeechExtensionVisitor {
     default void visit(TextToSpeechStmt node) {
         visit((TextToSpeechBlock) node);
     }
-
-    /**
-     * @param node TextToSpeech  Node of which the children will be iterated
-     */
-    void visit(TextToSpeechBlock node);
 
     /**
      * Default implementation of visit method for Language.
@@ -50,7 +45,7 @@ public interface TextToSpeechExtensionVisitor {
      * @param node Language of which the children will be iterated
      */
     default void visit(Language node) {
-        visitParentVisitor(node);
+        visit((TextToSpeechBlock) node);
     }
 
     /**
@@ -89,7 +84,7 @@ public interface TextToSpeechExtensionVisitor {
      * @param node Voice of which the children will be iterated
      */
     default void visit(Voice node) {
-        visitParentVisitor(node);
+        visit((TextToSpeechBlock) node);
     }
 
     /**
@@ -154,8 +149,6 @@ public interface TextToSpeechExtensionVisitor {
      * @param node SayTextToSpeech of which the children will be iterated
      */
     default void visit(Speak node) {
-        visitParentVisitor(node);
+        visit((TextToSpeechBlock) node);
     }
-
-    void visitParentVisitor(TextToSpeechBlock node);
 }
