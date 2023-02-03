@@ -50,4 +50,24 @@ public class ScriptCountTest implements JsonTest {
     public void testDeadCode() throws IOException, ParsingException {
         assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/smells/deadCode.json");
     }
+
+    @Test
+    public void testPenTTSMusicTranslate() throws IOException, ParsingException {
+        assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/metrics/PenTTSMusicTranslate.json");
+    }
+
+    @Test
+    public void testTranslateTo() throws IOException, ParsingException {
+        assertThatMetricReports(0, new ScriptCount<>(), "./src/test/fixtures/metrics/translateTo.json");
+    }
+
+    @Test
+    public void twoScriptsTranslate() throws IOException, ParsingException {
+        assertThatMetricReports(2, new ScriptCount<>(), "./src/test/fixtures/metrics/twoScriptsTranslate.json");
+    }
+
+    @Test
+    public void fiveScriptsTranslate() throws IOException, ParsingException {
+        assertThatMetricReports(5, new ScriptCount<>(), "./src/test/fixtures/metrics/fiveScriptsTranslate.json");
+    }
 }
