@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -349,6 +346,16 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         if (!node.getChildren().isEmpty()) {
             //only expression has to be counted since the attributes are fixed in the blocks
             node.getExpr().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(Message node) {
+        if (insideScript || insideProcedure) {
+            //normal messages should not count as they are dropdowns
+            if (!(node.getMessage() instanceof StringLiteral)) {
+                visitChildren(node);
+            }
         }
     }
 

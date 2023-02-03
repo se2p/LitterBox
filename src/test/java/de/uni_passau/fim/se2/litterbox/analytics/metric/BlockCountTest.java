@@ -81,4 +81,9 @@ public class BlockCountTest implements JsonTest {
     public void testTranslate() throws IOException, ParsingException {
         assertThatMetricReports(7, new BlockCount<>(), "./src/test/fixtures/metrics/nestedTranslate.json");
     }
+
+    @Test
+    public void testTranslater() throws IOException, ParsingException {
+        assertThatMetricReports(14, new BlockCount<>(), "./src/test/fixtures/metrics/translater.json");
+    }
 }
