@@ -53,7 +53,7 @@ public class ScriptCountTest implements JsonTest {
 
     @Test
     public void testPenTTSMusicTranslate() throws IOException, ParsingException {
-        assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/metrics/PenTTSMusicTranslate.json");
+        assertThatMetricReports(3, new ScriptCount<>(), "./src/test/fixtures/metrics/penTTSMusicTranslate.json");
     }
 
     @Test
