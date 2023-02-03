@@ -149,6 +149,6 @@ public interface TextToSpeechExtensionVisitor extends ScratchVisitor {
      * @param node SayTextToSpeech of which the children will be iterated
      */
     default void visit(Speak node) {
-        visit((TextToSpeechBlock) node);
+        visit((TextToSpeechStmt) node);
     }
 }
