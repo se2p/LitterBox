@@ -78,6 +78,11 @@ public class BlockCountTest implements JsonTest {
     }
 
     @Test
+    public void testNestedMusic() throws IOException, ParsingException {
+        assertThatMetricReports(6, new BlockCount<>(), "./src/test/fixtures/metrics/nestedMusic.json");
+    }
+
+    @Test
     public void testTranslate() throws IOException, ParsingException {
         assertThatMetricReports(7, new BlockCount<>(), "./src/test/fixtures/metrics/nestedTranslate.json");
     }

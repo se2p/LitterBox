@@ -1,0 +1,220 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "gkNr{%maRZW*ij1IssqP": {
+                    "opcode": "music_setTempo",
+                    "next": "GG!c~6|%K_tI|v~te,%y",
+                    "parent": "(6cN!)LQ}M^3[#HS~My(",
+                    "inputs": {
+                        "TEMPO": [
+                            3,
+                            "7(QBCL!=Y+6/(yQIH3Z_",
+                            [
+                                4,
+                                "60"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "GG!c~6|%K_tI|v~te,%y": {
+                    "opcode": "music_changeTempo",
+                    "next": null,
+                    "parent": "gkNr{%maRZW*ij1IssqP",
+                    "inputs": {
+                        "TEMPO": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7(QBCL!=Y+6/(yQIH3Z_": {
+                    "opcode": "music_getTempo",
+                    "next": null,
+                    "parent": "gkNr{%maRZW*ij1IssqP",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "(6cN!)LQ}M^3[#HS~My(": {
+                    "opcode": "music_setInstrument",
+                    "next": "gkNr{%maRZW*ij1IssqP",
+                    "parent": ";N-=cA435@UVDIH17-m9",
+                    "inputs": {
+                        "INSTRUMENT": [
+                            3,
+                            "y}LC}[6nz91QF^H6B9{6",
+                            "NcHQNMAJS@L_J1?16SA@"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "NcHQNMAJS@L_J1?16SA@": {
+                    "opcode": "music_menu_INSTRUMENT",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "INSTRUMENT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": true,
+                    "x": 529,
+                    "y": 323
+                },
+                "y}LC}[6nz91QF^H6B9{6": {
+                    "opcode": "music_getTempo",
+                    "next": null,
+                    "parent": "(6cN!)LQ}M^3[#HS~My(",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";N-=cA435@UVDIH17-m9": {
+                    "opcode": "music_setInstrument",
+                    "next": "(6cN!)LQ}M^3[#HS~My(",
+                    "parent": null,
+                    "inputs": {
+                        "INSTRUMENT": [
+                            1,
+                            "J.6%UT$s.VTb21/QEPDt"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 332,
+                    "y": 240
+                },
+                "J.6%UT$s.VTb21/QEPDt": {
+                    "opcode": "music_menu_INSTRUMENT",
+                    "next": null,
+                    "parent": ";N-=cA435@UVDIH17-m9",
+                    "inputs": {},
+                    "fields": {
+                        "INSTRUMENT": [
+                            "1",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "music"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.3.18",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+    }
+}
