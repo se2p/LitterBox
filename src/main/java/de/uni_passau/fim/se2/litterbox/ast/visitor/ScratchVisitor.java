@@ -3435,23 +3435,23 @@ public interface ScratchVisitor {
         if (this instanceof MBlockVisitor) {
             ((MBlockVisitor) this).visit(node);
         } else {
-            visitDefaultVisitor(node);
+            visit((ExtensionBlock) node);
         }
     }
 
     default void visit(MusicBlock node) {
-        visitDefaultVisitor(node);
+        visit((ExtensionBlock) node);
     }
 
     default void visit(PenStmt node) {
-        visitDefaultVisitor(node);
+        visit((ExtensionBlock) node);
     }
 
     default void visit(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
+        visit((ExtensionBlock) node);
     }
 
     default void visit(TranslateBlock node) {
-        visitDefaultVisitor(node);
+        visit((ExtensionBlock) node);
     }
 }
