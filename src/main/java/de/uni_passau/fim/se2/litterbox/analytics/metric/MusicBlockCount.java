@@ -44,16 +44,6 @@ public class MusicBlockCount<T extends ASTNode> implements MetricExtractor<T>, S
     }
 
     @Override
-    public void visitParentVisitor(MusicBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(MusicBlock node) {
-        node.accept((MusicExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(SetTempoTo node) {
         count++;
         visitChildren(node);

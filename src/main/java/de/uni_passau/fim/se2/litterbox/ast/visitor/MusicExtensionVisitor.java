@@ -29,12 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.Note;
 
-public interface MusicExtensionVisitor {
-
-    /**
-     * @param node Music Node of which the children will be iterated
-     */
-    void visit(MusicBlock node);
+public interface MusicExtensionVisitor extends ScratchVisitor {
 
     default void visit(MusicStmt node) {
         visit((MusicBlock) node);
@@ -73,7 +68,7 @@ public interface MusicExtensionVisitor {
     }
 
     default void visit(Note node) {
-        visitParentVisitor(node);
+        visit((MusicBlock) node);
     }
 
     default void visit(FixedNote node) {
@@ -85,7 +80,7 @@ public interface MusicExtensionVisitor {
     }
 
     default void visit(Instrument node) {
-        visitParentVisitor(node);
+        visit((MusicBlock) node);
     }
 
     default void visit(FixedInstrument node) {
@@ -97,7 +92,7 @@ public interface MusicExtensionVisitor {
     }
 
     default void visit(Drum node) {
-        visitParentVisitor(node);
+        visit((MusicBlock) node);
     }
 
     default void visit(FixedDrum node) {
@@ -107,6 +102,4 @@ public interface MusicExtensionVisitor {
     default void visit(ExprDrum node) {
         visit((Drum) node);
     }
-
-    void visitParentVisitor(MusicBlock node);
 }

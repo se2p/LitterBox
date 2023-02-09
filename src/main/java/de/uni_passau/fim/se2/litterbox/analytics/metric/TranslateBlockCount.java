@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -43,16 +42,6 @@ public class TranslateBlockCount<T extends ASTNode> implements MetricExtractor<T
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visitParentVisitor(TranslateBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(TranslateBlock node) {
-        node.accept((TranslateExtensionVisitor) this);
     }
 
     @Override

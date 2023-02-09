@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -32,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
@@ -354,6 +350,16 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
+    public void visit(Message node) {
+        if (insideScript || insideProcedure) {
+            //normal messages should not count as they are dropdowns
+            if (!(node.getMessage() instanceof StringLiteral)) {
+                visitChildren(node);
+            }
+        }
+    }
+
+    @Override
     public void visit(ReceptionOfMessage node) {
         if (insideScript || insideProcedure) {
             count++;
@@ -575,11 +581,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(ExprLanguage node) {
         //only visit the children/the node that is inside the language block
         visitChildren(node);
@@ -631,19 +632,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         visitChildren(node);
     }
 
-    @Override
-    public void visit(MusicBlock node) {
-        if (insideScript || insideProcedure) {
-            count++;
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visitParentVisitor(MusicBlock node) {
-        visitDefaultVisitor(node);
-    }
-
     // Translate Blocks
 
     @Override
@@ -663,11 +651,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
             count++;
         }
         visitChildren(node);
-    }
-
-    @Override
-    public void visitParentVisitor(TranslateBlock node) {
-        visitDefaultVisitor(node);
     }
 }
 

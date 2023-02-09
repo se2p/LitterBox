@@ -1,0 +1,377 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "η μεταβλητή μου",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 1,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "υπόβαθρο1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "e5f794c8756ca0cead5cb7e7fe354c41",
+                    "name": "Playground",
+                    "bitmapResolution": 2,
+                    "md5ext": "e5f794c8756ca0cead5cb7e7fe354c41.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "ποπ",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Αντικείμενο1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "ενδυμασία1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "ενδυμασία2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Νιάου",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Dani",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 2,
+            "costumes": [
+                {
+                    "assetId": "6518333c95cf96a9aaf73a4a948e002f",
+                    "name": "Dani-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "6518333c95cf96a9aaf73a4a948e002f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 37,
+                    "rotationCenterY": 141
+                },
+                {
+                    "assetId": "2cba86439098a7e0daa46e0ff8a59f7c",
+                    "name": "Dani-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "2cba86439098a7e0daa46e0ff8a59f7c.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 86,
+                    "rotationCenterY": 141
+                },
+                {
+                    "assetId": "b5f989e21b56af371209369c331b821e",
+                    "name": "Dani-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "b5f989e21b56af371209369c331b821e.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 37,
+                    "rotationCenterY": 138
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 6,
+            "y": -114,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Characters 1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "%1k6[;|;`FQI]vXEGGSm": {
+                    "opcode": "translate_getTranslate",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "WORDS": [
+                            1,
+                            [
+                                10,
+                                "ΣΧΟΛΕΙΟ"
+                            ]
+                        ],
+                        "LANGUAGE": [
+                            1,
+                            "6Q*,hy8M8kB8529mTV*F"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 655,
+                    "y": 509
+                },
+                "6Q*,hy8M8kB8529mTV*F": {
+                    "opcode": "translate_menu_languages",
+                    "next": null,
+                    "parent": "%1k6[;|;`FQI]vXEGGSm",
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "en",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 7,
+            "costumes": [
+                {
+                    "assetId": "03bc23a9fa12c1244c83a07a81f20bfd",
+                    "name": "character1-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "03bc23a9fa12c1244c83a07a81f20bfd.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 49.8898709690844,
+                    "rotationCenterY": 124.76092657062226
+                },
+                {
+                    "assetId": "f26b130c2c58b812be21d1a9745863a1",
+                    "name": "character1-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "f26b130c2c58b812be21d1a9745863a1.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.60290188300769,
+                    "rotationCenterY": 122.98040317401274
+                },
+                {
+                    "assetId": "cc0be722cf93eef63726bd606ab11c5c",
+                    "name": "character1-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "cc0be722cf93eef63726bd606ab11c5c.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.60291410943074,
+                    "rotationCenterY": 126.85057804587933
+                },
+                {
+                    "assetId": "6be261800647c53becb1f93ed31ed13e",
+                    "name": "character1-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "6be261800647c53becb1f93ed31ed13e.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.602918664146046,
+                    "rotationCenterY": 123.84994499999999
+                },
+                {
+                    "assetId": "6f78ce6a87d114162ed9fbef30f9a0fd",
+                    "name": "character1-e",
+                    "bitmapResolution": 1,
+                    "md5ext": "6f78ce6a87d114162ed9fbef30f9a0fd.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 65.725,
+                    "rotationCenterY": 120.67006881854581
+                },
+                {
+                    "assetId": "527ba82c5e82f43c8fca0be905dbe20a",
+                    "name": "character1-f",
+                    "bitmapResolution": 1,
+                    "md5ext": "527ba82c5e82f43c8fca0be905dbe20a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.60291455471537,
+                    "rotationCenterY": 126.76429674297606
+                },
+                {
+                    "assetId": "1e303bb57aac0cb4678e85de4251f3f4",
+                    "name": "character1-g",
+                    "bitmapResolution": 1,
+                    "md5ext": "1e303bb57aac0cb4678e85de4251f3f4.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.60291143772301,
+                    "rotationCenterY": 125.34991500000001
+                },
+                {
+                    "assetId": "b6ff5c056a4fc4eaea17b6ecfec3e434",
+                    "name": "character1-h",
+                    "bitmapResolution": 1,
+                    "md5ext": "b6ff5c056a4fc4eaea17b6ecfec3e434.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54.60291599243823,
+                    "rotationCenterY": 126.34996499999997
+                },
+                {
+                    "assetId": "5e2f620e5687a36e1954414054c69ccc",
+                    "name": "character1-i",
+                    "bitmapResolution": 1,
+                    "md5ext": "5e2f620e5687a36e1954414054c69ccc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 59.662344830457954,
+                    "rotationCenterY": 124.64983500000002
+                },
+                {
+                    "assetId": "1044a68cc743f83564e36a6bca16830b",
+                    "name": "character1-j",
+                    "bitmapResolution": 1,
+                    "md5ext": "1044a68cc743f83564e36a6bca16830b.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 57.80000000000001,
+                    "rotationCenterY": 127.9064156368213
+                },
+                {
+                    "assetId": "b37d0e0d46f07cb2cbdc5285e176bf62",
+                    "name": "character1-k",
+                    "bitmapResolution": 1,
+                    "md5ext": "b37d0e0d46f07cb2cbdc5285e176bf62.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 55.00291821886171,
+                    "rotationCenterY": 122.96517404562759
+                },
+                {
+                    "assetId": "984043e1e7c544999c31f952d1d43a56",
+                    "name": "character1-l",
+                    "bitmapResolution": 1,
+                    "md5ext": "984043e1e7c544999c31f952d1d43a56.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 56,
+                    "rotationCenterY": 124.849995
+                },
+                {
+                    "assetId": "6d5ddfc69f9c6a3f1d2ded1428237931",
+                    "name": "character1-m",
+                    "bitmapResolution": 1,
+                    "md5ext": "6d5ddfc69f9c6a3f1d2ded1428237931.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 56,
+                    "rotationCenterY": 126.73041545130786
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": true,
+            "x": -25,
+            "y": -93,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "translate_getViewerLanguage",
+            "mode": "default",
+            "opcode": "translate_getViewerLanguage",
+            "params": {},
+            "spriteName": null,
+            "value": "Ελληνικά",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [
+        "translate"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20201125065300",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0"
+    }
+}
