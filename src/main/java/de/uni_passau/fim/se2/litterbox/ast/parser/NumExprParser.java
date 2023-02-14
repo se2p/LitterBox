@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -313,6 +314,8 @@ public class NumExprParser {
                 portNumber = exprBlock.get(FIELDS_KEY).get(PORT_KEY).get(0).asText();
                 port = new MCorePort(portNumber);
                 return new DetectLinePort(port, metadata);
+            case music_getTempo:
+                return new Tempo(metadata);
 
             default:
                 throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");

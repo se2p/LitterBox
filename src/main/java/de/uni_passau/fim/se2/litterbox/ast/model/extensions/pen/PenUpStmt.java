@@ -43,7 +43,11 @@ public class PenUpStmt extends AbstractNode implements PenStmt, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof PenExtensionVisitor) {
+            ((PenExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit(this);
+        }
     }
 
     @Override

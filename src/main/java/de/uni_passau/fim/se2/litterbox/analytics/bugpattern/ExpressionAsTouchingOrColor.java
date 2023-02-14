@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
@@ -84,15 +83,5 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder implements 
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         visitChildren(node);
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
     }
 }

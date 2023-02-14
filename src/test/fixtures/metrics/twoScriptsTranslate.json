@@ -1,0 +1,363 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "mi variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "=K-z78O?Qi#O,QS([Ng8": {
+                    "opcode": "text2speech_speakAndWait",
+                    "next": null,
+                    "parent": "D?QLt#)}$znf-DO45$75",
+                    "inputs": {
+                        "WORDS": [
+                            3,
+                            ".iN3{R,nTnK*C_6ii#u*",
+                            [
+                                10,
+                                "hola"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "DEJ_yT:-u25l1p)-]0f(": {
+                    "opcode": "text2speech_setLanguage",
+                    "next": "D?QLt#)}$znf-DO45$75",
+                    "parent": "N#wBHhp#Q#h7sZ_`),jk",
+                    "inputs": {
+                        "LANGUAGE": [
+                            3,
+                            "8bYBmz-6:v(aCa[Ho/S=",
+                            "1?eUuppk^%FKS%S{#.19"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1?eUuppk^%FKS%S{#.19": {
+                    "opcode": "text2speech_menu_languages",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "es-419",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": true,
+                    "x": 82,
+                    "y": 254
+                },
+                "8bYBmz-6:v(aCa[Ho/S=": {
+                    "opcode": "translate_getViewerLanguage",
+                    "next": null,
+                    "parent": "DEJ_yT:-u25l1p)-]0f(",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".iN3{R,nTnK*C_6ii#u*": {
+                    "opcode": "translate_getTranslate",
+                    "next": null,
+                    "parent": "=K-z78O?Qi#O,QS([Ng8",
+                    "inputs": {
+                        "WORDS": [
+                            1,
+                            [
+                                10,
+                                "Hola, en este proyecto tendran que poner tu OSE, y lo are a mi manera"
+                            ]
+                        ],
+                        "LANGUAGE": [
+                            3,
+                            "w/Lubo9Z]/?isv$k/4BI",
+                            "lI_MuMzvDK[dI$[g)Em:"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "lI_MuMzvDK[dI$[g)Em:": {
+                    "opcode": "translate_menu_languages",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "nb",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": true,
+                    "x": 226,
+                    "y": 327
+                },
+                "w/Lubo9Z]/?isv$k/4BI": {
+                    "opcode": "translate_getViewerLanguage",
+                    "next": null,
+                    "parent": ".iN3{R,nTnK*C_6ii#u*",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "D?QLt#)}$znf-DO45$75": {
+                    "opcode": "text2speech_setVoice",
+                    "next": "=K-z78O?Qi#O,QS([Ng8",
+                    "parent": "DEJ_yT:-u25l1p)-]0f(",
+                    "inputs": {
+                        "VOICE": [
+                            1,
+                            "qr5~JM(})o[0eG@d#Z`)"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "qr5~JM(})o[0eG@d#Z`)": {
+                    "opcode": "text2speech_menu_voices",
+                    "next": null,
+                    "parent": "D?QLt#)}$znf-DO45$75",
+                    "inputs": {},
+                    "fields": {
+                        "voices": [
+                            "TENOR",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "N#wBHhp#Q#h7sZ_`),jk": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "DEJ_yT:-u25l1p)-]0f(",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -82,
+                    "y": 194
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "f7c559b74c3ccae6d256b2b45b26560e",
+                    "name": "fondo1",
+                    "bitmapResolution": 1,
+                    "md5ext": "f7c559b74c3ccae6d256b2b45b26560e.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 248,
+                    "rotationCenterY": 191.94095341278438
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": "es"
+        },
+        {
+            "isStage": false,
+            "name": "Gobo",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "1{,!tLmVBy3_-.86oHn=": {
+                    "opcode": "sound_playuntildone",
+                    "next": null,
+                    "parent": "Y4Cs8qIEFsZg8~ebjVK=",
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "WtBiHuBS$ZS[FfTr=H%U"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "WtBiHuBS$ZS[FfTr=H%U": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "1{,!tLmVBy3_-.86oHn=",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Vexento - Masked Heroes",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "HII25IAEgw#qu~fPy9VS": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "_5Xf_OfXZkdM4O@|wtuN",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "Y4Cs8qIEFsZg8~ebjVK="
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_5Xf_OfXZkdM4O@|wtuN": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "HII25IAEgw#qu~fPy9VS",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 197,
+                    "y": 93
+                },
+                "Y4Cs8qIEFsZg8~ebjVK=": {
+                    "opcode": "sound_setvolumeto",
+                    "next": "1{,!tLmVBy3_-.86oHn=",
+                    "parent": "HII25IAEgw#qu~fPy9VS",
+                    "inputs": {
+                        "VOLUME": [
+                            1,
+                            [
+                                4,
+                                "34"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "0e34dab2041da71ddae2fb081b8773df",
+                    "name": "gobo-a",
+                    "bitmapResolution": 1,
+                    "md5ext": "0e34dab2041da71ddae2fb081b8773df.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 29.477477477477407,
+                    "rotationCenterY": 117.50600600600598
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                },
+                {
+                    "assetId": "a0b83b977e471c2a8269ce1e4b61f694",
+                    "name": "Vexento - Masked Heroes",
+                    "dataFormat": "mp3",
+                    "rate": 48000,
+                    "sampleCount": 10131330,
+                    "md5ext": "a0b83b977e471c2a8269ce1e4b61f694.mp3"
+                }
+            ],
+            "volume": 34,
+            "layerOrder": 1,
+            "visible": true,
+            "x": -156,
+            "y": -38,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Gobo a mi manera",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "5769e94d50bce3b726fcf9d58f37cb9c",
+                    "name": "disfraz1",
+                    "bitmapResolution": 1,
+                    "md5ext": "5769e94d50bce3b726fcf9d58f37cb9c.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 105.06343685256243,
+                    "rotationCenterY": 89.9266173770612
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 144,
+            "y": -2,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "text2speech",
+        "translate"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20211110140254",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+    }
+}

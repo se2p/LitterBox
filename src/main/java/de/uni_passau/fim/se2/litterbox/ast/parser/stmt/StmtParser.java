@@ -96,6 +96,8 @@ public class StmtParser {
                 return ResetStmtParser.parse(blockId, current, blocks);
             } else if (IRStmtOpcode.contains(opcode)) {
                 return IRStmtParser.parse(state, blockId, current, blocks);
+            } else if (MusicOpcode.contains(opcode)) {
+                return MusicStmtParser.parse(state, blockId, current, blocks);
             } else {
                 if (PropertyLoader.getSystemBooleanProperty("parser.log_unknown_opcode")) {
                     Logger.getGlobal().warning("Block with ID " + blockId + " and unknown opcode "

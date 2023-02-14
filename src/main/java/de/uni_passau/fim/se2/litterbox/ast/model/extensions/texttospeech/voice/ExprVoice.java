@@ -47,7 +47,11 @@ public class ExprVoice extends AbstractNode implements Voice {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+        if (visitor instanceof TextToSpeechExtensionVisitor) {
+            ((TextToSpeechExtensionVisitor) visitor).visit(this);
+        } else {
+            visitor.visit(this);
+        }
     }
 
     @Override

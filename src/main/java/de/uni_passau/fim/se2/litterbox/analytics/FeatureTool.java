@@ -22,14 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-import org.apache.commons.csv.CSVFormat;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class FeatureTool {
 
-    private List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
+    private final List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
             new AvgBlockStatementCount<>(),
             new AvgScriptWidthCount<>(),
             new AvgVariableLengthCount<>(),
@@ -85,7 +81,7 @@ public class FeatureTool {
         headers.add("id");
         metrics.stream().map(MetricExtractor::getName).forEach(headers::add);
         headers.add("scratch_block_code");
-        CSVPrinter printer = getNewPrinter(fileName, headers);
+        CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers);
         int actorCount = 0;
         List<ActorDefinition> actorDefinitions = getActors(program);
         for (ActorDefinition actorDefinition : actorDefinitions) {
@@ -119,6 +115,7 @@ public class FeatureTool {
             }
         }
         printer.flush();
+        printer.close();
     }
 
     private String getScratchBlockCode(ASTNode target, Program program,ActorDefinition actorDefinition) {
@@ -131,20 +128,6 @@ public class FeatureTool {
         target.accept(visitor);
         visitor.end();
         return visitor.getScratchBlocks();
-    }
-
-    // TODO: Code clone -- same is in CSVReportGenerator
-    protected CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
-
-        if (Files.exists(Paths.get(name))) {
-            BufferedWriter writer = Files.newBufferedWriter(
-                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            return new CSVPrinter(writer, CSVFormat.DEFAULT.withSkipHeaderRecord());
-        } else {
-            BufferedWriter writer = Files.newBufferedWriter(
-                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(heads.toArray(new String[0])));
-        }
     }
 
     private List<ActorDefinition> getActors(Program program) {

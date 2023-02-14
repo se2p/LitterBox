@@ -49,11 +49,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.mov
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetAxis;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.reset.ResetTimer2;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
@@ -120,7 +126,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -891,16 +897,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(PenDownStmt node) {
         emitNoSpace("pen down");
         storeNotesForIssue(node);
@@ -975,16 +971,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     //---------------------------------------------------------------
     // TextToSpeech blocks
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
 
     @Override
     public void visit(FixedLanguage node) {
@@ -1103,7 +1089,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Speak node) {
-        emitNoSpace("set voice to ");
+        emitNoSpace("speak ");
         node.getText().accept(this);
         emitNoSpace(" :: tts");
         storeNotesForIssue(node);
@@ -3300,5 +3286,111 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(MBlockNode node) {
         node.accept((MBlockVisitor) this);
+    }
+
+    // music extension
+
+    @Override
+    public void visit(Tempo node) {
+        emitNoSpace("(Tempo");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(RestForBeats node) {
+        emitNoSpace("rest for ");
+        node.getBeats().accept(this);
+        emitNoSpace(" beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetTempoTo node) {
+        emitNoSpace("set tempo to ");
+        node.getTempo().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeTempoBy node) {
+        emitNoSpace("change tempo by ");
+        node.getTempo().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayNoteForBeats node) {
+        emitNoSpace("play note ");
+        node.getNote().accept((MusicExtensionVisitor) this);
+        emitNoSpace(" for ");
+        node.getBeats().accept(this);
+        emitNoSpace("beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PlayDrumForBeats node) {
+        emitNoSpace("play drum ");
+        node.getDrum().accept((MusicExtensionVisitor) this);
+        emitNoSpace(" for ");
+        node.getBeats().accept(this);
+        emitNoSpace("beats");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetInstrumentTo node) {
+        emitNoSpace("set instrument to ");
+        node.getInstrument().accept((MusicExtensionVisitor) this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        emitNoSpace("(");
+        emitNoSpace(node.getType().getName());
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        emitNoSpace("(");
+        double num = node.getNote();
+        if (num % 1 == 0) {
+            emitNoSpace(Integer.toString((int) num));
+        } else {
+            emitNoSpace(String.valueOf(num));
+        }
+        storeNotesForIssue(node);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        emitNoSpace("(");
+        emitNoSpace(node.getType().getName());
+        emitNoSpace(" v)");
     }
 }

@@ -31,9 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -228,11 +226,6 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     //pen
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(ChangePenColorParamBy node) {
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
@@ -248,11 +241,6 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
             createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
     }
 
     @Override
@@ -274,16 +262,6 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     }
 
     //Text to Speech
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
 
     @Override
     public void visit(FixedLanguage node) {

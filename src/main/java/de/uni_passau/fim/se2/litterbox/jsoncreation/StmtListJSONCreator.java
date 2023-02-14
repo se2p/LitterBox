@@ -1022,11 +1022,6 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(SetPenSizeTo node) {
         createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
                 MATH_NUM_PRIMITIVE, node.getOpcode());
@@ -1099,21 +1094,6 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     public void visit(SetPenColorParamTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
     }
 
     @Override

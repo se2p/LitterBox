@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
@@ -622,16 +621,6 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
-    public void visit(PenStmt node) {
-        node.accept((PenExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(PenStmt node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
     public void visit(SetPenColorToColorStmt node) {
         currentStackedDepth = 0;
         visitChildren(node);
@@ -659,16 +648,6 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     public void visit(ChangePenSizeBy node) {
         currentStackedDepth = 0;
         visitChildren(node);
-    }
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
     }
 
     @Override

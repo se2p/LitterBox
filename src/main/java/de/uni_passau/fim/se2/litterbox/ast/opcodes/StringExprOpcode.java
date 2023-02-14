@@ -31,7 +31,12 @@ public enum StringExprOpcode implements Opcode {
 
     //mBlock String Opcode
     comm_receive_ir,    // codey
-    detect_ir;          // mcore
+    detect_ir,         // mcore
+
+    //translate
+
+    translate_getViewerLanguage,
+    translate_getTranslate;
 
     public static boolean contains(String opcode) {
         opcode = Opcode.removePrefix(opcode);

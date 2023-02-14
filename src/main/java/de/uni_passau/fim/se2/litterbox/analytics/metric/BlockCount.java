@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -32,11 +29,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -61,11 +67,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor {
+public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -342,6 +350,16 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     }
 
     @Override
+    public void visit(Message node) {
+        if (insideScript || insideProcedure) {
+            //normal messages should not count as they are dropdowns
+            if (!(node.getMessage() instanceof StringLiteral)) {
+                visitChildren(node);
+            }
+        }
+    }
+
+    @Override
     public void visit(ReceptionOfMessage node) {
         if (insideScript || insideProcedure) {
             count++;
@@ -554,16 +572,12 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         if (insideScript || insideProcedure) {
             count++;
         }
+        visitChildren(node);
     }
 
     @Override
     public void visit(FixedLanguage node) {
         //do not count
-    }
-
-    @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
     }
 
     @Override
@@ -580,6 +594,62 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     @Override
     public void visit(ExprVoice node) {
         //only visit the children/the node that is inside the voice block
+        visitChildren(node);
+    }
+
+    // Music Blocks
+
+    @Override
+    public void visit(FixedDrum node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    // Translate Blocks
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
+        //do not count
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TranslateBlock node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
         visitChildren(node);
     }
 }

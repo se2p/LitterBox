@@ -1,0 +1,253 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Bühnenbild1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Plopp",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "X(^h/t8K%IyYkY:},%hp": {
+                    "opcode": "translate_getTranslate",
+                    "next": null,
+                    "parent": "9wN1)AYd!K8E*!dm9jQ~",
+                    "inputs": {
+                        "WORDS": [
+                            1,
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ],
+                        "LANGUAGE": [
+                            3,
+                            "Erzp-fwbugd/`YckMjtI",
+                            "4}L8mK5s|ZdN?x9ek0Ng"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "4}L8mK5s|ZdN?x9ek0Ng": {
+                    "opcode": "translate_menu_languages",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "zh-cn",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": true,
+                    "x": 725,
+                    "y": 544
+                },
+                "eqs[9NeW^eA3hR}~s@rN": {
+                    "opcode": "translate_getViewerLanguage",
+                    "next": null,
+                    "parent": "(=jrp$_u*PvlI8PnaX$o",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "mxAZ)~.rZk!U6N5edSzM": {
+                    "opcode": "translate_getTranslate",
+                    "next": null,
+                    "parent": "O)/Xf]Q0jhSU9,JNI*OC",
+                    "inputs": {
+                        "WORDS": [
+                            1,
+                            [
+                                10,
+                                "hello"
+                            ]
+                        ],
+                        "LANGUAGE": [
+                            1,
+                            "YDE@D03x]@DIcb6Y}lkp"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "YDE@D03x]@DIcb6Y}lkp": {
+                    "opcode": "translate_menu_languages",
+                    "next": null,
+                    "parent": "mxAZ)~.rZk!U6N5edSzM",
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "zh-tw",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "(=jrp$_u*PvlI8PnaX$o": {
+                    "opcode": "looks_say",
+                    "next": "9wN1)AYd!K8E*!dm9jQ~",
+                    "parent": null,
+                    "inputs": {
+                        "MESSAGE": [
+                            3,
+                            "eqs[9NeW^eA3hR}~s@rN",
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 448,
+                    "y": 476
+                },
+                "9wN1)AYd!K8E*!dm9jQ~": {
+                    "opcode": "looks_think",
+                    "next": "O)/Xf]Q0jhSU9,JNI*OC",
+                    "parent": "(=jrp$_u*PvlI8PnaX$o",
+                    "inputs": {
+                        "MESSAGE": [
+                            3,
+                            "X(^h/t8K%IyYkY:},%hp",
+                            [
+                                10,
+                                "Hmm..."
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Erzp-fwbugd/`YckMjtI": {
+                    "opcode": "translate_getViewerLanguage",
+                    "next": null,
+                    "parent": "X(^h/t8K%IyYkY:},%hp",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "O)/Xf]Q0jhSU9,JNI*OC": {
+                    "opcode": "looks_think",
+                    "next": null,
+                    "parent": "9wN1)AYd!K8E*!dm9jQ~",
+                    "inputs": {
+                        "MESSAGE": [
+                            3,
+                            "mxAZ)~.rZk!U6N5edSzM",
+                            [
+                                10,
+                                "Hmm..."
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Miau",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "translate"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.3.14",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+    }
+}

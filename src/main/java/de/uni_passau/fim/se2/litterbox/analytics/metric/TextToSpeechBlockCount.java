@@ -44,16 +44,6 @@ public class TextToSpeechBlockCount<T extends ASTNode> implements MetricExtracto
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node) {
-        visitDefaultVisitor(node);
-    }
-
-    @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(SetLanguage node) {
         count++;
     }
