@@ -42,6 +42,7 @@ public class EmptyControlBodyTest implements JsonTest {
     public void testEmptyBodies() throws IOException, ParsingException {
         Program emptyBodies = getAST("./src/test/fixtures/smells/emptyBodies.json");
         EmptyControlBody parameterName = new EmptyControlBody();
+        IssueTranslator.getInstance().setLanguage("de");
         List<Issue> reports = new ArrayList<>(parameterName.check(emptyBodies));
         Assertions.assertEquals(6, reports.size());
         Hint repeat = new Hint(parameterName.getName());
@@ -51,7 +52,7 @@ public class EmptyControlBodyTest implements JsonTest {
         forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
         Assertions.assertEquals(forever.getHintText(), reports.get(1).getHint());
         Hint ifThen = new Hint(parameterName.getName());
-        ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then "));
-        Assertions.assertEquals(ifThen.getHintText(), reports.get(2).getHint());
+        ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
+        Assertions.assertEquals("Du hast einen [sbi]falls < > , dann[/sbi] verwendet, der keine Bausteine enthält. Dies macht den Code schwieriger zu verstehen. Lösche den Baustein, falls er nicht weiter verwendet wird.", reports.get(2).getHint());
     }
 }
