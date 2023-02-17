@@ -54,5 +54,6 @@ public class EmptyControlBodyTest implements JsonTest {
         Hint ifThen = new Hint(parameterName.getName());
         ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
         Assertions.assertEquals("Du hast einen [sbi]falls < > , dann[/sbi] verwendet, der keine Bausteine enthält. Dies macht den Code schwieriger zu verstehen. Lösche den Baustein, falls er nicht weiter verwendet wird.", reports.get(2).getHint());
+        IssueTranslator.getInstance().setLanguage("en");
     }
 }
