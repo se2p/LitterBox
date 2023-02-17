@@ -36,12 +36,12 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
             Hint hint = new Hint(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then ") + IssueTranslator.getInstance().getInfo("else"));
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
             Hint hint = new Hint(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then ") + IssueTranslator.getInstance().getInfo("else"));
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
@@ -51,7 +51,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
             Hint hint = new Hint(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then "));
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
