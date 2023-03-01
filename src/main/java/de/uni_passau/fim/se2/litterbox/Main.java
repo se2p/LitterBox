@@ -426,6 +426,12 @@ public class Main implements Callable<Integer> {
         )
         int maxPathLength = 8;
 
+        @CommandLine.Option(
+                names = {"--scripts"},
+                description = "generate token per scripts"
+        )
+        boolean isPerScript = false;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             if (maxPathLength < 0) {
@@ -439,7 +445,7 @@ public class Main implements Callable<Integer> {
                 ProgramRelation.setNoHash();
             }
 
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
+            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
         }
     }
 

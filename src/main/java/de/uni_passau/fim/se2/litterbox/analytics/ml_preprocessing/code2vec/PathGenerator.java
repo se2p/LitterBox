@@ -44,7 +44,7 @@ public class PathGenerator {
             "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
     ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
-    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
+    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram, boolean isPerScript) {
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
         this.wholeProgram = wholeProgram;

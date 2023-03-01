@@ -31,10 +31,12 @@ import java.util.stream.Stream;
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
+    private final boolean isPerScript;
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions);
         this.maxPathLength = maxPathLength;
+        this.isPerScript = isPerScript;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
             return Stream.empty();
         }
 
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram);
+        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram, isPerScript);
         return generatePathTask.createContextForCode2Vec();
     }
 
