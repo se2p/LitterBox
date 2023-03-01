@@ -140,7 +140,6 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
-
         protected abstract Analyzer getAnalyzer() throws Exception;
 
         /**
@@ -384,6 +383,12 @@ public class Main implements Callable<Integer> {
         )
         boolean wholeProgram;
 
+        @CommandLine.Option(
+                names = {"--scripts"},
+                description = "generate token per scripts"
+        )
+        boolean isPerScript = false;
+
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
                 final File outputDirectory = Path.of(outputPath).toFile();
@@ -403,7 +408,7 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram);
+            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram, isPerScript);
         }
     }
 
@@ -427,12 +432,6 @@ public class Main implements Callable<Integer> {
         )
         int maxPathLength = 8;
 
-        @CommandLine.Option(
-                names = {"--scripts"},
-                description = "generate token per scripts"
-        )
-        boolean isPerScript = false;
-
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             if (maxPathLength < 0) {
@@ -446,7 +445,7 @@ public class Main implements Callable<Integer> {
                 ProgramRelation.setNoHash();
             }
 
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
+            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
         }
     }
 

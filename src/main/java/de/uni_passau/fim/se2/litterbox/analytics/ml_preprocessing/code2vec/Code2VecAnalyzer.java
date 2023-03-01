@@ -24,21 +24,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
-    private final boolean isPerScript;
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
         super(commonOptions);
         this.maxPathLength = maxPathLength;
-        this.isPerScript = isPerScript;
     }
 
     @Override
@@ -52,7 +48,6 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
         GeneratePathTask generatePathTask = new GeneratePathTask(new PathGenerator(program, maxPathLength, includeStage, wholeProgram, isPerScript));
         return generatePathTask.createContextForCode2Vec();
     }
-
 
     @Override
     protected Path outputFileName(File inputFile) {
