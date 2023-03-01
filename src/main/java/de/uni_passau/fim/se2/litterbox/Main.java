@@ -140,6 +140,7 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
+
         protected abstract Analyzer getAnalyzer() throws Exception;
 
         /**

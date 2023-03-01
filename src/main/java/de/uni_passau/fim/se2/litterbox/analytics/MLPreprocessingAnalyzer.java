@@ -46,6 +46,7 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         this.outputPath = commonOptions.getOutputPath();
         this.includeStage = commonOptions.includeStage();
         this.wholeProgram = commonOptions.wholeProgram();
+
     }
 
     protected abstract Stream<String> process(File inputFile) throws IOException;

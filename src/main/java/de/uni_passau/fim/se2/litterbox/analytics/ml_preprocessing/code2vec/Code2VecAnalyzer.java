@@ -24,8 +24,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
@@ -47,9 +49,10 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
             return Stream.empty();
         }
 
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram, isPerScript);
+        GeneratePathTask generatePathTask = new GeneratePathTask(new PathGenerator(program, maxPathLength, includeStage, wholeProgram, isPerScript));
         return generatePathTask.createContextForCode2Vec();
     }
+
 
     @Override
     protected Path outputFileName(File inputFile) {

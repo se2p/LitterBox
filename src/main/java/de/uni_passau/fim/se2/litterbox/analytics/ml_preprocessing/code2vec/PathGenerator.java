@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.*;
@@ -32,9 +34,12 @@ public class PathGenerator {
     private final int maxPathLength;
     private final boolean includeStage;
     private final boolean wholeProgram;
+    private final boolean isPerScript;
 
     private final Program program;
+    // TODO convert to generics
     private Map<ActorDefinition, List<ASTNode>> leafsMap;
+    private Map<Script, List<ASTNode>> scriptLeafsMap;
 
     private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
             "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
@@ -49,8 +54,21 @@ public class PathGenerator {
         this.includeStage = includeStage;
         this.wholeProgram = wholeProgram;
         this.program = program;
+        this.isPerScript = isPerScript;
 
-        extractASTLeafsPerSprite();
+        if(isPerScript) {
+            extractASTLeafsPerScript();
+            printLeafsPerScript();
+        } else {
+            extractASTLeafsPerSprite();
+        }
+    }
+
+
+    private void extractASTLeafsPerScript() {
+        ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
+        program.getActorDefinitionList().getDefinitions().forEach(sprite -> sprite.getScripts().getScriptList().forEach(script -> script.accept(scriptVisitor)));
+        scriptLeafsMap = scriptVisitor.getLeafsMap();
     }
 
     private void extractASTLeafsPerSprite() {
@@ -72,6 +90,19 @@ public class PathGenerator {
             }
         }
     }
+    public void printLeafsPerScript() {
+        System.out.println("Number of scripts: " + scriptLeafsMap.keySet().size());
+        for (Map.Entry<Script, List<ASTNode>> entry : scriptLeafsMap.entrySet()) {
+            String scriptName = entry.getKey().getUniqueName();
+            System.out.println("Script : " + scriptName);
+            System.out.println("Number of ASTLeafs for " + scriptName + ": " + entry.getValue().size());
+            int i = 0;
+            for (ASTNode value : entry.getValue()) {
+                System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
+                i++;
+            }
+        }
+    }
 
     public List<String> getAllLeafs() {
         return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
@@ -81,7 +112,10 @@ public class PathGenerator {
     public List<ProgramFeatures> generatePaths() {
         if (wholeProgram) {
             return generatePathsWholeProgram().stream().collect(Collectors.toList());
-        } else {
+        } else if (isPerScript){
+            return generatePathsPerScripts();
+        }
+        else {
             return generatePathsPerSprite();
         }
     }
@@ -99,6 +133,19 @@ public class PathGenerator {
         return spriteFeatures;
     }
 
+    private List<ProgramFeatures> generatePathsPerScripts() {
+        List<ProgramFeatures> scriptFeatures = new ArrayList<>();
+        for (Map.Entry<Script, List<ASTNode>> entry : scriptLeafsMap.entrySet()) {
+            Script script = entry.getKey();
+            List<ASTNode> leafs = entry.getValue();
+            ProgramFeatures singleScriptFeatures = generatePathsForScript(script, leafs);
+            if (singleScriptFeatures != null && !singleScriptFeatures.isEmpty()) {
+                scriptFeatures.add(singleScriptFeatures);
+            }
+        }
+        return scriptFeatures;
+    }
+
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
         final List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
@@ -114,6 +161,16 @@ public class PathGenerator {
         return getProgramFeatures(spriteName, leafs);
     }
 
+    private ProgramFeatures generatePathsForScript(final Script script, final List<ASTNode> leafs) {
+
+        // TODO generate meaningful scripts' names (spriteName +id ??)
+        String scriptName = script.getUniqueName();
+        if (scriptName == null) {
+            return null;
+        }
+
+        return getProgramFeatures(scriptName, leafs);
+    }
     private ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
 
