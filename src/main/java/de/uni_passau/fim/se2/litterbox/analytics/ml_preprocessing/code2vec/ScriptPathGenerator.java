@@ -33,15 +33,15 @@ public class ScriptPathGenerator extends PathGenerator {
 
     private Map<Script, List<ASTNode>> leafsMap;
 
-    public ScriptPathGenerator(int maxPathLength, Program program) {
-        super(maxPathLength, program);
+    public ScriptPathGenerator(int maxPathLength, boolean includeStage, Program program) {
+        super(maxPathLength, includeStage,  program);
         extractASTLeafs();
     }
 
     @Override
     protected void extractASTLeafs() {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        List<ActorDefinition> sprites = AstNodeUtil.getActors(program, false);
+        List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         sprites.forEach(sprite -> sprite.getScripts().getScriptList().
                         forEach(script -> script.accept(scriptVisitor)));
         leafsMap = scriptVisitor.getLeafsMap();
