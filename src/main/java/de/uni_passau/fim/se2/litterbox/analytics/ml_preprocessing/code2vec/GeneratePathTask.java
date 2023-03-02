@@ -31,9 +31,8 @@ public class GeneratePathTask {
     }
 
 
-    // TODO instead of Stream<String>, use generics
     public Stream<String> createContextForCode2Vec() {
-        // pathGenerator.printLeafsPerSprite();
+        // pathGenerator.printLeafs();
         List<ProgramFeatures> features = pathGenerator.generatePaths();
         return featuresToString(features);
     }
@@ -43,7 +42,6 @@ public class GeneratePathTask {
         if (features == null) {
             return Stream.empty();
         }
-
         return features.stream().map(ProgramFeatures::toString);
     }
 }
