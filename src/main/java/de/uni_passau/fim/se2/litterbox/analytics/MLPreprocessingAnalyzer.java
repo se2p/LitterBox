@@ -111,17 +111,16 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
 
     private void writeResultPerScriptToFile(File inputFile, List<String> result) throws IOException {
         Files.createDirectories(outputPath.getPath());
-        int i = 0;
         for (String token : result) {
             Path outName = outputFileName(inputFile);
-            Path outputFile = outputPath.getPath().resolve(outName + "_script_" + i);
-
+            String scriptName = token.split(" ")[0]; // workaround, better to change the return type of process method to hashmap <
+            Path outputFile = outputPath.getPath().resolve(outName + scriptName);
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-                bw.write(token);
+                int x= token.indexOf(" ");
+                bw.write(token.substring(x+1));
                 bw.flush();
             }
             log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
-            i += 1;
         }
     }
 

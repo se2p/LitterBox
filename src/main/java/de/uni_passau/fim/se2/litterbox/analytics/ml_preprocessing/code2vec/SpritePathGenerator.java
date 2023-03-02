@@ -36,13 +36,7 @@ public class SpritePathGenerator extends PathGenerator {
         super(maxPathLength, includeStage, program);
     }
 
-    private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
-            "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
-            "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
-            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
-            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
-            "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
-    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
+
 
     @Override
     public void printLeafs() {
@@ -60,7 +54,7 @@ public class SpritePathGenerator extends PathGenerator {
     }
 
     @Override
-    public void extractASTLeafs() {
+    protected void extractASTLeafs() {
         ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
         program.accept(spriteVisitor);
         leafsMap = spriteVisitor.getLeafsCollector();
@@ -88,24 +82,6 @@ public class SpritePathGenerator extends PathGenerator {
         return super.getProgramFeatures(spriteName, leafs);
     }
 
-    private static String normalizeSpriteName(String spriteName) {
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
-        if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
-            return null;
-        }
-
-        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        String splitName = normalizedSpriteLabel;
-        if (!splitNameParts.isEmpty()) {
-            splitName = String.join("|", splitNameParts);
-        }
-
-        return splitName;
-    }
-
-    private static boolean isDefaultName(String normalizedSpriteLabel) {
-        return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
-    }
 
     @Override
     public List<String> getAllLeafs() {

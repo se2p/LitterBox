@@ -26,7 +26,7 @@ public class ProgramPathGenerator extends PathGenerator {
     }
 
     @Override
-    public void extractASTLeafs() {
+    protected void extractASTLeafs() {
         ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
         program.accept(spriteVisitor);
         leafsMap = spriteVisitor.getLeafsCollector();

@@ -39,7 +39,7 @@ public class ScriptPathGenerator extends PathGenerator {
     }
 
     @Override
-    public void extractASTLeafs() {
+    protected void extractASTLeafs() {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, false);
         sprites.forEach(sprite -> sprite.getScripts().getScriptList().
@@ -51,9 +51,7 @@ public class ScriptPathGenerator extends PathGenerator {
     public void printLeafs() {
         System.out.println("Number of scripts: " + leafsMap.keySet().size());
         for (Map.Entry<Script, List<ASTNode>> entry : leafsMap.entrySet()) {
-            String scriptName = entry.getKey().getUniqueName();
-            System.out.println("Script : " + scriptName);
-            System.out.println("Number of ASTLeafs for " + scriptName + ": " + entry.getValue().size());
+            System.out.println("Number of ASTLeafs for Script " + generateScriptName(entry.getKey()) + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
                 System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
@@ -77,14 +75,17 @@ public class ScriptPathGenerator extends PathGenerator {
     }
 
     private ProgramFeatures generatePathsForScript(final Script script, final List<ASTNode> leafs) {
-        ActorDefinition parentSprite = AstNodeUtil.findActor(script).get();
-        String scriptName = "spriteName_" + parentSprite.getIdent().getName() + "_scriptId_" +  parentSprite.getScripts().getScriptList().indexOf(script);
-        return getProgramFeatures(scriptName, leafs);
+        return getProgramFeatures(generateScriptName(script), leafs);
     }
 
     @Override
     public List<String> getAllLeafs() {
         return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
                 .collect(Collectors.toList());
+    }
+
+    private String generateScriptName(Script script){
+        ActorDefinition parentSprite = AstNodeUtil.findActor(script).get();
+        return "spriteName_" + normalizeSpriteName(parentSprite.getIdent().getName()) + "_scriptId_" +  parentSprite.getScripts().getScriptList().indexOf(script);
     }
 }
