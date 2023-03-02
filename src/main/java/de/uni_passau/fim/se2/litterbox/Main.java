@@ -389,6 +389,14 @@ public class Main implements Callable<Integer> {
         )
         boolean isPerScript = false;
 
+        protected void validateParams() throws CommandLine.ParameterException {
+            if(wholeProgram && isPerScript)
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "The analysis must be done either per scripts or for whole program"
+                );
+        }
+
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
                 final File outputDirectory = Path.of(outputPath).toFile();
