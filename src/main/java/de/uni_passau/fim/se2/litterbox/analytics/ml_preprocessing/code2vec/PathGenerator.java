@@ -2,8 +2,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
 import java.util.*;
 
 public abstract class PathGenerator {
@@ -12,7 +12,6 @@ public abstract class PathGenerator {
     protected boolean includeStage;
 
     protected final Program program;
-    protected Map<ActorDefinition, List<ASTNode>> leafsMap;
 
     public PathGenerator(int maxPathLength, boolean includeStage, Program program) {
         this.maxPathLength = maxPathLength;
@@ -27,11 +26,11 @@ public abstract class PathGenerator {
         extractASTLeafs();
     }
 
-    public abstract List<ProgramFeatures> generatePaths() ;
+    public abstract List<ProgramFeatures> generatePaths();
 
-    public abstract void printLeafs() ;
+    public abstract void printLeafs();
 
-    public abstract void extractASTLeafs() ;
+    public abstract void extractASTLeafs();
 
     public ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
@@ -117,4 +116,5 @@ public abstract class PathGenerator {
         pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }
 
+    public abstract List<String> getAllLeafs();
 }

@@ -20,26 +20,29 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ScriptPathGenerator extends PathGenerator {
 
     private Map<Script, List<ASTNode>> leafsMap;
 
     public ScriptPathGenerator(int maxPathLength, Program program) {
-        super(maxPathLength,program);
+        super(maxPathLength, program);
         extractASTLeafs();
-
     }
 
     @Override
     public void extractASTLeafs() {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        program.getActorDefinitionList().getDefinitions().forEach(sprite -> sprite.getScripts().getScriptList().forEach(script -> script.accept(scriptVisitor)));
+        program.getActorDefinitionList().getDefinitions().stream().filter(ActorDefinition::isSprite).
+                forEach(sprite -> sprite.getScripts().getScriptList().
+                        forEach(script -> script.accept(scriptVisitor)));
         leafsMap = scriptVisitor.getLeafsMap();
     }
 
@@ -75,10 +78,12 @@ public class ScriptPathGenerator extends PathGenerator {
     private ProgramFeatures generatePathsForScript(final Script script, final List<ASTNode> leafs) {
         // TODO generate meaningful scripts' names (spriteName +id ??)
         String scriptName = script.getUniqueName();
-        if (scriptName == null) {
-            return null;
-        }
         return getProgramFeatures(scriptName, leafs);
     }
 
+    @Override
+    public List<String> getAllLeafs() {
+        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
+                .collect(Collectors.toList());
+    }
 }

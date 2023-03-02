@@ -30,9 +30,10 @@ import java.util.stream.Stream;
 
 public class SpritePathGenerator extends PathGenerator {
 
+    private Map<ActorDefinition, List<ASTNode>> leafsMap;
 
     public SpritePathGenerator(int maxPathLength, boolean includeStage, Program program) {
-        super(maxPathLength, includeStage,  program);
+        super(maxPathLength, includeStage, program);
     }
 
     private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
@@ -42,7 +43,6 @@ public class SpritePathGenerator extends PathGenerator {
             "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
             "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
     ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
-
 
     @Override
     public void printLeafs() {
@@ -80,7 +80,6 @@ public class SpritePathGenerator extends PathGenerator {
         return spriteFeatures;
     }
 
-
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
         String spriteName = normalizeSpriteName(sprite.getIdent().getName());
         if (spriteName == null) {
@@ -108,6 +107,7 @@ public class SpritePathGenerator extends PathGenerator {
         return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
     }
 
+    @Override
     public List<String> getAllLeafs() {
         return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
                 .collect(Collectors.toList());

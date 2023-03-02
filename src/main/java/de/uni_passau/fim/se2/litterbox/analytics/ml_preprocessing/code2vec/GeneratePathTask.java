@@ -24,19 +24,17 @@ import java.util.stream.Stream;
 
 public class GeneratePathTask {
 
-
     private final PathGenerator pathGenerator;
+
     public GeneratePathTask(PathGenerator pathGenerator) {
         this.pathGenerator = Objects.requireNonNull(pathGenerator);
     }
-
 
     public Stream<String> createContextForCode2Vec() {
         // pathGenerator.printLeafs();
         List<ProgramFeatures> features = pathGenerator.generatePaths();
         return featuresToString(features);
     }
-
 
     private Stream<String> featuresToString(List<ProgramFeatures> features) {
         if (features == null) {
