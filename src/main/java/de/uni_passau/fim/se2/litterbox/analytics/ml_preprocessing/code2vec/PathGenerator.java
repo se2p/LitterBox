@@ -4,10 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class PathGenerator {
 
@@ -34,16 +31,7 @@ public abstract class PathGenerator {
 
     public abstract void printLeafs() ;
 
-    public void extractASTLeafs() {
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
-        program.accept(spriteVisitor);
-        leafsMap = spriteVisitor.getLeafsCollector();
-    }
-
-    public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
-                .collect(Collectors.toList());
-    }
+    public abstract void extractASTLeafs() ;
 
     public ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
@@ -124,6 +112,7 @@ public abstract class PathGenerator {
         }
         return upStack;
     }
+
     private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
         pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }

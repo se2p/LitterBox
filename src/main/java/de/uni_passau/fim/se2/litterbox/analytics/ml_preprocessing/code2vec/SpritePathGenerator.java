@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,6 +60,13 @@ public class SpritePathGenerator extends PathGenerator {
     }
 
     @Override
+    public void extractASTLeafs() {
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
+        program.accept(spriteVisitor);
+        leafsMap = spriteVisitor.getLeafsCollector();
+    }
+
+    @Override
     public List<ProgramFeatures> generatePaths() {
         List<ProgramFeatures> spriteFeatures = new ArrayList<>();
         for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
@@ -78,7 +86,7 @@ public class SpritePathGenerator extends PathGenerator {
         if (spriteName == null) {
             return null;
         }
-        return getProgramFeatures(spriteName, leafs);
+        return super.getProgramFeatures(spriteName, leafs);
     }
 
     private static String normalizeSpriteName(String spriteName) {
@@ -98,5 +106,10 @@ public class SpritePathGenerator extends PathGenerator {
 
     private static boolean isDefaultName(String normalizedSpriteLabel) {
         return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
+    }
+
+    public List<String> getAllLeafs() {
+        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
+                .collect(Collectors.toList());
     }
 }

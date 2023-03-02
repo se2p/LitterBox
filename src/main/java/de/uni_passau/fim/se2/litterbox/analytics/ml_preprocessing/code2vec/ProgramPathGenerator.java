@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +18,14 @@ public class ProgramPathGenerator extends PathGenerator{
     @Override
     public void printLeafs() {
         //
+    }
+
+    @Override
+    public void extractASTLeafs() {
+        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
+        program.accept(spriteVisitor);
+        leafsMap = spriteVisitor.getLeafsCollector();
+
     }
 
     @Override
