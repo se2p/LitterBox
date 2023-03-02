@@ -43,7 +43,7 @@ class PathGeneratorTest implements JsonTest {
     @Test
     void testGeneratePaths() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator generator = new PathGenerator(program, 8, false, false, false);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(false, false, 8, false, program);
         List<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
         int positionCat = 0;
@@ -80,7 +80,7 @@ class PathGeneratorTest implements JsonTest {
     @Test
     void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
-        PathGenerator generator = new PathGenerator(program, 8, false, false, false);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(false, false, 8, false, program);
         List<String> tokens = generator.getAllLeafs();
         assertArrayEquals(expectedLeafs, tokens.toArray());
     }
@@ -89,7 +89,7 @@ class PathGeneratorTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator generator = new PathGenerator(program, 8, includeStage, true, false);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(true, false, 8, includeStage, program);
 
         List<ProgramFeatures> pathContexts = generator.generatePaths();
         assertEquals(1, pathContexts.size());
@@ -124,7 +124,7 @@ class PathGeneratorTest implements JsonTest {
     void testGeneratePathsEmptyProgram(boolean includeStage, boolean wholeProgram) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
 
-        PathGenerator generator = new PathGenerator(program, 8, includeStage, wholeProgram, false);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(wholeProgram, false, 8, includeStage, program);
         List<ProgramFeatures> features = generator.generatePaths();
         assertTrue(features.isEmpty());
     }

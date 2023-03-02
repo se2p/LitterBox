@@ -40,7 +40,8 @@ class GeneratePathTaskTest implements JsonTest {
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, 8, true, true, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(true, false, 8, true, program);
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         String pathContextForCode2Vec = generatePathTask.createContextForCode2Vec().collect(Collectors.joining());
         assertThat(pathContextForCode2Vec).isEmpty();
     }
@@ -49,8 +50,8 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, 8, includeStage, false, false);
-
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, false, 8, includeStage, program);
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<String> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec().collect(Collectors.toList());
 
         if (includeStage) {
