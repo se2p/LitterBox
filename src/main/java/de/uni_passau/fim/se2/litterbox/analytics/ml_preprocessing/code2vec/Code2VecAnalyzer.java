@@ -44,6 +44,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
+        // TODO use builder instead
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContextForCode2Vec();

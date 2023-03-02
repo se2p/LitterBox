@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -40,8 +41,8 @@ public class ScriptPathGenerator extends PathGenerator {
     @Override
     public void extractASTLeafs() {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        program.getActorDefinitionList().getDefinitions().stream().filter(ActorDefinition::isSprite).
-                forEach(sprite -> sprite.getScripts().getScriptList().
+        List<ActorDefinition> sprites = AstNodeUtil.getActors(program, false);
+        sprites.forEach(sprite -> sprite.getScripts().getScriptList().
                         forEach(script -> script.accept(scriptVisitor)));
         leafsMap = scriptVisitor.getLeafsMap();
     }
@@ -76,8 +77,8 @@ public class ScriptPathGenerator extends PathGenerator {
     }
 
     private ProgramFeatures generatePathsForScript(final Script script, final List<ASTNode> leafs) {
-        // TODO generate meaningful scripts' names (spriteName +id ??)
-        String scriptName = script.getUniqueName();
+        ActorDefinition parentSprite = AstNodeUtil.findActor(script).get();
+        String scriptName = "spriteName_" + parentSprite.getIdent().getName() + "_scriptId_" +  parentSprite.getScripts().getScriptList().indexOf(script);
         return getProgramFeatures(scriptName, leafs);
     }
 
