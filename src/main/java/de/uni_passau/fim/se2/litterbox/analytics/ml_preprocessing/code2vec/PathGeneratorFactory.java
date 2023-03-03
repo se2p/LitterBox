@@ -9,11 +9,11 @@ public class PathGeneratorFactory {
             int maxPathLength, boolean includeStage, Program program) {
 
         if (isPerScript) {
-            return new ScriptPathGenerator(maxPathLength, includeStage, program);
+            return new ScriptPathGenerator(program, maxPathLength, includeStage);
         } else if (wholeProgram) {
-            return new ProgramPathGenerator(maxPathLength, includeStage, program);
+            return new ProgramPathGenerator(program, maxPathLength, includeStage);
         } else {
-            return new SpritePathGenerator(maxPathLength, includeStage, program);
+            return new SpritePathGenerator(program, maxPathLength, includeStage);
         }
     }
 }

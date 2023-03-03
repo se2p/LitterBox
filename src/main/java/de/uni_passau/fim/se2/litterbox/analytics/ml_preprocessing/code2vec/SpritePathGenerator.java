@@ -22,21 +22,20 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class SpritePathGenerator extends PathGenerator {
+public final class SpritePathGenerator extends PathGenerator {
 
-    private Map<ActorDefinition, List<ASTNode>> leafsMap;
+    private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public SpritePathGenerator(int maxPathLength, boolean includeStage, Program program) {
-        super(maxPathLength, includeStage, program);
+    public SpritePathGenerator(Program program, int maxPathLength, boolean includeStage) {
+        super(program, maxPathLength, includeStage);
+        this.leafsMap = extractASTLeafs();
     }
-
-
 
     @Override
     public void printLeafs() {
@@ -53,11 +52,10 @@ public class SpritePathGenerator extends PathGenerator {
         }
     }
 
-    @Override
-    protected void extractASTLeafs() {
+    private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
         ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
         program.accept(spriteVisitor);
-        leafsMap = spriteVisitor.getLeafsCollector();
+        return spriteVisitor.getLeafsCollector();
     }
 
     @Override
@@ -81,7 +79,6 @@ public class SpritePathGenerator extends PathGenerator {
         }
         return super.getProgramFeatures(spriteName, leafs);
     }
-
 
     @Override
     public List<String> getAllLeafs() {

@@ -25,6 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -47,7 +48,10 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
         // TODO use builder instead
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        return generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
+        if (this.isPerScript) {
+            return generatePathTask.featuresToString(features, false);
+        } else return generatePathTask.featuresToString(features, true);
     }
 
     @Override

@@ -18,29 +18,20 @@ public abstract class PathGenerator {
             "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
     ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
-    protected final int maxPathLength;
-    protected boolean includeStage;
-
     protected final Program program;
 
-    public PathGenerator(int maxPathLength, boolean includeStage, Program program) {
+    protected final int maxPathLength;
+    protected final boolean includeStage;
+
+    public PathGenerator(Program program, int maxPathLength, boolean includeStage) {
+        this.program = program;
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
-        this.program = program;
-        extractASTLeafs();
-    }
-
-    public PathGenerator(int maxPathLength, Program program) {
-        this.maxPathLength = maxPathLength;
-        this.program = program;
-        extractASTLeafs();
     }
 
     public abstract List<ProgramFeatures> generatePaths();
 
     public abstract void printLeafs();
-
-    protected abstract void extractASTLeafs();
 
     protected ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);

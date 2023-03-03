@@ -29,22 +29,21 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ScriptPathGenerator extends PathGenerator {
+public final class ScriptPathGenerator extends PathGenerator {
 
-    private Map<Script, List<ASTNode>> leafsMap;
+    private final Map<Script, List<ASTNode>> leafsMap;
 
-    public ScriptPathGenerator(int maxPathLength, boolean includeStage, Program program) {
-        super(maxPathLength, includeStage,  program);
-        extractASTLeafs();
+    public ScriptPathGenerator(Program program, int maxPathLength, boolean includeStage) {
+        super(program, maxPathLength, includeStage);
+        this.leafsMap = extractASTLeafs();
     }
 
-    @Override
-    protected void extractASTLeafs() {
+    private Map<Script, List<ASTNode>> extractASTLeafs() {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         sprites.forEach(sprite -> sprite.getScripts().getScriptList().
-                        forEach(script -> script.accept(scriptVisitor)));
-        leafsMap = scriptVisitor.getLeafsMap();
+                forEach(script -> script.accept(scriptVisitor)));
+        return scriptVisitor.getLeafsMap();
     }
 
     @Override
@@ -84,8 +83,8 @@ public class ScriptPathGenerator extends PathGenerator {
                 .collect(Collectors.toList());
     }
 
-    private String generateScriptName(Script script){
+    private String generateScriptName(Script script) {
         ActorDefinition parentSprite = AstNodeUtil.findActor(script).get();
-        return "spriteName_" + normalizeSpriteName(parentSprite.getIdent().getName()) + "_scriptId_" +  parentSprite.getScripts().getScriptList().indexOf(script);
+        return "spriteName_" + normalizeSpriteName(parentSprite.getIdent().getName()) + "_scriptId_" + parentSprite.getScripts().getScriptList().indexOf(script);
     }
 }

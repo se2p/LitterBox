@@ -30,16 +30,18 @@ public class GeneratePathTask {
         this.pathGenerator = Objects.requireNonNull(pathGenerator);
     }
 
-    public Stream<String> createContextForCode2Vec() {
+    public List<ProgramFeatures> createContextForCode2Vec() {
         // pathGenerator.printLeafs();
-        List<ProgramFeatures> features = pathGenerator.generatePaths();
-        return featuresToString(features);
+        return pathGenerator.generatePaths();
     }
 
-    private Stream<String> featuresToString(List<ProgramFeatures> features) {
+    public Stream<String> featuresToString(List<ProgramFeatures> features, boolean includeName) {
         if (features == null) {
             return Stream.empty();
         }
-        return features.stream().map(ProgramFeatures::toString);
+        if (!includeName)
+            return features.stream().map(feature -> feature.getFeatures().toString());
+        else
+            return features.stream().map(ProgramFeatures::toString);
     }
 }

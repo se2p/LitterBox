@@ -12,12 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ProgramPathGenerator extends PathGenerator {
+public final class ProgramPathGenerator extends PathGenerator {
 
-    private Map<ActorDefinition, List<ASTNode>> leafsMap;
+    private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public ProgramPathGenerator(int maxPathLength, boolean includeStage, Program program) {
-        super(maxPathLength, includeStage, program);
+    public ProgramPathGenerator(Program program, int maxPathLength, boolean includeStage) {
+        super(program, maxPathLength, includeStage);
+        this.leafsMap = extractASTLeafs();
     }
 
     @Override
@@ -25,11 +26,10 @@ public class ProgramPathGenerator extends PathGenerator {
         //
     }
 
-    @Override
-    protected void extractASTLeafs() {
+    private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
         ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
         program.accept(spriteVisitor);
-        leafsMap = spriteVisitor.getLeafsCollector();
+        return spriteVisitor.getLeafsCollector();
     }
 
     @Override
