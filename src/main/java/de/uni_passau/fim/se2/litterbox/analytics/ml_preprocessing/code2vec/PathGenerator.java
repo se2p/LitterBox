@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PathGenerator {
     private final int maxPathLength;
@@ -36,13 +36,6 @@ public class PathGenerator {
     private final Program program;
     private Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
-            "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
-            "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
-            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
-            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
-            "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
-    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
     public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
         this.maxPathLength = maxPathLength;
@@ -106,7 +99,7 @@ public class PathGenerator {
     }
 
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
-        String spriteName = normalizeSpriteName(sprite.getIdent().getName());
+        String spriteName = SpriteAndScriptNamingUtils.normalizeSpriteName(sprite.getIdent().getName());
         if (spriteName == null) {
             return null;
         }
@@ -198,22 +191,4 @@ public class PathGenerator {
         pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }
 
-    private static String normalizeSpriteName(String spriteName) {
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
-        if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
-            return null;
-        }
-
-        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        String splitName = normalizedSpriteLabel;
-        if (!splitNameParts.isEmpty()) {
-            splitName = String.join("|", splitNameParts);
-        }
-
-        return splitName;
-    }
-
-    private static boolean isDefaultName(String normalizedSpriteLabel) {
-        return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
-    }
 }

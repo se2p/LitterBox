@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class CSVReportGenerator implements ReportGenerator {
         if(outputPerScript){
             var scripts = program.getActorDefinitionList().getDefinitions().get(0).getScripts().getScriptList();
             for(Script script : scripts){
-                row = generateReportsPerScript(issues, script);
+                row = generateReportsPerScript(program, issues, script);
                 printer.printRecord(row);
             }
         }
@@ -91,9 +92,9 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private List<String> generateReportsPerScript(Collection<Issue> issues, Script script){
+    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues, Script script){
         List<String> row = new ArrayList<>();
-        row.add(script.getOpcode().getName());
+        row.add( program.getIdent().getName() + "_"+ SpriteAndScriptNamingUtils.generateScriptName(script));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
