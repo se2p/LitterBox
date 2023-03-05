@@ -43,11 +43,13 @@ public class BugAnalyzer extends Analyzer {
     private String annotationOutput;
     private boolean ignoreLooseBlocks;
     private final String detectors;
+    private final boolean outputPerScript;
 
-    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
+        this.outputPerScript = outputPerScript;
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
@@ -55,6 +57,7 @@ public class BugAnalyzer extends Analyzer {
     public void setAnnotationOutput(String annotationOutput) {
         this.annotationOutput = annotationOutput;
     }
+
 
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
@@ -71,7 +74,7 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
         Set<Issue> issues = runFinders(program);
-        generateOutput(program, issues, reportFileName);
+        generateOutput(program, issues, reportFileName, outputPerScript);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);
     }
 
@@ -80,12 +83,13 @@ public class BugAnalyzer extends Analyzer {
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {
             iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+            var temp = iF.check(program);
+            issues.addAll(temp);
         }
         return issues;
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, String reportFileName) {
+    private void generateOutput(Program program, Set<Issue> issues, String reportFileName, boolean outputPerScript) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
@@ -94,7 +98,7 @@ public class BugAnalyzer extends Analyzer {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript);
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
             } else {
