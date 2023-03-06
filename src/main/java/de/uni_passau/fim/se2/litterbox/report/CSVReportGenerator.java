@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -29,7 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class CSVReportGenerator implements ReportGenerator {
 
@@ -63,11 +64,16 @@ public class CSVReportGenerator implements ReportGenerator {
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         List<String> row;
         if (outputPerScript) {
-            for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions())
+            for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
                 for (Script script : actorDefinition.getScripts().getScriptList()) {
                     row = generateReportsPerScript(program, issues, script);
                     printer.printRecord(row);
                 }
+                for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
+                    row = generateReportsPerScript(program, issues, procedureDefinition);
+                    printer.printRecord(row);
+                }
+            }
         } else {
             row = generateReportsPerProject(program, issues);
             printer.printRecord(row);
@@ -92,14 +98,13 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues, Script script) {
+    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity script) {
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName() + "_" + SpriteAndScriptNamingUtils.generateScriptName(script));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
-                    .filter(i -> Objects.nonNull(i.getScript()))
-                    .filter(i -> i.getScript().equals(script))
+                    .filter(i -> i.getScriptOrProcedureDefinition().equals(script))
                     .filter(i -> i.getFinderName().equals(finder))
                     .count();
             row.add(Long.toString(numIssuesForFinder));
