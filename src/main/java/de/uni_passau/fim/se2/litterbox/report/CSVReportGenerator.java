@@ -97,7 +97,7 @@ public class CSVReportGenerator implements ReportGenerator {
 
     private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity scriptEntity) {
         List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName() + "_" + getSpriteOrProcedureDefinitionName(scriptEntity));
+        row.add(program.getIdent().getName() + "_" + SpriteAndScriptNamingUtils.getSpriteOrProcedureDefinitionName(scriptEntity));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
@@ -109,12 +109,6 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private static String getSpriteOrProcedureDefinitionName(ScriptEntity scriptEntity) {
-        if (scriptEntity instanceof Script)
-            return  SpriteAndScriptNamingUtils.generateScriptName(scriptEntity);
-        else if (scriptEntity instanceof ProcedureDefinition)
-            return ((ProcedureDefinition) scriptEntity).getIdent().getName();
-        else return null;
-    }
+
 
 }

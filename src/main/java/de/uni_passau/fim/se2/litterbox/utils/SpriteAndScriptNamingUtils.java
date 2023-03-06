@@ -15,6 +15,14 @@ import java.util.stream.Stream;
 // TODO rename
 public class SpriteAndScriptNamingUtils {
 
+    public static String getSpriteOrProcedureDefinitionName(ScriptEntity scriptEntity) {
+        if (scriptEntity instanceof Script)
+            return generateScriptName(scriptEntity);
+        else if (scriptEntity instanceof ProcedureDefinition)
+            return ((ProcedureDefinition) scriptEntity).getIdent().getName();
+        else return null;
+    }
+
     public static String generateScriptName(ScriptEntity node) {
         ActorDefinition parentSprite = AstNodeUtil.findActor(node).get();
         return "spriteName_" + normalizeSpriteName(parentSprite.getIdent().getName()) + getSpriteOrProcedureDefinitionIndex(node, parentSprite);
