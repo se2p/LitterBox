@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 import org.apache.commons.csv.CSVPrinter;
@@ -98,17 +95,26 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity script) {
+    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity scriptEntity) {
         List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName() + "_" + SpriteAndScriptNamingUtils.generateScriptName(script));
+        row.add(program.getIdent().getName() + "_" + getSpriteOrProcedureDefinitionName(scriptEntity));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
-                    .filter(i -> i.getScriptOrProcedureDefinition().equals(script))
+                    .filter(i -> i.getScriptOrProcedureDefinition().equals(scriptEntity))
                     .filter(i -> i.getFinderName().equals(finder))
                     .count();
             row.add(Long.toString(numIssuesForFinder));
         }
         return row;
     }
+
+    private static String getSpriteOrProcedureDefinitionName(ScriptEntity scriptEntity) {
+        if (scriptEntity instanceof Script)
+            return  SpriteAndScriptNamingUtils.generateScriptName(scriptEntity);
+        else if (scriptEntity instanceof ProcedureDefinition)
+            return ((ProcedureDefinition) scriptEntity).getIdent().getName();
+        else return null;
+    }
+
 }
