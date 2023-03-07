@@ -27,10 +27,12 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class ScriptEntityPathGenerator extends PathGenerator {
 
+    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final Map<ScriptEntity, List<ASTNode>> leafsMap;
 
     public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage) {
@@ -76,16 +78,25 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         for (Map.Entry<ScriptEntity, List<ASTNode>> entry : leafsMap.entrySet()) {
             ScriptEntity script = entry.getKey();
             List<ASTNode> leafs = entry.getValue();
-            ProgramFeatures singleScriptFeatures = generatePathsForScript(script, leafs);
-            if (singleScriptFeatures != null && !singleScriptFeatures.isEmpty()) {
+            String scriptName = NodeNameUtils.getSpriteOrProcedureDefinitionName(script);
+            ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
+            if (isValidateScriptFeature(scriptName, singleScriptFeatures, script)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
         }
         return scriptFeatures;
     }
 
-    private ProgramFeatures generatePathsForScript(final ScriptEntity script, final List<ASTNode> leafs) {
-        return super.getProgramFeatures(NodeNameUtils.getSpriteOrProcedureDefinitionName(script), leafs);
+    private boolean isValidateScriptFeature(String scriptName, ProgramFeatures singleScriptFeatures, ScriptEntity script){
+        if (scriptName == null) {
+            log.severe("can't name for script with Id " + script.toString()); // TODO replcae to string
+            return false;
+        }
+        if (singleScriptFeatures.isEmpty()) {
+            log.severe("can't generate paths for script with Id - empty features " + scriptName);
+            return false;
+        }
+        return true;
     }
 
     @Override
