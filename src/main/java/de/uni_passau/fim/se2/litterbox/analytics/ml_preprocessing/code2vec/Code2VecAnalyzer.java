@@ -24,18 +24,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
+    private final boolean isPerScript;
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions);
         this.maxPathLength = maxPathLength;
+        this.isPerScript = isPerScript;
     }
 
     @Override
@@ -45,17 +49,63 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-        // TODO use builder instead
+        // TODO use builder instead?
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        if (this.isPerScript) {
-            return generatePathTask.featuresToString(features, false);
-        } else return generatePathTask.featuresToString(features, true);
+        return generatePathTask.featuresToString(features, true);
     }
 
     @Override
     protected Path outputFileName(File inputFile) {
         return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
+    }
+
+    @Override
+    protected void check(File fileEntry, String csv) throws IOException {
+        if (this.isPerScript) {
+            runProcessingSteps(fileEntry);
+        } else super.check(fileEntry, csv);
+    }
+
+    private void runProcessingSteps(File inputFile) throws IOException {
+        final Stream<String> output = process(inputFile);
+        List<String> outputList = output.collect(Collectors.toList());
+        this.writeResultPerScriptsToOutput(inputFile, outputList);
+    }
+
+    private void writeResultPerScriptsToOutput(File inputFile, List<String> result) throws IOException {
+        if (result.isEmpty()) {
+            log.warning("The processing step returned no output!");
+            return;
+        }
+        if (outputPath.isConsoleOutput()) {
+            System.out.println(result);
+        } else {
+            writeResultPerScriptToFile(inputFile, result);
+        }
+    }
+
+    private void writeResultPerScriptToFile(File inputFile, List<String> result) throws IOException {
+        for (String token : result) {
+            Path outName = outputFileName(inputFile);
+            Path outputFile = outputPath.getPath().resolve(outName + getScriptName(token));
+            try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
+                bw.write(removeScriptNameFromToken(token));
+                bw.flush();
+            }
+            log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
+        }
+    }
+
+    // TODO the next 2 methods is a dirty way around, better to change the return type of 'process' method
+
+    private String getScriptName(String token) {
+        return token.split(" ")[0];
+    }
+
+    private String removeScriptNameFromToken(String token) {
+        int index = token.indexOf(" ");
+        return token.substring(index + 1);
     }
 }

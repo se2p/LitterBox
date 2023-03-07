@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,7 +34,6 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
     protected final MLOutputPath outputPath;
     protected final boolean includeStage;
     protected final boolean wholeProgram;
-    protected final boolean isPerScript;
 
     /**
      * Sets up an analyzer that extracts the necessary information for a machine learning model from a program.
@@ -48,7 +46,6 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         this.outputPath = commonOptions.getOutputPath();
         this.includeStage = commonOptions.includeStage();
         this.wholeProgram = commonOptions.wholeProgram();
-        this.isPerScript = commonOptions.isPerScript();
     }
 
     protected abstract Stream<String> process(File inputFile) throws IOException;
@@ -57,17 +54,10 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
 
     private void runProcessingSteps(File inputFile) throws IOException {
         final Stream<String> output = process(inputFile);
-
-        if (this.isPerScript) {
-            //Convert a Stream to List
-            List<String> outputList = output.collect(Collectors.toList());
-            writeResultPerScriptsToOutput(inputFile, outputList);
-        } else {
             final String joined = output.collect(Collectors.joining(System.lineSeparator()));
             if (!joined.isBlank()) {
                 writeResultToOutput(inputFile, joined);
             }
-        }
     }
 
     private void writeResultToOutput(File inputFile, String result) throws IOException {
@@ -96,36 +86,10 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
     }
 
-    private void writeResultPerScriptsToOutput(File inputFile, List<String> result) throws IOException {
-        if (result.isEmpty()) {
-            log.warning("The processing step returned no output!");
-            return;
-        }
-
-        if (outputPath.isConsoleOutput()) {
-            System.out.println(result);
-        } else {
-            writeResultPerScriptToFile(inputFile, result);
-        }
-    }
-
-    private void writeResultPerScriptToFile(File inputFile, List<String> result) throws IOException {
-        Files.createDirectories(outputPath.getPath());
-        int i =0;
-        for (String token : result) {
-            Path outName = outputFileName(inputFile);
-            Path outputFile = outputPath.getPath().resolve(outName + "scriptId_" +  i);
-            try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-                bw.write(token);
-                bw.flush();
-            }
-            log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
-            i+=1;
-        }
-    }
 
     @Override
-    void check(File fileEntry, String csv) throws IOException {
+    protected void check(File fileEntry, String csv) throws IOException {
         runProcessingSteps(fileEntry);
     }
+
 }

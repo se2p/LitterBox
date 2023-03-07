@@ -24,7 +24,6 @@ public class MLPreprocessorCommonOptions {
     private final boolean deleteAfterwards;
     private final boolean includeStage;
     private final boolean wholeProgram;
-    private final boolean isPerScript;
 
     /**
      * Combines some options used for all machine learning preprocessing analyzers.
@@ -35,16 +34,14 @@ public class MLPreprocessorCommonOptions {
      * @param includeStage     If the stage should be included like a regular sprite in the processing steps.
      * @param wholeProgram     If the whole program should be treated as a single entity instead of performing the analysis
      *                         per sprite.
-     * @param isPerScript      if the analysis is per script
      */
     public MLPreprocessorCommonOptions(final String inputPath, final MLOutputPath outputPath, boolean deleteAfterwards,
-                                       boolean includeStage, boolean wholeProgram, boolean isPerScript) {
+                                       boolean includeStage, boolean wholeProgram) {
         this.inputPath = inputPath;
         this.outputPath = outputPath;
         this.deleteAfterwards = deleteAfterwards;
         this.includeStage = includeStage;
         this.wholeProgram = wholeProgram;
-        this.isPerScript = isPerScript;
     }
 
     public String getInputPath() {
@@ -67,7 +64,4 @@ public class MLPreprocessorCommonOptions {
         return wholeProgram;
     }
 
-    public boolean isPerScript() {
-        return isPerScript;
-    }
 }

@@ -383,19 +383,6 @@ public class Main implements Callable<Integer> {
         )
         boolean wholeProgram;
 
-        @CommandLine.Option(
-                names = {"--scripts"},
-                description = "generate token per scripts"
-        )
-        boolean isPerScript = false;
-
-        protected void validateParams() throws CommandLine.ParameterException {
-            if(wholeProgram && isPerScript)
-                throw new CommandLine.ParameterException(
-                        spec.commandLine(),
-                        "The analysis must be done either per scripts or for whole program"
-                );
-        }
 
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
@@ -416,7 +403,7 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram, isPerScript);
+            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram);
         }
     }
 
@@ -440,11 +427,23 @@ public class Main implements Callable<Integer> {
         )
         int maxPathLength = 8;
 
+        @CommandLine.Option(
+                names = {"--scripts"},
+                description = "generate token per scripts"
+        )
+        boolean isPerScript = false;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             if (maxPathLength < 0) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
             }
+
+            if(wholeProgram && isPerScript)
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "The analysis must be done either per scripts or for whole program"
+                );
         }
 
         @Override
@@ -453,7 +452,7 @@ public class Main implements Callable<Integer> {
                 ProgramRelation.setNoHash();
             }
 
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
+            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
         }
     }
 
