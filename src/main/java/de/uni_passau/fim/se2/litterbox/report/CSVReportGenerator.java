@@ -97,7 +97,7 @@ public class CSVReportGenerator implements ReportGenerator {
 
     private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity scriptEntity) {
         List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName() + "_" + NodeNameUtils.getSpriteOrProcedureDefinitionFullName(scriptEntity));
+        row.add(program.getIdent().getName() + "_" + NodeNameUtils.getSpriteOrProcedureDefinitionName(scriptEntity));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
