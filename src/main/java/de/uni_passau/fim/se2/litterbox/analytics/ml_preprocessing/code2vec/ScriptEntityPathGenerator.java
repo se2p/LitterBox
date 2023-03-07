@@ -61,7 +61,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         System.out.println("Number of scripts: " + leafsMap.keySet().size());
         for (Map.Entry<ScriptEntity, List<ASTNode>> entry : leafsMap.entrySet()) {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
-                    NodeNameUtils.getSpriteOrProcedureDefinitionFullName(entry.getKey()) + ": " + entry.getValue().size());
+                    NodeNameUtils.getSpriteOrProcedureDefinitionName(entry.getKey()) + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
                 System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
@@ -85,7 +85,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     }
 
     private ProgramFeatures generatePathsForScript(final ScriptEntity script, final List<ASTNode> leafs) {
-        return super.getProgramFeatures(NodeNameUtils.getSpriteOrProcedureDefinitionFullName(script), leafs);
+        return super.getProgramFeatures(NodeNameUtils.getSpriteOrProcedureDefinitionName(script), leafs);
     }
 
     @Override
