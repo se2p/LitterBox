@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -99,7 +99,7 @@ public class PathGenerator {
     }
 
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
-        String spriteName = SpriteAndScriptNamingUtils.normalizeSpriteName(sprite.getIdent().getName());
+        String spriteName = NodeNameUtils.normalizeSpriteName(sprite.getIdent().getName());
         if (spriteName == null) {
             return null;
         }

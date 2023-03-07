@@ -19,9 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.utils.SpriteAndScriptNamingUtils;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class CSVReportGenerator implements ReportGenerator {
 
     private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity scriptEntity) {
         List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName() + "_" + SpriteAndScriptNamingUtils.getSpriteOrProcedureDefinitionName(scriptEntity));
+        row.add(program.getIdent().getName() + "_" + NodeNameUtils.getSpriteOrProcedureDefinitionFullName(scriptEntity));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
