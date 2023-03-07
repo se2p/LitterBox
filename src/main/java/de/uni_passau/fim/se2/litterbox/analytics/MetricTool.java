@@ -43,6 +43,7 @@ public class MetricTool {
             metricList.add(new AvgVariableLengthCount<>());
             metricList.add(new BackdropCount<>());
             metricList.add(new BlockCount<>());
+            metricList.add(new BooleanOperationCount<>());
             metricList.add(new CategoryEntropy<>());
             metricList.add(new Cohesion<>());
             metricList.add(new ComputationalThinkingAverageScore());
