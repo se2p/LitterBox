@@ -35,12 +35,12 @@ public class GeneratePathTask {
         return pathGenerator.generatePaths();
     }
 
-    public Stream<String> featuresToString(List<ProgramFeatures> features, boolean includeName) {
+    public Stream<String> featuresToString(List<ProgramFeatures> features, boolean includeActorName) {
         if (features == null) {
             return Stream.empty();
         }
-        if (!includeName)
-            return features.stream().map(feature -> feature.getFeatures().toString());
+        if (!includeActorName)
+            return features.stream().map(ProgramFeatures::toStringWithoutNodeName);
         else
             return features.stream().map(ProgramFeatures::toString);
     }

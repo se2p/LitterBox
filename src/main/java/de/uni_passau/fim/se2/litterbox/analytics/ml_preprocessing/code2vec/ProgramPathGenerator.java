@@ -6,10 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class ProgramPathGenerator extends PathGenerator {
@@ -18,7 +15,7 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     public ProgramPathGenerator(Program program, int maxPathLength, boolean includeStage) {
         super(program, maxPathLength, includeStage);
-        this.leafsMap = extractASTLeafs();
+        this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
     }
 
     @Override
@@ -39,7 +36,7 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
         List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
+        final ProgramFeatures programFeatures = super.getProgramFeatures("program", leafs);
         return Optional.of(programFeatures).filter(features -> !features.isEmpty());
     }
 

@@ -5,18 +5,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class PathGenerator {
-
-    protected static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
-            "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
-            "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
-            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
-            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
-            "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
-    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
     protected final Program program;
 
@@ -33,7 +23,9 @@ public abstract class PathGenerator {
 
     public abstract void printLeafs();
 
-    protected ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
+    public abstract List<String> getAllLeafs();
+
+    protected final ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
 
         for (int i = 0; i < astLeafs.size(); i++) {
@@ -113,28 +105,7 @@ public abstract class PathGenerator {
         return upStack;
     }
 
-    private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
+    private static void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
         pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }
-
-    protected static String normalizeSpriteName(String spriteName) {
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
-        if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
-            return null;
-        }
-
-        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        String splitName = normalizedSpriteLabel;
-        if (!splitNameParts.isEmpty()) {
-            splitName = String.join("|", splitNameParts);
-        }
-
-        return splitName;
-    }
-
-    protected static boolean isDefaultName(String normalizedSpriteLabel) {
-        return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
-    }
-
-    public abstract List<String> getAllLeafs();
 }

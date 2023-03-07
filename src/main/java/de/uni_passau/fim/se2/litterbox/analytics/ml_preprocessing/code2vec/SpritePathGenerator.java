@@ -22,8 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public final class SpritePathGenerator extends PathGenerator {
 
     public SpritePathGenerator(Program program, int maxPathLength, boolean includeStage) {
         super(program, maxPathLength, includeStage);
-        this.leafsMap = extractASTLeafs();
+        this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
     }
 
     @Override
@@ -73,7 +73,7 @@ public final class SpritePathGenerator extends PathGenerator {
     }
 
     private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
-        String spriteName = normalizeSpriteName(sprite.getIdent().getName());
+        String spriteName = NodeNameUtils.normalizeSpriteName(sprite.getIdent().getName());
         if (spriteName == null) {
             return null;
         }
