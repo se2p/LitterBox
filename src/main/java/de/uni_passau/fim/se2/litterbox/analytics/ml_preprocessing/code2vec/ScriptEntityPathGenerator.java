@@ -46,8 +46,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     private Map<Script, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        sprites.forEach(sprite -> sprite.getScripts().getScriptList().
-                forEach(script -> script.accept(scriptVisitor)));
+        sprites.forEach(sprite -> sprite.getScripts().getScriptList().forEach(script -> script.accept(scriptVisitor)));
         return scriptVisitor.getLeafsMap();
     }
 
@@ -61,35 +60,31 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     @Override
     public void printLeafs() {
         System.out.println("Number of scripts: " + leafsMap.keySet().size());
-        for (Map.Entry<ScriptEntity, List<ASTNode>> entry : leafsMap.entrySet()) {
+        leafsMap.forEach((script, leafs) -> {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
-                    NodeNameUtils.getSpriteOrProcedureDefinitionName(entry.getKey()) + ": " + entry.getValue().size());
-            int i = 0;
-            for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
-                i++;
-            }
-        }
+                    NodeNameUtils.getSpriteOrProcedureDefinitionName(script) + ": " + leafs.size());
+            leafs.forEach(leaf -> {
+                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + StringUtil.getToken(leaf));
+            });
+        });
     }
 
     @Override
     public List<ProgramFeatures> generatePaths() {
         List<ProgramFeatures> scriptFeatures = new ArrayList<>();
-        for (Map.Entry<ScriptEntity, List<ASTNode>> entry : leafsMap.entrySet()) {
-            ScriptEntity script = entry.getKey();
-            List<ASTNode> leafs = entry.getValue();
+        leafsMap.forEach((script, leafs) -> {
             String scriptName = NodeNameUtils.getSpriteOrProcedureDefinitionName(script);
             ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
             if (isValidateScriptFeature(scriptName, singleScriptFeatures, script)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
-        }
+        });
         return scriptFeatures;
     }
 
-    private boolean isValidateScriptFeature(String scriptName, ProgramFeatures singleScriptFeatures, ScriptEntity script){
+    private boolean isValidateScriptFeature(String scriptName, ProgramFeatures singleScriptFeatures, ScriptEntity script) {
         if (scriptName == null) {
-            log.severe("can't name for script with Id " + script.toString()); // TODO replcae to string
+            log.severe("can't name for script with Id " + script.toString()); // TODO replace to string
             return false;
         }
         if (singleScriptFeatures.isEmpty()) {
@@ -101,7 +96,6 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
-                .collect(Collectors.toList());
+        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken).collect(Collectors.toList());
     }
 }
