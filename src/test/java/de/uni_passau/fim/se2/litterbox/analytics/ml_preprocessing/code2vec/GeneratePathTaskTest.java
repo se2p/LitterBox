@@ -19,17 +19,28 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
 
 class GeneratePathTaskTest implements JsonTest {
 
@@ -94,4 +105,23 @@ class GeneratePathTaskTest implements JsonTest {
 
         assertThat(pathContextsForCode2Vec).contains(CAT_SCRIPT_PATH);
     }
+
+    @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
+    @ValueSource(booleans = {true, false})
+    public void testCreateContextForCode2VecPerScriptsCount(boolean includeStage) throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, true, 8, includeStage, program);
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
+        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
+        List<String> pathContextsForCode2Vec = generatePathTask.featuresToString(features, false).collect(Collectors.toList());
+
+        ScriptCount<ASTNode> scriptCount = new ScriptCount<>();
+        int scriptCountPerProgram = (int) scriptCount.calculateMetric(program);
+
+        ProcedureCount<ASTNode> procedureCount = new ProcedureCount<>();
+        int procedureCountPerProgram = (int) procedureCount.calculateMetric(program);
+
+        assertThat(pathContextsForCode2Vec).hasSize(scriptCountPerProgram + procedureCountPerProgram);
+    }
+
 }
