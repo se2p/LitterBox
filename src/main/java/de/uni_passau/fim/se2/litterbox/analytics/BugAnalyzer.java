@@ -83,8 +83,7 @@ public class BugAnalyzer extends Analyzer {
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {
             iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            var temp = iF.check(program);
-            issues.addAll(temp);
+            issues.addAll(iF.check(program));
         }
         return issues;
     }
