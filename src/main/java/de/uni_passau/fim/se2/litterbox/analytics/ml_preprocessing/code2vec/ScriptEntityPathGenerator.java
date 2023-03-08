@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public final class ScriptEntityPathGenerator extends PathGenerator {
 
-    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(ScriptEntityPathGenerator.class.getName());
     private final Map<ScriptEntity, List<ASTNode>> leafsMap;
 
     public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage) {
