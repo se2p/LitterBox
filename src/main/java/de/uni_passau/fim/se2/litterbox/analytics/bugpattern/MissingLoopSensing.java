@@ -216,13 +216,19 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             return false;
         }
         IfStmt ifStmt = findIf(first.getCodeLocation());
-        boolean resultOfThenSection = ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
-
+        boolean resultOfThenSection = false;
+        if (ifStmt.getThenStmts().getNumberOfStatements() > 0) {
+            resultOfThenSection =
+                    ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+        }
         if (ifStmt instanceof IfThenStmt) {
             return resultOfThenSection;
         } else {
             IfElseStmt ifElseStmt = (IfElseStmt) ifStmt;
-            boolean resultOfElseSection = ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+            boolean resultOfElseSection = false;
+            if (ifElseStmt.getElseStmts().getNumberOfStatements() > 0) {
+                resultOfElseSection = ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+            }
             return resultOfThenSection || resultOfElseSection;
         }
     }
