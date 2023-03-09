@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -203,6 +204,32 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             return other.getFinder().areCoupled(other, first);
         }
         return false;
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue first, Issue other) {
+        if (first.getFinder() != this) {
+            return super.areCoupled(first, other);
+        }
+
+        if (other.getFinder() instanceof ForeverInsideIf) {
+            IfStmt ifStmt = findIf(first.getCodeLocation());
+            if (ifStmt instanceof IfThenStmt) {
+                return ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+            } else {
+                return ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation()
+                        || ((IfElseStmt) ifStmt).getElseStmts().getStatement(((IfElseStmt) ifStmt).getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+            }
+        }
+        return false;
+    }
+
+    private IfStmt findIf(ASTNode codeLocation) {
+        ASTNode parent = codeLocation.getParentNode();
+        while (!(parent instanceof IfStmt)) {
+            parent = parent.getParentNode();
+        }
+        return (IfStmt) parent;
     }
 
     @Override
