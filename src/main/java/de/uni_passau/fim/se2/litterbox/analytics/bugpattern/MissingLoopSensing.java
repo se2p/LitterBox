@@ -212,22 +212,29 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             return super.areCoupled(first, other);
         }
 
-        if (other.getFinder() instanceof ForeverInsideIf) {
-            IfStmt ifStmt = findIf(first.getCodeLocation());
-            if (ifStmt instanceof IfThenStmt) {
-                return ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
-            } else {
-                return ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation()
-                        || ((IfElseStmt) ifStmt).getElseStmts().getStatement(((IfElseStmt) ifStmt).getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
-            }
+        if (!(other.getFinder() instanceof ForeverInsideIf)) {
+            return false;
         }
-        return false;
+        IfStmt ifStmt = findIf(first.getCodeLocation());
+        boolean resultOfThenSection = ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+
+        if (ifStmt instanceof IfThenStmt) {
+            return resultOfThenSection;
+        } else {
+            IfElseStmt ifElseStmt = (IfElseStmt) ifStmt;
+            boolean resultOfElseSection = ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
+            return resultOfThenSection || resultOfElseSection;
+        }
     }
 
     private IfStmt findIf(ASTNode codeLocation) {
         ASTNode parent = codeLocation.getParentNode();
         while (!(parent instanceof IfStmt)) {
-            parent = parent.getParentNode();
+            if (parent != null) {
+                parent = parent.getParentNode();
+            } else {
+                throw new IllegalStateException("It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong.");
+            }
         }
         return (IfStmt) parent;
     }
