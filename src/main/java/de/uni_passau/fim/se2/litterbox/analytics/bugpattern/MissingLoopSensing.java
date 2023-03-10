@@ -215,22 +215,29 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         if (!(other.getFinder() instanceof ForeverInsideIf)) {
             return false;
         }
+
         IfStmt ifStmt = findIf(first.getCodeLocation());
-        boolean resultOfThenSection = false;
-        if (ifStmt.getThenStmts().getNumberOfStatements() > 0) {
-            resultOfThenSection =
-                    ifStmt.getThenStmts().getStatement(ifStmt.getThenStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
-        }
+        StmtList thenStmts = ifStmt.getThenStmts();
+        boolean resultOfThenSection = isLastStmtIssueLocation(thenStmts, other);
+
         if (ifStmt instanceof IfThenStmt) {
             return resultOfThenSection;
         } else {
             IfElseStmt ifElseStmt = (IfElseStmt) ifStmt;
-            boolean resultOfElseSection = false;
-            if (ifElseStmt.getElseStmts().getNumberOfStatements() > 0) {
-                resultOfElseSection = ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) == other.getCodeLocation();
-            }
+            StmtList elseStmts = ifElseStmt.getElseStmts();
+            boolean resultOfElseSection = isLastStmtIssueLocation(elseStmts, other);
+
             return resultOfThenSection || resultOfElseSection;
         }
+    }
+
+    private boolean isLastStmtIssueLocation(final StmtList stmtList, final Issue issue) {
+        if (stmtList.getStmts().isEmpty()) {
+            return false;
+        }
+
+        Stmt lastStmt = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
+        return lastStmt == issue.getCodeLocation();
     }
 
     private IfStmt findIf(ASTNode codeLocation) {
