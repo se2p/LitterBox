@@ -112,4 +112,16 @@ public class MissingLoopSensingTest implements JsonTest {
         Assertions.assertNotEquals(reports.get(6).getCodeLocation(), reports.get(7).getCodeLocation());
         Assertions.assertEquals(2, reports.get(6).getDistanceTo(reports.get(7)));
     }
+
+    @Test
+    public void testSubsumption() throws ParsingException, IOException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingSubsumed.json");
+        MissingLoopSensing mls = new MissingLoopSensing();
+        ForeverInsideIf fii = new ForeverInsideIf();
+        List<Issue> reportsMLS = new ArrayList<>(mls.check(prog));
+        List<Issue> reportsFII = new ArrayList<>(fii.check(prog));
+        Assertions.assertEquals(1, reportsFII.size());
+        Assertions.assertEquals(1, reportsMLS.size());
+        Assertions.assertTrue(mls.isSubsumedBy(reportsMLS.get(0), reportsFII.get(0)));
+    }
 }
