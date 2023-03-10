@@ -21,10 +21,14 @@ package de.uni_passau.fim.se2.litterbox.report;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 
 public class CSVPrinterFactory {
@@ -36,7 +40,7 @@ public class CSVPrinterFactory {
      * Creates a new CSV printer that either appends rows to the output file if it already exists, or creates a new file.
      *
      * @param outputFile The path to the file which the data should be written to.
-     * @param heads The header column names of the CSV data.
+     * @param heads      The header column names of the CSV data.
      * @return A CSV printer that writes to {@code outputFile}.
      * @throws IOException Thrown in case opening the target file is not possible.
      */
@@ -46,9 +50,16 @@ public class CSVPrinterFactory {
 
         final CSVFormat format;
         if (outFileAlreadyExists) {
-            format = CSVFormat.DEFAULT.builder()
-                    .setSkipHeaderRecord(true)
-                    .build();
+            BufferedReader br = new BufferedReader(new FileReader(new File(outputPath.toUri())));
+            String headers = br.readLine();
+            String[] headerNames = headers.split(",");
+            if (Arrays.equals(heads.toArray(new String[0]), headerNames)) {
+                format = CSVFormat.DEFAULT.builder()
+                        .setSkipHeaderRecord(true)
+                        .build();
+            } else {
+                throw new IOException("File already exists with a different format.");
+            }
         } else {
             format = CSVFormat.DEFAULT.builder()
                     .setHeader(heads.toArray(new String[0]))
