@@ -22,8 +22,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,10 +48,8 @@ public class CSVPrinterFactory {
 
         final CSVFormat format;
         if (outFileAlreadyExists) {
-            BufferedReader br = new BufferedReader(new FileReader(new File(outputPath.toUri())));
-            String headers = br.readLine();
-            String[] headerNames = headers.split(",");
-            if (Arrays.equals(heads.toArray(new String[0]), headerNames)) {
+            final List<String> existingHeaders = getHeaderNames(outputPath);
+            if (heads.equals(existingHeaders)) {
                 format = CSVFormat.DEFAULT.builder()
                         .setSkipHeaderRecord(true)
                         .build();
@@ -68,5 +64,13 @@ public class CSVPrinterFactory {
 
         final var writer = Files.newBufferedWriter(outputPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         return new CSVPrinter(writer, format);
+    }
+
+    private static List<String> getHeaderNames(final Path csvFile) throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(csvFile)) {
+            final String headers = br.readLine();
+            final String[] headerNames = headers.split(",");
+            return Arrays.asList(headerNames);
+        }
     }
 }
