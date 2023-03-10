@@ -86,6 +86,7 @@ public class MetricTool {
             metricList.add(new StatementCount<>());
             metricList.add(new TokenEntropy<>());
             metricList.add(new TranslateBlockCount<>());
+            metricList.add(new UndefinedBlockCount<>());
             metricList.add(new VariableCount<>());
             metricList.add(new VariablesBlockCount<>());
             metricList.add(new VariableUseCount<>());
