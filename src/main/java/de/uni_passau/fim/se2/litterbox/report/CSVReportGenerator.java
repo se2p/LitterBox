@@ -28,12 +28,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CSVReportGenerator implements ReportGenerator {
 
     private final List<String> detectors;
     private final CSVPrinter printer;
     private final boolean outputPerScript;
+
+    private static final Logger log = Logger.getLogger(CSVReportGenerator.class.getName());
 
     /**
      * CSVReportGenerator writes the results of an analyses for a given list of detectors to a file.
@@ -63,16 +66,20 @@ public class CSVReportGenerator implements ReportGenerator {
         if (outputPerScript) {
             for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
                 for (Script script : actorDefinition.getScripts().getScriptList()) {
-                    row = generateReportsPerScript(program, issues, script);
+                    if (!NodeNameUtils.isValidScript(script))
+                        continue;
+                    row = createScriptRow(program, issues, script);
                     printer.printRecord(row);
                 }
                 for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
-                    row = generateReportsPerScript(program, issues, procedureDefinition);
+                    if (!NodeNameUtils.isValidScript(procedureDefinition))
+                        continue;
+                    row = createScriptRow(program, issues, procedureDefinition);
                     printer.printRecord(row);
                 }
             }
         } else {
-            row = generateReportsPerProject(program, issues);
+            row = createProjectRow(program, issues);
             printer.printRecord(row);
         }
         printer.flush();
@@ -82,7 +89,7 @@ public class CSVReportGenerator implements ReportGenerator {
         printer.close();
     }
 
-    private List<String> generateReportsPerProject(Program program, Collection<Issue> issues) {
+    private List<String> createProjectRow(Program program, Collection<Issue> issues) {
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
         for (String finder : detectors) {
@@ -95,12 +102,13 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private List<String> generateReportsPerScript(Program program, Collection<Issue> issues,  ScriptEntity scriptEntity) {
+    private List<String> createScriptRow(Program program, Collection<Issue> issues, ScriptEntity scriptEntity) {
         List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName() + "_" + NodeNameUtils.getSpriteOrProcedureDefinitionName(scriptEntity));
+        row.add(getScriptEntityFullName(program, scriptEntity));
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
+                    .filter(i -> i.getScriptOrProcedureDefinition() != null)
                     .filter(i -> i.getScriptOrProcedureDefinition().equals(scriptEntity))
                     .filter(i -> i.getFinderName().equals(finder))
                     .count();
@@ -109,6 +117,12 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-
-
+    private static String getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
+        if (NodeNameUtils.getScriptEntityName(scriptEntity).isPresent())
+            return program.getIdent().getName() + "_" + NodeNameUtils.getScriptEntityName(scriptEntity).get();
+        else {
+            log.severe("can't generate a name for a valid scriptEntity");
+            return "N/A";
+        }
+    }
 }
