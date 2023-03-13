@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -108,12 +109,12 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = {true, false})
-    public void testCreateContextForCode2VecPerScriptsCount(boolean includeStage) throws IOException, ParsingException {
+    public void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage) throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, true, 8, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        List<String> pathContextsForCode2Vec = generatePathTask.featuresToString(features, false).collect(Collectors.toList());
+        List<String> scriptsPaths = generatePathTask.featuresToString(features, false).collect(Collectors.toList());
 
         ScriptCount<ASTNode> scriptCount = new ScriptCount<>();
         int scriptCountPerProgram = (int) scriptCount.calculateMetric(program);
@@ -121,7 +122,8 @@ class GeneratePathTaskTest implements JsonTest {
         ProcedureCount<ASTNode> procedureCount = new ProcedureCount<>();
         int procedureCountPerProgram = (int) procedureCount.calculateMetric(program);
 
-        assertThat(pathContextsForCode2Vec).hasSize(scriptCountPerProgram + procedureCountPerProgram);
+        assertThat(scriptsPaths).hasSize(scriptCountPerProgram + procedureCountPerProgram);
     }
+
 
 }
