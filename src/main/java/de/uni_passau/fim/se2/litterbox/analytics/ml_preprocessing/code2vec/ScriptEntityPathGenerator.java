@@ -46,14 +46,18 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     private Map<Script, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
         ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        sprites.forEach(sprite -> sprite.getScripts().getScriptList().forEach(script -> script.accept(scriptVisitor)));
+        sprites.forEach(sprite ->
+                sprite.getScripts().getScriptList()
+                        .forEach(script -> script.accept(scriptVisitor)));
         return scriptVisitor.getLeafsMap();
     }
 
     private Map<ProcedureDefinition, List<ASTNode>> extractProcedureDefinitionsASTLeafs(List<ActorDefinition> sprites) {
         ExtractProcedureDefinitionVisitor extractProcedureDefinitionVisitor = new ExtractProcedureDefinitionVisitor();
-        sprites.forEach(sprite -> sprite.getProcedureDefinitionList().getList().
-                forEach(procedureDefinition -> procedureDefinition.accept(extractProcedureDefinitionVisitor)));
+        sprites.forEach(sprite ->
+                sprite.getProcedureDefinitionList().getList().
+                        forEach(procedureDefinition ->
+                                procedureDefinition.accept(extractProcedureDefinitionVisitor)));
         return extractProcedureDefinitionVisitor.getLeafsMap();
     }
 
@@ -62,7 +66,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         System.out.println("Number of scripts: " + leafsMap.keySet().size());
         leafsMap.forEach((script, leafs) -> {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
-                    NodeNameUtils.getSpriteOrProcedureDefinitionName(script) + ": " + leafs.size());
+                    NodeNameUtils.getScriptEntityName(script) + ": " + leafs.size());
             leafs.forEach(leaf -> {
                 System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + StringUtil.getToken(leaf));
             });
@@ -73,25 +77,19 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     public List<ProgramFeatures> generatePaths() {
         List<ProgramFeatures> scriptFeatures = new ArrayList<>();
         leafsMap.forEach((script, leafs) -> {
-            String scriptName = NodeNameUtils.getSpriteOrProcedureDefinitionName(script);
-            ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
-            if (isValidateScriptFeature(scriptName, singleScriptFeatures, script)) {
-                scriptFeatures.add(singleScriptFeatures);
+            if (NodeNameUtils.isValidScript(script)) {
+                var scriptName = NodeNameUtils.getScriptEntityName(script).orElse("N/A");
+                ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
+                if (isValidateScriptFeature(singleScriptFeatures)) {
+                    scriptFeatures.add(singleScriptFeatures);
+                }
             }
         });
         return scriptFeatures;
     }
 
-    private boolean isValidateScriptFeature(String scriptName, ProgramFeatures singleScriptFeatures, ScriptEntity script) {
-        if (scriptName == null) {
-            log.severe("can't name for script with Id " + script.toString()); // TODO replace to string
-            return false;
-        }
-        if (singleScriptFeatures.isEmpty()) {
-            log.severe("can't generate paths for script with Id - empty features " + scriptName);
-            return false;
-        }
-        return true;
+    private boolean isValidateScriptFeature(ProgramFeatures singleScriptFeatures) {
+        return !singleScriptFeatures.isEmpty();
     }
 
     @Override

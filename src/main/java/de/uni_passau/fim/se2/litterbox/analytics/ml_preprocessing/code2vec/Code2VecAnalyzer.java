@@ -76,7 +76,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
 
     private void writeResultPerScriptsToOutput(File inputFile, List<String> result) throws IOException {
         if (result.isEmpty()) {
-            log.warning("The processing step returned no output!");
+            log.warning("The processing step returned no output For input File " + inputFile.getName());
             return;
         }
         if (outputPath.isConsoleOutput()) {
@@ -90,11 +90,13 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
         for (String token : result) {
             Path outName = outputFileName(inputFile);
             Path outputFile = outputPath.getPath().resolve(outName + getScriptName(token));
+            if (Files.exists(outputFile))
+                log.severe("Overriding script result " + outputFile);
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
                 bw.write(removeScriptNameFromToken(token));
                 bw.flush();
             }
-            log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
+            //log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
         }
     }
 
