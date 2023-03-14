@@ -108,7 +108,6 @@ public class CSVReportGenerator implements ReportGenerator {
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
-                    .filter(i -> i.getScriptOrProcedureDefinition() != null)
                     .filter(i -> i.getScriptOrProcedureDefinition().equals(scriptEntity))
                     .filter(i -> i.getFinderName().equals(finder))
                     .count();

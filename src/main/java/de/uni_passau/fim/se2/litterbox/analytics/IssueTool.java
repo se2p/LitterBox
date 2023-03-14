@@ -123,6 +123,37 @@ public class IssueTool {
         return bugFinders;
     }
 
+        private static Map<String, IssueFinder> generateScriptsBugsFinders() {
+        Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+
+        registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
+        registerBugFinder(new BlockingIfElse(), bugFinders);
+        registerBugFinder(new ComparingLiterals(), bugFinders);
+        registerBugFinder(new EndlessRecursion(), bugFinders);
+        registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
+        registerBugFinder(new ForeverInsideIf(), bugFinders);
+        registerBugFinder(new ForeverInsideLoop(), bugFinders);
+        registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
+        registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+        registerBugFinder(new KeySetPosition(), bugFinders);
+        registerBugFinder(new MissingLoopMousePosition(), bugFinders);
+        registerBugFinder(new MissingLoopSensing(), bugFinders);
+        registerBugFinder(new MissingTerminationCondition(), bugFinders);
+        registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
+        registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterOutOfScope(), bugFinders);
+        registerBugFinder(new PositionEqualsCheck(), bugFinders);
+        registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
+        registerBugFinder(new TypeError(), bugFinders);
+        registerBugFinder(new VariableAsLiteral(), bugFinders);
+
+        return bugFinders;
+    }
+
     private static Map<String, IssueFinder> generateAllFinders() {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
@@ -168,7 +199,7 @@ public class IssueTool {
             registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
             registerSmellFinder(new UnnecessaryMove(), smellFinders);
-            registerSmellFinder(new UnnecessaryRotation(),smellFinders);
+            registerSmellFinder(new UnnecessaryRotation(), smellFinders);
             registerSmellFinder(new UnnecessarySizeChange(), smellFinders);
             registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
             registerSmellFinder(new UnnecessaryTime(), smellFinders);
@@ -252,6 +283,9 @@ public class IssueTool {
                 break;
             case BUGS:
                 finders = new ArrayList<>(generateBugFinders().values());
+                break;
+            case BUGS_SCRIPTS:
+                finders = new ArrayList<>(generateScriptsBugsFinders().values());
                 break;
             case SMELLS:
                 finders = new ArrayList<>(generateSmellFinders().values());
