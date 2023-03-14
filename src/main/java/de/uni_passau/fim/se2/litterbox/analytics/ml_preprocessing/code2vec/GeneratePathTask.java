@@ -37,18 +37,9 @@ public class GeneratePathTask {
         this.wholeProgram = wholeProgram;
     }
 
-    public Stream<String> createContextForCode2Vec() {
+    public List<ProgramFeatures> createContextForCode2Vec() {
         PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram);
         // pathGenerator.printLeafsPerSprite();
-        List<ProgramFeatures> programs = pathGenerator.generatePaths();
-        return featuresToString(programs);
-    }
-
-    private Stream<String> featuresToString(List<ProgramFeatures> features) {
-        if (features == null) {
-            return Stream.empty();
-        }
-
-        return features.stream().map(ProgramFeatures::toString);
+        return pathGenerator.generatePaths();
     }
 }

@@ -1,0 +1,41 @@
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
+
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+/**
+ * Counts the number of undefined blocks.
+ */
+public class UndefinedBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+    public static final String NAME = "undefined_block_count";
+    private int count = 0;
+
+    @Override
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        count = 0;
+        node.accept(this);
+        return count;
+    }
+
+    @Override
+    public void visit(UnspecifiedStmt node) {
+        count++;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(UnspecifiedExpression node) {
+        count++;
+        visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+}
