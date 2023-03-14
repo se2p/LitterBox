@@ -59,9 +59,8 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(true, false, 8, true, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        List<String> pathContextsForCode2Vec = generatePathTask.featuresToString(features, true).collect(Collectors.toList());
-        assertThat(pathContextsForCode2Vec).isEmpty();
+        List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContextForCode2Vec();
+        assertThat(pathContextForCode2Vec).isEmpty();
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
@@ -70,8 +69,7 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, false, 8, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        List<String> pathContextsForCode2Vec = generatePathTask.featuresToString(features, true).collect(Collectors.toList());
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
 
         if (includeStage) {
             assertThat(pathContextsForCode2Vec).hasSize(3);
@@ -79,13 +77,18 @@ class GeneratePathTaskTest implements JsonTest {
             assertThat(pathContextsForCode2Vec).hasSize(2);
         }
 
-        assertThat(pathContextsForCode2Vec).contains(CAT_PATHS);
-        assertThat(pathContextsForCode2Vec).contains(ABBY_PATHS);
+        List<String> pathContexts = pathContextsForCode2Vec
+                .stream()
+                .map(ProgramFeatures::toString)
+                .collect(Collectors.toList());
+
+        assertThat(pathContexts).contains(CAT_PATHS);
+        assertThat(pathContexts).contains(ABBY_PATHS);
 
         if (includeStage) {
-            assertThat(pathContextsForCode2Vec).contains(STAGE_PATHS);
+            assertThat(pathContexts).contains(STAGE_PATHS);
         } else {
-            assertThat(pathContextsForCode2Vec).doesNotContain(STAGE_PATHS);
+            assertThat(pathContexts).doesNotContain(STAGE_PATHS);
         }
     }
 

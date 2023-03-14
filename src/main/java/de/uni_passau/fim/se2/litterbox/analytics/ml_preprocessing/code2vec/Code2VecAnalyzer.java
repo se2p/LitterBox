@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
+public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
     private final int maxPathLength;
     private final boolean isPerScript;
@@ -43,7 +43,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     }
 
     @Override
-    public Stream<String> process(File inputFile) {
+    public Stream<ProgramFeatures> process(File inputFile) {
         final Program program = extractProgram(inputFile);
         if (program == null) {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
@@ -53,7 +53,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        return generatePathTask.featuresToString(features, true);
+        return generatePathTask.featuresToString(features, true).stream();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer {
     }
 
     private void runProcessingSteps(File inputFile) throws IOException {
-        final Stream<String> output = process(inputFile);
+        final var output = process(inputFile);
         List<String> outputList = output.collect(Collectors.toList());
         this.writeResultPerScriptsToOutput(inputFile, outputList);
     }
