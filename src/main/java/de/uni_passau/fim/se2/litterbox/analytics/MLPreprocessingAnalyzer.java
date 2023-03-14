@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class MLPreprocessingAnalyzer extends Analyzer {
+public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     private static final Logger log = Logger.getLogger(MLPreprocessingAnalyzer.class.getName());
 
     protected final MLOutputPath outputPath;
@@ -48,12 +48,14 @@ public abstract class MLPreprocessingAnalyzer extends Analyzer {
         this.wholeProgram = commonOptions.wholeProgram();
     }
 
-    protected abstract Stream<String> process(File inputFile) throws IOException;
+    protected abstract Stream<R> process(File inputFile) throws IOException;
+
+    protected abstract String resultToString(R result);
 
     protected abstract Path outputFileName(File inputFile);
 
     private void runProcessingSteps(File inputFile) throws IOException {
-        final Stream<String> output = process(inputFile);
+        final Stream<String> output = process(inputFile).map(this::resultToString);
         final String joined = output.collect(Collectors.joining(System.lineSeparator()));
         if (!joined.isBlank()) {
             writeResultToOutput(inputFile, joined);
