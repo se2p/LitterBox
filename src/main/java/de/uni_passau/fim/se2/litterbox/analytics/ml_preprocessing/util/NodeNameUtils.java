@@ -43,10 +43,14 @@ public class NodeNameUtils {
 
     public static Optional<String> getScriptEntityName(ASTNode node) {
         if (node instanceof Script)
-            return Optional.of("ScriptId_" + AstNodeUtil.findActor(node).get() + "_" + getBlockId(((Script) node).getStmtList()));
+            return Optional.of("ScriptId_" + getParentSpriteName(node) + "_" + getBlockId(((Script) node).getStmtList()));
         else if (node instanceof ProcedureDefinition)
-            return Optional.of("ProcedureId_" + AstNodeUtil.findActor(node).get() + "_" + getBlockId(((ProcedureDefinition) node).getStmtList()));
+            return Optional.of("ProcedureId_" + getBlockId(((ProcedureDefinition) node).getStmtList()));
         else return Optional.empty();
+    }
+
+    private static String getParentSpriteName(ASTNode node) {
+        return normalizeSpriteName(AstNodeUtil.findActor(node).get().getIdent().getName());
     }
 
     private static String getBlockId(StmtList stmtList) {

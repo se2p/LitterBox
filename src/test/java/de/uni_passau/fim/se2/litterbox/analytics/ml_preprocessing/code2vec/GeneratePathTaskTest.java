@@ -98,16 +98,20 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, true, 8, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        List<String> pathContextsForCode2Vec = generatePathTask.featuresToString(features, false).collect(Collectors.toList());
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+
+        List<String> pathContexts = pathContextsForCode2Vec
+                .stream()
+                .map(ProgramFeatures::toStringWithoutNodeName)
+                .collect(Collectors.toList());
 
         if (includeStage) {
-            assertThat(pathContextsForCode2Vec).hasSize(1);
+            assertThat(pathContexts).hasSize(1);
         } else {
-            assertThat(pathContextsForCode2Vec).hasSize(1);
+            assertThat(pathContexts).hasSize(1);
         }
 
-        assertThat(pathContextsForCode2Vec).contains(CAT_SCRIPT_PATH);
+        assertThat(pathContexts).contains(CAT_SCRIPT_PATH);
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
@@ -116,8 +120,11 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(false, true, 8, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        List<String> scriptsPaths = generatePathTask.featuresToString(features, false).collect(Collectors.toList());
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<String> pathContexts = pathContextsForCode2Vec
+                .stream()
+                .map(ProgramFeatures::toStringWithoutNodeName)
+                .collect(Collectors.toList());
 
         ScriptCount<ASTNode> scriptCount = new ScriptCount<>();
         int scriptCountPerProgram = (int) scriptCount.calculateMetric(program);
@@ -125,8 +132,6 @@ class GeneratePathTaskTest implements JsonTest {
         ProcedureCount<ASTNode> procedureCount = new ProcedureCount<>();
         int procedureCountPerProgram = (int) procedureCount.calculateMetric(program);
 
-        assertThat(scriptsPaths).hasSize(scriptCountPerProgram + procedureCountPerProgram);
+        assertThat(pathContexts).hasSize(scriptCountPerProgram + procedureCountPerProgram);
     }
-
-
 }

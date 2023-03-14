@@ -52,8 +52,12 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         // TODO use builder instead?
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> features = generatePathTask.createContextForCode2Vec();
-        return generatePathTask.featuresToString(features, true).stream();
+        return generatePathTask.createContextForCode2Vec().stream();
+    }
+
+    @Override
+    protected String resultToString(ProgramFeatures result) {
+        return result.toString();
     }
 
     @Override
@@ -70,11 +74,11 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
     private void runProcessingSteps(File inputFile) throws IOException {
         final var output = process(inputFile);
-        List<String> outputList = output.collect(Collectors.toList());
+        var outputList = output.collect(Collectors.toList());
         this.writeResultPerScriptsToOutput(inputFile, outputList);
     }
 
-    private void writeResultPerScriptsToOutput(File inputFile, List<String> result) throws IOException {
+    private void writeResultPerScriptsToOutput(File inputFile, List<ProgramFeatures> result) throws IOException {
         if (result.isEmpty()) {
             log.warning("The processing step returned no output For input File " + inputFile.getName());
             return;
@@ -86,28 +90,17 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         }
     }
 
-    private void writeResultPerScriptToFile(File inputFile, List<String> result) throws IOException {
-        for (String token : result) {
+    private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) throws IOException {
+        for (ProgramFeatures token : result) {
             Path outName = outputFileName(inputFile);
-            Path outputFile = outputPath.getPath().resolve(outName + getScriptName(token));
+            Path outputFile = outputPath.getPath().resolve(outName + token.getName());
             if (Files.exists(outputFile))
                 log.severe("Overriding script result " + outputFile);
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-                bw.write(removeScriptNameFromToken(token));
+                bw.write(token.getFeatures().toString());
                 bw.flush();
             }
             //log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
         }
-    }
-
-    // TODO the next 2 methods is a dirty way around, better to change the return type of 'process' method
-
-    private String getScriptName(String token) {
-        return token.split(" ")[0];
-    }
-
-    private String removeScriptNameFromToken(String token) {
-        int index = token.indexOf(" ");
-        return token.substring(index + 1);
     }
 }

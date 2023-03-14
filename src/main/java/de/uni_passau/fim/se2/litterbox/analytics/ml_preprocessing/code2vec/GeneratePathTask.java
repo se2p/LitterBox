@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class GeneratePathTask {
 
@@ -33,15 +32,5 @@ public class GeneratePathTask {
     public List<ProgramFeatures> createContextForCode2Vec() {
         // pathGenerator.printLeafs();
         return pathGenerator.generatePaths();
-    }
-
-    public Stream<String> featuresToString(List<ProgramFeatures> features, boolean includeActorName) {
-        if (features == null) {
-            return Stream.empty();
-        }
-        if (!includeActorName)
-            return features.stream().map(ProgramFeatures::toStringWithoutNodeName);
-        else
-            return features.stream().map(ProgramFeatures::toString);
     }
 }
