@@ -22,6 +22,7 @@ import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -69,6 +70,12 @@ public interface JsonTest {
         Program prog = getAST(filePath);
         Set<Issue> reports = finder.check(prog);
         Assertions.assertEquals(expectedIssues, reports.size());
+    }
+
+    default void assertThatExtractionReports(List<String> expected, NameExtraction finder, String filePath) throws IOException, ParsingException {
+        Program prog = getAST(filePath);
+        List<String> reports = finder.extractNames(prog);
+        Assertions.assertEquals(expected, reports);
     }
 
     default void assertThatMetricReports(double expectedIssues, MetricExtractor<Program> finder, String filePath) throws IOException, ParsingException {

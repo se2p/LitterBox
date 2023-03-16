@@ -370,6 +370,24 @@ public class Main implements Callable<Integer> {
         }
     }
 
+    @CommandLine.Command(
+            name = "extract",
+            description = "Extract names of various things in Scratch projects."
+    )
+    static class ExtractSubcommand extends LitterBoxSubcommand {
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected ExtractionAnalyzer getAnalyzer() {
+            return new ExtractionAnalyzer(projectPath, outputPath, deleteProject);
+        }
+    }
+
     abstract static class MLPreprocessorSubcommand extends LitterBoxSubcommand {
         @CommandLine.Option(
                 names = {"-s", "--include-stage"},
