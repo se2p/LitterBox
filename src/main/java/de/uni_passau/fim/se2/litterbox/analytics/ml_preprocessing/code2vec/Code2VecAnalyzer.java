@@ -32,14 +32,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
+
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+
+    private final PathType pathType;
     private final int maxPathLength;
-    private final boolean isPerScript;
 
     public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions);
         this.maxPathLength = maxPathLength;
-        this.isPerScript = isPerScript;
+        this.pathType = isPerScript ? PathType.SCRIPT :
+                wholeProgram ? PathType.PROGRAM :
+                        PathType.SPRITE;
     }
 
     @Override
@@ -49,8 +53,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-        // TODO use builder instead?
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(wholeProgram, isPerScript, maxPathLength, includeStage, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(pathType, maxPathLength, includeStage, program);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContextForCode2Vec().stream();
     }
@@ -67,7 +70,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
     @Override
     protected void check(File fileEntry, String csv) throws IOException {
-        if (this.isPerScript) {
+        if (this.pathType == PathType.SCRIPT) {
             runProcessingSteps(fileEntry);
         } else super.check(fileEntry, csv);
     }

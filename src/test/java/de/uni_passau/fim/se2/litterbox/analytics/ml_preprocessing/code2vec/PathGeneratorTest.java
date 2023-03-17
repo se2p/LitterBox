@@ -21,9 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.checkerframework.common.value.qual.BoolVal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -43,7 +45,7 @@ class PathGeneratorTest implements JsonTest {
     @Test
     void testGeneratePaths() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator generator = PathGeneratorFactory.createPathGenerator(false, false, 8, false, program);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, false, program);
         List<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
         int positionCat = 0;
@@ -80,7 +82,7 @@ class PathGeneratorTest implements JsonTest {
     @Test
     void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
-        PathGenerator generator = PathGeneratorFactory.createPathGenerator(false, false, 8, false, program);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, false, program);
         List<String> tokens = generator.getAllLeafs();
         assertArrayEquals(expectedLeafs, tokens.toArray());
     }
@@ -89,7 +91,7 @@ class PathGeneratorTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator generator = PathGeneratorFactory.createPathGenerator(true, false, 8, includeStage, program);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, includeStage, program);
 
         List<ProgramFeatures> pathContexts = generator.generatePaths();
         assertEquals(1, pathContexts.size());
@@ -119,22 +121,25 @@ class PathGeneratorTest implements JsonTest {
         }
     }
 
-    @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}, wholeProgram={1}")
+    @ParameterizedTest(name = "{displayName} [{index}] pathType={0}, includeStage={1}")
     @MethodSource("code2vecOptions")
-    void testGeneratePathsEmptyProgram(boolean includeStage, boolean wholeProgram) throws ParsingException, IOException {
+
+    void testGeneratePathsEmptyProgram(PathType pathType, boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
 
-        PathGenerator generator = PathGeneratorFactory.createPathGenerator(wholeProgram, false, 8, includeStage, program);
+        PathGenerator generator = PathGeneratorFactory.createPathGenerator(pathType, 8, includeStage, program);
         List<ProgramFeatures> features = generator.generatePaths();
         assertTrue(features.isEmpty());
     }
 
     private static Stream<Arguments> code2vecOptions() {
         return Stream.of(
-                Arguments.arguments(true, true),
-                Arguments.arguments(true, false),
-                Arguments.arguments(false, true),
-                Arguments.arguments(false, false)
+                Arguments.arguments(PathType.SPRITE, true),
+                Arguments.arguments(PathType.SPRITE, false),
+                Arguments.arguments(PathType.SCRIPT, true),
+                Arguments.arguments(PathType.SCRIPT, false),
+                Arguments.arguments(PathType.PROGRAM, false),
+                Arguments.arguments(PathType.PROGRAM, false)
         );
     }
 }
