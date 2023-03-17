@@ -34,16 +34,25 @@ import java.util.List;
 public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     List<String> edges = new LinkedList<>();
-    StringBuilder edgesString;
+    StringBuilder edgesString = new StringBuilder();
     long counter = 0;
 
-    public void initDotString() {
-        edgesString = new StringBuilder();
+    public static String buildDotGraph(final AstNode node) {
+        final DotVisitor visitor = new DotVisitor();
+
+        visitor.initDotString();
+        node.accept(visitor);
+        visitor.finishDotString();
+
+        return visitor.edgesString.toString();
+    }
+
+    private void initDotString() {
         addln("digraph G {");
         addln("shape=rectangle");
     }
 
-    public void finishDotString() {
+    private void finishDotString() {
         edgesString.append("}");
     }
 
