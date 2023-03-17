@@ -50,6 +50,7 @@ import java.util.concurrent.Callable;
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
+                Main.ExtractSubcommand.class,
                 // machine learning preprocessors
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
