@@ -49,6 +49,7 @@ import java.util.concurrent.Callable;
                 Main.LeilaSubcommand.class,
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
+                Main.DotSubcommand.class,
                 // machine learning preprocessors
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
@@ -367,6 +368,24 @@ public class Main implements Callable<Integer> {
         @Override
         protected MetricAnalyzer getAnalyzer() {
             return new MetricAnalyzer(projectPath, outputPath, deleteProject);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "dot",
+            description = "Convert the project into a .dot file."
+    )
+    static class DotSubcommand extends LitterBoxSubcommand {
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected DotAnalyzer getAnalyzer() {
+            return new DotAnalyzer(projectPath, outputPath, deleteProject);
         }
     }
 
