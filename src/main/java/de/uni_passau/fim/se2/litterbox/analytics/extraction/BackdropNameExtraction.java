@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.extraction;
 
-import de.uni_passau.fim.se2.litterbox.analytics.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
@@ -30,7 +29,6 @@ import java.util.List;
 public class BackdropNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "backdrop_names";
     private List<String> names;
-    private boolean inActor;
 
     @Override
     public List<String> extractNames(Program program) {
@@ -48,9 +46,7 @@ public class BackdropNameExtraction implements ScratchVisitor, NameExtraction {
 
     @Override
     public void visit(ImageMetadata node) {
-        if (inActor) {
-            names.add(node.getName());
-        }
+        names.add(node.getName());
     }
 
     @Override

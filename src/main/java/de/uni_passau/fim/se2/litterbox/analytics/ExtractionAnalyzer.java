@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
