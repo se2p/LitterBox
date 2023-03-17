@@ -28,7 +28,7 @@ import java.util.List;
 
 public class SpriteNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "sprite_names";
-    private static List<String> names;
+    private List<String> names;
 
     @Override
     public List<String> extractNames(Program program) {

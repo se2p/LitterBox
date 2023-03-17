@@ -29,7 +29,7 @@ import java.util.List;
 
 public class BackdropNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "backdrop_names";
-    private static List<String> names;
+    private List<String> names;
     private boolean inActor;
 
     @Override
@@ -42,10 +42,8 @@ public class BackdropNameExtraction implements ScratchVisitor, NameExtraction {
     @Override
     public void visit(ActorDefinition node) {
         if (node.isStage()) {
-            inActor = true;
+            visitChildren(node);
         }
-        visitChildren(node);
-        inActor = false;
     }
 
     @Override

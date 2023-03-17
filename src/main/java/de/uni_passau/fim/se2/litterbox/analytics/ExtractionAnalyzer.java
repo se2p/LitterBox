@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class ExtractionAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
-    private ExtractionTool issueTool;
+    private final ExtractionTool issueTool;
 
     public ExtractionAnalyzer(String input, String output, boolean delete) {
         super(input, output, delete);
@@ -43,7 +43,7 @@ public class ExtractionAnalyzer extends Analyzer {
     void check(File fileEntry, String csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
-            // Todo error message
+            log.warning("Could not parse program in file " + fileEntry);
             return;
         }
 

@@ -29,11 +29,10 @@ import java.util.List;
 
 public class ListNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "list_names";
-    private static List<String> names;
 
     @Override
     public List<String> extractNames(Program program) {
-        names = new ArrayList<>();
+        final List<String> names = new ArrayList<>();
         Collection<ExpressionListInfo> variables = program.getSymbolTable().getLists().values();
         for (ExpressionListInfo variable : variables) {
             names.add(variable.getVariableName());
