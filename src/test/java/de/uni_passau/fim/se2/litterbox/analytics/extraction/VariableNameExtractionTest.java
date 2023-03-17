@@ -16,29 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.extraction;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UndefinedBlockCountTest implements JsonTest {
-
-    @Test
-    public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new UndefinedBlockCount<>(), "./src/test/fixtures/emptyProject.json");
-    }
+public class VariableNameExtractionTest implements JsonTest {
 
     @Test
-    public void testUndefinedBlockCountNested() throws IOException, ParsingException {
-        assertThatMetricReports(3, new UndefinedBlockCount<>(), "./src/test/fixtures/metrics/undefinedBlocks.json");
-    }
-
-    @Test
-    public void testUndefinedBlockCountWithEvent() throws IOException, ParsingException {
-        assertThatMetricReports(4, new UndefinedBlockCount<>(), "./src/test/fixtures/metrics/undefinedBlocksEvent.json");
+    public void testVariableNameExtraction() throws IOException, ParsingException {
+        List<String> list = new ArrayList<>();
+        list.add("my variable");
+        list.add("blub");
+        assertThatExtractionReports(list, new VariableNameExtraction(), "./src/test/fixtures/extraction/multiVariable.json");
     }
 }
-

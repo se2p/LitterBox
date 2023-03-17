@@ -50,6 +50,7 @@ import java.util.concurrent.Callable;
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
+                Main.ExtractSubcommand.class,
                 // machine learning preprocessors
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
@@ -368,6 +369,24 @@ public class Main implements Callable<Integer> {
         @Override
         protected MetricAnalyzer getAnalyzer() {
             return new MetricAnalyzer(projectPath, outputPath, deleteProject);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "extract",
+            description = "Extract names of various things in Scratch projects."
+    )
+    static class ExtractSubcommand extends LitterBoxSubcommand {
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected ExtractionAnalyzer getAnalyzer() {
+            return new ExtractionAnalyzer(projectPath, outputPath, deleteProject);
         }
     }
 
