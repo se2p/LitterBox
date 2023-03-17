@@ -32,12 +32,10 @@ import java.util.List;
  * Visitor that creates a .dot output for a Program-AST
  */
 public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
-
-    List<String> edges = new LinkedList<>();
     StringBuilder edgesString = new StringBuilder();
     long counter = 0;
 
-    public static String buildDotGraph(final AstNode node) {
+    public static String buildDotGraph(final ASTNode node) {
         final DotVisitor visitor = new DotVisitor();
 
         visitor.initDotString();
@@ -90,25 +88,6 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
             addln(sLabel);
             String edge = name + " -> " + counter;
             addln(edge);
-        }
-    }
-
-    public void printGraph() {
-        System.out.println("digraph G {");
-        System.out.println("\t rankdir=LR");
-        System.out.println("\t shape=rectangle");
-        for (String edge : edges) {
-            System.out.print("\t");
-            System.out.println(edge);
-        }
-        System.out.println("}");
-    }
-
-    public void saveGraph(String fileName) throws IOException {
-        File file = new File(fileName);
-        FileOutputStream fos = new FileOutputStream(file);
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8))) {
-            bw.write(edgesString.toString());
         }
     }
 
