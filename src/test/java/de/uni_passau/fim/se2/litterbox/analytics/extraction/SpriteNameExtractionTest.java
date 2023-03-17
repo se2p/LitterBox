@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariableNameExtractionTest implements JsonTest {
+public class SpriteNameExtractionTest implements JsonTest {
 
     @Test
-    public void testVariableNameExtraction() throws IOException, ParsingException {
+    public void testSpriteNameExtraction() throws IOException, ParsingException {
         List<String> list = new ArrayList<>();
-        list.add("my variable");
-        list.add("blub");
-        assertThatExtractionReports(list, new VariableNameExtraction(), "./src/test/fixtures/extraction/multiVariable.json");
+        list.add("Sprite1");
+        list.add("Andie");
+        assertThatExtractionReports(list, new SpriteNameExtraction(), "./src/test/fixtures/extraction/multiVariable.json");
     }
 }

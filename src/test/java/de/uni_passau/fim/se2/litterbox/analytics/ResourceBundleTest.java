@@ -42,7 +42,7 @@ public class ResourceBundleTest {
     public void checkBugResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String bugFinder : IssueTool.getBugFinderNames()) {
-            assertWithMessage("Language "+locale+", bug finder "+bugFinder +" not found in name resources").that(names.keySet()).contains(bugFinder);
+            assertWithMessage("Language " + locale + ", bug finder " + bugFinder + " not found in name resources").that(names.keySet()).contains(bugFinder);
             checkEncodingProblems(names.getString(bugFinder));
         }
     }
@@ -52,7 +52,7 @@ public class ResourceBundleTest {
     public void checkSmellResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String smellFinder : IssueTool.getSmellFinderNames()) {
-            assertWithMessage("Language "+locale+", smell finder "+smellFinder +" not found in name resources").that(names.keySet()).contains(smellFinder);
+            assertWithMessage("Language " + locale + ", smell finder " + smellFinder + " not found in name resources").that(names.keySet()).contains(smellFinder);
             checkEncodingProblems(names.getString(smellFinder));
         }
     }
@@ -62,7 +62,7 @@ public class ResourceBundleTest {
     public void checkPerfumeResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
-            assertWithMessage("Language "+locale+", perfume finder "+perfumeFinder +" not found in name resources").that(names.keySet()).contains(perfumeFinder);
+            assertWithMessage("Language " + locale + ", perfume finder " + perfumeFinder + " not found in name resources").that(names.keySet()).contains(perfumeFinder);
             checkEncodingProblems(names.getString(perfumeFinder));
         }
     }
@@ -116,7 +116,7 @@ public class ResourceBundleTest {
         List<IssueFinder> bugFinders = IssueTool.getFinders(GroupConstants.BUGS);
         for (IssueFinder finder : bugFinders) {
             for (String key : finder.getHintKeys()) {
-                assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
                 checkEncodingProblems(hints.getString(key));
             }
@@ -130,7 +130,7 @@ public class ResourceBundleTest {
         List<IssueFinder> smellFinders = IssueTool.getFinders(GroupConstants.SMELLS);
         for (IssueFinder finder : smellFinders) {
             for (String key : finder.getHintKeys()) {
-                assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
                 checkEncodingProblems(hints.getString(key));
             }
@@ -144,7 +144,7 @@ public class ResourceBundleTest {
         List<IssueFinder> perfumeFinders = IssueTool.getFinders(GroupConstants.PERFUMES);
         for (IssueFinder finder : perfumeFinders) {
             for (String key : finder.getHintKeys()) {
-                assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+                assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
                 checkValidBrackets(key, hints.getString(key));
                 checkEncodingProblems(hints.getString(key));
             }
@@ -157,7 +157,7 @@ public class ResourceBundleTest {
         ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
 
         for (IssueTranslator.GeneralTerm term : IssueTranslator.GeneralTerm.values()) {
-            assertWithMessage("Language "+locale+", general term "+ term.getKey() +" not found in resources").that(hints.keySet()).contains(term.getKey());
+            assertWithMessage("Language " + locale + ", general term " + term.getKey() + " not found in resources").that(hints.keySet()).contains(term.getKey());
             checkEncodingProblems(hints.getString(term.getKey()));
         }
     }
@@ -168,8 +168,9 @@ public class ResourceBundleTest {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         Collection<String> finders = new HashSet<>(IssueTool.getAllFinderNames());
         finders.addAll(new MetricTool().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
+        finders.addAll(new ExtractionTool().getExtractorNames());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language "+locale+", key "+key +" does not match a finder").that(finders).contains(key);
+            assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
         }
     }
 
@@ -180,7 +181,7 @@ public class ResourceBundleTest {
         List<IssueFinder> allFinders = IssueTool.getFinders(GroupConstants.ALL);
         Set<String> hintKeys = allFinders.stream().flatMap(f -> f.getHintKeys().stream()).collect(Collectors.toSet());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
+            assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);
         }
     }
 

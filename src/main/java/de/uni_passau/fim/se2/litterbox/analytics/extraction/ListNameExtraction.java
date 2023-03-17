@@ -6,8 +6,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class ListNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "list_names";
@@ -16,7 +16,10 @@ public class ListNameExtraction implements ScratchVisitor, NameExtraction {
     @Override
     public List<String> extractNames(Program program) {
         names = new ArrayList<>();
-        Map<String, ExpressionListInfo> variables = program.getSymbolTable().getLists();
+        Collection<ExpressionListInfo> variables = program.getSymbolTable().getLists().values();
+        for (ExpressionListInfo variable : variables) {
+            names.add(variable.getVariableName());
+        }
         return names;
     }
 
