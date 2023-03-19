@@ -66,14 +66,10 @@ public class CSVReportGenerator implements ReportGenerator {
         if (outputPerScript) {
             for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
                 for (Script script : actorDefinition.getScripts().getScriptList()) {
-                    if (!NodeNameUtils.isValidScript(script))
-                        continue;
                     row = createScriptRow(program, issues, script);
                     printer.printRecord(row);
                 }
                 for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
-                    if (!NodeNameUtils.isValidScript(procedureDefinition))
-                        continue;
                     row = createScriptRow(program, issues, procedureDefinition);
                     printer.printRecord(row);
                 }
