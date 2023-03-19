@@ -28,16 +28,9 @@ public class NodeNameUtils {
     ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
     /**
-     * Is valid script boolean. a valid script is a script that contains at least more than 1 statement
-     * TODO is that correct?
-     * @param scriptEntity the script entity
-     * @return the boolean
-     * @throws IllegalArgumentException the illegal argument exception
-     */
-
-    /**
-     * Gets script entity name. in case of @node is Type Script, generate a name.
-     * Otherwise, return the original name
+     * Gets script entity name.
+     * in case of @param node is Type Script, generate a name.
+     * in case of @param node is Type ProcedureDefinition, return the original name
      *
      * @param node the node
      * @return the script entity name
@@ -46,8 +39,8 @@ public class NodeNameUtils {
         if (node instanceof Script)
             return Optional.of("ScriptId_" + node.getScratchBlocks().hashCode());
         else if (node instanceof ProcedureDefinition)
-            return Optional.of("Sprite_id" + getParentSpriteName(node) +
-                    "ProcedureId_" + StringUtil.replaceSpecialCharacters(((ProcedureDefinition) node).getIdent().getName()));
+            return Optional.of("Sprite_id_" + getParentSpriteName(node) +
+                    "_ProcedureId_" + StringUtil.replaceSpecialCharacters(((ProcedureDefinition) node).getIdent().getName()));
         else return Optional.empty();
     }
 
