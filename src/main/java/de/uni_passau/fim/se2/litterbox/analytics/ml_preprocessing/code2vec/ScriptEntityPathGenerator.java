@@ -77,12 +77,10 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     public List<ProgramFeatures> generatePaths() {
         List<ProgramFeatures> scriptFeatures = new ArrayList<>();
         leafsMap.forEach((script, leafs) -> {
-            if (NodeNameUtils.isValidScript(script)) {
-                var scriptName = NodeNameUtils.getScriptEntityName(script).orElse("N/A");
-                ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
-                if (isValidateScriptFeature(singleScriptFeatures)) {
-                    scriptFeatures.add(singleScriptFeatures);
-                }
+            var scriptName = NodeNameUtils.getScriptEntityName(script).orElse("N/A");
+            ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
+            if (isValidateScriptFeature(singleScriptFeatures)) {
+                scriptFeatures.add(singleScriptFeatures);
             }
         });
         return scriptFeatures;

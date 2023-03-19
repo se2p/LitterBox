@@ -1,9 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +9,16 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The type Node name utils.
+ */
 public class NodeNameUtils {
 
     private static final Logger log = Logger.getLogger(NodeNameUtils.class.getName());
 
+    /**
+     * The constant DEFAULT_SPRITE_NAMES.
+     */
     public static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
             "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
             "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
@@ -24,53 +28,35 @@ public class NodeNameUtils {
     ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
 
     /**
-     * a valid script is a script that contains at least more than 1 statement
+     * Is valid script boolean. a valid script is a script that contains at least more than 1 statement
+     * TODO is that correct?
+     * @param scriptEntity the script entity
+     * @return the boolean
+     * @throws IllegalArgumentException the illegal argument exception
      */
-    public static boolean isValidScript(ScriptEntity scriptEntity) throws IllegalArgumentException {
-        var stmts = getStatements(scriptEntity);
-        return (stmts != null) && stmts.size() > 1;
-    }
 
-    private static List<Stmt> getStatements(ScriptEntity scriptEntity) {
-        List<Stmt> stmts = null;
-        if (scriptEntity instanceof Script) {
-            stmts = ((Script) scriptEntity).getStmtList().getStmts();
-        } else if (scriptEntity instanceof ProcedureDefinition) {
-            stmts = ((ProcedureDefinition) scriptEntity).getStmtList().getStmts();
-        }
-        return stmts;
-    }
-
-    public static Optional<String> getScriptEntityName(ASTNode node) {
+    /**
+     * Gets script entity name. in case of @node is Type Script, generate a name.
+     * Otherwise, return the original name
+     *
+     * @param node the node
+     * @return the script entity name
+     */
+    public static Optional<String> getScriptEntityName(ScriptEntity node) {
         if (node instanceof Script)
-            return Optional.of("ScriptId_" + getParentSpriteName(node) + "_" + getBlockId(((Script) node).getStmtList()));
+            return Optional.of("ScriptId_" + node.getScratchBlocks().hashCode());
         else if (node instanceof ProcedureDefinition)
-            return Optional.of("ProcedureId_" + getBlockId(((ProcedureDefinition) node).getStmtList()));
+            return Optional.of("Sprite_id" + getParentSpriteName(node) +
+                    "ProcedureId_" + StringUtil.replaceSpecialCharacters(((ProcedureDefinition) node).getIdent().getName()));
         else return Optional.empty();
     }
 
-    private static String getParentSpriteName(ASTNode node) {
-        return normalizeSpriteName(AstNodeUtil.findActor(node).get().getIdent().getName());
-    }
-
-    private static String getBlockId(StmtList stmtList) {
-        var firstStmt = getFirstNonDataBlockStmt(stmtList.getStmts());
-        if (firstStmt != null)
-            return String.valueOf(((NonDataBlockMetadata) firstStmt.getMetadata()).getBlockId().hashCode());
-        else {
-            log.severe("can't generate script id for " + stmtList.getStmts().get(0).getScratchBlocks());
-            return null;
-        }
-    }
-
-    private static Stmt getFirstNonDataBlockStmt(List<Stmt> stmts) {
-        for (Stmt stmt : stmts) {
-            if (stmt.getMetadata() instanceof NonDataBlockMetadata)
-                return stmt;
-        }
-        return null;
-    }
-
+    /**
+     * Normalize sprite name string.
+     *
+     * @param spriteName the sprite name
+     * @return the string
+     */
     public static String normalizeSpriteName(String spriteName) {
         String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
         if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
@@ -82,6 +68,10 @@ public class NodeNameUtils {
             splitName = String.join("|", splitNameParts);
         }
         return splitName;
+    }
+
+    private static String getParentSpriteName(ASTNode node) {
+        return normalizeSpriteName(AstNodeUtil.findActor(node).get().getIdent().getName());
     }
 
     private static boolean isDefaultName(String normalizedSpriteLabel) {

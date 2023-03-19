@@ -83,7 +83,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
     private void writeResultPerScriptsToOutput(File inputFile, List<ProgramFeatures> result) throws IOException {
         if (result.isEmpty()) {
-            log.warning("The processing step returned no output For input File " + inputFile.getName());
+            //log.warning("The processing step returned no output For input File " + inputFile.getName());
             return;
         }
         if (outputPath.isConsoleOutput()) {
