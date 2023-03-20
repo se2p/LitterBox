@@ -75,13 +75,13 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         } else super.check(fileEntry, csv);
     }
 
-    private void runProcessingSteps(File inputFile) throws IOException {
+    private void runProcessingSteps(File inputFile) {
         final var output = process(inputFile);
         var outputList = output.collect(Collectors.toList());
         this.writeResultPerScriptsToOutput(inputFile, outputList);
     }
 
-    private void writeResultPerScriptsToOutput(File inputFile, List<ProgramFeatures> result) throws IOException {
+    private void writeResultPerScriptsToOutput(File inputFile, List<ProgramFeatures> result) {
         if (result.isEmpty()) {
             //log.warning("The processing step returned no output For input File " + inputFile.getName());
             return;
@@ -93,7 +93,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         }
     }
 
-    private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) throws IOException {
+    private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) {
         for (ProgramFeatures token : result) {
             Path outName = outputFileName(inputFile);
             Path outputFile = outputPath.getPath().resolve(outName + token.getName());
@@ -102,6 +102,8 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
                 bw.write(token.getFeatures().toString());
                 bw.flush();
+            } catch (IOException e) {
+                log.severe("Exception in writing the file " + outputFile + "Error message " +  e.getMessage());
             }
             //log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
         }
