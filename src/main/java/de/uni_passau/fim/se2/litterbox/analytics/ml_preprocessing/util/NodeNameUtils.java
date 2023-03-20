@@ -60,6 +60,8 @@ public class NodeNameUtils {
         if (!splitNameParts.isEmpty()) {
             splitName = String.join("|", splitNameParts);
         }
+        if(splitName.length()> 100)
+            return splitName.substring(0, Math.min(splitName.length(), 100));
         return splitName;
     }
 
