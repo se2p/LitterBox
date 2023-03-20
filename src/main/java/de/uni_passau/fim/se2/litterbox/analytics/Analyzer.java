@@ -56,9 +56,10 @@ public abstract class Analyzer {
      */
     public void analyzeFile() throws IOException {
         File file = input.toFile();
-
         if (file.exists() && file.isDirectory()) {
-            for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
+            var listOfFiles =  getProgramPaths(String.valueOf(file)) ;
+            for (String filePath : listOfFiles) {
+                var fileEntry = new File(String.valueOf(filePath));
                 if (!fileEntry.isDirectory()) {
                     check(fileEntry, output);
                     deleteFile(fileEntry);
@@ -72,6 +73,13 @@ public abstract class Analyzer {
         }
     }
 
+    private static List<String> getProgramPaths(String dirPath) throws IOException {
+        return Files.walk(Paths.get(dirPath))
+                .filter(p -> !Files.isDirectory(p))
+                .map(Path::toString)
+                .filter(f -> f.endsWith("json"))
+                .collect(Collectors.toList());
+    }
     private void deleteFile(File file) {
         if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
             boolean success = file.delete();
