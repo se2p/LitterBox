@@ -69,6 +69,7 @@ public class UselessWait extends AbstractIssueFinder {
         if (node instanceof ScriptEntity) {
             return false;
         } else if (node instanceof IfElseStmt) {
+            //it should be checked if the other half of the if-else has something meaningful
             if (stmtList != ((IfElseStmt) node).getThenStmts()) {
                 boolean hasStmtsOfValue = checkStmtListOfIfElse(((IfElseStmt) node).getThenStmts());
                 if (hasStmtsOfValue) {
@@ -86,7 +87,13 @@ public class UselessWait extends AbstractIssueFinder {
         StmtList parentStmtList = (StmtList) node.getParentNode();
         boolean hasOtherStmts = checkStmtList(parentStmtList);
         if (hasOtherStmts) {
-            return true;
+            //leading statements on top level should be ignored, as they have already been processed at runtime
+            if (parentStmtList.getParentNode() instanceof ScriptEntity) {
+                ASTNode lastNode = parentStmtList.getStatement(parentStmtList.getNumberOfStatements() - 1);
+                return !(lastNode == node);
+            } else {
+                return true;
+            }
         } else {
             return hasOtherBlocks(parentStmtList.getParentNode(), parentStmtList);
         }
@@ -99,7 +106,7 @@ public class UselessWait extends AbstractIssueFinder {
             return false;
         } else {
             Stmt stmt = stmtList.getStatement(0);
-            return stmt instanceof WaitSeconds || stmt instanceof WaitUntil;
+            return !(stmt instanceof WaitSeconds || stmt instanceof WaitUntil);
         }
     }
 
