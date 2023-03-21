@@ -168,7 +168,7 @@ public class IssueTool {
             registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
             registerSmellFinder(new UnnecessaryMove(), smellFinders);
-            registerSmellFinder(new UnnecessaryRotation(),smellFinders);
+            registerSmellFinder(new UnnecessaryRotation(), smellFinders);
             registerSmellFinder(new UnnecessarySizeChange(), smellFinders);
             registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
             registerSmellFinder(new UnnecessaryTime(), smellFinders);
@@ -176,6 +176,7 @@ public class IssueTool {
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
             registerSmellFinder(new UselessBlocks(), smellFinders);
+            registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
         if (LOAD_MBLOCK) {// mBlock smells
