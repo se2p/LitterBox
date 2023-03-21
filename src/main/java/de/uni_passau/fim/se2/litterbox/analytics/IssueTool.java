@@ -177,6 +177,7 @@ public class IssueTool {
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
             registerSmellFinder(new UselessBlocks(), smellFinders);
+            registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
         if (LOAD_MBLOCK) {// mBlock smells

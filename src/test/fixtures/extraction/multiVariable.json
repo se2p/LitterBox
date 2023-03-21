@@ -1,0 +1,213 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Andie",
+            "variables": {
+                "JQ?A`Q.sK3IV`*%cbt_T": [
+                    "blub",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "andie-a",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "b36584db82bdd45014430aa918461ca0",
+                    "md5ext": "b36584db82bdd45014430aa918461ca0.svg",
+                    "rotationCenterX": 80,
+                    "rotationCenterY": 65
+                },
+                {
+                    "name": "andie-b",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "b3fc774e753fef520fb544127a48554b",
+                    "md5ext": "b3fc774e753fef520fb544127a48554b.svg",
+                    "rotationCenterX": 40,
+                    "rotationCenterY": 91
+                },
+                {
+                    "name": "andie-c",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "ded71c8a0f39852178f1695b622c2d89",
+                    "md5ext": "ded71c8a0f39852178f1695b622c2d89.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 49
+                },
+                {
+                    "name": "andie-d",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "d92aaf6cf44921905d51ca4a10a4f3d6",
+                    "md5ext": "d92aaf6cf44921905d51ca4a10a4f3d6.svg",
+                    "rotationCenterX": 71,
+                    "rotationCenterY": 57
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Basketball Bounce",
+                    "assetId": "1727f65b5f22d151685b8e5917456a60",
+                    "dataFormat": "wav",
+                    "format": "adpcm",
+                    "rate": 22050,
+                    "sampleCount": 8129,
+                    "md5ext": "1727f65b5f22d151685b8e5917456a60.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 78,
+            "y": 7,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "`jEk@4|i[#Fk?(8x)AV.-my variable",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "my variable"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "JQ?A`Q.sK3IV`*%cbt_T",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "blub"
+            },
+            "spriteName": "Andie",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.3.61",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+    }
+}
