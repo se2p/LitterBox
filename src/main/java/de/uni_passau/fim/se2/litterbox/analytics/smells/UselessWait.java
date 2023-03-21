@@ -10,6 +10,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
+/**
+ * This finder detects the useless wait smell. A wait seconds block without any following blocks
+ * (or blocks before ir in case it is inside a loop) is useless as the waiting does not contribute to the project.
+ */
 public class UselessWait extends AbstractIssueFinder {
     public static final String NAME = "useless_wait";
     private int loopCount = 0;
@@ -83,9 +87,9 @@ public class UselessWait extends AbstractIssueFinder {
     /**
      * It should be checked if either half of the if-else has something meaningful.
      *
-     * @param node ToDo
-     * @param stmtList ToDo
-     * @return ToDo
+     * @param node     IfElseStmt that should be checked
+     * @param stmtList the stmtList that was already inspected
+     * @return if the other stmtList of the IfElseStmt contains something meaningful
      */
     private boolean hasOtherBlocks(IfElseStmt node, StmtList stmtList) {
         if (stmtList != node.getThenStmts()) {
@@ -97,13 +101,12 @@ public class UselessWait extends AbstractIssueFinder {
         }
     }
 
-
     /**
      * Leading statements on top level should be ignored, as they have already been processed at runtime.
      *
-     * @param node ToDo
-     * @param parentStmtList ToDo
-     * @return ToDo
+     * @param node           the node that should be inspected if it is in last place in the ScriptEntity
+     * @param parentStmtList the stmtList that contains the node
+     * @return if the node is at last place in the ScriptEntity
      */
     private boolean canOtherStmtsBeIgnored(ASTNode node, StmtList parentStmtList) {
         if (parentStmtList.getParentNode() instanceof ScriptEntity) {

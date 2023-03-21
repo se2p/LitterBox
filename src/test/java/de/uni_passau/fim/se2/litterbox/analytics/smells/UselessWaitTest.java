@@ -50,4 +50,14 @@ public class UselessWaitTest implements JsonTest {
     public void testUselessWaitLeadingBlocks() throws IOException, ParsingException {
         assertThatFinderReports(1, new UselessWait(), "./src/test/fixtures/smells/uselessWaitLeadingBlocks.json");
     }
+
+    @Test
+    public void testUselessWaitOtherStmts() throws IOException, ParsingException {
+        assertThatFinderReports(0, new UselessWait(), "./src/test/fixtures/smells/uselessWaitOtherStmts.json");
+    }
+
+    @Test
+    public void testUselessWaitIfElseWorking() throws IOException, ParsingException {
+        assertThatFinderReports(0, new UselessWait(), "./src/test/fixtures/smells/uselessWaitIfElseWorking.json");
+    }
 }
