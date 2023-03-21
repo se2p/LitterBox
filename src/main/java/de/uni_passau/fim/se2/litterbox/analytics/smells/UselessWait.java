@@ -68,34 +68,49 @@ public class UselessWait extends AbstractIssueFinder {
     private boolean hasOtherBlocks(ASTNode node, StmtList stmtList) {
         if (node instanceof ScriptEntity) {
             return false;
-        } else if (node instanceof IfElseStmt) {
-            //it should be checked if the other half of the if-else has something meaningful
-            if (stmtList != ((IfElseStmt) node).getThenStmts()) {
-                boolean hasStmtsOfValue = checkStmtListOfIfElse(((IfElseStmt) node).getThenStmts());
-                if (hasStmtsOfValue) {
-                    return true;
-                }
-            } else if (stmtList != ((IfElseStmt) node).getElseStmts()) {
-                boolean hasStmtsOfValue = checkStmtListOfIfElse(((IfElseStmt) node).getElseStmts());
-                if (hasStmtsOfValue) {
-                    return true;
-                }
-            } else {
-                throw new IllegalStateException("An If-Else-block only has two stmtLists so one has to fit and you should never reach this point.");
-            }
+        } else if (node instanceof IfElseStmt && hasOtherBlocks((IfElseStmt) node, stmtList)) {
+            return true;
         }
         StmtList parentStmtList = (StmtList) node.getParentNode();
         boolean hasOtherStmts = checkStmtList(parentStmtList);
         if (hasOtherStmts) {
-            //leading statements on top level should be ignored, as they have already been processed at runtime
-            if (parentStmtList.getParentNode() instanceof ScriptEntity) {
-                ASTNode lastNode = parentStmtList.getStatement(parentStmtList.getNumberOfStatements() - 1);
-                return !(lastNode == node);
-            } else {
-                return true;
-            }
+            return !canOtherStmtsBeIgnored(node, parentStmtList);
         } else {
             return hasOtherBlocks(parentStmtList.getParentNode(), parentStmtList);
+        }
+    }
+
+    /**
+     * It should be checked if either half of the if-else has something meaningful.
+     *
+     * @param node ToDo
+     * @param stmtList ToDo
+     * @return ToDo
+     */
+    private boolean hasOtherBlocks(IfElseStmt node, StmtList stmtList) {
+        if (stmtList != node.getThenStmts()) {
+            return checkStmtListOfIfElse(node.getThenStmts());
+        } else if (stmtList != node.getElseStmts()) {
+            return checkStmtListOfIfElse(node.getElseStmts());
+        } else {
+            throw new IllegalStateException("An If-Else-block only has two stmtLists so one has to fit and you should never reach this point.");
+        }
+    }
+
+
+    /**
+     * Leading statements on top level should be ignored, as they have already been processed at runtime.
+     *
+     * @param node ToDo
+     * @param parentStmtList ToDo
+     * @return ToDo
+     */
+    private boolean canOtherStmtsBeIgnored(ASTNode node, StmtList parentStmtList) {
+        if (parentStmtList.getParentNode() instanceof ScriptEntity) {
+            ASTNode lastNode = parentStmtList.getStatement(parentStmtList.getNumberOfStatements() - 1);
+            return lastNode == node;
+        } else {
+            return false;
         }
     }
 
@@ -111,11 +126,7 @@ public class UselessWait extends AbstractIssueFinder {
     }
 
     private boolean checkStmtList(StmtList stmtList) {
-        if (stmtList.getNumberOfStatements() > 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return stmtList.getNumberOfStatements() > 1;
     }
 
     @Override
