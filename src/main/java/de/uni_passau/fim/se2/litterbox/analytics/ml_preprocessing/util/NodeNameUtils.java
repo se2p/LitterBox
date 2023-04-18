@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptNameVisitor;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,11 +37,12 @@ public class NodeNameUtils {
      * @return the script entity name
      */
     public static Optional<String> getScriptEntityName(ScriptEntity node) {
-        if (node instanceof Script)
-            return Optional.of("ScriptId_" + node.getScratchBlocks().hashCode());
+        ScriptNameVisitor nameVisitor = new ScriptNameVisitor();
+        if (node instanceof Script){
+            return Optional.of("ScriptId_" + nameVisitor.getName(node));
+        }
         else if (node instanceof ProcedureDefinition)
-            return Optional.of("Sprite_id_" + getParentSpriteName(node) +
-                    "_ProcedureId_" + StringUtil.replaceSpecialCharacters(((ProcedureDefinition) node).getIdent().getName()));
+            return Optional.of("ProcedureId_" + nameVisitor.getName(node));
         else return Optional.empty();
     }
 
@@ -60,6 +62,8 @@ public class NodeNameUtils {
         if (!splitNameParts.isEmpty()) {
             splitName = String.join("|", splitNameParts);
         }
+        if(splitName.length()> 100)
+            return splitName.substring(0, Math.min(splitName.length(), 100));
         return splitName;
     }
 
