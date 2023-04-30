@@ -37,9 +37,9 @@ public class NodeNameUtils {
      */
     public static Optional<String> getScriptEntityName(ScriptEntity node) {
         if (node instanceof Script)
-            return Optional.of("ScriptId_" + node.getScratchBlocks().hashCode());
+            return Optional.of("_ScriptId_" + node.getScratchBlocks().hashCode());
         else if (node instanceof ProcedureDefinition)
-            return Optional.of("Sprite_id_" + getParentSpriteName(node) +
+            return Optional.of("_Sprite_id_" + getParentSpriteName(node) +
                     "_ProcedureId_" + StringUtil.replaceSpecialCharacters(((ProcedureDefinition) node).getIdent().getName()));
         else return Optional.empty();
     }

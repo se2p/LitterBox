@@ -82,6 +82,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             if (isValidateScriptFeature(singleScriptFeatures)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
+            else scriptFeatures.add(singleScriptFeatures); // consider also empty paths
         });
         return scriptFeatures;
     }
