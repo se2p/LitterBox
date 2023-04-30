@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptNameVisitor;
 
 import java.util.List;
 import java.util.Optional;
