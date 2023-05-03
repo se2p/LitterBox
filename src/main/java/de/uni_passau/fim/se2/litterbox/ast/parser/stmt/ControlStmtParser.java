@@ -57,33 +57,32 @@ public class ControlStmtParser {
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
 
         switch (opcode) {
-            case control_if:
+            case control_if -> {
                 stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(state, current, allBlocks, inputs);
                 return new IfThenStmt(boolExpr, stmtList, metadata);
-
-            case control_if_else:
+            }
+            case control_if_else -> {
                 stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(state, current, allBlocks, inputs);
                 elseStmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK2_KEY);
                 return new IfElseStmt(boolExpr, stmtList, elseStmtList, metadata);
-
-            case control_repeat:
+            }
+            case control_repeat -> {
                 NumExpr numExpr = NumExprParser.parseNumExpr(state, current, TIMES_KEY, allBlocks);
                 stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatTimesStmt(numExpr, stmtList, metadata);
-
-            case control_repeat_until:
+            }
+            case control_repeat_until -> {
                 stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(state, current, allBlocks, inputs);
                 return new UntilStmt(boolExpr, stmtList, metadata);
-
-            case control_forever:
+            }
+            case control_forever -> {
                 stmtList = getSubstackStmtList(state, allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatForeverStmt(stmtList, metadata);
-
-            default:
-                throw new ParsingException("Unknown Opcode " + opcodeString);
+            }
+            default -> throw new ParsingException("Unknown Opcode " + opcodeString);
         }
     }
 

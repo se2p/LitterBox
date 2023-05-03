@@ -205,30 +205,15 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String getKeyValue(int numberValue) {
-        String key;
-        switch (numberValue) {
-            case UPARROW:
-                key = IssueTranslator.getInstance().getInfo("up_arrow");
-                break;
-            case DOWNARROW:
-                key = IssueTranslator.getInstance().getInfo("down_arrow");
-                break;
-            case LEFTARROW:
-                key = IssueTranslator.getInstance().getInfo("left_arrow");
-                break;
-            case RIGHTARROW:
-                key = IssueTranslator.getInstance().getInfo("right_arrow");
-                break;
-            case SPACE:
-                key = IssueTranslator.getInstance().getInfo("space");
-                break;
-            case ANYKEY:
-                key = IssueTranslator.getInstance().getInfo("any");
-                break;
-            default:
-                key = String.valueOf((char) numberValue);
-        }
-        return key;
+        return switch (numberValue) {
+            case UPARROW -> IssueTranslator.getInstance().getInfo("up_arrow");
+            case DOWNARROW -> IssueTranslator.getInstance().getInfo("down_arrow");
+            case LEFTARROW -> IssueTranslator.getInstance().getInfo("left_arrow");
+            case RIGHTARROW -> IssueTranslator.getInstance().getInfo("right_arrow");
+            case SPACE -> IssueTranslator.getInstance().getInfo("space");
+            case ANYKEY -> IssueTranslator.getInstance().getInfo("any");
+            default -> String.valueOf((char) numberValue);
+        };
     }
 
     public static String createReferenceInput(String inputName, int shadowIndicator, String reference,

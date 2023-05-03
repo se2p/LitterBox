@@ -53,43 +53,43 @@ public class SpriteLookStmtParser {
         StringExpr stringExpr;
         NumExpr numExpr;
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
-        switch (opcode) {
-            case looks_show:
-                return new Show(metadata);
-            case looks_hide:
-                return new Hide(metadata);
-            case looks_sayforsecs:
+        return switch (opcode) {
+            case looks_show -> new Show(metadata);
+            case looks_hide -> new Hide(metadata);
+            case looks_sayforsecs -> {
                 stringExpr = StringExprParser.parseStringExpr(state, current, MESSAGE_KEY, allBlocks);
                 numExpr = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
-                return new SayForSecs(stringExpr, numExpr, metadata);
-            case looks_say:
+                yield new SayForSecs(stringExpr, numExpr, metadata);
+            }
+            case looks_say -> {
                 stringExpr = StringExprParser.parseStringExpr(state, current, MESSAGE_KEY, allBlocks);
-                return new Say(stringExpr, metadata);
-            case looks_thinkforsecs:
+                yield new Say(stringExpr, metadata);
+            }
+            case looks_thinkforsecs -> {
                 stringExpr = StringExprParser.parseStringExpr(state, current, MESSAGE_KEY, allBlocks);
                 numExpr = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
-                return new ThinkForSecs(stringExpr, numExpr, metadata);
-            case looks_think:
+                yield new ThinkForSecs(stringExpr, numExpr, metadata);
+            }
+            case looks_think -> {
                 stringExpr = StringExprParser.parseStringExpr(state, current, MESSAGE_KEY, allBlocks);
-                return new Think(stringExpr, metadata);
-            case looks_nextcostume:
-                return new NextCostume(metadata);
-            case looks_switchcostumeto:
+                yield new Think(stringExpr, metadata);
+            }
+            case looks_nextcostume -> new NextCostume(metadata);
+            case looks_switchcostumeto -> {
                 ElementChoice costumeChoice = CostumeChoiceParser.parse(state, current, allBlocks);
-                return new SwitchCostumeTo(costumeChoice, metadata);
-            case looks_changesizeby:
+                yield new SwitchCostumeTo(costumeChoice, metadata);
+            }
+            case looks_changesizeby -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, CHANGE_KEY, allBlocks);
-                return new ChangeSizeBy(numExpr, metadata);
-            case looks_setsizeto:
+                yield new ChangeSizeBy(numExpr, metadata);
+            }
+            case looks_setsizeto -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, SIZE_KEY_CAP, allBlocks);
-                return new SetSizeTo(numExpr, metadata);
-            case looks_gotofrontback:
-                return parseGoToLayer(current, metadata);
-            case looks_goforwardbackwardlayers:
-                return parseGoForwardBackwardLayer(state, current, allBlocks, metadata);
-            default:
-                throw new RuntimeException("Not implemented for opcode " + opcodeString);
-        }
+                yield new SetSizeTo(numExpr, metadata);
+            }
+            case looks_gotofrontback -> parseGoToLayer(current, metadata);
+            case looks_goforwardbackwardlayers -> parseGoForwardBackwardLayer(state, current, allBlocks, metadata);
+        };
     }
 
     private static SpriteLookStmt parseGoForwardBackwardLayer(final ProgramParserState state, JsonNode current,

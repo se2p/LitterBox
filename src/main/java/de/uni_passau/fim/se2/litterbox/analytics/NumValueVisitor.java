@@ -125,68 +125,23 @@ public class NumValueVisitor implements ScratchVisitor {
         node.getOperand2().accept(this);
         bValue = getEndValue();
 
-        switch (operand) {
-
-            case ABS:
-                endValue = Math.abs(bValue);
-                break;
-
-            case ACOS:
-                endValue = Math.acos(bValue);
-                break;
-
-            case ASIN:
-                endValue = Math.asin(bValue);
-                break;
-
-            case ATAN:
-                endValue = Math.atan(bValue);
-                break;
-
-            case CEILING:
-                endValue = Math.ceil(bValue);
-                break;
-
-            case COS:
-                endValue = Math.cos(bValue);
-                break;
-
-            case FLOOR:
-                endValue = Math.floor(bValue);
-                break;
-
-            case LN:
-                endValue = Math.log(bValue);
-                break;
-
-            case LOG:
-                endValue = Math.log10(bValue);
-                break;
-
-            case POW10:
-                endValue = Math.pow(bValue, 10);
-                break;
-
-            case POWE:
-                endValue = Math.pow(bValue, Math.E);
-                break;
-
-            case SIN:
-                endValue = Math.sin(bValue);
-                break;
-
-            case SQRT:
-                endValue = Math.sqrt(bValue);
-                break;
-
-            case TAN:
-                endValue = Math.tan(bValue);
-                break;
-
-            case UNKNOWN:
-            default:
-                throw new NoNumberException();
-        }
+        endValue = switch (operand) {
+            case ABS -> Math.abs(bValue);
+            case ACOS -> Math.acos(bValue);
+            case ASIN -> Math.asin(bValue);
+            case ATAN -> Math.atan(bValue);
+            case CEILING -> Math.ceil(bValue);
+            case COS -> Math.cos(bValue);
+            case FLOOR -> Math.floor(bValue);
+            case LN -> Math.log(bValue);
+            case LOG -> Math.log10(bValue);
+            case POW10 -> Math.pow(bValue, 10);
+            case POWE -> Math.pow(bValue, Math.E);
+            case SIN -> Math.sin(bValue);
+            case SQRT -> Math.sqrt(bValue);
+            case TAN -> Math.tan(bValue);
+            case UNKNOWN -> throw new NoNumberException();
+        };
     }
 
     private double getEndValue() {

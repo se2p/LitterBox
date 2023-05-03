@@ -248,22 +248,16 @@ public class IssueTool {
         List<IssueFinder> finders = new ArrayList<>();
 
         switch (commandString) {
-            case ALL:
-                finders = new ArrayList<>(generateAllFinders().values());
-                break;
-            case BUGS:
-                finders = new ArrayList<>(generateBugFinders().values());
-                break;
-            case SMELLS:
-                finders = new ArrayList<>(generateSmellFinders().values());
-                break;
-            case PERFUMES:
-                finders = new ArrayList<>(generatePerfumeFinders().values());
-                break;
-            case DEFAULT:
-                finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
-                break;
-            default:
+            case ALL -> finders = new ArrayList<>(generateAllFinders().values());
+            case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
+            case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
+            case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
+            case DEFAULT -> {
+                var strictFinders = generateAllFinders().values().stream()
+                        .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
+                finders.addAll(strictFinders);
+            }
+            default -> {
                 for (String detectorName : commandString.split(",")) {
                     Map<String, IssueFinder> allFinders = generateAllFinders();
                     if (!allFinders.containsKey(detectorName)) {
@@ -273,7 +267,7 @@ public class IssueTool {
                     }
                     finders.add(allFinders.get(detectorName));
                 }
-                break;
+            }
         }
         return Collections.unmodifiableList(finders);
     }

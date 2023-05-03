@@ -50,59 +50,67 @@ public class SpriteMotionStmtParser {
         NumExpr numExpr;
         Position position;
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
-        switch (opcode) {
-            case motion_movesteps:
+        return switch (opcode) {
+            case motion_movesteps -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, STEPS_KEY, allBlocks);
-                return new MoveSteps(numExpr, metadata);
-            case motion_turnright:
+                yield new MoveSteps(numExpr, metadata);
+            }
+            case motion_turnright -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, DEGREES_KEY, allBlocks);
-                return new TurnRight(numExpr, metadata);
-            case motion_turnleft:
+                yield new TurnRight(numExpr, metadata);
+            }
+            case motion_turnleft -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, DEGREES_KEY, allBlocks);
-                return new TurnLeft(numExpr, metadata);
-            case motion_gotoxy:
+                yield new TurnLeft(numExpr, metadata);
+            }
+            case motion_gotoxy -> {
                 NumExpr xExpr = NumExprParser.parseNumExpr(state, current, X, allBlocks);
                 NumExpr yExpr = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
-                return new GoToPosXY(xExpr, yExpr, metadata);
-            case motion_goto:
+                yield new GoToPosXY(xExpr, yExpr, metadata);
+            }
+            case motion_goto -> {
                 position = PositionParser.parse(state, current, allBlocks);
-                return new GoToPos(position, metadata);
-            case motion_glidesecstoxy:
+                yield new GoToPos(position, metadata);
+            }
+            case motion_glidesecstoxy -> {
                 NumExpr secs = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
                 NumExpr x = NumExprParser.parseNumExpr(state, current, X, allBlocks);
                 NumExpr y = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
-                return new GlideSecsToXY(secs, x, y, metadata);
-            case motion_glideto:
+                yield new GlideSecsToXY(secs, x, y, metadata);
+            }
+            case motion_glideto -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, SECS_KEY, allBlocks);
                 position = PositionParser.parse(state, current, allBlocks);
-                return new GlideSecsTo(numExpr, position, metadata);
-            case motion_pointindirection:
+                yield new GlideSecsTo(numExpr, position, metadata);
+            }
+            case motion_pointindirection -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, DIRECTION_KEY_CAP, allBlocks);
-                return new PointInDirection(numExpr, metadata);
-            case motion_pointtowards:
+                yield new PointInDirection(numExpr, metadata);
+            }
+            case motion_pointtowards -> {
                 position = PositionParser.parse(state, current, allBlocks);
-                return new PointTowards(position, metadata);
-            case motion_changexby:
+                yield new PointTowards(position, metadata);
+            }
+            case motion_changexby -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, DX_KEY, allBlocks);
-                return new ChangeXBy(numExpr, metadata);
-            case motion_changeyby:
+                yield new ChangeXBy(numExpr, metadata);
+            }
+            case motion_changeyby -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, DY_KEY, allBlocks);
-                return new ChangeYBy(numExpr, metadata);
-            case motion_setx:
+                yield new ChangeYBy(numExpr, metadata);
+            }
+            case motion_setx -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, X, allBlocks);
-                return new SetXTo(numExpr, metadata);
-            case motion_sety:
+                yield new SetXTo(numExpr, metadata);
+            }
+            case motion_sety -> {
                 numExpr = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
-                return new SetYTo(numExpr, metadata);
-            case motion_ifonedgebounce:
-                return new IfOnEdgeBounce(metadata);
-            case sensing_setdragmode:
-                return parseSetDragmode(current, metadata);
-            case motion_setrotationstyle:
-                return parseSetRotationStyle(current, metadata);
-            default:
-                throw new RuntimeException("Parsing not implemented yet for opcode " + opcodeString);
-        }
+                yield new SetYTo(numExpr, metadata);
+            }
+            case motion_ifonedgebounce -> new IfOnEdgeBounce(metadata);
+            case sensing_setdragmode -> parseSetDragmode(current, metadata);
+            case motion_setrotationstyle -> parseSetRotationStyle(current, metadata);
+        };
     }
 
     private static SpriteMotionStmt parseSetRotationStyle(JsonNode current, BlockMetadata metadata) {

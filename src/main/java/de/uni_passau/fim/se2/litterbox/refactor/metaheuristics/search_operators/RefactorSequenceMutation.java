@@ -25,11 +25,9 @@ import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
 
-    private static final Logger log = Logger.getLogger(RefactorSequenceMutation.class.getName());
     private static final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
     private final List<RefactoringFinder> refactoringFinders;
@@ -84,18 +82,15 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
     private int mutateAtIndex(List<Integer> mutatedProductions, int index) {
         var mutation = Randomness.nextInt(3);
         switch (mutation) {
-            case 0:
+            case 0 -> {
                 mutatedProductions.add(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
                 index++;
-                break;
-            case 1:
-                mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
-                break;
-            case 2:
-            default:
+            }
+            case 1 -> mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
+            default -> {
                 mutatedProductions.remove(index);
                 index--;
-                break;
+            }
         }
         return index;
     }

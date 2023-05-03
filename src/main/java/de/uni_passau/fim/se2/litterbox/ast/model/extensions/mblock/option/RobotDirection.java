@@ -80,8 +80,7 @@ public class RobotDirection extends AbstractNode implements MBlockOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RobotDirection)) return false;
-        RobotDirection that = (RobotDirection) o;
+        if (!(o instanceof RobotDirection that)) return false;
         return directionType == that.directionType;
     }
 
@@ -102,28 +101,14 @@ public class RobotDirection extends AbstractNode implements MBlockOption {
         }
 
         public static EventDirectionType fromString(String name) {
-            switch (name) {
-                case "1":
-                    name = "forward";
-                    break;
+            name = switch (name) {
+                case "1" -> "forward";
+                case "2" -> "backward";
+                case "turn_left", "3" -> "left";
+                case "turn_right", "4" -> "right";
+                default -> name;
+            };
 
-                case "2":
-                    name = "backward";
-                    break;
-
-                case "turn_left":
-                case "3":
-                    name = "left";
-                    break;
-
-                case "turn_right":
-                case "4":
-                    name = "right";
-                    break;
-
-                default:
-                    break;
-            }
             for (EventDirectionType f : values()) {
                 if (f.getName().equals(name.toLowerCase())) {
                     return f;

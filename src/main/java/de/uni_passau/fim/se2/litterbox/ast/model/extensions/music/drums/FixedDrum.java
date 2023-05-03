@@ -93,59 +93,26 @@ public class FixedDrum extends AbstractNode implements Drum, FixedNodeOption {
         }
 
         public String getName() {
-            switch (this) {
-                case SNARE_DRUM:
-                    return "(1) Snare Drum";
-                case BASS_DRUM:
-                    return "(2) Bass Drum";
-
-                case SIDE_STICK:
-                    return "(3) Side Stick";
-
-                case CRASH_CYMBAL:
-                    return "(4) Crash Cymbal";
-
-                case OPEN_HI_HAT:
-                    return "(5) Open Hi-Hat";
-
-                case CLOSED_HI_HAT:
-                    return "(6) Closed Hi-Hat";
-                case TAMBOURINE:
-                    return "(7) Tambourine";
-                case HAND_CLAP:
-                    return "(8) Hand Clap";
-                case CLAVES:
-                    return "(9) Claves";
-
-                case WOOD_BLOCK:
-                    return "(10) Wood Block";
-
-                case COWBELL:
-                    return "(11) Cowbell";
-
-                case TRIANGLE:
-                    return "(12) Triangle";
-
-                case BONGO:
-                    return "(13) Bongo";
-
-                case CONGA:
-                    return "(14) Conga";
-
-                case CABASA:
-                    return "(15) Cabasa";
-
-                case GUIRO:
-                    return "(16) Guiro";
-
-                case VIBRASLAP:
-                    return "(17) Vibraslap";
-
-                case CUICA:
-                    return "(18) Cuica";
-                default:
-                    throw new IllegalArgumentException("Unknown FixedDrum: " + type);
-            }
+            return switch (this) {
+                case SNARE_DRUM -> "(1) Snare Drum";
+                case BASS_DRUM -> "(2) Bass Drum";
+                case SIDE_STICK -> "(3) Side Stick";
+                case CRASH_CYMBAL -> "(4) Crash Cymbal";
+                case OPEN_HI_HAT -> "(5) Open Hi-Hat";
+                case CLOSED_HI_HAT -> "(6) Closed Hi-Hat";
+                case TAMBOURINE -> "(7) Tambourine";
+                case HAND_CLAP -> "(8) Hand Clap";
+                case CLAVES -> "(9) Claves";
+                case WOOD_BLOCK -> "(10) Wood Block";
+                case COWBELL -> "(11) Cowbell";
+                case TRIANGLE -> "(12) Triangle";
+                case BONGO -> "(13) Bongo";
+                case CONGA -> "(14) Conga";
+                case CABASA -> "(15) Cabasa";
+                case GUIRO -> "(16) Guiro";
+                case VIBRASLAP -> "(17) Vibraslap";
+                case CUICA -> "(18) Cuica";
+            };
         }
 
         public String getType() {

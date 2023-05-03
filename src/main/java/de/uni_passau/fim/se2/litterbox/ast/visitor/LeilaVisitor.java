@@ -1631,25 +1631,21 @@ public class LeilaVisitor extends PrintVisitor {
         TYPE expectedType = expectedTypes.peek();
         double value = number.getValue();
         switch (expectedType) {
-            case ORIGINAL:
+            case ORIGINAL -> {
                 if (isInteger(value)) {
                     emitAsLong(value);
                 } else {
                     emitAsDouble(value);
                 }
-                break;
-            case INTEGER:
+            }
+            case INTEGER -> {
                 if (isInteger(value)) {
                     emitAsLong(value);
                 } else {
                     throw new RuntimeException("Expected type integer but got " + value);
                 }
-                break;
-            case FLOAT:
-                emitAsDouble(value);
-                break;
-            default:
-                throw new RuntimeException("Unknown expected type: " + expectedType);
+            }
+            case FLOAT -> emitAsDouble(value);
         }
     }
 
@@ -1680,65 +1676,49 @@ public class LeilaVisitor extends PrintVisitor {
         NumExpr operand2 = numFunctOf.getOperand2();
         boolean expectationSet = false;
         switch (numFunctOf.getOperand1().getType()) {
-            case ABS:
+            case ABS -> {
                 emitNoSpace("mathAbsF(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case LN:
-                emitNoSpace("mathLn(");
-                break;
-            case ACOS:
-                emitNoSpace("mathAcos(");
-                break;
-            case ASIN:
-                emitNoSpace("mathAsin(");
-                break;
-            case ATAN:
+            }
+            case LN -> emitNoSpace("mathLn(");
+            case ACOS -> emitNoSpace("mathAcos(");
+            case ASIN -> emitNoSpace("mathAsin(");
+            case ATAN -> {
                 emitNoSpace("mathAtan(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case CEILING:
+            }
+            case CEILING -> {
                 expectFloat();
                 emitNoSpace("mathCeiling(");
                 expectationSet = true;
-                break;
-            case COS:
+            }
+            case COS -> {
                 emitNoSpace("mathCosDegree(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case FLOOR:
+            }
+            case FLOOR -> {
                 emitNoSpace("mathFloor(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case LOG:
-                emitNoSpace("mathLog(");
-                break;
-            case POW10:
-                emitNoSpace("mathPowten(");
-                break;
-            case POWE:
-                emitNoSpace("mathPowe(");
-                break;
-            case SIN:
+            }
+            case LOG -> emitNoSpace("mathLog(");
+            case POW10 -> emitNoSpace("mathPowten(");
+            case POWE -> emitNoSpace("mathPowe(");
+            case SIN -> {
                 emitNoSpace("mathSinDegree(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case SQRT:
+            }
+            case SQRT -> {
                 emitNoSpace("mathSqrt(");
                 expectFloat();
                 expectationSet = true;
-                break;
-            case TAN:
-                emitNoSpace("mathTan(");
-                break;
-            case UNKNOWN:
-            default:
-                throw new RuntimeException("Unknown numerical function");
+            }
+            case TAN -> emitNoSpace("mathTan(");
+            case UNKNOWN -> throw new RuntimeException("Unknown numerical function");
         }
         if (!expectationSet) {
             expectInteger();

@@ -100,140 +100,73 @@ public class TFixedLanguage extends AbstractNode implements TLanguage, FixedNode
         }
 
         public String getName() {
-            switch (this) {
-                case ALBANIAN:
-                    return "Albanian";
-                case AMHARIC:
-                    return "Amharic";
-                case ARABIC:
-                    return "Arabic";
-                case ARMENIAN:
-                    return "Armenian";
-                case AZERBAIJANI:
-                    return "Azerbaijani";
-                case BASQUE:
-                    return "Basque";
-                case BELARUSIAN:
-                    return "Belarusian";
-                case BULGARIAN:
-                    return "Bulgarian";
-                case CATALAN:
-                    return "Catalan";
-                case CHINESE_TRADITIONAL:
-                    return "Chinese (Traditional)";
-                case CROATIAN:
-                    return "Croatian";
-                case CZECH:
-                    return "Czech";
-                case DANISH:
-                    return "Danish";
-                case DUTCH:
-                    return "Dutch";
-                case ENGLISH:
-                    return "English";
-                case ESPERANTO:
-                    return "Esperanto";
-                case ESTONIAN:
-                    return "Estonian";
-                case FINNISH:
-                    return "Finnish";
-                case FRENCH:
-                    return "French";
-                case GALICIAN:
-                    return "Galician";
-                case GERMAN:
-                    return "German";
-                case GREEK:
-                    return "Greek";
-                case HAITIAN_CREOLE:
-                    return "Haitian Creole";
-                case HINDI:
-                    return "Hindi";
-                case HUNGARIAN:
-                    return "Hungarian";
-                case ICELANDIC:
-                    return "Icelandic";
-                case INDONESIAN:
-                    return "Indonesian";
-                case IRISH:
-                    return "Irish";
-                case ITALIAN:
-                    return "Italian";
-                case JAPANESE:
-                    return "Japanese";
-                case KANNADA:
-                    return "Kannada";
-                case KOREAN:
-                    return "Korean";
-                case KURDISH_KURMANJI:
-                    return "Kurdish (Kurmanji)";
-                case LATIN:
-                    return "Latin";
-                case LATVIAN:
-                    return "Latvian";
-                case LITHUANIAN:
-                    return "Lithuanian";
-                case MACEDONIAN:
-                    return "Macedonian";
-                case MALAY:
-                    return "Malay";
-                case MALAYALAM:
-                    return "Malayalam";
-                case MALTESE:
-                    return "Maltese";
-                case MAORI:
-                    return "Maori";
-                case MARATHI:
-                    return "Marathi";
-                case MONGOLIAN:
-                    return "Mongolian";
-                case MYANMAR_BURMESE:
-                    return "Myanmar (Burmese)";
-                case PERSIAN:
-                    return "Persian";
-                case POLISH:
-                    return "Polish";
-                case PORTUGUESE:
-                    return "Portuguese";
-                case ROMANIAN:
-                    return "Romanian";
-                case RUSSIAN:
-                    return "Russian";
-                case SCOTS_GAELIC:
-                    return "Scots Gaelic";
-                case SERBIAN:
-                    return "Serbian";
-                case SLOVAK:
-                    return "Slovak";
-                case SLOVENIAN:
-                    return "Slovenian";
-                case SPANISH:
-                    return "Spanish";
-                case SWEDISH:
-                    return "Swedish";
-                case TELUGU:
-                    return "Telugu";
-                case THAI:
-                    return "Thai";
-                case TURKISH:
-                    return "Turkish";
-                case UKRAINIAN:
-                    return "Ukrainian";
-                case UZBEK:
-                    return "Uzbek";
-                case VIETNAMESE:
-                    return "Vietnamese";
-                case WELSH:
-                    return "Welsh";
-                case ZULU:
-                    return "Zulu";
-                case HEBREW:
-                    return "Hebrew";
-                case CHINESE_SIMPLIFIED:
-                    return "Chinese (Simplified)";
-                default:
-                    throw new IllegalArgumentException("Unknown FixedLanguage: " + type);
-            }
+            return switch (this) {
+                case ALBANIAN -> "Albanian";
+                case AMHARIC -> "Amharic";
+                case ARABIC -> "Arabic";
+                case ARMENIAN -> "Armenian";
+                case AZERBAIJANI -> "Azerbaijani";
+                case BASQUE -> "Basque";
+                case BELARUSIAN -> "Belarusian";
+                case BULGARIAN -> "Bulgarian";
+                case CATALAN -> "Catalan";
+                case CHINESE_TRADITIONAL -> "Chinese (Traditional)";
+                case CROATIAN -> "Croatian";
+                case CZECH -> "Czech";
+                case DANISH -> "Danish";
+                case DUTCH -> "Dutch";
+                case ENGLISH -> "English";
+                case ESPERANTO -> "Esperanto";
+                case ESTONIAN -> "Estonian";
+                case FINNISH -> "Finnish";
+                case FRENCH -> "French";
+                case GALICIAN -> "Galician";
+                case GERMAN -> "German";
+                case GREEK -> "Greek";
+                case HAITIAN_CREOLE -> "Haitian Creole";
+                case HINDI -> "Hindi";
+                case HUNGARIAN -> "Hungarian";
+                case ICELANDIC -> "Icelandic";
+                case INDONESIAN -> "Indonesian";
+                case IRISH -> "Irish";
+                case ITALIAN -> "Italian";
+                case JAPANESE -> "Japanese";
+                case KANNADA -> "Kannada";
+                case KOREAN -> "Korean";
+                case KURDISH_KURMANJI -> "Kurdish (Kurmanji)";
+                case LATIN -> "Latin";
+                case LATVIAN -> "Latvian";
+                case LITHUANIAN -> "Lithuanian";
+                case MACEDONIAN -> "Macedonian";
+                case MALAY -> "Malay";
+                case MALAYALAM -> "Malayalam";
+                case MALTESE -> "Maltese";
+                case MAORI -> "Maori";
+                case MARATHI -> "Marathi";
+                case MONGOLIAN -> "Mongolian";
+                case MYANMAR_BURMESE -> "Myanmar (Burmese)";
+                case PERSIAN -> "Persian";
+                case POLISH -> "Polish";
+                case PORTUGUESE -> "Portuguese";
+                case ROMANIAN -> "Romanian";
+                case RUSSIAN -> "Russian";
+                case SCOTS_GAELIC -> "Scots Gaelic";
+                case SERBIAN -> "Serbian";
+                case SLOVAK -> "Slovak";
+                case SLOVENIAN -> "Slovenian";
+                case SPANISH -> "Spanish";
+                case SWEDISH -> "Swedish";
+                case TELUGU -> "Telugu";
+                case THAI -> "Thai";
+                case TURKISH -> "Turkish";
+                case UKRAINIAN -> "Ukrainian";
+                case UZBEK -> "Uzbek";
+                case VIETNAMESE -> "Vietnamese";
+                case WELSH -> "Welsh";
+                case ZULU -> "Zulu";
+                case HEBREW -> "Hebrew";
+                case CHINESE_SIMPLIFIED -> "Chinese (Simplified)";
+            };
         }
 
         public String getType() {
