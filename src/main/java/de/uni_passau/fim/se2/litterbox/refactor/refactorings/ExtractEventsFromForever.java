@@ -89,9 +89,11 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ExtractEventsFromForever)) return false;
-        ExtractEventsFromForever that = (ExtractEventsFromForever) o;
-        return Objects.equals(loop, that.loop) && Objects.equals(scriptList, that.scriptList) && Objects.equals(script, that.script) && Objects.equals(eventScripts, that.eventScripts);
+        if (!(o instanceof ExtractEventsFromForever that)) return false;
+        return Objects.equals(loop, that.loop)
+                && Objects.equals(scriptList, that.scriptList)
+                && Objects.equals(script, that.script)
+                && Objects.equals(eventScripts, that.eventScripts);
     }
 
     @Override

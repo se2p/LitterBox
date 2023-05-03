@@ -77,8 +77,8 @@ public class Coordination extends AbstractIssueFinder {
                     }
                 }
             }
-            if (node instanceof IfThenStmt) {
-                return ((IfThenStmt) node).getBoolExpr() == (other.getCodeLocation());
+            if (node instanceof IfThenStmt ifThenStmt) {
+                return ifThenStmt.getBoolExpr() == (other.getCodeLocation());
             }
         }
 

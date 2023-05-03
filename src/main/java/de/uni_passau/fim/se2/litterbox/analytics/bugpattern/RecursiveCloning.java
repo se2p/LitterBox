@@ -68,9 +68,7 @@ public class RecursiveCloning extends AbstractIssueFinder {
     @Override
     public void visit(CreateCloneOf node) {
         if (secondVisit) {
-            if (node.getStringExpr() instanceof AsString
-                    && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
-
+            if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId) {
                 final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
 
                 if (spriteName.equals("_myself_") && !foundDelete) {

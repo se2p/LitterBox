@@ -62,10 +62,10 @@ public class TerminatedLoop extends AbstractIssueFinder {
         if (children.hasStatements()) {
             List<Stmt> stmts = children.getStmts();
             Stmt last = stmts.get(stmts.size() - 1);
-            if (last instanceof StopAll) {
-                addIssue(last, ((StopAll) last).getMetadata(), IssueSeverity.LOW);
-            } else if (last instanceof StopThisScript) {
-                addIssue(last, ((StopThisScript) last).getMetadata(), IssueSeverity.LOW);
+            if (last instanceof StopAll stopAll) {
+                addIssue(last, stopAll.getMetadata(), IssueSeverity.LOW);
+            } else if (last instanceof StopThisScript stopThisScript) {
+                addIssue(last, stopThisScript.getMetadata(), IssueSeverity.LOW);
             }
         }
     }

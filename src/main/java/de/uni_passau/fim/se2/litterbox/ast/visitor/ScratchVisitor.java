@@ -3406,12 +3406,12 @@ public interface ScratchVisitor {
      * @param node A node that should be visited.
      */
     default void visitDefaultVisitor(ASTNode node) {
-        if (node instanceof Stmt) {
-            visit((Stmt) node);
-        } else if (node instanceof Expression) {
-            visit((Expression) node);
-        } else if (node instanceof Event) {
-            visit((Event) node);
+        if (node instanceof Stmt stmt) {
+            visit(stmt);
+        } else if (node instanceof Expression expression) {
+            visit(expression);
+        } else if (node instanceof Event event) {
+            visit(event);
         } else {
             visit(node);
         }
@@ -3432,8 +3432,8 @@ public interface ScratchVisitor {
     }
 
     default void visit(MBlockNode node) {
-        if (this instanceof MBlockVisitor) {
-            ((MBlockVisitor) this).visit(node);
+        if (this instanceof MBlockVisitor mBlockVisitor) {
+            mBlockVisitor.visit(node);
         } else {
             visit((ExtensionBlock) node);
         }

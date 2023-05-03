@@ -65,9 +65,8 @@ public class MonitorMetadataParser {
             visible = monitorNode.get(VISIBLE_KEY).asBoolean();
         }
         JsonNode valueNode = monitorNode.get(VALUE_LOWER_KEY);
-        if (valueNode instanceof ArrayNode) {
+        if (valueNode instanceof ArrayNode valuesArray) {
             List<String> values = new ArrayList<>();
-            ArrayNode valuesArray = (ArrayNode) valueNode;
             for (int i = 0; i < valuesArray.size(); i++) {
                 values.add(valuesArray.get(i).asText());
             }

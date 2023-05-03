@@ -66,32 +66,32 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     }
 
     public void visitControlStmts(ControlStmt controlStmt) {
-        if (controlStmt instanceof IfThenStmt) {
-            this.getBlockCount(((IfThenStmt) controlStmt).getBoolExpr(), true);
+        if (controlStmt instanceof IfThenStmt ifThenStmt) {
+            this.getBlockCount(ifThenStmt.getBoolExpr(), true);
             for (Stmt stmt : ((IfThenStmt) controlStmt).getThenStmts().getStmts()) {
                 visit(stmt);
             }
-        } else if (controlStmt instanceof RepeatTimesStmt) {
-            this.getBlockCount(((RepeatTimesStmt) controlStmt).getTimes(), true);
-            for (Stmt stmt : ((RepeatTimesStmt) controlStmt).getStmtList().getStmts()) {
+        } else if (controlStmt instanceof RepeatTimesStmt repeatTimesStmt) {
+            this.getBlockCount(repeatTimesStmt.getTimes(), true);
+            for (Stmt stmt : repeatTimesStmt.getStmtList().getStmts()) {
                 visit(stmt);
             }
-        } else if (controlStmt instanceof UntilStmt) {
-            this.getBlockCount(((UntilStmt) controlStmt).getBoolExpr(), true);
-            for (Stmt stmt : ((UntilStmt) controlStmt).getStmtList().getStmts()) {
+        } else if (controlStmt instanceof UntilStmt untilStmt) {
+            this.getBlockCount(untilStmt.getBoolExpr(), true);
+            for (Stmt stmt : untilStmt.getStmtList().getStmts()) {
                 visit(stmt);
             }
-        } else if (controlStmt instanceof IfElseStmt) {
-            this.getBlockCount(((IfElseStmt) controlStmt).getBoolExpr(), true);
-            for (Stmt stmt : ((IfElseStmt) controlStmt).getThenStmts().getStmts()) {
+        } else if (controlStmt instanceof IfElseStmt ifElseStmt) {
+            this.getBlockCount(ifElseStmt.getBoolExpr(), true);
+            for (Stmt stmt : ifElseStmt.getThenStmts().getStmts()) {
                 visit(stmt);
             }
 
-            for (Stmt stmt : ((IfElseStmt) controlStmt).getElseStmts().getStmts()) {
+            for (Stmt stmt : ifElseStmt.getElseStmts().getStmts()) {
                 visit(stmt);
             }
-        } else if (controlStmt instanceof RepeatForeverStmt) {
-            for (Stmt stmt : ((RepeatForeverStmt) controlStmt).getStmtList().getStmts()) {
+        } else if (controlStmt instanceof RepeatForeverStmt repeatForeverStmt) {
+            for (Stmt stmt : repeatForeverStmt.getStmtList().getStmts()) {
                 visit(stmt);
             }
         }

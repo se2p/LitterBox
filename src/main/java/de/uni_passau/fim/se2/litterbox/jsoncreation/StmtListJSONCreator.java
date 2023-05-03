@@ -855,12 +855,12 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     private void createVariableWithInputBlock(NonDataBlockMetadata metadata, Identifier identifier, Expression expr, Opcode opcode) {
         List<String> inputs = new ArrayList<>();
-        if (expr instanceof NumberLiteral) {
+        if (expr instanceof NumberLiteral numberLiteral) {
             NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
             format.setGroupingUsed(false);
             format.setMinimumFractionDigits(0);
             inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                    format.format(((NumberLiteral) expr).getValue())));
+                    format.format(numberLiteral.getValue())));
         } else {
             inputs.add(createExpr(metadata, VALUE_KEY, expr));
         }
@@ -869,8 +869,8 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     private void createBroadcastStmt(NonDataBlockMetadata metadata, StringExpr stringExpr, Opcode opcode) {
         List<String> inputs = new ArrayList<>();
-        if (stringExpr instanceof StringLiteral) {
-            String message = ((StringLiteral) stringExpr).getText();
+        if (stringExpr instanceof StringLiteral stringLiteral) {
+            String message = stringLiteral.getText();
             String messageId;
             if (symbolTable.getMessage(message).isPresent()) {
                 messageId = symbolTable.getMessage(message).get().getIdentifier();
@@ -997,12 +997,12 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     }
 
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
-        if (numExpr instanceof NumberLiteral) {
+        if (numExpr instanceof NumberLiteral numberLiteral) {
             NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
             format.setGroupingUsed(false);
             format.setMinimumFractionDigits(0);
             return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
-                    format.format(((NumberLiteral) numExpr).getValue()));
+                    format.format(numberLiteral.getValue()));
         } else {
             return createExpr(metadata, inputKey, numExpr);
         }

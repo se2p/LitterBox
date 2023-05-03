@@ -97,23 +97,19 @@ public class MessageNeverSent extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            if (!addComment) {
-                final String actorName = currentActor.getIdent().getName();
-                final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
-                messageSent.add(new Pair<>(actorName, msgName));
-            }
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral && !addComment) {
+            final String actorName = currentActor.getIdent().getName();
+            final String msgName = stringLiteral.getText();
+            messageSent.add(new Pair<>(actorName, msgName));
         }
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            if (!addComment) {
-                final String actorName = currentActor.getIdent().getName();
-                final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
-                messageSent.add(new Pair<>(actorName, msgName));
-            }
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral && !addComment) {
+            final String actorName = currentActor.getIdent().getName();
+            final String msgName = stringLiteral.getText();
+            messageSent.add(new Pair<>(actorName, msgName));
         }
     }
 
@@ -124,15 +120,19 @@ public class MessageNeverSent extends AbstractIssueFinder {
             return;
         }
         currentScript = node;
-        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof ReceptionOfMessage) {
-            ReceptionOfMessage event = (ReceptionOfMessage) node.getEvent();
-            if (event.getMsg().getMessage() instanceof StringLiteral) {
-                final String msgName = ((StringLiteral) event.getMsg().getMessage()).getText();
+        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof ReceptionOfMessage event) {
+            if (event.getMsg().getMessage() instanceof StringLiteral message) {
+                final String msgName = message.getText();
                 if (!addComment) {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
-                    Hint hint = MessageNeverSentHintFactory.generateHint(((StringLiteral) event.getMsg().getMessage()).getText(), sayText, thinkText, touchedSprites);
+                    Hint hint = MessageNeverSentHintFactory.generateHint(
+                            message.getText(),
+                            sayText,
+                            thinkText,
+                            touchedSprites
+                    );
                     addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, hint);
                 }
             }
@@ -167,14 +167,14 @@ public class MessageNeverSent extends AbstractIssueFinder {
 
     @Override
     public void visit(Touching node) {
-        if (node.getTouchable() instanceof SpriteTouchable) {
-            processStringExpr((((SpriteTouchable) node.getTouchable()).getStringExpr()), touchedSprites);
+        if (node.getTouchable() instanceof SpriteTouchable touchable) {
+            processStringExpr(touchable.getStringExpr(), touchedSprites);
         }
     }
 
     private void processStringExpr(StringExpr node, Map<String, Set<String>> map) {
-        if (node instanceof StringLiteral) {
-            String text = ((StringLiteral) node).getText();
+        if (node instanceof StringLiteral stringLiteral) {
+            String text = stringLiteral.getText();
             if (map.containsKey(text)) {
                 map.get(text).add(currentActor.getIdent().getName());
             } else {

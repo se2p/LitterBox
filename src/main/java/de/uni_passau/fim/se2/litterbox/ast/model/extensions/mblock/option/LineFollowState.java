@@ -80,8 +80,7 @@ public class LineFollowState extends AbstractNode implements MBlockOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LineFollowState)) return false;
-        LineFollowState that = (LineFollowState) o;
+        if (!(o instanceof LineFollowState that)) return false;
         return type == that.type;
     }
 

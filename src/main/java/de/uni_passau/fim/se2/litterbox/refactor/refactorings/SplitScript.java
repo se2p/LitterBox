@@ -99,10 +99,16 @@ public class SplitScript extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SplitScript)) return false;
-        SplitScript that = (SplitScript) o;
-        return Objects.equals(script, that.script) && Objects.equals(splitPoint, that.splitPoint) && Objects.equals(replacementScript1, that.replacementScript1) && Objects.equals(replacementScript2, that.replacementScript2);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SplitScript that)) {
+            return false;
+        }
+        return Objects.equals(script, that.script)
+                && Objects.equals(splitPoint, that.splitPoint)
+                && Objects.equals(replacementScript1, that.replacementScript1)
+                && Objects.equals(replacementScript2, that.replacementScript2);
     }
 
     @Override

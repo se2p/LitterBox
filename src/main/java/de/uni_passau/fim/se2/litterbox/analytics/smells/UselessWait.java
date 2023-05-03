@@ -72,7 +72,7 @@ public class UselessWait extends AbstractIssueFinder {
     private boolean hasOtherBlocks(ASTNode node, StmtList stmtList) {
         if (node instanceof ScriptEntity) {
             return false;
-        } else if (node instanceof IfElseStmt && hasOtherBlocks((IfElseStmt) node, stmtList)) {
+        } else if (node instanceof IfElseStmt ifElseStmt && hasOtherBlocks(ifElseStmt, stmtList)) {
             return true;
         }
         StmtList parentStmtList = (StmtList) node.getParentNode();

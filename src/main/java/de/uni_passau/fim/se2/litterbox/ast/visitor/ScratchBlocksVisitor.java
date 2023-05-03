@@ -922,9 +922,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(ChangePenColorParamBy node) {
         emitNoSpace("change pen ");
 
-        if (node.getParam() instanceof StringLiteral) {
+        if (node.getParam() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -939,9 +938,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(SetPenColorParamTo node) {
         emitNoSpace("set pen ");
-        if (node.getParam() instanceof StringLiteral) {
+        if (node.getParam() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -975,81 +973,36 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(FixedLanguage node) {
         emitNoSpace("( ");
-        switch (node.getType()) {
-            case ARABIC:
-                emitNoSpace("Arabic");
-                break;
-            case CHINESE:
-                emitNoSpace("Chinese (Mandarin)");
-                break;
-            case DANISH:
-                emitNoSpace("Danish");
-                break;
-            case DUTCH:
-                emitNoSpace("Dutch");
-                break;
-            case ENGLISH:
-                emitNoSpace("English");
-                break;
-            case FRENCH:
-                emitNoSpace("French");
-                break;
-            case GERMAN:
-                emitNoSpace("German");
-                break;
-            case HINDI:
-                emitNoSpace("Hindi");
-                break;
-            case ICELANDIC:
-                emitNoSpace("Icelandic");
-                break;
-            case ITALIAN:
-                emitNoSpace("Italien");
-                break;
-            case JAPANESE:
-                emitNoSpace("Japanese");
-                break;
-            case KOREAN:
-                emitNoSpace("Korean");
-                break;
-            case NORWEGIAN:
-                emitNoSpace("Norwegian");
-                break;
-            case POLISH:
-                emitNoSpace("Polish");
-                break;
-            case PORTUGUESE_BR:
-                emitNoSpace("Portuguese (Brazilian)");
-                break;
-            case PORTUGUESE:
-                emitNoSpace("Portuguese");
-                break;
-            case ROMANIAN:
-                emitNoSpace("Romanian");
-                break;
-            case RUSSIAN:
-                emitNoSpace("Russian");
-                break;
-            case SPANISH:
-                emitNoSpace("Spanish");
-                break;
-            case SPANISH_419:
-                emitNoSpace("Spanish (Latin America)");
-                break;
-            case SWEDISH:
-                emitNoSpace("Swedish");
-                break;
-            case TURKISH:
-                emitNoSpace("Turkish");
-                break;
-            case WELSH:
-                emitNoSpace("Welsh");
-                break;
-            default:
-                //shouldn't be possible
-                emitNoSpace(" ");
-        }
+        emitNoSpace(getLanguage(node));
         emitNoSpace(" v)");
+    }
+
+    private static String getLanguage(FixedLanguage node) {
+        return switch (node.getType()) {
+            case ARABIC -> "Arabic";
+            case CHINESE -> "Chinese (Mandarin)";
+            case DANISH -> "Danish";
+            case DUTCH -> "Dutch";
+            case ENGLISH -> "English";
+            case FRENCH -> "French";
+            case GERMAN -> "German";
+            case HINDI -> "Hindi";
+            case ICELANDIC -> "Icelandic";
+            case ITALIAN -> "Italien";
+            case JAPANESE -> "Japanese";
+            case KOREAN -> "Korean";
+            case NORWEGIAN -> "Norwegian";
+            case POLISH -> "Polish";
+            case PORTUGUESE_BR -> "Portuguese (Brazilian)";
+            case PORTUGUESE -> "Portuguese";
+            case ROMANIAN -> "Romanian";
+            case RUSSIAN -> "Russian";
+            case SPANISH -> "Spanish";
+            case SPANISH_419 -> "Spanish (Latin America)";
+            case SWEDISH -> "Swedish";
+            case TURKISH -> "Turkish";
+            case WELSH -> "Welsh";
+        };
     }
 
     @Override
@@ -1123,8 +1076,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber && !(((AsNumber) node.getExpr()).getOperand1() instanceof Qualified)) {
-            ((AsNumber) node.getExpr()).getOperand1().accept(this);
+        if (node.getExpr() instanceof AsNumber asNumber && !(asNumber.getOperand1() instanceof Qualified)) {
+            asNumber.getOperand1().accept(this);
         } else {
             //
             node.getExpr().accept(this);
@@ -1306,9 +1259,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(WithExpr node) {
-        if (node.getExpression() instanceof StrId) {
+        if (node.getExpression() instanceof StrId literal) {
             emitNoSpace("(");
-            StrId literal = (StrId) node.getExpression();
             if (literal.getName().equals("_stage_")) {
                 emitNoSpace("Stage");
             } else {
@@ -1371,15 +1323,15 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
+        if (node.getExpression() instanceof Qualified qualified) {
+            DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
         node.getExpression().accept(this);
-        if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
+        if (node.getExpression() instanceof Qualified qualified) {
+            DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
             } else if (dataExpr instanceof ScratchList) {
@@ -1476,9 +1428,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Message node) {
         StringExpr message = node.getMessage();
-        if (message instanceof StringLiteral) {
+        if (message instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) message;
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
             storeNotesForIssue(node);
@@ -1641,9 +1592,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof Parameter) {
             node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof StrId) {
+        } else if (node.getOperand1() instanceof StrId strId) {
             emitNoSpace("(");
-            final String spriteName = ((StrId) node.getOperand1()).getName();
+            final String spriteName = strId.getName();
             if (spriteName.equals("_myself_")) {
                 emitNoSpace("myself");
             } else {
@@ -1842,9 +1793,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SpriteTouchable node) {
-        if (node.getStringExpr() instanceof StringLiteral) {
+        if (node.getStringExpr() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getStringExpr();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -1873,9 +1823,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Key node) {
-        if (node.getKey() instanceof NumberLiteral) {
+        if (node.getKey() instanceof NumberLiteral num) {
             emitNoSpace("(");
-            NumberLiteral num = (NumberLiteral) node.getKey();
             emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
             emitNoSpace(" v)");
         } else {
@@ -2383,16 +2332,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(BlackWhite node) {
-        String colorType = node.getBlackWhiteType().getDefinition();
-        switch (colorType) {
-            case "0":
-                emitNoSpace("black");
-                break;
-            case "1":
-                emitNoSpace("white");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid color type: " + colorType);
+        switch (node.getBlackWhiteType()) {
+            case BLACK -> emitNoSpace("black");
+            case WHITE -> emitNoSpace("white");
         }
         storeNotesForIssue(node);
     }
@@ -2417,41 +2359,21 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(LEDPosition node) {
-        String position = node.getPositionType().getDefinition();
-        switch (position) {
-            case "0":
-                emitNoSpace("all");
-                break;
-            case "1":
-                emitNoSpace("right");
-                break;
-            case "2":
-                emitNoSpace("left");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid position: " + position);
+        switch (node.getPositionType()) {
+            case ALL -> emitNoSpace("all");
+            case RIGHT -> emitNoSpace("right");
+            case LEFT -> emitNoSpace("left");
         }
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(LineFollowState node) {
-        String lineType = node.getLineFollowType().getDefinition();
-        switch (lineType) {
-            case "0":
-                emitNoSpace("none");
-                break;
-            case "1":
-                emitNoSpace("rightside");
-                break;
-            case "2":
-                emitNoSpace("leftside");
-                break;
-            case "3":
-                emitNoSpace("all");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid line follow type: " + lineType);
+        switch (node.getLineFollowType()) {
+            case NONE -> emitNoSpace("none");
+            case RIGHT -> emitNoSpace("rightside");
+            case LEFT -> emitNoSpace("leftside");
+            case ALL -> emitNoSpace("all");
         }
         storeNotesForIssue(node);
     }
@@ -2464,19 +2386,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(PadOrientation node) {
-        String orientationName = node.getOrientationName();
-        switch (orientationName) {
-            case "screen_up":
-                emitNoSpace("face up");
-                break;
-            case "screen_down":
-                emitNoSpace("face down");
-                break;
-            case "upright":
-                emitNoSpace("stand on desk");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid orientation: " + orientationName);
+        switch (node.getOrientationType()) {
+            case SCREEN_UP -> emitNoSpace("face up");
+            case SCREEN_DOWN -> emitNoSpace("face down");
+            case UPRIGHT -> emitNoSpace("stand on desk");
         }
         storeNotesForIssue(node);
     }
@@ -2500,61 +2413,34 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(RobotAxis node) {
-        String axisName = node.getAxisName();
-        switch (axisName) {
-            case "all":
-                emitNoSpace("ALL");
-                break;
-            case "x":
-                emitNoSpace("X");
-                break;
-            case "y":
-                emitNoSpace("Y");
-                break;
-            case "z":
-                emitNoSpace("Z");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid axis name: " + axisName);
+        switch (node.getAxisType()) {
+            case ALL -> emitNoSpace("ALL");
+            case X -> emitNoSpace("X");
+            case Y -> emitNoSpace("Y");
+            case Z -> emitNoSpace("Z");
         }
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(RobotButton node) {
-        String buttonName = node.getButtonType().getName();
-        switch (buttonName) {
-            case "a":
-                emitNoSpace("A");
-                break;
-            case "b":
-                emitNoSpace("B");
-                break;
-            case "c":
-                emitNoSpace("C");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid button name: " + buttonName);
+        switch (node.getButtonType()) {
+            case A -> emitNoSpace("A");
+            case B -> emitNoSpace("B");
+            case C -> emitNoSpace("C");
         }
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(RobotDirection node) {
-        String directionName = node.getDirectionName();
-        switch (directionName) {
-            case "left":
-            case "right":
+        switch (node.getDirectionType()) {
+            case LEFT, RIGHT -> {
+                String directionName = node.getDirectionName();
                 emitNoSpace("tilted to the " + directionName);
-                break;
-            case "forward":
-                emitNoSpace("ears up");
-                break;
-            case "backward":
-                emitNoSpace("ears down");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
+            }
+            case FORWARD -> emitNoSpace("ears up");
+            case BACKWARD -> emitNoSpace("ears down");
         }
         storeNotesForIssue(node);
     }
@@ -3100,17 +2986,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(MoveDirection node) {
         emitNoSpace("@codeyA [");
         String directionName = node.getDirection().getDirectionName();
-        switch (directionName) {
-            case "left":
-            case "right":
-                emitNoSpace("turn " + directionName);
-                break;
-            case "forward":
-            case "backward":
-                emitNoSpace("move " + directionName);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid tilt direction: " + directionName);
+        switch (node.getDirection().getDirectionType()) {
+            case LEFT, RIGHT -> emitNoSpace("turn " + directionName);
+            case FORWARD, BACKWARD -> emitNoSpace("move " + directionName);
         }
         emitNoSpace(" v] at power ");
         node.getPercent().accept(this);

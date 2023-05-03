@@ -89,13 +89,11 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
     }
 
     private boolean isBooleanTrueLiteral(ComparableExpr expr) {
-        if (expr instanceof StringLiteral) {
-            StringLiteral literal = (StringLiteral) expr;
+        if (expr instanceof StringLiteral literal) {
             if (literal.getText().equalsIgnoreCase("true")) {
                 return true;
             }
-        } else if (expr instanceof NumberLiteral) {
-            NumberLiteral literal = (NumberLiteral) expr;
+        } else if (expr instanceof NumberLiteral literal) {
             if (((int) literal.getValue()) == 1) {
                 return true;
             }
@@ -105,13 +103,11 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
     }
 
     private boolean isBooleanFalseLiteral(ComparableExpr expr) {
-        if (expr instanceof StringLiteral) {
-            StringLiteral literal = (StringLiteral) expr;
+        if (expr instanceof StringLiteral literal) {
             if (literal.getText().equalsIgnoreCase("false")) {
                 return true;
             }
-        } else if (expr instanceof NumberLiteral) {
-            NumberLiteral literal = (NumberLiteral) expr;
+        } else if (expr instanceof NumberLiteral literal) {
             if (((int) literal.getValue()) == 0) {
                 return true;
             }
@@ -121,19 +117,16 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
     }
 
     private String getBooleanLiteral(ComparableExpr expr) {
-        if (expr instanceof StringLiteral) {
-            StringLiteral literal = (StringLiteral) expr;
+        if (expr instanceof StringLiteral literal) {
             return literal.getText();
-        } else if (expr instanceof NumberLiteral) {
-            NumberLiteral literal = (NumberLiteral) expr;
+        } else if (expr instanceof NumberLiteral literal) {
             return Integer.toString((int) literal.getValue());
         }
         throw new RuntimeException("Unknown literal type");
     }
 
     private boolean isBooleanExpression(ComparableExpr expr) {
-        if (expr instanceof AsString) {
-            AsString asString = (AsString) expr;
+        if (expr instanceof AsString asString) {
             if (asString.getOperand1() instanceof BoolExpr) {
                 return true;
             }

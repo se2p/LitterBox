@@ -94,10 +94,9 @@ public class Attribute implements Defineable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Attribute)) {
+        if (!(o instanceof Attribute attribute1)) {
             return false;
         }
-        Attribute attribute1 = (Attribute) o;
         return Objects.equals(actorIdentifier, attribute1.actorIdentifier)
                 && attribute == attribute1.attribute;
     }

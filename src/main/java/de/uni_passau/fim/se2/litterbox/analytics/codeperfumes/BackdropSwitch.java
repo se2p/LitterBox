@@ -90,19 +90,18 @@ public class BackdropSwitch extends AbstractIssueFinder {
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
-        } else if (msgName instanceof WithExpr) {
-            if (((WithExpr) msgName).getExpression() instanceof StrId) {
-                switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
-            } else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            } else if (((WithExpr) msgName).getExpression() instanceof AsString) {
-                AsString expr = (AsString) ((WithExpr) msgName).getExpression();
-                if (expr.getOperand1() instanceof StrId) {
-                    switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
-                } else if (expr.getOperand1() instanceof StringLiteral) {
-                    switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+        } else if (msgName instanceof WithExpr withExpr) {
+            if (withExpr.getExpression() instanceof StrId strId) {
+                switched.add(new Pair<>(actorName, strId.getName()));
+            } else if (withExpr.getExpression() instanceof StringLiteral stringLiteral) {
+                switched.add(new Pair<>(actorName, stringLiteral.getText()));
+            } else if (withExpr.getExpression() instanceof AsString expr) {
+                if (expr.getOperand1() instanceof StrId strId) {
+                    switched.add(new Pair<>(actorName, strId.getName()));
+                } else if (expr.getOperand1() instanceof StringLiteral stringLiteral) {
+                    switched.add(new Pair<>(actorName, stringLiteral.getText()));
                 }
-            } else if (((WithExpr) msgName).getExpression() instanceof NumExpr) {
+            } else if (withExpr.getExpression() instanceof NumExpr) {
                 nextRandPrev = true;
             }
         }
@@ -118,19 +117,18 @@ public class BackdropSwitch extends AbstractIssueFinder {
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
-        } else if (msgName instanceof WithExpr) {
-            if (((WithExpr) msgName).getExpression() instanceof StrId) {
-                switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
-            } else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            } else if (((WithExpr) msgName).getExpression() instanceof AsString) {
-                AsString expr = (AsString) ((WithExpr) msgName).getExpression();
-                if (expr.getOperand1() instanceof StrId) {
-                    switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
-                } else if (expr.getOperand1() instanceof StringLiteral) {
-                    switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+        } else if (msgName instanceof WithExpr withExpr) {
+            if (withExpr.getExpression() instanceof StrId strId) {
+                switched.add(new Pair<>(actorName, strId.getName()));
+            } else if (withExpr.getExpression() instanceof StringLiteral stringLiteral) {
+                switched.add(new Pair<>(actorName, stringLiteral.getText()));
+            } else if (withExpr.getExpression() instanceof AsString expr) {
+                if (expr.getOperand1() instanceof StrId strId) {
+                    switched.add(new Pair<>(actorName, strId.getName()));
+                } else if (expr.getOperand1() instanceof StringLiteral stringLiteral) {
+                    switched.add(new Pair<>(actorName, stringLiteral.getText()));
                 }
-            } else if (((WithExpr) msgName).getExpression() instanceof NumExpr) {
+            } else if (withExpr.getExpression() instanceof NumExpr) {
                 nextRandPrev = true;
             }
         }
@@ -150,8 +148,7 @@ public class BackdropSwitch extends AbstractIssueFinder {
             return;
         }
         currentScript = node;
-        if (node.getStmtList().hasStatements() && node.getEvent() instanceof BackdropSwitchTo) {
-            BackdropSwitchTo event = (BackdropSwitchTo) node.getEvent();
+        if (node.getStmtList().hasStatements() && node.getEvent() instanceof BackdropSwitchTo event) {
             final String msgName = event.getBackdrop().getName();
 
             if (!addComment) {
@@ -171,10 +168,7 @@ public class BackdropSwitch extends AbstractIssueFinder {
             return false;
         }
 
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

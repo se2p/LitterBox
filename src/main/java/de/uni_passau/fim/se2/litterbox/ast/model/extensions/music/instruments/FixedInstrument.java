@@ -48,8 +48,8 @@ public class FixedInstrument extends AbstractNode implements Instrument, FixedNo
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof MusicExtensionVisitor) {
-            ((MusicExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof MusicExtensionVisitor musicExtensionVisitor) {
+            musicExtensionVisitor.visit(this);
         } else {
             visitor.visit(this);
         }
@@ -93,73 +93,29 @@ public class FixedInstrument extends AbstractNode implements Instrument, FixedNo
         }
 
         public String getName(){
-            switch (this) {
-
-                case PIANO:
-                    return"(1) Piano";
-
-                case ELECTRIC_PIANO:
-                    return"(2) Electric Piano";
-
-                case ORGAN:
-                    return"(3) Organ";
-
-                case GUITAR:
-                    return"(4) Guitar";
-
-                case ELECTRIC_GUITAR:
-                    return"(5) Electric Guitar";
-
-                case BASS:
-                    return"(6) Bass";
-
-                case PIZZICATO:
-                    return"(7) Pizzicato";
-
-                case CELLO:
-                    return"(8) Cello";
-
-                case TROMBONE:
-                    return"(9) Trombone";
-
-                case CLARINET:
-                    return"(10) Clarinet";
-
-                case SAXOPHONE:
-                    return"(11) Saxophone";
-
-                case FLUTE:
-                    return"(12) Flute";
-
-                case WOODEN_FLUTE:
-                    return"(13) Wooden Flute";
-
-                case BASSOON:
-                    return"(14) Bassoon";
-
-                case CHOIR:
-                    return"(15) Choir";
-
-                case VIBRAPHONE:
-                    return"(16) Vibraphone";
-
-                case MUSIC_BOX:
-                    return"(17) Music Box";
-
-                case STEEL_DRUM:
-                    return"(18) Steel Drum";
-
-                case MARIMBA:
-                    return"(19) Marimba";
-
-                case SYNTH_LEAD:
-                    return"(20) Synth Lead";
-
-                case SYNTH_PAD:
-                    return"(21) Synth Pad";
-                default:
-                    throw new IllegalArgumentException("Unknown FixedInstrument: " + type);
-            }
+            return switch (this) {
+                case PIANO -> "(1) Piano";
+                case ELECTRIC_PIANO -> "(2) Electric Piano";
+                case ORGAN -> "(3) Organ";
+                case GUITAR -> "(4) Guitar";
+                case ELECTRIC_GUITAR -> "(5) Electric Guitar";
+                case BASS -> "(6) Bass";
+                case PIZZICATO -> "(7) Pizzicato";
+                case CELLO -> "(8) Cello";
+                case TROMBONE -> "(9) Trombone";
+                case CLARINET -> "(10) Clarinet";
+                case SAXOPHONE -> "(11) Saxophone";
+                case FLUTE -> "(12) Flute";
+                case WOODEN_FLUTE -> "(13) Wooden Flute";
+                case BASSOON -> "(14) Bassoon";
+                case CHOIR -> "(15) Choir";
+                case VIBRAPHONE -> "(16) Vibraphone";
+                case MUSIC_BOX -> "(17) Music Box";
+                case STEEL_DRUM -> "(18) Steel Drum";
+                case MARIMBA -> "(19) Marimba";
+                case SYNTH_LEAD -> "(20) Synth Lead";
+                case SYNTH_PAD -> "(21) Synth Pad";
+            };
         }
 
         public String getType() {

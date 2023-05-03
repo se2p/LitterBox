@@ -29,7 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -120,9 +120,11 @@ public class LeilaVisitorTest implements JsonTest {
         String path = "src/test/fixtures/leilaVisitor/goToSprite.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("            declare o as actor \n"
-                + "            define o as locate actor \"Affe\"\n"
-                + "            goToSprite(o)");
+        assertThat(output).contains("""
+                            declare o as actor\s
+                            define o as locate actor "Affe"
+                            goToSprite(o)\
+                """);
     }
 
     @Test
@@ -130,9 +132,11 @@ public class LeilaVisitorTest implements JsonTest {
         String path = "src/test/fixtures/leilaVisitor/glideSecsTo.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("        declare o as actor \n"
-                + "        define o as locate actor \"Apple\"\n"
-                + "        glideSecsToSprite(1, o)");
+        assertThat(output).contains("""
+                        declare o as actor\s
+                        define o as locate actor "Apple"
+                        glideSecsToSprite(1, o)\
+                """);
     }
 
     @Test
@@ -140,13 +144,17 @@ public class LeilaVisitorTest implements JsonTest {
         String path = "src/test/fixtures/leilaVisitor/globalInStage.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("    script on startup do begin \n"
-                + "        define Stage.global as 10\n"
-                + "    end ");
-        assertThat(output).contains("    script on startup do begin \n"
-                + "        define Stage.global as 0\n"
-                + "        define local as 0\n"
-                + "    end ");
+        assertThat(output).contains("""
+                    script on startup do begin\s
+                        define Stage.global as 10
+                    end \
+                """);
+        assertThat(output).contains("""
+                    script on startup do begin\s
+                        define Stage.global as 0
+                        define local as 0
+                    end \
+                """);
         assertThat(output).contains("    declare local as float\n");
         assertThat(output).doesNotContain("    declare Stage.local as float\n");
     }
@@ -156,30 +164,32 @@ public class LeilaVisitorTest implements JsonTest {
         String path = "src/test/fixtures/leilaVisitor/attributeAboveValue.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("\n"
-                + "    script on message \"loudness_ABOVE_10\" do begin \n"
-                + "        moveSteps(10)\n"
-                + "    end \n"
-                + "\n"
-                + "    script on startup do begin \n"
-                + "        repeat forever\n"
-                + "            if (loudness > 10) begin \n"
-                + "                broadcast \"loudness_ABOVE_10\"\n"
-                + "            end \n"
-                + "        end \n"
-                + "    end \n"
-                + "\n"
-                + "    script on message \"timer_ABOVE_10\" do begin \n"
-                + "        moveSteps(10)\n"
-                + "    end \n"
-                + "\n"
-                + "    script on startup do begin \n"
-                + "        repeat forever\n"
-                + "            if (timer > 10) begin \n"
-                + "                broadcast \"timer_ABOVE_10\"\n"
-                + "            end \n"
-                + "        end \n"
-                + "    end ");
+        assertThat(output).contains("""
+
+                    script on message "loudness_ABOVE_10" do begin\s
+                        moveSteps(10)
+                    end\s
+
+                    script on startup do begin\s
+                        repeat forever
+                            if (loudness > 10) begin\s
+                                broadcast "loudness_ABOVE_10"
+                            end\s
+                        end\s
+                    end\s
+
+                    script on message "timer_ABOVE_10" do begin\s
+                        moveSteps(10)
+                    end\s
+
+                    script on startup do begin\s
+                        repeat forever
+                            if (timer > 10) begin\s
+                                broadcast "timer_ABOVE_10"
+                            end\s
+                        end\s
+                    end \
+                """);
     }
 
     @Test
@@ -187,34 +197,35 @@ public class LeilaVisitorTest implements JsonTest {
         String path = "src/test/fixtures/leilaVisitor/backdropSwitchEvent.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("script on message \"BACKDROP_SWITCHED_TO_backdrop1\" () do begin \n"
-                + "        moveSteps(10)\n"
-                + "    end \n"
-                + "\n"
-                + "    script on startup do begin \n"
-                + "        declare oldBackdrop as string\n"
-                + "        define oldBackdrop as backdropName()\n"
-                + "        declare currentBackdrop as string\n"
-                + "        define currentBackdrop as backdropName()\n"
-                + "        repeat forever\n"
-                + "            if ((not (oldBackdrop = \"backdrop1\")) and (currentBackdrop = \"backdrop1\")) then begin \n"
-                + "                broadcast \"BACKDROP_SWITCHED_TO_backdrop1\" ()\n"
-                + "            end \n"
-                + "            define oldBackdrop as currentBackdrop\n"
-                + "            define currentBackdrop as backdropName()\n"
-                + "        end \n"
-                + "    end \n"
-                + "\n"
-                + "end ");
+        assertThat(output).contains("""
+                script on message "BACKDROP_SWITCHED_TO_backdrop1" () do begin\s
+                        moveSteps(10)
+                    end\s
+
+                    script on startup do begin\s
+                        declare oldBackdrop as string
+                        define oldBackdrop as backdropName()
+                        declare currentBackdrop as string
+                        define currentBackdrop as backdropName()
+                        repeat forever
+                            if ((not (oldBackdrop = "backdrop1")) and (currentBackdrop = "backdrop1")) then begin\s
+                                broadcast "BACKDROP_SWITCHED_TO_backdrop1" ()
+                            end\s
+                            define oldBackdrop as currentBackdrop
+                            define currentBackdrop as backdropName()
+                        end\s
+                    end\s
+
+                end\s""");
     }
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(out, true, Charset.forName("UTF-8"));
+        PrintStream stream = new PrintStream(out, true, StandardCharsets.UTF_8);
         LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         Program program = getAST(path);
         visitor.visit(program);
-        return out.toString(Charset.forName("UTF-8"));
+        return out.toString(StandardCharsets.UTF_8);
     }
 
     @Test

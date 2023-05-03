@@ -73,10 +73,8 @@ public class MissingCloneCall extends AbstractIssueFinder {
             return;
         }
 
-        if (node.getStringExpr() instanceof AsString
-                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
-
-            final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+        if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
+            final String spriteName = strId.getName();
             if (spriteName.equals("_myself_")) {
                 clonedActors.add(currentActor.getIdent().getName());
             } else {
@@ -92,11 +90,10 @@ public class MissingCloneCall extends AbstractIssueFinder {
             return;
         }
         currentScript = node;
-        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof StartedAsClone) {
+        if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof StartedAsClone event) {
             if (!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
-                StartedAsClone event = (StartedAsClone) node.getEvent();
                 addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM);
             }
         }

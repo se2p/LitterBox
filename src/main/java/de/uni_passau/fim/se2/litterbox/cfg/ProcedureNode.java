@@ -48,10 +48,9 @@ public class ProcedureNode extends CFGNode {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProcedureNode)) {
+        if (!(o instanceof ProcedureNode that)) {
             return false;
         }
-        ProcedureNode that = (ProcedureNode) o;
         return Objects.equals(procedureName, that.procedureName)
                 && Objects.equals(actorName, that.actorName);
     }

@@ -121,25 +121,12 @@ public class LoopedStatementNotStopped extends AbstractRobotFinder {
     @Override
     public void visit(LEDMatrixStmt node) {
         if (inLoop) {
-            if (node instanceof PortStmt) {
-                switch (((PortStmt) node).getPort().getPortType()) {
-
-                    default:
-                    case PORT_1:
-                        matrix1.put(currentScript, matrix1.get(currentScript).setLooped());
-                        break;
-
-                    case PORT_2:
-                        matrix2.put(currentScript, matrix2.get(currentScript).setLooped());
-                        break;
-
-                    case PORT_3:
-                        matrix3.put(currentScript, matrix3.get(currentScript).setLooped());
-                        break;
-
-                    case PORT_4:
-                        matrix4.put(currentScript, matrix4.get(currentScript).setLooped());
-                        break;
+            if (node instanceof PortStmt portStmt) {
+                switch (portStmt.getPort().getPortType()) {
+                    case PORT_1, PORT_ON_BOARD -> matrix1.put(currentScript, matrix1.get(currentScript).setLooped());
+                    case PORT_2 -> matrix2.put(currentScript, matrix2.get(currentScript).setLooped());
+                    case PORT_3 -> matrix3.put(currentScript, matrix3.get(currentScript).setLooped());
+                    case PORT_4 -> matrix4.put(currentScript, matrix4.get(currentScript).setLooped());
                 }
             } else {
                 matrix1.put(currentScript, matrix1.get(currentScript).setLooped());
@@ -183,27 +170,22 @@ public class LoopedStatementNotStopped extends AbstractRobotFinder {
     @Override
     public void visit(TurnOffFacePort node) {
         switch (node.getPort().getPortType()) {
-
-            default:
-            case PORT_1:
+            case PORT_1, PORT_ON_BOARD -> {
                 matrix1.put(currentScript, matrix1.get(currentScript).setStopped());
                 matrix1StopNode.put(currentScript, node);
-                break;
-
-            case PORT_2:
+            }
+            case PORT_2 -> {
                 matrix2.put(currentScript, matrix2.get(currentScript).setStopped());
                 matrix2StopNode.put(currentScript, node);
-                break;
-
-            case PORT_3:
+            }
+            case PORT_3 -> {
                 matrix3.put(currentScript, matrix3.get(currentScript).setStopped());
                 matrix3StopNode.put(currentScript, node);
-                break;
-
-            case PORT_4:
+            }
+            case PORT_4 -> {
                 matrix4.put(currentScript, matrix4.get(currentScript).setStopped());
                 matrix4StopNode.put(currentScript, node);
-                break;
+            }
         }
     }
 
@@ -288,55 +270,31 @@ public class LoopedStatementNotStopped extends AbstractRobotFinder {
         NONE, LOOPED, STOPPED, BOTH;
 
         public LoopStopState setStopped() {
-            switch (this) {
-                case NONE:
-                case STOPPED:
-                default:
-                    return STOPPED;
-
-                case LOOPED:
-                case BOTH:
-                    return BOTH;
-            }
+            return switch (this) {
+                case LOOPED, BOTH -> BOTH;
+                case NONE, STOPPED -> STOPPED;
+            };
         }
 
         public LoopStopState setLooped() {
-            switch (this) {
-                case NONE:
-                case LOOPED:
-                default:
-                    return LOOPED;
-
-                case STOPPED:
-                case BOTH:
-                    return BOTH;
-            }
+            return switch (this) {
+                case STOPPED, BOTH -> BOTH;
+                case NONE, LOOPED -> LOOPED;
+            };
         }
 
         public boolean isStopped() {
-            switch (this) {
-                case NONE:
-                case LOOPED:
-                default:
-                    return false;
-
-                case STOPPED:
-                case BOTH:
-                    return true;
-            }
+            return switch (this) {
+                case STOPPED, BOTH -> true;
+                case LOOPED, NONE -> false;
+            };
         }
 
         public boolean isLooped() {
-            switch (this) {
-                case NONE:
-                case STOPPED:
-                default:
-                    return false;
-
-                case LOOPED:
-                case BOTH:
-                    return true;
-            }
+            return switch (this) {
+                case LOOPED, BOTH -> true;
+                case NONE, STOPPED -> false;
+            };
         }
     }
 }

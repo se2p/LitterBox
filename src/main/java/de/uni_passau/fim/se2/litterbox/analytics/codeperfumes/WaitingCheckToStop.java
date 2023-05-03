@@ -56,10 +56,10 @@ public class WaitingCheckToStop extends AbstractIssueFinder {
         WaitUntil wait = null;
         for (int i = 0; i < stmts.size() - 1 && !hasWait; i++) {
             Stmt stmt = stmts.get(i);
-            if (stmt instanceof WaitUntil) {
-                if (!(((WaitUntil) stmt).getUntil() instanceof UnspecifiedBoolExpr)) {
+            if (stmt instanceof WaitUntil waitUntil) {
+                if (!(waitUntil.getUntil() instanceof UnspecifiedBoolExpr)) {
                     hasWait = true;
-                    wait = (WaitUntil) stmt;
+                    wait = waitUntil;
                 }
             }
         }

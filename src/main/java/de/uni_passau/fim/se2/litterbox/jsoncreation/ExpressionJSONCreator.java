@@ -479,8 +479,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
         String fieldValue;
         Attribute attr = node.getAttribute();
-        if (attr instanceof AttributeFromFixed) {
-            fieldValue = ((AttributeFromFixed) attr).getAttribute().getTypeName();
+        if (attr instanceof AttributeFromFixed attributeFromFixed) {
+            fieldValue = attributeFromFixed.getAttribute().getTypeName();
         } else {
             fieldValue = ((AttributeFromVariable) attr).getVariable().getName().getName();
         }
@@ -580,13 +580,11 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     public void visit(Qualified node) {
         String actor = node.getFirst().getName();
         StringBuilder jsonString = new StringBuilder();
-        if (node.getSecond() instanceof ScratchList) {
-            ScratchList list = (ScratchList) node.getSecond();
+        if (node.getSecond() instanceof ScratchList list) {
             String listName = list.getName().getName();
             String listId = symbolTable.getListIdentifierFromActorAndName(actor, listName);
             BlockMetadata metadata = list.getMetadata();
-            if (metadata instanceof DataBlockMetadata) {
-                DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
+            if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(listName).append("\",\"");
                 jsonString.append(listId)
@@ -599,13 +597,11 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                 jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
                         true));
             }
-        } else if (node.getSecond() instanceof Variable) {
-            Variable variable = (Variable) node.getSecond();
+        } else if (node.getSecond() instanceof Variable variable) {
             String variableName = variable.getName().getName();
             String variableId = symbolTable.getVariableIdentifierFromActorAndName(actor, variableName);
             BlockMetadata metadata = variable.getMetadata();
-            if (metadata instanceof DataBlockMetadata) {
-                DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
+            if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(variableName).append("\",\"");
                 jsonString.append(variableId)

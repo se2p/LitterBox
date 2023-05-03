@@ -269,36 +269,17 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         // Can only handle LocalIdentifier hier (i.e. value selected in dropdown)
         // We lose precision here because it could also be a Parameter or else
         // but we don't know the value of that statically
-        if (owner instanceof LocalIdentifier) {
-            LocalIdentifier localIdentifier = (LocalIdentifier) owner;
-
-            if (attribute instanceof AttributeFromFixed) {
-                AttributeFromFixed fixedAttribute = (AttributeFromFixed) attribute;
+        if (owner instanceof LocalIdentifier localIdentifier) {
+            if (attribute instanceof AttributeFromFixed fixedAttribute) {
                 FixedAttribute at = fixedAttribute.getAttribute();
                 switch (at.getType()) {
-                    case X_POSITION:
-                    case Y_POSITION:
-                        uses.add(Attribute.positionOf(localIdentifier));
-                        break;
-                    case SIZE:
-                        uses.add(Attribute.sizeOf(localIdentifier));
-                        break;
-                    case DIRECTION:
-                        uses.add(Attribute.rotationOf(localIdentifier));
-                        break;
-                    case COSTUME_NUMBER:
-                    case COSTUME_NAME:
-                        uses.add(Attribute.costumeOf(localIdentifier));
-                        break;
-                    case VOLUME:
-                        uses.add(Attribute.volumeOf(localIdentifier));
-                        break;
-                    case BACKDROP_NAME:
-                    case BACKDROP_NUMBER:
-                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
-                        break;
-                    default:
-                        // TODO: What should happen in the default case?
+                    case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(localIdentifier));
+                    case SIZE -> uses.add(Attribute.sizeOf(localIdentifier));
+                    case DIRECTION -> uses.add(Attribute.rotationOf(localIdentifier));
+                    case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(localIdentifier));
+                    case VOLUME -> uses.add(Attribute.volumeOf(localIdentifier));
+                    case BACKDROP_NAME, BACKDROP_NUMBER ->
+                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
                 }
             }
             // TODO: Once we handle parameters:

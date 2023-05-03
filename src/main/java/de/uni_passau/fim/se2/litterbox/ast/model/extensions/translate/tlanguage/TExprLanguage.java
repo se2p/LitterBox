@@ -47,9 +47,8 @@ public class TExprLanguage extends AbstractNode implements TLanguage {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-
-        if (visitor instanceof TranslateExtensionVisitor) {
-            ((TranslateExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof TranslateExtensionVisitor translateExtensionVisitor) {
+            translateExtensionVisitor.visit(this);
         } else {
             visitor.visit(this);
         }

@@ -31,8 +31,7 @@ public class ExtractLoopConditionFinder extends AbstractRefactoringFinder {
     public void visit(RepeatForeverStmt repeatForeverStmt) {
 
         for (Stmt stmt : repeatForeverStmt.getStmtList().getStmts()) {
-            if (stmt instanceof IfThenStmt) {
-                IfThenStmt ifThenStmt = (IfThenStmt) stmt;
+            if (stmt instanceof IfThenStmt ifThenStmt) {
                 if (ifThenStmt.getThenStmts().getNumberOfStatements() == 1
                         && ifThenStmt.getThenStmts().getStatement(0) instanceof TerminationStmt) {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifThenStmt));

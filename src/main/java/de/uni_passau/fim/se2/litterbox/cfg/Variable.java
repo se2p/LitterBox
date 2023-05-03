@@ -54,8 +54,7 @@ public class Variable implements Defineable {
 
     @Override
     public String toString() {
-        if (identifier instanceof Qualified) {
-            Qualified q = (Qualified) identifier;
+        if (identifier instanceof Qualified q) {
             return "Variable{"
                     + "identifier=" + q.getFirst().getName() + "." + q.getSecond().getName().getName()
                     + '}';

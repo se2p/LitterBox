@@ -64,8 +64,8 @@ public class MissingResource extends AbstractIssueFinder {
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String backdropName = strId.getName();
             if (!imageExists(backdropName, backdrops)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
@@ -83,8 +83,8 @@ public class MissingResource extends AbstractIssueFinder {
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String backdropName = strId.getName();
             if (!imageExists(backdropName, backdrops)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
@@ -93,8 +93,8 @@ public class MissingResource extends AbstractIssueFinder {
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        if (node.getCostumeChoice() instanceof WithExpr && ((WithExpr) node.getCostumeChoice()).getExpression() instanceof StrId) {
-            String costume = ((StrId) ((WithExpr) node.getCostumeChoice()).getExpression()).getName();
+        if (node.getCostumeChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String costume = strId.getName();
             if (!imageExists(costume, images)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
@@ -103,8 +103,8 @@ public class MissingResource extends AbstractIssueFinder {
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String sound = strId.getName();
             if (!soundExists(sound)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
@@ -113,8 +113,8 @@ public class MissingResource extends AbstractIssueFinder {
 
     @Override
     public void visit(StartSound node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String sound = strId.getName();
             if (!soundExists(sound)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }

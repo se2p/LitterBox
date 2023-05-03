@@ -23,11 +23,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
@@ -60,10 +55,12 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        if (node instanceof ASTLeaf) {
-            recordLeaf((ASTLeaf) node);
+        if (node instanceof ASTLeaf astLeaf) {
+            recordLeaf(astLeaf);
         } else {
-            String name = String.valueOf(System.identityHashCode(node)); //This should only be a workaround this is a hack
+            // This should only be a workaround this is a hack
+            String name = String.valueOf(System.identityHashCode(node));
+
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             addln(label);
             for (ASTNode child : node.getChildren()) {
