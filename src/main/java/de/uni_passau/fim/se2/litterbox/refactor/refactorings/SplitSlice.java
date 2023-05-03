@@ -74,9 +74,15 @@ public class SplitSlice extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SplitSlice that)) return false;
-        return Objects.equals(script, that.script) && Objects.equals(slices, that.slices) && Objects.equals(replacementScripts, that.replacementScripts);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SplitSlice that)) {
+            return false;
+        }
+        return Objects.equals(script, that.script)
+                && Objects.equals(slices, that.slices)
+                && Objects.equals(replacementScripts, that.replacementScripts);
     }
 
     @Override

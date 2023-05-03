@@ -64,9 +64,9 @@ public class SpriteMotionStmtParser {
                 yield new TurnLeft(numExpr, metadata);
             }
             case motion_gotoxy -> {
-                NumExpr xExpr = NumExprParser.parseNumExpr(state, current, X, allBlocks);
-                NumExpr yExpr = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
-                yield new GoToPosXY(xExpr, yExpr, metadata);
+                NumExpr x = NumExprParser.parseNumExpr(state, current, X, allBlocks);
+                NumExpr y = NumExprParser.parseNumExpr(state, current, Y, allBlocks);
+                yield new GoToPosXY(x, y, metadata);
             }
             case motion_goto -> {
                 position = PositionParser.parse(state, current, allBlocks);

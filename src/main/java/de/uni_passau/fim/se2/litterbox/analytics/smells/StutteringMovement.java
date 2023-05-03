@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -84,7 +85,9 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     private Script getRefactoring(Script oldScript) {
         Stmt firstStatement = oldScript.getStmtList().getStatement(0);
-        IfThenStmt ifThen = new IfThenStmt(new IsKeyPressed(((KeyPressed) oldScript.getEvent()).getKey(), firstStatement.getMetadata()), oldScript.getStmtList(), firstStatement.getMetadata());
+        Key key = ((KeyPressed) oldScript.getEvent()).getKey();
+        IsKeyPressed isKeyPressed = new IsKeyPressed(key, firstStatement.getMetadata());
+        IfThenStmt ifThen = new IfThenStmt(isKeyPressed, oldScript.getStmtList(), firstStatement.getMetadata());
         RepeatForeverStmt forever = new RepeatForeverStmt(new StmtList(ifThen), firstStatement.getMetadata());
         StmtList stmtList = new StmtList(forever);
         return new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);

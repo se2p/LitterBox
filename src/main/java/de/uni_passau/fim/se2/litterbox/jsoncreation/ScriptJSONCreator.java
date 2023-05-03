@@ -96,7 +96,9 @@ public class ScriptJSONCreator {
 
                 String name = backdropSwitchTo.getBackdrop().getName();
                 String fields = createFields(BACKDROP_INPUT, name, null);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, backdropSwitchTo.getOpcode()));
+                String blockJson = createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields,
+                        backdropSwitchTo.getOpcode());
+                jsonString.append(blockJson);
             } else if (event instanceof GreenFlag greenFlag) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
                 blockId = meta.getBlockId();
@@ -109,7 +111,9 @@ public class ScriptJSONCreator {
                 String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
                 String fields = createFields(KEY_OPTION, key, null);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, keyPressed.getOpcode()));
+                String blockJson = createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields,
+                        keyPressed.getOpcode());
+                jsonString.append(blockJson);
             } else if (event instanceof ReceptionOfMessage receptionOfMessage) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) receptionOfMessage.getMetadata();
                 blockId = meta.getBlockId();
@@ -124,7 +128,9 @@ public class ScriptJSONCreator {
                     id = "unspecified" + messageText;
                 }
                 String fields = createFields(BROADCAST_OPTION, messageText, id);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, receptionOfMessage.getOpcode()));
+                String blockJson = createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields,
+                        receptionOfMessage.getOpcode());
+                jsonString.append(blockJson);
             } else if (event instanceof SpriteClicked spriteClicked) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
                 blockId = meta.getBlockId();

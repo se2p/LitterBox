@@ -28,7 +28,8 @@ import java.util.List;
 
 public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
 
-    private static final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
+    private static final int NUMBER_OF_POSSIBLE_PRODUCTIONS =
+            PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
     private final List<RefactoringFinder> refactoringFinders;
 

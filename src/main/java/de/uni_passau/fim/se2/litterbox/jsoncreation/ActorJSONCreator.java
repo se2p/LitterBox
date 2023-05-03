@@ -52,10 +52,7 @@ public class ActorJSONCreator {
                                                ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
         ActorMetadata meta = actor.getActorMetadata();
-        boolean isStage = false;
-        if (actor.isStage()) {
-            isStage = true;
-        }
+        boolean isStage = actor.isStage();
         jsonString.append("{");
         JSONStringCreator.createFieldValue(jsonString, IS_STAGE_KEY, isStage).append(",");
         JSONStringCreator.createFieldValue(jsonString, NAME_KEY, actor.getIdent().getName()).append(",");
@@ -248,13 +245,15 @@ public class ActorJSONCreator {
     private static StringBuilder addVariable(StringBuilder jsonString, SetVariableTo node, SymbolTable symbol) {
         Qualified qualified = (Qualified) node.getIdentifier();
         Variable variable = (Variable) qualified.getSecond();
-        String id = symbol.getVariableIdentifierFromActorAndName(qualified.getFirst().getName(), variable.getName().getName());
+        String variableName = variable.getName().getName();
+
+        String id = symbol.getVariableIdentifierFromActorAndName(qualified.getFirst().getName(), variableName);
         JSONStringCreator.createField(jsonString, id).append("[");
         Expression expr = node.getExpr();
         if (expr instanceof StringLiteral stringLiteral) {
-            jsonString.append("\"").append(variable.getName().getName()).append("\", \"").append(stringLiteral.getText()).append("\"]");
+            jsonString.append("\"").append(variableName).append("\", \"").append(stringLiteral.getText()).append("\"]");
         } else if (expr instanceof NumberLiteral numberLiteral) {
-            jsonString.append("\"").append(variable.getName().getName()).append("\", ").append(numberLiteral.getValue()).append("]");
+            jsonString.append("\"").append(variableName).append("\", ").append(numberLiteral.getValue()).append("]");
         }
         return jsonString;
     }

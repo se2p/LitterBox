@@ -117,9 +117,17 @@ public class SplitLoop extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SplitLoop splitLoop)) return false;
-        return Objects.equals(script, splitLoop.script) && Objects.equals(loopStmt, splitLoop.loopStmt) && Objects.equals(splitPoint, splitLoop.splitPoint) && Objects.equals(replacementScript1, splitLoop.replacementScript1) && Objects.equals(replacementScript2, splitLoop.replacementScript2);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SplitLoop splitLoop)) {
+            return false;
+        }
+        return Objects.equals(script, splitLoop.script)
+                && Objects.equals(loopStmt, splitLoop.loopStmt)
+                && Objects.equals(splitPoint, splitLoop.splitPoint)
+                && Objects.equals(replacementScript1, splitLoop.replacementScript1)
+                && Objects.equals(replacementScript2, splitLoop.replacementScript2);
     }
 
     @Override

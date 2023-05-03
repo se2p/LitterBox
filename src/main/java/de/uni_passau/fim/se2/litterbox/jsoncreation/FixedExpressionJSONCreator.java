@@ -146,9 +146,11 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         if (node.getExpression() instanceof StrId strId) {
             if (node.getParentNode() instanceof AttributeOf) {
                 createFieldsExpression(metadata, OBJECT_KEY, strId.getName());
-            } else if (node.getParentNode() instanceof PlaySoundUntilDone || node.getParentNode() instanceof StartSound) {
+            } else if (node.getParentNode() instanceof PlaySoundUntilDone
+                    || node.getParentNode() instanceof StartSound) {
                 createFieldsExpression(metadata, SOUND_MENU, strId.getName());
-            } else if (node.getParentNode() instanceof SwitchBackdrop || node.getParentNode() instanceof SwitchBackdropAndWait) {
+            } else if (node.getParentNode() instanceof SwitchBackdrop
+                    || node.getParentNode() instanceof SwitchBackdropAndWait) {
                 createFieldsExpression(metadata, BACKDROP_INPUT, strId.getName());
             } else if (node.getParentNode() instanceof SwitchCostumeTo) {
                 createFieldsExpression(metadata, COSTUME_INPUT, strId.getName());

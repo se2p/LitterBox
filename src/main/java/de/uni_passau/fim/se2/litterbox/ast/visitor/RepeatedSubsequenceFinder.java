@@ -86,7 +86,9 @@ public abstract class RepeatedSubsequenceFinder {
         for (Stmt stmt : statements) {
             // FIXME: Simplify conditionals using LoopStmt interface
             if (stmt instanceof IfElseStmt ifStmt) {
-                length += getSequenceLength(ifStmt.getThenStmts().getStmts()) + getSequenceLength(ifStmt.getElseStmts().getStmts());
+                int thenLength = getSequenceLength(ifStmt.getThenStmts().getStmts());
+                int elseLength = getSequenceLength(ifStmt.getElseStmts().getStmts());
+                length += thenLength + elseLength;
             } else if (stmt instanceof IfThenStmt ifStmt) {
                 length += getSequenceLength(ifStmt.getThenStmts().getStmts());
             } else if (stmt instanceof RepeatForeverStmt repeatStmt) {

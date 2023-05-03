@@ -80,9 +80,16 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SequenceToLoop that)) return false;
-        return times == that.times && Objects.equals(targetStatement, that.targetStatement) && Objects.equals(repeatedStatements, that.repeatedStatements) && Objects.equals(replacementLoop, that.replacementLoop);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SequenceToLoop that)) {
+            return false;
+        }
+        return times == that.times
+                && Objects.equals(targetStatement, that.targetStatement)
+                && Objects.equals(repeatedStatements, that.repeatedStatements)
+                && Objects.equals(replacementLoop, that.replacementLoop);
     }
 
     @Override

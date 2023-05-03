@@ -62,7 +62,8 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
         }
 
         StmtList statements = script.getStmtList();
-        if (statements.getNumberOfStatements() != 1 || !(statements.getStatement(0) instanceof RepeatForeverStmt repeatForeverStmt)) {
+        if (statements.getNumberOfStatements() != 1
+                || !(statements.getStatement(0) instanceof RepeatForeverStmt repeatForeverStmt)) {
             return; // Only scripts consisting only of the loop
         }
 

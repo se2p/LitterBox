@@ -58,7 +58,9 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
         if (node instanceof ASTLeaf astLeaf) {
             recordLeaf(astLeaf);
         } else {
-            String name = String.valueOf(System.identityHashCode(node)); //This should only be a workaround this is a hack
+            // This should only be a workaround this is a hack
+            String name = String.valueOf(System.identityHashCode(node));
+
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             addln(label);
             for (ASTNode child : node.getChildren()) {

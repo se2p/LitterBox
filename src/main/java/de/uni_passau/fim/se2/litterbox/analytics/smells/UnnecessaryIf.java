@@ -40,16 +40,20 @@ public class UnnecessaryIf extends AbstractIssueFinder {
         IfThenStmt lastIf = null;
         for (Stmt s : stmts) {
             if (s instanceof IfThenStmt ifThenStmt) {
-                if (lastList != null) {
-                    if (lastList.equals(ifThenStmt.getThenStmts())) {
-                        IfThenStmt joinedIf = new IfThenStmt(new Or(lastIf.getBoolExpr(), ifThenStmt.getBoolExpr(), lastIf.getMetadata()), lastIf.getThenStmts(), s.getMetadata());
-                        StatementReplacementVisitor visitor = new StatementReplacementVisitor(lastIf, Arrays.asList(s), Arrays.asList(joinedIf));
-                        ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
+                if (lastList != null && lastList.equals(ifThenStmt.getThenStmts())) {
+                    Or or = new Or(lastIf.getBoolExpr(), ifThenStmt.getBoolExpr(), lastIf.getMetadata());
+                    IfThenStmt joinedIf = new IfThenStmt(or, lastIf.getThenStmts(), s.getMetadata());
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(
+                            lastIf,
+                            Arrays.asList(s),
+                            Arrays.asList(joinedIf)
+                    );
+                    ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
 
-                        MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
-                        issue.setRefactoredScriptOrProcedureDefinition(refactored);
-                        addIssue(issue);
-                    }
+                    MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor,
+                            getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                    issue.setRefactoredScriptOrProcedureDefinition(refactored);
+                    addIssue(issue);
                 }
                 lastList = ifThenStmt.getThenStmts();
                 lastIf = ifThenStmt;

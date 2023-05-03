@@ -154,14 +154,15 @@ public class TimedStatementInLiveLoop extends AbstractRobotFinder {
 
     @Override
     public void visit(Stmt node) {
-        if (live) {
-            if (inLoop) {
-                stmtCount++;
-                if (node instanceof TimedStmt timedStmt && issueNode == null && !(node instanceof SpeakerStmt || node instanceof WaitSeconds || node instanceof BroadcastAndWait)) {
-                    issueNode = timedStmt;
-                } else {
-                    visitChildren(node);
-                }
+        if (live && inLoop) {
+            stmtCount++;
+            if (node instanceof TimedStmt timedStmt
+                    && issueNode == null
+                    && !(node instanceof SpeakerStmt || node instanceof WaitSeconds || node instanceof BroadcastAndWait)
+            ) {
+                issueNode = timedStmt;
+            } else {
+                visitChildren(node);
             }
         }
     }

@@ -238,7 +238,8 @@ public class StringExprParser {
         };
     }
 
-    private static StringExpr parseTranslate(ProgramParserState state, JsonNode exprBlock, BlockMetadata metadata, JsonNode blocks) throws ParsingException {
+    private static StringExpr parseTranslate(ProgramParserState state, JsonNode exprBlock, BlockMetadata metadata,
+                                             JsonNode blocks) throws ParsingException {
         TLanguage language;
         BlockMetadata paramMetadata;
         List<JsonNode> inputsList = new ArrayList<>();

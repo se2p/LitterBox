@@ -100,9 +100,15 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MergeLoops that)) return false;
-        return Objects.equals(script1, that.script1) && Objects.equals(script2, that.script2) && Objects.equals(replacementScript, that.replacementScript);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MergeLoops that)) {
+            return false;
+        }
+        return Objects.equals(script1, that.script1)
+                && Objects.equals(script2, that.script2)
+                && Objects.equals(replacementScript, that.replacementScript);
     }
 
     @Override

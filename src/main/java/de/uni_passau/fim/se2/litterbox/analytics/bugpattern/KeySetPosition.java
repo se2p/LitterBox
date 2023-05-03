@@ -155,7 +155,7 @@ public class KeySetPosition extends AbstractIssueFinder {
 
         if (other.getFinder() instanceof MissingLoopSensing) {
             ASTNode node = first.getCodeLocation().getParentNode().getParentNode();
-            if(node instanceof IfThenStmt ifThenStmt){
+            if (node instanceof IfThenStmt ifThenStmt) {
                 return ifThenStmt.getBoolExpr() == (other.getCodeLocation());
             }
 
