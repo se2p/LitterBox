@@ -157,8 +157,8 @@ public class TimedStatementInLiveLoop extends AbstractRobotFinder {
         if (live) {
             if (inLoop) {
                 stmtCount++;
-                if (node instanceof TimedStmt && issueNode == null && !(node instanceof SpeakerStmt || node instanceof WaitSeconds || node instanceof BroadcastAndWait)) {
-                    issueNode = (TimedStmt) node;
+                if (node instanceof TimedStmt timedStmt && issueNode == null && !(node instanceof SpeakerStmt || node instanceof WaitSeconds || node instanceof BroadcastAndWait)) {
+                    issueNode = timedStmt;
                 } else {
                     visitChildren(node);
                 }

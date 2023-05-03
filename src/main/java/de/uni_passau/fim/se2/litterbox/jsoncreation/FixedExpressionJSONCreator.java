@@ -111,19 +111,15 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
 
     @Override
     public void visit(FromExpression node) {
-        if (node.getStringExpr() instanceof AsString) {
-            AsString asString = (AsString) node.getStringExpr();
-            if (asString.getOperand1() instanceof StrId) {
-                if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
-                    createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY,
-                            ((StrId) asString.getOperand1()).getName());
-                } else if (node.getParentNode() instanceof PointTowards) {
-                    createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOWARDS_KEY,
-                            ((StrId) asString.getOperand1()).getName());
-                } else if (node.getParentNode() instanceof DistanceTo) {
-                    createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY,
-                            ((StrId) asString.getOperand1()).getName());
-                }
+        if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
+            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+            if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
+                createFieldsExpression(metadata, TO_KEY, strId.getName());
+            } else if (node.getParentNode() instanceof PointTowards) {
+                createFieldsExpression(metadata, TOWARDS_KEY, strId.getName());
+            } else if (node.getParentNode() instanceof DistanceTo) {
+                createFieldsExpression(metadata, DISTANCETOMENU_KEY, strId.getName());
             }
         }
     }
@@ -145,19 +141,17 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
 
     @Override
     public void visit(WithExpr node) {
-        if (node.getExpression() instanceof StrId) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        if (node.getExpression() instanceof StrId strId) {
             if (node.getParentNode() instanceof AttributeOf) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), OBJECT_KEY,
-                        ((StrId) node.getExpression()).getName());
+                createFieldsExpression(metadata, OBJECT_KEY, strId.getName());
             } else if (node.getParentNode() instanceof PlaySoundUntilDone || node.getParentNode() instanceof StartSound) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), SOUND_MENU,
-                        ((StrId) node.getExpression()).getName());
+                createFieldsExpression(metadata, SOUND_MENU, strId.getName());
             } else if (node.getParentNode() instanceof SwitchBackdrop || node.getParentNode() instanceof SwitchBackdropAndWait) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), BACKDROP_INPUT,
-                        ((StrId) node.getExpression()).getName());
+                createFieldsExpression(metadata, BACKDROP_INPUT, strId.getName());
             } else if (node.getParentNode() instanceof SwitchCostumeTo) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), COSTUME_INPUT,
-                        ((StrId) node.getExpression()).getName());
+                createFieldsExpression(metadata, COSTUME_INPUT, strId.getName());
             }
         }
     }
@@ -165,11 +159,10 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     @Override
     public void visit(CreateCloneOf node) {
         StringExpr stringExpr = node.getStringExpr();
-        if (stringExpr instanceof AsString && ((AsString) stringExpr).getOperand1() instanceof StrId) {
+        if (stringExpr instanceof AsString asString && asString.getOperand1() instanceof StrId) {
             StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
             NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
-                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
                 menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
             } else {
                 NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
@@ -183,8 +176,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     @Override
     public void visit(Key node) {
         NumExpr numExpr = node.getKey();
-        if (numExpr instanceof NumberLiteral) {
-            NumberLiteral numberLiteral = (NumberLiteral) numExpr;
+        if (numExpr instanceof NumberLiteral numberLiteral) {
             createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), KEY_OPTION,
                     getKeyValue((int) numberLiteral.getValue()));
         }
@@ -228,11 +220,10 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     @Override
     public void visit(ChangePenColorParamBy node) {
         StringExpr stringExpr = node.getParam();
-        if (stringExpr instanceof StringLiteral) {
-            String strid = ((StringLiteral) stringExpr).getText();
+        if (stringExpr instanceof StringLiteral stringLiteral) {
+            String strid = stringLiteral.getText();
             NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
-                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
                 menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
             } else {
                 NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
@@ -246,11 +237,10 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     @Override
     public void visit(SetPenColorParamTo node) {
         StringExpr stringExpr = node.getParam();
-        if (stringExpr instanceof StringLiteral) {
-            String strid = ((StringLiteral) stringExpr).getText();
+        if (stringExpr instanceof StringLiteral stringLiteral) {
+            String strid = stringLiteral.getText();
             NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata) {
-                TopNonDataBlockWithMenuMetadata metadata = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
+            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
                 menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
             } else {
                 NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();

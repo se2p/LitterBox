@@ -233,10 +233,10 @@ public class LeilaVisitor extends PrintVisitor {
             appendIndentation();
             script.accept(this);
             Event event = script.getEvent();
-            if (event instanceof BackdropSwitchTo) {
-                emitSwitchListener((BackdropSwitchTo) event);
-            } else if (event instanceof AttributeAboveValue) {
-                emitAttributeValueListener((AttributeAboveValue) event);
+            if (event instanceof BackdropSwitchTo backdropSwitchTo) {
+                emitSwitchListener(backdropSwitchTo);
+            } else if (event instanceof AttributeAboveValue attributeAboveValue) {
+                emitAttributeValueListener(attributeAboveValue);
             }
         }
         endIndentation();
@@ -590,11 +590,11 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
         emitNoSpace("changeCostumeTo(");
-        if (switchCostumeTo.getCostumeChoice() instanceof WithExpr) {
-            final Expression expr = ((WithExpr) switchCostumeTo.getCostumeChoice()).getExpression();
-            if (expr instanceof LocalIdentifier) {
+        if (switchCostumeTo.getCostumeChoice() instanceof WithExpr costumeChoice) {
+            final Expression expr = costumeChoice.getExpression();
+            if (expr instanceof LocalIdentifier identifier) {
                 emitNoSpace("\"");
-                emitNoSpace(((LocalIdentifier) expr).getName());
+                emitNoSpace(identifier.getName());
                 emitNoSpace("\"");
             }
         } else {
@@ -766,15 +766,15 @@ public class LeilaVisitor extends PrintVisitor {
             emitNoSpace("pointTowardsPos(");
             pointTowards.getPosition().accept(this);
             closeParentheses();
-        } else if (pointTowards.getPosition() instanceof FromExpression) {
+        } else if (pointTowards.getPosition() instanceof FromExpression fromExpression) {
             // A sprite
             emitNoSpace("pointTowards(");
-            StringExpr strExpr = ((FromExpression) pointTowards.getPosition()).getStringExpr();
+            StringExpr strExpr = fromExpression.getStringExpr();
             emitActorExpression(strExpr);
             closeParentheses();
-        } else if (pointTowards.getPosition() instanceof RandomPos) {
+        } else if (pointTowards.getPosition() instanceof RandomPos randomPos) {
             emitNoSpace("pointTowardsPos(");
-            pointTowards.getPosition().accept(this);
+            randomPos.accept(this);
             closeParentheses();
         }
     }
@@ -782,12 +782,12 @@ public class LeilaVisitor extends PrintVisitor {
     private void emitActorExpression(Expression expr) {
         emitNoSpace("locate actor ");
         expectOriginal();
-        if (expr instanceof LocalIdentifier) {
-            emitNoSpace("\"" + ((LocalIdentifier) expr).getName() + "\"");
-        } else if (expr instanceof AsString) {
-            Expression op1 = ((AsString) expr).getOperand1();
-            if (op1 instanceof LocalIdentifier) {
-                emitNoSpace("\"" + ((LocalIdentifier) op1).getName() + "\"");
+        if (expr instanceof LocalIdentifier localIdentifier) {
+            emitNoSpace("\"" + localIdentifier.getName() + "\"");
+        } else if (expr instanceof AsString asString) {
+            Expression op1 = asString.getOperand1();
+            if (op1 instanceof LocalIdentifier localIdentifier) {
+                emitNoSpace("\"" + localIdentifier.getName() + "\"");
             } else {
                 op1.accept(this);
             }
@@ -1138,10 +1138,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DeclarationAttributeAsTypeStmt declarationAttributeAsTypeStmt) {
-
         StringExpr stringExpr = declarationAttributeAsTypeStmt.getStringExpr();
-        if (stringExpr instanceof StringLiteral) {
-            String text = ((StringLiteral) stringExpr).getText();
+        if (stringExpr instanceof StringLiteral stringLiteral) {
+            String text = stringLiteral.getText();
             if (STDVAR.contains(text)) {
                 skippedDeclarations++;
                 return;

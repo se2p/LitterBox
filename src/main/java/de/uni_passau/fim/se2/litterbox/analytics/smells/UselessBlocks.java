@@ -159,9 +159,9 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString) {
-            if (((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
-                String name = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+        if (node.getStringExpr() instanceof AsString asString) {
+            if (asString.getOperand1() instanceof StrId strId) {
+                String name = strId.getName();
                 if (isCurrentStage && name.equals("_myself_")) {
                     Hint hint = new Hint(HINT_STAGE);
                     addIssue(node, node.getMetadata(), hint);

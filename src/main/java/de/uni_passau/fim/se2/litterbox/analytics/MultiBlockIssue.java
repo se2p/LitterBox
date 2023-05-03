@@ -65,12 +65,12 @@ public class MultiBlockIssue extends Issue {
 
     @Override
     public Script getScript() {
-        return scripts.get(0) instanceof Script ? (Script) scripts.get(0) : null;
+        return scripts.get(0) instanceof Script script ? script : null;
     }
 
     @Override
     public ProcedureDefinition getProcedure() {
-        return scripts.get(0) instanceof ProcedureDefinition ? (ProcedureDefinition) scripts.get(0) : null;
+        return scripts.get(0) instanceof ProcedureDefinition procedure ? procedure : null;
     }
 
     @Override

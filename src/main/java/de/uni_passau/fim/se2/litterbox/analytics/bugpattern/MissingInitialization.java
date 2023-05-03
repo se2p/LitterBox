@@ -88,9 +88,8 @@ public class MissingInitialization extends AbstractIssueFinder {
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         for (Use use : initialUses) {
-
-            if (use.getDefinable() instanceof Attribute) {
-                if (((Attribute)use.getDefinable()).getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
+            if (use.getDefinable() instanceof Attribute attribute) {
+                if (attribute.getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
                     // TODO: Handle visibility properly in a way that does not produce too many false positives
                     // e.g. only report this if there is a hide statement?
                     continue;
@@ -106,8 +105,8 @@ public class MissingInitialization extends AbstractIssueFinder {
                 Hint hint;
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
-                if (containingScript instanceof Script) {
-                    if (((Script) containingScript).getEvent() instanceof StartedAsClone) {
+                if (containingScript instanceof Script script) {
+                    if (script.getEvent() instanceof StartedAsClone) {
                         hint = new Hint(NAME_CLONE);
                     } else {
                         hint = new Hint(getName());
@@ -138,9 +137,7 @@ public class MissingInitialization extends AbstractIssueFinder {
             return false;
         }
 
-        if (first instanceof UseIssue && other instanceof UseIssue) {
-            UseIssue firstUse = (UseIssue) first;
-            UseIssue otherUse = (UseIssue) other;
+        if (first instanceof UseIssue firstUse && other instanceof UseIssue otherUse) {
             Use use1 = firstUse.getUse();
             Use use2 = otherUse.getUse();
             if (use1.getDefinable().equals(use2.getDefinable())) {

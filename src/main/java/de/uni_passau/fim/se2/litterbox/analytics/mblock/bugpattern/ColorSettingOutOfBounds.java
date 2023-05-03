@@ -50,8 +50,8 @@ public class ColorSettingOutOfBounds extends AbstractRobotFinder {
     }
 
     private boolean colorOutOfBounds(NumExpr node) {
-        if (node instanceof NumberLiteral) {
-            double value = ((NumberLiteral) node).getValue();
+        if (node instanceof NumberLiteral numberLiteral) {
+            double value = numberLiteral.getValue();
             return value < COLOR_MIN || value > COLOR_MAX;
         }
         return false;

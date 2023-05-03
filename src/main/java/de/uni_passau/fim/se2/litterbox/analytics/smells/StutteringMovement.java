@@ -60,12 +60,11 @@ public class StutteringMovement extends AbstractIssueFinder {
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
-        if (script.getEvent() instanceof KeyPressed) {
+        if (script.getEvent() instanceof KeyPressed keyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() <= 2 && !listOfStmt.isEmpty()) {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
-                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
                     IssueBuilder builder = prepareIssueBuilder(stmt)
@@ -88,8 +87,7 @@ public class StutteringMovement extends AbstractIssueFinder {
         IfThenStmt ifThen = new IfThenStmt(new IsKeyPressed(((KeyPressed) oldScript.getEvent()).getKey(), firstStatement.getMetadata()), oldScript.getStmtList(), firstStatement.getMetadata());
         RepeatForeverStmt forever = new RepeatForeverStmt(new StmtList(ifThen), firstStatement.getMetadata());
         StmtList stmtList = new StmtList(forever);
-        Script refactoredScript = new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);
-        return refactoredScript;
+        return new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);
     }
 
     @Override

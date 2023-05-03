@@ -66,8 +66,7 @@ public class LoopUnrolling extends OnlyCodeCloneVisitor implements Refactoring {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LoopUnrolling)) return false;
-        LoopUnrolling that = (LoopUnrolling) o;
+        if (!(o instanceof LoopUnrolling that)) return false;
         return value == that.value && Objects.equals(loop, that.loop) && Objects.equals(unrolledStmts, that.unrolledStmts);
     }
 

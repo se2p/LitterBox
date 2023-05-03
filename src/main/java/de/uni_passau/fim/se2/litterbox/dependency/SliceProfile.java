@@ -179,8 +179,7 @@ public class SliceProfile {
         statementNumbers.clear();
         int numStatement = 0;
         for (CFGNode node : cfg.getNodes()) {
-            if (node.getASTNode() instanceof Stmt) {
-                Stmt stmt = (Stmt) node.getASTNode();
+            if (node.getASTNode() instanceof Stmt stmt) {
                 statementNumbers.put(stmt, numStatement++);
                 assert (statementNumbers.size() == numStatement);
             }

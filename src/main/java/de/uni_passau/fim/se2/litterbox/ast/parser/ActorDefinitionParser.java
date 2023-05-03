@@ -36,7 +36,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -84,7 +83,7 @@ public class ActorDefinitionParser {
                         && allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean())
                         && !DependentBlockOpcode.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
                         || allBlocks.get(fieldName) instanceof ArrayNode)
-                .collect(Collectors.toList());
+                .toList();
 
         List<Script> scripts = new LinkedList<>();
         for (String topLevelid : topLevelNodes) {

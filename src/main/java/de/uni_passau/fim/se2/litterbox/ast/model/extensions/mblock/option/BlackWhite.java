@@ -80,8 +80,7 @@ public class BlackWhite extends AbstractNode implements MBlockOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BlackWhite)) return false;
-        BlackWhite that = (BlackWhite) o;
+        if (!(o instanceof BlackWhite that)) return false;
         return type == that.type;
     }
 

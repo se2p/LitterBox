@@ -448,7 +448,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(WaitUntil node) {
-        if (!visitOuter & insideForever) {
+        if (!visitOuter && insideForever) {
             blockName = IssueTranslator.getInstance().getInfo("wait_until");
             inCondition = true;
             visitChildren(node);

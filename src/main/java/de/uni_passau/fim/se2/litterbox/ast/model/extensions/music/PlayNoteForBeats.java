@@ -57,8 +57,8 @@ public class PlayNoteForBeats extends AbstractNode implements MusicStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof MusicExtensionVisitor) {
-            ((MusicExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof MusicExtensionVisitor musicExtensionVisitor) {
+            musicExtensionVisitor.visit(this);
         } else {
             visitor.visit((MusicBlock) this);
         }

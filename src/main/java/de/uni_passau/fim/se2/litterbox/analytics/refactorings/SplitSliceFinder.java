@@ -62,8 +62,8 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
             // Some fuffing around necessary to ensure statements are in order
             Set<Stmt> sliceStmts = new LinkedHashSet<>();
             for (CFGNode reachableNode : reachableNodes) {
-                if (reachableNode.getASTNode() instanceof Stmt) {
-                    sliceStmts.add((Stmt) reachableNode.getASTNode());
+                if (reachableNode.getASTNode() instanceof Stmt stmt) {
+                    sliceStmts.add(stmt);
                 }
             }
             List<Stmt> slice = new ArrayList<>(script.getStmtList().getStmts());

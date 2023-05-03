@@ -41,12 +41,11 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
         // check size > 1 because there has to be room for a say/think AND a stop stmt
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
-            if (questionableNode instanceof Broadcast) {
-                Broadcast broadcast = (Broadcast) questionableNode;
+            if (questionableNode instanceof Broadcast broadcast) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_SPRITE, currentActor.getIdent().getName());
-                if (((Broadcast) questionableNode).getMessage().getMessage() instanceof StringLiteral) {
-                    hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) ((Broadcast) questionableNode).getMessage().getMessage()).getText());
+                if (broadcast.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
+                    hint.setParameter(Hint.HINT_MESSAGE, stringLiteral.getText());
                 } else {
                     hint.setParameter(Hint.HINT_MESSAGE, IssueTranslator.getInstance().getInfo("message"));
                 }

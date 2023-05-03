@@ -104,8 +104,7 @@ public class SplitIf extends OnlyCodeCloneVisitor implements Refactoring {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SplitIf)) return false;
-        SplitIf splitIf = (SplitIf) o;
+        if (!(o instanceof SplitIf splitIf)) return false;
         return Objects.equals(ifThenStmt, splitIf.ifThenStmt) && Objects.equals(splitPoint, splitIf.splitPoint) && Objects.equals(replacementIf1, splitIf.replacementIf1) && Objects.equals(replacementIf2, splitIf.replacementIf2);
     }
 

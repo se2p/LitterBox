@@ -120,9 +120,9 @@ public abstract class AbstractDependencyGraph {
     }
 
     public void removeNode(ASTNode node) {
-        if (node instanceof ReceptionOfMessage) {
+        if (node instanceof ReceptionOfMessage receptionOfMessage) {
             // Rely on exception if this doesn't exist
-            CFGNode cfgNode = getNode(((ReceptionOfMessage) node).getMsg()).get();
+            CFGNode cfgNode = getNode(receptionOfMessage.getMsg()).get();
             graph.removeNode(cfgNode);
         } else if (node instanceof StartedAsClone) {
             // Rely on exception if this doesn't exist

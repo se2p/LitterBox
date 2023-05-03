@@ -922,9 +922,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(ChangePenColorParamBy node) {
         emitNoSpace("change pen ");
 
-        if (node.getParam() instanceof StringLiteral) {
+        if (node.getParam() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -939,9 +938,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(SetPenColorParamTo node) {
         emitNoSpace("set pen ");
-        if (node.getParam() instanceof StringLiteral) {
+        if (node.getParam() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -1078,8 +1076,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber && !(((AsNumber) node.getExpr()).getOperand1() instanceof Qualified)) {
-            ((AsNumber) node.getExpr()).getOperand1().accept(this);
+        if (node.getExpr() instanceof AsNumber asNumber && !(asNumber.getOperand1() instanceof Qualified)) {
+            asNumber.getOperand1().accept(this);
         } else {
             //
             node.getExpr().accept(this);
@@ -1261,9 +1259,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(WithExpr node) {
-        if (node.getExpression() instanceof StrId) {
+        if (node.getExpression() instanceof StrId literal) {
             emitNoSpace("(");
-            StrId literal = (StrId) node.getExpression();
             if (literal.getName().equals("_stage_")) {
                 emitNoSpace("Stage");
             } else {
@@ -1326,15 +1323,15 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
+        if (node.getExpression() instanceof Qualified qualified) {
+            DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
         node.getExpression().accept(this);
-        if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
+        if (node.getExpression() instanceof Qualified qualified) {
+            DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
             } else if (dataExpr instanceof ScratchList) {
@@ -1431,9 +1428,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Message node) {
         StringExpr message = node.getMessage();
-        if (message instanceof StringLiteral) {
+        if (message instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) message;
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
             storeNotesForIssue(node);
@@ -1596,9 +1592,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof Parameter) {
             node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof StrId) {
+        } else if (node.getOperand1() instanceof StrId strId) {
             emitNoSpace("(");
-            final String spriteName = ((StrId) node.getOperand1()).getName();
+            final String spriteName = strId.getName();
             if (spriteName.equals("_myself_")) {
                 emitNoSpace("myself");
             } else {
@@ -1797,9 +1793,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(SpriteTouchable node) {
-        if (node.getStringExpr() instanceof StringLiteral) {
+        if (node.getStringExpr() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getStringExpr();
             emitNoSpace(literal.getText());
             emitNoSpace(" v)");
         } else {
@@ -1828,9 +1823,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Key node) {
-        if (node.getKey() instanceof NumberLiteral) {
+        if (node.getKey() instanceof NumberLiteral num) {
             emitNoSpace("(");
-            NumberLiteral num = (NumberLiteral) node.getKey();
             emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
             emitNoSpace(" v)");
         } else {

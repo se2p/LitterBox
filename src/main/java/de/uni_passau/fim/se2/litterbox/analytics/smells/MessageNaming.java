@@ -50,34 +50,30 @@ public class MessageNaming extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            if (checkName(((StringLiteral) node.getMessage().getMessage()).getText())) {
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            }
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral
+                && checkName(stringLiteral.getText())) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            if (checkName(((StringLiteral) node.getMessage().getMessage()).getText())) {
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            }
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral
+                && checkName(stringLiteral.getText())) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        if (node.getMsg().getMessage() instanceof StringLiteral) {
-            if (checkName(((StringLiteral) node.getMsg().getMessage()).getText())) {
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMsg().getMessage()).getText());
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            }
+        if (node.getMsg().getMessage() instanceof StringLiteral stringLiteral && checkName(stringLiteral.getText())) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMsg().getMessage()).getText());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
@@ -125,11 +121,11 @@ public class MessageNaming extends AbstractIssueFinder {
     }
 
     private String getText(ASTNode codeLocation) {
-        if (codeLocation instanceof Broadcast) {
-            StringExpr expr = ((Broadcast) codeLocation).getMessage().getMessage();
+        if (codeLocation instanceof Broadcast broadcast) {
+            StringExpr expr = broadcast.getMessage().getMessage();
             return ((StringLiteral) expr).getText();
-        } else if (codeLocation instanceof BroadcastAndWait) {
-            StringExpr expr = ((BroadcastAndWait) codeLocation).getMessage().getMessage();
+        } else if (codeLocation instanceof BroadcastAndWait broadcastAndWait) {
+            StringExpr expr = broadcastAndWait.getMessage().getMessage();
             return ((StringLiteral) expr).getText();
         } else {
             StringExpr expr = ((ReceptionOfMessage) codeLocation).getMsg().getMessage();

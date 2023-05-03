@@ -99,8 +99,8 @@ public class MatrixOffScript extends AbstractRobotFinder {
     }
 
     private boolean isBlank(LEDMatrixStmt node) {
-        if (node instanceof FacePanelStmt) {
-            LEDMatrix matrix = ((FacePanelStmt) node).getLedMatrix();
+        if (node instanceof FacePanelStmt facePanelStmt) {
+            LEDMatrix matrix = facePanelStmt.getLedMatrix();
             return matrix.getFaceString().equals("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
         }
         return false;

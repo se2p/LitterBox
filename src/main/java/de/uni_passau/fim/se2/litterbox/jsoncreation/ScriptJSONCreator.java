@@ -59,8 +59,7 @@ public class ScriptJSONCreator {
                 nextId = vis.getBlockId(stmtList.getStmts().get(0));
             }
 
-            if (event instanceof AttributeAboveValue) {
-                AttributeAboveValue attributeAboveValue = (AttributeAboveValue) event;
+            if (event instanceof AttributeAboveValue attributeAboveValue) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) attributeAboveValue.getMetadata();
                 blockId = meta.getBlockId();
 
@@ -68,12 +67,12 @@ public class ScriptJSONCreator {
                 NumExpr numExpr = attributeAboveValue.getValue();
                 if (numExpr instanceof UnspecifiedNumExpr) {
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
-                } else if (numExpr instanceof NumberLiteral) {
+                } else if (numExpr instanceof NumberLiteral numberLiteral) {
                     NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
                     format.setGroupingUsed(false);
                     format.setMinimumFractionDigits(0);
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                            format.format(((NumberLiteral) numExpr).getValue())));
+                            format.format(numberLiteral.getValue())));
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
@@ -91,21 +90,18 @@ public class ScriptJSONCreator {
                 String fields = createFields(WHEN_GREATER_THAN_MENU, attribute, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
                         fields, attributeAboveValue.getOpcode()));
-            } else if (event instanceof BackdropSwitchTo) {
-                BackdropSwitchTo backdropSwitchTo = (BackdropSwitchTo) event;
+            } else if (event instanceof BackdropSwitchTo backdropSwitchTo) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) backdropSwitchTo.getMetadata();
                 blockId = meta.getBlockId();
 
                 String name = backdropSwitchTo.getBackdrop().getName();
                 String fields = createFields(BACKDROP_INPUT, name, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, backdropSwitchTo.getOpcode()));
-            } else if (event instanceof GreenFlag) {
-                GreenFlag greenFlag = (GreenFlag) event;
+            } else if (event instanceof GreenFlag greenFlag) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null, greenFlag.getOpcode()));
-            } else if (event instanceof KeyPressed) {
-                KeyPressed keyPressed = (KeyPressed) event;
+            } else if (event instanceof KeyPressed keyPressed) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
                 blockId = meta.getBlockId();
 
@@ -114,8 +110,7 @@ public class ScriptJSONCreator {
 
                 String fields = createFields(KEY_OPTION, key, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, keyPressed.getOpcode()));
-            } else if (event instanceof ReceptionOfMessage) {
-                ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
+            } else if (event instanceof ReceptionOfMessage receptionOfMessage) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) receptionOfMessage.getMetadata();
                 blockId = meta.getBlockId();
 
@@ -130,18 +125,15 @@ public class ScriptJSONCreator {
                 }
                 String fields = createFields(BROADCAST_OPTION, messageText, id);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, receptionOfMessage.getOpcode()));
-            } else if (event instanceof SpriteClicked) {
-                SpriteClicked spriteClicked = (SpriteClicked) event;
+            } else if (event instanceof SpriteClicked spriteClicked) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null, spriteClicked.getOpcode()));
-            } else if (event instanceof StageClicked) {
-                StageClicked stageClicked = (StageClicked) event;
+            } else if (event instanceof StageClicked stageClicked) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) stageClicked.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null, stageClicked.getOpcode()));
-            } else if (event instanceof StartedAsClone) {
-                StartedAsClone startedAsClone = (StartedAsClone) event;
+            } else if (event instanceof StartedAsClone startedAsClone) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null, startedAsClone.getOpcode()));

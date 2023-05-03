@@ -48,9 +48,8 @@ public class FixedDrum extends AbstractNode implements Drum, FixedNodeOption {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-
-        if (visitor instanceof MusicExtensionVisitor) {
-            ((MusicExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof MusicExtensionVisitor musicExtensionVisitor) {
+            musicExtensionVisitor.visit(this);
         } else {
             visitor.visit(this);
         }

@@ -62,11 +62,9 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
         }
 
         StmtList statements = script.getStmtList();
-        if (statements.getNumberOfStatements() != 1 || !(statements.getStatement(0) instanceof RepeatForeverStmt)) {
+        if (statements.getNumberOfStatements() != 1 || !(statements.getStatement(0) instanceof RepeatForeverStmt repeatForeverStmt)) {
             return; // Only scripts consisting only of the loop
         }
-
-        RepeatForeverStmt repeatForeverStmt = (RepeatForeverStmt) statements.getStatement(0);
 
         if (!repeatForeverStmt.getStmtList().hasStatements()) {
             return;
@@ -74,9 +72,8 @@ public class ExtractEventsFromForeverFinder extends AbstractRefactoringFinder {
 
         for (Stmt stmtForever : repeatForeverStmt.getStmtList().getStmts()) {
             // Check for ifThen statement.
-            if (stmtForever instanceof IfThenStmt) {
+            if (stmtForever instanceof IfThenStmt ifThenStmt) {
                 // Check the bool expression for isKeyPressed event.
-                IfThenStmt ifThenStmt = (IfThenStmt) stmtForever;
                 BoolExpr expr = ifThenStmt.getBoolExpr();
                 if (!(expr instanceof IsKeyPressed)) {
                     return;

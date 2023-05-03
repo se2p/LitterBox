@@ -48,9 +48,8 @@ public class TFixedLanguage extends AbstractNode implements TLanguage, FixedNode
 
     @Override
     public void accept(ScratchVisitor visitor) {
-
-        if (visitor instanceof TranslateExtensionVisitor) {
-            ((TranslateExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof TranslateExtensionVisitor translateExtensionVisitor) {
+            translateExtensionVisitor.visit(this);
         } else {
             visitor.visit(this);
         }

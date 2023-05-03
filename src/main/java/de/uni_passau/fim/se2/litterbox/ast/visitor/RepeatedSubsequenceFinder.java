@@ -85,20 +85,15 @@ public abstract class RepeatedSubsequenceFinder {
         int length = statements.size();
         for (Stmt stmt : statements) {
             // FIXME: Simplify conditionals using LoopStmt interface
-            if (stmt instanceof IfElseStmt) {
-                IfElseStmt ifStmt = (IfElseStmt) stmt;
+            if (stmt instanceof IfElseStmt ifStmt) {
                 length += getSequenceLength(ifStmt.getThenStmts().getStmts()) + getSequenceLength(ifStmt.getElseStmts().getStmts());
-            } else if (stmt instanceof IfThenStmt) {
-                IfThenStmt ifStmt = (IfThenStmt) stmt;
+            } else if (stmt instanceof IfThenStmt ifStmt) {
                 length += getSequenceLength(ifStmt.getThenStmts().getStmts());
-            } else if (stmt instanceof RepeatForeverStmt) {
-                RepeatForeverStmt repeatStmt = (RepeatForeverStmt) stmt;
+            } else if (stmt instanceof RepeatForeverStmt repeatStmt) {
                 length += getSequenceLength(repeatStmt.getStmtList().getStmts());
-            } else if (stmt instanceof RepeatTimesStmt) {
-                RepeatTimesStmt repeatStmt = (RepeatTimesStmt) stmt;
+            } else if (stmt instanceof RepeatTimesStmt repeatStmt) {
                 length += getSequenceLength(repeatStmt.getStmtList().getStmts());
-            } else if (stmt instanceof UntilStmt) {
-                UntilStmt repeatStmt = (UntilStmt) stmt;
+            } else if (stmt instanceof UntilStmt repeatStmt) {
                 length += getSequenceLength(repeatStmt.getStmtList().getStmts());
             }
         }

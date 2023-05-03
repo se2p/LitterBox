@@ -79,8 +79,7 @@ public class MergeScripts extends OnlyCodeCloneVisitor implements Refactoring {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MergeScripts)) return false;
-        MergeScripts that = (MergeScripts) o;
+        if (!(o instanceof MergeScripts that)) return false;
         return Objects.equals(script1, that.script1) && Objects.equals(script2, that.script2) && Objects.equals(replacementScript, that.replacementScript);
     }
 

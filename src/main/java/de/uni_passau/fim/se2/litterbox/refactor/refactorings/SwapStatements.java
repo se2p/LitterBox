@@ -80,8 +80,7 @@ public class SwapStatements extends OnlyCodeCloneVisitor implements Refactoring 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SwapStatements)) return false;
-        SwapStatements that = (SwapStatements) o;
+        if (!(o instanceof SwapStatements that)) return false;
         return Objects.equals(stmt1, that.stmt1) && Objects.equals(stmt2, that.stmt2);
     }
 

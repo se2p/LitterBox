@@ -145,13 +145,13 @@ public class GgnnGraphBuilder {
     }
 
     private List<Pair<ASTNode>> getDataDependencies() {
-        if (astRoot instanceof Program) {
-            return ((Program) astRoot).getActorDefinitionList().getDefinitions()
+        if (astRoot instanceof Program program) {
+            return program.getActorDefinitionList().getDefinitions()
                     .stream()
                     .flatMap(this::getDataDependencies)
                     .collect(Collectors.toList());
-        } else if (astRoot instanceof ActorDefinition) {
-            return getDataDependencies((ActorDefinition) astRoot).collect(Collectors.toList());
+        } else if (astRoot instanceof ActorDefinition actorDefinition) {
+            return getDataDependencies(actorDefinition).collect(Collectors.toList());
         } else {
             throw new UnsupportedOperationException("Can only extract data dependencies from programs and actors!");
         }

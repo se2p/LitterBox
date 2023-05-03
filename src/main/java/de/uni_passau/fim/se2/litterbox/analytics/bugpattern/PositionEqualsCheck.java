@@ -56,12 +56,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
                 || operand instanceof PositionX || operand instanceof PositionY) {
             return false;
-        } else if (operand instanceof AttributeOf) {
-            if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
-                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute().getType()
-                        != FixedAttribute.FixedAttributeType.X_POSITION
-                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute().getType()
-                        != FixedAttribute.FixedAttributeType.Y_POSITION;
+        } else if (operand instanceof AttributeOf attributeOf) {
+            if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed) {
+                return attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.X_POSITION
+                        && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.Y_POSITION;
             }
         }
         return true;
@@ -76,11 +74,9 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
 
     @Override
     public void visit(Equals node) {
-        if (inCondition) {
-            if (!checkEquals(node)) {
-                Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
-                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
-            }
+        if (inCondition && !checkEquals(node)) {
+            Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
     }
 

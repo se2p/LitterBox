@@ -67,8 +67,8 @@ public class Timer extends AbstractIssueFinder {
     @Override
     public void visit(SetVariableTo node) {
         if (!addComment) {
-            if (node.getIdentifier() instanceof Qualified) {
-                setVariables.add((Qualified) node.getIdentifier());
+            if (node.getIdentifier() instanceof Qualified qualified) {
+                setVariables.add(qualified);
             }
         }
     }
@@ -109,12 +109,11 @@ public class Timer extends AbstractIssueFinder {
                 }
             });
             node.getStmts().forEach(stmt -> {
-                        if (stmt instanceof ChangeVariableBy) {
+                        if (stmt instanceof ChangeVariableBy changeVariableBy) {
                             if (waitSec) {
-                                if (((ChangeVariableBy) stmt).getIdentifier() instanceof Qualified) {
-                                    Qualified changedVariable = (Qualified) ((ChangeVariableBy) stmt).getIdentifier();
-                                    for (Qualified var : setVariables) {
-                                        if (changedVariable.equals(var)) {
+                                if (changeVariableBy.getIdentifier() instanceof Qualified changedVariable) {
+                                    for (Qualified qualified : setVariables) {
+                                        if (changedVariable.equals(qualified)) {
                                             addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
                                             break;
                                         }
