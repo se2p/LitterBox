@@ -51,7 +51,7 @@ public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer<String> {
         }
 
         GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(program, inputFile.toPath(),
-                includeStage, wholeProgram, labelName);
+                includeStage, includeDefaultSprites, wholeProgram, labelName);
         if (isDotStringGraph) {
             String label = FilenameUtils.removeExtension(inputFile.getName());
             return Stream.of(generateGgnnGraphTask.generateDotGraphData(label));

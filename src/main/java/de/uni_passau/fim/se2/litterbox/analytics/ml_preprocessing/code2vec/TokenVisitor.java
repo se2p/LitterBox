@@ -18,11 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -34,17 +40,64 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoic
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.DragMode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import org.apache.commons.lang3.StringUtils;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 
 import java.util.Locale;
 
-public class TokenVisitor implements ScratchVisitor {
+public class TokenVisitor
+        implements ScratchVisitor, PenExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
+
+    private final boolean normalised;
 
     private String token = "";
 
-    public String getToken() {
-        return StringUtils.deleteWhitespace(token).replace(",", "");
+    private TokenVisitor(final boolean normalised) {
+        this.normalised = normalised;
+    }
+
+    /**
+     * Retrieves the actual literal represented by a node.
+     *
+     * @param node A node of the AST.
+     * @return The literal value of the given node.
+     */
+    public static String getToken(final ASTNode node) {
+        return TokenVisitor.getToken(node, false);
+    }
+
+    /**
+     * Retrieves the actual normalised literal represented by a node.
+     *
+     * @param node A node of the AST.
+     * @return The literal value of the given node.
+     */
+    public static String getNormalisedToken(final ASTNode node) {
+        return getToken(node, true);
+    }
+
+    private static String getToken(final ASTNode node, final boolean normalised) {
+        final TokenVisitor visitor = new TokenVisitor(normalised);
+        node.accept(visitor);
+        return visitor.token;
+    }
+
+    private void saveString(final String token) {
+        if (normalised) {
+            this.token = StringUtil.normaliseString(token);
+        } else {
+            this.token = token;
+        }
+    }
+
+    private void saveNumber(final double value) {
+        if (Math.floor(value) == value) {
+            token = Integer.toString((int) value);
+        } else {
+            token = String.format(Locale.ROOT, "%.2f", value);
+        }
     }
 
     @Override
@@ -54,7 +107,12 @@ public class TokenVisitor implements ScratchVisitor {
 
     @Override
     public void visit(StringLiteral node) {
-        token = node.getText();
+        saveString(node.getText());
+    }
+
+    @Override
+    public void visit(StrId node) {
+        saveString(node.getName());
     }
 
     @Override
@@ -64,70 +122,86 @@ public class TokenVisitor implements ScratchVisitor {
 
     @Override
     public void visit(NumberLiteral node) {
-        if (Math.floor(node.getValue()) == node.getValue()) {
-            token = Integer.toString((int) node.getValue());
-        } else {
-            token = String.format(Locale.ROOT, "%.2f", node.getValue());
-        }
+        saveNumber(node.getValue());
     }
 
     @Override
     public void visit(TimeComp node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(SoundEffect node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(RotationStyle node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(NumFunct node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(NameNum node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(LayerChoice node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(GraphicEffect node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(ForwardBackwardChoice node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(EventAttribute node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(DragMode node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(FixedAttribute node) {
-        token = node.getTypeName();
+        token = node.getType().toString();
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        saveNumber(node.getNote());
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        token = node.getType().toString();
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        token = node.getType().toString();
+    }
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        token = node.getType().toString();
     }
 
     @Override
     public void visit(ColorLiteral node) {
-        token = String.format("%02x%02x%02x", node.getRed(), node.getGreen(), node.getBlue());
+        token = node.getRGB();
     }
 }
