@@ -31,14 +31,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Analyzer {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
 
-    protected Path input;
+    private final Scratch3Parser parser = new Scratch3Parser();
+
+    private final Path input;
     protected String output;
     protected boolean delete;
 
@@ -82,7 +83,7 @@ public abstract class Analyzer {
     }
 
     /**
-     * Analzed multiple files based on a list of projectids in the given file.
+     * Analyze multiple files based on a list of project ids in the given file.
      *
      * @param listPath is the path to a file containing all the ids of projects that should be analyzed.
      */
@@ -90,7 +91,7 @@ public abstract class Analyzer {
         Path projectList = Paths.get(listPath);
 
         try (Stream<String> lines = Files.lines(projectList)) {
-            List<String> pids = lines.collect(Collectors.toList());
+            List<String> pids = lines.toList();
             for (String pid : pids) {
                 analyzeSingle(pid);
             }
@@ -102,7 +103,7 @@ public abstract class Analyzer {
     /**
      * Analyzes a single project based on the given project id.
      *
-     * <p>If a file with the given projectid exists in the path with which this analyzer was initialized, the project
+     * <p>If a file with the given project id exists in the path with which this analyzer was initialized, the project
      * will be directly analyzed, otherwise it will be downloaded to the configured path and analyzed afterwards.</p>
      *
      * @param pid is the id of the project that should be analyzed.
@@ -132,7 +133,6 @@ public abstract class Analyzer {
      * @return the parsed program or null in case the program could not be loaded or parsed
      */
     protected Program extractProgram(File fileEntry) {
-        Scratch3Parser parser = new Scratch3Parser();
         Program program = null;
         try {
             program = parser.parseFile(fileEntry);
