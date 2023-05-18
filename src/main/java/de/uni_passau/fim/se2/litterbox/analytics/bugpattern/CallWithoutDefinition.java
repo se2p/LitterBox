@@ -42,7 +42,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName())
-                    && !program.getProcedureMapping().checkIfMalformated(
+                    && !program.getProcedureMapping().checkIfMalformed(
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
 
                 addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
