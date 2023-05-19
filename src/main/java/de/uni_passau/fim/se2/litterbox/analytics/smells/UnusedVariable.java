@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -48,16 +49,7 @@ public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
     public static final String NAME_LIST = "unused_variables_list";
-    private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
-            "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy "
-            + "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
-            "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja "
-            + "varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი",
-            "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn "
-            + "variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable",
-            "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel",
-            "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi",
-            "我的变量", "i-variable yami"};
+
     private List<Qualified> variableCalls;
     private boolean insideProcedure;
     private boolean insideScript;
@@ -92,7 +84,8 @@ public class UnusedVariable extends AbstractIssueFinder {
                 }
             }
 
-            if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
+            boolean hasDefaultName = Constants.DEFAULT_VARIABLE_NAMES.contains(name.toLowerCase(Locale.ROOT));
+            if (!currFound && !hasDefaultName) {
                 for (ActorDefinition actor : actors) {
                     if (actor.getIdent().getName().equals(actorName)) {
                         currentActor = actor;
