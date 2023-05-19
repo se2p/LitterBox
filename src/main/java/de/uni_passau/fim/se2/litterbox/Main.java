@@ -421,6 +421,12 @@ public class Main implements Callable<Integer> {
         )
         boolean wholeProgram;
 
+        @CommandLine.Option(
+                names = {"--include-default-sprites"},
+                description = "Include sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
+        )
+        boolean includeDefaultSprites;
+
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
                 final File outputDirectory = Path.of(outputPath).toFile();
@@ -440,7 +446,8 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram);
+            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
+                    includeDefaultSprites);
         }
     }
 

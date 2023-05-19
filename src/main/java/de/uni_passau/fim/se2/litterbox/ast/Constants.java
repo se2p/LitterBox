@@ -18,7 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast;
 
-public class Constants {
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public final class Constants {
+
+    private Constants() {
+        throw new IllegalCallerException("utility class constructor");
+    }
 
     /**
      * Constants used for serialization and deserialization for Scratch 3.
@@ -341,4 +349,29 @@ public class Constants {
     public static final String INSTRUMENT_KEY = "INSTRUMENT";
     public static final String NOTE_KEY = "NOTE";
     public static final String DRUM_KEY = "DRUM";
+
+    /**
+     * The default sprite names in the various languages in lowercase.
+     *
+     * <p>Note to developers:
+     * To update the names, clone the
+     * <a href="https://github.com/scratchfoundation/scratch-l10n">Scratch translation repository</a>
+     * and run the following command in it:
+     * <pre>
+     * grep -oER '"gui.SpriteInfo.sprite": "[^"]+"' | cut -d ' ' -f2- | sed 's/$/,/' | sort | uniq | tr '\n' ' ' | fold -w 108 -s
+     * </pre>
+     * This extracts the value from the JSON key/value pairs of the translations, add a comma to the end of the line,
+     * ensures unique values, and wraps the lines to fit nicely below.
+     * <p>
+     * <em>Note</em>: the wrapped result might need some manual adjustment in case sprite names contain spaces and a
+     * line break is added in the wrong place.
+     */
+    public static final Set<String> DEFAULT_SPRITE_NAMES = Stream.of(
+            "스프라이트", "Actor", "Aktè", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo",
+            "i-Sprite", "Kihusika", "Kukla", "Lik", "Motšeakarolo", "Nhân vật", "Obchecto", "Objeto", "Parehe",
+            "Pêlîstik", "Personaj", "Personatge", "Personaxe", "Pertsonaia", "Postava", "Rolulo", "Sprait", "Sprajt",
+            "Sprayt", "Sprid", "Sprìd", "Sprite", "Spriti", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
+            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "სპრაიტი", "Կերպար", "דמות", "الكائن", "تەن", "شکلک",
+            "ገፀ-ባህርይ", "স্প্রাইট", "ସ୍ପ୍ରାଇଟ", "สไปรต์", "តួអង្គ", "スプライト", "角色"
+    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
 }

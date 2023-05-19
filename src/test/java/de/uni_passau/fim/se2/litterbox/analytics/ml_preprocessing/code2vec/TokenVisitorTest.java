@@ -18,43 +18,90 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import org.junit.Test;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class TokenVisitorTest {
+class TokenVisitorTest {
 
     @Test
-    public void testIntegerNumber() {
+    void testIntegerNumber() {
         NumberLiteral literal = new NumberLiteral(1234);
-        TokenVisitor visitor = new TokenVisitor();
-        literal.accept(visitor);
-        assertThat(visitor.getToken()).isEqualTo("1234");
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("1234");
     }
 
     @Test
-    public void testDoubleNumber() {
+    void testIntegerRounded() {
+        NumberLiteral literal = new NumberLiteral(1234.0);
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("1234");
+    }
+
+    @Test
+    void testDoubleNumber() {
         NumberLiteral literal = new NumberLiteral(3.14);
-        TokenVisitor visitor = new TokenVisitor();
-        literal.accept(visitor);
-        assertThat(visitor.getToken()).isEqualTo("3.14");
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("3.14");
     }
 
     @Test
-    public void testStringWithWhitespace() {
+    void testDoubleNumberRounded() {
+        NumberLiteral literal = new NumberLiteral(3.1415);
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("3.14");
+    }
+
+    @Test
+    void testStringWithWhitespace() {
         StringLiteral literal = new StringLiteral("hello\t world \n");
-        TokenVisitor visitor = new TokenVisitor();
-        literal.accept(visitor);
-        assertThat(visitor.getToken()).isEqualTo("helloworld");
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("hello\t world \n");
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("hello_world");
     }
 
     @Test
-    public void testStringWithComma() {
+    void testStringWithComma() {
         StringLiteral literal = new StringLiteral("a,b,c");
-        TokenVisitor visitor = new TokenVisitor();
-        literal.accept(visitor);
-        assertThat(visitor.getToken()).isEqualTo("abc");
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo("a,b,c");
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("abc");
+    }
+
+    @Test
+    void testStringIdWithComma() {
+        StrId id = new StrId("a,b,c");
+        assertThat(TokenVisitor.getNormalisedToken(id)).isEqualTo("abc");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testColorLiteral(final boolean normalised) {
+        final ColorLiteral color = new ColorLiteral(34, 7, 78);
+
+        final String actual;
+        if (normalised) {
+            actual = TokenVisitor.getNormalisedToken(color);
+        } else {
+            actual = TokenVisitor.getToken(color);
+        }
+
+        assertThat(actual).isEqualTo("#22074e");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testRotationStyle(final boolean normalised) {
+        final RotationStyle rotationStyle = new RotationStyle(RotationStyle.RotationStyleType.dont_rotate.getToken());
+
+        final String actual;
+        if (normalised) {
+            actual = TokenVisitor.getNormalisedToken(rotationStyle);
+        } else {
+            actual = TokenVisitor.getToken(rotationStyle);
+        }
+
+        assertThat(actual).isEqualTo("dont_rotate");
     }
 }

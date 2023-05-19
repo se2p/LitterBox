@@ -18,56 +18,64 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.TokenVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StringUtil {
-    private StringUtil() {
-    }
 
-    public static String normalizeName(String original) {
-        original = original.toLowerCase()
-                .replace("\\n", "") // new lines
-                .replaceAll("//s+", "") // whitespaces
-                .replaceAll("[\"',]", "") // quotes, apostrophes, commas
-                .replaceAll("\\P{Print}", ""); // unicode weird characters
-        String stripped = original.replaceAll("[^A-Za-z]", "");
-        if (stripped.length() == 0) {
-            return "";
-        } else {
-            return stripped;
-        }
+    private static final Pattern ALLOWED_LABEL_CHARS = Pattern.compile("[^a-z0-9_-]");
+
+    private static final Pattern SPLIT_PATTERN = Pattern.compile(
+            "(?<=[a-z])(?=[A-Z])|_|-|\\d|\\p{Punct}|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"
+    );
+
+    private StringUtil() {
+        throw new IllegalCallerException("utility class constructor");
     }
 
     public static List<String> splitToSubtokens(String str1) {
-        String str2 = str1.trim();
-        return Stream.of(str2.split("(?<=[a-z])(?=[A-Z])|_|-|\\d|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"))
-                .filter(s -> s.length() > 0).map(StringUtil::normalizeName)
-                .filter(s -> s.length() > 0).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public static String replaceSpecialCharacters(final String label) {
-        if (label == null || label.isBlank()) {
-            return "blank";
-        } else {
-            return label.replaceAll("[^a-zA-Z\\d\\s|]", "|").trim();
-        }
+        final String str2 = str1.trim();
+        return Stream.of(SPLIT_PATTERN.split(str2))
+                .filter(s -> !s.isEmpty())
+                .map(StringUtil::normalizeSubtoken)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
-     * Retrieve the actual literal represented by a node.
+     * Only keeps lowercase a-z characters.
      *
-     * @param node A node of the AST.
-     * @return The literal value of the given node.
+     * @param original Some string.
+     * @return The input converted to lowercase and all non-{@code a-z}-characters removed.
      */
-    public static String getToken(final ASTNode node) {
-        TokenVisitor visitor = new TokenVisitor();
-        node.accept(visitor);
-        return visitor.getToken();
+    private static String normalizeSubtoken(final String original) {
+        return original.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
+    }
+
+    /**
+     * Converts string literals as they appear in Scratch programs into a normalised form without special characters.
+     *
+     * <p>Applied normalisations:
+     * <ul>
+     *     <li>Replaces whitespace with underscores.</li>
+     *     <li>Converts to lowercase.</li>
+     *     <li>Removes all characters that are not alphanumeric, underscores, or dashes.</li>
+     * </ul>
+     *
+     * @param s Some string.
+     * @return The input string in its normalised form.
+     */
+    public static String normaliseString(final String s) {
+        final String noSpaces = s.trim().replaceAll("\\s+", "_");
+        final String label = ALLOWED_LABEL_CHARS.matcher(noSpaces.toLowerCase(Locale.ROOT)).replaceAll("");
+        if (label.isEmpty()) {
+            return "EMPTY_STRING";
+        } else {
+            return label;
+        }
     }
 }

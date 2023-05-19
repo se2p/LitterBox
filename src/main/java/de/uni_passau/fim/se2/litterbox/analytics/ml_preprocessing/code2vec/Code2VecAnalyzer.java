@@ -45,7 +45,8 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             return Stream.empty();
         }
 
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram);
+        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram,
+                includeDefaultSprites);
         return generatePathTask.createContextForCode2Vec().stream();
     }
 

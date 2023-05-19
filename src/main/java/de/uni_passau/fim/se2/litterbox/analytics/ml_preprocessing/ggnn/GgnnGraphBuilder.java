@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.TokenVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -120,7 +120,7 @@ public class GgnnGraphBuilder {
 
     private Map<Integer, String> getNodeLabels(final Map<ASTNode, Integer> nodeIndices,
                                                final Set<Integer> usedIndices) {
-        return getNodeInformation(nodeIndices, usedIndices, StringUtil::getToken);
+        return getNodeInformation(nodeIndices, usedIndices, TokenVisitor::getNormalisedToken);
     }
 
     private Map<Integer, String> getNodeTypes(final Map<ASTNode, Integer> nodeIndices, final Set<Integer> usedIndices) {
