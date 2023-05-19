@@ -73,13 +73,14 @@ public class SpriteNaming extends AbstractIssueFinder {
         visitedNames.add(trimmedName);
     }
 
+    /**
+     * Removes leading whitespace, and trailing whitespace/number combinations.
+     *
+     * @param name A sprite name.
+     * @return The trimmed sprite name.
+     */
     private String trimName(String name) {
-        String trimmedName = name;
-        while (trimmedName.length() > 0 && (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
-                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1)))) {
-            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
-        }
-        return trimmedName;
+        return name.trim().replaceAll("[\\d\\s]+$", "");
     }
 
     @Override
