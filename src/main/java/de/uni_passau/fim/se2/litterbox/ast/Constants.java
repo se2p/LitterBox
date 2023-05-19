@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast;
 
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -362,8 +363,8 @@ public final class Constants {
      * </pre>
      * This extracts the value from the JSON key/value pairs of the translations, add a comma to the end of the line,
      * ensures unique values, and wraps the lines to fit nicely below.
-     * <p>
-     * <em>Note</em>: the wrapped result might need some manual adjustment in case sprite names contain spaces and a
+     *
+     * <p><em>Note</em>: the wrapped result might need some manual adjustment in case sprite names contain spaces and a
      * line break is added in the wrong place.
      */
     public static final Set<String> DEFAULT_SPRITE_NAMES = Stream.of(
@@ -373,5 +374,30 @@ public final class Constants {
             "Sprayt", "Sprid", "Sprìd", "Sprite", "Spriti", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
             "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "სპრაიტი", "Կերպար", "דמות", "الكائن", "تەن", "شکلک",
             "ገፀ-ባህርይ", "স্প্রাইট", "ସ୍ପ୍ରାଇଟ", "สไปรต์", "តួអង្គ", "スプライト", "角色"
-    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
+    ).map(Constants::normaliseDefaultName).collect(Collectors.toUnmodifiableSet());
+
+    /**
+     * The default sprite names in the various languages in lowercase.
+     *
+     * <p>Note to developers:
+     * To update this list, follow the steps as for {@link #DEFAULT_SPRITE_NAMES}, but replace
+     * {@code gui.spriteInfo.sprite} with {@code DEFAULT_BROADCAST_MESSAGE_NAME}.
+     */
+    public static final Set<String> DEFAULT_MESSAGE_NAMES = Stream.of(
+            "메시지1", "bericht1", "berjocht1", "besked1", "boodskap1", "dæmiUmNafnÁSkilaboðum", "haber1", "ismarıc 1",
+            "karere1", "ki hāŋa1", "meddelande1", "melding1", "mensache1", "mensagem 1", "Mensagem 1", "mensahe1",
+            "mensaje1", "mensaxe1", "mesaĝo1", "mesaj1", "message1", "messaggio1", "messatge1", "mezua1", "missatge1",
+            "molaetsa 1", "molaetša1", "Nachricht1", "neges1", "pesan1", "peyam1", "poruka1", "qillqa1", "saƙon1",
+            "sporočilo1", "správa1", "teachdaireachd1", "teachtaireacht1", "teade1", "tin nhắn 1", "ujumbe1",
+            "umyalezo1", "umyalezo wokuqala", "üzenet1", "viesti1", "wiadomość1", "xabar1", "ziņa1", "žinutė1",
+            "zpráva1", "μήνυμα1", "ацҳамҭа1", "мэссэж1", "паведамленне1", "повідомлення1", "порука1", "сообщение1",
+            "съобщение1", "хабарлама1", "შეტყობინება1", "հաղորդագրություն1", "מסר 1", "الرسالة 1", "پیام 1", "نامەی1",
+            "መልእክት1", "বার্তা1", "ସନ୍ଦେଶ 1 ", "ข้อความ1", "សារ 1", "メッセージ1", "消息1"
+    ).map(Constants::normaliseDefaultName)
+            .map(name -> name.replaceAll("\\d", ""))
+            .collect(Collectors.toUnmodifiableSet());
+
+    private static String normaliseDefaultName(final String name) {
+        return name.toLowerCase(Locale.ROOT);
+    }
 }
