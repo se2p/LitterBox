@@ -73,7 +73,7 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
             return Stream.empty();
         }
 
-        final Stream<ActorDefinition> actors = AstNodeUtil.getActors(program, includeStage);
+        final Stream<ActorDefinition> actors = getActors(program);
 
         final Stream<TokenSequence> result;
         if (wholeProgram) {
@@ -87,6 +87,14 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
         }
 
         return result;
+    }
+
+    private Stream<ActorDefinition> getActors(final Program program) {
+        if (includeDefaultSprites) {
+            return AstNodeUtil.getActors(program, includeStage);
+        } else {
+            return AstNodeUtil.getActorsWithoutDefaultSprites(program, includeStage);
+        }
     }
 
     @Override
