@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -40,11 +39,11 @@ public abstract class Analyzer {
     private final Scratch3Parser parser = new Scratch3Parser();
 
     private final Path input;
-    protected String output;
-    protected boolean delete;
+    protected final Path output;
+    protected final boolean delete;
 
-    protected Analyzer(String input, String output, boolean delete) {
-        this.input = Paths.get(input);
+    protected Analyzer(Path input, Path output, boolean delete) {
+        this.input = input;
         this.output = output;
         this.delete = delete;
     }
@@ -85,18 +84,16 @@ public abstract class Analyzer {
     /**
      * Analyze multiple files based on a list of project ids in the given file.
      *
-     * @param listPath is the path to a file containing all the ids of projects that should be analyzed.
+     * @param projectList is the path to a file containing all the ids of projects that should be analyzed.
      */
-    public void analyzeMultiple(String listPath) {
-        Path projectList = Paths.get(listPath);
-
+    public void analyzeMultiple(Path projectList) {
         try (Stream<String> lines = Files.lines(projectList)) {
             List<String> pids = lines.toList();
             for (String pid : pids) {
                 analyzeSingle(pid);
             }
         } catch (IOException e) {
-            log.warning("Could not read project list at " + projectList.toString());
+            log.warning("Could not read project list at " + projectList);
         }
     }
 
@@ -109,11 +106,11 @@ public abstract class Analyzer {
      * @param pid is the id of the project that should be analyzed.
      */
     public void analyzeSingle(String pid) throws IOException {
-        Path path = Paths.get(input.toString(), pid + ".json");
+        Path path = input.resolve(pid + ".json");
         File projectFile = path.toFile();
         if (!projectFile.exists()) {
             try {
-                Downloader.downloadAndSaveProject(pid, input.toString());
+                Downloader.downloadAndSaveProject(pid, input);
             } catch (IOException e) {
                 log.warning("Could not download project with PID: " + pid);
                 return;
@@ -124,7 +121,7 @@ public abstract class Analyzer {
         deleteFile(projectFile);
     }
 
-    abstract void check(File fileEntry, String csv) throws IOException;
+    abstract void check(File fileEntry, Path csv) throws IOException;
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.

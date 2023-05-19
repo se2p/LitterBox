@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +47,7 @@ public interface JsonTest {
 
     default Program getAST(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
-        return parser.parseFile(fileName);
+        return parser.parseFile(Path.of(fileName).toFile());
     }
 
     default ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
@@ -58,7 +59,7 @@ public interface JsonTest {
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
     static Program parseProgram(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
-        return parser.parseFile(fileName);
+        return parser.parseFile(Path.of(fileName).toFile());
     }
 
     default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {

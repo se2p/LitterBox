@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +40,7 @@ public class CSVReportGenerator implements ReportGenerator {
      * @param detectors list of detectors that should be included in the report.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVReportGenerator(String fileName, List<String> detectors) throws IOException {
+    public CSVReportGenerator(Path fileName, List<String> detectors) throws IOException {
         this.detectors = new ArrayList<>(detectors);
 
         final List<String> headers = new ArrayList<>();

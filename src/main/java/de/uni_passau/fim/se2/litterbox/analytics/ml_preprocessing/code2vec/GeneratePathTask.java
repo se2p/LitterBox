@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class GeneratePathTask {
 

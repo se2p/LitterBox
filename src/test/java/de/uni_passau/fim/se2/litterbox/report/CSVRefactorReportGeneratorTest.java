@@ -80,8 +80,8 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         when(refactorSequence.getOriginalProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
-        String fileName = tmpFile.getFileName().toString();
-        String pathName = tmpFile.getParent().toString();
+        Path fileName = tmpFile.getFileName();
+        Path pathName = tmpFile.getParent();
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
         reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
         reportGenerator.close();
@@ -137,8 +137,8 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         when(refactorSequence.getOriginalProgram()).thenReturn(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
-        String fileName = tmpFile.getFileName().toString();
-        String pathName = tmpFile.getParent().toString();
+        Path fileName = tmpFile.getFileName();
+        Path pathName = tmpFile.getParent();
 
         CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
         reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);

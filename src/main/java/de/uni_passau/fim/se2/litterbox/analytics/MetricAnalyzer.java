@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 public class MetricAnalyzer extends Analyzer {
@@ -29,7 +30,7 @@ public class MetricAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
     private MetricTool issueTool;
 
-    public MetricAnalyzer(String input, String output, boolean delete) {
+    public MetricAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
         this.issueTool = new MetricTool();
     }
@@ -40,7 +41,7 @@ public class MetricAnalyzer extends Analyzer {
      * @param fileEntry the file to analyze
      */
     @Override
-    void check(File fileEntry, String csv) {
+    void check(File fileEntry, Path csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message

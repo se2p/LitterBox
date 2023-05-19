@@ -24,13 +24,21 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class JSONCreate {
+class JSONCreate {
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    @AfterAll
+    static void cleanUp() throws IOException {
+        Files.delete(Path.of("createBroadcast_annotated.json"));
+    }
 
     @Test
     public void createJSON() throws ParsingException, IOException {

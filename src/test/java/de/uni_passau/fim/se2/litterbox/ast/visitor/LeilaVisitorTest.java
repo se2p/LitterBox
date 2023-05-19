@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -230,12 +230,11 @@ public class LeilaVisitorTest implements JsonTest {
 
     @Test
     public void testCheckFailsForFolder(@TempDir File tempFile) throws IOException {
-        File file = new File("./src/test/fixtures/emptyProject.json");
-        String path = file.getAbsolutePath();
-        String outPath = tempFile.getAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false, true,false);
+        Path path = Path.of("./src/test/fixtures/emptyProject.json");
+        Path outPath = tempFile.toPath().toAbsolutePath();
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath.resolve("foobar"), false, true,false);
         analyzer.analyzeFile();
-        File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
+        File output = outPath.resolve("foobar").resolve("emptyProject.sc").toFile();
         assertThat(output.exists()).isFalse();
     }
 }

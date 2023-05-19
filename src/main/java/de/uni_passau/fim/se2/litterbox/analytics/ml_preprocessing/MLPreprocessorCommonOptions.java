@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing;
 
+import java.nio.file.Path;
+
 /**
  * Combines some options used for all machine learning preprocessing analyzers.
  *
@@ -30,7 +32,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing;
  * @param includeDefaultSprites If output should be generated for sprites that have the default name, e.g. ‘Sprite1’.
  */
 public record MLPreprocessorCommonOptions(
-        String inputPath,
+        Path inputPath,
         MLOutputPath outputPath,
         boolean deleteAfterwards,
         boolean includeStage,

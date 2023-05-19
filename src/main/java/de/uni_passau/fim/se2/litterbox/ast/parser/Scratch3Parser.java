@@ -40,10 +40,6 @@ public class Scratch3Parser {
         return program;
     }
 
-    public Program parseFile(String fileName) throws IOException, ParsingException {
-        return parseFile(new File(fileName));
-    }
-
     public Program parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
         if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {

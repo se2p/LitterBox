@@ -31,12 +31,12 @@ import java.util.logging.Logger;
 public class DotAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(DotAnalyzer.class.getName());
 
-    public DotAnalyzer(String input, String output, boolean delete) {
+    public DotAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
     }
 
     @Override
-    void check(File fileEntry, String outputPath) {
+    void check(File fileEntry, Path outputPath) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             log.warning("Could not parse program in " + fileEntry.getPath());
@@ -50,11 +50,10 @@ public class DotAnalyzer extends Analyzer {
         }
     }
 
-    private void createDotFile(Program program, String outputPath) throws IOException {
-        final Path outputFile = Path.of(outputPath);
+    private void createDotFile(Program program, Path outputPath) throws IOException {
         final String dotString = DotVisitor.buildDotGraph(program);
 
-        try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
+        try (BufferedWriter bw = Files.newBufferedWriter(outputPath)) {
             bw.write(dotString);
         }
     }
