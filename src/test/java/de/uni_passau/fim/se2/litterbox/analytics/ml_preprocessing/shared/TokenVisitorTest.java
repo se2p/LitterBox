@@ -16,20 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared;
 
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class TokenVisitorTest {
+class TokenVisitorTest implements JsonTest {
 
     @Test
     void testIntegerNumber() {
@@ -103,5 +107,28 @@ class TokenVisitorTest {
         }
 
         assertThat(actual).isEqualTo("dont_rotate");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "src/test/fixtures/allBlocks.json",
+            "src/test/fixtures/ml_preprocessing/shared/pen_blocks.json",
+            "src/test/fixtures/ml_preprocessing/shared/tts_blocks.json",
+            "src/test/fixtures/ml_preprocessing/shared/music_blocks.json"
+    })
+    void testAllBlocksNoSpaces(final String filename) throws Exception {
+        final Program program = getAST(filename);
+        final NoSpacesChecker noSpacesChecker = new NoSpacesChecker();
+        program.accept(noSpacesChecker);
+    }
+
+    static class NoSpacesChecker implements ScratchVisitor {
+        @Override
+        public void visit(ASTNode node) {
+            final String token = TokenVisitor.getNormalisedToken(node);
+            assertThat(token).doesNotContain(" ");
+
+            visitChildren(node);
+        }
     }
 }
