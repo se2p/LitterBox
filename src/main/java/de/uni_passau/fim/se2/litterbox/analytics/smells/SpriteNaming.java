@@ -22,13 +22,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * This finder looks if a sprite name has an uncommunicative name.
@@ -38,12 +36,6 @@ public class SpriteNaming extends AbstractIssueFinder {
     public static final String NAME = "sprite_naming";
     public static final String HINT_DEFAULT = "sprite_naming_default";
     private List<String> visitedNames;
-
-    private static final String[] SPRITE_LANGUAGES = {"Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš",
-            "Hahmo", "Kihusika", "Kukla", "Lik", "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia",
-            "Postava", "Pêlîstik", "Sprait", "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning",
-            "Umlingisi", "Veikėjas", "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن",
-            "تەن", "شکلک", "สไปรต์", "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"};
 
     @Override
     public void visit(Program node) {
@@ -58,17 +50,17 @@ public class SpriteNaming extends AbstractIssueFinder {
     }
 
     private void checkName(String name) {
-        String trimmedName = trimName(name);
+        final String trimmedName = trimName(name);
 
-        for (String standard : SPRITE_LANGUAGES) {
-            if (trimmedName.equals(standard)) {
-                Hint hint = new Hint(HINT_DEFAULT);
-                hint.setParameter(Hint.HINT_SPRITE, name);
-                addIssueWithLooseComment(hint);
-                visitedNames.add(trimmedName);
-                return;
-            }
+        boolean isDefaultName = Constants.DEFAULT_SPRITE_NAMES.contains(trimmedName.toLowerCase(Locale.ROOT));
+        if (isDefaultName) {
+            Hint hint = new Hint(HINT_DEFAULT);
+            hint.setParameter(Hint.HINT_SPRITE, name);
+            addIssueWithLooseComment(hint);
+            visitedNames.add(trimmedName);
+            return;
         }
+
         for (String visitedName : visitedNames) {
             if (trimmedName.equals(visitedName)) {
                 Hint hint = new Hint(getName());
