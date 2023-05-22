@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,11 +42,8 @@ public abstract class AbstractNode implements ASTNode {
     }
 
     protected AbstractNode(List<? extends ASTNode> children) {
-
         Preconditions.checkAllArgsNotNull(children);
-        this.children = UnmodifiableListBuilder.<ASTNode>builder()
-                .addAll(children)
-                .build();
+        this.children = Collections.unmodifiableList(children);
     }
 
     @Override
