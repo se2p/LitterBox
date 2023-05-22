@@ -40,7 +40,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -62,7 +61,7 @@ public class CSVRefactorReportGenerator {
      * @param fitnessFunctions list of used FitnessFunctions.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVRefactorReportGenerator(String fileName, String refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
+    public CSVRefactorReportGenerator(Path fileName, Path refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
         refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).collect(Collectors.toList());
         List<String> fitnessFunctionsNamesWithoutRefactoring = fitnessFunctions.stream().map(fitnessFunction -> fitnessFunction.getName() + "_without_refactoring").collect(Collectors.toList());
         List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).collect(Collectors.toList());
@@ -145,17 +144,16 @@ public class CSVRefactorReportGenerator {
         printer.close();
     }
 
-    protected CSVPrinter getNewPrinter(String name, String refactoredPath) throws IOException {
+    protected CSVPrinter getNewPrinter(Path name, Path refactoredPath) throws IOException {
         Path filePath;
-        Path namePath = Paths.get(name);
-        if (namePath.isAbsolute()) {
-            filePath = namePath;
+        if (name.isAbsolute()) {
+            filePath = name;
         } else {
-            filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
+            filePath = refactoredPath.resolve(name);
         }
 
         if (!Files.exists(filePath.getParent())) {
-            Files.createDirectory(filePath.getParent());
+            Files.createDirectories(filePath.getParent());
         }
 
         if (filePath.toFile().length() > 0) {

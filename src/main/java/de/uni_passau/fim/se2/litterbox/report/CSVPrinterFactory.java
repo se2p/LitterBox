@@ -37,13 +37,12 @@ public class CSVPrinterFactory {
     /**
      * Creates a new CSV printer that either appends rows to the output file if it already exists, or creates a new file.
      *
-     * @param outputFile The path to the file which the data should be written to.
+     * @param outputPath The path to the file which the data should be written to.
      * @param heads      The header column names of the CSV data.
      * @return A CSV printer that writes to {@code outputFile}.
      * @throws IOException Thrown in case opening the target file is not possible.
      */
-    public static CSVPrinter getNewPrinter(final String outputFile, final List<String> heads) throws IOException {
-        final Path outputPath = Path.of(outputFile);
+    public static CSVPrinter getNewPrinter(final Path outputPath, final List<String> heads) throws IOException {
         final boolean outFileAlreadyExists = Files.exists(outputPath) && outputPath.toFile().length() > 0;
 
         final CSVFormat format;

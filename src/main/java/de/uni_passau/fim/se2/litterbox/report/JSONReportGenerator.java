@@ -29,9 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadat
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,8 +55,8 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
     private static final boolean INCLUDE_COUPLING = PropertyLoader.getSystemBoolProperty("json.coupling");
 
-    public JSONReportGenerator(String fileName) throws IOException {
-        outputStream = new FileOutputStream(fileName);
+    public JSONReportGenerator(Path fileName) throws IOException {
+        outputStream = Files.newOutputStream(fileName);
         jsonGenerator = jfactory.createGenerator(outputStream, JsonEncoding.UTF8);
         jsonGenerator.useDefaultPrettyPrinter();
         closeStream = true;
