@@ -90,6 +90,8 @@ public enum NodeType {
 
     SOUND_VOLUME,
 
+    TRANSLATE_VIEWER_LANGUAGE,
+
     TTS_LANGUAGE,
     TTS_VOICE,
 

@@ -48,6 +48,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -82,15 +86,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.*;
+import java.util.logging.Logger;
 
-class AstnnTransformationVisitor
-        implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+class AstnnTransformationVisitor implements
+        ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor,
+        TranslateExtensionVisitor {
+
+    private static final Logger log = Logger.getLogger(AstnnTransformationVisitor.class.getName());
 
     /**
      * Remove the parameters from the procedure definition and call block names.
@@ -932,6 +937,8 @@ class AstnnTransformationVisitor
         finishVisit(AstnnAstNodeFactory.build(nodeType, child));
     }
 
+
+
     // endregion operators
 
     // region variables
@@ -1357,6 +1364,32 @@ class AstnnTransformationVisitor
 
     // endregion music
 
+    // region translate
+
+    @Override
+    public void visit(TranslateTo node) {
+        final AstnnNode text = transformNode(node.getText());
+        final AstnnNode language = transformNode(node.getLanguage());
+        finishVisit(AstnnAstNodeFactory.build(StatementType.TRANSLATE_TO, text, language));
+    }
+
+    @Override
+    public void visit(ViewerLanguage node) {
+        finishVisit(AstnnAstNodeFactory.build(NodeType.TRANSLATE_VIEWER_LANGUAGE));
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        visitFixedChoice(node);
+    }
+
+    // endregion translate
+
     // region helper methods
 
     private void visitFixedChoice(final FixedNodeOption option) {
@@ -1381,7 +1414,10 @@ class AstnnTransformationVisitor
     }
 
     private AstnnNode getNode() {
-        final AstnnNode node = nodeTracker.orElseThrow();
+        final AstnnNode node = nodeTracker.orElseGet(() -> {
+            log.warning("Could not parse a block! Returning placeholder node.");
+            return AstnnAstNodeFactory.build(NodeType.UNKNOWN);
+        });
         nodeTracker = Optional.empty();
         return node;
     }

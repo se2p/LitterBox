@@ -47,6 +47,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -350,13 +351,22 @@ class ToAstnnTransformerTest implements JsonTest {
             "src/test/fixtures/allBlocks.json",
             "src/test/fixtures/ml_preprocessing/shared/pen_blocks.json",
             "src/test/fixtures/ml_preprocessing/shared/tts_blocks.json",
-            "src/test/fixtures/ml_preprocessing/shared/music_blocks.json"
+            "src/test/fixtures/ml_preprocessing/shared/music_blocks.json",
+            "src/test/fixtures/ml_preprocessing/shared/translate_blocks.json"
     })
     void testAllBlocksVisitable(final String filename) throws Exception {
         final Program program = getAST(filename);
         final AstnnNode node = ToAstnnTransformer.transform(program, true, true, false);
         assertThat(node).isNotNull();
         assertThat(node).isInstanceOf(AstnnAstNode.class);
+        assertNoUnknownNode(node);
+    }
+
+    private void assertNoUnknownNode(final AstnnNode node) {
+        assertThat(node.label().toLowerCase(Locale.ROOT))
+                .isNotEqualTo(NodeType.UNKNOWN.name().toLowerCase(Locale.ROOT));
+
+        node.children().forEach(this::assertNoUnknownNode);
     }
 
     private void assertChildLabels(final AstnnNode node, final String... labels) {

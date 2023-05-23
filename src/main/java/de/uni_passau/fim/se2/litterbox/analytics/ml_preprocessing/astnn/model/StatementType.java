@@ -128,6 +128,8 @@ public enum StatementType {
     PEN_SETPENSIZETO,
     PEN_STAMP,
 
+    TRANSLATE_TO,
+
     TTS_SETLANGUAGE,
     TTS_SETVOICE,
     TTS_SPEAK,
