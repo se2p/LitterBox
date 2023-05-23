@@ -250,8 +250,8 @@ public class StringExprParser {
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
 
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.note.name())) {
-                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_INPUT_KEY);
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.translate_menu_languages.name())) {
+                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_FIELDS_KEY);
                 Preconditions.checkArgument(languageParamNode.isArray());
                 String attribute = languageParamNode.get(FIELD_VALUE).asText();
                 paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
