@@ -100,7 +100,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             if (Files.exists(outputFile))
                 log.severe("Overriding script result " + outputFile);
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-                bw.write(token.getFeatures().toString());
+                bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
                 bw.flush();
             } catch (IOException e) {
                 log.severe("Exception in writing the file " + outputFile + "Error message " +  e.getMessage());
