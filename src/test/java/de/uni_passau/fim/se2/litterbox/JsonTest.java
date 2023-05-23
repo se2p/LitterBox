@@ -24,9 +24,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -65,6 +69,19 @@ public interface JsonTest {
     default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         return finder.check(prog);
+    }
+
+    /**
+     * Checks that the given AST part does not contain any {@link UnspecifiedStmt} or {@link UnspecifiedExpression}.
+     *
+     * @param root The root node of the (sub-)tree.
+     */
+    default void assertNoUnspecifiedBlocks(final ASTNode root) {
+        final var unknownExpr = NodeFilteringVisitor.getBlocks(root, UnspecifiedExpression.class);
+        assertThat(unknownExpr).isEmpty();
+
+        final var unknownStmt = NodeFilteringVisitor.getBlocks(root, UnspecifiedStmt.class);
+        assertThat(unknownStmt).isEmpty();
     }
 
     default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws IOException, ParsingException {
