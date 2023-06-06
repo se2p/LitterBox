@@ -31,11 +31,11 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     @Override
     public List<ProgramFeatures> generatePaths() {
-        return generatePathsWholeProgram().stream().collect(Collectors.toList());
+        return generatePathsWholeProgram().stream().toList();
     }
 
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
-        List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+        List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).toList();
         final ProgramFeatures programFeatures = super.getProgramFeatures("program", leafs);
         return Optional.of(programFeatures).filter(features -> !features.isEmpty());
     }
@@ -43,6 +43,6 @@ public final class ProgramPathGenerator extends PathGenerator {
     @Override
     public List<String> getAllLeafs() {
         return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

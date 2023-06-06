@@ -81,6 +81,6 @@ public final class SpritePathGenerator extends PathGenerator {
     @Override
     public List<String> getAllLeafs() {
         return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

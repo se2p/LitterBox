@@ -113,7 +113,7 @@ class PathGeneratorTest implements JsonTest {
         }
 
         List<String> actualPaths = pathContexts.get(0).getFeatures()
-                .stream().map(ProgramRelation::toString).collect(Collectors.toList());
+                .stream().map(ProgramRelation::toString).toList();
         assertEquals(expectedPathCount, actualPaths.size());
 
         for (String expectedPath : expectedPaths) {

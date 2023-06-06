@@ -93,6 +93,6 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken).collect(Collectors.toList());
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken).toList();
     }
 }

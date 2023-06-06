@@ -77,7 +77,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
     private void runProcessingSteps(File inputFile) {
         final var output = process(inputFile);
-        var outputList = output.collect(Collectors.toList());
+        var outputList = output.toList();
         this.writeResultPerScriptsToOutput(inputFile, outputList);
     }
 

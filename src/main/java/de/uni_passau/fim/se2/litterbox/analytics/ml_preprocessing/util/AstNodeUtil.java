@@ -49,7 +49,7 @@ public class AstNodeUtil {
                 .getDefinitions()
                 .stream()
                 .filter(actor -> includeStage || actor.isSprite())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
