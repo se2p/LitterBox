@@ -92,23 +92,14 @@ public class GgnnProgramGraphDotGraphBuilder {
     }
 
     private static String getEdgeColor(GgnnProgramGraph.EdgeType edgeType) {
-        switch (edgeType) {
-            case CHILD:
-                return "[color=black]";
-            case NEXT_TOKEN:
-                return "[color=blue]";
-            case DATA_DEPENDENCY:
-                return "[color=green]";
-            case COMPUTED_FROM:
-                return "[color=orange]";
-            case GUARDED_BY:
-                return "[color=maroon]";
-            case PARAMETER_PASSING:
-                return "[color=purple]";
-            case MESSAGE_PASSING:
-                return "[color=darkcyan]";
-            default:
-                throw new UnsupportedOperationException("Missing edge color definition!");
-        }
+        return switch (edgeType) {
+            case CHILD -> "[color=black]";
+            case NEXT_TOKEN -> "[color=blue]";
+            case DATA_DEPENDENCY -> "[color=green]";
+            case COMPUTED_FROM -> "[color=orange]";
+            case GUARDED_BY -> "[color=maroon]";
+            case PARAMETER_PASSING -> "[color=purple]";
+            case MESSAGE_PASSING -> "[color=darkcyan]";
+        };
     }
 }

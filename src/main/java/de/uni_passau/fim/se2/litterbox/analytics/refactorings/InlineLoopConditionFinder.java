@@ -37,9 +37,9 @@ public class InlineLoopConditionFinder extends AbstractRefactoringFinder {
             return;
         }
         Stmt lastStmt = script.getStmtList().getStatement(script.getStmtList().getNumberOfStatements() - 1);
-        if (lastStmt instanceof UntilStmt) {
+        if (lastStmt instanceof UntilStmt untilStmt) {
             // TODO: Could also cover the case where it is followed by a TerminationStmt
-            refactorings.add(new InlineLoopCondition((UntilStmt) lastStmt));
+            refactorings.add(new InlineLoopCondition(untilStmt));
         }
     }
 

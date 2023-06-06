@@ -23,9 +23,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 /**
@@ -33,10 +34,10 @@ import java.util.Iterator;
  */
 public class JsonParser {
 
-    public static JsonNode getBlocksNodeFromJSON(String path) throws IOException {
+    public static JsonNode getBlocksNodeFromJSON(Path path) throws IOException {
         JsonNode script;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {

@@ -59,8 +59,8 @@ public class MiddleMan extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         List<Stmt> stmts = node.getStmtList().getStmts();
-        if (stmts.size() == 1 && (stmts.get(0) instanceof CallStmt)) {
-            if (!((CallStmt) stmts.get(0)).getIdent().getName().equals(node.getIdent().getName())) {
+        if (stmts.size() == 1 && stmts.get(0) instanceof CallStmt callStmt) {
+            if (!callStmt.getIdent().getName().equals(node.getIdent().getName())) {
                 addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM, new Hint(PROCEDURE_HINT));
             }
         }

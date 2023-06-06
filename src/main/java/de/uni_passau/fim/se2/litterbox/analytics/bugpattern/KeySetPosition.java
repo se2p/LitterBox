@@ -55,9 +55,9 @@ public class KeySetPosition extends AbstractIssueFinder {
             inCondition = false;
             lastKeyValue = null;
             super.visit(node);
-        } else if (node.getEvent() instanceof KeyPressed && node.getStmtList().getStmts().size() > 0) {
+        } else if (node.getEvent() instanceof KeyPressed keyPressed && !node.getStmtList().getStmts().isEmpty()) {
             currentScript = node;
-            Key keyNode = ((KeyPressed) node.getEvent()).getKey();
+            Key keyNode = keyPressed.getKey();
             NumberLiteral keyNum = (NumberLiteral) keyNode.getKey();
             int key = (int) keyNum.getValue();
             if (key == KeyParser.DOWNARROW || key == KeyParser.UPARROW || key == KeyParser.LEFTARROW || key == KeyParser.RIGHTARROW) {
@@ -132,10 +132,8 @@ public class KeySetPosition extends AbstractIssueFinder {
 
     @Override
     public void visit(Key node) {
-        if (inCondition) {
-            if (node.getKey() instanceof NumberLiteral) {
-                lastKeyValue = (NumberLiteral) node.getKey();
-            }
+        if (inCondition && node.getKey() instanceof NumberLiteral numberLiteral) {
+            lastKeyValue = numberLiteral;
         }
     }
 
@@ -157,8 +155,8 @@ public class KeySetPosition extends AbstractIssueFinder {
 
         if (other.getFinder() instanceof MissingLoopSensing) {
             ASTNode node = first.getCodeLocation().getParentNode().getParentNode();
-            if(node instanceof IfThenStmt){
-                return ((IfThenStmt) node).getBoolExpr() == (other.getCodeLocation());
+            if (node instanceof IfThenStmt ifThenStmt) {
+                return ifThenStmt.getBoolExpr() == (other.getCodeLocation());
             }
 
         }

@@ -46,16 +46,16 @@ public class MotorLowPower extends AbstractRobotFinder {
         if (robot == MCORE) {
             NumValueVisitor calc = new NumValueVisitor();
             try {
-                if (node instanceof MoveSides) {
-                    NumExpr powerLeft = ((MoveSides) node).getLeftPower();
-                    NumExpr powerRight = ((MoveSides) node).getRightPower();
+                if (node instanceof MoveSides moveSides) {
+                    NumExpr powerLeft = moveSides.getLeftPower();
+                    NumExpr powerRight = moveSides.getRightPower();
                     double powerLeftValue = abs(calc.calculateEndValue(powerLeft));
                     double powerRightValue = abs(calc.calculateEndValue(powerRight));
                     if (powerLeftValue < MOTOR_MIN_VALUE && powerLeftValue != 0 || powerRightValue < MOTOR_MIN_VALUE && powerRightValue != 0) {
                         addIssue(node, IssueSeverity.MEDIUM);
                     }
-                } else if (node instanceof SinglePower) {
-                    NumExpr power = ((SinglePower) node).getPercent();
+                } else if (node instanceof SinglePower singlePower) {
+                    NumExpr power = singlePower.getPercent();
                     double powerValue = abs(calc.calculateEndValue(power));
                     if (powerValue < MOTOR_MIN_VALUE && powerValue != 0) {
                         addIssue(node, IssueSeverity.MEDIUM);

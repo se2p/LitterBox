@@ -47,9 +47,9 @@ public class MotorPowerOutOfBounds extends AbstractRobotFinder {
     public void visit(RobotMoveStmt node) {
         NumValueVisitor calc = new NumValueVisitor();
         try {
-            if (node instanceof MoveSides) {
-                NumExpr powerLeft = ((MoveSides) node).getLeftPower();
-                NumExpr powerRight = ((MoveSides) node).getRightPower();
+            if (node instanceof MoveSides moveSides) {
+                NumExpr powerLeft = moveSides.getLeftPower();
+                NumExpr powerRight = moveSides.getRightPower();
                 double powerLeftValue = calc.calculateEndValue(powerLeft);
                 double powerRightValue = calc.calculateEndValue(powerRight);
                 if (powerLeftValue > MOTOR_MAX_VALUE || powerRightValue > MOTOR_MAX_VALUE) {
@@ -57,8 +57,8 @@ public class MotorPowerOutOfBounds extends AbstractRobotFinder {
                 } else if (powerLeftValue < CODEY_MIN_VALUE || powerRightValue < CODEY_MIN_VALUE) {
                     addIssue(node, LOW);
                 }
-            } else if (node instanceof SinglePower) {
-                NumExpr power = ((SinglePower) node).getPercent();
+            } else if (node instanceof SinglePower singlePower) {
+                NumExpr power = singlePower.getPercent();
                 double powerValue = calc.calculateEndValue(power);
                 if (powerValue > MOTOR_MAX_VALUE) {
                     addIssue(node, LOW);

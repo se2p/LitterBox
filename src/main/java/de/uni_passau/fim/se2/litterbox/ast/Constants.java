@@ -18,7 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast;
 
-public class Constants {
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public final class Constants {
+
+    private Constants() {
+        throw new IllegalCallerException("utility class constructor");
+    }
 
     /**
      * Constants used for serialization and deserialization for Scratch 3.
@@ -341,4 +351,82 @@ public class Constants {
     public static final String INSTRUMENT_KEY = "INSTRUMENT";
     public static final String NOTE_KEY = "NOTE";
     public static final String DRUM_KEY = "DRUM";
+
+    /**
+     * The default sprite names in the various languages in lowercase.
+     *
+     * <p>Note to developers:
+     * To update the names, clone the
+     * <a href="https://github.com/scratchfoundation/scratch-l10n">Scratch translation repository</a>
+     * and run the following command in it:
+     * <pre>
+     * grep -oER '"gui.SpriteInfo.sprite": "[^"]+"' | cut -d ' ' -f2- | \
+     *     sed 's/$/,/' | sort | uniq | tr '\n' ' ' | fold -w 108 -s
+     * </pre>
+     * This extracts the value from the JSON key/value pairs of the translations, add a comma to the end of the line,
+     * ensures unique values, and wraps the lines to fit nicely below.
+     *
+     * <p><em>Note</em>: the wrapped result might need some manual adjustment in case sprite names contain spaces and a
+     * line break is added in the wrong place.
+     */
+    public static final Set<String> DEFAULT_SPRITE_NAMES = buildDefaultNames(
+            "스프라이트", "Actor", "Aktè", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo",
+            "i-Sprite", "Kihusika", "Kukla", "Lik", "Motšeakarolo", "Nhân vật", "Obchecto", "Objeto", "Parehe",
+            "Pêlîstik", "Personaj", "Personatge", "Personaxe", "Pertsonaia", "Postava", "Rolulo", "Sprait", "Sprajt",
+            "Sprayt", "Sprid", "Sprìd", "Sprite", "Spriti", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
+            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "სპრაიტი", "Կերպար", "דמות", "الكائن", "تەن", "شکلک",
+            "ገፀ-ባህርይ", "স্প্রাইট", "ସ୍ପ୍ରାଇଟ", "สไปรต์", "តួអង្គ", "スプライト", "角色"
+    ).collect(Collectors.toUnmodifiableSet());
+
+    /**
+     * The default sprite names in the various languages in lowercase.
+     *
+     * <p>Note to developers:
+     * To update this list, follow the steps as for {@link #DEFAULT_SPRITE_NAMES}, but replace
+     * {@code gui.spriteInfo.sprite} with {@code DEFAULT_BROADCAST_MESSAGE_NAME}.
+     */
+    public static final Set<String> DEFAULT_MESSAGE_NAMES = buildDefaultNames(
+            "메시지1", "bericht1", "berjocht1", "besked1", "boodskap1", "dæmiUmNafnÁSkilaboðum", "haber1", "ismarıc 1",
+            "karere1", "ki hāŋa1", "meddelande1", "melding1", "mensache1", "mensagem 1", "Mensagem 1", "mensahe1",
+            "mensaje1", "mensaxe1", "mesaĝo1", "mesaj1", "message1", "messaggio1", "messatge1", "mezua1", "missatge1",
+            "molaetsa 1", "molaetša1", "Nachricht1", "neges1", "pesan1", "peyam1", "poruka1", "qillqa1", "saƙon1",
+            "sporočilo1", "správa1", "teachdaireachd1", "teachtaireacht1", "teade1", "tin nhắn 1", "ujumbe1",
+            "umyalezo1", "umyalezo wokuqala", "üzenet1", "viesti1", "wiadomość1", "xabar1", "ziņa1", "žinutė1",
+            "zpráva1", "μήνυμα1", "ацҳамҭа1", "мэссэж1", "паведамленне1", "повідомлення1", "порука1", "сообщение1",
+            "съобщение1", "хабарлама1", "შეტყობინება1", "հաղորդագրություն1", "מסר 1", "الرسالة 1", "پیام 1", "نامەی1",
+            "መልእክት1", "বার্তা1", "ସନ୍ଦେଶ 1 ", "ข้อความ1", "សារ 1", "メッセージ1", "消息1"
+    ).map(name -> name.replaceAll("\\d", "")).collect(Collectors.toUnmodifiableSet());
+
+    /**
+     * The default sprite names in the various languages in lowercase.
+     *
+     * <p>Note to developers:
+     * To update this list, follow the steps as for {@link #DEFAULT_SPRITE_NAMES}, but replace
+     * {@code gui.spriteInfo.sprite} with {@code gui.defaultProject.variable}.
+     *
+     * <p><em>Note</em>: In this case better omit the {@code fold} step of the command since most names contain spaces
+     * which results in many wrong automatic line wraps.
+     */
+    public static final Set<String> DEFAULT_VARIABLE_NAMES = buildDefaultNames(
+            "나의 변수", "abubuwa masu canzawa na", "a miña variábel", "a minha variável", "an caochladair agam",
+            "az én változóm", "biến của tôi", "değişkenim", "fy newidyn", "guheroka min", "hukniraqni",
+            "i-variable yam", "i-variable yami", "kibadilika changu", "la meva variable", "la mia variabile",
+            "la mio variable", "lo mío variable", "mano kintamasis", "mans mainīgais", "m'athróg", "ma variabla",
+            "ma variable", "meine Variable", "mening o'zgaruvchim", "mia variablo", "mijn variabele", "minha variável",
+            "minu muutuja", "min variabel", "mi variable", "moja spremenljivka", "moja varijabla", "moja zmienna",
+            "moje proměnná", "muuttujani", "myn fariabele", "my variable", "my veranderlike", "nire aldagaia",
+            "phapanyo ya ka", "pharologanyo ya me", "premenná", "taku taurangi", "toʾoku variable", "variabel saya",
+            "variabila mea", "variable ko", "varyab mwen la", "η μεταβλητή μου", "исхатәу аҽеиҭак", "мая зменная",
+            "менің айнымалым", "миний хувьсагч", "моја променљива", "моя змінна", "моя переменная", "моята променлива",
+            "ჩემი ცვლადი", "իմ փոփոխականը", "המשתנה שלי", "گۆڕاوەکەم", "متغيري", "متغیر من", "আমার ভ্যারিয়েবল",
+            "ମୋ ଭେରିଏବଲ୍", "ตัวแปรของฉัน", "អថេរខ្ញុំ", "へんすう", "変数", "我的变量"
+    ).collect(Collectors.toUnmodifiableSet());
+
+    private static Stream<String> buildDefaultNames(final String... names) {
+        return Arrays.stream(names).map(Constants::normaliseDefaultName);
+    }
+
+    private static String normaliseDefaultName(final String name) {
+        return name.toLowerCase(Locale.ROOT);
+    }
 }

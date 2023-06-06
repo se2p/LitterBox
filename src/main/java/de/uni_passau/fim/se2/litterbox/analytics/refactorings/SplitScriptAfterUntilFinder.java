@@ -37,8 +37,8 @@ public class SplitScriptAfterUntilFinder extends AbstractRefactoringFinder {
 
         for (int i = 0; i < script.getStmtList().getNumberOfStatements() - 1; i++) {
             Stmt stmt = script.getStmtList().getStatement(i);
-            if (stmt instanceof UntilStmt) {
-                refactorings.add(new SplitScriptAfterUntil(script, (UntilStmt) stmt));
+            if (stmt instanceof UntilStmt untilStmt) {
+                refactorings.add(new SplitScriptAfterUntil(script, untilStmt));
             }
         }
     }

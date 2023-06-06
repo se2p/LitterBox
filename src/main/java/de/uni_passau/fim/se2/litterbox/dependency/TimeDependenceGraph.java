@@ -72,8 +72,7 @@ public class TimeDependenceGraph extends AbstractDependencyGraph {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Delay)) return false;
-            Delay delay = (Delay) o;
+            if (!(o instanceof Delay delay)) return false;
             return Objects.equals(source, delay.source);
         }
 

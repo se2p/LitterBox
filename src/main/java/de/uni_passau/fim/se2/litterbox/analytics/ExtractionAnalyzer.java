@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
 
 public class ExtractionAnalyzer extends Analyzer {
@@ -30,7 +31,7 @@ public class ExtractionAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
     private final ExtractionTool issueTool;
 
-    public ExtractionAnalyzer(String input, String output, boolean delete) {
+    public ExtractionAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
         this.issueTool = new ExtractionTool();
     }
@@ -41,7 +42,7 @@ public class ExtractionAnalyzer extends Analyzer {
      * @param fileEntry the file to analyze
      */
     @Override
-    void check(File fileEntry, String csv) {
+    void check(File fileEntry, Path csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             log.warning("Could not parse program in file " + fileEntry);

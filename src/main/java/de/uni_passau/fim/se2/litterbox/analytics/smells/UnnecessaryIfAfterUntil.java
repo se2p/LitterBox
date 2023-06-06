@@ -40,9 +40,7 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts();
         for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof UntilStmt && stmts.get(i + 1) instanceof IfElseStmt) {
-                UntilStmt until = (UntilStmt) stmts.get(i);
-                IfElseStmt ifElse = (IfElseStmt) stmts.get(i + 1);
+            if (stmts.get(i) instanceof UntilStmt until && stmts.get(i + 1) instanceof IfElseStmt ifElse) {
                 if (until.getBoolExpr().equals(ifElse.getBoolExpr())) {
                     IssueBuilder builder = prepareIssueBuilder(ifElse)
                             .withSeverity(IssueSeverity.LOW)
@@ -51,9 +49,7 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
 
                     addIssue(builder);
                 }
-            } else if (stmts.get(i) instanceof UntilStmt && stmts.get(i + 1) instanceof IfThenStmt) {
-                UntilStmt until = (UntilStmt) stmts.get(i);
-                IfThenStmt ifThen = (IfThenStmt) stmts.get(i + 1);
+            } else if (stmts.get(i) instanceof UntilStmt until && stmts.get(i + 1) instanceof IfThenStmt ifThen) {
                 if (until.getBoolExpr().equals(ifThen.getBoolExpr())) {
                     IssueBuilder builder = prepareIssueBuilder(ifThen)
                             .withSeverity(IssueSeverity.LOW)

@@ -181,14 +181,11 @@ public final class Pair<T> extends AbstractCollection<T> {
 
             @Override
             public T next() {
-                switch (index++) {
-                    case 0:
-                        return getFst();
-                    case 1:
-                        return getSnd();
-                    default:
-                        throw new NoSuchElementException();
-                }
+                return switch (index++) {
+                    case 0 -> getFst();
+                    case 1 -> getSnd();
+                    default -> throw new NoSuchElementException();
+                };
             }
         };
     }

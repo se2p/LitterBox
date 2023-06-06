@@ -50,14 +50,10 @@ public class TerminationStmtParser {
 
         final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
-        switch (opcode) {
-            case control_stop:
-                return parseControlStop(current, metadata);
-            case control_delete_this_clone:
-                return new DeleteClone(metadata);
-            default:
-                throw new RuntimeException("Not implemented yet for opcode " + opcode);
-        }
+        return switch (opcode) {
+            case control_stop -> parseControlStop(current, metadata);
+            case control_delete_this_clone -> new DeleteClone(metadata);
+        };
     }
 
     private static TerminationStmt parseControlStop(JsonNode current, BlockMetadata metadata) throws ParsingException {

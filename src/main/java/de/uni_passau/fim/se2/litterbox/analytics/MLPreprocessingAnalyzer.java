@@ -34,6 +34,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     protected final MLOutputPath outputPath;
     protected final boolean includeStage;
     protected final boolean wholeProgram;
+    protected final boolean includeDefaultSprites;
 
     /**
      * Sets up an analyzer that extracts the necessary information for a machine learning model from a program.
@@ -41,11 +42,12 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
      * @param commonOptions Some common options used for all machine learning preprocessors.
      */
     protected MLPreprocessingAnalyzer(final MLPreprocessorCommonOptions commonOptions) {
-        super(commonOptions.getInputPath(), commonOptions.getOutputPath().toString(), commonOptions.deleteAfterwards());
+        super(commonOptions.inputPath(), null, commonOptions.deleteAfterwards());
 
-        this.outputPath = commonOptions.getOutputPath();
+        this.outputPath = commonOptions.outputPath();
         this.includeStage = commonOptions.includeStage();
         this.wholeProgram = commonOptions.wholeProgram();
+        this.includeDefaultSprites = commonOptions.includeDefaultSprites();
     }
 
     protected abstract Stream<R> process(File inputFile) throws IOException;
@@ -90,7 +92,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
 
 
     @Override
-    protected void check(File fileEntry, String csv) throws IOException {
+    void check(File fileEntry, Path csv) throws IOException {
         runProcessingSteps(fileEntry);
     }
 

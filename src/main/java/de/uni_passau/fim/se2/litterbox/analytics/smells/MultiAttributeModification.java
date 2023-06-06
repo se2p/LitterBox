@@ -208,10 +208,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetGraphicEffectTo node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetGraphicEffectTo
-                    && ((SetGraphicEffectTo) prevNode).getEffect().equals(node.getEffect()))
-                    || (prevNode instanceof ChangeGraphicEffectBy
-                    && ((ChangeGraphicEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
+            if ((prevNode instanceof SetGraphicEffectTo setGraphicEffectTo
+                    && setGraphicEffectTo.getEffect().equals(node.getEffect()))
+                    || (prevNode instanceof ChangeGraphicEffectBy changeGraphicEffectBy
+                    && changeGraphicEffectBy.getEffect().equals(node.getEffect()))) {
                 generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), GRAPHIC_EFFECT));
             }
         }
@@ -221,10 +221,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(ChangeGraphicEffectBy node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetGraphicEffectTo
-                    && ((SetGraphicEffectTo) prevNode).getEffect().equals(node.getEffect()))
-                    || (prevNode instanceof ChangeGraphicEffectBy
-                    && ((ChangeGraphicEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
+            if ((prevNode instanceof SetGraphicEffectTo setGraphicEffectTo
+                    && setGraphicEffectTo.getEffect().equals(node.getEffect()))
+                    || (prevNode instanceof ChangeGraphicEffectBy changeGraphicEffectBy
+                    && changeGraphicEffectBy.getEffect().equals(node.getEffect()))) {
                 generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), GRAPHIC_EFFECT));
             }
         }
@@ -234,10 +234,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(ChangeSoundEffectBy node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetSoundEffectTo
-                    && ((SetSoundEffectTo) prevNode).getEffect().equals(node.getEffect()))
-                    || (prevNode instanceof ChangeSoundEffectBy
-                    && ((ChangeSoundEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
+            if ((prevNode instanceof SetSoundEffectTo setSoundEffectTo
+                    && setSoundEffectTo.getEffect().equals(node.getEffect()))
+                    || (prevNode instanceof ChangeSoundEffectBy changeSoundEffectBy
+                    && changeSoundEffectBy.getEffect().equals(node.getEffect()))) {
                 generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), SOUND_EFFECT));
             }
         }
@@ -247,10 +247,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetSoundEffectTo node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetSoundEffectTo
-                    && ((SetSoundEffectTo) prevNode).getEffect().equals(node.getEffect()))
-                    || (prevNode instanceof ChangeSoundEffectBy
-                    && ((ChangeSoundEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
+            if ((prevNode instanceof SetSoundEffectTo setSoundEffectTo
+                    && setSoundEffectTo.getEffect().equals(node.getEffect()))
+                    || (prevNode instanceof ChangeSoundEffectBy changeSoundEffectBy
+                    && changeSoundEffectBy.getEffect().equals(node.getEffect()))) {
                 generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), SOUND_EFFECT));
             }
         }
@@ -424,10 +424,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(ChangePenColorParamBy node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetPenColorParamTo
-                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
-                    || (prevNode instanceof ChangePenColorParamBy
-                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
+            if ((prevNode instanceof SetPenColorParamTo setPenColorParamTo
+                    && setPenColorParamTo.getParam().equals(node.getParam()))
+                    || (prevNode instanceof ChangePenColorParamBy changePenColorParamBy
+                    && changePenColorParamBy.getParam().equals(node.getParam()))) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
@@ -437,10 +437,10 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetPenColorParamTo node) {
         if (prevNode != null) {
-            if ((prevNode instanceof SetPenColorParamTo
-                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
-                    || (prevNode instanceof ChangePenColorParamBy
-                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
+            if ((prevNode instanceof SetPenColorParamTo setPenColorParamTo
+                    && setPenColorParamTo.getParam().equals(node.getParam()))
+                    || (prevNode instanceof ChangePenColorParamBy changePenColorParamBy
+                    && changePenColorParamBy.getParam().equals(node.getParam()))) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }

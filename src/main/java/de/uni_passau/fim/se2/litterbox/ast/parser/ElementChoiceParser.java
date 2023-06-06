@@ -80,16 +80,11 @@ public class ElementChoiceParser {
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
-        switch (standardElemChoice) {
-            case random:
-                return new Random(metadata);
-            case next:
-                return new Next(metadata);
-            case previous:
-                return new Prev(metadata);
-            default:
-                throw new RuntimeException("No implementation for " + standardElemChoice);
-        }
+        return switch (standardElemChoice) {
+            case random -> new Random(metadata);
+            case next -> new Next(metadata);
+            case previous -> new Prev(metadata);
+        };
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

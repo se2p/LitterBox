@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 public class LeilaAnalyzer extends Analyzer {
@@ -46,7 +45,7 @@ public class LeilaAnalyzer extends Analyzer {
      * @param nonDet flag whether attributes in intermediate language should be
      *               non deterministic (i.e. not initialized)
      */
-    public LeilaAnalyzer(String input, String output, boolean nonDet, boolean onNever, boolean delete) {
+    public LeilaAnalyzer(Path input, Path output, boolean nonDet, boolean onNever, boolean delete) {
         super(input, output, delete);
         this.nonDet = nonDet;
         this.onNever = onNever;
@@ -54,8 +53,8 @@ public class LeilaAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, String out) {
-        if (!Paths.get(out).toFile().isDirectory()) {
+    void check(File fileEntry, Path out) {
+        if (!out.toFile().isDirectory()) {
             log.warning("Output path must be a folder");
             return;
         }
@@ -64,7 +63,7 @@ public class LeilaAnalyzer extends Analyzer {
         String outName = getIntermediateFileName(fileEntry.getName());
 
         try {
-            Path outPath = Paths.get(out, outName);
+            Path outPath = out.resolve(outName);
             stream = new PrintStream(outPath.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.info("Creation of output stream not possible with output file " + outName);

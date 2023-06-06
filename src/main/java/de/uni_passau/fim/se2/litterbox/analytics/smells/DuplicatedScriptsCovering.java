@@ -66,12 +66,10 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
                         topBlockCurrent = currentScript.getEvent();
                         topBlockOther = script2.getEvent();
                     }
-                    if (!(topBlockCurrent.getMetadata() instanceof TopNonDataBlockMetadata)
-                            || !(topBlockOther.getMetadata() instanceof TopNonDataBlockMetadata)) {
+                    if (!(topBlockCurrent.getMetadata() instanceof TopNonDataBlockMetadata metaCurrent)
+                            || !(topBlockOther.getMetadata() instanceof TopNonDataBlockMetadata metaOther)) {
                         continue;
                     }
-                    TopNonDataBlockMetadata metaCurrent = (TopNonDataBlockMetadata) topBlockCurrent.getMetadata();
-                    TopNonDataBlockMetadata metaOther = (TopNonDataBlockMetadata) topBlockOther.getMetadata();
                     double currentX = metaCurrent.getXPos();
                     double currentY = metaCurrent.getYPos();
                     double otherX = metaOther.getXPos();

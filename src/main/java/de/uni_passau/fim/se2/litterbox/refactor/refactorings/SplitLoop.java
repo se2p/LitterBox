@@ -80,14 +80,11 @@ public class SplitLoop extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     private LoopStmt getLoop(LoopStmt loopStmt, StmtList body) {
-        if (loopStmt instanceof RepeatForeverStmt) {
-            RepeatForeverStmt origLoop = (RepeatForeverStmt) loopStmt;
+        if (loopStmt instanceof RepeatForeverStmt origLoop) {
             return new RepeatForeverStmt(body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof RepeatTimesStmt) {
-            RepeatTimesStmt origLoop = (RepeatTimesStmt) loopStmt;
+        } else if (loopStmt instanceof RepeatTimesStmt origLoop) {
             return new RepeatTimesStmt(apply(origLoop.getTimes()), body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof UntilStmt) {
-            UntilStmt origLoop = (UntilStmt) loopStmt;
+        } else if (loopStmt instanceof UntilStmt origLoop) {
             return new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
         } else {
             throw new RuntimeException("Unknown loop statement: " + loopStmt);
@@ -120,10 +117,17 @@ public class SplitLoop extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SplitLoop)) return false;
-        SplitLoop splitLoop = (SplitLoop) o;
-        return Objects.equals(script, splitLoop.script) && Objects.equals(loopStmt, splitLoop.loopStmt) && Objects.equals(splitPoint, splitLoop.splitPoint) && Objects.equals(replacementScript1, splitLoop.replacementScript1) && Objects.equals(replacementScript2, splitLoop.replacementScript2);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SplitLoop splitLoop)) {
+            return false;
+        }
+        return Objects.equals(script, splitLoop.script)
+                && Objects.equals(loopStmt, splitLoop.loopStmt)
+                && Objects.equals(splitPoint, splitLoop.splitPoint)
+                && Objects.equals(replacementScript1, splitLoop.replacementScript1)
+                && Objects.equals(replacementScript2, splitLoop.replacementScript2);
     }
 
     @Override

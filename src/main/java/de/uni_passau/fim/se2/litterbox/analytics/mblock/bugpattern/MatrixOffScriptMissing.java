@@ -126,17 +126,17 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     }
 
     private void setStopped(LEDMatrixStmt node) {
-        if (node instanceof PortStmt) {
-            states.put(((PortStmt) node).getPort().getPortType(), STOPPED);
+        if (node instanceof PortStmt portStmt) {
+            states.put(portStmt.getPort().getPortType(), STOPPED);
         } else {
             states.put(PORT_1, STOPPED);
         }
     }
 
     private void setRunning(LEDMatrixStmt node) {
-        if (node instanceof PortStmt) {
-            states.put(((PortStmt) node).getPort().getPortType(), RUNNING);
-            lastStmts.put(((PortStmt) node).getPort().getPortType(), node);
+        if (node instanceof PortStmt portStmt) {
+            states.put(portStmt.getPort().getPortType(), RUNNING);
+            lastStmts.put(portStmt.getPort().getPortType(), node);
         } else {
             states.put(PORT_1, RUNNING);
             lastStmts.put(PORT_1, node);
@@ -150,8 +150,8 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     }
 
     private boolean isBlank(LEDMatrixStmt node) {
-        if (node instanceof FacePanelStmt) {
-            LEDMatrix matrix = ((FacePanelStmt) node).getLedMatrix();
+        if (node instanceof FacePanelStmt facePanelStmt) {
+            LEDMatrix matrix = facePanelStmt.getLedMatrix();
             return matrix.getFaceString().equals("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
         }
         return false;

@@ -36,8 +36,8 @@ public class ViewerLanguage extends SingularExpression implements StringExpr, Tr
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof TranslateExtensionVisitor) {
-            ((TranslateExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof TranslateExtensionVisitor translateExtensionVisitor) {
+            translateExtensionVisitor.visit(this);
         } else {
             visitor.visit((TranslateBlock) this);
         }

@@ -160,18 +160,19 @@ public class StringExprParser {
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
-        switch (opcode) {
-            case operator_join:
+        return switch (opcode) {
+            case operator_join -> {
                 StringExpr first = parseStringExpr(state, exprBlock, STRING1_KEY, allBlocks);
                 StringExpr second = parseStringExpr(state, exprBlock, STRING2_KEY, allBlocks);
-                return new Join(first, second, metadata);
-            case operator_letter_of:
+                yield new Join(first, second, metadata);
+            }
+            case operator_letter_of -> {
                 NumExpr num = NumExprParser.parseNumExpr(state, exprBlock, LETTER_KEY, allBlocks);
                 StringExpr word = parseStringExpr(state, exprBlock, STRING_KEY, allBlocks);
-                return new LetterOf(num, word, metadata);
-            case sensing_username:
-                return new Username(metadata);
-            case data_itemoflist:
+                yield new LetterOf(num, word, metadata);
+            }
+            case sensing_username -> new Username(metadata);
+            case data_itemoflist -> {
                 NumExpr index = NumExprParser.parseNumExpr(state, exprBlock, INDEX_KEY, allBlocks);
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
@@ -190,16 +191,18 @@ public class StringExprParser {
                 ExpressionListInfo variableInfo = list.get();
                 variable = new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId((variableInfo.getVariableName()))));
-                return new ItemOfVariable(index, variable, metadata);
-            case looks_costumenumbername:
+                yield new ItemOfVariable(index, variable, metadata);
+            }
+            case looks_costumenumbername -> {
                 String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Costume(new NameNum(numberName), metadata);
-            case looks_backdropnumbername:
-                numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Backdrop(new NameNum(numberName), metadata);
-            case sensing_answer:
-                return new Answer(metadata);
-            case sensing_of:
+                yield new Costume(new NameNum(numberName), metadata);
+            }
+            case looks_backdropnumbername -> {
+                String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                yield  new Backdrop(new NameNum(numberName), metadata);
+            }
+            case sensing_answer -> new Answer(metadata);
+            case sensing_of -> {
                 ElementChoice elem;
                 JsonNode inputsNode = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY);
                 if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
@@ -222,37 +225,21 @@ public class StringExprParser {
                 }
 
                 String prop = exprBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
-                Attribute property;
-                switch (prop) {
-                    case "y position":
-                    case "x position":
-                    case "direction":
-                    case "costume #":
-                    case "costume name":
-                    case "size":
-                    case "volume":
-                    case "backdrop name":
-                    case "backdrop #":
-                        property = new AttributeFromFixed(new FixedAttribute(prop));
-                        break;
-                    default:
-                        property = new AttributeFromVariable(new Variable(new StrId(prop)));
-                }
-                return new AttributeOf(property, elem, metadata);
-            case detect_ir:
-            case comm_receive_ir:
-                return new IRMessage(metadata);
-            case translate_getTranslate:
-                return parseTranslate(state, exprBlock, metadata, allBlocks);
-            case translate_getViewerLanguage:
-                return new ViewerLanguage(metadata);
-
-            default:
-                throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
-        }
+                Attribute property = switch (prop) {
+                    case "y position", "x position", "direction", "costume #", "costume name", "size", "volume",
+                            "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(prop));
+                    default -> new AttributeFromVariable(new Variable(new StrId(prop)));
+                };
+                yield new AttributeOf(property, elem, metadata);
+            }
+            case detect_ir, comm_receive_ir -> new IRMessage(metadata);
+            case translate_getTranslate -> parseTranslate(state, exprBlock, metadata, allBlocks);
+            case translate_getViewerLanguage -> new ViewerLanguage(metadata);
+        };
     }
 
-    private static StringExpr parseTranslate(ProgramParserState state, JsonNode exprBlock, BlockMetadata metadata, JsonNode blocks) throws ParsingException {
+    private static StringExpr parseTranslate(ProgramParserState state, JsonNode exprBlock, BlockMetadata metadata,
+                                             JsonNode blocks) throws ParsingException {
         TLanguage language;
         BlockMetadata paramMetadata;
         List<JsonNode> inputsList = new ArrayList<>();
@@ -263,8 +250,8 @@ public class StringExprParser {
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
 
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.note.name())) {
-                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_INPUT_KEY);
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.translate_menu_languages.name())) {
+                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_FIELDS_KEY);
                 Preconditions.checkArgument(languageParamNode.isArray());
                 String attribute = languageParamNode.get(FIELD_VALUE).asText();
                 paramMetadata = BlockMetadataParser.parse(reference, referredBlock);

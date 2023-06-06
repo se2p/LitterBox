@@ -47,8 +47,8 @@ public class ExprLanguage extends AbstractNode implements Language {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof TextToSpeechExtensionVisitor) {
-            ((TextToSpeechExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof TextToSpeechExtensionVisitor textToSpeechExtensionVisitor) {
+            textToSpeechExtensionVisitor.visit(this);
         } else {
             visitor.visit(this);
         }

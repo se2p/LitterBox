@@ -115,7 +115,7 @@ public class Main implements Callable<Integer> {
                 description = "Path to the folder or file that should be analysed, "
                         + "or path in which to store downloaded projects."
         )
-        String projectPath;
+        Path projectPath;
 
         @CommandLine.Option(
                 names = {"--project-id"},
@@ -127,14 +127,14 @@ public class Main implements Callable<Integer> {
                 names = {"--project-list"},
                 description = "Path to a file with a list of project ids which should be downloaded and analysed."
         )
-        String projectList;
+        Path projectList;
 
         @CommandLine.Option(
                 names = {"-o", "--output"},
                 description = "Path to the file or folder for the analyser results. "
                         + "Has to be a folder if multiple projects are analysed."
         )
-        String outputPath;
+        Path outputPath;
 
         @CommandLine.Option(
                 names = {"--delete"},
@@ -212,12 +212,12 @@ public class Main implements Callable<Integer> {
                 names = {"-a", "--annotate"},
                 description = "Path where Scratch files with hints to bug patterns should be created."
         )
-        String annotationPath;
+        Path annotationPath;
 
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             if (projectPath == null) {
-                projectPath = Files.createTempDirectory("litterbox-bug").toString();
+                projectPath = Files.createTempDirectory("litterbox-bug");
             }
 
             final String detector = String.join(",", detectors);
@@ -336,7 +336,7 @@ public class Main implements Callable<Integer> {
                 names = {"-r", "--refactored-projects"},
                 description = "Path where the refactored Scratch projects should be created."
         )
-        String refactoredPath;
+        Path refactoredPath;
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
@@ -421,10 +421,15 @@ public class Main implements Callable<Integer> {
         )
         boolean wholeProgram;
 
+        @CommandLine.Option(
+                names = {"--include-default-sprites"},
+                description = "Include sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
+        )
+        boolean includeDefaultSprites;
 
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
-                final File outputDirectory = Path.of(outputPath).toFile();
+                final File outputDirectory = outputPath.toFile();
                 if (outputDirectory.exists() && !outputDirectory.isDirectory()) {
                     throw new CommandLine.ParameterException(
                             spec.commandLine(),
@@ -441,7 +446,8 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram);
+            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
+                    includeDefaultSprites);
         }
     }
 

@@ -67,27 +67,22 @@ public class KeyParser {
             block = current;
         }
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
-        switch (keyValue) {
-            case "space":
-                return new Key(new NumberLiteral(SPACE), metadata);
-            case "up arrow":
-                return new Key(new NumberLiteral(UPARROW), metadata);
-            case "down arrow":
-                return new Key(new NumberLiteral(DOWNARROW), metadata);
-            case "left arrow":
-                return new Key(new NumberLiteral(LEFTARROW), metadata);
-            case "right arrow":
-                return new Key(new NumberLiteral(RIGHTARROW), metadata);
-            case "any":
-                return new Key(new NumberLiteral(ANYKEY), metadata);
-            default:
+        return switch (keyValue) {
+            case "space" -> new Key(new NumberLiteral(SPACE), metadata);
+            case "up arrow" -> new Key(new NumberLiteral(UPARROW), metadata);
+            case "down arrow" -> new Key(new NumberLiteral(DOWNARROW), metadata);
+            case "left arrow" -> new Key(new NumberLiteral(LEFTARROW), metadata);
+            case "right arrow" -> new Key(new NumberLiteral(RIGHTARROW), metadata);
+            case "any" -> new Key(new NumberLiteral(ANYKEY), metadata);
+            default -> {
                 if (keyValue.length() > 0) {
-                    return new Key(new NumberLiteral(keyValue.charAt(0)), metadata);
+                    yield new Key(new NumberLiteral(keyValue.charAt(0)), metadata);
                 } else {
-                    // It is not clear how this can happen, but it happens sometimtes.
-                    return new Key(new NumberLiteral(0), metadata);
+                    // It is not clear how this can happen, but it happens sometimes.
+                    yield new Key(new NumberLiteral(0), metadata);
                 }
-        }
+            }
+        };
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

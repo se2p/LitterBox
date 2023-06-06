@@ -53,7 +53,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(pathType, maxPathLength, includeStage, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(pathType, maxPathLength, includeStage, program, includeDefaultSprites);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContextForCode2Vec().stream();
     }

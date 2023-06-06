@@ -66,25 +66,13 @@ public class ListStmtParser {
 
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
-        switch (opcode) {
-            case data_replaceitemoflist:
-                return parseReplaceItemOfList(state, current, allBlocks, metadata);
-
-            case data_insertatlist:
-                return parseInsertAtList(state, current, allBlocks, metadata);
-
-            case data_deletealloflist:
-                return parseDeleteAllOfList(state, current, metadata);
-
-            case data_deleteoflist:
-                return parseDeleteOfList(state, current, allBlocks, metadata);
-
-            case data_addtolist:
-                return parseAddToList(state, current, allBlocks, metadata);
-
-            default:
-                throw new RuntimeException("Not Implemented yet");
-        }
+        return switch (opcode) {
+            case data_replaceitemoflist -> parseReplaceItemOfList(state, current, allBlocks, metadata);
+            case data_insertatlist -> parseInsertAtList(state, current, allBlocks, metadata);
+            case data_deletealloflist -> parseDeleteAllOfList(state, current, metadata);
+            case data_deleteoflist -> parseDeleteOfList(state, current, allBlocks, metadata);
+            case data_addtolist -> parseAddToList(state, current, allBlocks, metadata);
+        };
     }
 
     private static ListStmt parseAddToList(final ProgramParserState state, JsonNode current, JsonNode allBlocks,

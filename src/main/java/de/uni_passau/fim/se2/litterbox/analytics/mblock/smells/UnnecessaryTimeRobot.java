@@ -115,12 +115,11 @@ public class UnnecessaryTimeRobot extends AbstractRobotFinder {
     }
 
     private boolean checkTime(NumExpr node) {
-        if (node instanceof NumberLiteral) {
-            NumberLiteral num = (NumberLiteral) node;
+        if (node instanceof NumberLiteral num) {
             return num.getValue() == 0;
-        } else if (node instanceof AsNumber) {
-            if (((AsNumber) node).getOperand1() instanceof StringLiteral) {
-                return ((StringLiteral) ((AsNumber) node).getOperand1()).getText().equals("");
+        } else if (node instanceof AsNumber num) {
+            if (num.getOperand1() instanceof StringLiteral stringLiteral) {
+                return stringLiteral.getText().equals("");
             }
         }
         return false;

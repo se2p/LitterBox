@@ -102,8 +102,7 @@ public class FixedAttribute extends AbstractNode implements FixedNodeOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FixedAttribute)) return false;
-        FixedAttribute that = (FixedAttribute) o;
+        if (!(o instanceof FixedAttribute that)) return false;
         return type == that.type;
     }
 
