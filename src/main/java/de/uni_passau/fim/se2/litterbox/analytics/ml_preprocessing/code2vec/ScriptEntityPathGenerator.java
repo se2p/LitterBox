@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractProcedureDefinitionVisitor;
@@ -83,6 +82,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             if (isValidateScriptFeature(singleScriptFeatures)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
+            else scriptFeatures.add(singleScriptFeatures); // consider also empty paths
         });
         return scriptFeatures;
     }

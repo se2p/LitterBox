@@ -58,7 +58,7 @@ class GeneratePathTaskTest implements JsonTest {
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContextForCode2Vec();
         assertThat(pathContextForCode2Vec).isEmpty();
@@ -68,7 +68,7 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
 
@@ -97,7 +97,7 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextForCode2VecPerScripts(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
 
@@ -119,7 +119,7 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     public void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage) throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
         List<String> pathContexts = pathContextsForCode2Vec

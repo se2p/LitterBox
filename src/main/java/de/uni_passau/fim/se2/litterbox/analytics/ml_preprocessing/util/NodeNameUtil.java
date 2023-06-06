@@ -19,11 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -82,7 +79,7 @@ public final class NodeNameUtil {
      */
     public static Optional<String> getScriptEntityName(ScriptEntity node) {
         //
-        return null;
+        return Optional.of("node");
     }
 
 
