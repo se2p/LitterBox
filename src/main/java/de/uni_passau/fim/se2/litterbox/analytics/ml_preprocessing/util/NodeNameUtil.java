@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -67,4 +68,19 @@ public final class NodeNameUtil {
     private static boolean isDefaultName(final String normalisedSpriteLabel) {
         return Constants.DEFAULT_SPRITE_NAMES.contains(normalisedSpriteLabel);
     }
+
+    /**
+     * Gets script entity name.
+     * in case of @param node is Type Script, generate a name.
+     * in case of @param node is Type ProcedureDefinition, return the original name
+     *
+     * @param node the node
+     * @return the script entity name
+     */
+    public static Optional<String> getScriptEntityName(ScriptEntity node) {
+        //
+        return Optional.of("node");
+    }
+
+
 }

@@ -280,6 +280,7 @@ public class IssueTool {
         switch (commandString) {
             case ALL -> finders = new ArrayList<>(generateAllFinders().values());
             case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
+            case BUGS_SCRIPTS -> finders = new ArrayList<>(generateScriptsBugsFinders().values());
             case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
             case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
             case DEFAULT -> {

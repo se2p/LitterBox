@@ -27,8 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -78,7 +78,7 @@ public abstract class Analyzer {
                 .filter(p -> !Files.isDirectory(p))
                 .map(Path::toString)
                 .filter(f -> f.endsWith("json"))
-                .collect(Collectors.toList());
+                .toList();
     }
     private void deleteFile(File file) {
         if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {

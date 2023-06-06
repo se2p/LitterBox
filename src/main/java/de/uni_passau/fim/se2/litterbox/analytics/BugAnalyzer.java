@@ -46,7 +46,7 @@ public class BugAnalyzer extends Analyzer {
     private final String detectors;
     private final boolean outputPerScript;
 
-    public BugAnalyzer(Path input, Path output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+    public BugAnalyzer(Path input, Path output, String detectors, boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
@@ -88,7 +88,7 @@ public class BugAnalyzer extends Analyzer {
         return issues;
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName) {
+    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
         try {
             if (reportFileName == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);

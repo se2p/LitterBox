@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.apache.commons.csv.CSVPrinter;
@@ -45,6 +45,7 @@ public class CSVReportGenerator implements ReportGenerator {
      *
      * @param fileName  of the file to which the report is written.
      * @param detectors list of detectors that should be included in the report.
+     * @param outputPerScript indicate if the results should be written per scripts
      * @throws IOException is thrown if the file cannot be opened
      */
     public CSVReportGenerator(Path fileName, List<String> detectors, boolean outputPerScript) throws IOException {
@@ -114,8 +115,8 @@ public class CSVReportGenerator implements ReportGenerator {
     }
 
     private static String getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
-        if (NodeNameUtils.getScriptEntityName(scriptEntity).isPresent())
-            return program.getIdent().getName() + "_" + NodeNameUtils.getScriptEntityName(scriptEntity).get();
+        if (NodeNameUtil.getScriptEntityName(scriptEntity).isPresent())
+            return program.getIdent().getName() + "_" + NodeNameUtil.getScriptEntityName(scriptEntity).get();
         else {
             log.severe("can't generate a name for a valid scriptEntity");
             return "N/A";
