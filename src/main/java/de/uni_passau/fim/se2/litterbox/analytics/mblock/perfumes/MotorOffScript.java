@@ -88,11 +88,11 @@ public class MotorOffScript extends AbstractRobotFinder {
     private boolean isZeroPower(RobotMoveStmt node) {
         NumValueVisitor calc = new NumValueVisitor();
         try {
-            if (node instanceof MoveDirection) {
-                return 0 == calc.calculateEndValue(((MoveDirection) node).getPercent());
-            } else if (node instanceof MoveSides) {
-                double left = calc.calculateEndValue(((MoveSides) node).getLeftPower());
-                double right = calc.calculateEndValue(((MoveSides) node).getRightPower());
+            if (node instanceof MoveDirection moveDirection) {
+                return 0 == calc.calculateEndValue(moveDirection.getPercent());
+            } else if (node instanceof MoveSides moveSides) {
+                double left = calc.calculateEndValue(moveSides.getLeftPower());
+                double right = calc.calculateEndValue(moveSides.getRightPower());
                 return left == 0 && right == 0;
             }
         } catch (Exception ignored) {

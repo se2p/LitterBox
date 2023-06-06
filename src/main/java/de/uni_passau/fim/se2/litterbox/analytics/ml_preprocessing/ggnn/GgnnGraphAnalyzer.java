@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer {
+public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer<String> {
     private static final Logger log = Logger.getLogger(GgnnGraphAnalyzer.class.getName());
 
     private final boolean isDotStringGraph;
@@ -50,14 +50,19 @@ public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer {
             return Stream.empty();
         }
 
-        GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(program, input, includeStage,
-                                                                                wholeProgram, labelName);
+        GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(program, inputFile.toPath(),
+                includeStage, includeDefaultSprites, wholeProgram, labelName);
         if (isDotStringGraph) {
             String label = FilenameUtils.removeExtension(inputFile.getName());
             return Stream.of(generateGgnnGraphTask.generateDotGraphData(label));
         } else {
             return generateGgnnGraphTask.generateJsonGraphData();
         }
+    }
+
+    @Override
+    protected String resultToString(String result) {
+        return result;
     }
 
     @Override

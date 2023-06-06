@@ -40,9 +40,9 @@ public enum RobotCode {
     public static RobotCode getRobot(String name, SetStmtList setStmtList) {
         boolean visible = false;
         for (SetStmt setStmt : setStmtList.getStmts()) {
-            if (setStmt instanceof SetAttributeTo) {
-                if (((SetAttributeTo) setStmt).getStringExpr() instanceof StringLiteral) {
-                    if (((StringLiteral) ((SetAttributeTo) setStmt).getStringExpr()).getText().equals("visible")) {
+            if (setStmt instanceof SetAttributeTo setAttributeTo) {
+                if (setAttributeTo.getStringExpr() instanceof StringLiteral stringLiteral) {
+                    if (stringLiteral.getText().equals("visible")) {
                         visible = ((BoolLiteral) ((SetAttributeTo) setStmt).getExpr()).getValue();
                     }
                 }

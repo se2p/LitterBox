@@ -971,8 +971,8 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
         if (replacement instanceof Position) {
             return replacement;
         } else {
-            if (replacement instanceof StringExpr) {
-                return new FromExpression((StringExpr) replacement, new NoBlockMetadata());
+            if (replacement instanceof StringExpr stringExpr) {
+                return new FromExpression(stringExpr, new NoBlockMetadata());
             } else {
                 return new FromExpression(new AsString((Expression) replacement), new NoBlockMetadata());
             }

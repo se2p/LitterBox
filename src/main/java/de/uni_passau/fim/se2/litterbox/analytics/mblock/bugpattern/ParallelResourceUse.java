@@ -107,25 +107,13 @@ public class ParallelResourceUse extends AbstractRobotFinder {
         if (node instanceof TurnOffFace || node instanceof TurnOffFacePort) {
             return;
         }
-        if (node instanceof PortStmt) {
-            PortType port = ((PortStmt) node).getPort().getPortType();
+        if (node instanceof PortStmt portStmt) {
+            PortType port = portStmt.getPort().getPortType();
             switch (port) {
-                default:
-                case PORT_1:
-                    addEntry(node, matrix1UseNode);
-                    break;
-
-                case PORT_2:
-                    addEntry(node, matrix2UseNode);
-                    break;
-
-                case PORT_3:
-                    addEntry(node, matrix3UseNode);
-                    break;
-
-                case PORT_4:
-                    addEntry(node, matrix4UseNode);
-                    break;
+                case PORT_1, PORT_ON_BOARD -> addEntry(node, matrix1UseNode);
+                case PORT_2 -> addEntry(node, matrix2UseNode);
+                case PORT_3 -> addEntry(node, matrix3UseNode);
+                case PORT_4 -> addEntry(node, matrix4UseNode);
             }
         } else {
             addEntry(node, matrix1UseNode);
@@ -151,22 +139,15 @@ public class ParallelResourceUse extends AbstractRobotFinder {
         if (black || node instanceof LEDOff) {
             return;
         }
-        if (node instanceof PositionStmt) {
-            PositionType position = ((PositionStmt) node).getPosition().getPositionType();
+        if (node instanceof PositionStmt positionStmt) {
+            PositionType position = positionStmt.getPosition().getPositionType();
             switch (position) {
-                case ALL:
+                case ALL -> {
                     addEntry(node, led1UseNode);
                     addEntry(node, led2UseNode);
-                    break;
-
-                case RIGHT:
-                    addEntry(node, led2UseNode);
-                    break;
-
-                case LEFT:
-                default:
-                    addEntry(node, led1UseNode);
-                    break;
+                }
+                case LEFT -> addEntry(node, led1UseNode);
+                case RIGHT -> addEntry(node, led2UseNode);
             }
         } else {
             addEntry(node, led1UseNode);
@@ -202,7 +183,7 @@ public class ParallelResourceUse extends AbstractRobotFinder {
         List<ScriptEntity> scriptList = new LinkedList<>(map.keySet());
         List<ASTNode> nodeList = new LinkedList<>(map.values());
         List<Metadata> metadataList = new LinkedList<>();
-        nodeList.forEach((node) -> metadataList.add(node.getMetadata()));
+        nodeList.forEach(node -> metadataList.add(node.getMetadata()));
         if (nodeList.size() >= 2) {
             MultiBlockIssue issue = new MultiBlockIssue(this, MEDIUM, program, currentActor, scriptList, nodeList,
                     nodeList.get(0).getMetadata(), new Hint(getName()));
@@ -223,18 +204,18 @@ public class ParallelResourceUse extends AbstractRobotFinder {
     }
 
     private boolean isBlack(LEDStmt node) {
-        if (node instanceof ColorStmt) {
-            StringExpr stringExpr = ((ColorStmt) node).getColorString();
-            if (stringExpr instanceof StringLiteral) {
-                String string = ((StringLiteral) stringExpr).getText();
+        if (node instanceof ColorStmt colorStmt) {
+            StringExpr stringExpr = colorStmt.getColorString();
+            if (stringExpr instanceof StringLiteral stringLiteral) {
+                String string = stringLiteral.getText();
                 return string.equals("#000000");
             }
-        } else if (node instanceof RGBValuesPosition) {
+        } else if (node instanceof RGBValuesPosition rgbValuesPosition) {
             NumValueVisitor calc = new NumValueVisitor();
             try {
-                double red = calc.calculateEndValue(((RGBValuesPosition) node).getRed());
-                double green = calc.calculateEndValue(((RGBValuesPosition) node).getGreen());
-                double blue = calc.calculateEndValue(((RGBValuesPosition) node).getBlue());
+                double red = calc.calculateEndValue(rgbValuesPosition.getRed());
+                double green = calc.calculateEndValue(rgbValuesPosition.getGreen());
+                double blue = calc.calculateEndValue(rgbValuesPosition.getBlue());
                 return red == 0 && green == 0 && blue == 0;
             } catch (Exception ignored) {
             }
@@ -245,11 +226,11 @@ public class ParallelResourceUse extends AbstractRobotFinder {
     private boolean isZeroPower(RobotMoveStmt node) {
         NumValueVisitor calc = new NumValueVisitor();
         try {
-            if (node instanceof MoveDirection) {
-                return 0 == calc.calculateEndValue(((MoveDirection) node).getPercent());
-            } else if (node instanceof MoveSides) {
-                double left = calc.calculateEndValue(((MoveSides) node).getLeftPower());
-                double right = calc.calculateEndValue(((MoveSides) node).getRightPower());
+            if (node instanceof MoveDirection moveDirection) {
+                return 0 == calc.calculateEndValue(moveDirection.getPercent());
+            } else if (node instanceof MoveSides moveSides) {
+                double left = calc.calculateEndValue(moveSides.getLeftPower());
+                double right = calc.calculateEndValue(moveSides.getRightPower());
                 return left == 0 && right == 0;
             }
         } catch (Exception ignored) {

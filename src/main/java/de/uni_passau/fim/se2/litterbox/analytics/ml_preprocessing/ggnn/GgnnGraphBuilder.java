@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -58,7 +58,8 @@ public class GgnnGraphBuilder {
         final List<Pair<ASTNode>> nextTokenEdges = GgnnGraphEdgesVisitor.getNextTokenEdges(astRoot);
         final List<Pair<ASTNode>> guardedByEdges = GgnnGraphEdgesVisitor.getGuardedByEdges(astRoot);
         final List<Pair<ASTNode>> computedFromEdges = GgnnGraphEdgesVisitor.getComputedFromEdges(astRoot);
-        final List<Pair<ASTNode>> parameterPassingEdges = GgnnGraphEdgesVisitor.getParameterPassingEdges(program, astRoot);
+        final List<Pair<ASTNode>> parameterPassingEdges =
+                GgnnGraphEdgesVisitor.getParameterPassingEdges(program, astRoot);
         final List<Pair<ASTNode>> messagePassingEdges = GgnnGraphEdgesVisitor.getMessagePassingEdges(astRoot);
         final List<Pair<ASTNode>> dataDependencies = getDataDependencies();
 
@@ -120,7 +121,7 @@ public class GgnnGraphBuilder {
 
     private Map<Integer, String> getNodeLabels(final Map<ASTNode, Integer> nodeIndices,
                                                final Set<Integer> usedIndices) {
-        return getNodeInformation(nodeIndices, usedIndices, StringUtil::getToken);
+        return getNodeInformation(nodeIndices, usedIndices, TokenVisitor::getNormalisedToken);
     }
 
     private Map<Integer, String> getNodeTypes(final Map<ASTNode, Integer> nodeIndices, final Set<Integer> usedIndices) {
@@ -145,13 +146,13 @@ public class GgnnGraphBuilder {
     }
 
     private List<Pair<ASTNode>> getDataDependencies() {
-        if (astRoot instanceof Program) {
-            return ((Program) astRoot).getActorDefinitionList().getDefinitions()
+        if (astRoot instanceof Program program) {
+            return program.getActorDefinitionList().getDefinitions()
                     .stream()
                     .flatMap(this::getDataDependencies)
                     .collect(Collectors.toList());
-        } else if (astRoot instanceof ActorDefinition) {
-            return getDataDependencies((ActorDefinition) astRoot).collect(Collectors.toList());
+        } else if (astRoot instanceof ActorDefinition actorDefinition) {
+            return getDataDependencies(actorDefinition).collect(Collectors.toList());
         } else {
             throw new UnsupportedOperationException("Can only extract data dependencies from programs and actors!");
         }

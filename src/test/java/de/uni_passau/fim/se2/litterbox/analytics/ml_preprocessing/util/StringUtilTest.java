@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -28,11 +28,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringUtilTest {
 
     @Test
-    void testNormalizeName() {
-        assertEquals("testone", StringUtil.normalizeName("test ONE"));
-        assertEquals("testtwo", StringUtil.normalizeName("test\ntwo"));
-        assertEquals("testthree", StringUtil.normalizeName("test,\"three'"));
-        assertEquals("testfour", StringUtil.normalizeName("t̷̡̢̛̛̫͙̠̻̣̮̩̗͔͕̙̂̿̆͐͒̋́̓̄͌̆̒̏̈͛̈̋̉̈̋̓̕ȩ̷̨̛̛̮͕̭͖̠͖̦̹͚̖̦̥͙̪̳͙̘͉̋̿̾͊̆͊͗̒́̀́͊͗̓̊̉̕͘͜s̶̨̺̘̬̖͆͊͛̂͐̂̔̐̍̈̾̉̅̓͊͒̾̚͜͝͝͝͝͝ţ̴̧͇̻̬̰̬̹̙̼͕͇̭̖̫̜̠̗͔̣̜͎͍̠̙̳͔̝͗̑͛̔̈̀́̊͝͠ͅ four"));
+    void testNormalizeString() {
+        final List<Pair<String>> beforeAfterPairs = List.of(
+                Pair.of("a_b", "a  \tb"),
+                Pair.of("a_b", "\na\nb\n"),
+                Pair.of("1a456b68", "1a456b68"),
+                Pair.of("ab", "{}äa'b\n")
+        );
+
+        assertAll(
+                beforeAfterPairs
+                        .stream()
+                        .map(pair -> () -> assertEquals(pair.getFst(), StringUtil.normaliseString(pair.getSnd())))
+        );
     }
 
     @Test

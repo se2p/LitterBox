@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,9 +52,11 @@ public class ExpressionParserTest {
 
     @BeforeAll
     public static void setup() throws IOException {
-        moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/movesteps.json");
-        allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/allexprtypes.json");
-        twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/twoNumExprSlotsNumExprs.json");
+        moveStepsScript = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/movesteps.json"));
+        allExprTypesScript = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/allexprtypes.json"));
+        twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON(
+                Path.of("./src/test/fixtures/twoNumExprSlotsNumExprs.json")
+        );
         literalBlock = allExprTypesScript.get("QJ:02/{CIWEai#dfuC(k");
         containingBlock = allExprTypesScript.get("K0-dZ/kW=hWWb/GpMt8:");
 
@@ -123,7 +126,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testNumFuncts() throws IOException {
-        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/numfuncts.json");
+        JsonNode script = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/numfuncts.json"));
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
 
@@ -132,7 +135,9 @@ public class ExpressionParserTest {
 
     @Test
     public void testStatement() throws IOException {
-        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
+        JsonNode script = JsonParser.getBlocksNodeFromJSON(
+                Path.of("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json")
+        );
         JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
 
         Exception exception = assertThrows(ParsingException.class, () -> {

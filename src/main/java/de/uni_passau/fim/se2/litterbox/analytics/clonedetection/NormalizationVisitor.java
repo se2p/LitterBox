@@ -51,10 +51,9 @@ public class NormalizationVisitor extends CloneVisitor {
     @Override
     public ASTNode visit(Key node) {
         NumExpr keyNode = node.getKey();
-        if (keyNode instanceof NumberLiteral) {
+        if (keyNode instanceof NumberLiteral theKeyNumber) {
             // The number of the key is stored as a NumberLiteral
             // which we do not want to normalize
-            NumberLiteral theKeyNumber = (NumberLiteral) keyNode;
             return new Key(new NumberLiteral(theKeyNumber.getValue()), apply(node.getMetadata()));
         } else {
             return super.visit(node);

@@ -21,10 +21,12 @@ package de.uni_passau.fim.se2.litterbox.report;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 
 public class CSVPrinterFactory {
@@ -35,20 +37,24 @@ public class CSVPrinterFactory {
     /**
      * Creates a new CSV printer that either appends rows to the output file if it already exists, or creates a new file.
      *
-     * @param outputFile The path to the file which the data should be written to.
-     * @param heads The header column names of the CSV data.
+     * @param outputPath The path to the file which the data should be written to.
+     * @param heads      The header column names of the CSV data.
      * @return A CSV printer that writes to {@code outputFile}.
      * @throws IOException Thrown in case opening the target file is not possible.
      */
-    public static CSVPrinter getNewPrinter(final String outputFile, final List<String> heads) throws IOException {
-        final Path outputPath = Path.of(outputFile);
+    public static CSVPrinter getNewPrinter(final Path outputPath, final List<String> heads) throws IOException {
         final boolean outFileAlreadyExists = Files.exists(outputPath) && outputPath.toFile().length() > 0;
 
         final CSVFormat format;
         if (outFileAlreadyExists) {
-            format = CSVFormat.DEFAULT.builder()
-                    .setSkipHeaderRecord(true)
-                    .build();
+            final List<String> existingHeaders = getHeaderNames(outputPath);
+            if (heads.equals(existingHeaders)) {
+                format = CSVFormat.DEFAULT.builder()
+                        .setSkipHeaderRecord(true)
+                        .build();
+            } else {
+                throw new IOException("File already exists with a different format.");
+            }
         } else {
             format = CSVFormat.DEFAULT.builder()
                     .setHeader(heads.toArray(new String[0]))
@@ -57,5 +63,13 @@ public class CSVPrinterFactory {
 
         final var writer = Files.newBufferedWriter(outputPath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         return new CSVPrinter(writer, format);
+    }
+
+    private static List<String> getHeaderNames(final Path csvFile) throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(csvFile)) {
+            final String headers = br.readLine();
+            final String[] headerNames = headers.split(",");
+            return Arrays.asList(headerNames);
+        }
     }
 }

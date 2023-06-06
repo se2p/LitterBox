@@ -18,49 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing;
 
-public class MLPreprocessorCommonOptions {
-    private final String inputPath;
-    private final MLOutputPath outputPath;
-    private final boolean deleteAfterwards;
-    private final boolean includeStage;
-    private final boolean wholeProgram;
+import java.nio.file.Path;
 
-    /**
-     * Combines some options used for all machine learning preprocessing analyzers.
-     *
-     * @param inputPath The path to the file that should be analysed.
-     * @param outputPath The path which the results should be written to.
-     * @param deleteAfterwards If the input path should be deleted after processing has finished.
-     * @param includeStage If the stage should be included like a regular sprite in the processing steps.
-     * @param wholeProgram If the whole program should be treated as a single entity instead of performing the analysis
-     *                     per sprite.
-     */
-    public MLPreprocessorCommonOptions(final String inputPath, final MLOutputPath outputPath, boolean deleteAfterwards,
-                                       boolean includeStage, boolean wholeProgram) {
-        this.inputPath = inputPath;
-        this.outputPath = outputPath;
-        this.deleteAfterwards = deleteAfterwards;
-        this.includeStage = includeStage;
-        this.wholeProgram = wholeProgram;
-    }
-
-    public String getInputPath() {
-        return inputPath;
-    }
-
-    public MLOutputPath getOutputPath() {
-        return outputPath;
-    }
-
-    public boolean deleteAfterwards() {
-        return deleteAfterwards;
-    }
-
-    public boolean includeStage() {
-        return includeStage;
-    }
-
-    public boolean wholeProgram() {
-        return wholeProgram;
-    }
-}
+/**
+ * Combines some options used for all machine learning preprocessing analyzers.
+ *
+ * @param inputPath The path to the file that should be analysed.
+ * @param outputPath The path which the results should be written to.
+ * @param deleteAfterwards If the input path should be deleted after processing has finished.
+ * @param includeStage If the stage should be included like a regular sprite in the processing steps.
+ * @param wholeProgram If the whole program should be treated as a single entity instead of performing the analysis per
+ *                     sprite.
+ * @param includeDefaultSprites If output should be generated for sprites that have the default name, e.g. ‘Sprite1’.
+ */
+public record MLPreprocessorCommonOptions(
+        Path inputPath,
+        MLOutputPath outputPath,
+        boolean deleteAfterwards,
+        boolean includeStage,
+        boolean wholeProgram,
+        boolean includeDefaultSprites
+) {}

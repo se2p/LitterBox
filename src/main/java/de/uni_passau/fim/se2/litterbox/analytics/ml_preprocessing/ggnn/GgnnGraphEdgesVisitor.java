@@ -203,15 +203,15 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
     private static class ComputedFromVisitor extends GgnnGraphEdgesVisitor {
         @Override
         public void visit(ChangeVariableBy node) {
-            if (node.getIdentifier() instanceof Qualified) {
-                addEdges((Qualified) node.getIdentifier(), node.getExpr());
+            if (node.getIdentifier() instanceof Qualified qualified) {
+                addEdges(qualified, node.getExpr());
             }
         }
 
         @Override
         public void visit(SetVariableTo node) {
-            if (node.getIdentifier() instanceof Qualified) {
-                addEdges((Qualified) node.getIdentifier(), node.getExpr());
+            if (node.getIdentifier() instanceof Qualified qualified) {
+                addEdges(qualified, node.getExpr());
             }
         }
 

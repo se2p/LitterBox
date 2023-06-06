@@ -50,7 +50,7 @@ public class CSVReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         List<String> finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders, false);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
@@ -71,14 +71,14 @@ public class CSVReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         List<String> finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders, false);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
         // Now write same issue again, which should only append
         finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders, false);
+        reportGenerator = new CSVReportGenerator(tmpFile, finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 

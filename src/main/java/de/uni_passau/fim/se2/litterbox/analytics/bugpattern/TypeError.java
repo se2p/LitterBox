@@ -79,11 +79,11 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(DistanceTo node) {
         Position position = node.getPosition();
-        if (position instanceof FromExpression) {
+        if (position instanceof FromExpression fromExpression) {
             Hint hint = new Hint(WEIRD_DISTANCE);
-            if (!(((FromExpression) position).getStringExpr() instanceof AsString)) {
+            if (!(fromExpression.getStringExpr() instanceof AsString asString)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            } else if (!((((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof StrId) || ((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof Qualified)) {
+            } else if (!((asString.getOperand1() instanceof StrId) || asString.getOperand1() instanceof Qualified)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }

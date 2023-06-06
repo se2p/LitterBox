@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -207,6 +206,7 @@ public class IssueTool {
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
             registerSmellFinder(new UselessBlocks(), smellFinders);
+            registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
         if (LOAD_MBLOCK) {// mBlock smells
@@ -278,25 +278,16 @@ public class IssueTool {
         List<IssueFinder> finders = new ArrayList<>();
 
         switch (commandString) {
-            case ALL:
-                finders = new ArrayList<>(generateAllFinders().values());
-                break;
-            case BUGS:
-                finders = new ArrayList<>(generateBugFinders().values());
-                break;
-            case BUGS_SCRIPTS:
-                finders = new ArrayList<>(generateScriptsBugsFinders().values());
-                break;
-            case SMELLS:
-                finders = new ArrayList<>(generateSmellFinders().values());
-                break;
-            case PERFUMES:
-                finders = new ArrayList<>(generatePerfumeFinders().values());
-                break;
-            case DEFAULT:
-                finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
-                break;
-            default:
+            case ALL -> finders = new ArrayList<>(generateAllFinders().values());
+            case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
+            case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
+            case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
+            case DEFAULT -> {
+                var strictFinders = generateAllFinders().values().stream()
+                        .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
+                finders.addAll(strictFinders);
+            }
+            default -> {
                 for (String detectorName : commandString.split(",")) {
                     Map<String, IssueFinder> allFinders = generateAllFinders();
                     if (!allFinders.containsKey(detectorName)) {
@@ -306,7 +297,7 @@ public class IssueTool {
                     }
                     finders.add(allFinders.get(detectorName));
                 }
-                break;
+            }
         }
         return Collections.unmodifiableList(finders);
     }

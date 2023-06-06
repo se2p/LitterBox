@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class GeneratePathTask {
 
@@ -29,26 +28,21 @@ public class GeneratePathTask {
     private final int maxPathLength;
     private final boolean includeStage;
     private final boolean wholeProgram;
+    private final boolean includeDefaultSprites;
 
-    public GeneratePathTask(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
+    public GeneratePathTask(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram,
+                            boolean includeDefaultSprites) {
         this.program = program;
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
         this.wholeProgram = wholeProgram;
+        this.includeDefaultSprites = includeDefaultSprites;
     }
 
-    public Stream<String> createContextForCode2Vec() {
-        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram);
+    public List<ProgramFeatures> createContextForCode2Vec() {
+        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram,
+                includeDefaultSprites);
         // pathGenerator.printLeafsPerSprite();
-        List<ProgramFeatures> programs = pathGenerator.generatePaths();
-        return featuresToString(programs);
-    }
-
-    private Stream<String> featuresToString(List<ProgramFeatures> features) {
-        if (features == null) {
-            return Stream.empty();
-        }
-
-        return features.stream().map(ProgramFeatures::toString);
+        return pathGenerator.generatePaths();
     }
 }

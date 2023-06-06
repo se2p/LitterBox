@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,12 +43,11 @@ public class CSVReportGenerator implements ReportGenerator {
     /**
      * CSVReportGenerator writes the results of an analyses for a given list of detectors to a file.
      *
-     * @param fileName        of the file to which the report is written.
-     * @param detectors       list of detectors that should be included in the report.
-     * @param outputPerScript indicate if the results should be written per scripts
+     * @param fileName  of the file to which the report is written.
+     * @param detectors list of detectors that should be included in the report.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVReportGenerator(String fileName, List<String> detectors, boolean outputPerScript) throws IOException {
+    public CSVReportGenerator(Path fileName, List<String> detectors, boolean outputPerScript) throws IOException {
         this.detectors = new ArrayList<>(detectors);
         this.outputPerScript = outputPerScript;
 

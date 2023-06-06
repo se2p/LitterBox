@@ -39,21 +39,24 @@ public class UnnecessaryIf extends AbstractIssueFinder {
         StmtList lastList = null;
         IfThenStmt lastIf = null;
         for (Stmt s : stmts) {
-            if (s instanceof IfThenStmt) {
+            if (s instanceof IfThenStmt ifThenStmt) {
+                if (lastList != null && lastList.equals(ifThenStmt.getThenStmts())) {
+                    Or or = new Or(lastIf.getBoolExpr(), ifThenStmt.getBoolExpr(), lastIf.getMetadata());
+                    IfThenStmt joinedIf = new IfThenStmt(or, lastIf.getThenStmts(), s.getMetadata());
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(
+                            lastIf,
+                            Arrays.asList(s),
+                            Arrays.asList(joinedIf)
+                    );
+                    ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
 
-                if (lastList != null) {
-                    if (lastList.equals(((IfThenStmt) s).getThenStmts())) {
-                        IfThenStmt joinedIf = new IfThenStmt(new Or(lastIf.getBoolExpr(), ((IfThenStmt) s).getBoolExpr(), lastIf.getMetadata()), lastIf.getThenStmts(), s.getMetadata());
-                        StatementReplacementVisitor visitor = new StatementReplacementVisitor(lastIf, Arrays.asList(s), Arrays.asList(joinedIf));
-                        ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
-
-                        MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
-                        issue.setRefactoredScriptOrProcedureDefinition(refactored);
-                        addIssue(issue);
-                    }
+                    MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor,
+                            getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                    issue.setRefactoredScriptOrProcedureDefinition(refactored);
+                    addIssue(issue);
                 }
-                lastList = ((IfThenStmt) s).getThenStmts();
-                lastIf = (IfThenStmt) s;
+                lastList = ifThenStmt.getThenStmts();
+                lastIf = ifThenStmt;
             } else {
                 // even if we already have a list from an ifstmt before, it only counts if a second ifstmt
                 // follows directly after the first.
@@ -87,8 +90,7 @@ public class UnnecessaryIf extends AbstractIssueFinder {
             return false;
         }
 
-        if (first instanceof MultiBlockIssue) {
-            MultiBlockIssue mbFirst = (MultiBlockIssue) first;
+        if (first instanceof MultiBlockIssue mbFirst) {
             MultiBlockIssue mbOther = (MultiBlockIssue) other;
             Set<ASTNode> nodes = new HashSet<>(mbFirst.getNodes());
             nodes.retainAll(mbOther.getNodes());

@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +76,7 @@ public class FeatureTool {
         return Collections.unmodifiableList(metrics);
     }
 
-    public void createCSVFile(Program program, String fileName) throws IOException {
+    public void createCSVFile(Program program, Path fileName) throws IOException {
         List<String> headers = new ArrayList<>();
         headers.add("project");
         headers.add("id");

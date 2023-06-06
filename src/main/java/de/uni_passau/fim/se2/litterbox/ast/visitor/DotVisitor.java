@@ -20,32 +20,52 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
-public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
-
-    List<String> edges = new LinkedList<>();
+public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
+    StringBuilder edgesString = new StringBuilder();
     long counter = 0;
+
+    public static String buildDotGraph(final ASTNode node) {
+        final DotVisitor visitor = new DotVisitor();
+
+        visitor.initDotString();
+        node.accept(visitor);
+        visitor.finishDotString();
+
+        return visitor.edgesString.toString();
+    }
+
+    private void initDotString() {
+        addln("digraph G {");
+        addln("shape=rectangle");
+    }
+
+    private void finishDotString() {
+        edgesString.append("}");
+    }
+
+    private void addln(String line) {
+        edgesString.append(line).append(System.lineSeparator());
+    }
 
     @Override
     public void visit(ASTNode node) {
-        if (node instanceof ASTLeaf) {
-            recordLeaf((ASTLeaf) node);
+        if (node instanceof ASTLeaf astLeaf) {
+            recordLeaf(astLeaf);
         } else {
-            String name = String.valueOf(System.identityHashCode(node)); //This should only be a workaround this is a hack
+            // This should only be a workaround this is a hack
+            String name = String.valueOf(System.identityHashCode(node));
+
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
-            edges.add(label);
+            addln(label);
             for (ASTNode child : node.getChildren()) {
                 String edge = name + " -> " + System.identityHashCode(child);
-                edges.add(edge);
+                addln(edge);
             }
 
             for (ASTNode child : node.getChildren()) {
@@ -57,45 +77,14 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor  {
     public void recordLeaf(ASTLeaf node) {
         String name = String.valueOf(System.identityHashCode(node));
         String label = name + " [label = \"" + node.getUniqueName() + "\"];";
-        edges.add(label);
+        addln(label);
         String[] simpleStrings = node.toSimpleStringArray();
         for (String simpleString : simpleStrings) {
             counter++;
             String sLabel = counter + " [label = \"" + simpleString + "\"];";
-            edges.add(sLabel);
+            addln(sLabel);
             String edge = name + " -> " + counter;
-            edges.add(edge);
-        }
-    }
-
-    public void printGraph() {
-        System.out.println("digraph G {");
-        System.out.println("\t rankdir=LR");
-        System.out.println("\t shape=rectangle");
-        for (String edge : edges) {
-            System.out.print("\t");
-            System.out.println(edge);
-        }
-        System.out.println("}");
-    }
-
-    public void saveGraph(String fileName) throws IOException {
-        File file = new File(fileName);
-        FileOutputStream fos = new FileOutputStream(file);
-        try(BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8))) {
-
-            bw.write("digraph G {");
-            bw.newLine();
-            // bw.write("\t rankdir=LR");
-            // bw.newLine();
-            bw.write("\t shape=rectangle");
-            bw.newLine();
-            for (String edge : edges) {
-                bw.write("\t");
-                bw.write(edge);
-                bw.newLine();
-            }
-            bw.write("}");
+            addln(edge);
         }
     }
 

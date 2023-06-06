@@ -1,4 +1,4 @@
-image: maven:3-jdk-11
+image: maven:3-eclipse-temurin-17
 
 stages:
   - build
@@ -32,7 +32,7 @@ test:
         echo "[" > "$output";
         tail -n +3 target/checkstyle-result.xml | while read p; do
           if echo "$p" | grep -q "<file name.*" ; then
-            file=$(expr "$p" : '<file name=\"\(.*\)\".*' | sed 's@'"$path"'@@g' );
+            file=$(expr "$p" : '<file name=\"\(.*\)\".*' | sed 's@'"$path"'@@g' | sed 's@^/@@');
             echo "$file";
           fi
           if echo "$p" | grep -q "<error.*" ; then
@@ -40,10 +40,10 @@ test:
             message="$(expr "$p" : '.*message=\"\(.*\)\" source.*' | sed -e 's/&apos;/`/g' -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&quot;/\\\"/g' -e 's/&amp;/\&/g')"
             checksum=$(echo "$file $line $message" | sha1sum | awk '{print $1}')
             if [ "$first" == 1 ] ; then
-              echo "{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": \"$line\" }}}" >> "$output";
+              echo "{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output";
               first=0;
             else
-              echo ",{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": \"$line\" }}}" >> "$output"
+              echo ",{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output"
             fi
           fi
         done ;

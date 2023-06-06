@@ -36,8 +36,8 @@ public class Tempo extends SingularExpression implements NumExpr, MusicExpressio
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof MusicExtensionVisitor) {
-            ((MusicExtensionVisitor) visitor).visit(this);
+        if (visitor instanceof MusicExtensionVisitor musicExtensionVisitor) {
+            musicExtensionVisitor.visit(this);
         } else {
             visitor.visit((MusicBlock) this);
         }

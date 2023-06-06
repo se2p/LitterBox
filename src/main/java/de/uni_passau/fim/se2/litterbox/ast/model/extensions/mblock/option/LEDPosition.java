@@ -80,8 +80,7 @@ public class LEDPosition extends AbstractNode implements MBlockOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LEDPosition)) return false;
-        LEDPosition that = (LEDPosition) o;
+        if (!(o instanceof LEDPosition that)) return false;
         return type == that.type;
     }
 

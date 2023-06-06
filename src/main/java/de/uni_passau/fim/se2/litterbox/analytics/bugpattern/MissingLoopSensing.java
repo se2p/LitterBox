@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -28,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -203,6 +206,52 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             return other.getFinder().areCoupled(other, first);
         }
         return false;
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue first, Issue other) {
+        if (first.getFinder() != this) {
+            return super.areCoupled(first, other);
+        }
+
+        if (!(other.getFinder() instanceof ForeverInsideIf)) {
+            return false;
+        }
+
+        IfStmt ifStmt = findIf(first.getCodeLocation());
+        StmtList thenStmts = ifStmt.getThenStmts();
+        boolean resultOfThenSection = isLastStmtIssueLocation(thenStmts, other);
+
+        if (ifStmt instanceof IfThenStmt) {
+            return resultOfThenSection;
+        } else {
+            IfElseStmt ifElseStmt = (IfElseStmt) ifStmt;
+            StmtList elseStmts = ifElseStmt.getElseStmts();
+            boolean resultOfElseSection = isLastStmtIssueLocation(elseStmts, other);
+
+            return resultOfThenSection || resultOfElseSection;
+        }
+    }
+
+    private boolean isLastStmtIssueLocation(final StmtList stmtList, final Issue issue) {
+        if (stmtList.getStmts().isEmpty()) {
+            return false;
+        }
+
+        Stmt lastStmt = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
+        return lastStmt == issue.getCodeLocation();
+    }
+
+    private IfStmt findIf(ASTNode codeLocation) {
+        ASTNode parent = codeLocation.getParentNode();
+        while (!(parent instanceof IfStmt)) {
+            if (parent != null) {
+                parent = parent.getParentNode();
+            } else {
+                throw new IllegalStateException("It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong.");
+            }
+        }
+        return (IfStmt) parent;
     }
 
     @Override

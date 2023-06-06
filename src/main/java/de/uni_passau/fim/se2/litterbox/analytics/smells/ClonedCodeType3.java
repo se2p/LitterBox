@@ -44,19 +44,17 @@ public class ClonedCodeType3 extends ClonedCode {
             return false;
         }
 
-        if (other.getFinder() instanceof ClonedCodeType1
-                || other.getFinder() instanceof ClonedCodeType2) {
-            if (!(first instanceof MultiBlockIssue) || !(other instanceof MultiBlockIssue)) {
+        if (other.getFinder() instanceof ClonedCodeType1 || other.getFinder() instanceof ClonedCodeType2) {
+            if (!(first instanceof MultiBlockIssue mbIssue1) || !(other instanceof MultiBlockIssue mbIssue2)) {
                 return false;
             }
 
             // If there is a type 1 or type 2 clone that covers all the nodes then it subsumes a type 3 issue
 
-            MultiBlockIssue mbIssue1 = (MultiBlockIssue) first;
-            MultiBlockIssue mbIssue2 = (MultiBlockIssue) other;
-
-            Set<Integer> statements1 = mbIssue1.getNodes().stream().map(System::identityHashCode).collect(Collectors.toSet());
-            Set<Integer> statements2 = mbIssue2.getNodes().stream().map(System::identityHashCode).collect(Collectors.toSet());
+            Set<Integer> statements1 = mbIssue1.getNodes().stream().map(System::identityHashCode)
+                    .collect(Collectors.toSet());
+            Set<Integer> statements2 = mbIssue2.getNodes().stream().map(System::identityHashCode)
+                    .collect(Collectors.toSet());
 
             statements1.removeAll(statements2);
             return statements1.isEmpty();

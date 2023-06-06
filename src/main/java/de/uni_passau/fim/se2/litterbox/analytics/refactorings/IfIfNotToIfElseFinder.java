@@ -47,14 +47,9 @@ public class IfIfNotToIfElseFinder extends AbstractRefactoringFinder {
         final List<Stmt> stmts = node.getStmts();
 
         for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof IfThenStmt
-                    && stmts.get(i + 1) instanceof IfThenStmt) {
-                IfThenStmt ifThenStmt1 = (IfThenStmt) stmts.get(i);
-                IfThenStmt ifThenStmt2 = (IfThenStmt) stmts.get(i + 1);
-
+            if (stmts.get(i) instanceof IfThenStmt ifThenStmt1 && stmts.get(i + 1) instanceof IfThenStmt ifThenStmt2) {
                 // TODO: Negation could also be the other way round?
-                if (ifThenStmt2.getBoolExpr() instanceof Not) {
-                    Not negation = (Not) ifThenStmt2.getBoolExpr();
+                if (ifThenStmt2.getBoolExpr() instanceof Not negation) {
                     if (negation.getOperand1().equals(ifThenStmt1.getBoolExpr())) {
                         refactorings.add(new IfIfNotToIfElse(ifThenStmt1, ifThenStmt2));
                     }

@@ -29,6 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,12 +41,12 @@ public class BugAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
     private List<String> detectorNames;
     private List<IssueFinder> issueFinders;
-    private String annotationOutput;
+    private Path annotationOutput;
     private boolean ignoreLooseBlocks;
     private final String detectors;
     private final boolean outputPerScript;
 
-    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript) {
+    public BugAnalyzer(Path input, Path output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
@@ -54,10 +55,9 @@ public class BugAnalyzer extends Analyzer {
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
-    public void setAnnotationOutput(String annotationOutput) {
+    public void setAnnotationOutput(Path annotationOutput) {
         this.annotationOutput = annotationOutput;
     }
-
 
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
@@ -66,7 +66,7 @@ public class BugAnalyzer extends Analyzer {
      * @param reportFileName the file in which to write the results
      */
     @Override
-    void check(File fileEntry, String reportFileName) {
+    void check(File fileEntry, Path reportFileName) {
         issueFinders = IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);
         if (program == null) {
@@ -88,9 +88,9 @@ public class BugAnalyzer extends Analyzer {
         return issues;
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, String reportFileName, boolean outputPerScript) {
+    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName) {
         try {
-            if (reportFileName == null || reportFileName.isEmpty()) {
+            if (reportFileName == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.endsWith(".json")) {
@@ -108,8 +108,8 @@ public class BugAnalyzer extends Analyzer {
         }
     }
 
-    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath) {
-        if (annotationOutput != null && !annotationOutput.isEmpty()) {
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, Path annotatePath) {
+        if (annotationOutput != null) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);

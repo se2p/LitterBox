@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -86,6 +87,7 @@ public class MetricTool {
             metricList.add(new StatementCount<>());
             metricList.add(new TokenEntropy<>());
             metricList.add(new TranslateBlockCount<>());
+            metricList.add(new UndefinedBlockCount<>());
             metricList.add(new VariableCount<>());
             metricList.add(new VariablesBlockCount<>());
             metricList.add(new VariableUseCount<>());
@@ -124,7 +126,7 @@ public class MetricTool {
         return Collections.unmodifiableList(getMetrics());
     }
 
-    public void createCSVFile(Program program, String fileName) throws IOException {
+    public void createCSVFile(Program program, Path fileName) throws IOException {
         final List<String> headers = new ArrayList<>();
         headers.add("project");
         getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);

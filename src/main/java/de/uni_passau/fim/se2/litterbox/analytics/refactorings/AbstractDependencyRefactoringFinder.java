@@ -67,8 +67,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         if (script.getEvent() instanceof StartedAsClone) {
             CFGNode head = cfg.getNodes().stream().filter(CloneEventNode.class::isInstance).findFirst().get();
             cfg.addEdgeFromEntry(head);
-        } else if (script.getEvent() instanceof ReceptionOfMessage) {
-            ReceptionOfMessage reception = (ReceptionOfMessage) script.getEvent();
+        } else if (script.getEvent() instanceof ReceptionOfMessage reception) {
             CFGNode head = cfg.getNode(reception.getMsg()).get();
             cfg.addEdgeFromEntry(head);
         }

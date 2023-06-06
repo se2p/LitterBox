@@ -72,18 +72,18 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
                 } else {
                     hint = new Hint(getName());
                 }
-                if (questionableNode instanceof Say) {
-                    Say say = (Say) questionableNode;
+                if (questionableNode instanceof Say say) {
                     hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
                     // TODO: This does not clone the message and metadata, should it?
-                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(say, new SayForSecs(say.getString(), new NumberLiteral(2), say.getMetadata()));
+                    SayForSecs sayForSecs = new SayForSecs(say.getString(), new NumberLiteral(2), say.getMetadata());
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(say, sayForSecs);
                     ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
                     issueBuilder = issueBuilder.withHint(hint).withRefactoring(refactoredScript);
-                } else if (questionableNode instanceof Think) {
-                    Think think = (Think) questionableNode;
+                } else if (questionableNode instanceof Think think) {
                     hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
                     // TODO: This does not clone the message and metadata, should it?
-                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(think, new SayForSecs(think.getThought(), new NumberLiteral(2), think.getMetadata()));
+                    SayForSecs say = new SayForSecs(think.getThought(), new NumberLiteral(2), think.getMetadata());
+                    StatementReplacementVisitor visitor = new StatementReplacementVisitor(think, say);
                     ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
                     issueBuilder = issueBuilder.withHint(hint).withRefactoring(refactoredScript);
                 }

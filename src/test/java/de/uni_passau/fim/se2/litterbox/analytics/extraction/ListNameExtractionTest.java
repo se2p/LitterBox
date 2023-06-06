@@ -16,32 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.extraction;
 
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class UnmodifiableListBuilder<E> {
+public class ListNameExtractionTest implements JsonTest {
 
-    private List<E> list = new ArrayList<>();
-
-    public static <E> UnmodifiableListBuilder<E> builder() {
-        return new UnmodifiableListBuilder<>();
-    }
-
-    public UnmodifiableListBuilder<E> add(E e) {
-        list.add(e);
-        return this;
-    }
-
-    public UnmodifiableListBuilder<E> addAll(Collection<? extends E> collection) {
-        list.addAll(collection);
-        return this;
-    }
-
-    public List<E> build() {
-        return Collections.unmodifiableList(list);
+    @Test
+    public void testListNameExtraction() throws IOException, ParsingException {
+        List<String> list = new ArrayList<>();
+        list.add("testGlobal");
+        list.add("testLocal");
+        assertThatExtractionReports(list, new ListNameExtraction(), "./src/test/fixtures/extraction/multiList.json");
     }
 }

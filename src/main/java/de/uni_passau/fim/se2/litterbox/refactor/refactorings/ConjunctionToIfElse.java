@@ -90,9 +90,10 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ConjunctionToIfElse)) return false;
-        ConjunctionToIfElse that = (ConjunctionToIfElse) o;
-        return Objects.equals(ifStatement1, that.ifStatement1) && Objects.equals(ifStatement2, that.ifStatement2) && Objects.equals(replacementIf, that.replacementIf);
+        if (!(o instanceof ConjunctionToIfElse that)) return false;
+        return Objects.equals(ifStatement1, that.ifStatement1)
+                && Objects.equals(ifStatement2, that.ifStatement2)
+                && Objects.equals(replacementIf, that.replacementIf);
     }
 
     @Override

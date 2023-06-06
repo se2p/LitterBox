@@ -33,8 +33,8 @@ public class UnnecessarySizeChange extends AbstractIssueFinder {
     @Override
     public void visit(SetSizeTo node) {
         NumExpr expr = node.getPercent();
-        if (expr instanceof NumberLiteral) {
-            double value = ((NumberLiteral) expr).getValue();
+        if (expr instanceof NumberLiteral numberLiteral) {
+            double value = numberLiteral.getValue();
             if (value <= 0 || value >= MAX_SIZE) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
@@ -44,8 +44,8 @@ public class UnnecessarySizeChange extends AbstractIssueFinder {
     @Override
     public void visit(ChangeSizeBy node) {
         NumExpr expr = node.getNum();
-        if (expr instanceof NumberLiteral) {
-            double value = ((NumberLiteral) expr).getValue();
+        if (expr instanceof NumberLiteral numberLiteral) {
+            double value = numberLiteral.getValue();
             if (value == 0 || value >= MAX_SIZE || value <= -MAX_SIZE) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }

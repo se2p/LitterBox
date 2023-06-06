@@ -83,9 +83,10 @@ public class IfElseToIfIfNot extends OnlyCodeCloneVisitor implements Refactoring
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IfElseToIfIfNot)) return false;
-        IfElseToIfIfNot that = (IfElseToIfIfNot) o;
-        return Objects.equals(ifElseStmt, that.ifElseStmt) && Objects.equals(replacementIf1, that.replacementIf1) && Objects.equals(replacementIf2, that.replacementIf2);
+        if (!(o instanceof IfElseToIfIfNot that)) return false;
+        return Objects.equals(ifElseStmt, that.ifElseStmt)
+                && Objects.equals(replacementIf1, that.replacementIf1)
+                && Objects.equals(replacementIf2, that.replacementIf2);
     }
 
     @Override

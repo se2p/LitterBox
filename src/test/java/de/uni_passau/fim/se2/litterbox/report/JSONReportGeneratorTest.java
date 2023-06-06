@@ -147,7 +147,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         Path tmpFile = Files.createTempFile(null, null);
-        JSONReportGenerator generator = new JSONReportGenerator(tmpFile.toString());
+        JSONReportGenerator generator = new JSONReportGenerator(tmpFile);
         generator.generateReport(program, issues);
 
         String result = Files.readString(tmpFile);

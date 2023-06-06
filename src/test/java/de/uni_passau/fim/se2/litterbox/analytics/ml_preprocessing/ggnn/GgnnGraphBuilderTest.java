@@ -54,6 +54,6 @@ class GgnnGraphBuilderTest implements JsonTest {
         Set<String> labels = new HashSet<>(nodes.values());
         // positive numbers remain as is; special symbols should not be removed from negative numbers;
         // spaces are removed from strings; colours as hexadecimal RGB
-        assertThat(labels).containsAtLeast("10", "-10", "What'syourname?", "84135d");
+        assertThat(labels).containsAtLeast("10", "-10", "whats_your_name", "#84135d");
     }
 }

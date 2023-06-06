@@ -64,14 +64,11 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
 
     // TODO: Code clone
     private LoopStmt getLoop(LoopStmt loopStmt, StmtList body) {
-        if (loopStmt instanceof RepeatForeverStmt) {
-            RepeatForeverStmt origLoop = (RepeatForeverStmt) loopStmt;
+        if (loopStmt instanceof RepeatForeverStmt origLoop) {
             return new RepeatForeverStmt(body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof RepeatTimesStmt) {
-            RepeatTimesStmt origLoop = (RepeatTimesStmt) loopStmt;
+        } else if (loopStmt instanceof RepeatTimesStmt origLoop) {
             return new RepeatTimesStmt(apply(origLoop.getTimes()), body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof UntilStmt) {
-            UntilStmt origLoop = (UntilStmt) loopStmt;
+        } else if (loopStmt instanceof UntilStmt origLoop) {
             return new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
         } else {
             throw new RuntimeException("Unknown loop statement: " + loopStmt);
@@ -103,10 +100,15 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MergeLoops)) return false;
-        MergeLoops that = (MergeLoops) o;
-        return Objects.equals(script1, that.script1) && Objects.equals(script2, that.script2) && Objects.equals(replacementScript, that.replacementScript);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MergeLoops that)) {
+            return false;
+        }
+        return Objects.equals(script1, that.script1)
+                && Objects.equals(script2, that.script2)
+                && Objects.equals(replacementScript, that.replacementScript);
     }
 
     @Override
