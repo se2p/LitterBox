@@ -18,12 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,8 +33,8 @@ public final class SpritePathGenerator extends PathGenerator {
 
     private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public SpritePathGenerator(Program program, int maxPathLength, boolean includeStage) {
-        super(program, maxPathLength, includeStage);
+    public SpritePathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+        super(program, maxPathLength, includeStage, includeDefaultSprites);
         this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
     }
 
@@ -46,7 +47,7 @@ public final class SpritePathGenerator extends PathGenerator {
             System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
+                System.out.println(i + " Leaf (Test): " + TokenVisitor.getNormalisedToken(value));
                 i++;
             }
         }
@@ -60,29 +61,26 @@ public final class SpritePathGenerator extends PathGenerator {
 
     @Override
     public List<ProgramFeatures> generatePaths() {
-        List<ProgramFeatures> spriteFeatures = new ArrayList<>();
-        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
-            ActorDefinition actor = entry.getKey();
-            List<ASTNode> leafs = entry.getValue();
-            ProgramFeatures singleSpriteFeatures = generatePathsForSprite(actor, leafs);
-            if (singleSpriteFeatures != null && !singleSpriteFeatures.isEmpty()) {
-                spriteFeatures.add(singleSpriteFeatures);
-            }
+        final List<ProgramFeatures> spriteFeatures = new ArrayList<>();
+        for (final Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
+            final ActorDefinition actor = entry.getKey();
+            final List<ASTNode> leafs = entry.getValue();
+            final Optional<ProgramFeatures> singleSpriteFeatures = generatePathsForSprite(actor, leafs);
+            singleSpriteFeatures.filter(features -> !features.isEmpty()).ifPresent(spriteFeatures::add);
         }
         return spriteFeatures;
     }
 
-    private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
-        String spriteName = NodeNameUtils.normalizeSpriteName(sprite.getIdent().getName());
-        if (spriteName == null) {
-            return null;
-        }
-        return super.getProgramFeatures(spriteName, leafs);
+    private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
+        final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
+        return spriteName
+                .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
+                .map(name -> getProgramFeatures(name, leafs));
     }
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
                 .collect(Collectors.toList());
     }
 }

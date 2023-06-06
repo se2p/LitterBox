@@ -69,7 +69,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     }
 
     @Override
-    protected void check(File fileEntry, String csv) throws IOException {
+    protected void check(File fileEntry, Path csv) throws IOException {
         if (this.pathType == PathType.SCRIPT) {
             runProcessingSteps(fileEntry);
         } else super.check(fileEntry, csv);

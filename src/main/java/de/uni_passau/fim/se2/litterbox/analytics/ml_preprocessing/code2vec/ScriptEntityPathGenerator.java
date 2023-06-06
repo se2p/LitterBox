@@ -18,13 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractProcedureDefinitionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtils;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -35,8 +36,8 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     private static final Logger log = Logger.getLogger(ScriptEntityPathGenerator.class.getName());
     private final Map<ScriptEntity, List<ASTNode>> leafsMap;
 
-    public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage) {
-        super(program, maxPathLength, includeStage);
+    public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+        super(program, maxPathLength, includeStage,includeDefaultSprites);
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         Map<ScriptEntity, List<ASTNode>> tmp = new HashMap<>();
         tmp.putAll(extractScriptsASTLeafs(sprites));
@@ -66,9 +67,9 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         System.out.println("Number of scripts: " + leafsMap.keySet().size());
         leafsMap.forEach((script, leafs) -> {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
-                    NodeNameUtils.getScriptEntityName(script) + ": " + leafs.size());
+                    NodeNameUtil.getScriptEntityName(script) + ": " + leafs.size());
             leafs.forEach(leaf -> {
-                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + StringUtil.getToken(leaf));
+                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitor.getNormalisedToken(leaf));
             });
         });
     }
@@ -77,12 +78,11 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     public List<ProgramFeatures> generatePaths() {
         List<ProgramFeatures> scriptFeatures = new ArrayList<>();
         leafsMap.forEach((script, leafs) -> {
-            var scriptName = NodeNameUtils.getScriptEntityName(script).orElse("N/A");
+            var scriptName = NodeNameUtil.getScriptEntityName(script).orElse("N/A");
             ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leafs);
             if (isValidateScriptFeature(singleScriptFeatures)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
-            else scriptFeatures.add(singleScriptFeatures); // consider also empty paths
         });
         return scriptFeatures;
     }
@@ -93,6 +93,6 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken).collect(Collectors.toList());
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken).collect(Collectors.toList());
     }
 }

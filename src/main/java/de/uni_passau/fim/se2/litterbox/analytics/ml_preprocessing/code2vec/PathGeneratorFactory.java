@@ -4,15 +4,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class PathGeneratorFactory {
 
-    static public PathGenerator createPathGenerator(PathType type, int maxPathLength, boolean includeStage, Program program) {
+    static public PathGenerator createPathGenerator(PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites) {
 
         switch (type) {
             case SCRIPT:
-                return new ScriptEntityPathGenerator(program, maxPathLength, includeStage);
+                return new ScriptEntityPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
             case PROGRAM:
-                return new ProgramPathGenerator(program, maxPathLength, includeStage);
+                return new ProgramPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
             default:
-                return new SpritePathGenerator(program, maxPathLength, includeStage);
+                return new SpritePathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
         }
     }
 }

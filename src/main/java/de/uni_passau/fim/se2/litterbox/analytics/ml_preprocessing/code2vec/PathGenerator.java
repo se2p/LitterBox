@@ -31,11 +31,13 @@ public abstract class PathGenerator {
 
     protected final int maxPathLength;
     protected final boolean includeStage;
+    protected final boolean includeDefaultSprites;
 
-    public PathGenerator(Program program, int maxPathLength, boolean includeStage) {
+    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
         this.program = program;
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
+        this.includeDefaultSprites = includeDefaultSprites;
     }
 
     public abstract List<ProgramFeatures> generatePaths();

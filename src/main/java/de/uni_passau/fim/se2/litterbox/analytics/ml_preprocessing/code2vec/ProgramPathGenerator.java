@@ -1,5 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -13,8 +14,8 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public ProgramPathGenerator(Program program, int maxPathLength, boolean includeStage) {
-        super(program, maxPathLength, includeStage);
+    public ProgramPathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+        super(program, maxPathLength, includeStage,includeDefaultSprites);
         this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
     }
 
@@ -42,7 +43,7 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
                 .collect(Collectors.toList());
     }
 }
