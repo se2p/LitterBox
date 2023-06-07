@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StringUtilTest {
@@ -32,8 +33,10 @@ class StringUtilTest {
         final List<Pair<String>> beforeAfterPairs = List.of(
                 Pair.of("a_b", "a  \tb"),
                 Pair.of("a_b", "\na\nb\n"),
-                Pair.of("1a456b68", "1a456b68"),
-                Pair.of("ab", "{}äa'b\n")
+                Pair.of("1_a_456_b_68", "1a456b68"),
+                Pair.of("1_a_456_b_68", "1A456B68"),
+                Pair.of("1_a_4_56_b_68", "1{a4]56B/68"),
+                Pair.of("äa_b", "{}äa'b\n")
         );
 
         assertAll(
@@ -44,17 +47,20 @@ class StringUtilTest {
     }
 
     @Test
-    void testSplitToSubtokens() {
+    void testSplitToSubtokensSimple() {
         List<String> subTokensTest1 = StringUtil.splitToSubtokens("ForeverAlone");
-        assertEquals(2, subTokensTest1.size());
-        assertEquals("forever", subTokensTest1.get(0));
-        assertEquals("alone", subTokensTest1.get(1));
+        assertThat(subTokensTest1).containsExactly("Forever", "Alone");
+    }
+
+    @Test
+    void testSplitToSubtokens() {
         List<String> subTokensTest2 = StringUtil.splitToSubtokens("Forever   _ Alone-3\ninThis98World?! ");
-        assertEquals(5, subTokensTest2.size());
-        assertEquals("forever", subTokensTest2.get(0));
-        assertEquals("alone", subTokensTest2.get(1));
-        assertEquals("in", subTokensTest2.get(2));
-        assertEquals("this", subTokensTest2.get(3));
-        assertEquals("world", subTokensTest2.get(4));
+        assertThat(subTokensTest2).containsExactly("Forever", "Alone", "3", "in", "This", "98", "World", "?!");
+    }
+
+    @Test
+    void testKeepSomePunctuation() {
+        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def");
+        assertThat(subtokens).containsExactly("abc", "!", "def");
     }
 }

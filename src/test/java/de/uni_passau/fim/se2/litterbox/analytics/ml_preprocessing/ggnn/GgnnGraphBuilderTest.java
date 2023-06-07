@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -38,7 +37,7 @@ class GgnnGraphBuilderTest implements JsonTest {
         GgnnProgramGraph.ContextGraph graph = builder.build();
         Map<Integer, String> nodes = graph.getNodeLabels();
 
-        List<Integer> nodeIndices = nodes.keySet().stream().sorted().collect(Collectors.toList());
+        List<Integer> nodeIndices = nodes.keySet().stream().sorted().toList();
         for (int i = 0; i < nodeIndices.size(); ++i) {
             assertThat(nodeIndices.get(i)).isEqualTo(i);
         }
@@ -54,6 +53,6 @@ class GgnnGraphBuilderTest implements JsonTest {
         Set<String> labels = new HashSet<>(nodes.values());
         // positive numbers remain as is; special symbols should not be removed from negative numbers;
         // spaces are removed from strings; colours as hexadecimal RGB
-        assertThat(labels).containsAtLeast("10", "-10", "whats_your_name", "#84135d");
+        assertThat(labels).containsAtLeast("10", "-10", "what_s_your_name_?", "#84135d");
     }
 }

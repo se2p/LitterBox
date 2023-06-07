@@ -70,13 +70,51 @@ class TokenVisitorTest implements JsonTest {
     void testStringWithComma() {
         StringLiteral literal = new StringLiteral("a,b,c");
         assertThat(TokenVisitor.getToken(literal)).isEqualTo("a,b,c");
-        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("abc");
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("a_b_c");
     }
 
     @Test
     void testStringIdWithComma() {
         StrId id = new StrId("a,b,c");
-        assertThat(TokenVisitor.getNormalisedToken(id)).isEqualTo("abc");
+        assertThat(TokenVisitor.getNormalisedToken(id)).isEqualTo("a_b_c");
+    }
+
+    @Test
+    void testKeepUnderscores() {
+        final String s = "a_b-c/d";
+        final StrId id = new StrId(s);
+        assertThat(TokenVisitor.getToken(id)).isEqualTo(s);
+        assertThat(TokenVisitor.getNormalisedToken(id)).isEqualTo("a_b_c_d");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"_", "__", "___"})
+    void testRemoveSequentialUnderscores(final String s) {
+        final StringLiteral literal = new StringLiteral("abc" + s + "def");
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("abc_def");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"_--.", "__", "_-__-", "{_},)-_+"})
+    void testReplaceMultiplePunctuation(final String s) {
+        final StrId id = new StrId("ab" + s + "def[]");
+        assertThat(TokenVisitor.getNormalisedToken(id)).isEqualTo("ab_def");
+    }
+
+    @Test
+    void testGreekString() {
+        final String s = "ελληνικά";
+        final StringLiteral literal = new StringLiteral(s);
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo(s);
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo(s);
+    }
+
+    @Test
+    void testGreekCamelCaseSplitting() {
+        final String s = "ελληΝικά";
+        final StringLiteral literal = new StringLiteral(s);
+        assertThat(TokenVisitor.getToken(literal)).isEqualTo(s);
+        assertThat(TokenVisitor.getNormalisedToken(literal)).isEqualTo("ελλη_νικά");
     }
 
     @ParameterizedTest
