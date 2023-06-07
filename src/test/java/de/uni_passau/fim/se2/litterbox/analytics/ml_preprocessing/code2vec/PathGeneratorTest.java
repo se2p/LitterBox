@@ -30,14 +30,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PathGeneratorTest implements JsonTest {
 
-    final String[] expectedLeafs = {"LOUDNESS", "10", "hello", "left_right", "PITCH", "100", "draggable",
+    final String[] expectedLeafs = {"LOUDNESS", "10", "hello_!", "left_right", "PITCH", "100", "draggable",
             "COLOR", "0", "1", "FORWARD", "FRONT", "NUMBER", "Size", "1", "2", "LOG", "YEAR"};
 
     @Test
@@ -62,18 +61,18 @@ class PathGeneratorTest implements JsonTest {
         ProgramFeatures cat = pathContextsPerSprite.get(positionCat);
         assertEquals("cat", cat.getName());
         assertEquals(3, cat.getFeatures().size());
-        assertEquals("39,625791294,hi",
+        assertEquals("39,625791294,hi_!",
                 cat.getFeatures().get(0).toString());
         assertEquals("39,1493538624,Show",
                 cat.getFeatures().get(1).toString());
-        assertEquals("hi,-547448667,Show",
+        assertEquals("hi_!,-547448667,Show",
                 cat.getFeatures().get(2).toString());
 
         // Sprite abby
         ProgramFeatures abby = pathContextsPerSprite.get(positionAbby);
         assertEquals("abby", abby.getName());
         assertEquals(1, abby.getFeatures().size());
-        assertEquals("GreenFlag,-2069003229,hello",
+        assertEquals("GreenFlag,-2069003229,hello_!",
                 abby.getFeatures().get(0).toString());
     }
 
@@ -97,10 +96,10 @@ class PathGeneratorTest implements JsonTest {
 
         int expectedPathCount;
         List<String> expectedPaths = new ArrayList<>(List.of(
-                "39,625791294,hi",
+                "39,625791294,hi_!",
                 "39,1493538624,Show",
-                "hi,-547448667,Show",
-                "GreenFlag,-2069003229,hello"
+                "hi_!,-547448667,Show",
+                "GreenFlag,-2069003229,hello_!"
         ));
         if (includeStage) {
             expectedPathCount = 6;
@@ -111,7 +110,7 @@ class PathGeneratorTest implements JsonTest {
         }
 
         List<String> actualPaths = pathContexts.get(0).getFeatures()
-                .stream().map(ProgramRelation::toString).collect(Collectors.toList());
+                .stream().map(ProgramRelation::toString).toList();
         assertEquals(expectedPathCount, actualPaths.size());
 
         for (String expectedPath : expectedPaths) {
