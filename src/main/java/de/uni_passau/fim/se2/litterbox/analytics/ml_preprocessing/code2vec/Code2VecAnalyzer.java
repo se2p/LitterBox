@@ -96,7 +96,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) {
         for (ProgramFeatures token : result) {
             Path outName = outputFileName(inputFile);
-            Path outputFile = outputPath.getPath().resolve(outName + token.getName());
+            Path outputFile = outputPath.getPath().resolve(outName + "_" + token.getName());
             if (Files.exists(outputFile))
                 log.severe("Overriding script result " + outputFile);
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {

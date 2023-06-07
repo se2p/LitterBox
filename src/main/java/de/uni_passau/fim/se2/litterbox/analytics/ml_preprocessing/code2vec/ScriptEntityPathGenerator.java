@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public final class ScriptEntityPathGenerator extends PathGenerator {
 
@@ -82,7 +81,6 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             if (isValidateScriptFeature(singleScriptFeatures)) {
                 scriptFeatures.add(singleScriptFeatures);
             }
-            else scriptFeatures.add(singleScriptFeatures); // consider also empty paths
         });
         return scriptFeatures;
     }
