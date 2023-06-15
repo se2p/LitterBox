@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;

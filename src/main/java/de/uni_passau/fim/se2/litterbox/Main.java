@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2seq.Code2SeqAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;

@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramRelation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

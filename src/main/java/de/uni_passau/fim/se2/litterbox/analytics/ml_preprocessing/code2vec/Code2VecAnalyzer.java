@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.GeneratePathTask;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
