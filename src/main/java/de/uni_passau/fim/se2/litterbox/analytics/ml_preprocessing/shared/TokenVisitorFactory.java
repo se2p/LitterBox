@@ -42,6 +42,22 @@ public final class TokenVisitorFactory {
     }
 
     /**
+     * Builds the default token visitor with the given delimiter.
+     *
+     * @param normalise If true, {@link StringUtil#normaliseString(String, String)} is used to normalise user-defined
+     *                  values with the given delimiter.
+     * @return A token visitor that can be used in {@link #getToken(BaseTokenVisitor, ASTNode)}.
+     */
+    public static BaseTokenVisitor getDefaultTokenVisitorWithDelimiter(final boolean normalise, String delimiter) {
+        return new BaseTokenVisitor(normalise) {
+            @Override
+            protected String normaliseToken(String token) {
+                return StringUtil.normaliseString(token, delimiter);
+            }
+        };
+    }
+
+    /**
      * Applies the given token visitor to the AST node and returns the extracted token.
      *
      * @param visitor Some token visitor.
@@ -75,5 +91,19 @@ public final class TokenVisitorFactory {
      */
     public static String getNormalisedToken(final ASTNode node) {
         return getToken(getDefaultTokenVisitor(true), node);
+    }
+
+    /**
+     * Retrieves the normalised token representing the given node with the given delimiter between the subtokens.
+     *
+     * <p>Uses the default normalising token visitor with delimiter as described in
+     * {@link #getDefaultTokenVisitorWithDelimiter(boolean, String)}.
+     *
+     * @param node A node of the AST.
+     * @param delimiter The delimiter that should be used to separate the subtokens.
+     * @return The normalised token representing the given node.
+     */
+    public static String getNormalisedTokenWithDelimiter(final ASTNode node, String delimiter) {
+        return getToken(getDefaultTokenVisitorWithDelimiter(true, delimiter), node);
     }
 }

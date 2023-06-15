@@ -50,13 +50,13 @@ public class StringUtil {
         return splitToSubtokenStream(token).toList();
     }
 
-    public static List<String> splitToNormalisedSubtokens(final String token) {
-        return splitToNormalisedSubtokenStream(token).toList();
+    public static List<String> splitToNormalisedSubtokens(final String token, final String delimiter) {
+        return splitToNormalisedSubtokenStream(token, delimiter).toList();
     }
 
-    public static Stream<String> splitToNormalisedSubtokenStream(final String token) {
+    public static Stream<String> splitToNormalisedSubtokenStream(final String token, final String delimiter) {
         return splitToSubtokenStream(token)
-                .map(StringUtil::normaliseSubtoken)
+                .map(subtoken -> StringUtil.normaliseSubtoken(subtoken, delimiter))
                 .filter(s -> !s.isEmpty());
     }
 
@@ -70,7 +70,8 @@ public class StringUtil {
     }
 
     /**
-     * Splits the string into subtokens first and then normalises each one using {@link #normaliseSubtoken(String)}.
+     * Splits the string into subtokens first and then normalises each one using
+     * {@link #normaliseSubtoken(String, String)}.
      *
      * <p>Subtokens are joined together with underscores to form the final result.
      *
@@ -78,9 +79,23 @@ public class StringUtil {
      * @return The normalised string.
      */
     public static String normaliseString(final String token) {
-        return splitToNormalisedSubtokenStream(token)
-                .collect(Collectors.joining("_"))
-                .replaceAll("_+", "_");
+        return normaliseString(token, "_");
+    }
+
+    /**
+     * Splits the string into subtokens first and then normalises each one using
+     * {@link #normaliseSubtoken(String, String)}.
+     *
+     * <p>Subtokens are joined together with the given delimiter to form the final result.
+     *
+     * @param token Some string.
+     * @param delimiter The delimiter.
+     * @return The normalised string.
+     */
+    public static String normaliseString(final String token, final String delimiter) {
+        return splitToNormalisedSubtokenStream(token, delimiter)
+                .collect(Collectors.joining(delimiter))
+                .replaceAll(Pattern.quote(delimiter) + "+", delimiter);
     }
 
     /**
@@ -89,20 +104,21 @@ public class StringUtil {
      * <p>Applied normalisations:
      * <ul>
      *     <li>Converts to lowercase.</li>
-     *     <li>Replaces whitespace with underscores.</li>
-     *     <li>Replaces punctuation except {@code ?} and {@code !} with {@code _}.</li>
-     *     <li>Replaces repeated {@code _} with a single one.</li>
+     *     <li>Replaces whitespace with the delimiter.</li>
+     *     <li>Replaces punctuation except {@code ?} and {@code !} with {@code delimiter}.</li>
+     *     <li>Replaces repeated {@code delimiter} with a single one.</li>
      * </ul>
      *
      * @param s Some string.
+     * @param delimiter The delimiter.
      * @return The input string in its normalised form.
      */
-    public static String normaliseSubtoken(final String s) {
+    public static String normaliseSubtoken(final String s, final String delimiter) {
         final String label = s.trim()
                 .toLowerCase(Locale.ROOT)
-                .replaceAll("\\s+", "_")
-                .replaceAll("[\\p{Punct}&&[^!?]]+", "_")
-                .replaceAll("_+", "_");
+                .replaceAll("\\s+", delimiter)
+                .replaceAll("[\\p{Punct}&&[^!?]]+", delimiter)
+                .replaceAll(Pattern.quote(delimiter) + "+", delimiter);
 
         if (label.isEmpty()) {
             return "EMPTY";

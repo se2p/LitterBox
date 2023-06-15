@@ -39,7 +39,7 @@ public final class NodeNameUtil {
      */
     public static Optional<String> normalizeSpriteName(final ActorDefinition actor) {
         final String spriteName = actor.getIdent().getName();
-        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName)
+        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
                 .filter(subtoken -> !subtoken.matches("^\\d+$"))
                 .collect(Collectors.joining("|"));
 

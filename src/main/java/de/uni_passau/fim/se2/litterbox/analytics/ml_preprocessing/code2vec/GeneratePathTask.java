@@ -45,4 +45,10 @@ public class GeneratePathTask {
         // pathGenerator.printLeafsPerSprite();
         return pathGenerator.generatePaths();
     }
+
+    public List<ProgramFeatures> createContextForCode2Seq() {
+        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram,
+                includeDefaultSprites, "|", "|", "|", "", "");
+        return pathGenerator.generatePaths();
+    }
 }

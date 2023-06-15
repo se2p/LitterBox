@@ -47,6 +47,25 @@ class StringUtilTest {
     }
 
     @Test
+    void testNormalizeStringWithDelimiter() {
+        final List<Pair<String>> beforeAfterPairs = List.of(
+                Pair.of("a|b", "a  \tb"),
+                Pair.of("a|b", "\na\nb\n"),
+                Pair.of("1|a|456|b|68", "1a456b68"),
+                Pair.of("1|a|456|b|68", "1A456B68"),
+                Pair.of("1|a|4|56|b|68", "1{a4]56B/68"),
+                Pair.of("äa|b", "{}äa'b\n")
+        );
+
+        assertAll(
+                beforeAfterPairs
+                        .stream()
+                        .map(pair -> () -> assertEquals(pair.getFst(),
+                                StringUtil.normaliseString(pair.getSnd(), "|")))
+        );
+    }
+
+    @Test
     void testSplitToSubtokensSimple() {
         List<String> subTokensTest1 = StringUtil.splitToSubtokens("ForeverAlone");
         assertThat(subTokensTest1).containsExactly("Forever", "Alone");
@@ -60,7 +79,7 @@ class StringUtilTest {
 
     @Test
     void testKeepSomePunctuation() {
-        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def");
+        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def", "_");
         assertThat(subtokens).containsExactly("abc", "!", "def");
     }
 }

@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2seq.Code2SeqAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
@@ -54,6 +55,7 @@ import java.util.concurrent.Callable;
                 // machine learning preprocessors
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
+                Main.Code2SeqSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -509,6 +511,35 @@ public class Main implements Callable<Integer> {
         @Override
         protected GgnnGraphAnalyzer getAnalyzer() {
             return new GgnnGraphAnalyzer(getCommonOptions(), dotGraph, label);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "code2seq",
+            description = "Transform Scratch projects into the code2seq input format."
+    )
+    static class Code2SeqSubcommand extends MLPreprocessorSubcommand {
+
+        @CommandLine.Option(
+                names = {"--max-path-length"},
+                description = "The maximum length for connecting two AST leafs. "
+                        + "Zero means there is no max path length. "
+                        + "Default: 8."
+        )
+        int maxPathLength = 8;
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            if (maxPathLength < 0) {
+                throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
+            }
+        }
+
+        @Override
+        protected Code2SeqAnalyzer getAnalyzer() {
+
+            ProgramRelation.setNoHash();
+            return new Code2SeqAnalyzer(getCommonOptions(), maxPathLength);
         }
     }
 }

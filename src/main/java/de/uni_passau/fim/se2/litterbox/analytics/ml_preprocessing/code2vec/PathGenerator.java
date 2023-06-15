@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -33,6 +32,11 @@ public class PathGenerator {
     private final boolean includeStage;
     private final boolean wholeProgram;
     private final boolean includeDefaultSprites;
+    private final String delimiter;
+    private final String upSymbol;
+    private final String downSymbol;
+    private final String startSymbol;
+    private final String endSymbol;
 
     private final Program program;
     private Map<ActorDefinition, List<ASTNode>> leafsMap;
@@ -44,6 +48,28 @@ public class PathGenerator {
         this.wholeProgram = wholeProgram;
         this.program = program;
         this.includeDefaultSprites = includeDefaultSprites;
+        this.delimiter = "_";
+        this.upSymbol = "^";
+        this.downSymbol = "_";
+        this.startSymbol = "(";
+        this.endSymbol = ")";
+
+        extractASTLeafsPerSprite();
+    }
+
+    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram,
+                         boolean includeDefaultSprites, String delimiter, String upSymbol, String downSymbol,
+                         String startSymbol, String endsymbol) {
+        this.maxPathLength = maxPathLength;
+        this.includeStage = includeStage;
+        this.wholeProgram = wholeProgram;
+        this.program = program;
+        this.includeDefaultSprites = includeDefaultSprites;
+        this.delimiter = delimiter;
+        this.upSymbol = upSymbol;
+        this.downSymbol = downSymbol;
+        this.startSymbol = startSymbol;
+        this.endSymbol = endsymbol;
 
         extractASTLeafsPerSprite();
     }
@@ -120,8 +146,8 @@ public class PathGenerator {
                 ASTNode target = astLeafs.get(j);
                 String path = generatePath(source, target);
                 if (!path.isEmpty()) {
-                    String sourceLiteral = TokenVisitorFactory.getNormalisedToken(source);
-                    String targetLiteral = TokenVisitorFactory.getNormalisedToken(target);
+                    String sourceLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(source, delimiter);
+                    String targetLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(target, delimiter);
                     if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
                         programFeatures.addFeature(sourceLiteral, path, targetLiteral);
                     }
@@ -143,8 +169,6 @@ public class PathGenerator {
     }
 
     private String generatePath(ASTNode source, ASTNode target) {
-        String down = "_";
-        String up = "^";
 
         final StringBuilder pathBuilder = new StringBuilder();
         final List<ASTNode> sourceStack = getTreeStack(source);
@@ -172,7 +196,7 @@ public class PathGenerator {
             ASTNode currentNode = sourceStack.get(i);
             String childId = "";
             appendNodeToPath(pathBuilder, currentNode, childId);
-            pathBuilder.append(up);
+            pathBuilder.append(upSymbol);
         }
 
         // add common Node
@@ -184,7 +208,7 @@ public class PathGenerator {
         for (int i = targetStack.size() - commonPrefix - 1; i >= 0; i--) {
             ASTNode currentNode = targetStack.get(i);
             String childId = "";
-            pathBuilder.append(down);
+            pathBuilder.append(downSymbol);
             appendNodeToPath(pathBuilder, currentNode, childId);
         }
 
@@ -192,6 +216,6 @@ public class PathGenerator {
     }
 
     private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
-        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
+        pathBuilder.append(startSymbol).append(node.getUniqueName()).append(childId).append(endSymbol);
     }
 }
