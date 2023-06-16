@@ -91,10 +91,10 @@ public class BugAnalyzer extends Analyzer {
             if (reportFileName == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".json")) {
+            } else if (reportFileName.getFileName().toString().endsWith(".json")) {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".csv")) {
+            } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
                 CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
