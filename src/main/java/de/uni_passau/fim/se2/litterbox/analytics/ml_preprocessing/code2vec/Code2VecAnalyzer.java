@@ -23,7 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -103,7 +105,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
                 bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
                 bw.flush();
             } catch (IOException e) {
-                log.severe("Exception in writing the file " + outputFile + "Error message " +  e.getMessage());
+                log.severe("Exception in writing the file " + outputFile + "Error message " + e.getMessage());
             }
             //log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
         }

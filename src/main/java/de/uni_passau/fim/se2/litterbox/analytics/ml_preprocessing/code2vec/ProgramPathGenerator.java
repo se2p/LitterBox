@@ -7,14 +7,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class ProgramPathGenerator extends PathGenerator {
 
     private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
     public ProgramPathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
-        super(program, maxPathLength, includeStage,includeDefaultSprites);
+        super(program, maxPathLength, includeStage, includeDefaultSprites);
         this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
     }
 

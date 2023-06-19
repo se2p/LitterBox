@@ -27,15 +27,13 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractProcedureDefinitionVis
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public final class ScriptEntityPathGenerator extends PathGenerator {
 
-    private static final Logger log = Logger.getLogger(ScriptEntityPathGenerator.class.getName());
     private final Map<ScriptEntity, List<ASTNode>> leafsMap;
 
     public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
-        super(program, maxPathLength, includeStage,includeDefaultSprites);
+        super(program, maxPathLength, includeStage, includeDefaultSprites);
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         Map<ScriptEntity, List<ASTNode>> tmp = new HashMap<>();
         tmp.putAll(extractScriptsASTLeafs(sprites));
@@ -66,9 +64,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         leafsMap.forEach((script, leafs) -> {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
                     NodeNameUtil.getScriptEntityName(script) + ": " + leafs.size());
-            leafs.forEach(leaf -> {
-                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(leaf));
-            });
+            leafs.forEach(leaf -> System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(leaf)));
         });
     }
 

@@ -21,10 +21,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 import java.util.function.UnaryOperator;
 
 public class ProgramRelation {
+    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
     private final String source;
     private final String target;
     private final String hashedPath;
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
 
     public ProgramRelation(String sourceName, String targetName, String path) {
         source = sourceName;

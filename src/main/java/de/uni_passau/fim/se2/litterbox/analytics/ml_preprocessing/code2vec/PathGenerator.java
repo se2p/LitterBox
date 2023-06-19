@@ -18,13 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class PathGenerator {
 
@@ -39,6 +38,20 @@ public abstract class PathGenerator {
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
         this.includeDefaultSprites = includeDefaultSprites;
+    }
+
+    private static List<ASTNode> getTreeStack(ASTNode node) {
+        ArrayList<ASTNode> upStack = new ArrayList<>();
+        ASTNode current = node;
+        while (current != null) {
+            upStack.add(current);
+            current = current.getParentNode();
+        }
+        return upStack;
+    }
+
+    private static void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
+        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }
 
     public abstract List<ProgramFeatures> generatePaths();
@@ -115,19 +128,5 @@ public abstract class PathGenerator {
         }
 
         return pathBuilder.toString();
-    }
-
-    private static List<ASTNode> getTreeStack(ASTNode node) {
-        ArrayList<ASTNode> upStack = new ArrayList<>();
-        ASTNode current = node;
-        while (current != null) {
-            upStack.add(current);
-            current = current.getParentNode();
-        }
-        return upStack;
-    }
-
-    private static void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
-        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
     }
 }

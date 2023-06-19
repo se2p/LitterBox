@@ -71,6 +71,7 @@ public final class NodeNameUtil {
 
     /**
      * Generate unique_id is the same across multiple runs
+     *
      * @param node the node
      * @return the script entity name
      */
@@ -78,5 +79,4 @@ public final class NodeNameUtil {
         ScriptEntityNameVisitor nameVisitor = new ScriptEntityNameVisitor();
         return Optional.ofNullable(nameVisitor.getName(node));
     }
-
 }
