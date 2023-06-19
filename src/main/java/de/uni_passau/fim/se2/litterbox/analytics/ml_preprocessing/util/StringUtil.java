@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -27,53 +27,85 @@ import java.util.stream.Stream;
 
 public class StringUtil {
 
-    private static final Pattern ALLOWED_LABEL_CHARS = Pattern.compile("[^a-z0-9_-]");
-
     private static final Pattern SPLIT_PATTERN = Pattern.compile(
-            "(?<=[a-z])(?=[A-Z])|_|-|\\d|\\p{Punct}|(?<=[A-Z])(?=[A-Z][a-z])|\\s+"
+            // digit followed by non-digit or other way round
+            "(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)"
+                    // lowercase followed by uppercase
+                    + "|(?<=\\p{Ll})(?=\\p{Lu})"
+                    // punctuation without question and exclamation marks
+                    + "|[\\p{Punct}&&[^?!]]"
+                    // uppercase, if followed by one uppercase and one lowercase letter
+                    // i.e. do not split all-caps words
+                    + "|(?<=\\p{Lu})(?=\\p{Lu}\\p{Ll})"
+                    + "|\\s+"
     );
+
+    private static final Pattern PUNCTUATION_SPLIT_PATTERN = Pattern.compile("(?<=[^?!])(?=[?!])");
 
     private StringUtil() {
         throw new IllegalCallerException("utility class constructor");
     }
 
-    public static List<String> splitToSubtokens(String str1) {
-        final String str2 = str1.trim();
-        return Stream.of(SPLIT_PATTERN.split(str2))
+    public static List<String> splitToSubtokens(final String token) {
+        return splitToSubtokenStream(token).toList();
+    }
+
+    public static List<String> splitToNormalisedSubtokens(final String token) {
+        return splitToNormalisedSubtokenStream(token).toList();
+    }
+
+    public static Stream<String> splitToNormalisedSubtokenStream(final String token) {
+        return splitToSubtokenStream(token)
+                .map(StringUtil::normaliseSubtoken)
+                .filter(s -> !s.isEmpty());
+    }
+
+    public static Stream<String> splitToSubtokenStream(final String token) {
+        final String[] split = SPLIT_PATTERN.split(token.trim());
+        return Stream.of(split)
+                .map(String::trim)
                 .filter(s -> !s.isEmpty())
-                .map(StringUtil::normalizeSubtoken)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toCollection(ArrayList::new));
+                .flatMap(s -> Arrays.stream(PUNCTUATION_SPLIT_PATTERN.split(s)))
+                .filter(s -> !s.isEmpty());
     }
 
     /**
-     * Only keeps lowercase a-z characters.
+     * Splits the string into subtokens first and then normalises each one using {@link #normaliseSubtoken(String)}.
      *
-     * @param original Some string.
-     * @return The input converted to lowercase and all non-{@code a-z}-characters removed.
+     * <p>Subtokens are joined together with underscores to form the final result.
+     *
+     * @param token Some string.
+     * @return The normalised string.
      */
-    private static String normalizeSubtoken(final String original) {
-        return original.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
+    public static String normaliseString(final String token) {
+        return splitToNormalisedSubtokenStream(token)
+                .collect(Collectors.joining("_"))
+                .replaceAll("_+", "_");
     }
 
     /**
-     * Converts string literals as they appear in Scratch programs into a normalised form without special characters.
+     * Converts tokens into a normalised form without special characters.
      *
      * <p>Applied normalisations:
      * <ul>
-     *     <li>Replaces whitespace with underscores.</li>
      *     <li>Converts to lowercase.</li>
-     *     <li>Removes all characters that are not alphanumeric, underscores, or dashes.</li>
+     *     <li>Replaces whitespace with underscores.</li>
+     *     <li>Replaces punctuation except {@code ?} and {@code !} with {@code _}.</li>
+     *     <li>Replaces repeated {@code _} with a single one.</li>
      * </ul>
      *
      * @param s Some string.
      * @return The input string in its normalised form.
      */
-    public static String normaliseString(final String s) {
-        final String noSpaces = s.trim().replaceAll("\\s+", "_");
-        final String label = ALLOWED_LABEL_CHARS.matcher(noSpaces.toLowerCase(Locale.ROOT)).replaceAll("");
+    public static String normaliseSubtoken(final String s) {
+        final String label = s.trim()
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("\\s+", "_")
+                .replaceAll("[\\p{Punct}&&[^!?]]+", "_")
+                .replaceAll("_+", "_");
+
         if (label.isEmpty()) {
-            return "EMPTY_STRING";
+            return "EMPTY";
         } else {
             return label;
         }
