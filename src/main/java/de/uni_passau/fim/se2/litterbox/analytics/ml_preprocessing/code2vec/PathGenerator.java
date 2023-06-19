@@ -18,7 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -61,14 +62,18 @@ public class PathGenerator {
             System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + TokenVisitor.getNormalisedToken(value));
+                System.out.println(i + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(value));
                 i++;
             }
         }
     }
 
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken).toList();
+        return leafsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(TokenVisitorFactory::getNormalisedToken)
+                .toList();
     }
 
     public List<ProgramFeatures> generatePaths() {
@@ -115,8 +120,8 @@ public class PathGenerator {
                 ASTNode target = astLeafs.get(j);
                 String path = generatePath(source, target);
                 if (!path.isEmpty()) {
-                    String sourceLiteral = TokenVisitor.getNormalisedToken(source);
-                    String targetLiteral = TokenVisitor.getNormalisedToken(target);
+                    String sourceLiteral = TokenVisitorFactory.getNormalisedToken(source);
+                    String targetLiteral = TokenVisitorFactory.getNormalisedToken(target);
                     if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
                         programFeatures.addFeature(sourceLiteral, path, targetLiteral);
                     }
