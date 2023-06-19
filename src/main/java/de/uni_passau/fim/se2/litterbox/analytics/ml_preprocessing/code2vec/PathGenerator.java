@@ -18,7 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -55,8 +56,8 @@ public abstract class PathGenerator {
                 ASTNode target = astLeafs.get(j);
                 String path = generatePath(source, target);
                 if (!path.isEmpty()) {
-                    String sourceLiteral = TokenVisitor.getNormalisedToken(source);
-                    String targetLiteral = TokenVisitor.getNormalisedToken(target);
+                    String sourceLiteral = TokenVisitorFactory.getNormalisedToken(source);
+                    String targetLiteral = TokenVisitorFactory.getNormalisedToken(target);
                     if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
                         programFeatures.addFeature(sourceLiteral, path, targetLiteral);
                     }

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NodeNameUtilTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] actorName={0}")
-    @ValueSource(strings = {" \t\n\r  ", "43789243789", "αλΛϝδΔ", "*&($"})
+    @ValueSource(strings = {" \t\n\r  ", "43789243789", "*&($"})
     void testNormalizedEmpty(final String actorName) {
         final Optional<String> normalized = NodeNameUtil.normalizeSpriteName(buildActor(actorName));
         assertEquals(Optional.empty(), normalized);
@@ -60,9 +60,9 @@ class NodeNameUtilTest {
                 Arguments.of("test|one", "test ONE"),
                 Arguments.of("test|two", "test\ntwo"),
                 Arguments.of("test|three", "test,\"three'"),
-                Arguments.of("test|four", "t̷̡̢̛̛̫͙̠̻̣̮̩̗͔͕̙̂̿̆͐͒̋́̓̄͌̆̒̏̈͛̈̋̉̈̋̓̕ȩ̷̨̛̛̮͕̭͖̠͖̦̹͚̖̦̥͙̪̳͙̘͉̋̿̾͊̆͊͗̒́̀́͊͗̓̊̉̕͘͜s̶̨̺̘̬̖͆͊͛̂͐̂̔̐̍̈̾̉̅̓͊͒̾̚͜͝͝͝͝͝ţ̴̧͇̻̬̰̬̹̙̼͕͇̭̖̫̜̠̗͔̣̜͎͍̠̙̳͔̝͗̑͛̔̈̀́̊͝͠ͅ four"),
-                Arguments.of("testfive", "testαλfive"),
-                Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts")
+                Arguments.of("testαλfive", "testαλfive"),
+                Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts"),
+                Arguments.of("αλ|λϝδ|δ", "αλΛϝδΔ")
         );
     }
 

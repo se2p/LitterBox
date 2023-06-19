@@ -24,8 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
 
@@ -41,15 +41,14 @@ public final class NodeNameUtil {
      */
     public static Optional<String> normalizeSpriteName(final ActorDefinition actor) {
         final String spriteName = actor.getIdent().getName();
-        final List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        final String splitName = String.join("|", splitNameParts);
+        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName)
+                .filter(subtoken -> !subtoken.matches("^\\d+$"))
+                .collect(Collectors.joining("|"));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
-        } else if (splitName.length() > 100) {
-            return Optional.of(StringUtils.truncate(splitName, 100));
         } else {
-            return Optional.of(splitName);
+            return Optional.of(StringUtils.truncate(splitName, 100));
         }
     }
 

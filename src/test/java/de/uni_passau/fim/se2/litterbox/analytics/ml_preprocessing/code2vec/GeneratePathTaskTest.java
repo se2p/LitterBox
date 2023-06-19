@@ -46,8 +46,8 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
 
 class GeneratePathTaskTest implements JsonTest {
 
-    final static String CAT_PATHS = "cat 39,625791294,Hi! 39,1493538624,Show Hi!,-547448667,Show";
-    final static String ABBY_PATHS = "abby GreenFlag,-2069003229,Hello!";
+    final static String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
+    final static String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
     final static String STAGE_PATHS = "stage GreenFlag,1809747443,10";
 
     /**
