@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneratio
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -38,6 +39,7 @@ public class PathGenerator {
     private final String downSymbol;
     private final String startSymbol;
     private final String endSymbol;
+    private final boolean normaliseTokens;
 
     private final Program program;
     private Map<ActorDefinition, List<ASTNode>> leafsMap;
@@ -54,13 +56,14 @@ public class PathGenerator {
         this.downSymbol = "_";
         this.startSymbol = "(";
         this.endSymbol = ")";
+        this.normaliseTokens = false;
 
         extractASTLeafsPerSprite();
     }
 
     public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram,
                          boolean includeDefaultSprites, String delimiter, String upSymbol, String downSymbol,
-                         String startSymbol, String endsymbol) {
+                         String startSymbol, String endsymbol, boolean normaliseTokens) {
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
         this.wholeProgram = wholeProgram;
@@ -71,6 +74,7 @@ public class PathGenerator {
         this.downSymbol = downSymbol;
         this.startSymbol = startSymbol;
         this.endSymbol = endsymbol;
+        this.normaliseTokens = normaliseTokens;
 
         extractASTLeafsPerSprite();
     }
@@ -149,6 +153,10 @@ public class PathGenerator {
                 if (!path.isEmpty()) {
                     String sourceLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(source, delimiter);
                     String targetLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(target, delimiter);
+                    if (normaliseTokens) {
+                        sourceLiteral = StringUtil.normaliseString(sourceLiteral, delimiter);
+                        targetLiteral = StringUtil.normaliseString(targetLiteral, delimiter);
+                    }
                     if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
                         programFeatures.addFeature(sourceLiteral, path, targetLiteral);
                     }

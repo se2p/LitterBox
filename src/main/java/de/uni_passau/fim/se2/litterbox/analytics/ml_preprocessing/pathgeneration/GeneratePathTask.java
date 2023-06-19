@@ -48,7 +48,7 @@ public class GeneratePathTask {
 
     public List<ProgramFeatures> createContextForCode2Seq() {
         PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram,
-                includeDefaultSprites, "|", "|", "|", "", "");
+                includeDefaultSprites, "|", "|", "|", "", "", true);
         return pathGenerator.generatePaths();
     }
 }

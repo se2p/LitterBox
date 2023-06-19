@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class Code2SeqAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
-    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(Code2SeqAnalyzer.class.getName());
     private final int maxPathLength;
 
     public Code2SeqAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
