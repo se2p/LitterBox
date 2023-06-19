@@ -1,6 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -42,7 +42,7 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken)
                 .toList();
     }
 }

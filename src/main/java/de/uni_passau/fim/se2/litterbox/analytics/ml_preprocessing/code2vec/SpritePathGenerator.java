@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -47,7 +47,7 @@ public final class SpritePathGenerator extends PathGenerator {
             System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
             int i = 0;
             for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + TokenVisitor.getNormalisedToken(value));
+                System.out.println(i + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(value));
                 i++;
             }
         }
@@ -80,7 +80,7 @@ public final class SpritePathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken)
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken)
                 .toList();
     }
 }

@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
@@ -67,7 +67,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             System.out.println("Number of ASTLeafs for ScriptEntity " +
                     NodeNameUtil.getScriptEntityName(script) + ": " + leafs.size());
             leafs.forEach(leaf -> {
-                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitor.getNormalisedToken(leaf));
+                System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(leaf));
             });
         });
     }
@@ -91,6 +91,6 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitor::getNormalisedToken).toList();
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken).toList();
     }
 }
