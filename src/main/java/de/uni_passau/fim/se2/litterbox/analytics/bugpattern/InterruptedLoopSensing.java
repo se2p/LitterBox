@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
@@ -341,10 +342,18 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IsKeyPressed node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
+    }
+
+    private void visitOuterBlocks(ASTNode node) {
+        visitOuter = true;
+        StmtList stmtList = getStmtList(node);
+        //if the outer StmtList is the top StmtList of the Script, checking is not necessary
+        if (!(stmtList.getParentNode() instanceof ScriptEntity)) {
+            getStmtList(node).accept(this);
+        }
+        visitOuter = false;
     }
 
     private StmtList getStmtList(ASTNode node) {
@@ -359,9 +368,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(Touching node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -369,9 +376,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IsMouseDown node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -379,9 +384,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(ColorTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -389,9 +392,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(SpriteTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -399,9 +400,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
