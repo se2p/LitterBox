@@ -85,7 +85,6 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
     private void writeResultPerScriptsToOutput(File inputFile, List<ProgramFeatures> result) {
         if (result.isEmpty()) {
-            //log.warning("The processing step returned no output For input File " + inputFile.getName());
             return;
         }
         if (outputPath.isConsoleOutput()) {
@@ -99,15 +98,16 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         for (ProgramFeatures token : result) {
             Path outName = outputFileName(inputFile);
             Path outputFile = outputPath.getPath().resolve(outName + "_" + token.getName());
-            if (Files.exists(outputFile))
-                log.severe("Overriding script result " + outputFile);
+            if (Files.exists(outputFile)) {
+                log.warning("A duplicated script has been skipped " + outputFile);
+                continue;
+            }
             try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
                 bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
                 bw.flush();
             } catch (IOException e) {
                 log.severe("Exception in writing the file " + outputFile + "Error message " + e.getMessage());
             }
-            //log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
         }
     }
 }
