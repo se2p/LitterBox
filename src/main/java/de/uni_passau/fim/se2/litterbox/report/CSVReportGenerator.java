@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,8 +45,8 @@ public class CSVReportGenerator implements ReportGenerator {
     /**
      * CSVReportGenerator writes the results of an analyses for a given list of detectors to a file.
      *
-     * @param fileName  of the file to which the report is written.
-     * @param detectors list of detectors that should be included in the report.
+     * @param fileName        of the file to which the report is written.
+     * @param detectors       list of detectors that should be included in the report.
      * @param outputPerScript indicate if the results should be written per scripts
      * @throws IOException is thrown if the file cannot be opened
      */
@@ -64,19 +66,17 @@ public class CSVReportGenerator implements ReportGenerator {
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
-        List<String> row;
         if (outputPerScript) {
             for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
                 for (Script script : actorDefinition.getScripts().getScriptList()) {
-                    row = createScriptRow(program, issues, script);
-                    printer.printRecord(row);
+                    checkScriptEntityAndAddRow(program, issues, script);
                 }
                 for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
-                    row = createScriptRow(program, issues, procedureDefinition);
-                    printer.printRecord(row);
+                    checkScriptEntityAndAddRow(program, issues, procedureDefinition);
                 }
             }
         } else {
+            List<String> row;
             row = createProjectRow(program, issues);
             printer.printRecord(row);
         }
@@ -100,9 +100,18 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private List<String> createScriptRow(Program program, Collection<Issue> issues, ScriptEntity scriptEntity) {
+    private void checkScriptEntityAndAddRow(Program program, Collection<Issue> issues, ScriptEntity scriptEntity) throws IOException {
+        List<String> row;
+        var scriptEntityName = NodeNameUtil.getScriptEntityFullName(program, scriptEntity);
+        if (scriptEntityName != null) {
+            row = createScriptRow(issues, scriptEntity, scriptEntityName);
+            printer.printRecord(row);
+        }
+    }
+
+    private List<String> createScriptRow(Collection<Issue> issues, ScriptEntity scriptEntity, String scriptEntityName) {
         List<String> row = new ArrayList<>();
-        row.add(getScriptEntityFullName(program, scriptEntity));
+        row.add(scriptEntityName);
         for (String finder : detectors) {
             long numIssuesForFinder = issues
                     .stream()
@@ -114,12 +123,4 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private static String getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
-        if (NodeNameUtil.getScriptEntityName(scriptEntity).isPresent())
-            return program.getIdent().getName() + "_" + NodeNameUtil.getScriptEntityName(scriptEntity).get();
-        else {
-            log.severe("can't generate a name for a valid scriptEntity");
-            return "N/A";
-        }
-    }
 }

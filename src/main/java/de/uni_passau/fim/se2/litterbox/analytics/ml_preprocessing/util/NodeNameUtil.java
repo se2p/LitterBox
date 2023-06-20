@@ -20,13 +20,18 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
+
+    private static final Logger log = Logger.getLogger(NodeNameUtil.class.getName());
 
     private NodeNameUtil() {
         throw new IllegalCallerException("utility class constructor");
@@ -69,17 +74,22 @@ public final class NodeNameUtil {
     }
 
     /**
-     * Gets script entity name.
-     * in case of @param node is Type Script, generate a name.
-     * in case of @param node is Type ProcedureDefinition, return the original name
+     * Generate unique_id is the same across multiple runs
      *
      * @param node the node
      * @return the script entity name
      */
     public static Optional<String> getScriptEntityName(ScriptEntity node) {
-        //
-        return Optional.of("node");
+        ScriptEntityNameVisitor nameVisitor = new ScriptEntityNameVisitor();
+        return Optional.ofNullable(nameVisitor.getName(node));
     }
 
-
+    public static String getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
+        if (getScriptEntityName(scriptEntity).isPresent())
+            return program.getIdent().getName() + "_" + getScriptEntityName(scriptEntity).get();
+        else {
+            log.warning("Couldn't generate a name for script entity for the program: " + program.getIdent().getName());
+            return null;
+        }
+    }
 }
