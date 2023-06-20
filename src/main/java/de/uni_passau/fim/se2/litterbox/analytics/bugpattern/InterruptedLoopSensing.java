@@ -48,7 +48,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
- * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like gliding.
+ * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like
+ * gliding.
  */
 public class InterruptedLoopSensing extends AbstractIssueFinder {
     private static final String NAME = "interrupted_loop_sensing";
@@ -98,7 +99,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (!checkingVariable && !checkingStop && !visitOuter) {
             if (insideForever) {
-                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                blockName = IssueTranslator.getInstance().getInfo("if") + " "
+                        + IssueTranslator.getInstance().getInfo("then") + " "
+                        + IssueTranslator.getInstance().getInfo("else");
                 inCondition = true;
                 node.getBoolExpr().accept(this);
                 if (variableName != null) {
@@ -131,7 +134,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (!checkingVariable && !checkingStop && insideForever && !visitOuter) {
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
+            blockName = IssueTranslator.getInstance().getInfo("if") + " "
+                    + IssueTranslator.getInstance().getInfo("then");
             inCondition = true;
             node.getBoolExpr().accept(this);
             if (variableName != null) {
@@ -148,7 +152,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     }
 
     /**
-     * If the variable is changed inside these stmts, it should not trigger the finder, as the insides of the loop are responsible for the exit condition.
+     * If the variable is changed inside these stmts, it should not trigger the finder, as the insides of the loop are
+     * responsible for the exit condition.
      *
      * @param stmts stmts that should be searched
      */
