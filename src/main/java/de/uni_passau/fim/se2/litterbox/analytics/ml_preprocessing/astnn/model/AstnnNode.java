@@ -31,7 +31,16 @@ public sealed interface AstnnNode permits AstnnAstNode, AstnnAstLeaf {
 
     String BLOCK_LABEL = "BLOCK";
 
+    /**
+     * Getter needed for Jackson to discover the attribute.
+     *
+     * @return The label of the node.
+     */
     String label();
+
+    default String getLabel() {
+        return label();
+    }
 
     /**
      * Checks if the node has no further children.
@@ -67,6 +76,15 @@ public sealed interface AstnnNode permits AstnnAstNode, AstnnAstLeaf {
     boolean hasBlock();
 
     List<AstnnNode> children();
+
+    /**
+     * Getter needed for Jackson to discover the attribute.
+     *
+     * @return The children of the node.
+     */
+    default List<AstnnNode> getChildren() {
+        return children();
+    }
 
     /**
      * Turns a tree into a statement tree by removing all direct and transitive
