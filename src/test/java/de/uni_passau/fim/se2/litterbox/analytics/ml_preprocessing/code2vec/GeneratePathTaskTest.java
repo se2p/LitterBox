@@ -53,7 +53,7 @@ class GeneratePathTaskTest implements JsonTest {
     /**
      * the only sprite that has a script contains more than one leaf: Cat
      */
-    final static String CAT_SCRIPT_PATH = "Hi!,-547448667,Show";
+    final static String CAT_SCRIPT_PATH = "hi_!,-547448667,Show";
 
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
