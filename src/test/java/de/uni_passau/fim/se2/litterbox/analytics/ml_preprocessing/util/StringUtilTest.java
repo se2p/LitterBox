@@ -84,4 +84,12 @@ class StringUtilTest {
         final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def", "_");
         assertThat(subtokens).containsExactly("abc", "!", "def");
     }
+
+    @Test
+    void regressionTestSpecialSpaces() {
+        final String input = "day! Callooh! Callay!";
+        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens(input, "_");
+
+        assertThat(subtokens).containsExactly("day", "!", "callooh", "!", "callay", "!");
+    }
 }

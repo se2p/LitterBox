@@ -27,17 +27,28 @@ import java.util.stream.Stream;
 
 public class StringUtil {
 
+    // Helpful documentation: https://en.wikipedia.org/wiki/Unicode_character_property
+
+    /**
+     * Separators and other control characters
+     */
+    private static final String SPACES = "[\\p{Z}\\p{C}]";
+
+    /**
+     * Punctuations and symbols
+     */
+    private static final String SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK = "[\\p{P}\\p{S}&&[^?!]]";
+
     private static final Pattern SPLIT_PATTERN = Pattern.compile(
             // digit followed by non-digit or other way round
             "(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)"
                     // lowercase followed by uppercase
                     + "|(?<=\\p{Ll})(?=\\p{Lu})"
-                    // punctuation without question and exclamation marks
-                    + "|[\\p{Punct}&&[^?!]]"
+                    + "|" + SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK
                     // uppercase, if followed by one uppercase and one lowercase letter
                     // i.e. do not split all-caps words
                     + "|(?<=\\p{Lu})(?=\\p{Lu}\\p{Ll})"
-                    + "|\\s+"
+                    + "|" + SPACES
     );
 
     private static final Pattern PUNCTUATION_SPLIT_PATTERN = Pattern.compile("(?<=[^?!])(?=[?!])");
@@ -122,8 +133,8 @@ public class StringUtil {
 
         return s.trim()
                 .toLowerCase(Locale.ROOT)
-                .replaceAll("\\s+", delimiter)
-                .replaceAll("[\\p{Punct}&&[^!?]]+", delimiter)
+                .replaceAll(SPACES + "+", delimiter)
+                .replaceAll(SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK + "+", delimiter)
                 // remove repeated delimiter to remove empty subtokens
                 .replaceAll(quotedDelimiter + "+", delimiter)
                 // remove delimiter from start/end to remove empty leading/trailing subtokens
