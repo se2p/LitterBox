@@ -137,7 +137,7 @@ public class PathGenerator {
     private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
         final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
         return spriteName
-                .filter(name -> !name.isEmpty() && (includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite)))
+                .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
                 .map(name -> getProgramFeatures(name, leafs));
     }
 
@@ -224,10 +224,6 @@ public class PathGenerator {
     }
 
     private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
-        String name = node.getUniqueName();
-        if (name.isEmpty()) {
-            name = "EMPTY_TOKEN";
-        }
-        pathBuilder.append(startSymbol).append(name).append(childId).append(endSymbol);
+        pathBuilder.append(startSymbol).append(node.getUniqueName()).append(childId).append(endSymbol);
     }
 }

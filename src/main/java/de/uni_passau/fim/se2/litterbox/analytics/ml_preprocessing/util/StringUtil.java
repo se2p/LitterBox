@@ -57,7 +57,11 @@ public class StringUtil {
     public static Stream<String> splitToNormalisedSubtokenStream(final String token, final String delimiter) {
         return splitToSubtokenStream(token)
                 .map(subtoken -> StringUtil.normaliseSubtoken(subtoken, delimiter))
-                .filter(s -> !s.isEmpty());
+                .filter(s -> !s.isEmpty() && !isOnlyDelimiter(s, delimiter));
+    }
+
+    private static boolean isOnlyDelimiter(final String token, final String delimiter) {
+        return token.matches(Pattern.quote(delimiter) + "+");
     }
 
     public static Stream<String> splitToSubtokenStream(final String token) {
@@ -114,16 +118,16 @@ public class StringUtil {
      * @return The input string in its normalised form.
      */
     public static String normaliseSubtoken(final String s, final String delimiter) {
-        final String label = s.trim()
+        final String quotedDelimiter = Pattern.quote(delimiter);
+
+        return s.trim()
                 .toLowerCase(Locale.ROOT)
                 .replaceAll("\\s+", delimiter)
                 .replaceAll("[\\p{Punct}&&[^!?]]+", delimiter)
-                .replaceAll(Pattern.quote(delimiter) + "+", delimiter);
-
-        if (label.isEmpty()) {
-            return "EMPTY";
-        } else {
-            return label;
-        }
+                // remove repeated delimiter to remove empty subtokens
+                .replaceAll(quotedDelimiter + "+", delimiter)
+                // remove delimiter from start/end to remove empty leading/trailing subtokens
+                .replaceAll("^" + quotedDelimiter, "")
+                .replaceAll(quotedDelimiter + "$", "");
     }
 }

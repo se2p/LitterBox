@@ -46,7 +46,16 @@ public final class NodeNameUtil {
         if (splitName.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(StringUtils.truncate(splitName, 100));
+            return Optional.of(truncateName(splitName));
+        }
+    }
+
+    private static String truncateName(final String name) {
+        final String truncated = StringUtils.truncate(name, 100);
+        if (truncated.endsWith("|")) {
+            return StringUtils.truncate(truncated, 99);
+        } else {
+            return truncated;
         }
     }
 
