@@ -122,7 +122,13 @@ public class IssueTool {
         return bugFinders;
     }
 
-        private static Map<String, IssueFinder> generateScriptsBugsFinders() {
+    /**
+     * Bug finders that can operate on single scripts, i.e. do not need other information from somewhere else in the
+     * program.
+     *
+     * @return Issue finders that work on single scripts.
+     */
+    private static Map<String, IssueFinder> generateScriptsBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
 
         registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
@@ -280,7 +286,7 @@ public class IssueTool {
         switch (commandString) {
             case ALL -> finders = new ArrayList<>(generateAllFinders().values());
             case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
-            case BUGS_SCRIPTS -> finders = new ArrayList<>(generateScriptsBugsFinders().values());
+            case BUGS_SCRIPTS -> finders = new ArrayList<>(generateScriptsBugFinders().values());
             case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
             case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
             case DEFAULT -> {

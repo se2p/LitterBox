@@ -219,6 +219,7 @@ public class Main implements Callable<Integer> {
                 description = "Get the bug patterns per script."
         )
         boolean outputPerScript;
+
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             if (projectPath == null) {
@@ -233,7 +234,8 @@ public class Main implements Callable<Integer> {
                     detector,
                     ignoreLooseBlocks,
                     deleteProject,
-                    outputPerScript);
+                    outputPerScript
+            );
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }

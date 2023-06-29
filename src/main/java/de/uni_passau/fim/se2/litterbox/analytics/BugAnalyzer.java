@@ -39,14 +39,17 @@ import java.util.stream.Collectors;
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
-    private List<String> detectorNames;
+    private final List<String> detectorNames;
     private List<IssueFinder> issueFinders;
     private Path annotationOutput;
-    private boolean ignoreLooseBlocks;
+    private final boolean ignoreLooseBlocks;
     private final String detectors;
     private final boolean outputPerScript;
 
-    public BugAnalyzer(Path input, Path output, String detectors, boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript) {
+    public BugAnalyzer(
+            Path input, Path output, String detectors,
+            boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
+    ) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
@@ -81,9 +84,9 @@ public class BugAnalyzer extends Analyzer {
     private Set<Issue> runFinders(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
-        for (IssueFinder iF : issueFinders) {
-            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+        for (IssueFinder issueFinder : issueFinders) {
+            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(issueFinder.check(program));
         }
         return issues;
     }
@@ -97,7 +100,9 @@ public class BugAnalyzer extends Analyzer {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript);
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(
+                        reportFileName, detectorNames, outputPerScript
+                );
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
             } else {

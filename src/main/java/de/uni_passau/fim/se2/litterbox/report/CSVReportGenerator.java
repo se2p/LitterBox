@@ -32,15 +32,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class CSVReportGenerator implements ReportGenerator {
 
     private final List<String> detectors;
     private final CSVPrinter printer;
     private final boolean outputPerScript;
-
-    private static final Logger log = Logger.getLogger(CSVReportGenerator.class.getName());
 
     /**
      * CSVReportGenerator writes the results of an analyses for a given list of detectors to a file.
@@ -55,10 +52,11 @@ public class CSVReportGenerator implements ReportGenerator {
         this.outputPerScript = outputPerScript;
 
         final List<String> headers = new ArrayList<>();
-        if (outputPerScript)
+        if (outputPerScript) {
             headers.add("script");
-        else
+        } else {
             headers.add("project");
+        }
         headers.addAll(this.detectors);
 
         printer = CSVPrinterFactory.getNewPrinter(fileName, headers);
@@ -67,20 +65,24 @@ public class CSVReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         if (outputPerScript) {
-            for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
-                for (Script script : actorDefinition.getScripts().getScriptList()) {
-                    checkScriptEntityAndAddRow(program, issues, script);
-                }
-                for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
-                    checkScriptEntityAndAddRow(program, issues, procedureDefinition);
-                }
-            }
+            generateReportPerScript(program, issues);
         } else {
             List<String> row;
             row = createProjectRow(program, issues);
             printer.printRecord(row);
         }
         printer.flush();
+    }
+
+    private void generateReportPerScript(Program program, Collection<Issue> issues) throws IOException {
+        for (ActorDefinition actorDefinition : program.getActorDefinitionList().getDefinitions()) {
+            for (Script script : actorDefinition.getScripts().getScriptList()) {
+                checkScriptEntityAndAddRow(program, issues, script);
+            }
+            for (ProcedureDefinition procedureDefinition : actorDefinition.getProcedureDefinitionList().getList()) {
+                checkScriptEntityAndAddRow(program, issues, procedureDefinition);
+            }
+        }
     }
 
     public void close() throws IOException {
@@ -100,11 +102,12 @@ public class CSVReportGenerator implements ReportGenerator {
         return row;
     }
 
-    private void checkScriptEntityAndAddRow(Program program, Collection<Issue> issues, ScriptEntity scriptEntity) throws IOException {
-        List<String> row;
+    private void checkScriptEntityAndAddRow(
+            Program program, Collection<Issue> issues, ScriptEntity scriptEntity
+    ) throws IOException {
         var scriptEntityName = NodeNameUtil.getScriptEntityFullName(program, scriptEntity);
-        if (scriptEntityName != null) {
-            row = createScriptRow(issues, scriptEntity, scriptEntityName);
+        if (scriptEntityName.isPresent()) {
+            List<String> row = createScriptRow(issues, scriptEntity, scriptEntityName.get());
             printer.printRecord(row);
         }
     }

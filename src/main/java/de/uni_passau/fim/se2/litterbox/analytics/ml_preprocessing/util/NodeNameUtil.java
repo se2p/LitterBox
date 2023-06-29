@@ -74,22 +74,17 @@ public final class NodeNameUtil {
     }
 
     /**
-     * Generate unique_id is the same across multiple runs
+     * Builds a globally unique name for a script.
      *
-     * @param node the node
-     * @return the script entity name
+     * <p>Combines the name/projectID of the program with the unique name of a script to create a globally unique
+     * identifier for the script.
+     *
+     * @param program The program the script belongs to.
+     * @param scriptEntity Some script inside {@code program}.
+     * @return A unique name based on the program and script ids. Empty if no ID could be generated for the script.
      */
-    public static Optional<String> getScriptEntityName(ScriptEntity node) {
-        ScriptEntityNameVisitor nameVisitor = new ScriptEntityNameVisitor();
-        return Optional.ofNullable(nameVisitor.getName(node));
-    }
-
-    public static String getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
-        if (getScriptEntityName(scriptEntity).isPresent())
-            return program.getIdent().getName() + "_" + getScriptEntityName(scriptEntity).get();
-        else {
-            log.warning("Couldn't generate a name for script entity for the program: " + program.getIdent().getName());
-            return null;
-        }
+    public static Optional<String> getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
+        return ScriptEntityNameVisitor.getScriptName(scriptEntity)
+                .map(name -> program.getIdent().getName() + "_" + name);
     }
 }
