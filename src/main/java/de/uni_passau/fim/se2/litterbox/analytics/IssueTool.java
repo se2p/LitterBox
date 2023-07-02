@@ -131,7 +131,7 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateScriptsBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
 
-        registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
+        registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
         registerBugFinder(new BlockingIfElse(), bugFinders);
         registerBugFinder(new ComparingLiterals(), bugFinders);
         registerBugFinder(new EndlessRecursion(), bugFinders);
