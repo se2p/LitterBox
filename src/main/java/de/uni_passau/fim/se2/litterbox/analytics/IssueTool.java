@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
@@ -90,7 +90,7 @@ public class IssueTool {
             registerBugFinder(new TypeError(), bugFinders);
             registerBugFinder(new VariableAsLiteral(), bugFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock bugs
+        if (LOAD_MBLOCK) { // mBlock bugs
             registerBugFinder(new AmbientLightOutOfBounds(), bugFinders);
             registerBugFinder(new BatteryLevelOutOfBounds(), bugFinders);
             registerBugFinder(new CodeyUploadStopTimed(), bugFinders);
@@ -215,7 +215,7 @@ public class IssueTool {
             registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock smells
+        if (LOAD_MBLOCK) { // mBlock smells
             registerSmellFinder(new MotorPowerMinus(), smellFinders);
             registerSmellFinder(new MultiAttributeModificationRobot(), smellFinders);
             registerSmellFinder(new UnnecessaryTimeRobot(), smellFinders);

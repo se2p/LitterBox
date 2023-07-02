@@ -72,9 +72,9 @@ public abstract class Analyzer {
 
     private static List<Path> getProgramPaths(Path dirPath) throws IOException {
         try (var files = Files.walk(dirPath)) {
-                return files.filter(p -> !Files.isDirectory(p))
-                    .filter(Analyzer::isPossibleScratchFile)
-                    .toList();
+            return files.filter(p -> !Files.isDirectory(p))
+                .filter(Analyzer::isPossibleScratchFile)
+                .toList();
         }
     }
 
