@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MultiAttributeModificationRobot;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.UnnecessaryTimeRobot;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.VariableInScript;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
@@ -248,7 +249,7 @@ public class IssueTool {
         Map<String, IssueFinder> questionFinders = new LinkedHashMap<>();
 
         if (LOAD_GENERAL) {
-
+            registerQuestionFinder(new VariableInScript(), questionFinders);
         }
 
         return questionFinders;
