@@ -126,6 +126,7 @@ public class IssueTool {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
         allFinders.putAll(generatePerfumeFinders());
+        allFinders.putAll(generateQuestionFinders());
 
         return allFinders;
     }
@@ -243,6 +244,16 @@ public class IssueTool {
         return perfumeFinders;
     }
 
+    public static Map<String, IssueFinder> generateQuestionFinders() {
+        Map<String, IssueFinder> questionFinders = new LinkedHashMap<>();
+
+        if (LOAD_GENERAL) {
+
+        }
+
+        return questionFinders;
+    }
+
     public static List<IssueFinder> getFinders(String commandString) {
         List<IssueFinder> finders = new ArrayList<>();
 
@@ -251,6 +262,7 @@ public class IssueTool {
             case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
             case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
             case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
+            case QUESTIONS -> finders = new ArrayList<>(generateQuestionFinders().values());
             case DEFAULT -> {
                 var strictFinders = generateAllFinders().values().stream()
                         .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
@@ -287,6 +299,10 @@ public class IssueTool {
         return Collections.unmodifiableSet(generatePerfumeFinders().keySet());
     }
 
+    public static Collection<String> getQuestionFinderNames() {
+        return Collections.unmodifiableSet(generateQuestionFinders().keySet());
+    }
+
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
         if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
@@ -313,5 +329,14 @@ public class IssueTool {
                     + " as Solution IssueFinder");
         }
         perfumeFinders.put(finder.getName(), finder);
+    }
+
+    static void registerQuestionFinder(IssueFinder finder, Map<String, IssueFinder> questionFinders) {
+        if (finder.getIssueType() != IssueType.QUESTION) {
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Solution IssueFinder");
+        }
+        questionFinders.put(finder.getName(), finder);
     }
 }
