@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
@@ -8,7 +9,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class VariableInScript extends AbstractIssueFinder {
-    private Set<String> variablesInScript = new LinkedHashSet<>();
+    private Set<String> variablesInScript;
+
+    @Override
+    public Set<Issue> check(Program program) {
+        variablesInScript = new LinkedHashSet<>();
+        return super.check(program);
+    }
 
     @Override
     public void visit(Script node) {
