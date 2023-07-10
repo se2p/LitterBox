@@ -56,15 +56,12 @@ public abstract class Analyzer {
      */
     public void analyzeFile() throws IOException {
         File file = input.toFile();
-
         if (file.exists() && file.isDirectory()) {
-            var listOfFiles =  getProgramPaths(String.valueOf(file)) ;
-            for (String filePath : listOfFiles) {
-                var fileEntry = new File(String.valueOf(filePath));
-                if (!fileEntry.isDirectory()) {
-                    check(fileEntry, output);
-                    deleteFile(fileEntry);
-                }
+            List<Path> listOfFiles = getProgramPaths(file.toPath());
+            for (Path filePath : listOfFiles) {
+                File fileEntry = filePath.toFile();
+                check(fileEntry, output);
+                deleteFile(fileEntry);
             }
         } else if (file.exists() && !file.isDirectory()) {
             check(file, output);
@@ -82,12 +79,17 @@ public abstract class Analyzer {
                 .toList();
     }
     private void deleteFile(File file) {
-        if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
+        if (delete && isPossibleScratchFile(file.toPath())) {
             boolean success = file.delete();
             if (!success) {
                 log.warning("Could not delete project: " + file.getName());
             }
         }
+    }
+
+    private static boolean isPossibleScratchFile(final Path path) {
+        final String filename = path.getFileName().toString();
+        return filename.endsWith(".json") || filename.endsWith(".sb3");
     }
 
     /**

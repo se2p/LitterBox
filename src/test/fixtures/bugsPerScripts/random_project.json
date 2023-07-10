@@ -1,1 +1,493 @@
-{"targets":[{"isStage":true,"name":"Stage","variables":{"`jEk@4|i[#Fk?(8x)AV.-my variable":["my variable",0],"Yy4g3m;sai_`%j*)~p!r":["x","33"],"@g.jP(x[;G$%L0].#XQ$":["y",""],"pA5fq}y{s4MiF_.09^kO":["z",67]},"lists":{},"broadcasts":{},"blocks":{},"comments":{},"currentCostume":0,"costumes":[{"assetId":"cd21514d0531fdffb22204e0ec5ed84a","name":"backdrop1","md5ext":"cd21514d0531fdffb22204e0ec5ed84a.svg","dataFormat":"svg","rotationCenterX":240,"rotationCenterY":180}],"sounds":[{"assetId":"83a9787d4cb6f3b7632b4ddfebf74367","name":"pop","dataFormat":"wav","format":"","rate":48000,"sampleCount":1123,"md5ext":"83a9787d4cb6f3b7632b4ddfebf74367.wav"}],"volume":100,"layerOrder":0,"tempo":60,"videoTransparency":50,"videoState":"on","textToSpeechLanguage":null},{"isStage":false,"name":"Sprite1","variables":{},"lists":{},"broadcasts":{},"blocks":{"J`Os]wQ1P~xd$YQv94yW":{"opcode":"event_whenflagclicked","next":":~nja)$aO^f(:XQv=Obn","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":338,"y":164},":~nja)$aO^f(:XQv=Obn":{"opcode":"sensing_askandwait","next":"[H2vdhZ!X8B+Ks,bT?a/","parent":"J`Os]wQ1P~xd$YQv94yW","inputs":{"QUESTION":[1,[10,"quanti ragazzi?"]]},"fields":{},"shadow":false,"topLevel":false},"[H2vdhZ!X8B+Ks,bT?a/":{"opcode":"data_setvariableto","next":"VV]/=4]h1f90QSc[-IaO","parent":":~nja)$aO^f(:XQv=Obn","inputs":{"VALUE":[3,"6yQT!:Ov,;X5I{:F!~BW",[10,"answer"]]},"fields":{"VARIABLE":["x","Yy4g3m;sai_`%j*)~p!r"]},"shadow":false,"topLevel":false},"6yQT!:Ov,;X5I{:F!~BW":{"opcode":"sensing_answer","next":null,"parent":"[H2vdhZ!X8B+Ks,bT?a/","inputs":{},"fields":{},"shadow":false,"topLevel":false},"VV]/=4]h1f90QSc[-IaO":{"opcode":"sensing_askandwait","next":"P5~P;~?OFh*{E|KD_~]%","parent":"[H2vdhZ!X8B+Ks,bT?a/","inputs":{"QUESTION":[1,[10,"quante ragazze?"]]},"fields":{},"shadow":false,"topLevel":false},"P5~P;~?OFh*{E|KD_~]%":{"opcode":"data_setvariableto","next":"oQA[pku6,3S%xZ~3[IU[","parent":"VV]/=4]h1f90QSc[-IaO","inputs":{"VALUE":[3,"c=F[]8vU7IkHHyu@L.jU",[10,"0"]]},"fields":{"VARIABLE":["y","@g.jP(x[;G$%L0].#XQ$"]},"shadow":false,"topLevel":false},"c=F[]8vU7IkHHyu@L.jU":{"opcode":"sensing_answer","next":null,"parent":"P5~P;~?OFh*{E|KD_~]%","inputs":{},"fields":{},"shadow":false,"topLevel":false},"oQA[pku6,3S%xZ~3[IU[":{"opcode":"data_setvariableto","next":"3E8zf#!yTVcx6^f~QsX6","parent":"P5~P;~?OFh*{E|KD_~]%","inputs":{"VALUE":[3,"kBOxJ{,kFnv4ctU)zR]E",[10,"0"]]},"fields":{"VARIABLE":["z","pA5fq}y{s4MiF_.09^kO"]},"shadow":false,"topLevel":false},"kBOxJ{,kFnv4ctU)zR]E":{"opcode":"operator_multiply","next":null,"parent":"oQA[pku6,3S%xZ~3[IU[","inputs":{"NUM1":[3,[12,"x","Yy4g3m;sai_`%j*)~p!r"],[4,""]],"NUM2":[3,"3goHDIGY(}P)].2p(!Cg",[4,"12"]]},"fields":{},"shadow":false,"topLevel":false},"3goHDIGY(}P)].2p(!Cg":{"opcode":"operator_add","next":null,"parent":"kBOxJ{,kFnv4ctU)zR]E","inputs":{"NUM1":[1,[4,"12"]],"NUM2":[3,"llb1K4q}ThOrU^f3R3g+",[4,""]]},"fields":{},"shadow":false,"topLevel":false},"llb1K4q}ThOrU^f3R3g+":{"opcode":"operator_multiply","next":null,"parent":"3goHDIGY(}P)].2p(!Cg","inputs":{"NUM1":[1,[4,"12"]],"NUM2":[3,"A`UGGZT![npLtM[I]o(n",[4,""]]},"fields":{},"shadow":false,"topLevel":false},"A`UGGZT![npLtM[I]o(n":{"opcode":"operator_multiply","next":null,"parent":"llb1K4q}ThOrU^f3R3g+","inputs":{"NUM1":[1,[4,"0.7"]],"NUM2":[3,[12,"y","@g.jP(x[;G$%L0].#XQ$"],[4,""]]},"fields":{},"shadow":false,"topLevel":false},"3E8zf#!yTVcx6^f~QsX6":{"opcode":"looks_say","next":null,"parent":"oQA[pku6,3S%xZ~3[IU[","inputs":{"MESSAGE":[3,"{bP8?La$b64*uD`j:?_d",[10,"Hello!"]]},"fields":{},"shadow":false,"topLevel":false},"{bP8?La$b64*uD`j:?_d":{"opcode":"operator_join","next":null,"parent":"3E8zf#!yTVcx6^f~QsX6","inputs":{"STRING1":[1,[10,"il prezzo totale è"]],"STRING2":[3,[12,"z","pA5fq}y{s4MiF_.09^kO"],[10,"banana"]]},"fields":{},"shadow":false,"topLevel":false}},"comments":{},"currentCostume":0,"costumes":[{"assetId":"b7853f557e4426412e64bb3da6531a99","name":"costume1","bitmapResolution":1,"md5ext":"b7853f557e4426412e64bb3da6531a99.svg","dataFormat":"svg","rotationCenterX":48,"rotationCenterY":50},{"assetId":"e6ddc55a6ddd9cc9d84fe0b4c21e016f","name":"costume2","bitmapResolution":1,"md5ext":"e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg","dataFormat":"svg","rotationCenterX":46,"rotationCenterY":53}],"sounds":[{"assetId":"83c36d806dc92327b9e7049a565c6bff","name":"Meow","dataFormat":"wav","format":"","rate":48000,"sampleCount":40681,"md5ext":"83c36d806dc92327b9e7049a565c6bff.wav"}],"volume":100,"layerOrder":1,"visible":true,"x":0,"y":0,"size":100,"direction":90,"draggable":false,"rotationStyle":"all around"}],"monitors":[{"id":"`jEk@4|i[#Fk?(8x)AV.-my variable","mode":"default","opcode":"data_variable","params":{"VARIABLE":"my variable"},"spriteName":null,"value":0,"width":0,"height":0,"x":5,"y":5,"visible":false,"sliderMin":0,"sliderMax":100,"isDiscrete":true},{"id":"Yy4g3m;sai_`%j*)~p!r","mode":"slider","opcode":"data_variable","params":{"VARIABLE":"x"},"spriteName":null,"value":"33","width":0,"height":0,"x":5,"y":32,"visible":true,"sliderMin":0,"sliderMax":100,"isDiscrete":true},{"id":"answer","mode":"default","opcode":"sensing_answer","params":{},"spriteName":null,"value":"","width":0,"height":0,"x":5,"y":5,"visible":true,"sliderMin":0,"sliderMax":100,"isDiscrete":true},{"id":"@g.jP(x[;G$%L0].#XQ$","mode":"slider","opcode":"data_variable","params":{"VARIABLE":"y"},"spriteName":null,"value":"","width":0,"height":0,"x":5,"y":59,"visible":true,"sliderMin":0,"sliderMax":100,"isDiscrete":true},{"id":"pA5fq}y{s4MiF_.09^kO","mode":"slider","opcode":"data_variable","params":{"VARIABLE":"z"},"spriteName":null,"value":67,"width":0,"height":0,"x":5,"y":86,"visible":true,"sliderMin":0,"sliderMax":100,"isDiscrete":true}],"extensions":[],"meta":{"semver":"3.0.0","vm":"0.2.0-prerelease.20201016122132","agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36"}}
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "Yy4g3m;sai_`%j*)~p!r": [
+                    "x",
+                    "33"
+                ],
+                "@g.jP(x[;G$%L0].#XQ$": [
+                    "y",
+                    ""
+                ],
+                "pA5fq}y{s4MiF_.09^kO": [
+                    "z",
+                    67
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "J`Os]wQ1P~xd$YQv94yW": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ":~nja)$aO^f(:XQv=Obn",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 338,
+                    "y": 164
+                },
+                ":~nja)$aO^f(:XQv=Obn": {
+                    "opcode": "sensing_askandwait",
+                    "next": "[H2vdhZ!X8B+Ks,bT?a/",
+                    "parent": "J`Os]wQ1P~xd$YQv94yW",
+                    "inputs": {
+                        "QUESTION": [
+                            1,
+                            [
+                                10,
+                                "quanti ragazzi?"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "[H2vdhZ!X8B+Ks,bT?a/": {
+                    "opcode": "data_setvariableto",
+                    "next": "VV]/=4]h1f90QSc[-IaO",
+                    "parent": ":~nja)$aO^f(:XQv=Obn",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "6yQT!:Ov,;X5I{:F!~BW",
+                            [
+                                10,
+                                "answer"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "x",
+                            "Yy4g3m;sai_`%j*)~p!r"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6yQT!:Ov,;X5I{:F!~BW": {
+                    "opcode": "sensing_answer",
+                    "next": null,
+                    "parent": "[H2vdhZ!X8B+Ks,bT?a/",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "VV]/=4]h1f90QSc[-IaO": {
+                    "opcode": "sensing_askandwait",
+                    "next": "P5~P;~?OFh*{E|KD_~]%",
+                    "parent": "[H2vdhZ!X8B+Ks,bT?a/",
+                    "inputs": {
+                        "QUESTION": [
+                            1,
+                            [
+                                10,
+                                "quante ragazze?"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "P5~P;~?OFh*{E|KD_~]%": {
+                    "opcode": "data_setvariableto",
+                    "next": "oQA[pku6,3S%xZ~3[IU[",
+                    "parent": "VV]/=4]h1f90QSc[-IaO",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "c=F[]8vU7IkHHyu@L.jU",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "y",
+                            "@g.jP(x[;G$%L0].#XQ$"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "c=F[]8vU7IkHHyu@L.jU": {
+                    "opcode": "sensing_answer",
+                    "next": null,
+                    "parent": "P5~P;~?OFh*{E|KD_~]%",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oQA[pku6,3S%xZ~3[IU[": {
+                    "opcode": "data_setvariableto",
+                    "next": "3E8zf#!yTVcx6^f~QsX6",
+                    "parent": "P5~P;~?OFh*{E|KD_~]%",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "kBOxJ{,kFnv4ctU)zR]E",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "z",
+                            "pA5fq}y{s4MiF_.09^kO"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kBOxJ{,kFnv4ctU)zR]E": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "oQA[pku6,3S%xZ~3[IU[",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "x",
+                                "Yy4g3m;sai_`%j*)~p!r"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "3goHDIGY(}P)].2p(!Cg",
+                            [
+                                4,
+                                "12"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3goHDIGY(}P)].2p(!Cg": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "kBOxJ{,kFnv4ctU)zR]E",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "12"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "llb1K4q}ThOrU^f3R3g+",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "llb1K4q}ThOrU^f3R3g+": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "3goHDIGY(}P)].2p(!Cg",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "12"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            "A`UGGZT![npLtM[I]o(n",
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "A`UGGZT![npLtM[I]o(n": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": "llb1K4q}ThOrU^f3R3g+",
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                "0.7"
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "y",
+                                "@g.jP(x[;G$%L0].#XQ$"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3E8zf#!yTVcx6^f~QsX6": {
+                    "opcode": "looks_say",
+                    "next": null,
+                    "parent": "oQA[pku6,3S%xZ~3[IU[",
+                    "inputs": {
+                        "MESSAGE": [
+                            3,
+                            "{bP8?La$b64*uD`j:?_d",
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "{bP8?La$b64*uD`j:?_d": {
+                    "opcode": "operator_join",
+                    "next": null,
+                    "parent": "3E8zf#!yTVcx6^f~QsX6",
+                    "inputs": {
+                        "STRING1": [
+                            1,
+                            [
+                                10,
+                                "il prezzo totale è"
+                            ]
+                        ],
+                        "STRING2": [
+                            3,
+                            [
+                                12,
+                                "z",
+                                "pA5fq}y{s4MiF_.09^kO"
+                            ],
+                            [
+                                10,
+                                "banana"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "b7853f557e4426412e64bb3da6531a99",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40681,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "`jEk@4|i[#Fk?(8x)AV.-my variable",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "my variable"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Yy4g3m;sai_`%j*)~p!r",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "x"
+            },
+            "spriteName": null,
+            "value": "33",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "answer",
+            "mode": "default",
+            "opcode": "sensing_answer",
+            "params": {},
+            "spriteName": null,
+            "value": "",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "@g.jP(x[;G$%L0].#XQ$",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "y"
+            },
+            "spriteName": null,
+            "value": "",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 59,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "pA5fq}y{s4MiF_.09^kO",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "z"
+            },
+            "spriteName": null,
+            "value": 67,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 86,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20201016122132",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36"
+    }
+}

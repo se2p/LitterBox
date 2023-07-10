@@ -214,6 +214,12 @@ public class Main implements Callable<Integer> {
         )
         Path annotationPath;
 
+        @CommandLine.Option(
+                names = {"-s", "--scripts"},
+                description = "Get the bug patterns per script."
+        )
+        boolean outputPerScript;
+
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             if (projectPath == null) {
@@ -227,7 +233,8 @@ public class Main implements Callable<Integer> {
                     outputPath,
                     detector,
                     ignoreLooseBlocks,
-                    deleteProject
+                    deleteProject,
+                    outputPerScript
             );
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);

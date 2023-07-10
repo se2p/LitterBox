@@ -20,14 +20,19 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
+
+    private static final Logger log = Logger.getLogger(NodeNameUtil.class.getName());
 
     private NodeNameUtil() {
         throw new IllegalCallerException("utility class constructor");
@@ -70,13 +75,17 @@ public final class NodeNameUtil {
     }
 
     /**
-     * Generate unique_id is the same across multiple runs
+     * Builds a globally unique name for a script.
      *
-     * @param node the node
-     * @return the script entity name
+     * <p>Combines the name/projectID of the program with the unique name of a script to create a globally unique
+     * identifier for the script.
+     *
+     * @param program The program the script belongs to.
+     * @param scriptEntity Some script inside {@code program}.
+     * @return A unique name based on the program and script ids. Empty if no ID could be generated for the script.
      */
-    public static Optional<String> getScriptEntityName(ScriptEntity node) {
-        ScriptEntityNameVisitor nameVisitor = new ScriptEntityNameVisitor();
-        return Optional.ofNullable(nameVisitor.getName(node));
+    public static Optional<String> getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
+        return ScriptEntityNameVisitor.getScriptName(scriptEntity)
+                .map(name -> program.getIdent().getName() + "_" + name);
     }
 }
