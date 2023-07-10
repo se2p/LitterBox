@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -71,12 +70,12 @@ public abstract class Analyzer {
         }
     }
 
-    private static List<String> getProgramPaths(String dirPath) throws IOException {
-        return Files.walk(Paths.get(dirPath))
-                .filter(p -> !Files.isDirectory(p))
-                .map(Path::toString)
-                .filter(f -> f.endsWith("json"))
-                .toList();
+    private static List<Path> getProgramPaths(Path dirPath) throws IOException {
+        try (var files = Files.walk(dirPath, 1)) {
+            return files.filter(p -> !Files.isDirectory(p))
+                    .filter(Analyzer::isPossibleScratchFile)
+                    .toList();
+        }
     }
     private void deleteFile(File file) {
         if (delete && isPossibleScratchFile(file.toPath())) {

@@ -88,4 +88,8 @@ public final class NodeNameUtil {
         return ScriptEntityNameVisitor.getScriptName(scriptEntity)
                 .map(name -> program.getIdent().getName() + "_" + name);
     }
+
+    public static Optional<String> getScriptEntityName(ScriptEntity node) {
+        return ScriptEntityNameVisitor.getScriptName(node);
+    }
 }
