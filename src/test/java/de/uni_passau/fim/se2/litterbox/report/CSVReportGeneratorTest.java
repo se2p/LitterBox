@@ -20,19 +20,24 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.EndlessRecursion;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
 
 public class CSVReportGeneratorTest implements JsonTest {
 
@@ -45,7 +50,7 @@ public class CSVReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         List<String> finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders, false);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
@@ -66,14 +71,14 @@ public class CSVReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         List<String> finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders,false);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
         // Now write same issue again, which should only append
         finders = new ArrayList<>();
         finders.add(EndlessRecursion.NAME);
-        reportGenerator = new CSVReportGenerator(tmpFile, finders);
+        reportGenerator = new CSVReportGenerator(tmpFile, finders,false);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
@@ -84,5 +89,49 @@ public class CSVReportGeneratorTest implements JsonTest {
         assertThat(lines.get(0)).isEqualTo("project,endless_recursion");
         assertThat(lines.get(1)).isEqualTo("recursiveProcedure,1");
         assertThat(lines.get(2)).isEqualTo("recursiveProcedure,1");
+    }
+
+    @Test
+    public void testGenerateReportsPerScript() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
+        List<IssueFinder> issueFinders = IssueTool.getFinders(BUGS);
+
+        Set<Issue> issues = new LinkedHashSet<>();
+        for (IssueFinder iF : issueFinders) {
+            iF.setIgnoreLooseBlocks(true);
+            issues.addAll(iF.check(program));
+        }
+
+        Path tmpFile = Files.createTempFile("foo", "bar");
+        List<String> finders = new ArrayList<>(IssueTool.getBugFinderNames());
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile, finders, true);
+        reportGenerator.generateReport(program, issues);
+        reportGenerator.close();
+
+        List<String> lines = Files.readAllLines(tmpFile);
+        Files.delete(tmpFile);
+
+        ScriptCount<ASTNode> scriptCount = new ScriptCount<>();
+        int scriptCountPerProgram = (int) scriptCount.calculateMetric(program);
+
+        ProcedureCount<ASTNode> procedureCount = new ProcedureCount<>();
+        int procedureCountPerProgram = (int) procedureCount.calculateMetric(program);
+
+        assertThat(lines).hasSize(1 + scriptCountPerProgram + procedureCountPerProgram);
+        assertThat(lines.get(0)).isEqualTo("script," + String.join(",", finders));
+
+        int totalBugsInScripts = getTotalBugsCountInScripts(lines);
+        assertThat(totalBugsInScripts).isEqualTo(issues.size());
+    }
+
+    private int getTotalBugsCountInScripts(List<String> lines) {
+        int count = 0;
+        for (String line : lines.subList(1, lines.size())) {
+            var lineSplits = line.split(",");
+            String[] bugsCount = Arrays.copyOfRange(lineSplits, 1, lineSplits.length);
+            int[] arr = Stream.of(bugsCount).mapToInt(Integer::parseInt).toArray();
+            count += Arrays.stream(arr).sum();
+        }
+        return count;
     }
 }
