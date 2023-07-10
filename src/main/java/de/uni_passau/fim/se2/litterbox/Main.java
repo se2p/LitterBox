@@ -480,7 +480,7 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--scripts"},
-                description = "generate token per scripts"
+                description = "Generate token per script."
         )
         boolean isPerScript = false;
 
@@ -490,11 +490,12 @@ public class Main implements Callable<Integer> {
                 throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
             }
 
-            if(wholeProgram && isPerScript)
+            if (wholeProgram && isPerScript) {
                 throw new CommandLine.ParameterException(
                         spec.commandLine(),
-                        "The analysis must be done either per scripts or for whole program"
+                        "The analysis must be done either per script or for whole program"
                 );
+            }
         }
 
         @Override

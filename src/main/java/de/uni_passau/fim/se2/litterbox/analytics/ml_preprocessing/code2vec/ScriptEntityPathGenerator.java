@@ -18,13 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractProcedureDefinitionVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractScriptVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractProcedureDefinitionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractScriptVisitor;
 
 import java.util.*;
 
@@ -32,13 +32,22 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     private final Map<ScriptEntity, List<ASTNode>> leafsMap;
 
-    public ScriptEntityPathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+    public ScriptEntityPathGenerator(
+            Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites
+    ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites);
+
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
-        Map<ScriptEntity, List<ASTNode>> tmp = new HashMap<>();
-        tmp.putAll(extractScriptsASTLeafs(sprites));
-        tmp.putAll(extractProcedureDefinitionsASTLeafs(sprites));
-        this.leafsMap = Collections.unmodifiableMap(tmp);
+        this.leafsMap = Collections.unmodifiableMap(collectLeaves(sprites));
+    }
+
+    private Map<ScriptEntity, List<ASTNode>> collectLeaves(final List<ActorDefinition> sprites) {
+        final Map<ScriptEntity, List<ASTNode>> leavesMap = new HashMap<>();
+
+        leavesMap.putAll(extractScriptsASTLeafs(sprites));
+        leavesMap.putAll(extractProcedureDefinitionsASTLeafs(sprites));
+
+        return leavesMap;
     }
 
     private Map<Script, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
@@ -49,17 +58,14 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     private Map<ProcedureDefinition, List<ASTNode>> extractProcedureDefinitionsASTLeafs(List<ActorDefinition> sprites) {
         ExtractProcedureDefinitionVisitor extractProcedureDefinitionVisitor = new ExtractProcedureDefinitionVisitor();
-        sprites.forEach(sprite -> sprite.getProcedureDefinitionList().getList().forEach(procedureDefinition -> procedureDefinition.accept(extractProcedureDefinitionVisitor)));
-        return extractProcedureDefinitionVisitor.getLeafsMap();
-    }
 
-    @Override
-    public void printLeafs() {
-        System.out.println("Number of scripts: " + leafsMap.keySet().size());
-        leafsMap.forEach((script, leafs) -> {
-            System.out.println("Number of ASTLeafs for ScriptEntity " + NodeNameUtil.getScriptEntityName(script) + ": " + leafs.size());
-            leafs.forEach(leaf -> System.out.println(leafs.indexOf(leaf) + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(leaf)));
-        });
+        for (ActorDefinition sprite : sprites) {
+            for (ProcedureDefinition procedure : sprite.getProcedureDefinitionList().getList()) {
+                procedure.accept(extractProcedureDefinitionVisitor);
+            }
+        }
+
+        return extractProcedureDefinitionVisitor.getLeafsMap();
     }
 
     @Override
@@ -83,6 +89,10 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken).toList();
+        return leafsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(TokenVisitorFactory::getNormalisedToken)
+                .toList();
     }
 }

@@ -33,7 +33,7 @@ public abstract class PathGenerator {
     protected final boolean includeStage;
     protected final boolean includeDefaultSprites;
 
-    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+    protected PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
         this.program = program;
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
@@ -55,8 +55,6 @@ public abstract class PathGenerator {
     }
 
     public abstract List<ProgramFeatures> generatePaths();
-
-    public abstract void printLeafs();
 
     public abstract List<String> getAllLeafs();
 
@@ -93,7 +91,11 @@ public abstract class PathGenerator {
         int currentSourceAncestorIndex = sourceStack.size() - 1;
         int currentTargetAncestorIndex = targetStack.size() - 1;
 
-        while (currentSourceAncestorIndex >= 0 && currentTargetAncestorIndex >= 0 && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)) {
+        while (
+                currentSourceAncestorIndex >= 0
+                && currentTargetAncestorIndex >= 0
+                && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)
+        ) {
             commonPrefix++;
             currentSourceAncestorIndex--;
             currentTargetAncestorIndex--;

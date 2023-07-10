@@ -75,6 +75,7 @@ public abstract class Analyzer {
                     .toList();
         }
     }
+
     private void deleteFile(File file) {
         if (delete && isPossibleScratchFile(file.toPath())) {
             boolean success = file.delete();

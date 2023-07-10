@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
 import java.util.*;
 
@@ -31,24 +31,11 @@ public final class SpritePathGenerator extends PathGenerator {
 
     private final Map<ActorDefinition, List<ASTNode>> leafsMap;
 
-    public SpritePathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+    public SpritePathGenerator(
+            Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites
+    ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites);
         this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
-    }
-
-    @Override
-    public void printLeafs() {
-        System.out.println("Number of sprites: " + leafsMap.keySet().size());
-        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
-            String actorName = entry.getKey().getIdent().getName();
-            System.out.println("Actor Definition: " + actorName);
-            System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
-            int i = 0;
-            for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + TokenVisitorFactory.getNormalisedToken(value));
-                i++;
-            }
-        }
     }
 
     private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
@@ -71,11 +58,17 @@ public final class SpritePathGenerator extends PathGenerator {
 
     private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
         final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
-        return spriteName.filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite)).map(name -> getProgramFeatures(name, leafs));
+        return spriteName
+                .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
+                .map(name -> getProgramFeatures(name, leafs));
     }
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken).toList();
+        return leafsMap.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .map(TokenVisitorFactory::getNormalisedToken)
+                .toList();
     }
 }
