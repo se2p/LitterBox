@@ -36,14 +36,19 @@ import static com.google.common.truth.Truth.assertThat;
 
 class GeneratePathTaskTest implements JsonTest {
 
-    final static String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
-    final static String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
-    final static String STAGE_PATHS = "stage GreenFlag,1809747443,10";
+    static final String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
+    static final String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
+    static final String STAGE_PATHS = "stage GreenFlag,1809747443,10";
 
     /**
      * the only sprite that has a script contains more than one leaf: Cat
      */
-    final static String CAT_SCRIPT_PATH = "hi_!,-547448667,Show";
+    static final List<String> CAT_SCRIPT_PATHS = List.of(
+            "39,625791294,hi_!",
+            "39,1493538624,Show",
+            "hi_!,-547448667,Show",
+            "GreenFlag,-2069003229,hello_!"
+    );
 
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
@@ -107,16 +112,18 @@ class GeneratePathTaskTest implements JsonTest {
 
         List<String> pathContexts = pathContextsForCode2Vec
                 .stream()
-                .map(ProgramFeatures::toStringWithoutNodeName)
+                .flatMap(features -> features.getFeatures().stream())
+                .map(ProgramRelation::toString)
                 .collect(Collectors.toList());
 
         if (includeStage) {
-            assertThat(pathContexts).hasSize(1);
+            assertThat(pathContexts).hasSize(5);
+            assertThat(pathContexts).contains("GreenFlag,1809747443,10");
         } else {
-            assertThat(pathContexts).hasSize(1);
+            assertThat(pathContexts).hasSize(4);
         }
 
-        assertThat(pathContexts).contains(CAT_SCRIPT_PATH);
+        assertThat(pathContexts).containsAtLeastElementsIn(CAT_SCRIPT_PATHS);
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
