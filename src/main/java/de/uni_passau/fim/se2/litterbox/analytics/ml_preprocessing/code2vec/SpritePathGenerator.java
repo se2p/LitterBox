@@ -71,14 +71,11 @@ public final class SpritePathGenerator extends PathGenerator {
 
     private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
         final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
-        return spriteName
-                .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
-                .map(name -> getProgramFeatures(name, leafs));
+        return spriteName.filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite)).map(name -> getProgramFeatures(name, leafs));
     }
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken)
-                .toList();
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken).toList();
     }
 }

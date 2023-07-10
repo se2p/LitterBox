@@ -43,9 +43,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions);
         this.maxPathLength = maxPathLength;
-        this.pathType = isPerScript ? PathType.SCRIPT :
-                wholeProgram ? PathType.PROGRAM :
-                        PathType.SPRITE;
+        this.pathType = isPerScript ? PathType.SCRIPT : wholeProgram ? PathType.PROGRAM : PathType.SPRITE;
     }
 
     @Override

@@ -93,8 +93,7 @@ public abstract class PathGenerator {
         int currentSourceAncestorIndex = sourceStack.size() - 1;
         int currentTargetAncestorIndex = targetStack.size() - 1;
 
-        while (currentSourceAncestorIndex >= 0 && currentTargetAncestorIndex >= 0
-                && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)) {
+        while (currentSourceAncestorIndex >= 0 && currentTargetAncestorIndex >= 0 && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)) {
             commonPrefix++;
             currentSourceAncestorIndex--;
             currentTargetAncestorIndex--;

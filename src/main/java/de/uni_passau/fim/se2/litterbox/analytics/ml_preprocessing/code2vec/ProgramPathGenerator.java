@@ -41,7 +41,6 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     @Override
     public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken)
-                .toList();
+        return leafsMap.values().stream().flatMap(Collection::stream).map(TokenVisitorFactory::getNormalisedToken).toList();
     }
 }

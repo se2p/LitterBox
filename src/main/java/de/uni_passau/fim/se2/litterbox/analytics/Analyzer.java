@@ -34,12 +34,10 @@ import java.util.stream.Stream;
 public abstract class Analyzer {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
-
-    private final Scratch3Parser parser = new Scratch3Parser();
-
-    private final Path input;
     protected final Path output;
     protected final boolean delete;
+    private final Scratch3Parser parser = new Scratch3Parser();
+    private final Path input;
 
     protected Analyzer(Path input, Path output, boolean delete) {
         this.input = input;
