@@ -18,42 +18,53 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ExtractScriptVisitor implements ScratchVisitor {
+public class ExtractScriptLeavesVisitor implements ScratchVisitor {
 
-    private final Map<Script, List<ASTNode>> leafsMap = new HashMap<>();
+    private final Map<ScriptEntity, List<ASTNode>> leavesMap = new HashMap<>();
+
+    private boolean insideScript = false;
+    private List<ASTNode> leaves;
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        visitScript(node);
+    }
 
     @Override
     public void visit(Script node) {
-        List<ASTNode> leafsCollector = new LinkedList<>();
-        traverseLeafs(node.getStmtList(), leafsCollector);
-        leafsMap.put(node, leafsCollector);
+        visitScript(node);
     }
 
-    private void traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {
-        if (node instanceof ASTLeaf) {
-            leafsCollector.add(node);
-        }
-        for (ASTNode child : node.getChildren()) {
-            //Metadata such as code position in the editor are irrelevant for the path contexts
-            if (child instanceof Metadata) {
-                continue;
-            }
-            traverseLeafs(child, leafsCollector);
+    private void visitScript(final ScriptEntity script) {
+        insideScript = true;
+
+        leaves = new ArrayList<>();
+        visitChildren(script);
+        leavesMap.put(script, leaves);
+
+        insideScript = false;
+    }
+
+    @Override
+    public void visit(ASTNode node) {
+        if (insideScript && node instanceof ASTLeaf && !AstNodeUtil.isMetadata(node)) {
+            leaves.add(node);
+        } else {
+            visitChildren(node);
         }
     }
 
-    public Map<Script, List<ASTNode>> getLeafsMap() {
-        return leafsMap;
+    public Map<ScriptEntity, List<ASTNode>> getLeavesMap() {
+        return leavesMap;
     }
 }

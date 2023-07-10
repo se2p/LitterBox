@@ -18,8 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractProcedureDefinitionVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractScriptVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractScriptLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
@@ -50,22 +49,28 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         return leavesMap;
     }
 
-    private Map<Script, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
-        ExtractScriptVisitor scriptVisitor = new ExtractScriptVisitor();
-        sprites.forEach(sprite -> sprite.getScripts().getScriptList().forEach(script -> script.accept(scriptVisitor)));
-        return scriptVisitor.getLeafsMap();
-    }
-
-    private Map<ProcedureDefinition, List<ASTNode>> extractProcedureDefinitionsASTLeafs(List<ActorDefinition> sprites) {
-        ExtractProcedureDefinitionVisitor extractProcedureDefinitionVisitor = new ExtractProcedureDefinitionVisitor();
+    private Map<ScriptEntity, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
+        ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor();
 
         for (ActorDefinition sprite : sprites) {
-            for (ProcedureDefinition procedure : sprite.getProcedureDefinitionList().getList()) {
-                procedure.accept(extractProcedureDefinitionVisitor);
+            for (Script script : sprite.getScripts().getScriptList()) {
+                script.accept(extractionVisitor);
             }
         }
 
-        return extractProcedureDefinitionVisitor.getLeafsMap();
+        return extractionVisitor.getLeavesMap();
+    }
+
+    private Map<ScriptEntity, List<ASTNode>> extractProcedureDefinitionsASTLeafs(List<ActorDefinition> sprites) {
+        ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor();
+
+        for (ActorDefinition sprite : sprites) {
+            for (ProcedureDefinition procedure : sprite.getProcedureDefinitionList().getList()) {
+                procedure.accept(extractionVisitor);
+            }
+        }
+
+        return extractionVisitor.getLeavesMap();
     }
 
     @Override

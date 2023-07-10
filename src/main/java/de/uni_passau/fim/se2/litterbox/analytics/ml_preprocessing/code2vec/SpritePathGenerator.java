@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -39,7 +39,7 @@ public final class SpritePathGenerator extends PathGenerator {
     }
 
     private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(includeStage);
         program.accept(spriteVisitor);
         return spriteVisitor.getLeafsCollector();
     }

@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -33,12 +33,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExtractSpriteVisitorTest implements JsonTest {
+class ExtractSpriteLeavesVisitorTest implements JsonTest {
 
     @Test
     void testVisit() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(false);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(false);
         program.accept(spriteVisitor);
         Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();
 
@@ -63,7 +63,7 @@ class ExtractSpriteVisitorTest implements JsonTest {
     @Test
     void testVisitIncludeStage() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(true);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(true);
         program.accept(spriteVisitor);
 
         Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();

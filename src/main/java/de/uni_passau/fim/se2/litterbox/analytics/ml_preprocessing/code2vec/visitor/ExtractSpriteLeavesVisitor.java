@@ -18,22 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ExtractSpriteVisitor implements ScratchVisitor {
+public class ExtractSpriteLeavesVisitor implements ScratchVisitor {
     private final Map<ActorDefinition, List<ASTNode>> leafsMap = new HashMap<>();
     private final boolean includeStage;
 
-    public ExtractSpriteVisitor(boolean includeStage) {
+    private boolean insideActor = false;
+    private List<ASTNode> leaves;
+
+    public ExtractSpriteLeavesVisitor(boolean includeStage) {
         this.includeStage = includeStage;
     }
 
@@ -43,29 +43,30 @@ public class ExtractSpriteVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition node) {
-        if (shouldActorBeIncluded(node)) {
-            List<ASTNode> leafsCollector = new LinkedList<>();
+        if (!shouldActorBeIncluded(node)) {
+            return;
+        }
 
-            traverseLeafs(node.getScripts(), leafsCollector);
-            leafsMap.put(node, leafsCollector);
+        insideActor = true;
+
+        leaves = new ArrayList<>();
+        node.getProcedureDefinitionList().accept(this);
+        node.getScripts().accept(this);
+        leafsMap.put(node, leaves);
+
+        insideActor = false;
+    }
+
+    @Override
+    public void visit(ASTNode node) {
+        if (insideActor && node instanceof ASTLeaf && !AstNodeUtil.isMetadata(node)) {
+            leaves.add(node);
+        } else {
+            visitChildren(node);
         }
     }
 
     private boolean shouldActorBeIncluded(ActorDefinition actor) {
         return actor.isSprite() || (includeStage && actor.isStage());
-    }
-
-    private void traverseLeafs(ASTNode node, List<ASTNode> leafsCollector) {
-        if (node instanceof ASTLeaf) {
-            leafsCollector.add(node);
-        }
-        for (ASTNode child : node.getChildren()) {
-            //Metadata such as code position in the editor are irrelevant for the path contexts
-            if (child instanceof Metadata) {
-                continue;
-            }
-
-            traverseLeafs(child, leafsCollector);
-        }
     }
 }

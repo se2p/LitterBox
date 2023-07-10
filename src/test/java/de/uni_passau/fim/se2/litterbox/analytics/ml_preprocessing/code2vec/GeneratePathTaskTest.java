@@ -117,7 +117,7 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = {true, false})
-    public void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage) throws IOException, ParsingException {
+    void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage) throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
