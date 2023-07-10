@@ -50,7 +50,9 @@ public class ExtractSpriteLeavesVisitor implements ScratchVisitor {
         insideActor = true;
 
         leaves = new ArrayList<>();
-        node.getProcedureDefinitionList().accept(this);
+        // ToDo fix in follow-up: enable and handle procedure names
+        //  Without further changes the internal Scratch block-ID is used.
+        // node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
         leafsMap.put(node, leaves);
 

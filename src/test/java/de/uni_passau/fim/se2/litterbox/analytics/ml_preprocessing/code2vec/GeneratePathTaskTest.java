@@ -19,30 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
 
 class GeneratePathTaskTest implements JsonTest {
 
@@ -91,6 +81,20 @@ class GeneratePathTaskTest implements JsonTest {
         } else {
             assertThat(pathContexts).doesNotContain(STAGE_PATHS);
         }
+    }
+
+    @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
+    @ValueSource(booleans = {true, false})
+    void testCreateContextCustomProcedures(boolean includeStage) throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/ml_preprocessing/shared/custom_blocks_simple.json");
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
+
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        assertThat(pathContextsForCode2Vec).hasSize(1);
+        List<ProgramRelation> programRelations = pathContextsForCode2Vec.get(0).getFeatures();
+
+        assertThat(programRelations).hasSize(1);
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
