@@ -29,43 +29,43 @@ import java.util.*;
 
 public final class SpritePathGenerator extends PathGenerator {
 
-    private final Map<ActorDefinition, List<ASTNode>> leafsMap;
+    private final Map<ActorDefinition, List<ASTNode>> leavesMap;
 
     public SpritePathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites);
-        this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
+        this.leavesMap = Collections.unmodifiableMap(extractASTLeaves());
     }
 
-    private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
+    private Map<ActorDefinition, List<ASTNode>> extractASTLeaves() {
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(includeStage);
         program.accept(spriteVisitor);
-        return spriteVisitor.getLeafsCollector();
+        return spriteVisitor.getLeavesCollector();
     }
 
     @Override
     public List<ProgramFeatures> generatePaths() {
         final List<ProgramFeatures> spriteFeatures = new ArrayList<>();
-        for (final Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
+        for (final Map.Entry<ActorDefinition, List<ASTNode>> entry : leavesMap.entrySet()) {
             final ActorDefinition actor = entry.getKey();
-            final List<ASTNode> leafs = entry.getValue();
-            final Optional<ProgramFeatures> singleSpriteFeatures = generatePathsForSprite(actor, leafs);
+            final List<ASTNode> leaves = entry.getValue();
+            final Optional<ProgramFeatures> singleSpriteFeatures = generatePathsForSprite(actor, leaves);
             singleSpriteFeatures.filter(features -> !features.isEmpty()).ifPresent(spriteFeatures::add);
         }
         return spriteFeatures;
     }
 
-    private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
+    private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leaves) {
         final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
         return spriteName
                 .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
-                .map(name -> getProgramFeatures(name, leafs));
+                .map(name -> getProgramFeatures(name, leaves));
     }
 
     @Override
-    public List<String> getAllLeafs() {
-        return leafsMap.values()
+    public List<String> getAllLeaves() {
+        return leavesMap.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .map(TokenVisitorFactory::getNormalisedToken)

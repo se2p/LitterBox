@@ -472,7 +472,7 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leafs. "
+                description = "The maximum length for connecting two AST leaves. "
                         + "Zero means there is no max path length. "
                         + "Default: 8."
         )

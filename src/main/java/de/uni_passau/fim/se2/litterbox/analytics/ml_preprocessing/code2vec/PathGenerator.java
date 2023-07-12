@@ -56,15 +56,15 @@ public abstract class PathGenerator {
 
     public abstract List<ProgramFeatures> generatePaths();
 
-    public abstract List<String> getAllLeafs();
+    public abstract List<String> getAllLeaves();
 
-    protected final ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
+    protected final ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeaves) {
         final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
 
-        for (int i = 0; i < astLeafs.size(); i++) {
-            for (int j = i + 1; j < astLeafs.size(); j++) {
-                ASTNode source = astLeafs.get(i);
-                ASTNode target = astLeafs.get(j);
+        for (int i = 0; i < astLeaves.size(); i++) {
+            for (int j = i + 1; j < astLeaves.size(); j++) {
+                ASTNode source = astLeaves.get(i);
+                ASTNode target = astLeaves.get(j);
                 String path = generatePath(source, target);
                 if (!path.isEmpty()) {
                     String sourceLiteral = TokenVisitorFactory.getNormalisedToken(source);

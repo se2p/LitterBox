@@ -81,22 +81,23 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     @Override
     protected void check(File fileEntry, Path csv) throws IOException {
         if (this.pathType == PathType.SCRIPT) {
-            runProcessingSteps(fileEntry);
+            runPerScriptProcessingSteps(fileEntry);
         } else {
             super.check(fileEntry, csv);
         }
     }
 
-    private void runProcessingSteps(File inputFile) {
+    private void runPerScriptProcessingSteps(File inputFile) {
         final var output = process(inputFile);
         var outputList = output.toList();
-        this.writeResultPerScriptToOutput(inputFile, outputList);
+        writeResultPerScriptToOutput(inputFile, outputList);
     }
 
     private void writeResultPerScriptToOutput(File inputFile, List<ProgramFeatures> result) {
         if (result.isEmpty()) {
             return;
         }
+
         if (outputPath.isConsoleOutput()) {
             System.out.println(result);
         } else {

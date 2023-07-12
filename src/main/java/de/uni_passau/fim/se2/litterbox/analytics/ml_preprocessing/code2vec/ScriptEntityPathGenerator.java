@@ -29,7 +29,7 @@ import java.util.*;
 
 public final class ScriptEntityPathGenerator extends PathGenerator {
 
-    private final Map<ScriptEntity, List<ASTNode>> leafsMap;
+    private final Map<ScriptEntity, List<ASTNode>> leavesMap;
 
     public ScriptEntityPathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites
@@ -37,34 +37,17 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
         super(program, maxPathLength, includeStage, includeDefaultSprites);
 
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
-        this.leafsMap = Collections.unmodifiableMap(collectLeaves(sprites));
+        this.leavesMap = Collections.unmodifiableMap(extractASTLeaves(sprites));
     }
 
-    private Map<ScriptEntity, List<ASTNode>> collectLeaves(final List<ActorDefinition> sprites) {
-        final Map<ScriptEntity, List<ASTNode>> leavesMap = new HashMap<>();
-
-        leavesMap.putAll(extractScriptsASTLeafs(sprites));
-        leavesMap.putAll(extractProcedureDefinitionsASTLeafs(sprites));
-
-        return leavesMap;
-    }
-
-    private Map<ScriptEntity, List<ASTNode>> extractScriptsASTLeafs(List<ActorDefinition> sprites) {
+    private Map<ScriptEntity, List<ASTNode>> extractASTLeaves(List<ActorDefinition> sprites) {
         ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor();
 
         for (ActorDefinition sprite : sprites) {
             for (Script script : sprite.getScripts().getScriptList()) {
                 script.accept(extractionVisitor);
             }
-        }
 
-        return extractionVisitor.getLeavesMap();
-    }
-
-    private Map<ScriptEntity, List<ASTNode>> extractProcedureDefinitionsASTLeafs(List<ActorDefinition> sprites) {
-        ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor();
-
-        for (ActorDefinition sprite : sprites) {
             for (ProcedureDefinition procedure : sprite.getProcedureDefinitionList().getList()) {
                 procedure.accept(extractionVisitor);
             }
@@ -75,26 +58,27 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     @Override
     public List<ProgramFeatures> generatePaths() {
-        List<ProgramFeatures> scriptFeatures = new ArrayList<>();
-        leafsMap.forEach((script, leafs) -> {
-            var scriptName = NodeNameUtil.getScriptEntityName(script);
-            if (scriptName.isPresent()) {
-                ProgramFeatures singleScriptFeatures = super.getProgramFeatures(String.valueOf(scriptName), leafs);
-                if (isValidateScriptFeature(singleScriptFeatures)) {
+        final List<ProgramFeatures> scriptFeatures = new ArrayList<>();
+
+        for (final var entry : leavesMap.entrySet()) {
+            final ScriptEntity script = entry.getKey();
+
+            NodeNameUtil.getScriptEntityName(script).ifPresent(scriptName -> {
+                final List<ASTNode> leaves = entry.getValue();
+                final ProgramFeatures singleScriptFeatures = super.getProgramFeatures(scriptName, leaves);
+
+                if (!singleScriptFeatures.isEmpty()) {
                     scriptFeatures.add(singleScriptFeatures);
                 }
-            }
-        });
+            });
+        }
+
         return scriptFeatures;
     }
 
-    private boolean isValidateScriptFeature(ProgramFeatures singleScriptFeatures) {
-        return !singleScriptFeatures.isEmpty();
-    }
-
     @Override
-    public List<String> getAllLeafs() {
-        return leafsMap.values()
+    public List<String> getAllLeaves() {
+        return leavesMap.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .map(TokenVisitorFactory::getNormalisedToken)

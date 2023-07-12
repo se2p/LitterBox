@@ -90,10 +90,8 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
         log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
     }
 
-
     @Override
     protected void check(File fileEntry, Path csv) throws IOException {
         runProcessingSteps(fileEntry);
     }
-
 }

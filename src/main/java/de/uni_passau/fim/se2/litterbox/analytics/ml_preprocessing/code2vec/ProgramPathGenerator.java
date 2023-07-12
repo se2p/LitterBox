@@ -28,19 +28,19 @@ import java.util.*;
 
 public final class ProgramPathGenerator extends PathGenerator {
 
-    private final Map<ActorDefinition, List<ASTNode>> leafsMap;
+    private final Map<ActorDefinition, List<ASTNode>> leavesMap;
 
     public ProgramPathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites);
-        this.leafsMap = Collections.unmodifiableMap(extractASTLeafs());
+        this.leavesMap = Collections.unmodifiableMap(extractASTLeaves());
     }
 
-    private Map<ActorDefinition, List<ASTNode>> extractASTLeafs() {
+    private Map<ActorDefinition, List<ASTNode>> extractASTLeaves() {
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(includeStage);
         program.accept(spriteVisitor);
-        return spriteVisitor.getLeafsCollector();
+        return spriteVisitor.getLeavesCollector();
     }
 
     @Override
@@ -49,14 +49,14 @@ public final class ProgramPathGenerator extends PathGenerator {
     }
 
     private Optional<ProgramFeatures> generatePathsWholeProgram() {
-        List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).toList();
-        final ProgramFeatures programFeatures = super.getProgramFeatures("program", leafs);
+        List<ASTNode> leaves = leavesMap.values().stream().flatMap(Collection::stream).toList();
+        final ProgramFeatures programFeatures = super.getProgramFeatures("program", leaves);
         return Optional.of(programFeatures).filter(features -> !features.isEmpty());
     }
 
     @Override
-    public List<String> getAllLeafs() {
-        return leafsMap.values()
+    public List<String> getAllLeaves() {
+        return leavesMap.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .map(TokenVisitorFactory::getNormalisedToken)

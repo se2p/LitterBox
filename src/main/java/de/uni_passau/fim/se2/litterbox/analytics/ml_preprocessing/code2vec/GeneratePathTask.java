@@ -30,7 +30,6 @@ public class GeneratePathTask {
     }
 
     public List<ProgramFeatures> createContextForCode2Vec() {
-        // pathGenerator.printLeafs();
         return pathGenerator.generatePaths();
     }
 }

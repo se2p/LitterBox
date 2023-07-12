@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PathGeneratorTest implements JsonTest {
 
-    final String[] expectedLeafs = {"LOUDNESS", "10", "hello_!", "left_right", "PITCH", "100", "draggable",
+    final String[] expectedLeaves = {"LOUDNESS", "10", "hello_!", "left_right", "PITCH", "100", "draggable",
             "COLOR", "0", "1", "FORWARD", "FRONT", "NUMBER", "Size", "1", "2", "LOG", "YEAR"};
 
     @Test
@@ -80,8 +80,8 @@ class PathGeneratorTest implements JsonTest {
     void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, false, program, true);
-        List<String> tokens = generator.getAllLeafs();
-        assertArrayEquals(expectedLeafs, tokens.toArray());
+        List<String> tokens = generator.getAllLeaves();
+        assertArrayEquals(expectedLeaves, tokens.toArray());
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")

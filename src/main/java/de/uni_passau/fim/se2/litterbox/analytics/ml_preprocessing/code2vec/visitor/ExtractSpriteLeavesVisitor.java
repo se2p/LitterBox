@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.*;
 
 public class ExtractSpriteLeavesVisitor implements ScratchVisitor {
-    private final Map<ActorDefinition, List<ASTNode>> leafsMap = new HashMap<>();
+    private final Map<ActorDefinition, List<ASTNode>> leavesMap = new HashMap<>();
     private final boolean includeStage;
 
     private boolean insideActor = false;
@@ -37,8 +37,8 @@ public class ExtractSpriteLeavesVisitor implements ScratchVisitor {
         this.includeStage = includeStage;
     }
 
-    public Map<ActorDefinition, List<ASTNode>> getLeafsCollector() {
-        return leafsMap;
+    public Map<ActorDefinition, List<ASTNode>> getLeavesCollector() {
+        return leavesMap;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ExtractSpriteLeavesVisitor implements ScratchVisitor {
         //  Without further changes the internal Scratch block-ID is used.
         // node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
-        leafsMap.put(node, leaves);
+        leavesMap.put(node, leaves);
 
         insideActor = false;
     }
