@@ -18,30 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import java.util.function.UnaryOperator;
-
-public class ProgramRelation {
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
-    private final String source;
-    private final String target;
-    private final String hashedPath;
-
-    public ProgramRelation(String sourceName, String targetName, String path) {
-        source = sourceName;
-        target = targetName;
-        hashedPath = hasher.apply(path);
-    }
-
-    public static void setNoHash() {
-        hasher = UnaryOperator.identity();
-    }
-
-    public static void setHasher(UnaryOperator<String> hasher) {
-        ProgramRelation.hasher = hasher;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s", source, hashedPath, target);
-    }
+public enum PathType {
+    PROGRAM,
+    SPRITE,
+    SCRIPT
 }

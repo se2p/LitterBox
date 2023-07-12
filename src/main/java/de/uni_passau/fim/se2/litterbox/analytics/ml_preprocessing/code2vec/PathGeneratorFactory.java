@@ -18,30 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import java.util.function.UnaryOperator;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ProgramRelation {
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
-    private final String source;
-    private final String target;
-    private final String hashedPath;
-
-    public ProgramRelation(String sourceName, String targetName, String path) {
-        source = sourceName;
-        target = targetName;
-        hashedPath = hasher.apply(path);
+public class PathGeneratorFactory {
+    private PathGeneratorFactory() {
+        throw new IllegalCallerException("utility class");
     }
 
-    public static void setNoHash() {
-        hasher = UnaryOperator.identity();
-    }
-
-    public static void setHasher(UnaryOperator<String> hasher) {
-        ProgramRelation.hasher = hasher;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s", source, hashedPath, target);
+    public static PathGenerator createPathGenerator(
+            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites
+    ) {
+        return switch (type) {
+            case SCRIPT -> new ScriptEntityPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
+            case PROGRAM -> new ProgramPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
+            default -> new SpritePathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
+        };
     }
 }

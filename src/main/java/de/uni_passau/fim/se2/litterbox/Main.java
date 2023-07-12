@@ -472,16 +472,29 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leafs. "
+                description = "The maximum length for connecting two AST leaves. "
                         + "Zero means there is no max path length. "
                         + "Default: 8."
         )
         int maxPathLength = 8;
 
+        @CommandLine.Option(
+                names = {"--scripts"},
+                description = "Generate token per script."
+        )
+        boolean isPerScript = false;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             if (maxPathLength < 0) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
+            }
+
+            if (wholeProgram && isPerScript) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "The analysis must be done either per script or for whole program"
+                );
             }
         }
 
@@ -491,7 +504,7 @@ public class Main implements Callable<Integer> {
                 ProgramRelation.setNoHash();
             }
 
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
+            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
         }
     }
 
