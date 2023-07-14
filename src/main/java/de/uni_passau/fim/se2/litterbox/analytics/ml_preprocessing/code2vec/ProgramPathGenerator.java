@@ -38,9 +38,11 @@ public final class ProgramPathGenerator extends PathGenerator {
     }
 
     private Map<ActorDefinition, List<ASTNode>> extractASTLeaves() {
-        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(includeStage);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
+                program.getProcedureMapping(), includeStage
+        );
         program.accept(spriteVisitor);
-        return spriteVisitor.getLeavesCollector();
+        return spriteVisitor.getLeaves();
     }
 
     @Override

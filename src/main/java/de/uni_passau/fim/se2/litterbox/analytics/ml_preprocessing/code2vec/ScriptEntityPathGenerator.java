@@ -41,7 +41,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     }
 
     private Map<ScriptEntity, List<ASTNode>> extractASTLeaves(List<ActorDefinition> sprites) {
-        ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor();
+        ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor(program.getProcedureMapping());
 
         for (ActorDefinition sprite : sprites) {
             for (Script script : sprite.getScripts().getScriptList()) {
@@ -53,7 +53,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             }
         }
 
-        return extractionVisitor.getLeavesMap();
+        return extractionVisitor.getLeaves();
     }
 
     @Override

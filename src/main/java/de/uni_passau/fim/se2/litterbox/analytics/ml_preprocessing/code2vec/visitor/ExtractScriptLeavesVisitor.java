@@ -24,16 +24,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 
-import java.util.*;
-
-public class ExtractScriptLeavesVisitor implements ScratchVisitor {
-
-    private final Map<ScriptEntity, List<ASTNode>> leavesMap = new HashMap<>();
+public class ExtractScriptLeavesVisitor extends ExtractLeavesVisitor<ScriptEntity> {
 
     private boolean insideScript = false;
-    private List<ASTNode> leaves;
+
+    public ExtractScriptLeavesVisitor(final ProcedureDefinitionNameMapping procedures) {
+        super(procedures);
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -48,23 +47,18 @@ public class ExtractScriptLeavesVisitor implements ScratchVisitor {
     private void visitScript(final ScriptEntity script) {
         insideScript = true;
 
-        leaves = new ArrayList<>();
         visitChildren(script);
-        leavesMap.put(script, leaves);
+        saveLeaves(script);
 
         insideScript = false;
     }
 
     @Override
     public void visit(ASTNode node) {
-        if (insideScript && node instanceof ASTLeaf && !AstNodeUtil.isMetadata(node)) {
-            leaves.add(node);
+        if (insideScript && node instanceof ASTLeaf leaf && !AstNodeUtil.isMetadata(node)) {
+            addLeaf(leaf);
         } else {
             visitChildren(node);
         }
-    }
-
-    public Map<ScriptEntity, List<ASTNode>> getLeavesMap() {
-        return leavesMap;
     }
 }
