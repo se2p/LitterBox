@@ -106,22 +106,27 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.2.rc3</version>
+                <version>4.2</version>
                 <configuration>
-                    <header>src/etc/header.txt</header>
                     <properties>
                         <year>2019-2022</year>
                     </properties>
-                    <excludes>
-                        <exclude>**/README</exclude>
-                        <exclude>**/.gitlab-ci.yml</exclude>
-                        <exclude>**/pom.xml</exclude>
-                        <exclude>**/.editorconfig</exclude>
-                        <exclude>**/Jenkinsfile</exclude>
-                        <exclude>src/test/resources/**</exclude>
-                        <exclude>src/main/resources/**</exclude>
-                        <exclude>**/*.properties</exclude>
-                    </excludes>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>src/etc/header.txt</header>
+                            <excludes>
+                                <exclude>**/README</exclude>
+                                <exclude>**/.gitlab-ci.yml</exclude>
+                                <exclude>**/pom.xml</exclude>
+                                <exclude>**/.editorconfig</exclude>
+                                <exclude>**/Jenkinsfile</exclude>
+                                <exclude>src/test/resources/**</exclude>
+                                <exclude>src/main/resources/**</exclude>
+                                <exclude>**/*.properties</exclude>
+                                <exclude>**/.m2/repository/**</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
