@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PathRepresentationVisitor;
 
 import java.util.*;
 
@@ -224,6 +225,9 @@ public class PathGenerator {
     }
 
     private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
-        pathBuilder.append(startSymbol).append(node.getUniqueName()).append(childId).append(endSymbol);
+        //pathBuilder.append(startSymbol).append(node.getUniqueName()).append(childId).append(endSymbol);
+        PathRepresentationVisitor visitor = new PathRepresentationVisitor();
+        node.accept(visitor);
+        pathBuilder.append(startSymbol).append(visitor.getRepresentation()).append(childId).append(endSymbol);
     }
 }
