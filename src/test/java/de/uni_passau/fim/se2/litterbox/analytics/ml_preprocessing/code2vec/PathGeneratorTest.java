@@ -64,18 +64,18 @@ class PathGeneratorTest implements JsonTest {
         ProgramFeatures cat = pathContextsPerSprite.get(positionCat);
         assertEquals("cat", cat.getName());
         assertEquals(3, cat.getFeatures().size());
-        assertEquals("39,625791294,hi_!",
+        assertEquals("39,1901228693,hi_!",
                 cat.getFeatures().get(0).toString());
-        assertEquals("39,1493538624,Show",
+        assertEquals("39,505538499,Show",
                 cat.getFeatures().get(1).toString());
-        assertEquals("hi_!,-547448667,Show",
+        assertEquals("hi_!,-556636644,Show",
                 cat.getFeatures().get(2).toString());
 
         // Sprite abby
         ProgramFeatures abby = pathContextsPerSprite.get(positionAbby);
         assertEquals("abby", abby.getName());
         assertEquals(1, abby.getFeatures().size());
-        assertEquals("GreenFlag,-2069003229,hello_!",
+        assertEquals("GreenFlag,-1432752714,hello_!",
                 abby.getFeatures().get(0).toString());
     }
 
@@ -99,15 +99,15 @@ class PathGeneratorTest implements JsonTest {
 
         int expectedPathCount;
         List<String> expectedPaths = new ArrayList<>(List.of(
-                "39,625791294,hi_!",
-                "39,1493538624,Show",
-                "hi_!,-547448667,Show",
-                "GreenFlag,-2069003229,hello_!"
+                "39,1901228693,hi_!",
+                "39,505538499,Show",
+                "hi_!,-556636644,Show",
+                "GreenFlag,-1432752714,hello_!"
         ));
         if (includeStage) {
             expectedPathCount = 6;
-            expectedPaths.add("GreenFlag,272321927,GreenFlag");
-            expectedPaths.add("GreenFlag,1809747443,10");
+            expectedPaths.add("GreenFlag,-3303485,GreenFlag");
+            expectedPaths.add("GreenFlag,-9258529,10");
         } else {
             expectedPathCount = 4;
         }

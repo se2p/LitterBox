@@ -35,9 +35,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 class GeneratePathTaskTest implements JsonTest {
 
-    final static String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
-    final static String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
-    final static String STAGE_PATHS = "stage GreenFlag,1809747443,10";
+    final static String CAT_PATHS = "cat 39,1901228693,hi_! 39,505538499,Show hi_!,-556636644,Show";
+    final static String ABBY_PATHS = "abby GreenFlag,-1432752714,hello_!";
+    final static String STAGE_PATHS = "stage GreenFlag,-9258529,10";
 
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
