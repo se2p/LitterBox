@@ -42,25 +42,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TokenizingAnalyzerTest implements JsonTest {
 
     private final List<TokenSequence> concreteScriptSequences = List.of(
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "stage",
                     List.of(List.of("BEGIN_SCRIPT", "event_whenflagclicked", "control_repeat", "10", "END_SCRIPT"))
             ),
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "cat",
                     List.of(
                             List.of("BEGIN_SCRIPT", "event_whenkeypressed", "key", "39", "looks_say", "hi_!",
                                     "looks_show", "END_SCRIPT")
                     )
             ),
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "abby",
                     List.of(List.of("BEGIN_SCRIPT", "event_whenflagclicked", "looks_say", "hello_!", "END_SCRIPT"))
             )
     );
 
     private final List<TokenSequence> concreteSpriteSequences = List.of(
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "stage",
                     List.of(
                             List.of("BEGIN", "BEGIN_SCRIPT", "event_whenflagclicked", "control_repeat", "10",
@@ -69,12 +69,17 @@ class TokenizingAnalyzerTest implements JsonTest {
             ),
             new TokenSequence(
                     "cat",
+                    List.of("cat"),
                     List.of(
                             List.of("BEGIN", "BEGIN_SCRIPT", "event_whenkeypressed", "key", "39", "looks_say", "hi_!",
                                     "looks_show", "END_SCRIPT", "END")
+                    ),
+                    List.of(
+                            List.of("begin", "begin", "script", "event", "whenkeypressed", "key", "39", "looks", "say",
+                                    "hi", "!", "looks", "show", "end", "script", "end")
                     )
             ),
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "abby",
                     List.of(
                             List.of("BEGIN", "BEGIN_SCRIPT", "event_whenflagclicked", "looks_say", "hello_!",
@@ -86,19 +91,24 @@ class TokenizingAnalyzerTest implements JsonTest {
     private final List<TokenSequence> abstractScriptSequences = List.of(
             new TokenSequence(
                     "stage",
+                    List.of("stage"),
                     List.of(
                             List.of("BEGIN_SCRIPT", "event_whenflagclicked", "control_repeat", "LITERAL_NUMBER",
                                     "END_SCRIPT")
+                    ),
+                    List.of(
+                            List.of("begin", "script", "event", "whenflagclicked", "control", "repeat", "literal",
+                                    "number", "end", "script")
                     )
             ),
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "cat",
                     List.of(
                             List.of("BEGIN_SCRIPT", "event_whenkeypressed", "key", "looks_say", "LITERAL_STRING",
                                     "looks_show", "END_SCRIPT")
                     )
             ),
-            new TokenSequence(
+            TokenSequenceBuilder.build(
                     "abby",
                     List.of(
                             List.of("BEGIN_SCRIPT", "event_whenflagclicked", "looks_say", "LITERAL_STRING",
@@ -179,8 +189,8 @@ class TokenizingAnalyzerTest implements JsonTest {
         final List<TokenSequence> expectedOutput;
         if (abstractTokens) {
             expectedOutput = List.of(
-                    new TokenSequence("stage", Collections.emptyList()),
-                    new TokenSequence("sprite", List.of(
+                    TokenSequenceBuilder.build("stage", Collections.emptyList()),
+                    TokenSequenceBuilder.build("sprite", List.of(
                             List.of("BEGIN_PROCEDURE", "PROCEDURE_DEFINITION", "looks_say", "LITERAL_STRING",
                                     "motion_movesteps", "LITERAL_NUMBER", "control_stop", "END_PROCEDURE"),
                             List.of("BEGIN_PROCEDURE", "PROCEDURE_DEFINITION", "motion_movesteps", "PARAMETER",
@@ -190,8 +200,8 @@ class TokenizingAnalyzerTest implements JsonTest {
             );
         } else {
             expectedOutput = List.of(
-                    new TokenSequence("stage", Collections.emptyList()),
-                    new TokenSequence("sprite", List.of(
+                    TokenSequenceBuilder.build("stage", Collections.emptyList()),
+                    TokenSequenceBuilder.build("sprite", List.of(
                             List.of("BEGIN_PROCEDURE", "block_no_inputs", "looks_say", "hello_!", "motion_movesteps",
                                     "10", "control_stop", "this_script", "END_PROCEDURE"),
                             List.of("BEGIN_PROCEDURE", "block_with_inputs", "motion_movesteps", "num_input", "control_if",
@@ -214,14 +224,14 @@ class TokenizingAnalyzerTest implements JsonTest {
 
         final TokenSequence expectedOutput;
         if (abstractTokens) {
-            expectedOutput = new TokenSequence("sprite", List.of(
+            expectedOutput = TokenSequenceBuilder.build("sprite", List.of(
                     List.of("BEGIN_PROCEDURE", "PROCEDURE_DEFINITION", "control_wait", "LITERAL_NUMBER",
                             "END_PROCEDURE"),
                     List.of("BEGIN_SCRIPT", "event_whenflagclicked", "CUSTOM_BLOCK", "sound_volume",
                             "sensing_mousedown", "sensing_mousey", "END_SCRIPT")
             ));
         } else {
-            expectedOutput = new TokenSequence("sprite", List.of(
+            expectedOutput = TokenSequenceBuilder.build("sprite", List.of(
                     List.of("BEGIN_PROCEDURE", "my_proc_defn", "control_wait", "1", "END_PROCEDURE"),
                     List.of("BEGIN_SCRIPT", "event_whenflagclicked", "my_proc_defn", "sound_volume",
                             "sensing_mousedown", "sensing_mousey", "END_SCRIPT")

@@ -18,7 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
-record TokenSequence(String label, List<List<String>> tokens) {
-}
+record TokenSequence(
+        String label,
+        @JsonProperty("subLabels") List<String> labelSubTokens,
+        List<List<String>> tokens,
+        List<List<String>> subTokens
+) {}

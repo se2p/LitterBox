@@ -33,6 +33,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -81,9 +82,9 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
                     .flatMap(actor -> getTokenSequencesForActor(program, actor))
                     .flatMap(List::stream)
                     .toList();
-            result = Stream.of(new TokenSequence(program.getIdent().getName(), List.of(tokens)));
+            result = Stream.of(TokenSequenceBuilder.build(program.getIdent().getName(), List.of(tokens)));
         } else {
-            result = actors.map(actor -> generateSequenceForActor(program, actor));
+            result = actors.flatMap(actor -> generateSequenceForActor(program, actor).stream());
         }
 
         return result;
@@ -102,11 +103,11 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
         return toJson(result);
     }
 
-    private TokenSequence generateSequenceForActor(final Program program, final ActorDefinition actor) {
-        final String label = NodeNameUtil.normalizeSpriteName(actor).orElse("<BLANK>");
-        final List<List<String>> tokens = getTokenSequencesForActor(program, actor).toList();
-
-        return new TokenSequence(label, tokens);
+    private Optional<TokenSequence> generateSequenceForActor(final Program program, final ActorDefinition actor) {
+        return NodeNameUtil.normalizeSpriteName(actor).map(label -> {
+            final List<List<String>> tokens = getTokenSequencesForActor(program, actor).toList();
+            return TokenSequenceBuilder.build(label, tokens);
+        });
     }
 
     private Stream<List<String>> getTokenSequencesForActor(final Program program, final ActorDefinition actor) {

@@ -204,4 +204,9 @@ public enum Token {
     public String getStrRep() {
         return strRep;
     }
+
+    @Override
+    public String toString() {
+        return strRep;
+    }
 }
