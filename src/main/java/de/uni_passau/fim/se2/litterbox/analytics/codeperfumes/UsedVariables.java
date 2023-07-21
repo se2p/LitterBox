@@ -22,17 +22,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideIf;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -53,11 +48,11 @@ public class UsedVariables extends AbstractIssueFinder {
     private boolean insideProcedure;
     private boolean insideScript;
     private boolean insideQualified;
-    private Map<String, VariableInfo> varMap;
-    private Map<String, ExpressionListInfo> listMap;
+    private Collection<VariableInfo> variables;
+    private Collection<ExpressionListInfo> lists;
 
-    private List<String> flaggedVariables;
-    private List<String> flaggedLists;
+    private Set<String> flaggedVariables;
+    private Set<String> flaggedLists;
 
     private String actorName;
 
@@ -66,10 +61,10 @@ public class UsedVariables extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         issues = new LinkedHashSet<>();
-        varMap = program.getSymbolTable().getVariables();
-        listMap = program.getSymbolTable().getLists();
-        flaggedVariables = new ArrayList<>();
-        flaggedLists = new ArrayList<>();
+        variables = program.getSymbolTable().getVariables().values();
+        lists = program.getSymbolTable().getLists().values();
+        flaggedVariables = new LinkedHashSet<>();
+        flaggedLists = new LinkedHashSet<>();
         program.accept(this);
         return issues;
     }
@@ -101,8 +96,7 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(Variable node) {
         if (insideQualified && !flaggedVariables.contains(actorName + node.getName().getName())) {
-            for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
-                VariableInfo curr = entry.getValue();
+            for (VariableInfo curr : variables) {
                 String actorNameInfo = curr.getActor();
                 String variableNameInfo = curr.getVariableName();
                 if (actorNameInfo.equals(actorName)
@@ -119,8 +113,7 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(ScratchList node) {
         if (insideQualified && !flaggedLists.contains(actorName + node.getName().getName())) {
-            for (Map.Entry<String, ExpressionListInfo> entry : listMap.entrySet()) {
-                ExpressionListInfo curr = entry.getValue();
+            for (ExpressionListInfo curr : lists) {
                 String actorNameInfo = curr.getActor();
                 String listNameInfo = curr.getVariableName();
                 if (actorNameInfo.equals(actorName)
