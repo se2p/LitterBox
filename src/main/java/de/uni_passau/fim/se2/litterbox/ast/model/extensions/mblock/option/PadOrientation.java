@@ -80,8 +80,7 @@ public class PadOrientation extends AbstractNode implements MBlockOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PadOrientation)) return false;
-        PadOrientation that = (PadOrientation) o;
+        if (!(o instanceof PadOrientation that)) return false;
         return type == that.type;
     }
 

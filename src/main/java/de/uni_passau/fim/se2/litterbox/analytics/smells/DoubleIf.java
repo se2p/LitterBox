@@ -46,8 +46,7 @@ public class DoubleIf extends AbstractIssueFinder {
 
             IfStmt lastIf = null;
             for (Stmt s : stmts) {
-                if (s instanceof IfStmt) {
-                    IfStmt ifStmt = (IfStmt) s;
+                if (s instanceof IfStmt ifStmt) {
                     BoolExpr condition = ifStmt.getBoolExpr();
                     if (lastIf != null) {
                         checkingForMove = true;

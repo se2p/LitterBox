@@ -73,34 +73,16 @@ public class CommonStmtParser {
 
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
-        switch (opcode) {
-            case control_wait:
-                return parseWaitSeconds(state, current, allBlocks, metadata);
-
-            case control_wait_until:
-                return parseWaitUntil(state, current, allBlocks, metadata);
-
-            case control_stop:
-                return parseControlStop(current, metadata);
-
-            case control_create_clone_of:
-                return parseCreateCloneOf(state, current, allBlocks, blockId);
-
-            case event_broadcast:
-                return parseBroadcast(state, current, allBlocks, metadata);
-
-            case event_broadcastandwait:
-                return parseBroadcastAndWait(state, current, allBlocks, metadata);
-
-            case sensing_resettimer:
-                return new ResetTimer(metadata);
-
-            case data_changevariableby:
-                return parseChangeVariableBy(state, current, allBlocks, metadata);
-
-            default:
-                throw new RuntimeException("Not Implemented yet");
-        }
+        return switch (opcode) {
+            case control_wait -> parseWaitSeconds(state, current, allBlocks, metadata);
+            case control_wait_until -> parseWaitUntil(state, current, allBlocks, metadata);
+            case control_stop -> parseControlStop(current, metadata);
+            case control_create_clone_of -> parseCreateCloneOf(state, current, allBlocks, blockId);
+            case event_broadcast -> parseBroadcast(state, current, allBlocks, metadata);
+            case event_broadcastandwait -> parseBroadcastAndWait(state, current, allBlocks, metadata);
+            case sensing_resettimer -> new ResetTimer(metadata);
+            case data_changevariableby -> parseChangeVariableBy(state, current, allBlocks, metadata);
+        };
     }
 
     private static CommonStmt parseChangeVariableBy(final ProgramParserState state, JsonNode current,

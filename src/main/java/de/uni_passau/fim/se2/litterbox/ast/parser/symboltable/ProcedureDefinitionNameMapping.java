@@ -26,20 +26,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ProcedureDefinitionNameMapping {
 
-    private Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures;
-    private List<String> malformatedProcedures;
+    private final Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures;
+    private final List<String> malformedProcedures;
 
     public ProcedureDefinitionNameMapping() {
         procedures = new LinkedHashMap<>();
-        malformatedProcedures = new ArrayList<>();
+        malformedProcedures = new ArrayList<>();
     }
 
     public ProcedureDefinitionNameMapping(ProcedureDefinitionNameMapping other) {
@@ -49,7 +45,7 @@ public class ProcedureDefinitionNameMapping {
         for (Map.Entry<String, Map<LocalIdentifier, ProcedureInfo>> entry : other.procedures.entrySet()) {
             procedures.put(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
         }
-        malformatedProcedures = new ArrayList<>(other.malformatedProcedures);
+        malformedProcedures = new ArrayList<>(other.malformedProcedures);
     }
 
     public void addProcedure(LocalIdentifier localIdentifier,
@@ -85,7 +81,7 @@ public class ProcedureDefinitionNameMapping {
     }
 
     public ProcedureInfo getProcedureForHash(String actorName, String jsonHash) {
-        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
+        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProceduresForActor(actorName);
         return procedureMap.entrySet()
                 .stream()
                 .filter(e -> e.getKey().getName().equals(jsonHash))
@@ -94,18 +90,30 @@ public class ProcedureDefinitionNameMapping {
                 .orElseThrow();
     }
 
-    public ProcedureInfo getProcedureForName(String actorName, String name) {
-        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
-        return procedureMap.values().stream().filter(p -> p.getName().equals(name)).findFirst().orElseThrow();
+    /**
+     * Finds a procedure in the given actor with the requested name.
+     *
+     * <p><em>Note:</em>
+     * Scratch supports overloading procedure names.
+     * This method will return any of them.
+     * Use {@link #getProceduresForName(String, String)} to get all procedures with the requested name.
+     *
+     * @param actorName The name of the actor the procedure is defined in.
+     * @param name The name of the procedure.
+     * @return A procedure with the requested name.
+     */
+    public Optional<ProcedureInfo> getProcedureForName(String actorName, String name) {
+        final Map<LocalIdentifier, ProcedureInfo> procedureMap = getProceduresForActor(actorName);
+        return procedureMap.values().stream().filter(p -> p.getName().equals(name)).findFirst();
     }
 
     public List<Pair<LocalIdentifier, ProcedureInfo>> getProceduresForName(String actorName, String name) {
-        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
+        final Map<LocalIdentifier, ProcedureInfo> procedureMap = getProceduresForActor(actorName);
         return procedureMap.entrySet()
                 .stream()
                 .filter(e -> e.getValue().getName().equals(name))
                 .map(Pair::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public ProcedureInfo getProcedureInfo(final ProcedureDefinition procedureDefinition) {
@@ -115,11 +123,15 @@ public class ProcedureDefinitionNameMapping {
         return getProcedureForHash(actor.getIdent().getName(), hash);
     }
 
-    public void addMalformated(String malformated) {
-        malformatedProcedures.add(malformated);
+    private Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
+        return getProcedures().getOrDefault(actorName, Collections.emptyMap());
     }
 
-    public boolean checkIfMalformated(String toCheck) {
-        return malformatedProcedures.contains(toCheck);
+    public void addMalformed(String malformed) {
+        malformedProcedures.add(malformed);
+    }
+
+    public boolean checkIfMalformed(String toCheck) {
+        return malformedProcedures.contains(toCheck);
     }
 }

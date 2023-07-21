@@ -42,16 +42,16 @@ public class MotorPowerMinus extends AbstractRobotFinder {
     public void visit(RobotMoveStmt node) {
         NumValueVisitor calc = new NumValueVisitor();
         try {
-            if (node instanceof MoveSides) {
-                NumExpr powerLeft = ((MoveSides) node).getLeftPower();
-                NumExpr powerRight = ((MoveSides) node).getRightPower();
+            if (node instanceof MoveSides moveSides) {
+                NumExpr powerLeft = moveSides.getLeftPower();
+                NumExpr powerRight = moveSides.getRightPower();
                 double powerLeftValue = calc.calculateEndValue(powerLeft);
                 double powerRightValue = calc.calculateEndValue(powerRight);
                 if (powerLeftValue < MCORE_MIN_VALUE || powerRightValue < MCORE_MIN_VALUE) {
                     addIssue(node);
                 }
-            } else if (node instanceof SinglePower) {
-                NumExpr power = ((SinglePower) node).getPercent();
+            } else if (node instanceof SinglePower singlePower) {
+                NumExpr power = singlePower.getPercent();
                 double powerValue = calc.calculateEndValue(power);
                 if (powerValue < MCORE_MIN_VALUE) {
                     addIssue(node);

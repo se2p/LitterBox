@@ -46,10 +46,7 @@ public class MergeDoubleIfFinder extends AbstractRefactoringFinder {
 
         for (int i = 0; i < stmts.size() - 1; i++) {
             // Only merge successive ifs with the same condition
-            if (stmts.get(i) instanceof IfStmt
-                    && stmts.get(i + 1) instanceof IfStmt) {
-                IfStmt ifStmt1 = (IfStmt) stmts.get(i);
-                IfStmt ifStmt2 = (IfStmt) stmts.get(i + 1);
+            if (stmts.get(i) instanceof IfStmt ifStmt1 && stmts.get(i + 1) instanceof IfStmt ifStmt2) {
                 if (ifStmt1.getBoolExpr().equals(ifStmt2.getBoolExpr())) {
                     refactorings.add(new MergeDoubleIf(ifStmt1, ifStmt2));
                 }

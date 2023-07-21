@@ -47,18 +47,13 @@ public class ResetStmtParser {
 
         ResetStmtOpcode opcode = ResetStmtOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
-        switch (opcode) {
-            case reset_angle:
+        return switch (opcode) {
+            case reset_angle -> {
                 String axisName = current.get(FIELDS_KEY).get(AXIS_KEY).get(0).asText();
                 RobotAxis axis = new RobotAxis(axisName);
-                return new ResetAxis(axis, metadata);
-
-            case reset_timer:
-            case show_reset_time:
-                return new ResetTimer2(metadata);
-
-            default:
-                throw new IllegalStateException("Reset Block with opcode " + opcode + " was not parsed");
-        }
+                yield new ResetAxis(axis, metadata);
+            }
+            case reset_timer, show_reset_time -> new ResetTimer2(metadata);
+        };
     }
 }

@@ -55,7 +55,7 @@ public abstract class PositionEqualsCheckHintFactory {
 
     private static Hint generateHintForDistance(ASTNode operand1, ASTNode operand2) {
         Hint hint;
-        if (operand2 instanceof NumberLiteral && ((NumberLiteral) operand2).getValue() == 0) {
+        if (operand2 instanceof NumberLiteral numberLiteral && numberLiteral.getValue() == 0) {
             if (isMousePosition(((DistanceTo) operand1).getPosition())) {
                 hint = new Hint(DISTANCE_ZERO_MOUSE);
             } else {
@@ -76,23 +76,23 @@ public abstract class PositionEqualsCheckHintFactory {
                 || node.getOperand2() instanceof PositionY || node.getOperand2() instanceof MouseY) {
             return "y";
         }
-        if (node.getOperand1() instanceof AttributeOf) {
-            if (((AttributeOf) node.getOperand1()).getAttribute() instanceof AttributeFromFixed
-                    && ((AttributeFromFixed) ((AttributeOf) node.getOperand1()).getAttribute()).getAttribute().getType() == FixedAttribute.FixedAttributeType.X_POSITION) {
+        if (node.getOperand1() instanceof AttributeOf attributeOf) {
+            if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed
+                    && attributeFromFixed.getAttribute().getType() == FixedAttribute.FixedAttributeType.X_POSITION) {
                 return "x";
             }
-            if (((AttributeOf) node.getOperand1()).getAttribute() instanceof AttributeFromFixed
-                    && ((AttributeFromFixed) ((AttributeOf) node.getOperand1()).getAttribute()).getAttribute().getType() == FixedAttribute.FixedAttributeType.Y_POSITION) {
+            if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed
+                    && attributeFromFixed.getAttribute().getType() == FixedAttribute.FixedAttributeType.Y_POSITION) {
                 return "y";
             }
         }
-        if (node.getOperand2() instanceof AttributeOf) {
-            if (((AttributeOf) node.getOperand2()).getAttribute() instanceof AttributeFromFixed
-                    && ((AttributeFromFixed) ((AttributeOf) node.getOperand2()).getAttribute()).getAttribute().getType() == FixedAttribute.FixedAttributeType.X_POSITION) {
+        if (node.getOperand2() instanceof AttributeOf attributeOf) {
+            if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed
+                    && attributeFromFixed.getAttribute().getType() == FixedAttribute.FixedAttributeType.X_POSITION) {
                 return "x";
             }
-            if (((AttributeOf) node.getOperand2()).getAttribute() instanceof AttributeFromFixed
-                    && ((AttributeFromFixed) ((AttributeOf) node.getOperand2()).getAttribute()).getAttribute().getType() == FixedAttribute.FixedAttributeType.Y_POSITION) {
+            if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed
+                    && attributeFromFixed.getAttribute().getType() == FixedAttribute.FixedAttributeType.Y_POSITION) {
                 return "y";
             }
         }

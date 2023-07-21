@@ -121,8 +121,8 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     private void setStopped(LEDStmt node) {
-        if (node instanceof PositionStmt) {
-            PositionType position = ((PositionStmt) node).getPosition().getPositionType();
+        if (node instanceof PositionStmt positionStmt) {
+            PositionType position = positionStmt.getPosition().getPositionType();
             if (position == PositionType.ALL) {
                 states.put(LEFT, STOPPED);
                 states.put(RIGHT, STOPPED);
@@ -135,8 +135,8 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     private void setRunning(LEDStmt node) {
-        if (node instanceof PositionStmt) {
-            PositionType position = ((PositionStmt) node).getPosition().getPositionType();
+        if (node instanceof PositionStmt positionStmt) {
+            PositionType position = positionStmt.getPosition().getPositionType();
             if (position == PositionType.ALL) {
                 states.put(LEFT, RUNNING);
                 states.put(RIGHT, RUNNING);
@@ -159,18 +159,18 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     private boolean isBlack(LEDStmt node) {
-        if (node instanceof ColorStmt) {
-            StringExpr stringExpr = ((ColorStmt) node).getColorString();
-            if (stringExpr instanceof StringLiteral) {
-                String string = ((StringLiteral) stringExpr).getText();
+        if (node instanceof ColorStmt colorStmt) {
+            StringExpr stringExpr = colorStmt.getColorString();
+            if (stringExpr instanceof StringLiteral stringLiteral) {
+                String string = stringLiteral.getText();
                 return string.equals("#000000");
             }
-        } else if (node instanceof RGBValuesPosition) {
+        } else if (node instanceof RGBValuesPosition rgbValuesPosition) {
             NumValueVisitor calc = new NumValueVisitor();
             try {
-                double red = calc.calculateEndValue(((RGBValuesPosition) node).getRed());
-                double green = calc.calculateEndValue(((RGBValuesPosition) node).getGreen());
-                double blue = calc.calculateEndValue(((RGBValuesPosition) node).getBlue());
+                double red = calc.calculateEndValue(rgbValuesPosition.getRed());
+                double green = calc.calculateEndValue(rgbValuesPosition.getGreen());
+                double blue = calc.calculateEndValue(rgbValuesPosition.getBlue());
                 return red == 0 && green == 0 && blue == 0;
             } catch (Exception ignored) {
             }

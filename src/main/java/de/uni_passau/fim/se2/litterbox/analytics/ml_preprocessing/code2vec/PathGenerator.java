@@ -18,121 +18,26 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtractSpriteVisitor;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PathGenerator {
-    private final int maxPathLength;
-    private final boolean includeStage;
-    private final boolean wholeProgram;
+public abstract class PathGenerator {
 
-    private final Program program;
-    private Map<ActorDefinition, List<ASTNode>> leafsMap;
+    protected final Program program;
 
-    private static final List<String> DEFAULT_SPRITE_NAMES = Stream.of(
-            "Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš", "Hahmo", "Kihusika", "Kukla", "Lik",
-            "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia", "Postava", "Pêlîstik", "Sprait",
-            "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning", "Umlingisi", "Veikėjas",
-            "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن", "تەن", "شکلک", "สไปรต์",
-            "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"
-    ).map(String::toLowerCase).collect(Collectors.toUnmodifiableList());
+    protected final int maxPathLength;
+    protected final boolean includeStage;
+    protected final boolean includeDefaultSprites;
 
-    public PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
+    protected PathGenerator(Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites) {
+        this.program = program;
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
-        this.wholeProgram = wholeProgram;
-        this.program = program;
-
-        extractASTLeafsPerSprite();
-    }
-
-    private void extractASTLeafsPerSprite() {
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(includeStage);
-        program.accept(spriteVisitor);
-        leafsMap = spriteVisitor.getLeafsCollector();
-    }
-
-    public void printLeafsPerSprite() {
-        System.out.println("Number of sprites: " + leafsMap.keySet().size());
-        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
-            String actorName = entry.getKey().getIdent().getName();
-            System.out.println("Actor Definition: " + actorName);
-            System.out.println("Number of ASTLeafs for " + actorName + ": " + entry.getValue().size());
-            int i = 0;
-            for (ASTNode value : entry.getValue()) {
-                System.out.println(i + " Leaf (Test): " + StringUtil.getToken(value));
-                i++;
-            }
-        }
-    }
-
-    public List<String> getAllLeafs() {
-        return leafsMap.values().stream().flatMap(Collection::stream).map(StringUtil::getToken)
-                .collect(Collectors.toList());
-    }
-
-    public List<ProgramFeatures> generatePaths() {
-        if (wholeProgram) {
-            return generatePathsWholeProgram().stream().collect(Collectors.toList());
-        } else {
-            return generatePathsPerSprite();
-        }
-    }
-
-    private List<ProgramFeatures> generatePathsPerSprite() {
-        List<ProgramFeatures> spriteFeatures = new ArrayList<>();
-        for (Map.Entry<ActorDefinition, List<ASTNode>> entry : leafsMap.entrySet()) {
-            ActorDefinition actor = entry.getKey();
-            List<ASTNode> leafs = entry.getValue();
-            ProgramFeatures singleSpriteFeatures = generatePathsForSprite(actor, leafs);
-            if (singleSpriteFeatures != null && !singleSpriteFeatures.isEmpty()) {
-                spriteFeatures.add(singleSpriteFeatures);
-            }
-        }
-        return spriteFeatures;
-    }
-
-    private Optional<ProgramFeatures> generatePathsWholeProgram() {
-        final List<ASTNode> leafs = leafsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-        final ProgramFeatures programFeatures = getProgramFeatures("program", leafs);
-        return Optional.of(programFeatures).filter(features -> !features.isEmpty());
-    }
-
-    private ProgramFeatures generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leafs) {
-        String spriteName = normalizeSpriteName(sprite.getIdent().getName());
-        if (spriteName == null) {
-            return null;
-        }
-
-        return getProgramFeatures(spriteName, leafs);
-    }
-
-    private ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeafs) {
-        final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
-
-        for (int i = 0; i < astLeafs.size(); i++) {
-            for (int j = i + 1; j < astLeafs.size(); j++) {
-                ASTNode source = astLeafs.get(i);
-                ASTNode target = astLeafs.get(j);
-                String path = generatePath(source, target);
-                if (!path.isEmpty()) {
-                    String sourceLiteral = StringUtil.getToken(source);
-                    String targetLiteral = StringUtil.getToken(target);
-                    if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
-                        programFeatures.addFeature(sourceLiteral, path, targetLiteral);
-                    }
-                }
-            }
-        }
-
-        return programFeatures;
+        this.includeDefaultSprites = includeDefaultSprites;
     }
 
     private static List<ASTNode> getTreeStack(ASTNode node) {
@@ -143,6 +48,35 @@ public class PathGenerator {
             current = current.getParentNode();
         }
         return upStack;
+    }
+
+    private static void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
+        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
+    }
+
+    public abstract List<ProgramFeatures> generatePaths();
+
+    public abstract List<String> getAllLeaves();
+
+    protected final ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeaves) {
+        final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
+
+        for (int i = 0; i < astLeaves.size(); i++) {
+            for (int j = i + 1; j < astLeaves.size(); j++) {
+                ASTNode source = astLeaves.get(i);
+                ASTNode target = astLeaves.get(j);
+                String path = generatePath(source, target);
+                if (!path.isEmpty()) {
+                    String sourceLiteral = TokenVisitorFactory.getNormalisedToken(source);
+                    String targetLiteral = TokenVisitorFactory.getNormalisedToken(target);
+                    if (!sourceLiteral.isEmpty() && !targetLiteral.isEmpty()) {
+                        programFeatures.addFeature(sourceLiteral, path, targetLiteral);
+                    }
+                }
+            }
+        }
+
+        return programFeatures;
     }
 
     private String generatePath(ASTNode source, ASTNode target) {
@@ -157,8 +91,11 @@ public class PathGenerator {
         int currentSourceAncestorIndex = sourceStack.size() - 1;
         int currentTargetAncestorIndex = targetStack.size() - 1;
 
-        while (currentSourceAncestorIndex >= 0 && currentTargetAncestorIndex >= 0
-                && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)) {
+        while (
+                currentSourceAncestorIndex >= 0
+                && currentTargetAncestorIndex >= 0
+                && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)
+        ) {
             commonPrefix++;
             currentSourceAncestorIndex--;
             currentTargetAncestorIndex--;
@@ -192,28 +129,5 @@ public class PathGenerator {
         }
 
         return pathBuilder.toString();
-    }
-
-    private void appendNodeToPath(final StringBuilder pathBuilder, final ASTNode node, final String childId) {
-        pathBuilder.append('(').append(node.getUniqueName()).append(childId).append(')');
-    }
-
-    private static String normalizeSpriteName(String spriteName) {
-        String normalizedSpriteLabel = StringUtil.normalizeName(spriteName);
-        if (normalizedSpriteLabel.isEmpty() || isDefaultName(normalizedSpriteLabel)) {
-            return null;
-        }
-
-        List<String> splitNameParts = StringUtil.splitToSubtokens(spriteName);
-        String splitName = normalizedSpriteLabel;
-        if (!splitNameParts.isEmpty()) {
-            splitName = String.join("|", splitNameParts);
-        }
-
-        return splitName;
-    }
-
-    private static boolean isDefaultName(String normalizedSpriteLabel) {
-        return DEFAULT_SPRITE_NAMES.contains(normalizedSpriteLabel);
     }
 }

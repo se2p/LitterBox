@@ -123,7 +123,7 @@ public class ProcDefinitionParser {
         final String actorName = state.getCurrentActor().getName();
 
         if (ident == null) {
-            state.getProcDefMap().addMalformated(actorName + methodName);
+            state.getProcDefMap().addMalformed(actorName + methodName);
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
 
@@ -216,7 +216,7 @@ public class ProcDefinitionParser {
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
-            state.getProcDefMap().addMalformated(actorName + methodName);
+            state.getProcDefMap().addMalformed(actorName + methodName);
             throw new ParsingException("Could not read argument names of a procedure", e);
         }
 

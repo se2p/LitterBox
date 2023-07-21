@@ -37,7 +37,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class LEDStmtParser {
-    private final static String COLORLIST_KEY = "COLORLIST";
+    private static final String COLORLIST_KEY = "COLORLIST";
     private static final String LED_POSITION_KEY = "LED_POSTION";   // spelling error in mBlock
     private static final String RED_KEY = "R";
     private static final String GREEN_KEY = "G";

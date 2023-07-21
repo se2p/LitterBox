@@ -168,14 +168,13 @@ public class DuplicateSprite extends AbstractIssueFinder {
     }
 
     private boolean compareNodes(ASTNode node1, ASTNode node2) {
-
         if (!node1.getClass().equals(node2.getClass())) {
             return false;
         }
 
-        if (node1 instanceof Qualified) {
+        if (node1 instanceof Qualified qualified) {
             // Only compare variable name, not actor, such that local variables can be equal
-            return ((Qualified) node1).getSecond().equals(((Qualified) node2).getSecond());
+            return qualified.getSecond().equals(((Qualified) node2).getSecond());
         } else {
             // If the class of the nodes does not define its own equals method
             // use our own local method to visit children, such that we

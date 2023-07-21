@@ -39,7 +39,10 @@ class GgnnGraphAnalyzerTest {
     @ValueSource(booleans = {true, false})
     void testProduceOutput(boolean toDotGraph, @TempDir Path outputDir) throws IOException {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
-                "src/test/fixtures/multipleSprites.json", MLOutputPath.directory(outputDir), false, true, false);
+                Path.of("src/test/fixtures/multipleSprites.json"),
+                MLOutputPath.directory(outputDir),
+                false, true, false, true
+        );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, toDotGraph, null);
         analyzer.analyzeFile();
 
@@ -56,7 +59,9 @@ class GgnnGraphAnalyzerTest {
 
     @Test
     void testInvalidInput() {
-        MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions("", MLOutputPath.console(), false, false, false);
+        MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
+                Path.of(""), MLOutputPath.console(), false, false, false, true
+        );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
 
         Stream<String> result = analyzer.process(Path.of("non_existing").toFile());

@@ -29,6 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,21 +39,26 @@ import java.util.stream.Collectors;
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
-    private List<String> detectorNames;
+    private final List<String> detectorNames;
     private List<IssueFinder> issueFinders;
-    private String annotationOutput;
-    private boolean ignoreLooseBlocks;
+    private Path annotationOutput;
+    private final boolean ignoreLooseBlocks;
     private final String detectors;
+    private final boolean outputPerScript;
 
-    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+    public BugAnalyzer(
+            Path input, Path output, String detectors,
+            boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
+    ) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
+        this.outputPerScript = outputPerScript;
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
-    public void setAnnotationOutput(String annotationOutput) {
+    public void setAnnotationOutput(Path annotationOutput) {
         this.annotationOutput = annotationOutput;
     }
 
@@ -63,7 +69,7 @@ public class BugAnalyzer extends Analyzer {
      * @param reportFileName the file in which to write the results
      */
     @Override
-    void check(File fileEntry, String reportFileName) {
+    void check(File fileEntry, Path reportFileName) {
         issueFinders = IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);
         if (program == null) {
@@ -71,30 +77,32 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
         Set<Issue> issues = runFinders(program);
-        generateOutput(program, issues, reportFileName);
+        generateOutput(program, issues, reportFileName, outputPerScript);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);
     }
 
     private Set<Issue> runFinders(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
-        for (IssueFinder iF : issueFinders) {
-            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+        for (IssueFinder issueFinder : issueFinders) {
+            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(issueFinder.check(program));
         }
         return issues;
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, String reportFileName) {
+    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
         try {
-            if (reportFileName == null || reportFileName.isEmpty()) {
+            if (reportFileName == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".json")) {
+            } else if (reportFileName.getFileName().toString().endsWith(".json")) {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
+            } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(
+                        reportFileName, detectorNames, outputPerScript
+                );
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
             } else {
@@ -105,8 +113,8 @@ public class BugAnalyzer extends Analyzer {
         }
     }
 
-    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath) {
-        if (annotationOutput != null && !annotationOutput.isEmpty()) {
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, Path annotatePath) {
+        if (annotationOutput != null) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);

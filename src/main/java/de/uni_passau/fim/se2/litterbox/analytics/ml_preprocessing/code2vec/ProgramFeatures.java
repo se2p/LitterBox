@@ -36,6 +36,10 @@ public class ProgramFeatures {
         return name + ' ' + features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
     }
 
+    public String toStringWithoutNodeName() {
+        return features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
+    }
+
     public void addFeature(String source, String path, String target) {
         ProgramRelation newRelation = new ProgramRelation(source, target, path);
         features.add(newRelation);

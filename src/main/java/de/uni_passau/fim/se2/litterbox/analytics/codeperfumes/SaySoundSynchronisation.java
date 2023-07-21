@@ -55,10 +55,8 @@ public class SaySoundSynchronisation extends AbstractIssueFinder {
     @Override
     public void visit(Say node) {
         if (saySomething && afterSound) {
-            if (node.getString() instanceof StringLiteral) {
-                if (((StringLiteral) node.getString()).getText().isEmpty()) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
-                }
+            if (node.getString() instanceof StringLiteral stringLiteral && stringLiteral.getText().isEmpty()) {
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
             }
             saySomething = false;
             afterSound = false;

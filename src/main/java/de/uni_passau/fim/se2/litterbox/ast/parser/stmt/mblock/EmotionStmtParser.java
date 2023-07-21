@@ -41,87 +41,33 @@ public class EmotionStmtParser {
 
         EmotionStmtOpcode opcode = EmotionStmtOpcode.getOpcode(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
-        switch (opcode) {
-            case emotion_look_up:
-                return new LookUp(metadata);
-
-            case emotion_look_down:
-                return new LookDown(metadata);
-
-            case emotion_look_left:
-                return new LookLeft(metadata);
-
-            case emotion_look_right:
-                return new LookRight(metadata);
-
-            case emotion_look_around:
-                return new LookAround(metadata);
-
-            case emotion_wink:
-                return new Wink(metadata);
-
-            case emotion_smile:
-                return new Smile(metadata);
-
-            case emotion_yeah:
-                return new Yeah(metadata);
-
-            case emotion_naughty:
-                return new Naughty(metadata);
-
-            case emotion_proud:
-                return new Proud(metadata);
-
-            case emotion_coquetry:
-                return new Coquetry(metadata);
-
-            case emotion_awkward:
-                return new Awkward(metadata);
-
-            case emotion_exclaim:
-                return new Exclaim(metadata);
-
-            case emotion_aggrieved:
-                return new Aggrieved(metadata);
-
-            case emotion_sad:
-                return new Sad(metadata);
-
-            case emotion_angry:
-                return new Angry(metadata);
-
-            case emotion_greeting:
-                return new Greeting(metadata);
-
-            case emotion_sprint:
-                return new Sprint(metadata);
-
-            case emotion_startle:
-                return new Startle(metadata);
-
-            case emotion_shiver:
-                return new Shiver(metadata);
-
-            case emotion_dizzy:
-                return new Dizzy(metadata);
-
-            case emotion_sleepy:
-                return new Sleepy(metadata);
-
-            case emotion_sleeping:
-                return new Sleeping(metadata);
-
-            case emotion_revive:
-                return new Revive(metadata);
-
-            case emotion_agree:
-                return new Agree(metadata);
-
-            case emotion_deny:
-                return new Deny(metadata);
-
-            default:
-                throw new IllegalStateException("EmotionStmtBlock with opcode " + opcode + " was not parsed");
-        }
+        return switch (opcode) {
+            case emotion_look_up -> new LookUp(metadata);
+            case emotion_look_down -> new LookDown(metadata);
+            case emotion_look_left -> new LookLeft(metadata);
+            case emotion_look_right -> new LookRight(metadata);
+            case emotion_look_around -> new LookAround(metadata);
+            case emotion_wink -> new Wink(metadata);
+            case emotion_smile -> new Smile(metadata);
+            case emotion_yeah -> new Yeah(metadata);
+            case emotion_naughty -> new Naughty(metadata);
+            case emotion_proud -> new Proud(metadata);
+            case emotion_coquetry -> new Coquetry(metadata);
+            case emotion_awkward -> new Awkward(metadata);
+            case emotion_exclaim -> new Exclaim(metadata);
+            case emotion_aggrieved -> new Aggrieved(metadata);
+            case emotion_sad -> new Sad(metadata);
+            case emotion_angry -> new Angry(metadata);
+            case emotion_greeting -> new Greeting(metadata);
+            case emotion_sprint -> new Sprint(metadata);
+            case emotion_startle -> new Startle(metadata);
+            case emotion_shiver -> new Shiver(metadata);
+            case emotion_dizzy -> new Dizzy(metadata);
+            case emotion_sleepy -> new Sleepy(metadata);
+            case emotion_sleeping -> new Sleeping(metadata);
+            case emotion_revive -> new Revive(metadata);
+            case emotion_agree -> new Agree(metadata);
+            case emotion_deny -> new Deny(metadata);
+        };
     }
 }

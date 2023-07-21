@@ -77,8 +77,7 @@ public class ConjunctionToIfs extends OnlyCodeCloneVisitor implements Refactorin
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ConjunctionToIfs)) return false;
-        ConjunctionToIfs that = (ConjunctionToIfs) o;
+        if (!(o instanceof ConjunctionToIfs that)) return false;
         return Objects.equals(ifStatement, that.ifStatement) && Objects.equals(replacementIf, that.replacementIf);
     }
 

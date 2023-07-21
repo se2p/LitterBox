@@ -1,4 +1,4 @@
-image: maven:3-jdk-11
+image: maven:3-eclipse-temurin-17
 
 stages:
   - build
@@ -7,7 +7,7 @@ stages:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
-cache:
+cache: &cache
   paths:
     - .m2/repository/
     - target/
@@ -56,3 +56,11 @@ test:
               - checkstyle-report.json
           junit:
               - target/surefire-reports/TEST-*.xml
+
+check-license-headers:
+  stage: test
+  cache:
+    <<: *cache
+    policy: pull
+  script:
+    - mvn license:check

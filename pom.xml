@@ -35,8 +35,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -87,7 +86,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.10</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -107,22 +106,27 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.2.rc3</version>
+                <version>4.2</version>
                 <configuration>
-                    <header>src/etc/header.txt</header>
                     <properties>
                         <year>2019-2022</year>
                     </properties>
-                    <excludes>
-                        <exclude>**/README</exclude>
-                        <exclude>**/.gitlab-ci.yml</exclude>
-                        <exclude>**/pom.xml</exclude>
-                        <exclude>**/.editorconfig</exclude>
-                        <exclude>**/Jenkinsfile</exclude>
-                        <exclude>src/test/resources/**</exclude>
-                        <exclude>src/main/resources/**</exclude>
-                        <exclude>**/*.properties</exclude>
-                    </excludes>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>src/etc/header.txt</header>
+                            <excludes>
+                                <exclude>**/README</exclude>
+                                <exclude>**/.gitlab-ci.yml</exclude>
+                                <exclude>**/pom.xml</exclude>
+                                <exclude>**/.editorconfig</exclude>
+                                <exclude>**/Jenkinsfile</exclude>
+                                <exclude>src/test/resources/**</exclude>
+                                <exclude>src/main/resources/**</exclude>
+                                <exclude>**/*.properties</exclude>
+                                <exclude>**/.m2/repository/**</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
                     </mapping>
@@ -140,7 +144,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <configLocation>checkstyle-litterbox.xml</configLocation>
                     <encoding>UTF-8</encoding>
@@ -148,16 +152,23 @@
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.10.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.7.2.0</version>
+                <version>4.7.3.4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.19.0</version>
+                <version>3.20.0</version>
             </plugin>
         </plugins>
     </build>

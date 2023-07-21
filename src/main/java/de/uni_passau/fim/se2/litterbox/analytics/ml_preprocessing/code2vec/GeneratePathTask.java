@@ -18,28 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 public class GeneratePathTask {
 
-    private final Program program;
-    private final int maxPathLength;
-    private final boolean includeStage;
-    private final boolean wholeProgram;
+    private final PathGenerator pathGenerator;
 
-    public GeneratePathTask(Program program, int maxPathLength, boolean includeStage, boolean wholeProgram) {
-        this.program = program;
-        this.maxPathLength = maxPathLength;
-        this.includeStage = includeStage;
-        this.wholeProgram = wholeProgram;
+    public GeneratePathTask(PathGenerator pathGenerator) {
+        this.pathGenerator = Objects.requireNonNull(pathGenerator);
     }
 
     public List<ProgramFeatures> createContextForCode2Vec() {
-        PathGenerator pathGenerator = new PathGenerator(program, maxPathLength, includeStage, wholeProgram);
-        // pathGenerator.printLeafsPerSprite();
         return pathGenerator.generatePaths();
     }
 }

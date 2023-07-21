@@ -44,8 +44,8 @@ public class UnnecessaryRotation extends AbstractIssueFinder {
     }
 
     private boolean hasUnnecessaryValue(NumExpr degrees) {
-        if (degrees instanceof NumberLiteral) {
-            double value = ((NumberLiteral) degrees).getValue();
+        if (degrees instanceof NumberLiteral numberLiteral) {
+            double value = numberLiteral.getValue();
             return value % 360 == 0;
         }
         return false;

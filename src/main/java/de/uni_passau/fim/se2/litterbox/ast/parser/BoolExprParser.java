@@ -313,13 +313,13 @@ public class BoolExprParser {
                                                                       ComparableExpr node, String input,
                                                                       JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
-        if (node instanceof AsNumber) {
-            if (((AsNumber) node).getOperand1() instanceof StringExpr) {
-                node = (StringExpr) ((AsNumber) node).getOperand1();
-            } else if (((AsNumber) node).getOperand1() instanceof ComparableExpr) {
-                node = (ComparableExpr) ((AsNumber) node).getOperand1();
+        if (node instanceof AsNumber number) {
+            if (number.getOperand1() instanceof StringExpr stringExpr) {
+                node = stringExpr;
+            } else if (number.getOperand1() instanceof ComparableExpr comparableExpr) {
+                node = comparableExpr;
             } else {
-                node = new AsString(((AsNumber) node).getOperand1());
+                node = new AsString(number.getOperand1());
             }
         } else if (node instanceof UnspecifiedNumExpr) {
             node = StringExprParser.parseStringExpr(state, exprBlock, input, allBlocks);

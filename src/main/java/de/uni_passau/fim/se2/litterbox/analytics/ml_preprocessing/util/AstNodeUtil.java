@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AstNodeUtil {
     private AstNodeUtil() {
@@ -49,7 +48,7 @@ public class AstNodeUtil {
                 .getDefinitions()
                 .stream()
                 .filter(actor -> includeStage || actor.isSprite())
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     /**
@@ -61,8 +60,8 @@ public class AstNodeUtil {
         ASTNode currentNode = node;
 
         while (currentNode != null) {
-            if (currentNode instanceof ActorDefinition) {
-                return Optional.of((ActorDefinition) currentNode);
+            if (currentNode instanceof ActorDefinition actorDefinition) {
+                return Optional.of(actorDefinition);
             }
             currentNode = currentNode.getParentNode();
         }

@@ -58,11 +58,9 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
             return;
         }
 
-        if (!(script.getStmtList().getStatement(0) instanceof LoopStmt)) {
+        if (!(script.getStmtList().getStatement(0) instanceof LoopStmt loop)) {
             return;
         }
-
-        LoopStmt loop = (LoopStmt) script.getStmtList().getStatement(0);
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(script);
         ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
