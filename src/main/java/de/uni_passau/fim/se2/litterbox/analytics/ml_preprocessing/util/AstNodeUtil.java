@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,16 +58,29 @@ public class AstNodeUtil {
      * @return The actor the node belongs to, empty if the node belongs to no actor.
      */
     public static Optional<ActorDefinition> findActor(final ASTNode node) {
+        return Optional.ofNullable(findParent(node, ActorDefinition.class));
+    }
+
+    /**
+     * Finds a transitive parent of node of the requested type.
+     *
+     * @param node Some node in the AST.
+     * @param parentType The class the parent is represented by.
+     * @return The parent in the AST of the requested type.
+     *         Might return {@code node} itself if it has matching type.
+     *         Returns {@code null} if no parent of the requested type could be found.
+     */
+    public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
 
         while (currentNode != null) {
-            if (currentNode instanceof ActorDefinition actorDefinition) {
-                return Optional.of(actorDefinition);
+            if (parentType.isAssignableFrom(currentNode.getClass())) {
+                return parentType.cast(currentNode);
             }
             currentNode = currentNode.getParentNode();
         }
 
-        return Optional.empty();
+        return null;
     }
 
     /**

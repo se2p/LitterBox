@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -243,15 +244,13 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     }
 
     private IfStmt findIf(ASTNode codeLocation) {
-        ASTNode parent = codeLocation.getParentNode();
-        while (!(parent instanceof IfStmt)) {
-            if (parent != null) {
-                parent = parent.getParentNode();
-            } else {
-                throw new IllegalStateException("It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong.");
-            }
+        IfStmt parent = AstNodeUtil.findParent(codeLocation.getParentNode(), IfStmt.class);
+        if (parent == null) {
+            throw new IllegalStateException(
+                    "It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
+            );
         }
-        return (IfStmt) parent;
+        return parent;
     }
 
     @Override
