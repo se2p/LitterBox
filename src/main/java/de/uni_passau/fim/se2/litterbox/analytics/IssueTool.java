@@ -252,6 +252,7 @@ public class IssueTool {
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
+            registerPerfumeFinder(new UsedVariables(), perfumeFinders);
             registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
             registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
         }
