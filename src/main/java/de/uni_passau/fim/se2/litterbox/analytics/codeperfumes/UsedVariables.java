@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -147,14 +147,7 @@ public class UsedVariables extends AbstractIssueFinder {
             return false;
         }
 
-        return other.getCodeLocation() == getParentStmt(first.getCodeLocation());
-    }
-
-    private Stmt getParentStmt(ASTNode node) {
-        while (!(node instanceof Stmt)) {
-            node = node.getParentNode();
-        }
-        return (Stmt) node;
+        return other.getCodeLocation() == AstNodeUtil.findParent(first.getCodeLocation(), Stmt.class);
     }
 
     @Override
