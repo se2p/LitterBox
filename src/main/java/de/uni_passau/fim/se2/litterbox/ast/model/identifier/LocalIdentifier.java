@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class LocalIdentifier extends AbstractNode implements Identifier, Expression {
     private final StringLiteral name;
 
-    public LocalIdentifier(StringLiteral name) {
+    protected LocalIdentifier(StringLiteral name) {
         super(name);
         this.name = name;
     }

@@ -99,7 +99,14 @@ class GeneratePathTaskTest implements JsonTest {
         assertThat(pathContextsForCode2Vec).hasSize(1);
         List<ProgramRelation> programRelations = pathContextsForCode2Vec.get(0).getFeatures();
 
-        assertThat(programRelations).hasSize(1);
+        assertThat(programRelations).hasSize(11);
+
+        List<String> relations = programRelations.stream().map(ProgramRelation::toString).toList();
+        assertThat(relations).containsAtLeast(
+                "testblock_b,-826963864,input_param",
+                "testblock_b,-1701860098,BooleanType",
+                "input_param,2024539361,BooleanType"
+        );
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
