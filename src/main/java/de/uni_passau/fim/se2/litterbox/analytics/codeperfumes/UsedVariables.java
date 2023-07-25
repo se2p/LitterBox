@@ -102,7 +102,7 @@ public class UsedVariables extends AbstractIssueFinder {
         }
     }
 
-    private void addHintToFlagableIdentifier(ASTNode node, Identifier identifier, String hintName){
+    private void addHintToFlagableIdentifier(ASTNode node, Identifier identifier, String hintName) {
         if ((insideProcedure || insideScript) && checkIdentifierForFlag(identifier)) {
             Hint hint = new Hint(hintName);
             addIssue(node, node.getMetadata(), hint);
