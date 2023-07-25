@@ -26,9 +26,17 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitializatio
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -94,18 +102,155 @@ public class UsedVariables extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(SetVariableTo node) {
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME);
+            addIssue(node, node.getMetadata(), hint);
+        }
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeVariableBy node) {
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME);
+            addIssue(node, node.getMetadata(), hint);
+        }
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(AddTo node) {
+        node.getString().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(DeleteOf node) {
+        node.getNum().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(DeleteAllOf node) {
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(InsertAt node) {
+        node.getString().accept(this);
+        node.getIndex().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(ReplaceItem node) {
+        node.getIndex().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+        node.getString().accept(this);
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        node.getNum().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(IndexOf node) {
+        node.getExpr().accept(this);
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(LengthOfVar node) {
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(ListContains node) {
+        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
+            Hint hint = new Hint(NAME_LIST);
+            addIssue(node, node.getMetadata(), hint);
+        }
+        node.getElement().accept(this);
+    }
+
+    private boolean checkIdentifier(Identifier identifier) {
+        if (identifier instanceof Qualified qualified) {
+            actorName = qualified.getFirst().getName();
+
+            if (qualified.getSecond() instanceof Variable variable) {
+                if (!flaggedVariables.contains(actorName + variable.getName().getName())) {
+                    return checkVariable(variable);
+                }
+            } else if (qualified.getSecond() instanceof ScratchList list) {
+                if (!flaggedVariables.contains(actorName + list.getName().getName())) {
+                    return checkList(list);
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkVariable(Variable variable) {
+        for (VariableInfo curr : variables) {
+            String actorNameInfo = curr.getActor();
+            String variableNameInfo = curr.getVariableName();
+            if (actorNameInfo.equals(actorName)
+                    && variableNameInfo.equals(variable.getName().getName())) {
+                flaggedVariables.add(actorName + variable.getName().getName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkList(ScratchList list) {
+        for (ExpressionListInfo curr : lists) {
+            String actorNameInfo = curr.getActor();
+            String listNameInfo = curr.getVariableName();
+            if (actorNameInfo.equals(actorName)
+                    && listNameInfo.equals(list.getName().getName())) {
+                flaggedLists.add(actorName + list.getName().getName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void visit(Variable node) {
         if (insideQualified && !flaggedVariables.contains(actorName + node.getName().getName())) {
-            for (VariableInfo curr : variables) {
-                String actorNameInfo = curr.getActor();
-                String variableNameInfo = curr.getVariableName();
-                if (actorNameInfo.equals(actorName)
-                        && variableNameInfo.equals(node.getName().getName())) {
-                    Hint hint = new Hint(NAME);
-                    addIssue(node, node.getMetadata(), hint);
-                    flaggedVariables.add(actorName + node.getName().getName());
-                    break;
-                }
+            if (checkVariable(node)) {
+                Hint hint = new Hint(NAME);
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
@@ -113,16 +258,9 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(ScratchList node) {
         if (insideQualified && !flaggedLists.contains(actorName + node.getName().getName())) {
-            for (ExpressionListInfo curr : lists) {
-                String actorNameInfo = curr.getActor();
-                String listNameInfo = curr.getVariableName();
-                if (actorNameInfo.equals(actorName)
-                        && listNameInfo.equals(node.getName().getName())) {
-                    Hint hint = new Hint(NAME_LIST);
-                    addIssue(node, node.getMetadata(), hint);
-                    flaggedLists.add(actorName + node.getName().getName());
-                    break;
-                }
+            if (checkList(node)) {
+                Hint hint = new Hint(NAME_LIST);
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
