@@ -58,14 +58,14 @@ class NodeNameUtilTest {
 
     private static Stream<Arguments> getRegularNormalizedPairs() {
         return Stream.of(
-                Arguments.of("test|one", "test ONE"),
-                Arguments.of("test|two", "test\ntwo"),
-                Arguments.of("test|three", "test,\"three'"),
-                Arguments.of("testαλfive", "testαλfive"),
-                Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts"),
-                Arguments.of("αλ|λϝδ|δ", "αλΛϝδΔ"),
+                Arguments.of("download", "download (48)"),
                 Arguments.of("pinos|de|boliche|removebg|preview", "pinos-de-boliche_1975-89-removebg-preview3"),
-                Arguments.of("download", "download (48)")
+                Arguments.of("test|one", "test ONE"),
+                Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts"),
+                Arguments.of("test|three", "test,\"three'"),
+                Arguments.of("test|two", "test\ntwo"),
+                Arguments.of("testαλfive", "testαλfive"),
+                Arguments.of("αλ|λϝδ|δ", "αλΛϝδΔ")
         );
     }
 

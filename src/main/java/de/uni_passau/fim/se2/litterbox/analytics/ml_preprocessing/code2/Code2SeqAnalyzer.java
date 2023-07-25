@@ -16,29 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2seq;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.GeneratePathTask;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class Code2SeqAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
+public class Code2SeqAnalyzer extends Code2Analyzer {
 
     private static final Logger log = Logger.getLogger(Code2SeqAnalyzer.class.getName());
-    private final int maxPathLength;
 
-    public Code2SeqAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
-        super(commonOptions);
-        this.maxPathLength = maxPathLength;
+    public Code2SeqAnalyzer(
+            final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
+    ) {
+        super(commonOptions, maxPathLength, isPerScript);
     }
 
     @Override
@@ -49,18 +44,14 @@ public class Code2SeqAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             return Stream.empty();
         }
 
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram,
-                includeDefaultSprites);
-        return generatePathTask.createContextForCode2Seq().stream();
-    }
+        ProgramRelation.setNoHash();
 
-    @Override
-    protected String resultToString(ProgramFeatures result) {
-        return result.toString();
-    }
+        final PathFormatOptions pathFormatOptions = new PathFormatOptions("|", "|", "|", "", "", true, true);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites, pathFormatOptions
+        );
+        final GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
-    @Override
-    protected Path outputFileName(File inputFile) {
-        return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
+        return generatePathTask.createContext().stream();
     }
 }

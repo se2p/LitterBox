@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public final class TokenVisitorFactory {
+    private static final String DEFAULT_DELIMITER = "_";
+
     private TokenVisitorFactory() {
         throw new IllegalCallerException("utility class");
     }
@@ -33,12 +35,7 @@ public final class TokenVisitorFactory {
      * @return A token visitor that can be used in {@link #getToken(BaseTokenVisitor, ASTNode)}.
      */
     public static BaseTokenVisitor getDefaultTokenVisitor(final boolean normalise) {
-        return new BaseTokenVisitor(normalise) {
-            @Override
-            protected String normaliseToken(String token) {
-                return StringUtil.normaliseString(token);
-            }
-        };
+        return getDefaultTokenVisitorWithDelimiter(normalise, DEFAULT_DELIMITER);
     }
 
     /**
@@ -90,7 +87,7 @@ public final class TokenVisitorFactory {
      * @return The normalised token representing the given node.
      */
     public static String getNormalisedToken(final ASTNode node) {
-        return getToken(getDefaultTokenVisitor(true), node);
+        return getNormalisedTokenWithDelimiter(node, DEFAULT_DELIMITER);
     }
 
     /**

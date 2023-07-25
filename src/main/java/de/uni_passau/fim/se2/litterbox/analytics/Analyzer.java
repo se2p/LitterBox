@@ -28,19 +28,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public abstract class Analyzer {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
-
-    private final Scratch3Parser parser = new Scratch3Parser();
-
-    private final Path input;
     protected final Path output;
     protected final boolean delete;
+    private final Scratch3Parser parser = new Scratch3Parser();
+    private final Path input;
 
     protected Analyzer(Path input, Path output, boolean delete) {
         this.input = input;
@@ -56,13 +53,12 @@ public abstract class Analyzer {
      */
     public void analyzeFile() throws IOException {
         File file = input.toFile();
-
         if (file.exists() && file.isDirectory()) {
-            for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
-                if (!fileEntry.isDirectory()) {
-                    check(fileEntry, output);
-                    deleteFile(fileEntry);
-                }
+            List<Path> listOfFiles = getProgramPaths(file.toPath());
+            for (Path filePath : listOfFiles) {
+                File fileEntry = filePath.toFile();
+                check(fileEntry, output);
+                deleteFile(fileEntry);
             }
         } else if (file.exists() && !file.isDirectory()) {
             check(file, output);
@@ -72,13 +68,26 @@ public abstract class Analyzer {
         }
     }
 
+    private static List<Path> getProgramPaths(Path dirPath) throws IOException {
+        try (var files = Files.walk(dirPath, 1)) {
+            return files.filter(p -> !Files.isDirectory(p))
+                    .filter(Analyzer::isPossibleScratchFile)
+                    .toList();
+        }
+    }
+
     private void deleteFile(File file) {
-        if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
+        if (delete && isPossibleScratchFile(file.toPath())) {
             boolean success = file.delete();
             if (!success) {
                 log.warning("Could not delete project: " + file.getName());
             }
         }
+    }
+
+    private static boolean isPossibleScratchFile(final Path path) {
+        final String filename = path.getFileName().toString();
+        return filename.endsWith(".json") || filename.endsWith(".sb3");
     }
 
     /**

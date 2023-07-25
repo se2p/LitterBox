@@ -1,4 +1,3 @@
-
 ![LitterBox Logo](src/main/resources/litterbox.png "LitterBox Logo")
 
 ![License LGPL v3](https://img.shields.io/github/license/se2p/LitterBox?color=blue&style=flat-square)
@@ -83,6 +82,7 @@ If a project is not found at the given path, LitterBox
 will download and store it at the given path, and then perform
 the checks.
 
+
 ### Output options
 
 In addition to the console output, LitterBox can produce output in
@@ -131,6 +131,17 @@ java -jar Litterbox-1.8.jar --help
 To select all bug patterns, you can also use the term `bugs` in the
 list; to select all code smell checks use `smells`.
 
+
+
+### Reporting the bug patterns per script
+
+The bug patterns can be reported per scripts and procedures instead of for the whole program. In this case, only the bug patterns that can be detected through intra-scripts and intra-procedures analysis are considered.
+
+```
+java -jar Litterbox-1.8.jar check --path <path/to/project.json> --output <result.csv> --detectors script-bugs --scripts
+```
+
+
 ### Deactivating robot finders
 
 To deactivate finders for the mBlock and Codey Rocky robots set the flag
@@ -165,12 +176,11 @@ To this end, Litterbox uses a multi-objective search-based approach to explore p
 refactorings that optimize code readability metrics such as size, complexity and entropy.
 The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
+
 ### Code2Vec output
 
-To be able to use code2vec with the programming language Scratch, Litterbox can produce a file as 
-input for code2vecs machine learning. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
-Litterbox produces a file with exactly these rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with 
-multiple projects and produces the output to the declared output folder.
+To be able to use the code2vec model with the programming language Scratch, a scratch parser is needed to generate the required input representation. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
+Litterbox produces for each Scratch program a file with these rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with multiple projects and produces the output to the declared output folder. 
 
 ```
 java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --path <path/to/json/project/or/folder/with/projects>
@@ -178,7 +188,15 @@ java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --
 
 There are some differences between Scratch and "normal" programming languages like Java, but the most important is,
 that Scratch has no methods and therefore no method names. Because of that, Litterbox uses sprite names like method names 
-and creates pathcontexts from every single sprite in a project.
+and creates path contexts from every single sprite in a project.
+
+#### Code2vec output per script
+
+LitterBox can generate the context paths per scripts and procedures. Given a Scratch program as input, it produces for each script and procedure a file containing the needed input representation for the code2vec model. 
+
+```
+java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --path <path/to/json/project/or/folder/with/projects> --scripts
+``` 
 
 ## Adding new bug patterns or code smells
 
@@ -242,6 +260,7 @@ Gordon Fraser\
 Luisa Greifenstein\
 Eva Gründinger\
 Ute Heuer\
+Alaa Khalil\
 Nina Körber\
 Simon Labrenz\
 Jonas Lerchenberger\

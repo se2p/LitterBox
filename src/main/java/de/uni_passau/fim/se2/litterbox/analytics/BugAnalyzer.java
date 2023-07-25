@@ -39,16 +39,21 @@ import java.util.stream.Collectors;
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
-    private List<String> detectorNames;
+    private final List<String> detectorNames;
     private List<IssueFinder> issueFinders;
     private Path annotationOutput;
-    private boolean ignoreLooseBlocks;
+    private final boolean ignoreLooseBlocks;
     private final String detectors;
+    private final boolean outputPerScript;
 
-    public BugAnalyzer(Path input, Path output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+    public BugAnalyzer(
+            Path input, Path output, String detectors,
+            boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
+    ) {
         super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         this.detectors = detectors;
+        this.outputPerScript = outputPerScript;
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
@@ -72,30 +77,32 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
         Set<Issue> issues = runFinders(program);
-        generateOutput(program, issues, reportFileName);
+        generateOutput(program, issues, reportFileName, outputPerScript);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);
     }
 
     private Set<Issue> runFinders(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
-        for (IssueFinder iF : issueFinders) {
-            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+        for (IssueFinder issueFinder : issueFinders) {
+            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(issueFinder.check(program));
         }
         return issues;
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName) {
+    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
         try {
             if (reportFileName == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".json")) {
+            } else if (reportFileName.getFileName().toString().endsWith(".json")) {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
+            } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(
+                        reportFileName, detectorNames, outputPerScript
+                );
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
             } else {

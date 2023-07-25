@@ -30,12 +30,12 @@ public class StringUtil {
     // Helpful documentation: https://en.wikipedia.org/wiki/Unicode_character_property
 
     /**
-     * Separators and other control characters
+     * Separators and other control characters.
      */
     private static final String SPACES = "[\\p{Z}\\p{C}]";
 
     /**
-     * Punctuations and symbols
+     * Punctuations and symbols.
      */
     private static final String SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK = "[\\p{P}\\p{S}&&[^?!]]";
 

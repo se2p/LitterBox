@@ -91,7 +91,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, Path csv) throws IOException {
+    protected void check(File fileEntry, Path csv) throws IOException {
         runProcessingSteps(fileEntry);
     }
 }

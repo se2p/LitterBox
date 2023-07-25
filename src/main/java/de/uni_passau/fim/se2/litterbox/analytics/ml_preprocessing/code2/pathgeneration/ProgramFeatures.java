@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,10 @@ public class ProgramFeatures {
     @Override
     public String toString() {
         return name + ' ' + features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
+    }
+
+    public String toStringWithoutNodeName() {
+        return features.stream().map(ProgramRelation::toString).collect(Collectors.joining(" "));
     }
 
     public void addFeature(String source, String path, String target) {

@@ -31,14 +31,14 @@ class StringUtilTest {
     @Test
     void testNormalizeString() {
         final List<Pair<String>> beforeAfterPairs = List.of(
-                Pair.of("a_b", "a  \tb"),
-                Pair.of("a_b", "\na\nb\n"),
-                Pair.of("1_a_456_b_68", "1a456b68"),
                 Pair.of("1_a_456_b_68", "1A456B68"),
+                Pair.of("1_a_456_b_68", "1a456b68"),
                 Pair.of("1_a_4_56_b_68", "1{a4]56B/68"),
-                Pair.of("äa_b", "{}äa'b\n"),
+                Pair.of("a_b", "\na\nb\n"),
+                Pair.of("a_b", "a  \tb"),
+                Pair.of("download_48", "download (48)"),
                 Pair.of("pinos_de_boliche_1975_89_removebg_preview_3", "pinos-de-boliche_1975-89-removebg-preview3"),
-                Pair.of("download_48", "download (48)")
+                Pair.of("äa_b", "{}äa'b\n")
         );
 
         assertAll(

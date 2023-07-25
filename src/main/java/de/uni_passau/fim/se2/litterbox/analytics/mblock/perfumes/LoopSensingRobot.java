@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -306,10 +307,8 @@ public class LoopSensingRobot extends AbstractRobotFinder {
 
     public void generateMultiBlockIssue(ASTNode node) {
         ASTNode loop = loops.get(loops.size() - 1);
-        ASTNode parent = node.getParentNode();
-        while (!(parent instanceof IfStmt)) {
-            parent = parent.getParentNode();
-        }
+        IfStmt parent = AstNodeUtil.findParent(node, IfStmt.class);
+
         List<ASTNode> concernedNodes = new ArrayList<>();
         concernedNodes.add(loop);
         concernedNodes.add(parent);
@@ -317,9 +316,15 @@ public class LoopSensingRobot extends AbstractRobotFinder {
         Hint hint = new Hint(NAME);
         MultiBlockIssue issue;
         if (currentScript != null) {
-            issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, currentScript, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.HIGH, program, currentActor, currentScript, concernedNodes,
+                    node.getMetadata(), hint
+            );
         } else {
-            issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, currentProcedure, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.HIGH, program, currentActor, currentProcedure, concernedNodes,
+                    node.getMetadata(), hint
+            );
         }
         addIssue(issue);
     }

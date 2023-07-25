@@ -20,6 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -74,5 +77,24 @@ public final class NodeNameUtil {
      */
     private static boolean isDefaultName(final String normalisedSpriteLabel) {
         return Constants.DEFAULT_SPRITE_NAMES.contains(normalisedSpriteLabel);
+    }
+
+    /**
+     * Builds a globally unique name for a script.
+     *
+     * <p>Combines the name/projectID of the program with the unique name of a script to create a globally unique
+     * identifier for the script.
+     *
+     * @param program The program the script belongs to.
+     * @param scriptEntity Some script inside {@code program}.
+     * @return A unique name based on the program and script ids. Empty if no ID could be generated for the script.
+     */
+    public static Optional<String> getScriptEntityFullName(Program program, ScriptEntity scriptEntity) {
+        return ScriptEntityNameVisitor.getScriptName(scriptEntity)
+                .map(name -> program.getIdent().getName() + "_" + name);
+    }
+
+    public static Optional<String> getScriptEntityName(ScriptEntity node) {
+        return ScriptEntityNameVisitor.getScriptName(node);
     }
 }

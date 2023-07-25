@@ -16,27 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.GeneratePathTask;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramFeatures;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.apache.commons.io.FilenameUtils;
 
-import java.io.*;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
-    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
-    private final int maxPathLength;
+public class Code2VecAnalyzer extends Code2Analyzer {
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
-        super(commonOptions);
-        this.maxPathLength = maxPathLength;
+    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
+        super(commonOptions, maxPathLength, isPerScript);
     }
 
     @Override
@@ -46,19 +41,10 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram,
-                includeDefaultSprites);
-        return generatePathTask.createContextForCode2Vec().stream();
-    }
-
-    @Override
-    protected String resultToString(ProgramFeatures result) {
-        return result.toString();
-    }
-
-    @Override
-    protected Path outputFileName(File inputFile) {
-        return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites
+        );
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
+        return generatePathTask.createContext().stream();
     }
 }

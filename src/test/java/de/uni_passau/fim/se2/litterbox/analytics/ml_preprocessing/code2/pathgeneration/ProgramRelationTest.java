@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramRelation;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

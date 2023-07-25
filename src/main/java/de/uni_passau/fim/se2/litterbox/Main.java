@@ -21,9 +21,9 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2seq.Code2SeqAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2SeqAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -216,6 +216,12 @@ public class Main implements Callable<Integer> {
         )
         Path annotationPath;
 
+        @CommandLine.Option(
+                names = {"-s", "--scripts"},
+                description = "Get the bug patterns per script."
+        )
+        boolean outputPerScript;
+
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             if (projectPath == null) {
@@ -229,7 +235,8 @@ public class Main implements Callable<Integer> {
                     outputPath,
                     detector,
                     ignoreLooseBlocks,
-                    deleteProject
+                    deleteProject,
+                    outputPerScript
             );
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
@@ -453,40 +460,58 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    @CommandLine.Command(
-            name = "code2vec",
-            description = "Transform Scratch projects into the code2vec input format."
-    )
-    static class Code2vecSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--nohash"},
-                description = "Do not hash paths."
-        )
-        boolean noHash;
+    private abstract static class Code2Subcommand extends MLPreprocessorSubcommand {
 
         @CommandLine.Option(
                 names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leafs. "
+                description = "The maximum length for connecting two AST leaves. "
                         + "Zero means there is no max path length. "
                         + "Default: 8."
         )
         int maxPathLength = 8;
+
+        @CommandLine.Option(
+                names = {"--scripts"},
+                description = "Generate token per script."
+        )
+        boolean isPerScript = false;
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             if (maxPathLength < 0) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
             }
+
+            if (wholeProgram && isPerScript) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "The analysis must be done either per script or for whole program"
+                );
+            }
         }
+    }
+
+    @CommandLine.Command(
+            name = "code2vec",
+            description = "Transform Scratch projects into the code2vec input format."
+    )
+    static class Code2vecSubcommand extends Code2Subcommand {
 
         @Override
         protected Code2VecAnalyzer getAnalyzer() {
-            if (noHash) {
-                ProgramRelation.setNoHash();
-            }
+            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
+        }
+    }
 
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
+    @CommandLine.Command(
+            name = "code2seq",
+            description = "Transform Scratch projects into the code2seq input format."
+    )
+    static class Code2SeqSubcommand extends Code2Subcommand {
+
+        @Override
+        protected Code2SeqAnalyzer getAnalyzer() {
+            return new Code2SeqAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
         }
     }
 
@@ -511,35 +536,6 @@ public class Main implements Callable<Integer> {
         @Override
         protected GgnnGraphAnalyzer getAnalyzer() {
             return new GgnnGraphAnalyzer(getCommonOptions(), dotGraph, label);
-        }
-    }
-
-    @CommandLine.Command(
-            name = "code2seq",
-            description = "Transform Scratch projects into the code2seq input format."
-    )
-    static class Code2SeqSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leafs. "
-                        + "Zero means there is no max path length. "
-                        + "Default: 8."
-        )
-        int maxPathLength = 8;
-
-        @Override
-        protected void validateParams() throws CommandLine.ParameterException {
-            if (maxPathLength < 0) {
-                throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
-            }
-        }
-
-        @Override
-        protected Code2SeqAnalyzer getAnalyzer() {
-
-            ProgramRelation.setNoHash();
-            return new Code2SeqAnalyzer(getCommonOptions(), maxPathLength);
         }
     }
 }

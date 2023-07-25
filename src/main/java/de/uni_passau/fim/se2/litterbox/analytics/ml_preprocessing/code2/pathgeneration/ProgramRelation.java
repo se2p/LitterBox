@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.pathgeneration;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import java.util.function.UnaryOperator;
 
 public class ProgramRelation {
+    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
     private final String source;
     private final String target;
     private final String hashedPath;
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
 
     public ProgramRelation(String sourceName, String targetName, String path) {
         source = sourceName;
