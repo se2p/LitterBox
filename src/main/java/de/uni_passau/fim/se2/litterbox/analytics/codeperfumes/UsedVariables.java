@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
@@ -101,116 +102,90 @@ public class UsedVariables extends AbstractIssueFinder {
         }
     }
 
-    @Override
-    public void visit(SetVariableTo node) {
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME);
+    private void addHintToFlagableIdentifier(ASTNode node, Identifier identifier, String hintName){
+        if ((insideProcedure || insideScript) && checkIdentifierForFlag(identifier)) {
+            Hint hint = new Hint(hintName);
             addIssue(node, node.getMetadata(), hint);
         }
+    }
+
+    @Override
+    public void visit(SetVariableTo node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME);
         node.getExpr().accept(this);
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME);
         node.getExpr().accept(this);
     }
 
     @Override
     public void visit(AddTo node) {
         node.getString().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(DeleteOf node) {
         node.getNum().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(DeleteAllOf node) {
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(InsertAt node) {
         node.getString().accept(this);
         node.getIndex().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(ReplaceItem node) {
         node.getIndex().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
         node.getString().accept(this);
     }
 
     @Override
     public void visit(ItemOfVariable node) {
         node.getNum().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(IndexOf node) {
         node.getExpr().accept(this);
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(LengthOfVar node) {
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
     }
 
     @Override
     public void visit(ListContains node) {
-        if ((insideProcedure || insideScript) && checkIdentifier(node.getIdentifier())) {
-            Hint hint = new Hint(NAME_LIST);
-            addIssue(node, node.getMetadata(), hint);
-        }
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
         node.getElement().accept(this);
     }
 
-    private boolean checkIdentifier(Identifier identifier) {
+    private boolean checkIdentifierForFlag(Identifier identifier) {
         if (identifier instanceof Qualified qualified) {
             actorName = qualified.getFirst().getName();
 
             if (qualified.getSecond() instanceof Variable variable) {
                 if (!flaggedVariables.contains(actorName + variable.getName().getName())) {
-                    return checkVariable(variable);
+                    return flagVariable(variable);
                 }
             } else if (qualified.getSecond() instanceof ScratchList list) {
                 if (!flaggedVariables.contains(actorName + list.getName().getName())) {
-                    return checkList(list);
+                    return flagList(list);
                 }
             } else {
                 return false;
@@ -219,7 +194,7 @@ public class UsedVariables extends AbstractIssueFinder {
         return false;
     }
 
-    private boolean checkVariable(Variable variable) {
+    private boolean flagVariable(Variable variable) {
         for (VariableInfo curr : variables) {
             String actorNameInfo = curr.getActor();
             String variableNameInfo = curr.getVariableName();
@@ -232,7 +207,7 @@ public class UsedVariables extends AbstractIssueFinder {
         return false;
     }
 
-    private boolean checkList(ScratchList list) {
+    private boolean flagList(ScratchList list) {
         for (ExpressionListInfo curr : lists) {
             String actorNameInfo = curr.getActor();
             String listNameInfo = curr.getVariableName();
@@ -248,7 +223,7 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(Variable node) {
         if (insideQualified && !flaggedVariables.contains(actorName + node.getName().getName())) {
-            if (checkVariable(node)) {
+            if (flagVariable(node)) {
                 Hint hint = new Hint(NAME);
                 addIssue(node, node.getMetadata(), hint);
             }
@@ -258,7 +233,7 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(ScratchList node) {
         if (insideQualified && !flaggedLists.contains(actorName + node.getName().getName())) {
-            if (checkList(node)) {
+            if (flagList(node)) {
                 Hint hint = new Hint(NAME_LIST);
                 addIssue(node, node.getMetadata(), hint);
             }
