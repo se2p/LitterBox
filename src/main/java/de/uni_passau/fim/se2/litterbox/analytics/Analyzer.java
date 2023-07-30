@@ -27,23 +27,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Analyzer {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
+    protected final Path output;
+    protected final boolean delete;
+    private final Scratch3Parser parser = new Scratch3Parser();
+    private final Path input;
 
-    protected Path input;
-    protected String output;
-    protected boolean delete;
-
-    protected Analyzer(String input, String output, boolean delete) {
-        this.input = Paths.get(input);
+    protected Analyzer(Path input, Path output, boolean delete) {
+        this.input = input;
         this.output = output;
         this.delete = delete;
     }
@@ -56,13 +53,12 @@ public abstract class Analyzer {
      */
     public void analyzeFile() throws IOException {
         File file = input.toFile();
-
         if (file.exists() && file.isDirectory()) {
-            for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
-                if (!fileEntry.isDirectory()) {
-                    check(fileEntry, output);
-                    deleteFile(fileEntry);
-                }
+            List<Path> listOfFiles = getProgramPaths(file.toPath());
+            for (Path filePath : listOfFiles) {
+                File fileEntry = filePath.toFile();
+                check(fileEntry, output);
+                deleteFile(fileEntry);
             }
         } else if (file.exists() && !file.isDirectory()) {
             check(file, output);
@@ -72,8 +68,16 @@ public abstract class Analyzer {
         }
     }
 
+    private static List<Path> getProgramPaths(Path dirPath) throws IOException {
+        try (var files = Files.walk(dirPath, 1)) {
+            return files.filter(p -> !Files.isDirectory(p))
+                    .filter(Analyzer::isPossibleScratchFile)
+                    .toList();
+        }
+    }
+
     private void deleteFile(File file) {
-        if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
+        if (delete && isPossibleScratchFile(file.toPath())) {
             boolean success = file.delete();
             if (!success) {
                 log.warning("Could not delete project: " + file.getName());
@@ -81,38 +85,41 @@ public abstract class Analyzer {
         }
     }
 
-    /**
-     * Analzed multiple files based on a list of projectids in the given file.
-     *
-     * @param listPath is the path to a file containing all the ids of projects that should be analyzed.
-     */
-    public void analyzeMultiple(String listPath) {
-        Path projectList = Paths.get(listPath);
+    private static boolean isPossibleScratchFile(final Path path) {
+        final String filename = path.getFileName().toString();
+        return filename.endsWith(".json") || filename.endsWith(".sb3");
+    }
 
+    /**
+     * Analyze multiple files based on a list of project ids in the given file.
+     *
+     * @param projectList is the path to a file containing all the ids of projects that should be analyzed.
+     */
+    public void analyzeMultiple(Path projectList) {
         try (Stream<String> lines = Files.lines(projectList)) {
-            List<String> pids = lines.collect(Collectors.toList());
+            List<String> pids = lines.toList();
             for (String pid : pids) {
                 analyzeSingle(pid);
             }
         } catch (IOException e) {
-            log.warning("Could not read project list at " + projectList.toString());
+            log.warning("Could not read project list at " + projectList);
         }
     }
 
     /**
      * Analyzes a single project based on the given project id.
      *
-     * <p>If a file with the given projectid exists in the path with which this analyzer was initialized, the project
+     * <p>If a file with the given project id exists in the path with which this analyzer was initialized, the project
      * will be directly analyzed, otherwise it will be downloaded to the configured path and analyzed afterwards.</p>
      *
      * @param pid is the id of the project that should be analyzed.
      */
     public void analyzeSingle(String pid) throws IOException {
-        Path path = Paths.get(input.toString(), pid + ".json");
+        Path path = input.resolve(pid + ".json");
         File projectFile = path.toFile();
         if (!projectFile.exists()) {
             try {
-                Downloader.downloadAndSaveProject(pid, input.toString());
+                Downloader.downloadAndSaveProject(pid, input);
             } catch (IOException e) {
                 log.warning("Could not download project with PID: " + pid);
                 return;
@@ -123,7 +130,7 @@ public abstract class Analyzer {
         deleteFile(projectFile);
     }
 
-    abstract void check(File fileEntry, String csv) throws IOException;
+    abstract void check(File fileEntry, Path csv) throws IOException;
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.
@@ -132,7 +139,6 @@ public abstract class Analyzer {
      * @return the parsed program or null in case the program could not be loaded or parsed
      */
     protected Program extractProgram(File fileEntry) {
-        Scratch3Parser parser = new Scratch3Parser();
         Program program = null;
         try {
             program = parser.parseFile(fileEntry);

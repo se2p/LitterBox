@@ -63,12 +63,10 @@ public class RobotAttribute implements Defineable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof RobotAttribute)) {
+        if (!(o instanceof RobotAttribute attribute1)) {
             return false;
         }
-        RobotAttribute attribute1 = (RobotAttribute) o;
-        return Objects.equals(actorIdentifier, attribute1.actorIdentifier)
-                && attribute == attribute1.attribute;
+        return Objects.equals(actorIdentifier, attribute1.actorIdentifier) && attribute == attribute1.attribute;
     }
 
     @Override

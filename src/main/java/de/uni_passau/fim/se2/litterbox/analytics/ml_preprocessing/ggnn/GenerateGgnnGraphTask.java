@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
@@ -28,21 +28,23 @@ import org.apache.commons.io.FilenameUtils;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GenerateGgnnGraphTask {
     private final Path inputPath;
     private final Program program;
     private final boolean includeStage;
+    private final boolean includeDefaultSprites;
     private final boolean wholeProgramAsSingleGraph;
     private final String labelName;
 
-    public GenerateGgnnGraphTask(Program program, Path inputPath, boolean includeStage,
+    public GenerateGgnnGraphTask(Program program, Path inputPath, boolean includeStage, boolean includeDefaultSprites,
                                  boolean wholeProgramAsSingleGraph, String labelName) {
         this.inputPath = inputPath;
         this.program = program;
         this.includeStage = includeStage;
+        this.includeDefaultSprites = includeDefaultSprites;
         this.wholeProgramAsSingleGraph = wholeProgramAsSingleGraph;
         this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
@@ -74,22 +76,28 @@ public class GenerateGgnnGraphTask {
                     () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
             graphs = List.of(buildProgramGraph(program, label));
         } else {
-            graphs = buildGraphs(program, labelName);
+            graphs = buildGraphs(program);
         }
 
         return graphs;
     }
 
-    private List<GgnnProgramGraph> buildGraphs(final Program program, String labelName) {
+    private List<GgnnProgramGraph> buildGraphs(final Program program) {
         return program.getActorDefinitionList().getDefinitions()
                 .stream()
-                .filter(actor -> !actor.isStage() || includeStage)
+                .filter(actor -> includeStage || !actor.isStage())
+                .filter(actor -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(actor))
                 .map(actor -> {
-                    String actorLabel = Objects.requireNonNullElseGet(labelName,
-                            () -> StringUtil.replaceSpecialCharacters(actor.getIdent().getName()));
+                    final String actorLabel = getActorLabel(actor);
                     return buildProgramGraph(program, actor, actorLabel);
                 })
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    private String getActorLabel(final ActorDefinition actor) {
+        return Optional.ofNullable(labelName)
+                .or(() -> NodeNameUtil.normalizeSpriteName(actor))
+                .orElse("");
     }
 
     private GgnnProgramGraph buildProgramGraph(final Program program, String label) {

@@ -23,18 +23,35 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
+
     private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+
+    private final PathType pathType;
     private final int maxPathLength;
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength) {
+    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions);
+
         this.maxPathLength = maxPathLength;
+
+        if (isPerScript) {
+            this.pathType = PathType.SCRIPT;
+        } else if (wholeProgram) {
+            this.pathType = PathType.PROGRAM;
+        } else {
+            this.pathType = PathType.SPRITE;
+        }
     }
 
     @Override
@@ -44,8 +61,10 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-
-        GeneratePathTask generatePathTask = new GeneratePathTask(program, maxPathLength, includeStage, wholeProgram);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites
+        );
+        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContextForCode2Vec().stream();
     }
 
@@ -57,5 +76,53 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     @Override
     protected Path outputFileName(File inputFile) {
         return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
+    }
+
+    @Override
+    protected void check(File fileEntry, Path csv) throws IOException {
+        if (this.pathType == PathType.SCRIPT) {
+            runPerScriptProcessingSteps(fileEntry);
+        } else {
+            super.check(fileEntry, csv);
+        }
+    }
+
+    private void runPerScriptProcessingSteps(File inputFile) {
+        final var output = process(inputFile);
+        var outputList = output.toList();
+        writeResultPerScriptToOutput(inputFile, outputList);
+    }
+
+    private void writeResultPerScriptToOutput(File inputFile, List<ProgramFeatures> result) {
+        if (result.isEmpty()) {
+            return;
+        }
+
+        if (outputPath.isConsoleOutput()) {
+            System.out.println(result);
+        } else {
+            writeResultPerScriptToFile(inputFile, result);
+        }
+    }
+
+    private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) {
+        for (ProgramFeatures token : result) {
+            Path outName = outputFileName(inputFile);
+            Path outputFile = outputPath.getPath().resolve(outName + "_" + token.getName());
+            if (Files.exists(outputFile)) {
+                log.warning("A duplicated script has been skipped " + outputFile);
+                continue;
+            }
+            writeProgramFeaturesToFile(outputFile, token);
+        }
+    }
+
+    private static void writeProgramFeaturesToFile(Path outputFile, ProgramFeatures token) {
+        try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
+            bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
+            bw.flush();
+        } catch (IOException e) {
+            log.severe("Exception in writing the file " + outputFile + "Error message " + e.getMessage());
+        }
     }
 }

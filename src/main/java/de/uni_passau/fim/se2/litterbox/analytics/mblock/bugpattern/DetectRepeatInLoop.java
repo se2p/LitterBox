@@ -99,8 +99,8 @@ public class DetectRepeatInLoop extends AbstractRobotFinder {
         issueState = false;
 
         node.getThenStmts().accept(this);
-        if (node instanceof IfElseStmt) {
-            ((IfElseStmt) node).getElseStmts().accept(this);
+        if (node instanceof IfElseStmt ifElseStmt) {
+            ifElseStmt.getElseStmts().accept(this);
         }
 
         if (inLoop && issueState && localIssueExpr != null) {

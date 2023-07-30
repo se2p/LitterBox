@@ -112,11 +112,11 @@ public class Issue {
     }
 
     public Script getScript() {
-        return script instanceof Script ? (Script) script : null;
+        return script instanceof Script s ? s : null;
     }
 
     public ProcedureDefinition getProcedure() {
-        return script instanceof ProcedureDefinition ? (ProcedureDefinition) script : null;
+        return script instanceof ProcedureDefinition procedure ? procedure : null;
     }
 
     public Program getProgram() {

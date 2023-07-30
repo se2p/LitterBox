@@ -66,8 +66,8 @@ public abstract class AbstractRobotFinder extends AbstractIssueFinder implements
             boolean added = false;
             List<Stmt> newList = new LinkedList<>();
             for (Stmt stmt : node.getStmts()) {
-                if (stmt instanceof CallStmt) {
-                    String procedureName = ((CallStmt) stmt).getIdent().getName();
+                if (stmt instanceof CallStmt callStmt) {
+                    String procedureName = callStmt.getIdent().getName();
                     if (procedureStmts.containsKey(procedureName)
                             && !(proceduresInScript.get(currentScript).contains(procedureName))) {
                         added = true;

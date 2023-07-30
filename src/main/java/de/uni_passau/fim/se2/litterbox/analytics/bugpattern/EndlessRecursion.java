@@ -82,24 +82,25 @@ public class EndlessRecursion extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
-            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                Hint hint = new Hint(BROADCAST_HINT);
-                hint.setParameter(Hint.HINT_MESSAGE, currentMessageName);
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral stringLiteral
+                && loopIfCounter == 0) {
+            if (stringLiteral.getText().equals(currentMessageName)) {
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
-                        .withHint(hint)
+                        .withHint(BROADCAST_HINT)
                         .withRefactoring(getBroadcastRefactoring(node));
 
                 addIssue(builder);
+
             }
         }
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
-            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral stringLiteral
+                && loopIfCounter == 0) {
+            if (stringLiteral.getText().equals(currentMessageName)) {
                 Hint hint = new Hint(BROADCAST_HINT);
                 hint.setParameter(Hint.HINT_MESSAGE, currentMessageName);
                 IssueBuilder builder = prepareIssueBuilder(node)

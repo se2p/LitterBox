@@ -63,18 +63,14 @@ public class TextToSpeechParser {
         }
         final TextToSpeechOpcode opcode = TextToSpeechOpcode.valueOf(opCodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
-        switch (opcode) {
-
-            case text2speech_setVoice:
-                return parseSetVoice(state, current, metadata, blocks);
-            case text2speech_speakAndWait:
+        return switch (opcode) {
+            case text2speech_setVoice -> parseSetVoice(state, current, metadata, blocks);
+            case text2speech_speakAndWait -> {
                 StringExpr expr = StringExprParser.parseStringExpr(state, current, WORDS_KEY, blocks);
-                return new Speak(expr, metadata);
-            case text2speech_setLanguage:
-                return parseSetLanguage(state, current, metadata, blocks);
-            default:
-                throw new RuntimeException("Not implemented yet for opcode " + opcode);
-        }
+                yield new Speak(expr, metadata);
+            }
+            case text2speech_setLanguage -> parseSetLanguage(state, current, metadata, blocks);
+        };
     }
 
     private static Stmt parseSetLanguage(final ProgramParserState state, JsonNode current, BlockMetadata metadata,

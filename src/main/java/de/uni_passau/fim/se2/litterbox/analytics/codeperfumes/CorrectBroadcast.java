@@ -73,8 +73,8 @@ public class CorrectBroadcast extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
+            final String msgName = stringLiteral.getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
@@ -86,8 +86,8 @@ public class CorrectBroadcast extends AbstractIssueFinder {
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral) {
-            final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
+        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
+            final String msgName = stringLiteral.getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
@@ -99,10 +99,10 @@ public class CorrectBroadcast extends AbstractIssueFinder {
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        if (node.getMsg().getMessage() instanceof StringLiteral) {
+        if (node.getMsg().getMessage() instanceof StringLiteral stringLiteral) {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                final String msgName = ((StringLiteral) node.getMsg().getMessage()).getText();
+                final String msgName = stringLiteral.getText();
                 messageReceived.add(new Pair<>(actorName, msgName));
             }
         }

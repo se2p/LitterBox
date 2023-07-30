@@ -16,32 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-public class UnmodifiableListBuilder<E> {
-
-    private List<E> list = new ArrayList<>();
-
-    public static <E> UnmodifiableListBuilder<E> builder() {
-        return new UnmodifiableListBuilder<>();
-    }
-
-    public UnmodifiableListBuilder<E> add(E e) {
-        list.add(e);
-        return this;
-    }
-
-    public UnmodifiableListBuilder<E> addAll(Collection<? extends E> collection) {
-        list.addAll(collection);
-        return this;
-    }
-
-    public List<E> build() {
-        return Collections.unmodifiableList(list);
-    }
+public enum PathType {
+    PROGRAM,
+    SPRITE,
+    SCRIPT
 }

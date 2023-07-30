@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
@@ -47,7 +48,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
- * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like gliding.
+ * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like
+ * gliding.
  */
 public class InterruptedLoopSensing extends AbstractIssueFinder {
     private static final String NAME = "interrupted_loop_sensing";
@@ -97,7 +99,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (!checkingVariable && !checkingStop && !visitOuter) {
             if (insideForever) {
-                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                blockName = IssueTranslator.getInstance().getInfo("if") + " "
+                        + IssueTranslator.getInstance().getInfo("then") + " "
+                        + IssueTranslator.getInstance().getInfo("else");
                 inCondition = true;
                 node.getBoolExpr().accept(this);
                 if (variableName != null) {
@@ -130,7 +134,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (!checkingVariable && !checkingStop && insideForever && !visitOuter) {
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
+            blockName = IssueTranslator.getInstance().getInfo("if") + " "
+                    + IssueTranslator.getInstance().getInfo("then");
             inCondition = true;
             node.getBoolExpr().accept(this);
             if (variableName != null) {
@@ -147,7 +152,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     }
 
     /**
-     * If the variable is changed inside these stmts, it should not trigger the finder, as the insides of the loop are responsible for the exit condition.
+     * If the variable is changed inside these stmts, it should not trigger the finder, as the insides of the loop are
+     * responsible for the exit condition.
      *
      * @param stmts stmts that should be searched
      */
@@ -341,10 +347,18 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IsKeyPressed node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
+    }
+
+    private void visitOuterBlocks(ASTNode node) {
+        visitOuter = true;
+        StmtList stmtList = getStmtList(node);
+        //if the outer StmtList is the top StmtList of the Script, checking is not necessary
+        if (!(stmtList.getParentNode() instanceof ScriptEntity)) {
+            getStmtList(node).accept(this);
+        }
+        visitOuter = false;
     }
 
     private StmtList getStmtList(ASTNode node) {
@@ -359,9 +373,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(Touching node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -369,9 +381,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IsMouseDown node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingOther = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -379,9 +389,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(ColorTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -389,9 +397,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(SpriteTouchingColor node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -399,9 +405,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuter = true;
-            getStmtList(node).accept(this);
-            visitOuter = false;
+            visitOuterBlocks(node);
         }
     }
 
@@ -448,7 +452,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(WaitUntil node) {
-        if (!visitOuter & insideForever) {
+        if (!visitOuter && insideForever) {
             blockName = IssueTranslator.getInstance().getInfo("wait_until");
             inCondition = true;
             visitChildren(node);

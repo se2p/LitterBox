@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -91,7 +90,7 @@ public class IssueTool {
             registerBugFinder(new TypeError(), bugFinders);
             registerBugFinder(new VariableAsLiteral(), bugFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock bugs
+        if (LOAD_MBLOCK) { // mBlock bugs
             registerBugFinder(new AmbientLightOutOfBounds(), bugFinders);
             registerBugFinder(new BatteryLevelOutOfBounds(), bugFinders);
             registerBugFinder(new CodeyUploadStopTimed(), bugFinders);
@@ -119,6 +118,43 @@ public class IssueTool {
             registerBugFinder(new TimedStatementInLiveLoop(), bugFinders);
             registerBugFinder(new UltraSonicOutOfBounds(), bugFinders);
         }
+
+        return bugFinders;
+    }
+
+    /**
+     * Bug finders that can operate on single scripts, i.e. do not need other information from somewhere else in the
+     * program.
+     *
+     * @return Issue finders that work on single scripts.
+     */
+    private static Map<String, IssueFinder> generateScriptsBugFinders() {
+        Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+
+        registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
+        registerBugFinder(new BlockingIfElse(), bugFinders);
+        registerBugFinder(new ComparingLiterals(), bugFinders);
+        registerBugFinder(new EndlessRecursion(), bugFinders);
+        registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
+        registerBugFinder(new ForeverInsideIf(), bugFinders);
+        registerBugFinder(new ForeverInsideLoop(), bugFinders);
+        registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
+        registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+        registerBugFinder(new KeySetPosition(), bugFinders);
+        registerBugFinder(new MissingLoopMousePosition(), bugFinders);
+        registerBugFinder(new MissingLoopSensing(), bugFinders);
+        registerBugFinder(new MissingTerminationCondition(), bugFinders);
+        registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
+        registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterOutOfScope(), bugFinders);
+        registerBugFinder(new PositionEqualsCheck(), bugFinders);
+        registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
+        registerBugFinder(new TypeError(), bugFinders);
+        registerBugFinder(new VariableAsLiteral(), bugFinders);
 
         return bugFinders;
     }
@@ -180,7 +216,7 @@ public class IssueTool {
             registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock smells
+        if (LOAD_MBLOCK) { // mBlock smells
             registerSmellFinder(new MotorPowerMinus(), smellFinders);
             registerSmellFinder(new MultiAttributeModificationRobot(), smellFinders);
             registerSmellFinder(new UnnecessaryTimeRobot(), smellFinders);
@@ -217,6 +253,7 @@ public class IssueTool {
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
+            registerPerfumeFinder(new UsedVariables(), perfumeFinders);
             registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
             registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
         }
@@ -249,22 +286,17 @@ public class IssueTool {
         List<IssueFinder> finders = new ArrayList<>();
 
         switch (commandString) {
-            case ALL:
-                finders = new ArrayList<>(generateAllFinders().values());
-                break;
-            case BUGS:
-                finders = new ArrayList<>(generateBugFinders().values());
-                break;
-            case SMELLS:
-                finders = new ArrayList<>(generateSmellFinders().values());
-                break;
-            case PERFUMES:
-                finders = new ArrayList<>(generatePerfumeFinders().values());
-                break;
-            case DEFAULT:
-                finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
-                break;
-            default:
+            case ALL -> finders = new ArrayList<>(generateAllFinders().values());
+            case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
+            case BUGS_SCRIPTS -> finders = new ArrayList<>(generateScriptsBugFinders().values());
+            case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
+            case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
+            case DEFAULT -> {
+                var strictFinders = generateAllFinders().values().stream()
+                        .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
+                finders.addAll(strictFinders);
+            }
+            default -> {
                 for (String detectorName : commandString.split(",")) {
                     Map<String, IssueFinder> allFinders = generateAllFinders();
                     if (!allFinders.containsKey(detectorName)) {
@@ -274,7 +306,7 @@ public class IssueTool {
                     }
                     finders.add(allFinders.get(detectorName));
                 }
-                break;
+            }
         }
         return Collections.unmodifiableList(finders);
     }

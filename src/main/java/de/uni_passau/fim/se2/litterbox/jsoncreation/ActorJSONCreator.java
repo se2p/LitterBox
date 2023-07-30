@@ -52,10 +52,7 @@ public class ActorJSONCreator {
                                                ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
         ActorMetadata meta = actor.getActorMetadata();
-        boolean isStage = false;
-        if (actor.isStage()) {
-            isStage = true;
-        }
+        boolean isStage = actor.isStage();
         jsonString.append("{");
         JSONStringCreator.createFieldValue(jsonString, IS_STAGE_KEY, isStage).append(",");
         JSONStringCreator.createFieldValue(jsonString, NAME_KEY, actor.getIdent().getName()).append(",");
@@ -67,16 +64,15 @@ public class ActorJSONCreator {
         List<SetVariableTo> listSetStmts = new ArrayList<>();
         List<SetAttributeTo> attributeToStmts = new ArrayList<>();
         for (SetStmt setStmt : setStmts) {
-            if (setStmt instanceof SetVariableTo) {
-                SetVariableTo setVariableTo = (SetVariableTo) setStmt;
+            if (setStmt instanceof SetVariableTo setVariableTo) {
                 Qualified qualified = (Qualified) setVariableTo.getIdentifier();
                 if (qualified.getSecond() instanceof Variable) {
                     variableSetStmts.add(setVariableTo);
                 } else if (qualified.getSecond() instanceof ScratchList) {
                     listSetStmts.add(setVariableTo);
                 }
-            } else if (setStmt instanceof SetAttributeTo) {
-                attributeToStmts.add((SetAttributeTo) setStmt);
+            } else if (setStmt instanceof SetAttributeTo setAttributeTo) {
+                attributeToStmts.add(setAttributeTo);
             }
         }
 
@@ -188,19 +184,19 @@ public class ActorJSONCreator {
         for (int i = 0; i < attributeToStmts.size() - 1; i++) {
             SetAttributeTo attributeTo = attributeToStmts.get(i);
             String attribute = ((StringLiteral) attributeTo.getStringExpr()).getText();
-            if (attributeTo.getExpr() instanceof StringLiteral) {
-                JSONStringCreator.createFieldValue(jsonString, attribute, ((StringLiteral) attributeTo.getExpr()).getText()).append(",");
-            } else if (attributeTo.getExpr() instanceof NumberLiteral) {
-                JSONStringCreator.createFieldValue(jsonString, attribute, ((NumberLiteral) attributeTo.getExpr()).getValue()).append(",");
+            if (attributeTo.getExpr() instanceof StringLiteral stringLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, stringLiteral.getText()).append(",");
+            } else if (attributeTo.getExpr() instanceof NumberLiteral numberLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, numberLiteral.getValue()).append(",");
             }
         }
         if (!attributeToStmts.isEmpty()) {
             SetAttributeTo attributeTo = attributeToStmts.get(attributeToStmts.size() - 1);
             String attribute = ((StringLiteral) attributeTo.getStringExpr()).getText();
-            if (attributeTo.getExpr() instanceof StringLiteral) {
-                JSONStringCreator.createFieldValue(jsonString, attribute, ((StringLiteral) attributeTo.getExpr()).getText());
-            } else if (attributeTo.getExpr() instanceof NumberLiteral) {
-                JSONStringCreator.createFieldValue(jsonString, attribute, ((NumberLiteral) attributeTo.getExpr()).getValue());
+            if (attributeTo.getExpr() instanceof StringLiteral stringLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, stringLiteral.getText());
+            } else if (attributeTo.getExpr() instanceof NumberLiteral numberLiteral) {
+                JSONStringCreator.createFieldValue(jsonString, attribute, numberLiteral.getValue());
             }
         }
 
@@ -249,13 +245,15 @@ public class ActorJSONCreator {
     private static StringBuilder addVariable(StringBuilder jsonString, SetVariableTo node, SymbolTable symbol) {
         Qualified qualified = (Qualified) node.getIdentifier();
         Variable variable = (Variable) qualified.getSecond();
-        String id = symbol.getVariableIdentifierFromActorAndName(qualified.getFirst().getName(), variable.getName().getName());
+        String variableName = variable.getName().getName();
+
+        String id = symbol.getVariableIdentifierFromActorAndName(qualified.getFirst().getName(), variableName);
         JSONStringCreator.createField(jsonString, id).append("[");
         Expression expr = node.getExpr();
-        if (expr instanceof StringLiteral) {
-            jsonString.append("\"").append(variable.getName().getName()).append("\", \"").append(((StringLiteral) expr).getText()).append("\"]");
-        } else if (expr instanceof NumberLiteral) {
-            jsonString.append("\"").append(variable.getName().getName()).append("\", ").append(((NumberLiteral) expr).getValue()).append("]");
+        if (expr instanceof StringLiteral stringLiteral) {
+            jsonString.append("\"").append(variableName).append("\", \"").append(stringLiteral.getText()).append("\"]");
+        } else if (expr instanceof NumberLiteral numberLiteral) {
+            jsonString.append("\"").append(variableName).append("\", ").append(numberLiteral.getValue()).append("]");
         }
         return jsonString;
     }
@@ -271,18 +269,18 @@ public class ActorJSONCreator {
         List<Expression> expressionList = ((ExpressionList) expression).getExpressions();
         for (int i = 0; i < expressionList.size() - 1; i++) {
             Expression expr = expressionList.get(i);
-            if (expr instanceof StringLiteral) {
-                jsonString.append("\"").append(((StringLiteral) expr).getText()).append("\",");
-            } else if (expr instanceof NumberLiteral) {
-                jsonString.append(((NumberLiteral) expr).getValue()).append(",");
+            if (expr instanceof StringLiteral stringLiteral) {
+                jsonString.append("\"").append(stringLiteral.getText()).append("\",");
+            } else if (expr instanceof NumberLiteral numberLiteral) {
+                jsonString.append(numberLiteral.getValue()).append(",");
             }
         }
         if (!expressionList.isEmpty()) {
             Expression expr = expressionList.get(expressionList.size() - 1);
-            if (expr instanceof StringLiteral) {
-                jsonString.append("\"").append(((StringLiteral) expr).getText()).append("\"");
-            } else if (expr instanceof NumberLiteral) {
-                jsonString.append(((NumberLiteral) expr).getValue());
+            if (expr instanceof StringLiteral stringLiteral) {
+                jsonString.append("\"").append(stringLiteral.getText()).append("\"");
+            } else if (expr instanceof NumberLiteral numberLiteral) {
+                jsonString.append(numberLiteral.getValue());
             }
         }
         jsonString.append("]]");

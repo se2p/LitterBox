@@ -60,11 +60,11 @@ public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
         StmtList mergedThenStmts = new StmtList(mergedListOfStmts);
 
         List<Stmt> mergedElseStmt = new ArrayList<>();
-        if (if1 instanceof IfElseStmt) {
-            mergedElseStmt.addAll(apply(((IfElseStmt)if1).getElseStmts()).getStmts());
+        if (if1 instanceof IfElseStmt ifElseStmt) {
+            mergedElseStmt.addAll(apply(ifElseStmt.getElseStmts()).getStmts());
         }
-        if (if2 instanceof IfElseStmt) {
-            mergedElseStmt.addAll(apply(((IfElseStmt)if2).getElseStmts()).getStmts());
+        if (if2 instanceof IfElseStmt ifElseStmt) {
+            mergedElseStmt.addAll(apply(ifElseStmt.getElseStmts()).getStmts());
         }
         StmtList mergedElseStmts = new StmtList(mergedElseStmt);
 

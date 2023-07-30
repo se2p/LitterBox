@@ -43,9 +43,7 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     }
 
     private void checkBool(BoolExpr boolExpr) {
-        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {
-            Parameter ident = (Parameter) ((AsBool) boolExpr).getOperand1();
-
+        if (boolExpr instanceof AsBool asBool && asBool.getOperand1() instanceof Parameter ident) {
             for (ArgumentInfo currentArgument : currentArguments) {
                 if (currentArgument.getName().equals(ident.getName().getName())
                         && !(currentArgument.getType() instanceof BooleanType)) {

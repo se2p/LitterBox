@@ -228,8 +228,8 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     //Events
     @Override
     public void visit(Event node) {
-        if (node instanceof AttributeAboveValue) {
-            EventAttribute.EventAttributeType eventAttributeType = ((AttributeAboveValue) node).getAttribute().getType();
+        if (node instanceof AttributeAboveValue attributeAboveValue) {
+            EventAttribute.EventAttributeType eventAttributeType = attributeAboveValue.getAttribute().getType();
             if (eventAttributeType == EventAttribute.EventAttributeType.LOUDNESS
                     || eventAttributeType == EventAttribute.EventAttributeType.TIMER) {
                 currentStackedDepth = 0;

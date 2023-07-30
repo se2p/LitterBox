@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -60,12 +61,11 @@ public class StutteringMovement extends AbstractIssueFinder {
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
-        if (script.getEvent() instanceof KeyPressed) {
+        if (script.getEvent() instanceof KeyPressed keyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() <= 2 && !listOfStmt.isEmpty()) {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
-                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
                     IssueBuilder builder = prepareIssueBuilder(stmt)
@@ -85,11 +85,12 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     private Script getRefactoring(Script oldScript) {
         Stmt firstStatement = oldScript.getStmtList().getStatement(0);
-        IfThenStmt ifThen = new IfThenStmt(new IsKeyPressed(((KeyPressed) oldScript.getEvent()).getKey(), firstStatement.getMetadata()), oldScript.getStmtList(), firstStatement.getMetadata());
+        Key key = ((KeyPressed) oldScript.getEvent()).getKey();
+        IsKeyPressed isKeyPressed = new IsKeyPressed(key, firstStatement.getMetadata());
+        IfThenStmt ifThen = new IfThenStmt(isKeyPressed, oldScript.getStmtList(), firstStatement.getMetadata());
         RepeatForeverStmt forever = new RepeatForeverStmt(new StmtList(ifThen), firstStatement.getMetadata());
         StmtList stmtList = new StmtList(forever);
-        Script refactoredScript = new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);
-        return refactoredScript;
+        return new Script(new GreenFlag(oldScript.getEvent().getMetadata()), stmtList);
     }
 
     @Override

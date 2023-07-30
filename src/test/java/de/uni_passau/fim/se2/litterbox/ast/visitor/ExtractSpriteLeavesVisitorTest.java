@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -32,49 +33,51 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExtractSpriteVisitorTest implements JsonTest {
+class ExtractSpriteLeavesVisitorTest implements JsonTest {
 
     @Test
     void testVisit() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(false);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(false);
         program.accept(spriteVisitor);
-        Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();
+        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeavesCollector();
 
-        assertEquals(2, leafsMap.keySet().size());
+        assertEquals(2, leavesMap.keySet().size());
 
-        ASTNode[] sprites = getSpriteArrayFromLeafsMap(leafsMap);
+        ActorDefinition[] sprites = getSpriteArrayFromLeavesMap(leavesMap);
 
         //check sprite abby
-        assertEquals("abby", ((ActorDefinition)sprites[0]).getIdent().getName());
-        assertEquals(2, leafsMap.get(sprites[0]).size());
-        assertEquals("GreenFlag", leafsMap.get(sprites[0]).get(0).getUniqueName());
-        assertEquals("StringLiteral", leafsMap.get(sprites[0]).get(1).getUniqueName());
+        ActorDefinition firstSprite = sprites[0];
+        assertEquals("abby", (firstSprite).getIdent().getName());
+        assertEquals(2, leavesMap.get(firstSprite).size());
+        assertEquals("GreenFlag", leavesMap.get(firstSprite).get(0).getUniqueName());
+        assertEquals("StringLiteral", leavesMap.get(firstSprite).get(1).getUniqueName());
 
         //check sprite cat
-        assertEquals("cat", ((ActorDefinition)sprites[1]).getIdent().getName());
-        assertEquals(3, leafsMap.get(sprites[1]).size());
-        assertEquals("NumberLiteral", leafsMap.get(sprites[1]).get(0).getUniqueName());
-        assertEquals("StringLiteral", leafsMap.get(sprites[1]).get(1).getUniqueName());
-        assertEquals("Show", leafsMap.get(sprites[1]).get(2).getUniqueName());
+        ActorDefinition secondSprite = sprites[1];
+        assertEquals("cat", (secondSprite).getIdent().getName());
+        assertEquals(3, leavesMap.get(secondSprite).size());
+        assertEquals("NumberLiteral", leavesMap.get(secondSprite).get(0).getUniqueName());
+        assertEquals("StringLiteral", leavesMap.get(secondSprite).get(1).getUniqueName());
+        assertEquals("Show", leavesMap.get(secondSprite).get(2).getUniqueName());
     }
 
     @Test
     void testVisitIncludeStage() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteVisitor spriteVisitor = new ExtractSpriteVisitor(true);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(true);
         program.accept(spriteVisitor);
 
-        Map<ActorDefinition, List<ASTNode>> leafsMap = spriteVisitor.getLeafsCollector();
-        assertEquals(3, leafsMap.keySet().size());
+        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeavesCollector();
+        assertEquals(3, leavesMap.keySet().size());
 
-        Optional<ActorDefinition> stage = leafsMap.keySet().stream().filter(ActorDefinition::isStage).findFirst();
+        Optional<ActorDefinition> stage = leavesMap.keySet().stream().filter(ActorDefinition::isStage).findFirst();
         assertTrue(stage.isPresent());
     }
 
-    private ASTNode[] getSpriteArrayFromLeafsMap(Map<ActorDefinition, List<ASTNode>> leafsMap) {
-        ASTNode[] sprites = new ASTNode[2];
-        for (ActorDefinition sprite : leafsMap.keySet()) {
+    private ActorDefinition[] getSpriteArrayFromLeavesMap(Map<ActorDefinition, List<ASTNode>> leavesMap) {
+        ActorDefinition[] sprites = new ActorDefinition[2];
+        for (ActorDefinition sprite : leavesMap.keySet()) {
             if (sprite.getIdent().getName().equals("abby")) {
                 sprites[0] = sprite;
             } else if (sprite.getIdent().getName().equals("cat")){

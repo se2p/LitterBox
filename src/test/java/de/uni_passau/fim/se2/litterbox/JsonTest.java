@@ -24,9 +24,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -34,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +51,7 @@ public interface JsonTest {
 
     default Program getAST(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
-        return parser.parseFile(fileName);
+        return parser.parseFile(Path.of(fileName).toFile());
     }
 
     default ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
@@ -58,12 +63,25 @@ public interface JsonTest {
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
     static Program parseProgram(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
-        return parser.parseFile(fileName);
+        return parser.parseFile(Path.of(fileName).toFile());
     }
 
     default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
         return finder.check(prog);
+    }
+
+    /**
+     * Checks that the given AST part does not contain any {@link UnspecifiedStmt} or {@link UnspecifiedExpression}.
+     *
+     * @param root The root node of the (sub-)tree.
+     */
+    default void assertNoUnspecifiedBlocks(final ASTNode root) {
+        final var unknownExpr = NodeFilteringVisitor.getBlocks(root, UnspecifiedExpression.class);
+        assertThat(unknownExpr).isEmpty();
+
+        final var unknownStmt = NodeFilteringVisitor.getBlocks(root, UnspecifiedStmt.class);
+        assertThat(unknownStmt).isEmpty();
     }
 
     default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws IOException, ParsingException {

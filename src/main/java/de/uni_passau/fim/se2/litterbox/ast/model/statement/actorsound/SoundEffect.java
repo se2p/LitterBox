@@ -107,8 +107,7 @@ public class SoundEffect extends AbstractNode implements FixedNodeOption {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SoundEffect)) return false;
-        SoundEffect that = (SoundEffect) o;
+        if (!(o instanceof SoundEffect that)) return false;
         return type == that.type;
     }
 

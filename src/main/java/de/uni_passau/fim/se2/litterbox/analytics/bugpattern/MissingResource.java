@@ -21,12 +21,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -34,100 +34,99 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * If the costume of a sprite should be set to one not available or play a sound that is not registered in the sprite it will not work.
+ * If the costume of a sprite should be set to one not available or play a sound that is not registered in the sprite
+ * it will not work.
  */
 public class MissingResource extends AbstractIssueFinder {
     public static final String NAME = "missing_resource";
-    private List<ImageMetadata> images;
-    private List<ImageMetadata> backdrops;
-    private List<SoundMetadata> sounds;
+
+    private Set<String> images;
+    private Set<String> backdrops;
+    private Set<String> sounds;
 
     @Override
     public void visit(Program node) {
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
             if (actor.getActorType().isStage()) {
-                backdrops = actor.getActorMetadata().getCostumes().getList();
+                backdrops = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
                 break;
             }
         }
+
         super.visit(node);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
-        images = actor.getActorMetadata().getCostumes().getList();
-        sounds = actor.getActorMetadata().getSounds().getList();
+        images = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
+        sounds = collectResourceNames(actor.getActorMetadata().getSounds().getList());
         super.visit(actor);
+    }
+
+    private Set<String> collectResourceNames(final List<? extends ResourceMetadata> resources) {
+        return resources.stream().map(ResourceMetadata::getName).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
-            if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String backdropName = strId.getName();
+            checkBackdropIssue(node, backdropName);
         }
-    }
-
-    private boolean imageExists(String imageName, List<ImageMetadata> metadataList) {
-        for (ImageMetadata meta : metadataList) {
-            if (imageName.equals(meta.getName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
-            if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String backdropName = strId.getName();
+            checkBackdropIssue(node, backdropName);
         }
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        if (node.getCostumeChoice() instanceof WithExpr && ((WithExpr) node.getCostumeChoice()).getExpression() instanceof StrId) {
-            String costume = ((StrId) ((WithExpr) node.getCostumeChoice()).getExpression()).getName();
-            if (!imageExists(costume, images)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
+        if (node.getCostumeChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String costume = strId.getName();
+            checkCostumeIssue(node, costume);
         }
     }
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
-            if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String sound = strId.getName();
+            checkSoundIssue(node, sound);
         }
     }
 
     @Override
     public void visit(StartSound node) {
-        if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
-            String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
-            if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
+        if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String sound = strId.getName();
+            checkSoundIssue(node, sound);
         }
     }
 
-    private boolean soundExists(String sound) {
-        for (SoundMetadata meta : sounds) {
-            if (sound.equals(meta.getName())) {
-                return true;
-            }
+    private void checkBackdropIssue(final ASTNode node, final String backdropName) {
+        if (!backdrops.contains(backdropName)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
-        return false;
+    }
+
+    private void checkCostumeIssue(final ASTNode node, final String costumeName) {
+        if (!images.contains(costumeName)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+
+    private void checkSoundIssue(final ASTNode node, final String soundName) {
+        if (!sounds.contains(soundName)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
     }
 
     @Override

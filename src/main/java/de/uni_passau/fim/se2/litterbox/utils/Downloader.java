@@ -28,7 +28,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,13 +42,13 @@ public final class Downloader {
         throw new IllegalCallerException("utility class");
     }
 
-    public static String downloadAndSaveProject(String projectId, String projectOut) throws IOException {
+    public static String downloadAndSaveProject(String projectId, Path projectOut) throws IOException {
         if (!isAlreadyDownloaded(projectId, projectOut)) {
             String json = downloadProjectJSON(projectId);
             saveDownloadedProject(json, projectId, projectOut);
             return json;
         } else {
-            Path path = Paths.get(projectOut, projectId + ".json");
+            Path path = projectOut.resolve(projectId + ".json");
             return Files.readString(path, StandardCharsets.UTF_8);
         }
     }
@@ -91,18 +90,17 @@ public final class Downloader {
         }
     }
 
-    public static boolean isAlreadyDownloaded(String projectid, String projectout) throws IOException {
-        Path path = Paths.get(projectout, projectid + ".json");
-        File file = new File(path.toString());
-        return file.exists();
+    public static boolean isAlreadyDownloaded(String projectid, Path projectout) {
+        Path path = projectout.resolve(projectid + ".json");
+        return path.toFile().exists();
     }
 
-    public static void saveDownloadedProject(String json, String projectid, String projectout) throws IOException {
+    public static void saveDownloadedProject(String json, String projectid, Path projectout) throws IOException {
         if (projectout == null) {
             return;
         }
 
-        File folder = new File(projectout);
+        File folder = projectout.toFile();
         if (folder.exists() && !folder.isDirectory()) {
             System.out.println("Projectout is not a folder but a file");
         }
@@ -117,7 +115,7 @@ public final class Downloader {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(json);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-        Path path = Paths.get(projectout, projectid + ".json");
-        writer.writeValue(new File(path.toString()), jsonNode);
+        Path path = projectout.resolve(projectid + ".json");
+        writer.writeValue(path.toFile(), jsonNode);
     }
 }

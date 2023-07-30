@@ -211,7 +211,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public boolean isSubsumedBy(Issue first, Issue other) {
         if (first.getFinder() != this) {
-            return super.areCoupled(first, other);
+            return super.isSubsumedBy(first, other);
         }
 
         if (!(other.getFinder() instanceof ForeverInsideIf)) {

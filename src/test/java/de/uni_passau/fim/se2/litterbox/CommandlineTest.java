@@ -30,7 +30,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -57,9 +56,11 @@ public class CommandlineTest {
 
     @Test
     public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
-        String inputPath = tempFile.getAbsolutePath();
-        commandLine.execute("leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number");
-        Path path = Paths.get(inputPath, "I am not a number" + ".json");
+        Path inputPath = tempFile.toPath().toAbsolutePath();
+        commandLine.execute(
+                "leila", "--path", inputPath.toString(), "-o", "barfoo", "--projectid", "I am not a number"
+        );
+        Path path = inputPath.resolve("I am not a number" + ".json");
         File file = new File(path.toString());
         assertThat(file.exists()).isFalse();
     }
@@ -79,10 +80,10 @@ public class CommandlineTest {
     @Test
     public void testLeilaValidOptions(@TempDir File tempFile) throws Exception {
         File file = new File("./src/test/fixtures/emptyProject.json");
-        String path = file.getAbsolutePath();
-        String outFile = tempFile.getAbsolutePath();
-        commandLine.execute("leila", "--path", path, "-o", outFile);
-        String output = Files.readString(Paths.get(outFile, "emptyProject.sc"));
+        Path path = file.toPath().toAbsolutePath();
+        Path outFile = tempFile.toPath().toAbsolutePath();
+        commandLine.execute("leila", "--path", path.toString(), "-o", outFile.toString());
+        String output = Files.readString(outFile.resolve("emptyProject.sc"));
         assertThat(output).contains("program emptyProject");
     }
 
