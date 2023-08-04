@@ -46,4 +46,9 @@ public class ElementInLoopBodyTest implements JsonTest {
     public void testScriptWithTwoLoopsAndOtherElements() throws IOException, ParsingException {
         assertThatFinderReports(1, new ElementInLoopBody(), "src/test/fixtures/questions/scriptWithTwoLoopsAndOtherElements.json");
     }
+
+    @Test
+    public void testTwoScriptsWithConditionalLoops() throws IOException, ParsingException {
+        assertThatFinderReports(2, new ElementInLoopBody(), "src/test/fixtures/questions/twoScriptsWithConditionalLoops.json");
+    }
 }
