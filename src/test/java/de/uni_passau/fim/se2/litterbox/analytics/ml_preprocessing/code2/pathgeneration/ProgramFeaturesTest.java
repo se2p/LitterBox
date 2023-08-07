@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,13 +28,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProgramFeaturesTest {
+    private final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
+
     ProgramFeatures cat;
 
     @BeforeEach
     void setUp() {
-        ProgramRelation.setDefaultHasher();
-
-        cat = new ProgramFeatures("cat");
+        cat = new ProgramFeatures("cat", programRelationFactory);
         cat.addFeature("39.0",
                 "(NumberLiteral)^(Key)^(KeyPressed)^(Script)_(StmtList)_(Say)_(StringLiteral)",
                 "Hi!");
@@ -57,7 +59,7 @@ class ProgramFeaturesTest {
 
     @Test
     void testIsEmpty() {
-        ProgramFeatures programFeatures = new ProgramFeatures("abby");
+        ProgramFeatures programFeatures = new ProgramFeatures("abby", programRelationFactory);
         assertTrue(programFeatures.isEmpty());
     }
 

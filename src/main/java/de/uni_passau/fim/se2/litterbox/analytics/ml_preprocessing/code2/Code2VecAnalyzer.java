@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.*;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
@@ -41,8 +42,10 @@ public class Code2VecAnalyzer extends Code2Analyzer {
             log.warning("Program was null. File name was '" + inputFile.getName() + "'");
             return Stream.empty();
         }
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-                pathType, maxPathLength, includeStage, program, includeDefaultSprites
+
+        final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
+        final PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites, programRelationFactory
         );
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContext().stream();

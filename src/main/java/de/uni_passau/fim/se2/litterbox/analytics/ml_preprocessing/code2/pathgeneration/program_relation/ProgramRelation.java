@@ -16,36 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
-
-import java.util.function.UnaryOperator;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation;
 
 public class ProgramRelation {
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
     private final String source;
     private final String target;
-    private final String hashedPath;
+    private final String path;
 
-    public ProgramRelation(String sourceName, String targetName, String path) {
+    /**
+     * Intentionally package-private, use the {@link ProgramRelationFactory} to create new instances.
+     *
+     * @param sourceName The terminal at the start of the path.
+     * @param targetName The terminal at the end of the path.
+     * @param path The path connecting the two terminals.
+     */
+    ProgramRelation(String sourceName, String targetName, String path) {
         source = sourceName;
         target = targetName;
-        hashedPath = hasher.apply(path);
-    }
-
-    public static void setNoHash() {
-        hasher = UnaryOperator.identity();
-    }
-
-    public static void setDefaultHasher() {
-        setHasher(s -> Integer.toString(s.hashCode()));
-    }
-
-    public static void setHasher(UnaryOperator<String> hasher) {
-        ProgramRelation.hasher = hasher;
+        this.path = path;
     }
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s", source, hashedPath, target);
+        return String.format("%s,%s,%s", source, path, target);
     }
 }

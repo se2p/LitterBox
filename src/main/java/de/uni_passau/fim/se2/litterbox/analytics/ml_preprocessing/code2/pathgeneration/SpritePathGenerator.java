@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -33,9 +34,9 @@ public final class SpritePathGenerator extends PathGenerator {
 
     public SpritePathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
-        super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions);
+        super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
         this.leavesMap = Collections.unmodifiableMap(extractASTLeaves());
     }
 

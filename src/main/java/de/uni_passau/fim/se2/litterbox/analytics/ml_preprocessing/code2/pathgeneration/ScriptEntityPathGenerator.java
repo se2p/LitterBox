@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.visitor.ExtractScriptLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
@@ -33,9 +34,9 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
 
     public ScriptEntityPathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
-        super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions);
+        super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
 
         List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         this.leavesMap = Collections.unmodifiableMap(extractASTLeaves(sprites));

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.*;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
@@ -44,11 +45,11 @@ public class Code2SeqAnalyzer extends Code2Analyzer {
             return Stream.empty();
         }
 
-        ProgramRelation.setNoHash();
-
+        final ProgramRelationFactory programRelationFactory = new ProgramRelationFactory();
         final PathFormatOptions pathFormatOptions = new PathFormatOptions("|", "|", "|", "", "", true, true);
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-                pathType, maxPathLength, includeStage, program, includeDefaultSprites, pathFormatOptions
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites, pathFormatOptions,
+                programRelationFactory
         );
         final GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
