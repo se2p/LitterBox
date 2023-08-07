@@ -21,14 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgen
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -38,8 +35,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -52,15 +47,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
@@ -68,7 +60,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -81,13 +72,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -259,11 +247,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(LocalIdentifier node) {
-        representation = 31;
-    }
-
-    @Override
     public void visit(Never node) {
         representation = 32;
     }
@@ -281,11 +264,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(ExpressionList node) {
         representation = 35;
-    }
-
-    @Override
-    public void visit(Type node) {
-        representation = 36;
     }
 
     @Override
@@ -349,11 +327,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(TerminationStmt node) {
-        representation = 49;
-    }
-
-    @Override
     public void visit(Qualified node) {
         representation = 50;
     }
@@ -366,11 +339,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(Touching node) {
         representation = 52;
-    }
-
-    @Override
-    public void visit(Clicked node) {
-        representation = 53;
     }
 
     @Override
@@ -409,11 +377,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ElementChoice node) {
-        representation = 61;
-    }
-
-    @Override
     public void visit(Next node) {
         representation = 62;
     }
@@ -434,11 +397,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Event node) {
-        representation = 66;
-    }
-
-    @Override
     public void visit(GreenFlag node) {
         representation = 67;
     }
@@ -449,23 +407,8 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ComparableExpr node) {
-        representation = 69;
-    }
-
-    @Override
-    public void visit(Expression node) {
-        representation = 70;
-    }
-
-    @Override
     public void visit(UnspecifiedExpression node) {
         representation = 71;
-    }
-
-    @Override
-    public void visit(BoolExpr node) {
-        representation = 72;
     }
 
     @Override
@@ -489,18 +432,8 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Color node) {
-        representation = 77;
-    }
-
-    @Override
     public void visit(FromNumber node) {
         representation = 78;
-    }
-
-    @Override
-    public void visit(NumExpr node) {
-        representation = 79;
     }
 
     @Override
@@ -609,11 +542,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(StringExpr node) {
-        representation = 101;
-    }
-
-    @Override
     public void visit(AsString node) {
         representation = 102;
     }
@@ -649,11 +577,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Position node) {
-        representation = 109;
-    }
-
-    @Override
     public void visit(MousePos node) {
         representation = 110;
     }
@@ -674,11 +597,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Stmt node) {
-        representation = 114;
-    }
-
-    @Override
     public void visit(ExpressionStmt node) {
         representation = 115;
     }
@@ -689,11 +607,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorLookStmt node) {
-        representation = 117;
-    }
-
-    @Override
     public void visit(AskAndWait node) {
         representation = 118;
     }
@@ -701,11 +614,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(ClearGraphicEffects node) {
         representation = 119;
-    }
-
-    @Override
-    public void visit(ActorSoundStmt node) {
-        representation = 120;
     }
 
     @Override
@@ -726,11 +634,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(StopAllSounds node) {
         representation = 124;
-    }
-
-    @Override
-    public void visit(CommonStmt node) {
-        representation = 125;
     }
 
     @Override
@@ -759,21 +662,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ControlStmt node) {
-        representation = 131;
-    }
-
-    @Override
-    public void visit(IfStmt node) {
-        representation = 132;
-    }
-
-    @Override
-    public void visit(DeclarationStmt node) {
-        representation = 133;
-    }
-
-    @Override
     public void visit(DeclarationAttributeAsTypeStmt node) {
         representation = 134;
     }
@@ -799,11 +687,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ListStmt node) {
-        representation = 139;
-    }
-
-    @Override
     public void visit(AddTo node) {
         representation = 140;
     }
@@ -826,11 +709,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(ReplaceItem node) {
         representation = 144;
-    }
-
-    @Override
-    public void visit(SpriteLookStmt node) {
-        representation = 145;
     }
 
     @Override
@@ -914,11 +792,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(SpriteMotionStmt node) {
-        representation = 162;
-    }
-
-    @Override
     public void visit(GlideSecsTo node) {
         representation = 163;
     }
@@ -964,11 +837,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Touchable node) {
-        representation = 172;
-    }
-
-    @Override
     public void visit(Edge node) {
         representation = 173;
     }
@@ -1001,11 +869,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(StringType node) {
         representation = 179;
-    }
-
-    @Override
-    public void visit(Identifier node) {
-        representation = 180;
     }
 
     @Override
@@ -1081,11 +944,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(FixedAttribute node) {
         representation = 195;
-    }
-
-    @Override
-    public void visit(Attribute node) {
-        representation = 196;
     }
 
     @Override
@@ -1169,11 +1027,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(DataExpr node) {
-        representation = 213;
-    }
-
-    @Override
     public void visit(Variable node) {
         representation = 214;
     }
@@ -1199,11 +1052,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Metadata node) {
-        representation = 219;
-    }
-
-    @Override
     public void visit(MetaMetadata node) {
         representation = 220;
     }
@@ -1224,11 +1072,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ResourceMetadata node) {
-        representation = 224;
-    }
-
-    @Override
     public void visit(ImageMetadata node) {
         representation = 225;
     }
@@ -1236,11 +1079,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(SoundMetadata node) {
         representation = 226;
-    }
-
-    @Override
-    public void visit(MonitorMetadata node) {
-        representation = 227;
     }
 
     @Override
@@ -1259,11 +1097,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(BlockMetadata node) {
-        representation = 231;
-    }
-
-    @Override
     public void visit(DataBlockMetadata node) {
         representation = 232;
     }
@@ -1276,11 +1109,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     @Override
     public void visit(TopNonDataBlockMetadata node) {
         representation = 234;
-    }
-
-    @Override
-    public void visit(MutationMetadata node) {
-        representation = 235;
     }
 
     @Override
@@ -1353,15 +1181,7 @@ class PathRepresentationVisitor implements ScratchVisitor {
         representation = 249;
     }
 
-    @Override
-    public void visit(LoopStmt node) {
-        representation = 250;
-    }
-
-    @Override
-    public void visitDefaultVisitor(ASTNode node) {
-        representation = 251;
-    }
+    // region: extension blocks
 
     @Override
     public void visit(ExtensionBlock node) {
@@ -1392,4 +1212,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
     public void visit(TranslateBlock node) {
         representation = 257;
     }
+
+    // endregion: extension blocks
 }
