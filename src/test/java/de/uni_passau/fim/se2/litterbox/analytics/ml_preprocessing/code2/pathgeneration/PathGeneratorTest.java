@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgen
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,6 +40,11 @@ class PathGeneratorTest implements JsonTest {
 
     final String[] expectedLeaves = {"LOUDNESS", "10", "hello_!", "left_right", "PITCH", "100", "draggable",
             "COLOR", "0", "1", "FORWARD", "FRONT", "NUMBER", "Size", "1", "2", "LOG", "YEAR"};
+
+    @BeforeEach
+    void setUp() {
+        ProgramRelation.setDefaultHasher();
+    }
 
     @Test
     void testGeneratePaths() throws ParsingException, IOException {

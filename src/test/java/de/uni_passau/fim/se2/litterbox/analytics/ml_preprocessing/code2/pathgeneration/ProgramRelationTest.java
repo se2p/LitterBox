@@ -38,6 +38,7 @@ class ProgramRelationTest implements JsonTest {
 
     @Test
     void testToString() {
+        ProgramRelation.setDefaultHasher();
         ProgramRelation programRelation = new ProgramRelation("GreenFlag", "Hello!",
                 "(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral)");
         assertEquals("GreenFlag,-2069003229,Hello!", programRelation.toString());

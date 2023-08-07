@@ -36,6 +36,10 @@ public class ProgramRelation {
         hasher = UnaryOperator.identity();
     }
 
+    public static void setDefaultHasher() {
+        setHasher(s -> Integer.toString(s.hashCode()));
+    }
+
     public static void setHasher(UnaryOperator<String> hasher) {
         ProgramRelation.hasher = hasher;
     }
