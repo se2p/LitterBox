@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
@@ -28,10 +28,25 @@ public class PathGeneratorFactory {
     public static PathGenerator createPathGenerator(
             PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites
     ) {
+        return createPathGenerator(
+                type, maxPathLength, includeStage, program, includeDefaultSprites, new PathFormatOptions()
+        );
+    }
+
+    public static PathGenerator createPathGenerator(
+            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
+            PathFormatOptions pathFormatOptions
+    ) {
         return switch (type) {
-            case SCRIPT -> new ScriptEntityPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
-            case PROGRAM -> new ProgramPathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
-            default -> new SpritePathGenerator(program, maxPathLength, includeStage, includeDefaultSprites);
+            case SCRIPT -> new ScriptEntityPathGenerator(
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+            );
+            case PROGRAM -> new ProgramPathGenerator(
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+            );
+            default -> new SpritePathGenerator(
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+            );
         };
     }
 }

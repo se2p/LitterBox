@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,12 +33,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PathGeneratorTest implements JsonTest {
 
     final String[] expectedLeaves = {"LOUDNESS", "10", "hello_!", "left_right", "PITCH", "100", "draggable",
             "COLOR", "0", "1", "FORWARD", "FRONT", "NUMBER", "Size", "1", "2", "LOG", "YEAR"};
+
+    @BeforeEach
+    void setUp() {
+        ProgramRelation.setDefaultHasher();
+    }
 
     @Test
     void testGeneratePaths() throws ParsingException, IOException {
@@ -61,19 +68,15 @@ class PathGeneratorTest implements JsonTest {
         ProgramFeatures cat = pathContextsPerSprite.get(positionCat);
         assertEquals("cat", cat.getName());
         assertEquals(3, cat.getFeatures().size());
-        assertEquals("39,625791294,hi_!",
-                cat.getFeatures().get(0).toString());
-        assertEquals("39,1493538624,Show",
-                cat.getFeatures().get(1).toString());
-        assertEquals("hi_!,-547448667,Show",
-                cat.getFeatures().get(2).toString());
+        assertEquals("39,625791294,hi_!", cat.getFeatures().get(0).toString());
+        assertEquals("39,1493538624,Show", cat.getFeatures().get(1).toString());
+        assertEquals("hi_!,-547448667,Show", cat.getFeatures().get(2).toString());
 
         // Sprite abby
         ProgramFeatures abby = pathContextsPerSprite.get(positionAbby);
         assertEquals("abby", abby.getName());
         assertEquals(1, abby.getFeatures().size());
-        assertEquals("GreenFlag,-2069003229,hello_!",
-                abby.getFeatures().get(0).toString());
+        assertEquals("GreenFlag,-2069003229,hello_!", abby.getFeatures().get(0).toString());
     }
 
     @Test
@@ -113,9 +116,7 @@ class PathGeneratorTest implements JsonTest {
                 .stream().map(ProgramRelation::toString).toList();
         assertEquals(expectedPathCount, actualPaths.size());
 
-        for (String expectedPath : expectedPaths) {
-            assertTrue(actualPaths.contains(expectedPath), expectedPath);
-        }
+        assertThat(actualPaths).containsExactlyElementsIn(expectedPaths);
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] pathType={0}, includeStage={1}")

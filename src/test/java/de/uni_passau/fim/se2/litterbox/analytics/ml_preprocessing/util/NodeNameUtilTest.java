@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -57,11 +58,13 @@ class NodeNameUtilTest {
 
     private static Stream<Arguments> getRegularNormalizedPairs() {
         return Stream.of(
+                Arguments.of("download", "download (48)"),
+                Arguments.of("pinos|de|boliche|removebg|preview", "pinos-de-boliche_1975-89-removebg-preview3"),
                 Arguments.of("test|one", "test ONE"),
-                Arguments.of("test|two", "test\ntwo"),
-                Arguments.of("test|three", "test,\"three'"),
-                Arguments.of("testαλfive", "testαλfive"),
                 Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts"),
+                Arguments.of("test|three", "test,\"three'"),
+                Arguments.of("test|two", "test\ntwo"),
+                Arguments.of("testαλfive", "testαλfive"),
                 Arguments.of("αλ|λϝδ|δ", "αλΛϝδΔ")
         );
     }
@@ -94,6 +97,17 @@ class NodeNameUtilTest {
         );
     }
 
+    @Test
+    void regressionTestTruncatedWithTrailingDelimiter() {
+        final ActorDefinition actor = buildActor("kisspng-digital-cameras-computer-icons-clip-art-encapsulat-photo"
+                + "-camera-png-icons-and-graphics-page-9-png-5cec96d4d759e2");
+        // 99 characters long, truncating to 100 would cause a trailing |
+        final String expected = "kisspng|digital|cameras|computer|icons|clip|art|encapsulat|photo|camera|png|icons"
+                + "|and|graphics|page";
+
+        assertEquals(Optional.of(expected), NodeNameUtil.normalizeSpriteName(actor));
+    }
+
     private static ActorDefinition buildActor(final String name) {
         final var actorId = new StrId(name);
         final var decls = new DeclarationStmtList(Collections.emptyList());
@@ -109,4 +123,5 @@ class NodeNameUtilTest {
 
         return new ActorDefinition(ActorType.getSprite(), actorId, decls, setStmts, procDefs, scripts, metadata);
     }
+
 }

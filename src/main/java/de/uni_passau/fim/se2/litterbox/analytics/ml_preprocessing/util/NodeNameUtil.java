@@ -26,12 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
-
-    private static final Logger log = Logger.getLogger(NodeNameUtil.class.getName());
 
     private NodeNameUtil() {
         throw new IllegalCallerException("utility class constructor");
@@ -45,14 +42,23 @@ public final class NodeNameUtil {
      */
     public static Optional<String> normalizeSpriteName(final ActorDefinition actor) {
         final String spriteName = actor.getIdent().getName();
-        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName)
+        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
                 .filter(subtoken -> !subtoken.matches("^\\d+$"))
                 .collect(Collectors.joining("|"));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(StringUtils.truncate(splitName, 100));
+            return Optional.of(truncateName(splitName));
+        }
+    }
+
+    private static String truncateName(final String name) {
+        final String truncated = StringUtils.truncate(name, 100);
+        if (truncated.endsWith("|")) {
+            return StringUtils.truncate(truncated, 99);
+        } else {
+            return truncated;
         }
     }
 

@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
-public enum PathType {
-    PROGRAM,
-    SPRITE,
-    SCRIPT
+public record PathFormatOptions(
+        String delimiter, String upSymbol, String downSymbol, String startSymbol, String endSymbol,
+        boolean useNodeId, boolean normaliseTokens
+) {
+    public PathFormatOptions() {
+        this("_", "^", "_", "(", ")", false, false);
+    }
 }

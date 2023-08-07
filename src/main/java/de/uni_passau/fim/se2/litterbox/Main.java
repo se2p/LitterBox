@@ -21,8 +21,9 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2SeqAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -54,6 +55,7 @@ import java.util.concurrent.Callable;
                 // machine learning preprocessors
                 Main.Code2vecSubcommand.class,
                 Main.GgnnSubcommand.class,
+                Main.Code2SeqSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -458,17 +460,7 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    @CommandLine.Command(
-            name = "code2vec",
-            description = "Transform Scratch projects into the code2vec input format."
-    )
-    static class Code2vecSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--nohash"},
-                description = "Do not hash paths."
-        )
-        boolean noHash;
+    private abstract static class Code2Subcommand extends MLPreprocessorSubcommand {
 
         @CommandLine.Option(
                 names = {"--max-path-length"},
@@ -497,14 +489,29 @@ public class Main implements Callable<Integer> {
                 );
             }
         }
+    }
+
+    @CommandLine.Command(
+            name = "code2vec",
+            description = "Transform Scratch projects into the code2vec input format."
+    )
+    static class Code2vecSubcommand extends Code2Subcommand {
 
         @Override
         protected Code2VecAnalyzer getAnalyzer() {
-            if (noHash) {
-                ProgramRelation.setNoHash();
-            }
-
             return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "code2seq",
+            description = "Transform Scratch projects into the code2seq input format."
+    )
+    static class Code2SeqSubcommand extends Code2Subcommand {
+
+        @Override
+        protected Code2SeqAnalyzer getAnalyzer() {
+            return new Code2SeqAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
         }
     }
 

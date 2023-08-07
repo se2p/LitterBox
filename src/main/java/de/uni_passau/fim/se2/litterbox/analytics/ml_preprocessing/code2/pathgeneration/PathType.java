@@ -16,20 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
-import java.util.List;
-import java.util.Objects;
-
-public class GeneratePathTask {
-
-    private final PathGenerator pathGenerator;
-
-    public GeneratePathTask(PathGenerator pathGenerator) {
-        this.pathGenerator = Objects.requireNonNull(pathGenerator);
-    }
-
-    public List<ProgramFeatures> createContextForCode2Vec() {
-        return pathGenerator.generatePaths();
-    }
+public enum PathType {
+    PROGRAM,
+    SPRITE,
+    SCRIPT
 }

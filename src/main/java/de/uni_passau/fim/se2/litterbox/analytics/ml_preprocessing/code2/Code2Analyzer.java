@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.PathType;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramFeatures;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramRelation;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
@@ -31,16 +33,17 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
+abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
-    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(Code2Analyzer.class.getName());
 
-    private final PathType pathType;
-    private final int maxPathLength;
+    protected final PathType pathType;
+    protected final int maxPathLength;
 
-    public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
+    protected Code2Analyzer(
+            final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
+    ) {
         super(commonOptions);
 
         this.maxPathLength = maxPathLength;
@@ -55,17 +58,12 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     }
 
     @Override
-    public Stream<ProgramFeatures> process(File inputFile) {
-        final Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Stream.empty();
+    protected void check(File fileEntry, Path csv) throws IOException {
+        if (this.pathType == PathType.SCRIPT) {
+            runPerScriptProcessingSteps(fileEntry);
+        } else {
+            super.check(fileEntry, csv);
         }
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-                pathType, maxPathLength, includeStage, program, includeDefaultSprites
-        );
-        GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        return generatePathTask.createContextForCode2Vec().stream();
     }
 
     @Override
@@ -78,22 +76,13 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
     }
 
-    @Override
-    protected void check(File fileEntry, Path csv) throws IOException {
-        if (this.pathType == PathType.SCRIPT) {
-            runPerScriptProcessingSteps(fileEntry);
-        } else {
-            super.check(fileEntry, csv);
-        }
-    }
-
-    private void runPerScriptProcessingSteps(File inputFile) {
+    protected void runPerScriptProcessingSteps(File inputFile) throws IOException {
         final var output = process(inputFile);
         var outputList = output.toList();
         writeResultPerScriptToOutput(inputFile, outputList);
     }
 
-    private void writeResultPerScriptToOutput(File inputFile, List<ProgramFeatures> result) {
+    protected void writeResultPerScriptToOutput(File inputFile, List<ProgramFeatures> result) {
         if (result.isEmpty()) {
             return;
         }
@@ -105,7 +94,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         }
     }
 
-    private void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) {
+    protected void writeResultPerScriptToFile(File inputFile, List<ProgramFeatures> result) {
         for (ProgramFeatures token : result) {
             Path outName = outputFileName(inputFile);
             Path outputFile = outputPath.getPath().resolve(outName + "_" + token.getName());
@@ -117,7 +106,7 @@ public class Code2VecAnalyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         }
     }
 
-    private static void writeProgramFeaturesToFile(Path outputFile, ProgramFeatures token) {
+    protected static void writeProgramFeaturesToFile(Path outputFile, ProgramFeatures token) {
         try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
             bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
             bw.flush();

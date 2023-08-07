@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -36,9 +37,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 class GeneratePathTaskTest implements JsonTest {
 
-    static final String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
-    static final String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
-    static final String STAGE_PATHS = "stage GreenFlag,1809747443,10";
+    final static String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
+    final static String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
+    final static String STAGE_PATHS = "stage GreenFlag,1809747443,10";
 
     /**
      * the only sprite that has a script contains more than one leaf: Cat
@@ -50,12 +51,17 @@ class GeneratePathTaskTest implements JsonTest {
             "GreenFlag,-2069003229,hello_!"
     );
 
+    @BeforeEach
+    void setUp() {
+        ProgramRelation.setDefaultHasher();
+    }
+
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContext();
         assertThat(pathContextForCode2Vec).isEmpty();
     }
 
@@ -65,7 +71,7 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
         if (includeStage) {
             assertThat(pathContextsForCode2Vec).hasSize(3);
@@ -95,7 +101,7 @@ class GeneratePathTaskTest implements JsonTest {
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
-        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
         assertThat(pathContextsForCode2Vec).hasSize(1);
         List<ProgramRelation> programRelations = pathContextsForCode2Vec.get(0).getFeatures();
 
@@ -115,7 +121,7 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
         List<String> pathContexts = pathContextsForCode2Vec
                 .stream()
@@ -139,7 +145,7 @@ class GeneratePathTaskTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
-        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContextForCode2Vec();
+        List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
         List<String> pathContexts = pathContextsForCode2Vec
                 .stream()
                 .map(ProgramFeatures::toStringWithoutNodeName)

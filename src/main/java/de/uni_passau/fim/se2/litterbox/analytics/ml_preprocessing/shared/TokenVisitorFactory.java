@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUti
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public final class TokenVisitorFactory {
+    private static final String DEFAULT_DELIMITER = "_";
+
     private TokenVisitorFactory() {
         throw new IllegalCallerException("utility class");
     }
@@ -33,10 +35,21 @@ public final class TokenVisitorFactory {
      * @return A token visitor that can be used in {@link #getToken(BaseTokenVisitor, ASTNode)}.
      */
     public static BaseTokenVisitor getDefaultTokenVisitor(final boolean normalise) {
+        return getDefaultTokenVisitorWithDelimiter(normalise, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Builds the default token visitor with the given delimiter.
+     *
+     * @param normalise If true, {@link StringUtil#normaliseString(String, String)} is used to normalise user-defined
+     *                  values with the given delimiter.
+     * @return A token visitor that can be used in {@link #getToken(BaseTokenVisitor, ASTNode)}.
+     */
+    public static BaseTokenVisitor getDefaultTokenVisitorWithDelimiter(final boolean normalise, String delimiter) {
         return new BaseTokenVisitor(normalise) {
             @Override
             protected String normaliseToken(String token) {
-                return StringUtil.normaliseString(token);
+                return StringUtil.normaliseString(token, delimiter);
             }
         };
     }
@@ -74,6 +87,20 @@ public final class TokenVisitorFactory {
      * @return The normalised token representing the given node.
      */
     public static String getNormalisedToken(final ASTNode node) {
-        return getToken(getDefaultTokenVisitor(true), node);
+        return getNormalisedTokenWithDelimiter(node, DEFAULT_DELIMITER);
+    }
+
+    /**
+     * Retrieves the normalised token representing the given node with the given delimiter between the subtokens.
+     *
+     * <p>Uses the default normalising token visitor with delimiter as described in
+     * {@link #getDefaultTokenVisitorWithDelimiter(boolean, String)}.
+     *
+     * @param node A node of the AST.
+     * @param delimiter The delimiter that should be used to separate the subtokens.
+     * @return The normalised token representing the given node.
+     */
+    public static String getNormalisedTokenWithDelimiter(final ASTNode node, String delimiter) {
+        return getToken(getDefaultTokenVisitorWithDelimiter(true, delimiter), node);
     }
 }
