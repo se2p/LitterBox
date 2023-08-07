@@ -21,10 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgen
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,6 +38,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 class GeneratePathTaskTest implements JsonTest {
 
+    private final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
     final static String CAT_PATHS = "cat 39,625791294,hi_! 39,1493538624,Show hi_!,-547448667,Show";
     final static String ABBY_PATHS = "abby GreenFlag,-2069003229,hello_!";
     final static String STAGE_PATHS = "stage GreenFlag,1809747443,10";
@@ -51,15 +53,11 @@ class GeneratePathTaskTest implements JsonTest {
             "GreenFlag,-2069003229,hello_!"
     );
 
-    @BeforeEach
-    void setUp() {
-        ProgramRelation.setDefaultHasher();
-    }
-
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program,
+                false, programRelationFactory);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContext();
         assertThat(pathContextForCode2Vec).isEmpty();
@@ -69,7 +67,8 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage,
+                program, false, programRelationFactory);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
@@ -98,7 +97,8 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextCustomProcedures(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/ml_preprocessing/shared/custom_blocks_simple.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage, program, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage,
+                program, false, programRelationFactory);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
@@ -119,7 +119,8 @@ class GeneratePathTaskTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testCreateContextForCode2VecPerScripts(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage,
+                program, false, programRelationFactory);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
@@ -141,9 +142,12 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = {true, false})
-    void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage) throws IOException, ParsingException {
+    void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage)
+            throws IOException, ParsingException
+    {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
-        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage, program, false);
+        PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage,
+                program, false, programRelationFactory);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
         List<String> pathContexts = pathContextsForCode2Vec

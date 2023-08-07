@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class PathGeneratorFactory {
@@ -26,26 +27,31 @@ public class PathGeneratorFactory {
     }
 
     public static PathGenerator createPathGenerator(
-            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites
+            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
+            ProgramRelationFactory programRelationFactory
     ) {
         return createPathGenerator(
-                type, maxPathLength, includeStage, program, includeDefaultSprites, new PathFormatOptions()
+                type, maxPathLength, includeStage, program, includeDefaultSprites, new PathFormatOptions(),
+                programRelationFactory
         );
     }
 
     public static PathGenerator createPathGenerator(
             PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
         return switch (type) {
             case SCRIPT -> new ScriptEntityPathGenerator(
-                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory
             );
             case PROGRAM -> new ProgramPathGenerator(
-                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory
             );
             default -> new SpritePathGenerator(
-                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory
             );
         };
     }

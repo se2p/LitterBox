@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -38,16 +39,18 @@ public abstract class PathGenerator {
     protected final boolean includeDefaultSprites;
 
     private final PathFormatOptions pathFormatOptions;
+    private final ProgramRelationFactory programRelationFactory;
 
     protected PathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
         this.program = program;
         this.includeDefaultSprites = includeDefaultSprites;
         this.pathFormatOptions = pathFormatOptions;
+        this.programRelationFactory = programRelationFactory;
     }
 
     private static List<ASTNode> getTreeStack(ASTNode node) {
@@ -84,7 +87,7 @@ public abstract class PathGenerator {
     protected abstract Stream<ASTNode> getLeaves();
 
     protected final ProgramFeatures getProgramFeatures(final String featureLabel, final List<ASTNode> astLeaves) {
-        final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel);
+        final ProgramFeatures programFeatures = new ProgramFeatures(featureLabel, programRelationFactory);
 
         for (int i = 0; i < astLeaves.size(); i++) {
             for (int j = i + 1; j < astLeaves.size(); j++) {

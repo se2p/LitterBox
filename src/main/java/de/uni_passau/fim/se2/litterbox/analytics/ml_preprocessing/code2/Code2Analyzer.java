@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.PathType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramFeatures;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
