@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,6 +50,11 @@ class GeneratePathTaskTest implements JsonTest {
             "hi_!,-547448667,Show",
             "GreenFlag,-2069003229,hello_!"
     );
+
+    @BeforeEach
+    void setUp() {
+        ProgramRelation.setDefaultHasher();
+    }
 
     @Test
     void testCreateContextEmptyProgram() throws ParsingException, IOException {

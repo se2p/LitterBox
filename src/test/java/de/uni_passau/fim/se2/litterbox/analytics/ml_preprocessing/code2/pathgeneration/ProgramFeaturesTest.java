@@ -30,6 +30,8 @@ class ProgramFeaturesTest {
 
     @BeforeEach
     void setUp() {
+        ProgramRelation.setDefaultHasher();
+
         cat = new ProgramFeatures("cat");
         cat.addFeature("39.0",
                 "(NumberLiteral)^(Key)^(KeyPressed)^(Script)_(StmtList)_(Say)_(StringLiteral)",
