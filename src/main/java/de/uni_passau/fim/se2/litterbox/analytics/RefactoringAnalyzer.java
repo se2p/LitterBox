@@ -179,14 +179,14 @@ public class RefactoringAnalyzer extends Analyzer {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
             reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
         } else if (FilenameUtils.getExtension(reportFileName.toString()).equals("csv")) {
-            CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(
+            try (CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(
                     reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet()
-            );
-            reportGenerator.generateReport(
-                    index, program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
-                    programExtractionTime, refactoringSearchTime
-            );
-            reportGenerator.close();
+            )) {
+                reportGenerator.generateReport(
+                        index, program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
+                        programExtractionTime, refactoringSearchTime
+                );
+            }
         } else {
             throw new IllegalArgumentException(
                     "Unknown output file type: " + reportFileName + ". "

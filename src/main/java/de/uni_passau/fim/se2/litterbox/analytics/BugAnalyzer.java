@@ -100,11 +100,11 @@ public class BugAnalyzer extends Analyzer {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(
-                        reportFileName, detectorNames, outputPerScript
-                );
-                reportGenerator.generateReport(program, issues);
-                reportGenerator.close();
+                try (CSVReportGenerator reportGenerator
+                             = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript)
+                ) {
+                    reportGenerator.generateReport(program, issues);
+                }
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);
             }
