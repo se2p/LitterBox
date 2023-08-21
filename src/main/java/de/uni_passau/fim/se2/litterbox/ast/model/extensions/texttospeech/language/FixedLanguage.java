@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class FixedLanguage extends AbstractNode implements Language, ASTLeaf {
+public class FixedLanguage extends AbstractNode implements Language, FixedNodeOption {
     private final BlockMetadata metadata;
-    private FixedLanguageType type;
+    private final FixedLanguageType type;
 
     public FixedLanguage(String typeName, BlockMetadata metadata) {
         super(metadata);
@@ -39,6 +39,11 @@ public class FixedLanguage extends AbstractNode implements Language, ASTLeaf {
 
     public FixedLanguageType getType() {
         return type;
+    }
+
+    @Override
+    public String getTypeName() {
+        return type.getType();
     }
 
     @Override
@@ -67,10 +72,10 @@ public class FixedLanguage extends AbstractNode implements Language, ASTLeaf {
 
     public enum FixedLanguageType {
 
-        ARABIC("ar"), CHINESE("zh-cn"), DANISH("da"), DUTCH("nl"), ENGLISH("en"), FRENCH("fr"), GERMAN("de"), HINDI("hi"),
-        ICELANDIC("is"), ITALIAN("it"), JAPANESE("ja"), KOREAN("ko"), NORWEGIAN("nb"), POLISH("pl"), PORTUGUESE_BR("pt-br"),
-        PORTUGUESE("pt"), ROMANIAN("ro"), RUSSIAN("ru"), SPANISH("es"), SPANISH_419("es-419"), SWEDISH("sv"), TURKISH("tr"),
-        WELSH("cy");
+        ARABIC("ar"), CHINESE("zh-cn"), DANISH("da"), DUTCH("nl"), ENGLISH("en"), FRENCH("fr"), GERMAN("de"),
+        HINDI("hi"), ICELANDIC("is"), ITALIAN("it"), JAPANESE("ja"), KOREAN("ko"), NORWEGIAN("nb"), POLISH("pl"),
+        PORTUGUESE_BR("pt-br"), PORTUGUESE("pt"), ROMANIAN("ro"), RUSSIAN("ru"), SPANISH("es"), SPANISH_419("es-419"),
+        SWEDISH("sv"), TURKISH("tr"), WELSH("cy");
 
         private final String type;
 

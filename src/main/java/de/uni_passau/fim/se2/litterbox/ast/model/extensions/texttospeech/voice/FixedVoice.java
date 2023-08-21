@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class FixedVoice extends AbstractNode implements Voice, ASTLeaf {
+public class FixedVoice extends AbstractNode implements Voice, FixedNodeOption {
     private final BlockMetadata metadata;
-    private FixedVoiceType type;
+    private final FixedVoiceType type;
 
     public FixedVoice(String typeName, BlockMetadata metadata) {
         super(metadata);
@@ -39,6 +39,11 @@ public class FixedVoice extends AbstractNode implements Voice, ASTLeaf {
 
     public FixedVoiceType getType() {
         return type;
+    }
+
+    @Override
+    public String getTypeName() {
+        return type.getType();
     }
 
     @Override
