@@ -45,10 +45,26 @@ class AstNodeUtilTest implements JsonTest {
     @ValueSource(booleans = {true, false})
     void testGetActors(boolean includeStage) throws Exception {
         final Program program = getAST("src/test/fixtures/multipleSprites.json");
-        final List<ActorDefinition> actors = AstNodeUtil.getActors(program, includeStage);
+        final List<ActorDefinition> actors = AstNodeUtil.getActors(program, includeStage).toList();
 
         int expectedActorCount = includeStage ? 3 : 2;
         assertThat(actors).hasSize(expectedActorCount);
+
+        if (!includeStage) {
+            assertAll(actors.stream().map(actor -> () -> assertThat(actor.isStage()).isFalse()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testGetActorsWithoutDefault(boolean includeStage) throws Exception {
+        final Program program = getAST("src/test/fixtures/similarButNotSame.json");
+        final List<ActorDefinition> allActors = AstNodeUtil.getActors(program, includeStage).toList();
+        final List<ActorDefinition> actors = AstNodeUtil.getActorsWithoutDefaultSprites(program, includeStage).toList();
+
+        int expectedActorCount = includeStage ? 2 : 1;
+        assertThat(actors).hasSize(expectedActorCount);
+        assertThat(allActors).hasSize(expectedActorCount + 1);
 
         if (!includeStage) {
             assertAll(actors.stream().map(actor -> () -> assertThat(actor.isStage()).isFalse()));

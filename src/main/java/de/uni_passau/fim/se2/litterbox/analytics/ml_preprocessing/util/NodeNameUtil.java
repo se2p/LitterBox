@@ -62,6 +62,14 @@ public final class NodeNameUtil {
         }
     }
 
+    /**
+     * Checks if the actor has a default name that was generated upon actor creation by Scratch itself.
+     *
+     * <p>A default name is a translation of ‘sprite’ ({@link Constants#DEFAULT_SPRITE_NAMES}), followed by a number.
+     *
+     * @param actor Some actor.
+     * @return True, if the actor has an automatically generated name.
+     */
     public static boolean hasDefaultName(final ActorDefinition actor) {
         // no special replacements except removal of the numbers needed: if the non-numeric part is not in the list of
         // known default names, it is not a default name
