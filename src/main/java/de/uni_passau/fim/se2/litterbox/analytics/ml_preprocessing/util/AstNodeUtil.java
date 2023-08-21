@@ -26,10 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class AstNodeUtil {
     private AstNodeUtil() {
@@ -44,12 +44,26 @@ public class AstNodeUtil {
                 || node instanceof SoundMetadataList;
     }
 
-    public static List<ActorDefinition> getActors(final Program program, boolean includeStage) {
-        return program.getActorDefinitionList()
+    /**
+     * Gets all actors in the program except for the ones that have a default name.
+     *
+     * <p>If a sprite is ‘default’ is only determined by its name
+     * (see {@link NodeNameUtil#hasDefaultName(ActorDefinition)}).
+     *
+     * @param program Some program.
+     * @param includeStage True, if the stage should be included as an actor.
+     * @return The actors in the given program.
+     */
+    public static Stream<ActorDefinition> getActorsWithoutDefaultSprites(final Program program, boolean includeStage) {
+        return getActors(program, includeStage).filter(Predicate.not(NodeNameUtil::hasDefaultName));
+    }
+
+    public static Stream<ActorDefinition> getActors(final Program program, boolean includeStage) {
+        return program
+                .getActorDefinitionList()
                 .getDefinitions()
                 .stream()
-                .filter(actor -> includeStage || actor.isSprite())
-                .toList();
+                .filter(actor -> includeStage || actor.isSprite());
     }
 
     /**

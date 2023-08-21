@@ -38,14 +38,14 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
 
-        List<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
+        Stream<ActorDefinition> sprites = AstNodeUtil.getActors(program, includeStage);
         this.leavesMap = Collections.unmodifiableMap(extractASTLeaves(sprites));
     }
 
-    private Map<ScriptEntity, List<ASTNode>> extractASTLeaves(List<ActorDefinition> sprites) {
+    private Map<ScriptEntity, List<ASTNode>> extractASTLeaves(Stream<ActorDefinition> sprites) {
         ExtractScriptLeavesVisitor extractionVisitor = new ExtractScriptLeavesVisitor(program.getProcedureMapping());
 
-        for (ActorDefinition sprite : sprites) {
+        sprites.sequential().forEach(sprite -> {
             for (Script script : sprite.getScripts().getScriptList()) {
                 script.accept(extractionVisitor);
             }
@@ -53,7 +53,7 @@ public final class ScriptEntityPathGenerator extends PathGenerator {
             for (ProcedureDefinition procedure : sprite.getProcedureDefinitionList().getList()) {
                 procedure.accept(extractionVisitor);
             }
-        }
+        });
 
         return extractionVisitor.getLeaves();
     }
