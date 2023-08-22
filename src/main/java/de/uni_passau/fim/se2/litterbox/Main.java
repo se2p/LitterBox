@@ -590,6 +590,24 @@ public class Main implements Callable<Integer> {
         )
         boolean sequencePerScript = false;
 
+        @CommandLine.Option(
+                names = {"--abstract-fixed-node-options"},
+                description = "Replace fixed node options with abstract token"
+        )
+        boolean abstractFixedNodeOption = false;
+
+        @CommandLine.Option(
+                names = {"--statement-level"},
+                description = "Generate a sequence consisting of only statement tokens"
+        )
+        boolean statementLevel = false;
+
+        @CommandLine.Option(
+                names = {"--masked-statement-id"},
+                description = "ID of the statement to mask. Default: no statement to mask"
+        )
+        String maskedStatementId = null;
+
         @Override
         protected TokenizingAnalyzer getAnalyzer() {
             if (wholeProgram && sequencePerScript) {
@@ -599,7 +617,9 @@ public class Main implements Callable<Integer> {
                 );
             }
 
-            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript);
+            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
+                    statementLevel, maskedStatementId);
+
         }
     }
 }

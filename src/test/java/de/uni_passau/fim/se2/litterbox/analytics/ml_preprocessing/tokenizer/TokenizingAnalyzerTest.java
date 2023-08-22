@@ -338,6 +338,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                 abstractTokens,
                 ActorNameNormalizer.getDefault()
         );
-        return new TokenizingAnalyzer(common, sequencePerScript);
+        return new TokenizingAnalyzer(common, false, false, false,
+                null);
     }
 }

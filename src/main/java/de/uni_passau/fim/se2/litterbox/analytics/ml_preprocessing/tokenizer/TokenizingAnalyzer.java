@@ -33,6 +33,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
@@ -40,15 +41,21 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
 
     private final boolean sequencePerScript;
 
+    private final BiFunction<Program, ASTNode, List<String>> tokenizeFunction;
+
     /**
      * An analyzer that flattens the program into a token sequence.
      *
      * @param commonOptions     The common ML preprocessor options.
      * @param sequencePerScript Generate one token sequence per script instead of one per actor.
+     * @param statementLevel    Generate a sequence consisting of only statement tokens
      */
     public TokenizingAnalyzer(
             final MLPreprocessorCommonOptions commonOptions,
-            boolean sequencePerScript
+            final boolean sequencePerScript,
+            final boolean abstractFixedNodeOptions,
+            final boolean statementLevel,
+            final String maskedStatementId
     ) {
         super(commonOptions);
 
@@ -60,6 +67,14 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
         this.objectMapper = new ObjectMapper();
 
         this.sequencePerScript = sequencePerScript;
+
+        if (statementLevel) {
+            tokenizeFunction = (program, astNode) -> StatementLevelTokenizer.tokenize(program, astNode,
+                    this.abstractTokens, maskedStatementId);
+        } else {
+            tokenizeFunction = ((program, astNode) ->
+                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions));
+        }
     }
 
     @Override
@@ -108,9 +123,9 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
                     .getList().stream().map(ASTNode.class::cast);
 
             return Stream.concat(procedures, scripts)
-                    .map(node -> Tokenizer.tokenize(program, node, abstractTokens));
+                    .map(node -> tokenizeFunction.apply(program, node));
         } else {
-            return Stream.of(Tokenizer.tokenize(program, actor, abstractTokens));
+            return Stream.of(tokenizeFunction.apply(program, actor));
         }
     }
 
