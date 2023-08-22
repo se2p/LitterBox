@@ -32,7 +32,7 @@ public class VariableInScript extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        variablesInScript.add(node.getName().getName());
+        variablesInScript.add("[var]" + node.getName().getName() + "[/var]");
     }
 
     @Override

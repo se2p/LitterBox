@@ -5,7 +5,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -74,40 +73,34 @@ public class ElementInLoopBody extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        elementsInScript.add(node.getName().getName());
+        elementsInScript.add("[var]" + node.getName().getName() + "[/var]");
         if (insideLoop) {
-            elementsInLoop.add(node.getName().getName());
-        }
-    }
-
-    @Override
-    public void visit(BoolLiteral node) {
-        elementsInScript.add(Arrays.toString(node.toSimpleStringArray()));
-        if (insideLoop) {
-            elementsInLoop.add(Arrays.toString(node.toSimpleStringArray()));
+            elementsInLoop.add("[var]" + node.getName().getName() + "[/var]");
         }
     }
 
     @Override
     public void visit(NumberLiteral node) {
-        elementsInScript.add(String.valueOf(node.getValue()));
+        elementsInScript.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         if (insideLoop) {
-            elementsInLoop.add(String.valueOf(node.getValue()));
+            elementsInLoop.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         }
     }
 
     @Override
     public void visit(StringLiteral node) {
-        elementsInScript.add(node.getText());
+        elementsInScript.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         if (insideLoop) {
-            elementsInLoop.add(node.getText());
+            elementsInLoop.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         }
     }
 
     @Override
     public void visit(Qualified node) {
         // Don't add actor to lists
-        visit(node.getSecond());
+        if (node.getSecond() instanceof Variable) {
+            visit((Variable) node.getSecond());
+        }
     }
 
     @Override
