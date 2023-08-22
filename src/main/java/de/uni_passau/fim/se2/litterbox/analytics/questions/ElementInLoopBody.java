@@ -37,8 +37,8 @@ public class ElementInLoopBody extends AbstractIssueFinder {
         if (elementsInLoop.size() > 0 && elementsInLoop.size() < elementsInScript.size()) {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withMetadata(node.getMetadata());
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.HINT_VARIABLE1, elementsInScript.toString());
-            hint.setParameter(Hint.HINT_VARIABLE2, elementsInLoop.toString());
+            hint.setParameter(Hint.CHOICES, elementsInScript.toString());
+            hint.setParameter(Hint.ANSWER, elementsInLoop.toString());
             addIssue(builder.withCurrentNode(node).withHint(hint));
         }
     }

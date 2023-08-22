@@ -25,7 +25,7 @@ public class VariableInScript extends AbstractIssueFinder {
         if (variablesInScript.size() > 0) {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withMetadata(node.getMetadata());
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.HINT_VARIABLE, variablesInScript.toString());
+            hint.setParameter(Hint.ANSWER, variablesInScript.toString());
             addIssue(builder.withCurrentNode(node).withHint(hint));
         }
     }
