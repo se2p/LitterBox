@@ -252,7 +252,9 @@ public class IssueTool {
             registerQuestionFinder(new VariableInScript(), questionFinders);
             registerQuestionFinder(new ElementInLoopBody(), questionFinders);
             registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
-            registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);}
+            registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);
+            registerQuestionFinder(new BlockControllingLoop(), questionFinders);
+        }
 
         return questionFinders;
     }
