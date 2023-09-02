@@ -132,6 +132,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
     public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
+    public static final String QUESTION_NOTE = "⇦   \u2753   ";
 
     private boolean inScript = false;
 
@@ -1986,6 +1987,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                 if (!issue.hasMultipleBlocks()) {
                     if (issue.getIssueType() == IssueType.PERFUME) {
                         issueNote.add(PERFUME_NOTE);
+                    } else if (issue.getIssueType() == IssueType.QUESTION) {
+                        issueNote.add(QUESTION_NOTE);
                     } else {
                         issueNote.add(BUG_NOTE);
                     }
@@ -1994,6 +1997,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                     if (node == (nodes.get(0))) {
                         if (issue.getIssueType() == IssueType.PERFUME) {
                             issueNote.add(PERFUME_NOTE);
+                        } else if (issue.getIssueType() == IssueType.QUESTION) {
+                            issueNote.add(QUESTION_NOTE);
                         } else {
                             issueNote.add(BUG_NOTE);
                         }
