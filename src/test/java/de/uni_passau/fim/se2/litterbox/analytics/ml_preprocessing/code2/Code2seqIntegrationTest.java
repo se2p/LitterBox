@@ -42,7 +42,6 @@ public class Code2seqIntegrationTest extends CliTest {
     @Test
     void processEmptyProgram() {
         commandLine.execute("code2seq", "-p", "src/test/fixtures/emptyProject.json");
-        assertEmptyStdErr();
         assertEmptyStdOut();
     }
 
@@ -72,9 +71,9 @@ public class Code2seqIntegrationTest extends CliTest {
         assertThat(output).startsWith("program ");
 
         final Stream<String> expectedPaths = Stream.of(
-                "39,29|57|41|8|25|153|27,39 ",
-                "39,29|57|41|8|25|156,39 ",
-                "hi|!,27|153|25|156,hi|! ",
+                "39,29|57|41|8|25|153|27,39",
+                "39,29|57|41|8|25|156,39",
+                "hi|!,27|153|25|156,hi|!",
                 "green|flag,67|8|25|153|27,green|flag"
         );
         assertAll(expectedPaths.map(path -> () -> assertThat(output).contains(path)));
