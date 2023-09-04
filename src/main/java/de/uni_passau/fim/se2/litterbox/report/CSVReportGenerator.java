@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CSVReportGenerator implements ReportGenerator {
+public class CSVReportGenerator implements ReportGenerator, AutoCloseable {
 
     private final List<String> detectors;
     private final CSVPrinter printer;
@@ -85,8 +85,9 @@ public class CSVReportGenerator implements ReportGenerator {
         }
     }
 
+    @Override
     public void close() throws IOException {
-        printer.close();
+        printer.close(true);
     }
 
     private List<String> createProjectRow(Program program, Collection<Issue> issues) {

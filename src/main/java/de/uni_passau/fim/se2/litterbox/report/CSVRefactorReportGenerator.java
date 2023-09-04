@@ -43,7 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class CSVRefactorReportGenerator {
+public class CSVRefactorReportGenerator implements AutoCloseable {
     private final List<String> headers = new ArrayList<>();
     private final List<String> refactorings;
     private final CSVPrinter printer;
@@ -141,8 +141,9 @@ public class CSVRefactorReportGenerator {
         printer.flush();
     }
 
+    @Override
     public void close() throws IOException {
-        printer.close();
+        printer.close(true);
     }
 
     protected CSVPrinter getNewPrinter(Path name, Path refactoredPath) throws IOException {
