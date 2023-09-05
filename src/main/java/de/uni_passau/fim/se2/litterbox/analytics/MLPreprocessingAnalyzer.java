@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -87,7 +88,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
         final Path outputFile = outputPath.getPath().resolve(outName);
 
         try (
-                BufferedWriter bw = Files.newBufferedWriter(outputFile);
+                BufferedWriter bw = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8);
                 PrintWriter pw = new PrintWriter(bw);
         ) {
             writeResult(inputFile, pw, result);

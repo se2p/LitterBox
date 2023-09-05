@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NodeNameUtilTest {
@@ -108,6 +109,47 @@ class NodeNameUtilTest {
         assertEquals(Optional.of(expected), NodeNameUtil.normalizeSpriteName(actor));
     }
 
+    @Test
+    void regressionTestTruncated() {
+        final ActorDefinition actor = buildActor("abcdefghij".repeat(11));
+        final String expected = "abcdefghij".repeat(10);
+
+        assertEquals(100, expected.length());
+        assertEquals(Optional.of(expected), NodeNameUtil.normalizeSpriteName(actor));
+    }
+
+    /**
+     * Multibyte characters should not be cut in half to not leave invalid Unicode at the end
+     */
+    @Test
+    void regressionTestUnicodeBoldCharacters() {
+        final String name = "abcdefghij|".repeat(8)
+                + "\uD835\uDDF1\uD835\uDDF6\uD835\uDDF3\uD835\uDDF3\uD835\uDDF2\uD835\uDDFF\uD835\uDDF2\uD835\uDDFB\uD835\uDDF0\uD835\uDDF2";
+        final Optional<String> expected = Optional.of(
+                "abcdefghij|".repeat(8)
+                + "\uD835\uDDF1\uD835\uDDF6\uD835\uDDF3\uD835\uDDF3\uD835\uDDF2\uD835\uDDFF"
+        );
+
+        final ActorDefinition actor = buildActor(name);
+        final Optional<String> normalized = NodeNameUtil.normalizeSpriteName(actor);
+
+        assertThat(normalized).isEqualTo(expected);
+    }
+
+    /**
+     * Truncate once for multibyte character, then again for | at end.
+     */
+    @Test
+    void truncateMultipleTimesAtEnd() {
+        final String name = "abcdefghij|".repeat(9) + "\uD835\uDDEA";
+        final Optional<String> expected = Optional.of("abcdefghij|".repeat(8) + "abcdefghij");
+
+        final ActorDefinition actor = buildActor(name);
+        final Optional<String> normalized = NodeNameUtil.normalizeSpriteName(actor);
+
+        assertThat(normalized).isEqualTo(expected);
+    }
+
     private static ActorDefinition buildActor(final String name) {
         final var actorId = new StrId(name);
         final var decls = new DeclarationStmtList(Collections.emptyList());
@@ -123,5 +165,4 @@ class NodeNameUtilTest {
 
         return new ActorDefinition(ActorType.getSprite(), actorId, decls, setStmts, procDefs, scripts, metadata);
     }
-
 }

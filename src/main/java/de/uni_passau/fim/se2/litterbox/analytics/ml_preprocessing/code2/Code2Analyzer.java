@@ -28,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -107,7 +108,7 @@ abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     }
 
     protected static void writeProgramFeaturesToFile(Path outputFile, ProgramFeatures token) {
-        try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
+        try (BufferedWriter bw = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8)) {
             bw.write(token.getFeatures().stream().map(ProgramRelation::toString).collect(Collectors.joining(" ")));
             bw.flush();
         } catch (IOException e) {

@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
 
+    private static final char SPLIT_DELIMITER = '|';
+
     private NodeNameUtil() {
         throw new IllegalCallerException("utility class constructor");
     }
@@ -44,22 +46,32 @@ public final class NodeNameUtil {
         final String spriteName = actor.getIdent().getName();
         final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
                 .filter(subtoken -> !subtoken.matches("^\\d+$"))
-                .collect(Collectors.joining("|"));
+                .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(truncateName(splitName));
+            final String truncated = truncateName(splitName);
+            return Optional.of(truncated);
         }
     }
 
     private static String truncateName(final String name) {
-        final String truncated = StringUtils.truncate(name, 100);
-        if (truncated.endsWith("|")) {
-            return StringUtils.truncate(truncated, 99);
-        } else {
-            return truncated;
+        if (name.length() <= 100) {
+            return name;
         }
+
+        int truncatePoint = 100;
+        while (shouldBeRemovedFromEnd(name.charAt(truncatePoint - 1))) {
+            truncatePoint -= 1;
+        }
+
+        return StringUtils.truncate(name, truncatePoint);
+    }
+
+    private static boolean shouldBeRemovedFromEnd(final char character) {
+        // should neither end with split marker '|' nor end with half of a multibyte Unicode character
+        return character == SPLIT_DELIMITER || Character.isHighSurrogate(character);
     }
 
     /**
