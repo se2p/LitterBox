@@ -246,7 +246,6 @@ public class IssueTool {
             registerPerfumeFinder(new MouseFollower(), perfumeFinders);
             registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
             registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
-            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
             registerPerfumeFinder(new NestedConditionalChecks(), perfumeFinders);
             registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
@@ -255,6 +254,7 @@ public class IssueTool {
             registerPerfumeFinder(new UsedVariables(), perfumeFinders);
             registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
             registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
+            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
         }
 
         if (LOAD_MBLOCK) {
