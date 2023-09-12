@@ -23,7 +23,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;

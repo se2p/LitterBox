@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AbstractToken;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -55,7 +57,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class StatementLevelTokenizer
         implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
@@ -63,35 +64,35 @@ public class StatementLevelTokenizer
 
     private final boolean abstractTokens;
 
-    private final String maskedStatementId;
+    private final MaskingStrategy maskingStrategy;
 
     private final ProcedureDefinitionNameMapping procedureNameMapping;
 
     private StatementLevelTokenizer(final ProcedureDefinitionNameMapping procedureNameMapping,
-                                    boolean abstractTokens,
-                                    String maskedStatementId) {
+                                    final boolean abstractTokens,
+                                    final MaskingStrategy maskingStrategy) {
         Preconditions.checkNotNull(procedureNameMapping);
 
         this.procedureNameMapping = procedureNameMapping;
         this.abstractTokens = abstractTokens;
-        this.maskedStatementId = maskedStatementId;
+        this.maskingStrategy = maskingStrategy;
     }
 
     public static List<String> tokenize(final Program program,
                                         final ASTNode node,
-                                        boolean abstractTokens,
-                                        String maskedStatementId) {
-        return tokenize(program.getProcedureMapping(), node, abstractTokens, maskedStatementId);
+                                        final boolean abstractTokens,
+                                        final MaskingStrategy maskingStrategy) {
+        return tokenize(program.getProcedureMapping(), node, abstractTokens, maskingStrategy);
     }
 
     private static List<String> tokenize(
             final ProcedureDefinitionNameMapping procedureNameMapping,
             final ASTNode node,
-            boolean abstractTokens,
-            String maskedStatementId
+            final boolean abstractTokens,
+            final MaskingStrategy maskingStrategy
     ) {
         final StatementLevelTokenizer v =
-                new StatementLevelTokenizer(procedureNameMapping, abstractTokens, maskedStatementId);
+                new StatementLevelTokenizer(procedureNameMapping, abstractTokens, maskingStrategy);
         node.accept(v);
         return v.tokens;
     }
@@ -115,17 +116,19 @@ public class StatementLevelTokenizer
     }
 
     private void visitControlBlock(final ASTNode node, final Token opcode) {
-        if (Objects.nonNull(maskedStatementId) && maskedStatementId.equals(getStatementId(node))) {
+        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
+                maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         }
         else {
             addToken(opcode);
+            visitChildren(node);
         }
-        visitChildren(node);
     }
 
     private void visit(final ASTNode node, final Token opcode) {
-        if (Objects.nonNull(maskedStatementId) && maskedStatementId.equals(getStatementId(node))) {
+        if (maskingStrategy.getMaskingType().equals(MaskingType.Statement) &&
+                maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         }
         else {

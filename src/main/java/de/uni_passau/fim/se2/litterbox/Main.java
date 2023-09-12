@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2Vec
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer.TokenizingAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -618,8 +620,7 @@ public class Main implements Callable<Integer> {
             }
 
             return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
-                    statementLevel, maskedStatementId);
-
+                    statementLevel, new MaskingStrategy(MaskingType.None, null));
         }
     }
 }

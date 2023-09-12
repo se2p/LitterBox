@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -55,8 +56,7 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
             final boolean sequencePerScript,
             final boolean abstractFixedNodeOptions,
             final boolean statementLevel,
-            final String maskedStatementId
-    ) {
+            final MaskingStrategy maskingStrategy) {
         super(commonOptions);
 
         Preconditions.checkArgument(
@@ -70,10 +70,10 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
 
         if (statementLevel) {
             tokenizeFunction = (program, astNode) -> StatementLevelTokenizer.tokenize(program, astNode,
-                    this.abstractTokens, maskedStatementId);
+                    this.abstractTokens, maskingStrategy);
         } else {
             tokenizeFunction = ((program, astNode) ->
-                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions));
+                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions, maskingStrategy));
         }
     }
 

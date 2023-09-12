@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AbstractToken;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -52,6 +54,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -95,32 +99,40 @@ public class Tokenizer
 
     private final boolean abstractFixedNodeOptions;
 
+    private final MaskingStrategy maskingStrategy;
+
     private final ProcedureDefinitionNameMapping procedureNameMapping;
 
     private Tokenizer(final ProcedureDefinitionNameMapping procedureNameMapping,
                       final boolean abstractTokens,
-                      final boolean abstractFixedNodeOptions) {
+                      final boolean abstractFixedNodeOptions,
+                      final MaskingStrategy maskingStrategy) {
         Preconditions.checkNotNull(procedureNameMapping);
 
         this.procedureNameMapping = procedureNameMapping;
         this.abstractTokens = abstractTokens;
         this.abstractFixedNodeOptions = abstractFixedNodeOptions;
+        this.maskingStrategy = maskingStrategy;
     }
 
     public static List<String> tokenize(final Program program,
                                         final ASTNode node,
                                         final boolean abstractTokens,
-                                        final boolean abstractFixedNodeOptions) {
-        return tokenize(program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions);
+                                        final boolean abstractFixedNodeOptions,
+                                        final MaskingStrategy maskingStrategy) {
+        return tokenize(program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions,
+                maskingStrategy);
     }
 
     private static List<String> tokenize(
             final ProcedureDefinitionNameMapping procedureNameMapping,
             final ASTNode node,
             final boolean abstractTokens,
-            final boolean abstractFixedNodeOptions
+            final boolean abstractFixedNodeOptions,
+            final MaskingStrategy maskingStrategy
     ) {
-        final Tokenizer v = new Tokenizer(procedureNameMapping, abstractTokens, abstractFixedNodeOptions);
+        final Tokenizer v = new Tokenizer(procedureNameMapping, abstractTokens, abstractFixedNodeOptions,
+                maskingStrategy);
         node.accept(v);
         return v.tokens;
     }
@@ -267,7 +279,7 @@ public class Tokenizer
 
     @Override
     public void visit(RandomPos node) {
-        visit(node, Token.MOTION_RANDOMPOS);
+        visit(node, Token.MOTION_RANDOMPOS); // oval menu
     }
 
     @Override
@@ -1190,11 +1202,37 @@ public class Tokenizer
 
     // region helper methods
 
+    private String getBlockId(final ASTNode node) {
+        if (node.getMetadata() instanceof DataBlockMetadata block) {
+            return block.getBlockId();
+        }
+        else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            return block.getBlockId();
+        }
+        return null;
+    }
+
     private void visitFixedNodeOption(final FixedNodeOption option, final Token opcode) {
-        if (abstractFixedNodeOptions) {
-            visit(option, opcode);
-        } else {
-            visit(option, getNormalisedToken(option));
+        if (MaskingType.FixedOption.equals(maskingStrategy.getMaskingType()) &&
+                maskingStrategy.getBlockId().equals(getBlockId(option.getParentNode()))) {
+            addToken(Token.MASK);
+        }
+        else {
+            if (abstractFixedNodeOptions) {
+                visit(option, opcode);
+            } else {
+                visit(option, getNormalisedToken(option));
+            }
+        }
+    }
+
+    private void visitOvalMenuFixedOption(final ASTNode node, final Token opcode) {
+        if (MaskingType.FixedOption.equals(maskingStrategy.getMaskingType()) &&
+                maskingStrategy.getBlockId().equals(getBlockId(node.getParentNode()))) {
+            addToken(Token.MASK);
+        }
+        else {
+            visit(node, opcode);
         }
     }
 
