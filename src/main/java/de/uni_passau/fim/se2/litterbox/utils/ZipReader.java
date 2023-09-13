@@ -23,55 +23,45 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
+import java.nio.file.Path;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Util class for getting the project JSON file out of the Scratch project ZIP file
+ * Util class for getting the project JSON file out of the Scratch project ZIP file.
  */
-public class ZipReader {
+public final class ZipReader {
+
+    private ZipReader() {
+        throw new IllegalCallerException("utility class");
+    }
 
     /**
      * A method to extract the project.json file from a Scratch project (ZIP file)
      *
      * @param path the file path
      * @return the JSON as a raw String
-     * @throws IOException when given a invalid file or corrupted ZIP file
+     * @throws IOException when given an invalid file or corrupted ZIP file
      */
-    public static String getJsonString(String path) throws IOException {
-
-        try(ZipFile file = new ZipFile(path)) {
-            final Enumeration<? extends ZipEntry> entries = file.entries();
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                if (entry.getName().equals("project.json")) {
-                    InputStream is = file.getInputStream(entry);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);        //.append('\n');
-                    }
-                    br.close();
-                    return sb.toString();
-                }
+    public static String getJsonString(final Path path) throws IOException {
+        try (ZipFile file = new ZipFile(path.toFile())) {
+            final ZipEntry projectJson = file.getEntry("project.json");
+            if (projectJson != null) {
+                return readZipEntry(file, projectJson);
+            } else {
+                return null;
             }
         }
-        return null;
     }
 
-    /**
-     * A method returning the filename for a given filepath
-     *
-     * @param path the file path
-     * @return the filename
-     * @throws IOException
-     */
-    public static String getName(String path) throws IOException {
-        final ZipFile file = new ZipFile(path);
-        String name = file.getName();
-        file.close();
-        return name;
+    private static String readZipEntry(final ZipFile file, final ZipEntry entry) throws IOException {
+        try (
+                InputStream is = file.getInputStream(entry);
+                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            return br.lines().collect(Collectors.joining("\n"));
+        }
     }
 }
