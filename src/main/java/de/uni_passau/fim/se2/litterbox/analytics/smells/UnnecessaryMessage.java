@@ -19,11 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -59,7 +62,13 @@ public class UnnecessaryMessage extends AbstractIssueFinder {
                 if (!messagesInOtherPlace.contains(brd.getMessage())) {
                     currentScript = node;
                     currentProcedure = null;
-                    addIssue(brd, brd.getMetadata());
+                    Hint hint = new Hint(getName());
+                    if (brd.getMessage().getMessage() instanceof StringLiteral message) {
+                        hint.setParameter(Hint.HINT_MESSAGE, message.getText());
+                    } else {
+                        hint.setParameter(Hint.HINT_MESSAGE, IssueTranslator.getInstance().getInfo("message"));
+                    }
+                    addIssue(node, node.getMetadata(), hint);
                 }
             }
         }
