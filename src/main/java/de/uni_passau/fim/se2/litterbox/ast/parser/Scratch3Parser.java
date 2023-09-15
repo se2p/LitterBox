@@ -66,7 +66,7 @@ public class Scratch3Parser {
         String fileName = fileEntry.getName();
         String programName = getProgramName(fileName);
 
-        String jsonString = ZipReader.getJsonString(fileEntry.getPath());
+        String jsonString = ZipReader.getJsonString(fileEntry.toPath());
         return parseString(programName, jsonString);
     }
 

@@ -26,12 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
 
-    private static final Logger log = Logger.getLogger(NodeNameUtil.class.getName());
+    private static final char SPLIT_DELIMITER = '|';
 
     private NodeNameUtil() {
         throw new IllegalCallerException("utility class constructor");
@@ -45,17 +44,44 @@ public final class NodeNameUtil {
      */
     public static Optional<String> normalizeSpriteName(final ActorDefinition actor) {
         final String spriteName = actor.getIdent().getName();
-        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName)
+        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
                 .filter(subtoken -> !subtoken.matches("^\\d+$"))
-                .collect(Collectors.joining("|"));
+                .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(StringUtils.truncate(splitName, 100));
+            final String truncated = truncateName(splitName);
+            return Optional.of(truncated);
         }
     }
 
+    private static String truncateName(final String name) {
+        if (name.length() <= 100) {
+            return name;
+        }
+
+        int truncatePoint = 100;
+        while (shouldBeRemovedFromEnd(name.charAt(truncatePoint - 1))) {
+            truncatePoint -= 1;
+        }
+
+        return StringUtils.truncate(name, truncatePoint);
+    }
+
+    private static boolean shouldBeRemovedFromEnd(final char character) {
+        // should neither end with split marker '|' nor end with half of a multibyte Unicode character
+        return character == SPLIT_DELIMITER || Character.isHighSurrogate(character);
+    }
+
+    /**
+     * Checks if the actor has a default name that was generated upon actor creation by Scratch itself.
+     *
+     * <p>A default name is a translation of ‘sprite’ ({@link Constants#DEFAULT_SPRITE_NAMES}), followed by a number.
+     *
+     * @param actor Some actor.
+     * @return True, if the actor has an automatically generated name.
+     */
     public static boolean hasDefaultName(final ActorDefinition actor) {
         // no special replacements except removal of the numbers needed: if the non-numeric part is not in the list of
         // known default names, it is not a default name

@@ -16,29 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProgramRelationTest implements JsonTest {
+    private final ProgramRelationFactory programRelationFactory = new ProgramRelationFactory();
+    private final ProgramRelationFactory hashingProgramRelationFactory = ProgramRelationFactory.withHashCodeFactory();
 
     final static String NO_HASH_OUTPUT = "GreenFlag,(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral),Hello!";
 
     @Test
     void testSetNoHash() {
-        ProgramRelation.setNoHash();
-        ProgramRelation programRelation = new ProgramRelation("GreenFlag", "Hello!",
+        ProgramRelation programRelation = programRelationFactory.build("GreenFlag", "Hello!",
                 "(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral)");
         assertEquals(NO_HASH_OUTPUT, programRelation.toString());
-        ProgramRelation.setHasher((s) -> Integer.toString(s.hashCode()));
     }
 
     @Test
     void testToString() {
-        ProgramRelation programRelation = new ProgramRelation("GreenFlag", "Hello!",
+        ProgramRelation programRelation = hashingProgramRelationFactory.build("GreenFlag", "Hello!",
                 "(GreenFlag)^(Script)_(StmtList)_(Say)_(StringLiteral)");
         assertEquals("GreenFlag,-2069003229,Hello!", programRelation.toString());
     }

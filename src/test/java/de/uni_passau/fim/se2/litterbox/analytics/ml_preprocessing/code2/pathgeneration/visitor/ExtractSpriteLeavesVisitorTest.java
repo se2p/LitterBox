@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.visitor;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -38,9 +37,11 @@ class ExtractSpriteLeavesVisitorTest implements JsonTest {
     @Test
     void testVisit() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(false);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
+                program.getProcedureMapping(), false
+        );
         program.accept(spriteVisitor);
-        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeavesCollector();
+        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeaves();
 
         assertEquals(2, leavesMap.keySet().size());
 
@@ -65,10 +66,12 @@ class ExtractSpriteLeavesVisitorTest implements JsonTest {
     @Test
     void testVisitIncludeStage() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
-        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(true);
+        ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
+                program.getProcedureMapping(), true
+        );
         program.accept(spriteVisitor);
 
-        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeavesCollector();
+        Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeaves();
         assertEquals(3, leavesMap.keySet().size());
 
         Optional<ActorDefinition> stage = leavesMap.keySet().stream().filter(ActorDefinition::isStage).findFirst();

@@ -22,18 +22,22 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideIf;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -53,11 +57,11 @@ public class UsedVariables extends AbstractIssueFinder {
     private boolean insideProcedure;
     private boolean insideScript;
     private boolean insideQualified;
-    private Map<String, VariableInfo> varMap;
-    private Map<String, ExpressionListInfo> listMap;
+    private Collection<VariableInfo> variables;
+    private Collection<ExpressionListInfo> lists;
 
-    private List<String> flaggedVariables;
-    private List<String> flaggedLists;
+    private Set<String> flaggedVariables;
+    private Set<String> flaggedLists;
 
     private String actorName;
 
@@ -66,10 +70,10 @@ public class UsedVariables extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         issues = new LinkedHashSet<>();
-        varMap = program.getSymbolTable().getVariables();
-        listMap = program.getSymbolTable().getLists();
-        flaggedVariables = new ArrayList<>();
-        flaggedLists = new ArrayList<>();
+        variables = program.getSymbolTable().getVariables().values();
+        lists = program.getSymbolTable().getLists().values();
+        flaggedVariables = new LinkedHashSet<>();
+        flaggedLists = new LinkedHashSet<>();
         program.accept(this);
         return issues;
     }
@@ -98,20 +102,130 @@ public class UsedVariables extends AbstractIssueFinder {
         }
     }
 
+    private void addHintToFlagableIdentifier(ASTNode node, Identifier identifier, String hintName) {
+        if ((insideProcedure || insideScript) && checkIdentifierForFlag(identifier)) {
+            Hint hint = new Hint(hintName);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(SetVariableTo node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME);
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeVariableBy node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME);
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(AddTo node) {
+        node.getString().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(DeleteOf node) {
+        node.getNum().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(DeleteAllOf node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(InsertAt node) {
+        node.getString().accept(this);
+        node.getIndex().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(ReplaceItem node) {
+        node.getIndex().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+        node.getString().accept(this);
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        node.getNum().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(IndexOf node) {
+        node.getExpr().accept(this);
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(LengthOfVar node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+    }
+
+    @Override
+    public void visit(ListContains node) {
+        addHintToFlagableIdentifier(node, node.getIdentifier(), NAME_LIST);
+        node.getElement().accept(this);
+    }
+
+    private boolean checkIdentifierForFlag(Identifier identifier) {
+        if (identifier instanceof Qualified qualified) {
+            actorName = qualified.getFirst().getName();
+
+            if (qualified.getSecond() instanceof Variable variable) {
+                if (!flaggedVariables.contains(actorName + variable.getName().getName())) {
+                    return flagVariable(variable);
+                }
+            } else if (qualified.getSecond() instanceof ScratchList list) {
+                if (!flaggedVariables.contains(actorName + list.getName().getName())) {
+                    return flagList(list);
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean flagVariable(Variable variable) {
+        for (VariableInfo curr : variables) {
+            String actorNameInfo = curr.getActor();
+            String variableNameInfo = curr.getVariableName();
+            if (actorNameInfo.equals(actorName)
+                    && variableNameInfo.equals(variable.getName().getName())) {
+                flaggedVariables.add(actorName + variable.getName().getName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean flagList(ScratchList list) {
+        for (ExpressionListInfo curr : lists) {
+            String actorNameInfo = curr.getActor();
+            String listNameInfo = curr.getVariableName();
+            if (actorNameInfo.equals(actorName)
+                    && listNameInfo.equals(list.getName().getName())) {
+                flaggedLists.add(actorName + list.getName().getName());
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void visit(Variable node) {
         if (insideQualified && !flaggedVariables.contains(actorName + node.getName().getName())) {
-            for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
-                VariableInfo curr = entry.getValue();
-                String actorNameInfo = curr.getActor();
-                String variableNameInfo = curr.getVariableName();
-                if (actorNameInfo.equals(actorName)
-                        && variableNameInfo.equals(node.getName().getName())) {
-                    Hint hint = new Hint(NAME);
-                    addIssue(node, node.getMetadata(), hint);
-                    flaggedVariables.add(actorName + node.getName().getName());
-                    break;
-                }
+            if (flagVariable(node)) {
+                Hint hint = new Hint(NAME);
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
@@ -119,17 +233,9 @@ public class UsedVariables extends AbstractIssueFinder {
     @Override
     public void visit(ScratchList node) {
         if (insideQualified && !flaggedLists.contains(actorName + node.getName().getName())) {
-            for (Map.Entry<String, ExpressionListInfo> entry : listMap.entrySet()) {
-                ExpressionListInfo curr = entry.getValue();
-                String actorNameInfo = curr.getActor();
-                String listNameInfo = curr.getVariableName();
-                if (actorNameInfo.equals(actorName)
-                        && listNameInfo.equals(node.getName().getName())) {
-                    Hint hint = new Hint(NAME_LIST);
-                    addIssue(node, node.getMetadata(), hint);
-                    flaggedLists.add(actorName + node.getName().getName());
-                    break;
-                }
+            if (flagList(node)) {
+                Hint hint = new Hint(NAME_LIST);
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
@@ -154,14 +260,7 @@ public class UsedVariables extends AbstractIssueFinder {
             return false;
         }
 
-        return other.getCodeLocation() == getParentStmt(first.getCodeLocation());
-    }
-
-    private Stmt getParentStmt(ASTNode node) {
-        while (!(node instanceof Stmt)) {
-            node = node.getParentNode();
-        }
-        return (Stmt) node;
+        return other.getCodeLocation() == AstNodeUtil.findParent(first.getCodeLocation(), Stmt.class);
     }
 
     @Override

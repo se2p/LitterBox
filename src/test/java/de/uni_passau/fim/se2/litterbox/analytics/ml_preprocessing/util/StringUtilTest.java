@@ -31,11 +31,13 @@ class StringUtilTest {
     @Test
     void testNormalizeString() {
         final List<Pair<String>> beforeAfterPairs = List.of(
-                Pair.of("a_b", "a  \tb"),
-                Pair.of("a_b", "\na\nb\n"),
-                Pair.of("1_a_456_b_68", "1a456b68"),
                 Pair.of("1_a_456_b_68", "1A456B68"),
+                Pair.of("1_a_456_b_68", "1a456b68"),
                 Pair.of("1_a_4_56_b_68", "1{a4]56B/68"),
+                Pair.of("a_b", "\na\nb\n"),
+                Pair.of("a_b", "a  \tb"),
+                Pair.of("download_48", "download (48)"),
+                Pair.of("pinos_de_boliche_1975_89_removebg_preview_3", "pinos-de-boliche_1975-89-removebg-preview3"),
                 Pair.of("äa_b", "{}äa'b\n")
         );
 
@@ -43,6 +45,25 @@ class StringUtilTest {
                 beforeAfterPairs
                         .stream()
                         .map(pair -> () -> assertEquals(pair.getFst(), StringUtil.normaliseString(pair.getSnd())))
+        );
+    }
+
+    @Test
+    void testNormalizeStringWithDelimiter() {
+        final List<Pair<String>> beforeAfterPairs = List.of(
+                Pair.of("a|b", "a  \tb"),
+                Pair.of("a|b", "\na\nb\n"),
+                Pair.of("1|a|456|b|68", "1a456b68"),
+                Pair.of("1|a|456|b|68", "1A456B68"),
+                Pair.of("1|a|4|56|b|68", "1{a4]56B/68"),
+                Pair.of("äa|b", "{}äa'b\n")
+        );
+
+        assertAll(
+                beforeAfterPairs
+                        .stream()
+                        .map(pair -> () -> assertEquals(pair.getFst(),
+                                StringUtil.normaliseString(pair.getSnd(), "|")))
         );
     }
 
@@ -60,7 +81,15 @@ class StringUtilTest {
 
     @Test
     void testKeepSomePunctuation() {
-        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def");
+        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens("abc!-def", "_");
         assertThat(subtokens).containsExactly("abc", "!", "def");
+    }
+
+    @Test
+    void regressionTestSpecialSpaces() {
+        final String input = "day! Callooh! Callay!";
+        final List<String> subtokens = StringUtil.splitToNormalisedSubtokens(input, "_");
+
+        assertThat(subtokens).containsExactly("day", "!", "callooh", "!", "callay", "!");
     }
 }

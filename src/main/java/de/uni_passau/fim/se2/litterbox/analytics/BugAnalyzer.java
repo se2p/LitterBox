@@ -34,16 +34,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
+
+    private static final String ANNOTATED_PROGRAM_SUFFIX = "_annotated";
+
     private final List<String> detectorNames;
-    private List<IssueFinder> issueFinders;
+    private final List<IssueFinder> issueFinders;
     private Path annotationOutput;
     private final boolean ignoreLooseBlocks;
-    private final String detectors;
     private final boolean outputPerScript;
 
     public BugAnalyzer(
@@ -51,10 +52,10 @@ public class BugAnalyzer extends Analyzer {
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
         super(input, output, delete);
-        issueFinders = IssueTool.getFinders(detectors);
-        this.detectors = detectors;
+
+        this.issueFinders = IssueTool.getFinders(detectors);
         this.outputPerScript = outputPerScript;
-        detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
+        this.detectorNames = issueFinders.stream().map(IssueFinder::getName).toList();
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
@@ -70,10 +71,8 @@ public class BugAnalyzer extends Analyzer {
      */
     @Override
     void check(File fileEntry, Path reportFileName) {
-        issueFinders = IssueTool.getFinders(detectors);
         Program program = extractProgram(fileEntry);
         if (program == null) {
-            // Todo error message
             return;
         }
         Set<Issue> issues = runFinders(program);
@@ -100,11 +99,11 @@ public class BugAnalyzer extends Analyzer {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(
-                        reportFileName, detectorNames, outputPerScript
-                );
-                reportGenerator.generateReport(program, issues);
-                reportGenerator.close();
+                try (CSVReportGenerator reportGenerator
+                             = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript)
+                ) {
+                    reportGenerator.generateReport(program, issues);
+                }
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);
             }
@@ -114,20 +113,24 @@ public class BugAnalyzer extends Analyzer {
     }
 
     private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, Path annotatePath) {
-        if (annotationOutput != null) {
-            try {
-                CommentGenerator commentGenerator = new CommentGenerator();
-                commentGenerator.generateReport(program, issues);
-                if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, "_annotated");
-                } else if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("sb3")) {
-                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, "_annotated");
-                } else {
-                    JSONFileCreator.writeMBlockFromProgram(program, annotatePath, fileEntry, "_annotated");
-                }
-            } catch (IOException e) {
-                log.warning(e.getMessage());
+        if (annotationOutput == null) {
+            return;
+        }
+
+        try {
+            CommentGenerator commentGenerator = new CommentGenerator();
+            commentGenerator.generateReport(program, issues);
+            String fileExtension = FilenameUtils.getExtension(fileEntry.getPath());
+
+            if (fileExtension.equalsIgnoreCase("json")) {
+                JSONFileCreator.writeJsonFromProgram(program, annotatePath, ANNOTATED_PROGRAM_SUFFIX);
+            } else if (fileExtension.equalsIgnoreCase("sb3")) {
+                JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, ANNOTATED_PROGRAM_SUFFIX);
+            } else {
+                JSONFileCreator.writeMBlockFromProgram(program, annotatePath, fileEntry, ANNOTATED_PROGRAM_SUFFIX);
             }
+        } catch (IOException e) {
+            log.warning(e.getMessage());
         }
     }
 }

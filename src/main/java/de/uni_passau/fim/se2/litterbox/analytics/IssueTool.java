@@ -59,12 +59,12 @@ public class IssueTool {
             registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
             registerBugFinder(new ForeverInsideIf(), bugFinders);
             registerBugFinder(new ForeverInsideLoop(), bugFinders);
+            registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new IllegalParameterRefactor(), bugFinders);
             registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
             registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
-            registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
@@ -72,8 +72,8 @@ public class IssueTool {
             registerBugFinder(new MissingBackdropSwitch(), bugFinders);
             registerBugFinder(new MissingCloneCall(), bugFinders);
             registerBugFinder(new MissingCloneInitialization(), bugFinders);
-            registerBugFinder(new MissingInitialization(), bugFinders);
             registerBugFinder(new MissingEraseAll(), bugFinders);
+            registerBugFinder(new MissingInitialization(), bugFinders);
             registerBugFinder(new MissingLoopMousePosition(), bugFinders);
             registerBugFinder(new MissingLoopSensing(), bugFinders);
             registerBugFinder(new MissingPenDown(), bugFinders);
@@ -173,22 +173,21 @@ public class IssueTool {
         // Smells
         if (LOAD_GENERAL) {
             registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
+            registerSmellFinder(new BusyWaiting(), smellFinders);
             registerSmellFinder(new ClonedCodeType1(), smellFinders);
             registerSmellFinder(new ClonedCodeType2(), smellFinders);
             registerSmellFinder(new ClonedCodeType3(), smellFinders);
-            registerSmellFinder(new BusyWaiting(), smellFinders);
             registerSmellFinder(new DeadCode(), smellFinders);
             registerSmellFinder(new DeleteCloneInLoop(), smellFinders);
+            registerSmellFinder(new DoubleIf(), smellFinders);
+            registerSmellFinder(new DuplicatedScript(), smellFinders);
+            registerSmellFinder(new DuplicatedScriptsCovering(), smellFinders);
+            registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new EmptyControlBody(), smellFinders);
             registerSmellFinder(new EmptyCustomBlock(), smellFinders);
             registerSmellFinder(new EmptyProject(), smellFinders);
             registerSmellFinder(new EmptyScript(), smellFinders);
             registerSmellFinder(new EmptySprite(), smellFinders);
-            registerSmellFinder(new DeadCode(), smellFinders);
-            registerSmellFinder(new DoubleIf(), smellFinders);
-            registerSmellFinder(new DuplicatedScript(), smellFinders);
-            registerSmellFinder(new DuplicatedScriptsCovering(), smellFinders);
-            registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new LongScript(), smellFinders);
             registerSmellFinder(new MessageNaming(), smellFinders);
             registerSmellFinder(new MiddleMan(), smellFinders);
@@ -199,9 +198,9 @@ public class IssueTool {
             registerSmellFinder(new SpriteNaming(), smellFinders);
             registerSmellFinder(new StutteringMovement(), smellFinders);
             registerSmellFinder(new UnnecessaryBoolean(), smellFinders);
-            registerSmellFinder(new UnnecessaryLoop(), smellFinders);
             registerSmellFinder(new UnnecessaryIf(), smellFinders);
             registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
+            registerSmellFinder(new UnnecessaryLoop(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
             registerSmellFinder(new UnnecessaryMove(), smellFinders);
             registerSmellFinder(new UnnecessaryProcedure(), smellFinders);
@@ -246,16 +245,16 @@ public class IssueTool {
             registerPerfumeFinder(new MatchingParameter(), perfumeFinders);
             registerPerfumeFinder(new MouseFollower(), perfumeFinders);
             registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
-            registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
-            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
             registerPerfumeFinder(new NestedConditionalChecks(), perfumeFinders);
             registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
+            registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
             registerPerfumeFinder(new UsedVariables(), perfumeFinders);
             registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
             registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
+            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
         }
 
         if (LOAD_MBLOCK) {

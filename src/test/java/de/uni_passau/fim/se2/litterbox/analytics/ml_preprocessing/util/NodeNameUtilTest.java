@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,6 +39,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NodeNameUtilTest {
@@ -57,11 +59,13 @@ class NodeNameUtilTest {
 
     private static Stream<Arguments> getRegularNormalizedPairs() {
         return Stream.of(
+                Arguments.of("download", "download (48)"),
+                Arguments.of("pinos|de|boliche|removebg|preview", "pinos-de-boliche_1975-89-removebg-preview3"),
                 Arguments.of("test|one", "test ONE"),
-                Arguments.of("test|two", "test\ntwo"),
-                Arguments.of("test|three", "test,\"three'"),
-                Arguments.of("testαλfive", "testαλfive"),
                 Arguments.of("test|six|multiple|parts", "test|six{multiple@ parts"),
+                Arguments.of("test|three", "test,\"three'"),
+                Arguments.of("test|two", "test\ntwo"),
+                Arguments.of("testαλfive", "testαλfive"),
                 Arguments.of("αλ|λϝδ|δ", "αλΛϝδΔ")
         );
     }
@@ -92,6 +96,58 @@ class NodeNameUtilTest {
                 Arguments.of(buildActor("αντικείμενο"), true),
                 Arguments.of(buildActor("αντικείμενο123"), true)
         );
+    }
+
+    @Test
+    void regressionTestTruncatedWithTrailingDelimiter() {
+        final ActorDefinition actor = buildActor("kisspng-digital-cameras-computer-icons-clip-art-encapsulat-photo"
+                + "-camera-png-icons-and-graphics-page-9-png-5cec96d4d759e2");
+        // 99 characters long, truncating to 100 would cause a trailing |
+        final String expected = "kisspng|digital|cameras|computer|icons|clip|art|encapsulat|photo|camera|png|icons"
+                + "|and|graphics|page";
+
+        assertEquals(Optional.of(expected), NodeNameUtil.normalizeSpriteName(actor));
+    }
+
+    @Test
+    void regressionTestTruncated() {
+        final ActorDefinition actor = buildActor("abcdefghij".repeat(11));
+        final String expected = "abcdefghij".repeat(10);
+
+        assertEquals(100, expected.length());
+        assertEquals(Optional.of(expected), NodeNameUtil.normalizeSpriteName(actor));
+    }
+
+    /**
+     * Multibyte characters should not be cut in half to not leave invalid Unicode at the end
+     */
+    @Test
+    void regressionTestUnicodeBoldCharacters() {
+        final String name = "abcdefghij|".repeat(8)
+                + "\uD835\uDDF1\uD835\uDDF6\uD835\uDDF3\uD835\uDDF3\uD835\uDDF2\uD835\uDDFF\uD835\uDDF2\uD835\uDDFB\uD835\uDDF0\uD835\uDDF2";
+        final Optional<String> expected = Optional.of(
+                "abcdefghij|".repeat(8)
+                + "\uD835\uDDF1\uD835\uDDF6\uD835\uDDF3\uD835\uDDF3\uD835\uDDF2\uD835\uDDFF"
+        );
+
+        final ActorDefinition actor = buildActor(name);
+        final Optional<String> normalized = NodeNameUtil.normalizeSpriteName(actor);
+
+        assertThat(normalized).isEqualTo(expected);
+    }
+
+    /**
+     * Truncate once for multibyte character, then again for | at end.
+     */
+    @Test
+    void truncateMultipleTimesAtEnd() {
+        final String name = "abcdefghij|".repeat(9) + "\uD835\uDDEA";
+        final Optional<String> expected = Optional.of("abcdefghij|".repeat(8) + "abcdefghij");
+
+        final ActorDefinition actor = buildActor(name);
+        final Optional<String> normalized = NodeNameUtil.normalizeSpriteName(actor);
+
+        assertThat(normalized).isEqualTo(expected);
     }
 
     private static ActorDefinition buildActor(final String name) {

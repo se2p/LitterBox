@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -39,10 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoic
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.DragMode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -52,8 +51,9 @@ import java.util.Objects;
  *
  * <p>See {@link TokenVisitorFactory} for additional related utilities and a default implementation.
  */
-public abstract class BaseTokenVisitor
-        implements ScratchVisitor, PenExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
+public abstract class BaseTokenVisitor implements
+        ScratchVisitor, PenExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor,
+        TextToSpeechExtensionVisitor {
 
     protected final boolean normalised;
 
@@ -206,5 +206,15 @@ public abstract class BaseTokenVisitor
     @Override
     public void visit(ColorLiteral node) {
         token = node.getRGB();
+    }
+
+    @Override
+    public void visit(FixedVoice node) {
+        token = node.getType().toString();
+    }
+
+    @Override
+    public void visit(FixedLanguage node) {
+        token = node.getType().toString();
     }
 }

@@ -16,32 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation;
 
 import java.util.function.UnaryOperator;
 
-public class ProgramRelation {
-    private static UnaryOperator<String> hasher = s -> Integer.toString(s.hashCode());
-    private final String source;
-    private final String target;
-    private final String hashedPath;
+public final class ProgramRelationFactory {
+    private final UnaryOperator<String> hasher;
 
-    public ProgramRelation(String sourceName, String targetName, String path) {
-        source = sourceName;
-        target = targetName;
-        hashedPath = hasher.apply(path);
+    public ProgramRelationFactory() {
+        this(UnaryOperator.identity());
     }
 
-    public static void setNoHash() {
-        hasher = UnaryOperator.identity();
+    public ProgramRelationFactory(final UnaryOperator<String> pathHasher) {
+        this.hasher = pathHasher;
     }
 
-    public static void setHasher(UnaryOperator<String> hasher) {
-        ProgramRelation.hasher = hasher;
+    public static ProgramRelationFactory withHashCodeFactory() {
+        return new ProgramRelationFactory(s -> Integer.toString(s.hashCode()));
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s", source, hashedPath, target);
+    public ProgramRelation build(final String sourceName, final String targetName, final String path) {
+        return new ProgramRelation(sourceName, targetName, hasher.apply(path));
     }
 }

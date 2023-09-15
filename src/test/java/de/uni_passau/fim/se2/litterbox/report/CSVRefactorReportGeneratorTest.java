@@ -82,9 +82,14 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         Path fileName = tmpFile.getFileName();
         Path pathName = tmpFile.getParent();
-        CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator.close();
+        try (CSVRefactorReportGenerator reportGenerator
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator.generateReport(
+                    0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    programExtractionTime, refactoringSearchTime
+            );
+        }
 
         List<String> lines = Files.readAllLines(tmpFile);
         Files.delete(tmpFile);
@@ -140,13 +145,23 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Path fileName = tmpFile.getFileName();
         Path pathName = tmpFile.getParent();
 
-        CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator.close();
+        try (CSVRefactorReportGenerator reportGenerator
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator.generateReport(
+                    0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    programExtractionTime, refactoringSearchTime
+            );
+        }
 
-        CSVRefactorReportGenerator reportGenerator2 = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator2.generateReport(1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator2.close();
+        try (CSVRefactorReportGenerator reportGenerator2
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator2.generateReport(
+                    1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    programExtractionTime, refactoringSearchTime
+            );
+        }
 
         List<String> lines = Files.readAllLines(tmpFile);
         Files.delete(tmpFile);

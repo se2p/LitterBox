@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec;
+package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
+
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +27,13 @@ import java.util.stream.Collectors;
 
 public class ProgramFeatures {
     private final String name;
+    private final ProgramRelationFactory programRelationFactory;
 
     private final List<ProgramRelation> features = new ArrayList<>();
 
-    public ProgramFeatures(String name) {
+    public ProgramFeatures(final String name, final ProgramRelationFactory programRelationFactory) {
         this.name = name;
+        this.programRelationFactory = programRelationFactory;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class ProgramFeatures {
     }
 
     public void addFeature(String source, String path, String target) {
-        ProgramRelation newRelation = new ProgramRelation(source, target, path);
+        final ProgramRelation newRelation = programRelationFactory.build(source, target, path);
         features.add(newRelation);
     }
 

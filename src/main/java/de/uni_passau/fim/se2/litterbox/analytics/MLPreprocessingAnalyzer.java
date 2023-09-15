@@ -22,10 +22,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
@@ -56,42 +58,54 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
 
     protected abstract Path outputFileName(File inputFile);
 
-    private void runProcessingSteps(File inputFile) throws IOException {
-        final Stream<String> output = process(inputFile).map(this::resultToString);
-        final String joined = output.collect(Collectors.joining(System.lineSeparator()));
-        if (!joined.isBlank()) {
-            writeResultToOutput(inputFile, joined);
-        }
+    @Override
+    protected void check(final File fileEntry, final Path csv) throws IOException {
+        runProcessingSteps(fileEntry);
     }
 
-    private void writeResultToOutput(File inputFile, String result) throws IOException {
-        if (result.isBlank()) {
-            log.warning("The processing step returned no output!");
-            return;
-        }
+    private void runProcessingSteps(final File inputFile) throws IOException {
+        final Stream<String> output = process(inputFile).filter(Objects::nonNull).map(this::resultToString);
+        writeResultToOutput(inputFile, output);
+    }
 
+    private void writeResultToOutput(final File inputFile, final Stream<String> result) throws IOException {
         if (outputPath.isConsoleOutput()) {
-            System.out.println(result);
+            writeResultToConsole(inputFile, result);
         } else {
             writeResultToFile(inputFile, result);
         }
     }
 
-    private void writeResultToFile(File inputFile, String result) throws IOException {
+    private void writeResultToConsole(final File inputFile, final Stream<String> result) {
+        // intentionally not in try-with-resources, as we do not want to close System.out
+        final PrintWriter pw = new PrintWriter(System.out, true);
+        writeResult(inputFile, pw, result);
+    }
+
+    private void writeResultToFile(final File inputFile, final Stream<String> result) throws IOException {
         Files.createDirectories(outputPath.getPath());
+        final Path outName = outputFileName(inputFile);
+        final Path outputFile = outputPath.getPath().resolve(outName);
 
-        Path outName = outputFileName(inputFile);
-        Path outputFile = outputPath.getPath().resolve(outName);
-
-        try (BufferedWriter bw = Files.newBufferedWriter(outputFile)) {
-            bw.write(result);
-            bw.flush();
+        try (
+                BufferedWriter bw = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8);
+                PrintWriter pw = new PrintWriter(bw);
+        ) {
+            writeResult(inputFile, pw, result);
         }
+
         log.info("Wrote processing result of " + inputFile + " to file " + outputFile);
     }
 
-    @Override
-    protected void check(File fileEntry, Path csv) throws IOException {
-        runProcessingSteps(fileEntry);
+    private void writeResult(final File inputFile, final PrintWriter printWriter, final Stream<String> result) {
+        final Iterator<String> lines = result.iterator();
+        if (!lines.hasNext()) {
+            log.warning("Processing " + inputFile + " resulted in no output!");
+            return;
+        }
+
+        while (lines.hasNext()) {
+            printWriter.println(lines.next());
+        }
     }
 }

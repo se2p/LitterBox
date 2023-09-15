@@ -27,8 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class AstNodeUtil {
     private AstNodeUtil() {
@@ -43,12 +44,26 @@ public class AstNodeUtil {
                 || node instanceof SoundMetadataList;
     }
 
-    public static List<ActorDefinition> getActors(final Program program, boolean includeStage) {
-        return program.getActorDefinitionList()
+    /**
+     * Gets all actors in the program except for the ones that have a default name.
+     *
+     * <p>If a sprite is ‘default’ is only determined by its name
+     * (see {@link NodeNameUtil#hasDefaultName(ActorDefinition)}).
+     *
+     * @param program Some program.
+     * @param includeStage True, if the stage should be included as an actor.
+     * @return The actors in the given program.
+     */
+    public static Stream<ActorDefinition> getActorsWithoutDefaultSprites(final Program program, boolean includeStage) {
+        return getActors(program, includeStage).filter(Predicate.not(NodeNameUtil::hasDefaultName));
+    }
+
+    public static Stream<ActorDefinition> getActors(final Program program, boolean includeStage) {
+        return program
+                .getActorDefinitionList()
                 .getDefinitions()
                 .stream()
-                .filter(actor -> includeStage || actor.isSprite())
-                .toList();
+                .filter(actor -> includeStage || actor.isSprite());
     }
 
     /**
@@ -57,16 +72,29 @@ public class AstNodeUtil {
      * @return The actor the node belongs to, empty if the node belongs to no actor.
      */
     public static Optional<ActorDefinition> findActor(final ASTNode node) {
+        return Optional.ofNullable(findParent(node, ActorDefinition.class));
+    }
+
+    /**
+     * Finds a transitive parent of node of the requested type.
+     *
+     * @param node Some node in the AST.
+     * @param parentType The class the parent is represented by.
+     * @return The parent in the AST of the requested type.
+     *         Might return {@code node} itself if it has matching type.
+     *         Returns {@code null} if no parent of the requested type could be found.
+     */
+    public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
 
         while (currentNode != null) {
-            if (currentNode instanceof ActorDefinition actorDefinition) {
-                return Optional.of(actorDefinition);
+            if (parentType.isAssignableFrom(currentNode.getClass())) {
+                return parentType.cast(currentNode);
             }
             currentNode = currentNode.getParentNode();
         }
 
-        return Optional.empty();
+        return null;
     }
 
     /**
