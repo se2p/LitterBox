@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -48,60 +49,50 @@ public class EmptyScript extends AbstractIssueFinder {
         }
     }
 
+    private void createHint(ASTNode node, String eventName) {
+        Hint hint = new Hint(getName());
+        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo(eventName));
+        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+    }
+
     @Override
     public void visit(GreenFlag node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("greenflag"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "greenflag");
     }
 
     @Override
     public void visit(KeyPressed node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("keypressed"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "keypressed");
     }
 
     @Override
     public void visit(BackdropSwitchTo node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("backdropswitchto"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "backdropswitchto");
     }
 
     @Override
     public void visit(AttributeAboveValue node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("eventattribute"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "eventattribute");
     }
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("receptionofmessage"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "receptionofmessage");
     }
 
     @Override
     public void visit(SpriteClicked node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("spriteclicked"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "spriteclicked");
     }
 
     @Override
     public void visit(StageClicked node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("stageclicked"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "stageclicked");
     }
 
     @Override
     public void visit(StartedAsClone node) {
-        Hint hint = new Hint(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("startedasclone"));
-        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        createHint(node, "startedasclone");
     }
 
     @Override

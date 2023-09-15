@@ -49,20 +49,20 @@ public class MiddleMan extends AbstractIssueFinder {
         currentProcedure = null;
         currentScript = script;
         Event event = script.getEvent();
-        if (event instanceof ReceptionOfMessage) {
+        if (event instanceof ReceptionOfMessage receptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
                 Hint hint = new Hint(BROADCAST_HINT);
-                hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, ((StringLiteral) ((ReceptionOfMessage) event).getMsg().getMessage()).getText());
+                hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, ((StringLiteral) (receptionOfMessage.getMsg()).getMessage()).getText());
                 Stmt broadcast = stmts.get(0);
                 StringExpr stringExpr;
-                if (broadcast instanceof Broadcast) {
-                    stringExpr = ((Broadcast) broadcast).getMessage().getMessage();
+                if (broadcast instanceof Broadcast normalBroadcast) {
+                    stringExpr = normalBroadcast.getMessage().getMessage();
                 } else {
                     stringExpr = ((BroadcastAndWait) broadcast).getMessage().getMessage();
                 }
-                if (stringExpr instanceof StringLiteral) {
-                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, ((StringLiteral) stringExpr).getText());
+                if (stringExpr instanceof StringLiteral stringLiteral) {
+                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, stringLiteral.getText());
                 } else {
                     hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, IssueTranslator.getInstance().getInfo("message"));
                 }
@@ -80,7 +80,7 @@ public class MiddleMan extends AbstractIssueFinder {
             if (!callStmt.getIdent().getName().equals(node.getIdent().getName())) {
                 Hint hint = new Hint(PROCEDURE_HINT);
                 hint.setParameter(Hint.HINT_BLOCKNAME_MIDDLE, node.getIdent().getName());
-                hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, ((CallStmt) stmts.get(0)).getIdent().getName());
+                hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, callStmt.getIdent().getName());
                 addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM, hint);
             }
         }
