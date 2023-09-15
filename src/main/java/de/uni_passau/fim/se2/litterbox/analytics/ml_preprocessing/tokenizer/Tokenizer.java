@@ -146,8 +146,14 @@ public class Tokenizer
     }
 
     private void visit(final ASTNode node, final Token opcode) {
-        addToken(opcode);
-        visitChildren(node);
+        if (MaskingType.Expression.equals(maskingStrategy.getMaskingType()) &&
+                maskingStrategy.getBlockId().equals(getBlockId(node))) {
+            addToken(Token.MASK);
+        }
+        else {
+            addToken(opcode);
+            visitChildren(node);
+        }
     }
 
     private void visit(final ASTNode node, final String token) {
@@ -1223,16 +1229,6 @@ public class Tokenizer
             } else {
                 visit(option, getNormalisedToken(option));
             }
-        }
-    }
-
-    private void visitOvalMenuFixedOption(final ASTNode node, final Token opcode) {
-        if (MaskingType.FixedOption.equals(maskingStrategy.getMaskingType()) &&
-                maskingStrategy.getBlockId().equals(getBlockId(node.getParentNode()))) {
-            addToken(Token.MASK);
-        }
-        else {
-            visit(node, opcode);
         }
     }
 
