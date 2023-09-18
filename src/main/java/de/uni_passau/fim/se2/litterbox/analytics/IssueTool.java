@@ -203,7 +203,6 @@ public class IssueTool {
             registerSmellFinder(new UnnecessaryLoop(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
             registerSmellFinder(new UnnecessaryMove(), smellFinders);
-            registerSmellFinder(new UnnecessaryProcedure(), smellFinders);
             registerSmellFinder(new UnnecessaryRotation(),smellFinders);
             registerSmellFinder(new UnnecessarySizeChange(), smellFinders);
             registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
