@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;

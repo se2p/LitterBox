@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
