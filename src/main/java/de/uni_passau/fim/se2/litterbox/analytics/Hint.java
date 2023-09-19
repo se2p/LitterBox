@@ -37,6 +37,10 @@ public class Hint {
     public static final String BLOCK_NAME = "BLOCKNAME";
     public static final String EVENT_HANDLER = "EVENTHANDLER";
     public static final String METHOD = "METHOD";
+    public static final String HINT_MESSAGE_MIDDLE = "MESSAGE_MIDDLE";
+    public static final String HINT_MESSAGE_FINAL = "MESSAGE_FINAL";
+    public static final String HINT_BLOCKNAME_MIDDLE = "BLOCKNAME_MIDDLE";
+    public static final String HINT_BLOCKNAME_FINAL = "BLOCKNAME_FINAL";
 
     private String hintKey;
     private String hintText;

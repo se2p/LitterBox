@@ -18,12 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +43,11 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName())
                     && !program.getProcedureMapping().checkIfMalformed(
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-
-                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
+                String name = AstNodeUtil.replaceProcedureParams(
+                        calledProcedure.getIdent().getName(), "()", "<>", "()");
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.BLOCK_NAME, name);
+                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
