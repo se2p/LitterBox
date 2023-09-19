@@ -53,7 +53,8 @@ public class MiddleMan extends AbstractIssueFinder {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
                 Hint hint = new Hint(BROADCAST_HINT);
-                hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, ((StringLiteral) (receptionOfMessage.getMsg()).getMessage()).getText());
+                String message = ((StringLiteral) (receptionOfMessage.getMsg()).getMessage()).getText();
+                hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, message);
                 Stmt broadcast = stmts.get(0);
                 StringExpr stringExpr;
                 if (broadcast instanceof Broadcast normalBroadcast) {

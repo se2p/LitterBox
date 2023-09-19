@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.visitor;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 public class ExtractSpriteLeavesVisitor extends ExtractLeavesVisitor<ActorDefinition> {
     private final boolean includeStage;

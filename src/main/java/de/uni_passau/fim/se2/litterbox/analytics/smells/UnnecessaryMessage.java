@@ -33,7 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * If a message is sent in the second block of a script the receiving script could also start with the event of the first script.
+ * If a message is sent in the second block of a script the receiving script could also start with the event of the
+ * first script.
  */
 public class UnnecessaryMessage extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_message";

@@ -135,7 +135,8 @@ public class EndlessRecursion extends AbstractIssueFinder {
         int position = stmtList.indexOf(node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
-        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt)).apply(currentProcedure);
+        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt))
+                .apply(currentProcedure);
     }
 
     private ScriptEntity getBroadcastRefactoring(ASTNode node) {
@@ -145,7 +146,8 @@ public class EndlessRecursion extends AbstractIssueFinder {
         int position = stmtList.indexOf(node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
-        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt)).apply(getCurrentScriptEntity());
+        return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt))
+                .apply(getCurrentScriptEntity());
     }
 
     @Override

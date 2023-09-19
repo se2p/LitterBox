@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -33,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bo
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;

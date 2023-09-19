@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.ast.util;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -83,8 +83,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     * Might return {@code node} itself if it has matching type.
-     * Returns {@code null} if no parent of the requested type could be found.
+     *         Might return {@code node} itself if it has matching type.
+     *         Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
@@ -133,7 +133,9 @@ public class AstNodeUtil {
      * @param replacementN  The substitution string for the numeric parameters.
      * @return The procedure name with replaced parameter placeholders.
      */
-    public static String replaceProcedureParams(final String procedureName, final String replacementS, final String replacementB, final String replacementN) {
+    public static String replaceProcedureParams(
+            final String procedureName, final String replacementS, final String replacementB, final String replacementN
+    ) {
         return procedureName.replace("%s", replacementS)
                 .replace("%b", replacementB)
                 .replace("%n", replacementN)
