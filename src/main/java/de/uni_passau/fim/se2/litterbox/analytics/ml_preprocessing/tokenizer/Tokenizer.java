@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
@@ -1215,6 +1216,11 @@ public class Tokenizer
         else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
             return block.getBlockId();
         }
+
+        if (node instanceof AttributeFromFixed attribute) {
+            return getBlockId(attribute.getParentNode());
+        }
+
         return null;
     }
 
