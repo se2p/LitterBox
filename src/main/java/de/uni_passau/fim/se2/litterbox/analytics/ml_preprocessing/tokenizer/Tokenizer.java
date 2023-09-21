@@ -1210,17 +1210,19 @@ public class Tokenizer
     // region helper methods
 
     private String getBlockId(final ASTNode node) {
-        if (node.getMetadata() instanceof DataBlockMetadata block) {
-            return block.getBlockId();
-        }
-        else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
-            return block.getBlockId();
-        }
+        try {
+            if (node.getMetadata() instanceof DataBlockMetadata block) {
+                return block.getBlockId();
+            }
+            else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+                return block.getBlockId();
+            }
 
-        if (node instanceof AttributeFromFixed attribute) {
-            return getBlockId(attribute.getParentNode());
+            if (node instanceof AttributeFromFixed attribute) {
+                return getBlockId(attribute.getParentNode());
+            }
         }
-
+        catch (Exception ignored) { }
         return null;
     }
 
