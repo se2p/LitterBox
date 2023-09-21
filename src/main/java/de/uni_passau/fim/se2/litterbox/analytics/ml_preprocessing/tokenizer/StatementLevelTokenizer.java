@@ -127,7 +127,7 @@ public class StatementLevelTokenizer
     }
 
     private void visit(final ASTNode node, final Token opcode) {
-        if (maskingStrategy.getMaskingType().equals(MaskingType.Statement) &&
+        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
                 maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         }
@@ -476,21 +476,21 @@ public class StatementLevelTokenizer
 
     @Override
     public void visit(StopAll node) {
-        visitStop();
+        visitStop(node);
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
-        visitStop();
+        visitStop(node);
     }
 
     @Override
     public void visit(StopThisScript node) {
-        visitStop();
+        visitStop(node);
     }
 
-    private void visitStop() {
-        addToken(Token.CONTROL_STOP);
+    private void visitStop(ASTNode node) {
+        visit(node, Token.CONTROL_STOP);
     }
 
     @Override
