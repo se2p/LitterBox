@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Test;
@@ -46,5 +47,14 @@ public class TranslateBlockParserTest implements JsonTest {
 
         final var viewerLanguage = NodeFilteringVisitor.getBlocks(program, ViewerLanguage.class);
         assertThat(viewerLanguage).hasSize(1);
+    }
+
+    @Test
+    void testParseTranslateBlocksWithVariable() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/stmtParser/translateBlock.json");
+        assertNoUnspecifiedBlocks(program);
+
+        final var variable = NodeFilteringVisitor.getBlocks(program, TExprLanguage.class);
+        assertThat(variable).hasSize(1);
     }
 }

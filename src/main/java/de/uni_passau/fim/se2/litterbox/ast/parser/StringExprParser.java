@@ -245,7 +245,7 @@ public class StringExprParser {
         List<JsonNode> inputsList = new ArrayList<>();
         exprBlock.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
-        if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
+        if (getShadowIndicator((ArrayNode) inputsList.get(1)) == 1) {
             String reference = exprBlock.get(INPUTS_KEY).get(LANGUAGE_INPUT_KEY).get(POS_INPUT_VALUE).asText();
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);

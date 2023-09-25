@@ -1,0 +1,162 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "P1 hp",
+                    "4"
+                ],
+                "4m)ZBb]HU*|#`h`@E+=B": [
+                    "@tch edge?",
+                    0
+                ],
+                ")=-crS9j)vqB{jD4/5BP": [
+                    "P2 hp",
+                    "4"
+                ],
+                "i/Kd3)8h6i6uI;]D]y,]": [
+                    "costume",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 2247,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Malcolm",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "^gqfFcU@!II9v@a(Zn[)": {
+                    "opcode": "translate_getTranslate",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "WORDS": [
+                            1,
+                            [
+                                10,
+                                "you're gonna' be STEW!"
+                            ]
+                        ],
+                        "LANGUAGE": [
+                            3,
+                            [
+                                12,
+                                "costume",
+                                "i/Kd3)8h6i6uI;]D]y,]"
+                            ],
+                            ";|RJ}?i]}#ePG8w6]D1:"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 125,
+                    "y": 676
+                },
+                ";|RJ}?i]}#ePG8w6]D1:": {
+                    "opcode": "translate_menu_languages",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "languages": [
+                            "it",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": true,
+                    "x": 488,
+                    "y": 684
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "eae45808db7d1bce27f8ad7c2648c9f1",
+                    "md5ext": "eae45808db7d1bce27f8ad7c2648c9f1.svg",
+                    "rotationCenterX": 47.67898252524472,
+                    "rotationCenterY": 49.49923017660271
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "c6ea1e6a23f4c43befc83b1038fb7428",
+                    "md5ext": "c6ea1e6a23f4c43befc83b1038fb7428.svg",
+                    "rotationCenterX": 45.407805150770855,
+                    "rotationCenterY": 52.49923017660271
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 81363,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": -68,
+            "draggable": false,
+            "rotationStyle": "don't rotate"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "translate"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.5.92",
+        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0"
+    }
+}
