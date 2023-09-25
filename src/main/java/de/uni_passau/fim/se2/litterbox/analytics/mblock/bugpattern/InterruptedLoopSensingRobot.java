@@ -107,7 +107,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
                 checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
                 insideControl = true;
-                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
                 insideControl = false;
@@ -138,7 +138,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             inCondition = false;
             checkForStop(node.getThenStmts());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
+            blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then");
             node.getThenStmts().accept(this);
             insideControl = false;
             sensingCollision = false;
