@@ -1,0 +1,129 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {
+                "}Q_bhxU?QCD3n9r,M$%a": {
+                    "blockId": "?m{^d]k4kPmS)iEE%g2a",
+                    "x": 420.61975479125977,
+                    "y": 261,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": ""
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Scene 1",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "797b03bdb8cf6ccfc30c0692d533d998",
+                    "md5ext": "797b03bdb8cf6ccfc30c0692d533d998.png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 2247,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 25,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "c2",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "Gt%^g}v[%KCjQI4FDf44": {
+                    "opcode": "music_playNoteForBeats",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NOTE": [
+                            1,
+                            [
+                                4,
+                                "72"
+                            ]
+                        ],
+                        "BEATS": [
+                            1,
+                            [
+                                4,
+                                "0.5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 242,
+                    "y": 309
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "d",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "c8f279bf30151d34a0b398fe567758d4",
+                    "md5ext": "c8f279bf30151d34a0b398fe567758d4.svg",
+                    "rotationCenterX": 33.625,
+                    "rotationCenterY": 48.85000000000005
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 2247,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 111.51452282,
+            "y": -139.23756906,
+            "size": 50,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "music"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "1.5.92",
+        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0"
+    }
+}
