@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.In
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.Note;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -126,20 +127,31 @@ public class MusicStmtParser {
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
         if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
-            String reference = current.get(INPUTS_KEY).get(NOTE_KEY).get(POS_INPUT_VALUE).asText();
-            JsonNode referredBlock = blocks.get(reference);
-            Preconditions.checkNotNull(referredBlock);
 
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.note.name())) {
-                JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(NOTE_KEY);
-                Preconditions.checkArgument(languageParamNode.isArray());
-                double attribute = languageParamNode.get(FIELD_VALUE).asDouble();
-                paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
-                note = new FixedNote(attribute, paramMetadata);
+            //It seems sometimes notes can be direct number values which will be parsed to literal to use in a note
+            if (current.get(INPUTS_KEY).get(NOTE_KEY).get(POS_INPUT_VALUE).isArray()) {
+                NumExpr numExpr = NumExprParser.parseNumExpr(state, current, NOTE_KEY, blocks);
+                if (numExpr instanceof NumberLiteral literal) {
+                    note = new FixedNote(literal.getValue(), new NoBlockMetadata());
+                } else {
+                    throw new ParsingException("A literal was found instead of a note and it was not a number value.");
+                }
             } else {
-                paramMetadata = new NoBlockMetadata();
-                Expression expr = ExpressionParser.parseExpr(state, current, NOTE_KEY, blocks);
-                note = new ExprNote(expr, paramMetadata);
+                String reference = current.get(INPUTS_KEY).get(NOTE_KEY).get(POS_INPUT_VALUE).asText();
+                JsonNode referredBlock = blocks.get(reference);
+                Preconditions.checkNotNull(referredBlock);
+
+                if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.note.name())) {
+                    JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(NOTE_KEY);
+                    Preconditions.checkArgument(languageParamNode.isArray());
+                    double attribute = languageParamNode.get(FIELD_VALUE).asDouble();
+                    paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
+                    note = new FixedNote(attribute, paramMetadata);
+                } else {
+                    paramMetadata = new NoBlockMetadata();
+                    Expression expr = ExpressionParser.parseExpr(state, current, NOTE_KEY, blocks);
+                    note = new ExprNote(expr, paramMetadata);
+                }
             }
         } else {
             paramMetadata = new NoBlockMetadata();
