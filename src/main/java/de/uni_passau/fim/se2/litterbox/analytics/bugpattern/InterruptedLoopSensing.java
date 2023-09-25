@@ -100,7 +100,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (!checkingVariable && !checkingStop && !visitOuter) {
             if (insideForever) {
-                blockName = IssueTranslator.getInstance().getInfo("if") + " "
+                blockName = IssueTranslator.getInstance().getInfo("if") + " < > "
                         + IssueTranslator.getInstance().getInfo("then") + " "
                         + IssueTranslator.getInstance().getInfo("else");
                 inCondition = true;
@@ -135,7 +135,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (!checkingVariable && !checkingStop && insideForever && !visitOuter) {
-            blockName = IssueTranslator.getInstance().getInfo("if") + " "
+            blockName = IssueTranslator.getInstance().getInfo("if") + " < > "
                     + IssueTranslator.getInstance().getInfo("then");
             inCondition = true;
             node.getBoolExpr().accept(this);
