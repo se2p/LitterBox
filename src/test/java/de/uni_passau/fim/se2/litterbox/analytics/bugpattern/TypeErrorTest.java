@@ -77,4 +77,9 @@ public class TypeErrorTest implements JsonTest {
             Assertions.assertEquals((new Hint(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHint());
         }
     }
+
+    @Test
+    public void testNoTypeErrorVariable() throws IOException, ParsingException {
+        assertThatFinderReports(0, new TypeError(), "./src/test/fixtures/bugpattern/noTypeError.json");
+    }
 }
