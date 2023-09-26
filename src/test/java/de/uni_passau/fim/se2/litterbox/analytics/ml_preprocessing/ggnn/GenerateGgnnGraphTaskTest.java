@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import org.junit.jupiter.api.Test;
@@ -88,7 +89,8 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(inputPath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, inputPath, includeStage, true, true, null);
+                program, inputPath, includeStage, true, true, null, ActorNameNormalizer.getDefault()
+        );
 
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(1);
@@ -103,7 +105,8 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(inputPath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, inputPath, includeStage, false, false, null);
+                program, inputPath, includeStage, false, false, null, ActorNameNormalizer.getDefault()
+        );
 
         int expectedSprites;
         if (includeStage) {
@@ -339,7 +342,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     ) throws Exception {
         Program program = getAST(fixturePath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, fixturePath, includeStage, includeDefaultSprites, wholeProgram, label);
+                program, fixturePath, includeStage, includeDefaultSprites, wholeProgram, label,
+                ActorNameNormalizer.getDefault()
+        );
         return graphTask.getProgramGraphs();
     }
 

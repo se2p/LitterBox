@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +42,8 @@ class GgnnGraphAnalyzerTest {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
                 Path.of("src/test/fixtures/multipleSprites.json"),
                 MLOutputPath.directory(outputDir),
-                false, true, false, true
+                false, true, false, true,
+                ActorNameNormalizer.getDefault()
         );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, toDotGraph, null);
         analyzer.analyzeFile();
@@ -60,7 +62,7 @@ class GgnnGraphAnalyzerTest {
     @Test
     void testInvalidInput() {
         MLPreprocessorCommonOptions commonOptions = new MLPreprocessorCommonOptions(
-                Path.of(""), MLOutputPath.console(), false, false, false, true
+                Path.of(""), MLOutputPath.console(), false, false, false, true, ActorNameNormalizer.getDefault()
         );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
 

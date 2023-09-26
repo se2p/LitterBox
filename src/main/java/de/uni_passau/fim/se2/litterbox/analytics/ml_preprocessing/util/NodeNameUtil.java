@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.Normalizer;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,32 @@ public final class NodeNameUtil {
         final String spriteName = actor.getIdent().getName();
         final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
                 .filter(subtoken -> !subtoken.matches("^\\d+$"))
+                .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
+
+        if (splitName.isEmpty()) {
+            return Optional.empty();
+        } else {
+            final String truncated = truncateName(splitName);
+            return Optional.of(truncated);
+        }
+    }
+
+    /**
+     * Normalizes the sprite name to only include latin base alphabet characters a-z.
+     *
+     * <p>For latin characters with diacritic marks, those are removed and the base character is retained
+     * (e.g., ö to o, á to a).
+     *
+     * @param actor The sprite for which the normalized name should be computed.
+     * @return The normalized sprite name. An empty optional instead of an empty name.
+     */
+    public static Optional<String> normalizeSpriteNameLatinOnly(final ActorDefinition actor) {
+        final String baseSpriteName = Normalizer.normalize(actor.getIdent().getName(), Normalizer.Form.NFKD);
+        final String spriteName = StringUtils.stripAccents(baseSpriteName);
+
+        final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
+                .map(subtoken -> subtoken.replaceAll("[^a-zA-Z]", ""))
+                .filter(subtoken -> !subtoken.isEmpty())
                 .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
 
         if (splitName.isEmpty()) {

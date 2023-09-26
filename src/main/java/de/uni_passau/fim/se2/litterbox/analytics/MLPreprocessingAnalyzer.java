@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     protected final boolean includeStage;
     protected final boolean wholeProgram;
     protected final boolean includeDefaultSprites;
+    protected final ActorNameNormalizer actorNameNormalizer;
 
     /**
      * Sets up an analyzer that extracts the necessary information for a machine learning model from a program.
@@ -50,6 +52,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
         this.includeStage = commonOptions.includeStage();
         this.wholeProgram = commonOptions.wholeProgram();
         this.includeDefaultSprites = commonOptions.includeDefaultSprites();
+        this.actorNameNormalizer = commonOptions.actorNameNormalizer();
     }
 
     protected abstract Stream<R> process(File inputFile) throws IOException;

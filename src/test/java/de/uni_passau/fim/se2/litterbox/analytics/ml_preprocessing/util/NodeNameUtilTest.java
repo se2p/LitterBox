@@ -71,6 +71,22 @@ class NodeNameUtilTest {
     }
 
     @ParameterizedTest
+    @MethodSource("latinOnlyNormalizationChecks")
+    void testNormalizeNameLatinOnly(final Optional<String> normalized, final String actorName) {
+        assertEquals(normalized, NodeNameUtil.normalizeSpriteNameLatinOnly(buildActor(actorName)));
+    }
+
+    private static Stream<Arguments> latinOnlyNormalizationChecks() {
+        return Stream.of(
+                Arguments.of(Optional.of("download"), "download (48)"),
+                Arguments.of(Optional.of("pinos|de|boliche|removebg|preview"), "piños_de-boliche_1975-89-removebg-preview3"),
+                Arguments.of(Optional.of("testfive"), "testαλfive"),
+                Arguments.of(Optional.empty(), "αλΛϝδΔ"),
+                Arguments.of(Optional.of("aa|o|ixi"), "äà3öø_íxì")
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("getDefaultNameActors")
     void testHasDefaultName(final ActorDefinition actor, final boolean hasDefaultName) {
         assertEquals(

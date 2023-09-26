@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2SeqAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -435,6 +437,12 @@ public class Main implements Callable<Integer> {
         )
         boolean includeDefaultSprites;
 
+        @CommandLine.Option(
+                names = {"--latin-only-sprite-names"},
+                description = "Normalise sprite names to include characters in the latin base alphabet (a-z) only."
+        )
+        boolean latinOnlyActorNames;
+
         protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
             if (outputPath != null) {
                 final File outputDirectory = outputPath.toFile();
@@ -455,7 +463,15 @@ public class Main implements Callable<Integer> {
 
             final MLOutputPath outputPath = getOutputPath();
             return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
-                    includeDefaultSprites);
+                    includeDefaultSprites, buildActorNameNormalizer());
+        }
+
+        private ActorNameNormalizer buildActorNameNormalizer() {
+            if (latinOnlyActorNames) {
+                return NodeNameUtil::normalizeSpriteNameLatinOnly;
+            } else {
+                return ActorNameNormalizer.getDefault();
+            }
         }
     }
 

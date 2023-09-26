@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class PathGeneratorFactory {
@@ -28,17 +29,18 @@ public class PathGeneratorFactory {
 
     public static PathGenerator createPathGenerator(
             PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
-            ProgramRelationFactory programRelationFactory
+            ProgramRelationFactory programRelationFactory, ActorNameNormalizer actorNameNormalizer
     ) {
         return createPathGenerator(
                 type, maxPathLength, includeStage, program, includeDefaultSprites, new PathFormatOptions(),
-                programRelationFactory
+                programRelationFactory, actorNameNormalizer
         );
     }
 
     public static PathGenerator createPathGenerator(
             PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
+            ActorNameNormalizer actorNameNormalizer
     ) {
         return switch (type) {
             case SCRIPT -> new ScriptEntityPathGenerator(
@@ -51,7 +53,7 @@ public class PathGeneratorFactory {
             );
             default -> new SpritePathGenerator(
                     program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
-                    programRelationFactory
+                    programRelationFactory, actorNameNormalizer
             );
         };
     }
