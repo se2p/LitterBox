@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.MLPreprocessingAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -104,7 +103,7 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
     }
 
     private Optional<TokenSequence> generateSequenceForActor(final Program program, final ActorDefinition actor) {
-        return NodeNameUtil.normalizeSpriteName(actor).map(label -> {
+        return actorNameNormalizer.normalizeName(actor).map(label -> {
             final List<List<String>> tokens = getTokenSequencesForActor(program, actor).toList();
             return TokenSequenceBuilder.build(label, tokens);
         });
