@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
+
 import java.nio.file.Path;
 
 /**
@@ -37,5 +39,6 @@ public record MLPreprocessorCommonOptions(
         boolean deleteAfterwards,
         boolean includeStage,
         boolean wholeProgram,
-        boolean includeDefaultSprites
+        boolean includeDefaultSprites,
+        ActorNameNormalizer actorNameNormalizer
 ) {}

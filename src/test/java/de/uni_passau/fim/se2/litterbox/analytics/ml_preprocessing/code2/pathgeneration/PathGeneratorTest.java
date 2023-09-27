@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgen
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class PathGeneratorTest implements JsonTest {
     void testGeneratePaths() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, false, program, true,
-                programRelationFactory);
+                programRelationFactory, ActorNameNormalizer.getDefault());
         List<ProgramFeatures> pathContextsPerSprite = generator.generatePaths();
         assertEquals(2, pathContextsPerSprite.size());
         int positionCat = 0;
@@ -82,7 +83,7 @@ class PathGeneratorTest implements JsonTest {
     void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, false, program, true,
-                programRelationFactory);
+                programRelationFactory, ActorNameNormalizer.getDefault());
         List<String> tokens = generator.getAllLeaves();
         assertArrayEquals(expectedLeaves, tokens.toArray());
     }
@@ -92,7 +93,7 @@ class PathGeneratorTest implements JsonTest {
     void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, includeStage, program,
-                true, programRelationFactory);
+                true, programRelationFactory, ActorNameNormalizer.getDefault());
 
         List<ProgramFeatures> pathContexts = generator.generatePaths();
         assertEquals(1, pathContexts.size());
@@ -127,7 +128,7 @@ class PathGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
 
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(pathType, 8, includeStage, program, true,
-                programRelationFactory);
+                programRelationFactory, ActorNameNormalizer.getDefault());
         List<ProgramFeatures> features = generator.generatePaths();
         assertTrue(features.isEmpty());
     }

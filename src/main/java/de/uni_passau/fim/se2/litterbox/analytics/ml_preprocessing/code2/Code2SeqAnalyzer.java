@@ -49,7 +49,7 @@ public class Code2SeqAnalyzer extends Code2Analyzer {
         final PathFormatOptions pathFormatOptions = new PathFormatOptions("|", "|", "|", "", "", true, true);
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
                 pathType, maxPathLength, includeStage, program, includeDefaultSprites, pathFormatOptions,
-                programRelationFactory
+                programRelationFactory, actorNameNormalizer
         );
         final GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 

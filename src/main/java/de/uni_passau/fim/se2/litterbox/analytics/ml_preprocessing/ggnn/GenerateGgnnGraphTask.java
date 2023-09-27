@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -37,15 +38,18 @@ public class GenerateGgnnGraphTask {
     private final boolean includeStage;
     private final boolean includeDefaultSprites;
     private final boolean wholeProgramAsSingleGraph;
+    private final ActorNameNormalizer actorNameNormalizer;
     private final String labelName;
 
     public GenerateGgnnGraphTask(Program program, Path inputPath, boolean includeStage, boolean includeDefaultSprites,
-                                 boolean wholeProgramAsSingleGraph, String labelName) {
+                                 boolean wholeProgramAsSingleGraph, String labelName,
+                                 ActorNameNormalizer actorNameNormalizer) {
         this.inputPath = inputPath;
         this.program = program;
         this.includeStage = includeStage;
         this.includeDefaultSprites = includeDefaultSprites;
         this.wholeProgramAsSingleGraph = wholeProgramAsSingleGraph;
+        this.actorNameNormalizer = actorNameNormalizer;
         this.labelName = labelName == null || labelName.isBlank() ? null : labelName;
     }
 
@@ -96,7 +100,7 @@ public class GenerateGgnnGraphTask {
 
     private String getActorLabel(final ActorDefinition actor) {
         return Optional.ofNullable(labelName)
-                .or(() -> NodeNameUtil.normalizeSpriteName(actor))
+                .or(() -> actorNameNormalizer.normalizeName(actor))
                 .orElse("");
     }
 

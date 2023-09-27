@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,9 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
     void testAllElementsPresent() throws Exception {
         Path filePath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(filePath.toString());
-        GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(program, filePath, true, true, false, null);
+        GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
+                program, filePath, true, true, false, null, ActorNameNormalizer.getDefault()
+        );
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(3);
 
@@ -52,7 +55,9 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
     void testSingleGraph() throws Exception {
         Path filePath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(filePath.toString());
-        GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(program, filePath, true, true, true, null);
+        GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
+                program, filePath, true, true, true, null, ActorNameNormalizer.getDefault()
+        );
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(1);
 

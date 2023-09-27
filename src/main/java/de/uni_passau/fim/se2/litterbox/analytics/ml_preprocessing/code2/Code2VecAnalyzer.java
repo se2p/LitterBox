@@ -45,7 +45,8 @@ public class Code2VecAnalyzer extends Code2Analyzer {
 
         final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
         final PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-                pathType, maxPathLength, includeStage, program, includeDefaultSprites, programRelationFactory
+                pathType, maxPathLength, includeStage, program, includeDefaultSprites, programRelationFactory,
+                actorNameNormalizer
         );
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContext().stream();

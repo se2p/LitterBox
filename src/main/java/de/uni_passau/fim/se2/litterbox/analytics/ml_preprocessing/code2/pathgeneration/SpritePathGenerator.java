@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgen
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.visitor.ExtractSpriteLeavesVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -30,13 +31,17 @@ import java.util.stream.Stream;
 
 public final class SpritePathGenerator extends PathGenerator {
 
+    private final ActorNameNormalizer actorNameNormalizer;
     private final Map<ActorDefinition, List<ASTNode>> leavesMap;
 
     public SpritePathGenerator(
             Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
+            ActorNameNormalizer actorNameNormalizer
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
+
+        this.actorNameNormalizer = actorNameNormalizer;
         this.leavesMap = Collections.unmodifiableMap(extractASTLeaves());
     }
 
@@ -61,7 +66,7 @@ public final class SpritePathGenerator extends PathGenerator {
     }
 
     private Optional<ProgramFeatures> generatePathsForSprite(final ActorDefinition sprite, final List<ASTNode> leaves) {
-        final Optional<String> spriteName = NodeNameUtil.normalizeSpriteName(sprite);
+        final Optional<String> spriteName = actorNameNormalizer.normalizeName(sprite);
         return spriteName
                 .filter(name -> includeDefaultSprites || !NodeNameUtil.hasDefaultName(sprite))
                 .map(name -> getProgramFeatures(name, leaves));

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -57,7 +58,7 @@ class GeneratePathTaskTest implements JsonTest {
     void testCreateContextEmptyProgram() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.PROGRAM, 8, true, program,
-                false, programRelationFactory);
+                false, programRelationFactory, ActorNameNormalizer.getDefault());
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextForCode2Vec = generatePathTask.createContext();
         assertThat(pathContextForCode2Vec).isEmpty();
@@ -68,7 +69,7 @@ class GeneratePathTaskTest implements JsonTest {
     void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage,
-                program, false, programRelationFactory);
+                program, false, programRelationFactory, ActorNameNormalizer.getDefault());
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
@@ -98,7 +99,7 @@ class GeneratePathTaskTest implements JsonTest {
     void testCreateContextCustomProcedures(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/ml_preprocessing/shared/custom_blocks_simple.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SPRITE, 8, includeStage,
-                program, false, programRelationFactory);
+                program, false, programRelationFactory, ActorNameNormalizer.getDefault());
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
@@ -120,7 +121,7 @@ class GeneratePathTaskTest implements JsonTest {
     void testCreateContextForCode2VecPerScripts(boolean includeStage) throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage,
-                program, false, programRelationFactory);
+                program, false, programRelationFactory, ActorNameNormalizer.getDefault());
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
 
@@ -147,7 +148,7 @@ class GeneratePathTaskTest implements JsonTest {
     {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(PathType.SCRIPT, 8, includeStage,
-                program, false, programRelationFactory);
+                program, false, programRelationFactory, ActorNameNormalizer.getDefault());
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
         List<String> pathContexts = pathContextsForCode2Vec
