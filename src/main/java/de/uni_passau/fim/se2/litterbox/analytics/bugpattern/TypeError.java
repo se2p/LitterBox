@@ -54,10 +54,11 @@ import java.util.List;
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
-    private boolean insideComparison = false;
+    private boolean isInsideComparison = false;
     private boolean isRightSide = false;
 
     private Type type = null;
+    private boolean isInsideQualified = false;
 
     private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
 
@@ -91,7 +92,7 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
-        insideComparison = true;
+        isInsideComparison = true;
         if (!node.getChildren().isEmpty()) {
             isRightSide = false;
             ASTNode leftChild = node.getChildren().get(0);
@@ -100,13 +101,13 @@ public class TypeError extends AbstractIssueFinder {
             isRightSide = true;
             rightChild.accept(this);
         }
-        insideComparison = false; // TODO: Can comparisons be nested?
+        isInsideComparison = false; // TODO: Can comparisons be nested?
         type = null;
     }
 
     @Override
     public void visit(StringExpr node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = null;
             }
@@ -122,7 +123,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(StringLiteral node) {
-        if (insideComparison) {
+        if (isInsideComparison && !isInsideQualified) {
             if (!isRightSide) {
                 this.type = Type.STRING;
             } else {
@@ -131,6 +132,13 @@ public class TypeError extends AbstractIssueFinder {
                 }
             }
         }
+    }
+
+    @Override
+    public void visit(Qualified node) {
+        isInsideQualified = true;
+        visitChildren(node);
+        isInsideQualified = false;
     }
 
     @Override
@@ -170,7 +178,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(NumExpr node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
@@ -190,7 +198,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(AsString node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 if (node.getOperand1().getUniqueName().equals("Touching")) {
                     type = Type.BOOLEAN;
@@ -209,7 +217,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(AsNumber node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = null;
             } else {
@@ -222,7 +230,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(NumberLiteral node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
@@ -234,7 +242,7 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private boolean isValid(Type type) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 this.type = type;
             } else {
