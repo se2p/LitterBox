@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.As
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.AstnnNode;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.NodeType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.StatementType;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AbstractTokenCheck;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,8 +62,10 @@ public class AstnnAbstractTokenTest extends AbstractTokenCheck {
             "src/test/fixtures/ml_preprocessing/shared/tts_blocks.json",
     })
     void testAllBlocksVisitableAbstract(final String filename) throws Exception {
+        final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(ActorNameNormalizer.getDefault(), true);
+
         final Program program = getAST(filename);
-        final AstnnNode node = ToAstnnTransformer.transform(program, true, true, true);
+        final AstnnNode node = toAstnnTransformer.transform(program, true, true);
         assertThat(node).isNotNull();
         assertThat(node).isInstanceOf(AstnnAstNode.class);
 

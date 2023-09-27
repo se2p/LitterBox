@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.AstnnAstNodeFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.AstnnNode;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -29,13 +30,15 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class ToAstnnTransformer {
-    private ToAstnnTransformer() {
-        throw new IllegalCallerException("utility class");
+    private final ActorNameNormalizer actorNameNormalizer;
+    private final boolean abstractTokens;
+
+    ToAstnnTransformer(final ActorNameNormalizer actorNameNormalizer, final boolean abstractTokens) {
+        this.actorNameNormalizer = actorNameNormalizer;
+        this.abstractTokens = abstractTokens;
     }
 
-    public static AstnnNode transform(
-            final Program program, boolean includeStage, boolean includeDefaultSprites, boolean abstractTokens
-    ) {
+    public AstnnNode transform(final Program program, boolean includeStage, boolean includeDefaultSprites) {
         final Stream<ActorDefinition> actors;
         if (includeDefaultSprites) {
             actors = AstNodeUtil.getActors(program, includeStage);
@@ -44,14 +47,14 @@ class ToAstnnTransformer {
         }
 
         final List<AstnnNode> nodes = actors
-                .map(actor -> transform(program, actor, abstractTokens))
+                .map(actor -> transform(program, actor))
                 .toList();
         return AstnnAstNodeFactory.program(program.getIdent().getName(), nodes);
     }
 
-    public static AstnnNode transform(final Program program, final ASTNode node, boolean abstractTokens) {
+    public AstnnNode transform(final Program program, final ASTNode node) {
         final AstnnTransformationVisitor visitor = new AstnnTransformationVisitor(
-                program.getProcedureMapping(), abstractTokens
+                program.getProcedureMapping(), actorNameNormalizer, abstractTokens
         );
         node.accept(visitor);
         return visitor.getResult();

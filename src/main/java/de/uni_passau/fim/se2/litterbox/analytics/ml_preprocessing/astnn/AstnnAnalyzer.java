@@ -36,6 +36,7 @@ public class AstnnAnalyzer extends MLPreprocessingAnalyzer<StatementTreeSequence
     private static final Logger log = Logger.getLogger(AstnnAnalyzer.class.getName());
 
     private final ObjectMapper objectMapper;
+    private final StatementTreeSequenceBuilder statementTreeSequenceBuilder;
 
     /**
      * Sets up an analyzer that extracts the necessary information for a machine learning model from a program.
@@ -46,6 +47,9 @@ public class AstnnAnalyzer extends MLPreprocessingAnalyzer<StatementTreeSequence
         super(commonOptions);
 
         objectMapper = new ObjectMapper();
+        statementTreeSequenceBuilder = new StatementTreeSequenceBuilder(
+                commonOptions.actorNameNormalizer(), commonOptions.abstractTokens()
+        );
     }
 
     @Override
@@ -59,12 +63,10 @@ public class AstnnAnalyzer extends MLPreprocessingAnalyzer<StatementTreeSequence
         final Stream<StatementTreeSequence> nodes;
         if (wholeProgram) {
             nodes = Stream.of(
-                    StatementTreeSequenceBuilder.build(program, includeStage, includeDefaultSprites, abstractTokens)
+                    statementTreeSequenceBuilder.build(program, includeStage, includeDefaultSprites)
             );
         } else {
-            nodes = StatementTreeSequenceBuilder.buildPerActor(
-                    program, includeStage, includeDefaultSprites, abstractTokens
-            );
+            nodes = statementTreeSequenceBuilder.buildPerActor(program, includeStage, includeDefaultSprites);
         }
 
         return nodes.filter(this::isValidStatementSequence);

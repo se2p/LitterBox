@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.As
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.AstnnNode;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.NodeType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.StatementTreeSequence;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -32,22 +32,24 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class StatementTreeSequenceBuilder {
-    private StatementTreeSequenceBuilder() {
-        throw new IllegalCallerException("utility class");
+    private final ActorNameNormalizer actorNameNormalizer;
+    private final ToAstnnTransformer toAstnnTransformer;
+
+    StatementTreeSequenceBuilder(final ActorNameNormalizer actorNameNormalizer, final boolean abstractTokens) {
+        this.actorNameNormalizer = actorNameNormalizer;
+        this.toAstnnTransformer = new ToAstnnTransformer(actorNameNormalizer, abstractTokens);
     }
 
-    public static StatementTreeSequence build(
-            final Program program, boolean includeStage, boolean includeDefaultSprites, boolean abstractTokens
+    public StatementTreeSequence build(
+            final Program program, boolean includeStage, boolean includeDefaultSprites
     ) {
-        final AstnnNode node = ToAstnnTransformer.transform(
-                program, includeStage, includeDefaultSprites, abstractTokens
-        );
+        final AstnnNode node = toAstnnTransformer.transform(program, includeStage, includeDefaultSprites);
         final List<AstnnNode> statementTrees = build(node);
         return new StatementTreeSequence(program.getIdent().getName(), statementTrees);
     }
 
-    public static Stream<StatementTreeSequence> buildPerActor(
-            final Program program, boolean includeStage, boolean includeDefaultSprites, boolean abstractTokens
+    public Stream<StatementTreeSequence> buildPerActor(
+            final Program program, boolean includeStage, boolean includeDefaultSprites
     ) {
         final Stream<ActorDefinition> actors;
         if (includeDefaultSprites) {
@@ -56,7 +58,7 @@ class StatementTreeSequenceBuilder {
             actors = AstNodeUtil.getActorsWithoutDefaultSprites(program, includeStage);
         }
 
-        return actors.map(actor -> build(program, actor, abstractTokens));
+        return actors.map(actor -> build(program, actor));
     }
 
     /**
@@ -64,15 +66,12 @@ class StatementTreeSequenceBuilder {
      *
      * @param program The program the actor belongs to. Required to be able to resolve custom procedure names.
      * @param actor The actor for which the statement trees should be generated.
-     * @param abstractTokens If literals and variable names should be represented by abstract tokens instead of values.
      * @return The statement tree sequence for the actor.
      */
-    public static StatementTreeSequence build(
-            final Program program, final ActorDefinition actor, boolean abstractTokens
-    ) {
-        final AstnnNode node = ToAstnnTransformer.transform(program, actor, abstractTokens);
+    public StatementTreeSequence build(final Program program, final ActorDefinition actor) {
+        final AstnnNode node = toAstnnTransformer.transform(program, actor);
         final List<AstnnNode> statementTrees = build(node);
-        final String label = NodeNameUtil.normalizeSpriteName(actor).orElse(NodeType.EMPTY_STRING.toString());
+        final String label = actorNameNormalizer.normalizeName(actor).orElse(NodeType.EMPTY_STRING.toString());
         return new StatementTreeSequence(label, statementTrees);
     }
 

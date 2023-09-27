@@ -19,10 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.model.*;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.BaseTokenVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AbstractToken;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -105,6 +105,7 @@ class AstnnTransformationVisitor implements
     private final BaseTokenVisitor tokenVisitor = TokenVisitorFactory.getDefaultTokenVisitor(true);
 
     private final ProcedureDefinitionNameMapping procedureNameMapping;
+    private final ActorNameNormalizer actorNameNormalizer;
     private final boolean abstractTokens;
 
     /**
@@ -114,8 +115,12 @@ class AstnnTransformationVisitor implements
      */
     private Optional<AstnnNode> nodeTracker = Optional.empty();
 
-    AstnnTransformationVisitor(final ProcedureDefinitionNameMapping procedureNameMapping, boolean abstractTokens) {
+    AstnnTransformationVisitor(
+            final ProcedureDefinitionNameMapping procedureNameMapping, final ActorNameNormalizer actorNameNormalizer,
+            final boolean abstractTokens
+    ) {
         this.procedureNameMapping = procedureNameMapping;
+        this.actorNameNormalizer = actorNameNormalizer;
         this.abstractTokens = abstractTokens;
     }
 
@@ -157,7 +162,7 @@ class AstnnTransformationVisitor implements
                 return AbstractToken.SPRITE.name();
             }
         } else {
-            return NodeNameUtil.normalizeSpriteName(node).orElse(NodeType.EMPTY_STRING.toString());
+            return actorNameNormalizer.normalizeName(node).orElse(NodeType.EMPTY_STRING.toString());
         }
     }
 
