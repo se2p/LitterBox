@@ -85,4 +85,9 @@ public class InterruptedLoopSensingTest implements JsonTest {
     public void testInterruptedLoopSensingWaitBeforeSensing() throws IOException, ParsingException {
         assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/waitingBeforeSensing.json");
     }
+
+    @Test
+    public void testInterruptedLoopSensingNotAfterRepeatUntil() throws IOException, ParsingException {
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/interruptedLoopSensingNotAfterRepeatUntil.json");
+    }
 }
