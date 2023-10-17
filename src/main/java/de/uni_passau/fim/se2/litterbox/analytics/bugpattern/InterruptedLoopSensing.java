@@ -380,7 +380,6 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
             sensingCollision = true;
-            visitOuterBlocks(node);
         }
     }
 
