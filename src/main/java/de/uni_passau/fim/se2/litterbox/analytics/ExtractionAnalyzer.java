@@ -18,15 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionResult;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class ExtractionAnalyzer extends Analyzer {
+public class ExtractionAnalyzer extends Analyzer<List<ExtractionResult>> {
 
     private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
     private final ExtractionTool issueTool;
@@ -42,7 +44,7 @@ public class ExtractionAnalyzer extends Analyzer {
      * @param fileEntry the file to analyze
      */
     @Override
-    void check(File fileEntry, Path csv) {
+    void checkAndWrite(File fileEntry, Path csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             log.warning("Could not parse program in file " + fileEntry);
@@ -54,5 +56,11 @@ public class ExtractionAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + csv);
         }
+    }
+
+    @Override
+    public List<ExtractionResult> check(File fileEntry) throws IOException {
+        Program program = extractProgram(fileEntry);
+        return issueTool.extract(program);
     }
 }

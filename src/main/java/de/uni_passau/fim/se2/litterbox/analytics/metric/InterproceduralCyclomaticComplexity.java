@@ -24,17 +24,18 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
 public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements MetricExtractor<T> {
+    public final static String NAME = "interprocedural_cyclomatic_complexity";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg =  visitor.getControlFlowGraph();
-        return cfg.getNumEdges() - cfg.getNumNodes() + 2;
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        return new MetricResult(NAME, cfg.getNumEdges() - cfg.getNumNodes() + 2);
     }
 
     @Override
     public String getName() {
-        return "interprocedural_cyclomatic_complexity";
+        return NAME;
     }
 }

@@ -35,9 +35,9 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
     public static final String NAME = "avg_script_width_count";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        return countScriptWidthCount(node);
+        return new MetricResult(NAME, countScriptWidthCount(node));
     }
 
     private double countScriptWidthCount(T node) {

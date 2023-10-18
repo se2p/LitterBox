@@ -37,13 +37,13 @@ public class StatementCount<T extends ASTNode> implements MetricExtractor<T>, Sc
     private int count = 0;
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        return count;
+        return new MetricResult(NAME, count);
     }
 
     @Override

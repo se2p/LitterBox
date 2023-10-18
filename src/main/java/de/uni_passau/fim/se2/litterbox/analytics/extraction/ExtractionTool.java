@@ -58,13 +58,22 @@ public class ExtractionTool {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
-        for (NameExtraction extractor : getExtractors()) {
-            row.add(extractor.extractNames(program).toString());
+        List<ExtractionResult> extractions = extract(program);
+        for (ExtractionResult extraction : extractions) {
+            row.add(extraction.result().toString());
         }
 
         try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
             printer.printRecord(row);
             printer.flush();
         }
+    }
+
+    public List<ExtractionResult> extract(Program program){
+        List<ExtractionResult> list = new ArrayList<>();
+        for (NameExtraction extractor : getExtractors()) {
+            list.add(extractor.extractNames(program));
+        }
+        return list;
     }
 }

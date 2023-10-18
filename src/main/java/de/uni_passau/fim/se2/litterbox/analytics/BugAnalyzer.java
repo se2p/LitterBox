@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class BugAnalyzer extends Analyzer {
+public class BugAnalyzer extends Analyzer<Set<Issue>> {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
@@ -70,17 +70,20 @@ public class BugAnalyzer extends Analyzer {
      * @param reportFileName the file in which to write the results
      */
     @Override
-    void check(File fileEntry, Path reportFileName) {
+    void checkAndWrite(File fileEntry, Path reportFileName) {
         Program program = extractProgram(fileEntry);
-        if (program == null) {
-            return;
-        }
-        Set<Issue> issues = runFinders(program);
+        Set<Issue> issues = check(program);
         generateOutput(program, issues, reportFileName, outputPerScript);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);
     }
 
-    private Set<Issue> runFinders(Program program) {
+    @Override
+    public Set<Issue> check(File fileEntry) {
+        Program program = extractProgram(fileEntry);
+        return check(program);
+    }
+
+    private Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder issueFinder : issueFinders) {

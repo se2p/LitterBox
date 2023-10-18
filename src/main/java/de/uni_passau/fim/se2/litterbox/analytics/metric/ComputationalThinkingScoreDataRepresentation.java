@@ -33,14 +33,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreDataRepresentation implements MetricExtractor<Program>, ScratchVisitor {
+    public final static String NAME = "ct_score_data_representation";
 
     private int score = 0;
 
     @Override
-    public double calculateMetric(Program program) {
+    public MetricResult calculateMetric(Program program) {
         score = 0;
         program.accept(this);
-        return score;
+        return new MetricResult(NAME, score);
     }
 
     @Override
@@ -152,6 +153,6 @@ public class ComputationalThinkingScoreDataRepresentation implements MetricExtra
 
     @Override
     public String getName() {
-        return "ct_score_data_representation";
+        return NAME;
     }
 }

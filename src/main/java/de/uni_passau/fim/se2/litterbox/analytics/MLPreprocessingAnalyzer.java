@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
+public abstract class MLPreprocessingAnalyzer<R> extends Analyzer<R> {
     private static final Logger log = Logger.getLogger(MLPreprocessingAnalyzer.class.getName());
 
     protected final MLOutputPath outputPath;
@@ -64,7 +64,7 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer {
     protected abstract Path outputFileName(File inputFile);
 
     @Override
-    protected void check(final File fileEntry, final Path csv) throws IOException {
+    protected void checkAndWrite(final File fileEntry, final Path csv) throws IOException {
         runProcessingSteps(fileEntry);
     }
 

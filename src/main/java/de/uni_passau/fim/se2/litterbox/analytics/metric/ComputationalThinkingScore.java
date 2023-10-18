@@ -21,23 +21,25 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ComputationalThinkingScore  implements MetricExtractor<Program> {
-    @Override
-    public double calculateMetric(Program program) {
-        double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program);
-        double dataRepresentationScore = new ComputationalThinkingScoreDataRepresentation().calculateMetric(program);
-        double flowControlScore = new ComputationalThinkingScoreFlowControl().calculateMetric(program);
-        double logicScore = new ComputationalThinkingScoreLogic().calculateMetric(program);
-        double parallelizationScore = new ComputationalThinkingScoreParallelization().calculateMetric(program);
-        double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program);
-        double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program);
+public class ComputationalThinkingScore implements MetricExtractor<Program> {
+    public final static String NAME="ct_score";
 
-        return abstractionScore + dataRepresentationScore + flowControlScore
-                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore;
+    @Override
+    public MetricResult calculateMetric(Program program) {
+        double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program).value();
+        double dataRepresentationScore = new ComputationalThinkingScoreDataRepresentation().calculateMetric(program).value();
+        double flowControlScore = new ComputationalThinkingScoreFlowControl().calculateMetric(program).value();
+        double logicScore = new ComputationalThinkingScoreLogic().calculateMetric(program).value();
+        double parallelizationScore = new ComputationalThinkingScoreParallelization().calculateMetric(program).value();
+        double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program).value();
+        double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program).value();
+
+        return new MetricResult(NAME, abstractionScore + dataRepresentationScore + flowControlScore
+                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore);
     }
 
     @Override
     public String getName() {
-        return "ct_score";
+        return NAME;
     }
 }

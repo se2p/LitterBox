@@ -30,10 +30,10 @@ public class SpriteNameExtraction implements ScratchVisitor, NameExtraction {
     private List<String> names;
 
     @Override
-    public List<String> extractNames(Program program) {
+    public ExtractionResult extractNames(Program program) {
         names = new ArrayList<>();
         program.accept(this);
-        return names;
+        return new ExtractionResult(NAME, names);
     }
 
     @Override

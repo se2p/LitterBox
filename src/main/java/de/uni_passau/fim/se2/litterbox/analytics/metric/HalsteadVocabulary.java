@@ -23,18 +23,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadVocabulary<T extends ASTNode> implements MetricExtractor<T> {
+    public final static String NAME = "halstead_size";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         node.accept(halstead);
 
         // The vocabulary size (n) is the sum of the number of unique operators and operands
-        return halstead.getUniqueOperands() + halstead.getUniqueOperators();
+        return new MetricResult(NAME, halstead.getUniqueOperands() + halstead.getUniqueOperators());
     }
 
     @Override
     public String getName() {
-        return "halstead_size";
+        return NAME;
     }
 }

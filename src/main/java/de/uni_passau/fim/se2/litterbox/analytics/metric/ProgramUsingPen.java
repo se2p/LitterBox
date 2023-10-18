@@ -31,9 +31,9 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T> {
     }
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        final double penBlocks = new PenBlockCount<>().calculateMetric(node);
-        return Math.min(1, penBlocks);
+        final double penBlocks = new PenBlockCount<>().calculateMetric(node).value();
+        return new MetricResult(NAME, Math.min(1, penBlocks));
     }
 }

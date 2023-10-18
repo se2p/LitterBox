@@ -41,7 +41,7 @@ public class FeatureAnalyzer extends Analyzer {
      * @param fileEntry the file to analyze
      */
     @Override
-    void check(File fileEntry, Path csv) {
+    void checkAndWrite(File fileEntry, Path csv) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message

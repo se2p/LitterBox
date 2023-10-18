@@ -40,13 +40,13 @@ public class AvgVariableLengthCount<T extends ASTNode> implements ScratchVisitor
     private List<String> variables;
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        return getAvgVariableLengthCount();
+        return new MetricResult(NAME, getAvgVariableLengthCount());
     }
 
     private double getAvgVariableLengthCount() {

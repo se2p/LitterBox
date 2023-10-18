@@ -53,7 +53,7 @@ public class LeilaAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, Path out) {
+    void checkAndWrite(File fileEntry, Path out) {
         if (!out.toFile().isDirectory()) {
             log.warning("Output path must be a folder");
             return;

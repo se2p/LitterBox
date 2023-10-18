@@ -134,13 +134,22 @@ public class MetricTool {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
-        for (MetricExtractor<Program> extractor : getMetrics()) {
-            row.add(Double.toString(extractor.calculateMetric(program)));
+        List<MetricResult> results = calculateMetrics(program);
+        for (MetricResult result : results) {
+            row.add(Double.toString(result.value()));
         }
 
         try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
             printer.printRecord(row);
             printer.flush();
         }
+    }
+
+    public List<MetricResult> calculateMetrics(Program program) {
+        List<MetricResult> results = new ArrayList<>();
+        for (MetricExtractor<Program> extractor : getMetrics()) {
+            results.add(extractor.calculateMetric(program));
+        }
+        return results;
     }
 }

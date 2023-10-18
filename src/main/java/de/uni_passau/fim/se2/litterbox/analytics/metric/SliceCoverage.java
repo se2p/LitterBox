@@ -27,8 +27,9 @@ import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 
 public class SliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
+    public final static String NAME = "slice_coverage";
 
-    private ActorDefinition actor;
+    private final ActorDefinition actor;
 
     public SliceCoverage() {
         actor = null;
@@ -39,17 +40,17 @@ public class SliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
     }
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor(actor);
         node.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
-        return sliceProfile.getCoverage();
+        return new MetricResult(NAME, sliceProfile.getCoverage());
     }
 
     @Override
     public String getName() {
-        return "slice_coverage";
+        return NAME;
     }
 }

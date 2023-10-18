@@ -28,14 +28,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreLogic implements MetricExtractor<Program>, ScratchVisitor {
+    public final static String NAME = "ct_score_logic";
 
     private int score = 0;
 
     @Override
-    public double calculateMetric(Program program) {
+    public MetricResult calculateMetric(Program program) {
         score = 0;
         program.accept(this);
-        return score;
+        return new MetricResult(NAME, score);
     }
 
     @Override

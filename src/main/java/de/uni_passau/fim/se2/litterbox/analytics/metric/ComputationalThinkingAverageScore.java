@@ -22,22 +22,23 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class ComputationalThinkingAverageScore  implements MetricExtractor<Program> {
+    public final static String NAME = "ct_score_average";
     @Override
-    public double calculateMetric(Program program) {
-        double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program);
-        double dataRepresentationScore = new ComputationalThinkingScoreDataRepresentation().calculateMetric(program);
-        double flowControlScore = new ComputationalThinkingScoreFlowControl().calculateMetric(program);
-        double logicScore = new ComputationalThinkingScoreLogic().calculateMetric(program);
-        double parallelizationScore = new ComputationalThinkingScoreParallelization().calculateMetric(program);
-        double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program);
-        double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program);
+    public MetricResult calculateMetric(Program program) {
+        double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program).value();
+        double dataRepresentationScore = new ComputationalThinkingScoreDataRepresentation().calculateMetric(program).value();
+        double flowControlScore = new ComputationalThinkingScoreFlowControl().calculateMetric(program).value();
+        double logicScore = new ComputationalThinkingScoreLogic().calculateMetric(program).value();
+        double parallelizationScore = new ComputationalThinkingScoreParallelization().calculateMetric(program).value();
+        double synchronizationScore = new ComputationalThinkingScoreSynchronization().calculateMetric(program).value();
+        double userInteractivityScore = new ComputationalThinkingScoreUserInteractivity().calculateMetric(program).value();
 
-        return (abstractionScore + dataRepresentationScore + flowControlScore
-                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore) / 7.0;
+        return new MetricResult(NAME, (abstractionScore + dataRepresentationScore + flowControlScore
+                + logicScore + parallelizationScore + synchronizationScore + userInteractivityScore) / 7.0);
     }
 
     @Override
     public String getName() {
-        return "ct_score_average";
+        return NAME;
     }
 }

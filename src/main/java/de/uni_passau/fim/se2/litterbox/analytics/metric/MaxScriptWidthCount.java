@@ -34,9 +34,9 @@ public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
     public static final String NAME = "max_script_width_count";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        return countMaxScriptWidthCount(node);
+        return new MetricResult(NAME, countMaxScriptWidthCount(node));
     }
 
     private double countMaxScriptWidthCount(T node) {

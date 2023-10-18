@@ -30,13 +30,13 @@ public class VariableNameExtraction implements ScratchVisitor, NameExtraction {
     public static final String NAME = "variable_names";
 
     @Override
-    public List<String> extractNames(Program program) {
+    public ExtractionResult extractNames(Program program) {
         final List<String> names = new ArrayList<>();
         Collection<VariableInfo> variables = program.getSymbolTable().getVariables().values();
         for (VariableInfo variable : variables) {
             names.add(variable.getVariableName());
         }
-        return names;
+        return new ExtractionResult(NAME, names);
     }
 
     @Override

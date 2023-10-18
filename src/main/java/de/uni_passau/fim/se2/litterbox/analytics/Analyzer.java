@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public abstract class Analyzer {
+public abstract class Analyzer<R> {
 
     private static final Logger log = Logger.getLogger(Analyzer.class.getName());
     protected final Path output;
@@ -57,11 +57,11 @@ public abstract class Analyzer {
             List<Path> listOfFiles = getProgramPaths(file.toPath());
             for (Path filePath : listOfFiles) {
                 File fileEntry = filePath.toFile();
-                check(fileEntry, output);
+                checkAndWrite(fileEntry, output);
                 deleteFile(fileEntry);
             }
         } else if (file.exists() && !file.isDirectory()) {
-            check(file, output);
+            checkAndWrite(file, output);
             deleteFile(file);
         } else {
             log.severe("Folder or file '" + file.getName() + "' does not exist");
@@ -126,11 +126,13 @@ public abstract class Analyzer {
             }
         }
 
-        check(projectFile, output);
+        checkAndWrite(projectFile, output);
         deleteFile(projectFile);
     }
 
-    abstract void check(File fileEntry, Path csv) throws IOException;
+    abstract void checkAndWrite(File fileEntry, Path csv) throws IOException;
+
+    public abstract R check(File fileEntry) throws IOException;
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.

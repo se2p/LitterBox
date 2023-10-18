@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Program>, ScratchVisitor {
+    public final static String NAME = "ct_score_abstraction";
 
     private int score = 0;
 
@@ -33,11 +34,11 @@ public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Pr
     private int numSpritesWithScripts = 0;
 
     @Override
-    public double calculateMetric(Program program) {
+    public MetricResult calculateMetric(Program program) {
         score = 0;
         numSpritesWithScripts = 0;
         program.accept(this);
-        return score;
+        return new MetricResult(NAME, score);
     }
 
     @Override
@@ -65,6 +66,6 @@ public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Pr
 
     @Override
     public String getName() {
-        return "ct_score_abstraction";
+        return NAME;
     }
 }

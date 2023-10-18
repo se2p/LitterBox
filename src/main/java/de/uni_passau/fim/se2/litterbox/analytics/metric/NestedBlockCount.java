@@ -32,7 +32,6 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     private int maxNestedDepth = 0;
     private int currentNestedDepth = 0;
 
-
     @Override
     public void visit(IfThenStmt node) {
         currentNestedDepth++;
@@ -84,11 +83,11 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         maxNestedDepth = 0;
         node.accept(this);
-        return maxNestedDepth;
+        return new MetricResult(NAME, maxNestedDepth);
     }
 
     @Override

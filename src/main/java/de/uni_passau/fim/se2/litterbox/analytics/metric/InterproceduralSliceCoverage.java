@@ -34,9 +34,10 @@ import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 import java.util.*;
 
 public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
+    public final static String NAME = "interprocedural_slice_coverage";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
 
         Map<Defineable, Double> coverageMap = new HashMap<>();
 
@@ -67,10 +68,10 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
         });
 
         if (coverageMap.isEmpty()) {
-            return 0.0;
+            return new MetricResult(NAME, 0.0);
         }
         double coverage = coverageMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        return coverage / coverageMap.size();
+        return new MetricResult(NAME, coverage / coverageMap.size());
     }
 
     private int getScriptLength(ProgramDependenceGraph pdg) {
@@ -82,6 +83,6 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
 
     @Override
     public String getName() {
-        return "interprocedural_slice_coverage";
+        return NAME;
     }
 }

@@ -36,11 +36,11 @@ public class MostComplexScript<T extends ASTNode> implements MetricExtractor<T>,
     int localCount = 0;
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         this.count = 0;
         node.accept(this);
-        return count;
+        return new MetricResult(NAME, count);
     }
 
     @Override

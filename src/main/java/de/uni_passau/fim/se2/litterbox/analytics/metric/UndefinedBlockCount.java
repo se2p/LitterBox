@@ -33,11 +33,11 @@ public class UndefinedBlockCount<T extends ASTNode> implements MetricExtractor<T
     private int count = 0;
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
         node.accept(this);
-        return count;
+        return new MetricResult(NAME, count);
     }
 
     @Override

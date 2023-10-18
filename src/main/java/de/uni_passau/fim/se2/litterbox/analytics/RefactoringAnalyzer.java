@@ -73,7 +73,7 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, Path reportName) throws IOException {
+    void checkAndWrite(File fileEntry, Path reportName) throws IOException {
         final Instant startProgramExtraction = Instant.now();
         Program program = extractProgram(fileEntry);
         if (program == null) {

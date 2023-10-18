@@ -353,11 +353,11 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         maxStackedDepth = 0;
         node.accept(this);
-        return maxStackedDepth;
+        return new MetricResult(NAME, maxStackedDepth);
     }
 
     @Override

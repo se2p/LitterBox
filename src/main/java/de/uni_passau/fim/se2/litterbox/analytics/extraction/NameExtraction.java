@@ -24,7 +24,7 @@ import java.util.List;
 
 public interface NameExtraction {
 
-    List<String> extractNames(Program program);
+    ExtractionResult extractNames(Program program);
 
     String getName();
 }

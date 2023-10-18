@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-public class DotAnalyzer extends Analyzer {
+public class DotAnalyzer extends Analyzer<String> {
     private static final Logger log = Logger.getLogger(DotAnalyzer.class.getName());
 
     public DotAnalyzer(Path input, Path output, boolean delete) {
@@ -36,7 +36,7 @@ public class DotAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, Path outputPath) {
+    void checkAndWrite(File fileEntry, Path outputPath) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             log.warning("Could not parse program in " + fileEntry.getPath());
@@ -48,6 +48,16 @@ public class DotAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning("Could not create dot File: " + outputPath);
         }
+    }
+
+    @Override
+    public String check(File fileEntry) throws IOException {
+        Program program = extractProgram(fileEntry);
+        if (program == null) {
+            log.warning("Could not parse program in " + fileEntry.getPath());
+            return "";
+        }
+        return DotVisitor.buildDotGraph(program);
     }
 
     private void createDotFile(Program program, Path outputPath) throws IOException {

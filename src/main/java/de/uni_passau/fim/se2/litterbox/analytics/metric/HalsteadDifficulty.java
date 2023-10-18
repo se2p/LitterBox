@@ -23,29 +23,30 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadDifficulty<T extends ASTNode> implements MetricExtractor<T> {
+    public final static String NAME = "halstead_difficulty";
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         node.accept(halstead);
 
         //  D = ( n1 / 2 ) * ( N2 / n2 )
         double n1 = halstead.getUniqueOperators();
-        double n2  = halstead.getUniqueOperands();
+        double n2 = halstead.getUniqueOperands();
 
         if (n2 == 0) {
             // If there are no operands, there's no difficulty
             // ...otherwise we'd divide by 0
-            return 0.0;
+            return new MetricResult(NAME, 0.0);
         }
 
         double totalOperands = halstead.getTotalOperands();
 
-        return (n1 / 2.0) * (totalOperands / n2);
+        return new MetricResult(NAME, (n1 / 2.0) * (totalOperands / n2));
     }
 
     @Override
     public String getName() {
-        return "halstead_difficulty";
+        return NAME;
     }
 }

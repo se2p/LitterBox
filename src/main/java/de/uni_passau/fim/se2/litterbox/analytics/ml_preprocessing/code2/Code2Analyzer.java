@@ -59,11 +59,11 @@ abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     }
 
     @Override
-    protected void check(File fileEntry, Path csv) throws IOException {
+    protected void checkAndWrite(File fileEntry, Path csv) throws IOException {
         if (this.pathType == PathType.SCRIPT) {
             runPerScriptProcessingSteps(fileEntry);
         } else {
-            super.check(fileEntry, csv);
+            super.checkAndWrite(fileEntry, csv);
         }
     }
 

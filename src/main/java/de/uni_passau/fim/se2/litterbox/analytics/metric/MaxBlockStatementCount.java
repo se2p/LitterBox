@@ -37,11 +37,11 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     private double maxBlocks;
 
     @Override
-    public double calculateMetric(T node) {
+    public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         maxBlocks = 0;
         node.accept(this);
-        return maxBlocks;
+        return new MetricResult(NAME, maxBlocks);
     }
 
     @Override
@@ -100,9 +100,9 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     public void getBlockCount(ASTNode node, boolean increment) {
         this.currentNumberOfBlocks = 0;
         if (increment) {
-            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node);
+            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node).value();
         } else {
-            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node) + 1;
+            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node).value() + 1;
         }
 
         this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
