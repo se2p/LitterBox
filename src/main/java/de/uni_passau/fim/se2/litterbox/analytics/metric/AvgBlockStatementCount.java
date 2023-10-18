@@ -32,8 +32,8 @@ public class AvgBlockStatementCount<T extends ASTNode> implements MetricExtracto
     @Override
     public MetricResult calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        double blockCount = new BlockCount<T>().calculateMetric(node);
-        double statementCount = new StatementCount<T>().calculateMetric(node);
+        double blockCount = new BlockCount<T>().calculateMetric(node).value();
+        double statementCount = new StatementCount<T>().calculateMetric(node).value();
         node.accept(this);
         return new MetricResult(NAME, statementCount > 0 ? blockCount / statementCount : 0);
     }

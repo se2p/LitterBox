@@ -18,14 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class FeatureAnalyzer extends Analyzer {
+public class FeatureAnalyzer extends Analyzer<List<FeatureResult>> {
 
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
     private FeatureTool featureTool;
@@ -53,5 +55,11 @@ public class FeatureAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + csv);
         }
+    }
+
+    @Override
+    public List<FeatureResult> check(File fileEntry) throws IOException {
+        Program program = extractProgram(fileEntry);
+        return featureTool.calculateFeatures(program);
     }
 }

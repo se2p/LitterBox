@@ -108,7 +108,7 @@ public class FeatureTool {
                 row.add(uniqueID);
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
-                    row.add(Double.toString(extractor.calculateMetric(target)));
+                    row.add(Double.toString(extractor.calculateMetric(target).value()));
                 }
                 String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
                 row.add(stringScratchCode);
@@ -119,7 +119,38 @@ public class FeatureTool {
         printer.close();
     }
 
-    private String getScratchBlockCode(ASTNode target, Program program,ActorDefinition actorDefinition) {
+    public List<FeatureResult> calculateFeatures(Program program) {
+        int actorCount = 0;
+        List<ActorDefinition> actorDefinitions = getActors(program);
+        List<FeatureResult> results = new ArrayList<>();
+        for (ActorDefinition actorDefinition : actorDefinitions) {
+            int scriptCount = 0;
+            int procedureDefCount = 0;
+            actorCount = actorCount + 1;
+            List<ASTNode> targets = new ArrayList<>();
+            targets.addAll(actorDefinition.getScripts().getScriptList());
+            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
+
+            for (ASTNode target : targets) {
+                String uniqueID = "";
+                if (target instanceof Script) {
+                    scriptCount = scriptCount + 1;
+                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                } else if (target instanceof ProcedureDefinition) {
+                    procedureDefCount = procedureDefCount + 1;
+                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                }
+
+                for (MetricExtractor<ASTNode> extractor : metrics) {
+                    MetricResult metricResult = extractor.calculateMetric(target);
+                    results.add(new FeatureResult(metricResult.name(), uniqueID, metricResult.value()));
+                }
+            }
+        }
+        return results;
+    }
+
+    private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         if (target instanceof ProcedureDefinition) {
             visitor.setProgram(program);
