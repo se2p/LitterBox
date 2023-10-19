@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-public class LeilaAnalyzer extends Analyzer {
+public class LeilaAnalyzer extends Analyzer<Void> {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(LeilaAnalyzer.class.getName());
@@ -75,6 +75,11 @@ public class LeilaAnalyzer extends Analyzer {
         visitor.visit(program);
         stream.close();
         log.info("Finished printing.");
+    }
+
+    @Override
+    public Void check(File fileEntry) throws IOException {
+        return null;
     }
 
     private String getIntermediateFileName(String name) {

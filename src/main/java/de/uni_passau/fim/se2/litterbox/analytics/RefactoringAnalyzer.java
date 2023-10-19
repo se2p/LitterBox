@@ -52,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class RefactoringAnalyzer extends Analyzer {
+public class RefactoringAnalyzer extends Analyzer<Void> {
 
     private static final Logger log = Logger.getLogger(RefactoringAnalyzer.class.getName());
     private final List<RefactoringFinder> refactoringFinders;
@@ -104,6 +104,11 @@ public class RefactoringAnalyzer extends Analyzer {
         } else {
             log.log(Level.FINE, "NSGA-II found no solutions!");
         }
+    }
+
+    @Override
+    public Void check(File fileEntry) throws IOException {
+        return null;
     }
 
     private void generateProjectsFromParetoFront(File fileEntry, Path reportName,
