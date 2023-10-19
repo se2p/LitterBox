@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AbstractTokenCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -80,6 +82,6 @@ class TokenizerAbstractTokenTest extends AbstractTokenCheck {
                 ActorNameNormalizer.getDefault()
         );
         return new TokenizingAnalyzer(common, false, false, false,
-                null);
+                new MaskingStrategy(MaskingType.None, null));
     }
 }

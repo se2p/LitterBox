@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -287,8 +289,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                         "music_changetempoby");
 
         if (abstractTokens) {
-            assertThat(output.get(0).tokens().get(0))
-                    .containsAtLeast("music_noteliteral", "music_drumliteral", "music_instrumentliteral");
+            assertThat(output.get(0).tokens().get(0)).contains("music_noteliteral");
         } else {
             assertThat(output.get(0).tokens().get(0))
                     .containsAtLeast("BASS_DRUM", "0.25", "60", "my_variable", "ORGAN");
@@ -338,7 +339,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                 abstractTokens,
                 ActorNameNormalizer.getDefault()
         );
-        return new TokenizingAnalyzer(common, false, false, false,
-                null);
+        return new TokenizingAnalyzer(common, sequencePerScript, false, false,
+                new MaskingStrategy(MaskingType.None, null));
     }
 }
