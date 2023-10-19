@@ -621,6 +621,7 @@ public class Tokenizer
     }
 
     private void visitStop(final String target) {
+        // TODO: Use 'abstractFixedNodeOptions' parameter here
         addToken(Token.CONTROL_STOP);
         if (!abstractTokens) {
             tokens.add(target);
@@ -743,6 +744,7 @@ public class Tokenizer
 
     @Override
     public void visit(Key node) {
+        // TODO: Use 'abstractFixedNodeOptions' parameter here
         if (abstractTokens) {
             addToken(Token.KEY);
         } else {
