@@ -286,7 +286,7 @@ public class Tokenizer
 
     @Override
     public void visit(RandomPos node) {
-        visit(node, Token.MOTION_RANDOMPOS); // oval menu
+        visit(node, Token.MOTION_RANDOMPOS);
     }
 
     @Override
