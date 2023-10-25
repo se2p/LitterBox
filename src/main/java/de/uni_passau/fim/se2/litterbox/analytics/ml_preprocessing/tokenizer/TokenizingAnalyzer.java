@@ -33,7 +33,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {

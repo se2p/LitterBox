@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * Holds all Refactorings and executes them.
@@ -32,8 +31,6 @@ public final class RefactoringTool {
 
     private RefactoringTool() {
     }
-
-    private static final Logger log = Logger.getLogger(RefactoringTool.class.getName());
 
     private static Map<String, RefactoringFinder> generateRefactoringFinders() {
         Map<String, RefactoringFinder> refactorings = new LinkedHashMap<>();

@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -34,6 +35,16 @@ public class FeatureAnalyzer extends Analyzer<List<FeatureResult>> {
     public FeatureAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
         this.featureTool = new FeatureTool();
+    }
+
+    @Override
+    protected void checkAndWrite(File file) throws IOException {
+        final Program program = extractProgram(file);
+        if (program == null) {
+            return;
+        }
+
+        featureTool.createCSVFile(program, output);
     }
 
     @Override
