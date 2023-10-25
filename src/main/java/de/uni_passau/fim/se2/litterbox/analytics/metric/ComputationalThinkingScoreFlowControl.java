@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreFlowControl implements MetricExtractor<Program>, ScratchVisitor {
-    public static final String NAME="ct_score_flow_control";
+    public static final String NAME = "ct_score_flow_control";
 
     private int score = 0;
 

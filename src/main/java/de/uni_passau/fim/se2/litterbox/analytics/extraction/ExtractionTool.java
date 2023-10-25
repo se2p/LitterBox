@@ -68,7 +68,7 @@ public class ExtractionTool {
         }
     }
 
-    public List<ExtractionResult> extract(Program program){
+    public List<ExtractionResult> extract(Program program) {
         List<ExtractionResult> list = new ArrayList<>();
         for (NameExtraction extractor : getExtractors()) {
             list.add(new ExtractionResult(extractor.getName(), extractor.extractNames(program)));

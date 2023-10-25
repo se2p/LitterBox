@@ -59,8 +59,9 @@ public class Cohesion<T extends ASTNode> implements MetricExtractor<T>, ScratchV
 
         for (MetricExtractor<Script> extractor : list) {
             double count = extractor.calculateMetric(node);
-            if (count > 0)
+            if (count > 0) {
                 countDifferentBlocks++;
+            }
         }
 
         // Calculate local script cohesion

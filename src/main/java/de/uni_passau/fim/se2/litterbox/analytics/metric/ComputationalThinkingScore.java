@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class ComputationalThinkingScore implements MetricExtractor<Program> {
-    public static final String NAME="ct_score";
+    public static final String NAME = "ct_score";
 
     @Override
     public double calculateMetric(Program program) {

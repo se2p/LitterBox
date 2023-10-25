@@ -137,7 +137,7 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
 
 
     /**
-     * Execute the list of refactorings
+     * Execute the list of refactorings.
      *
      * @param nsgaii initialized NSGA-II
      * @return A copy of the original program with the best sequence of refactorings found applied on it.
