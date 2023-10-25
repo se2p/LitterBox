@@ -23,15 +23,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadLength<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "halstead_length";
+    public static final String NAME = "halstead_length";
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         node.accept(halstead);
         // The program length (N) is the sum of the total number of operators and operands in the program
 
-        return new MetricResult(NAME, halstead.getTotalOperands() + halstead.getTotalOperators());
+        return halstead.getTotalOperands() + halstead.getTotalOperators();
     }
 
     @Override

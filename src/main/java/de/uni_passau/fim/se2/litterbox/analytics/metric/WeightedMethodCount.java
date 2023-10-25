@@ -35,12 +35,12 @@ public class WeightedMethodCount<T extends ASTNode> implements MetricExtractor<T
     int count = 0;
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         this.count = 0;
 
         node.accept(this);
-        return new MetricResult(NAME, count);
+        return count;
     }
 
     @Override

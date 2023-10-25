@@ -29,9 +29,9 @@ public abstract class JSONGenerator {
     void addMetrics(JsonGenerator jsonGenerator, Program program) throws IOException {
         MetricTool tool = new MetricTool();
 
-        for (MetricExtractor metric : tool.getAnalyzers()) {
-            double value = metric.calculateMetric(program);
-            jsonGenerator.writeNumberField(metric.getName(), value);
+        for (MetricExtractor<Program> metric : tool.getAnalyzers()) {
+            double metricResult = metric.calculateMetric(program);
+            jsonGenerator.writeNumberField(metric.getName(), metricResult);
         }
     }
 }

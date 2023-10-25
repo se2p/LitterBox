@@ -26,16 +26,16 @@ import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 
 public class SliceTightness<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "slice_tightness";
+    public static final String NAME = "slice_tightness";
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
         SliceProfile sliceProfile = new SliceProfile(pdg);
-        return new MetricResult(NAME, sliceProfile.getTightness());
+        return sliceProfile.getTightness();
     }
 
     @Override

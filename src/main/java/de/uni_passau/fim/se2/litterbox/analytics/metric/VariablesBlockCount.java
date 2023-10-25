@@ -46,11 +46,11 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
     private boolean insideProcedure = false;
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
         node.accept(this);
-        return new MetricResult(NAME, count);
+        return count;
     }
 
     @Override

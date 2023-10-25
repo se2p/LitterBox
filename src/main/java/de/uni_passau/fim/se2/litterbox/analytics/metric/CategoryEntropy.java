@@ -33,11 +33,11 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
     private double programCount = 0;
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         programCount = 0;
         node.accept(this);
-        return new MetricResult(NAME, -programCount);
+        return -programCount;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         list.add(new OperatorsBlockCount<>());
 
 
-        double count = new BlockCount<Script>().calculateMetric(node).value();
+        double count = new BlockCount<Script>().calculateMetric(node);
 
         // Empty program
         if (count == 0) {
@@ -64,7 +64,7 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double localEntropy = 0.0; // Compute script category entropy
 
         for (MetricExtractor<Script> extractor : list) {
-            double pX = extractor.calculateMetric(node).value() / count;
+            double pX = extractor.calculateMetric(node) / count;
             if (pX == 0)
                 continue;
             double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));
@@ -87,7 +87,7 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         list.add(new OperatorsBlockCount<>());
 
 
-        double count = new BlockCount<ProcedureDefinition>().calculateMetric(node).value();
+        double count = new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         // Empty program
         if (count == 0)
@@ -96,7 +96,7 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double localEntropy = 0.0; // Compute script category entropy
 
         for (MetricExtractor<ProcedureDefinition> extractor : list) {
-            double pX =  extractor.calculateMetric(node).value() / count;
+            double pX =  extractor.calculateMetric(node) / count;
             if (pX == 0)
                 continue;
             double categoryEntropy = pX * (Math.log(pX) / Math.log(2.0));

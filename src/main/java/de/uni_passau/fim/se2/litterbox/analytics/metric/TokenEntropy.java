@@ -22,10 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "token_entropy";
+    public static final String NAME = "token_entropy";
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         TokenVisitor visitor = new TokenVisitor();
         node.accept(visitor);
 
@@ -35,7 +35,7 @@ public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
             double tokenEntropy = p * (Math.log(p) / Math.log(2.0));
             entropyValue += tokenEntropy;
         }
-        return new MetricResult(NAME, -entropyValue);
+        return -entropyValue;
     }
 
     @Override

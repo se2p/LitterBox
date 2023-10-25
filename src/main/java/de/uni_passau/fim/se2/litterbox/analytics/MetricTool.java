@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MetricTool {
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
@@ -119,7 +118,7 @@ public class MetricTool {
     }
 
     public List<String> getMetricNames() {
-        return getMetrics().stream().map(MetricExtractor::getName).collect(Collectors.toList());
+        return getMetrics().stream().map(MetricExtractor::getName).toList();
     }
 
     public List<MetricExtractor<Program>> getAnalyzers() {
@@ -148,7 +147,8 @@ public class MetricTool {
     public List<MetricResult> calculateMetrics(Program program) {
         List<MetricResult> results = new ArrayList<>();
         for (MetricExtractor<Program> extractor : getMetrics()) {
-            results.add(extractor.calculateMetric(program));
+            double metricValue = extractor.calculateMetric(program);
+            results.add(new MetricResult(extractor.getName(), metricValue));
         }
         return results;
     }

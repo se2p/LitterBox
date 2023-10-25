@@ -28,14 +28,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreSynchronization implements MetricExtractor<Program>, ScratchVisitor {
-    public final static String NAME = "ct_score_synchronization";
+    public static final String NAME = "ct_score_synchronization";
     private int score = 0;
 
     @Override
-    public MetricResult calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         score = 0;
         program.accept(this);
-        return new MetricResult(NAME, score);
+        return score;
     }
 
     @Override

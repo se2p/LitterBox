@@ -55,13 +55,13 @@ public class MaxVariableLengthCount<T extends ASTNode> implements ScratchVisitor
     }
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        return new MetricResult(NAME, getMaxVariableLengthCount());
+        return getMaxVariableLengthCount();
     }
 
     private double getMaxVariableLengthCount() {

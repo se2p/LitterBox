@@ -27,17 +27,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ComputationalThinkingScoreParallelization implements MetricExtractor<Program>, ScratchVisitor {
-    public final static String NAME = "ct_score_parallelization";
+    public static final String NAME = "ct_score_parallelization";
     private int score = 0;
     private Map<Event, Integer> eventMap = new LinkedHashMap<>();
 
     @Override
-    public MetricResult calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         // TODO: Missing videoSensing_whenMotionGreaterThan --> 3
         score = 0;
         eventMap.clear();
         program.accept(this);
-        return new MetricResult(NAME, score);
+        return score;
     }
 
     @Override

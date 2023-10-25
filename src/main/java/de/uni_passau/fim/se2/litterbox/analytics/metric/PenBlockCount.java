@@ -30,11 +30,11 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     private int count = 0;
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
         node.accept(this);
-        return new MetricResult(NAME, count);
+        return count;
     }
 
     @Override

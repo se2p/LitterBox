@@ -31,10 +31,10 @@ public class BackdropNameExtraction implements ScratchVisitor, NameExtraction {
     private List<String> names;
 
     @Override
-    public ExtractionResult extractNames(Program program) {
+    public List<String> extractNames(Program program) {
         names = new ArrayList<>();
         program.accept(this);
-        return new ExtractionResult(NAME, names);
+        return names;
     }
 
     @Override

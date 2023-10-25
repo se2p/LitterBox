@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadEffort<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "halstead_effort";
+    public static final String NAME = "halstead_effort";
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         node.accept(halstead);
 
@@ -45,12 +45,12 @@ public class HalsteadEffort<T extends ASTNode> implements MetricExtractor<T> {
         if (n2 == 0) {
             // If there are no operands, there's no effort
             // ...otherwise we'd divide by 0
-            return new MetricResult(NAME, 0.0);
+            return 0.0;
         }
 
         double difficulty = (n1 / 2.0) * (totalOperands / n2);
 
-        return new MetricResult(NAME, volume * difficulty);
+        return volume * difficulty;
     }
 
     @Override

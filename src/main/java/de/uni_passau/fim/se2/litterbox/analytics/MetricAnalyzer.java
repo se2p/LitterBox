@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
@@ -37,31 +36,29 @@ public class MetricAnalyzer extends Analyzer<List<MetricResult>> {
         this.issueTool = new MetricTool();
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     */
     @Override
-    void checkAndWrite(File fileEntry, Path csv) {
-        Program program = extractProgram(fileEntry);
+    protected void checkAndWrite(File file) throws IOException {
+        Program program = extractProgram(file);
         if (program == null) {
-            // Todo error message
             return;
         }
 
+        issueTool.createCSVFile(program, output);
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, List<MetricResult> checkResult)
+            throws IOException {
         try {
-            issueTool.createCSVFile(program, csv);
+            issueTool.createCSVFile(program, output);
         } catch (IOException e) {
-            log.warning("Could not create CSV File: " + csv);
+            log.warning("Could not create CSV file: " + output);
+            throw e;
         }
     }
 
     @Override
-    public List<MetricResult> check(File fileEntry) throws IOException {
-        Program program = extractProgram(fileEntry);
+    public List<MetricResult> check(Program program) {
         return issueTool.calculateMetrics(program);
     }
-
-
 }

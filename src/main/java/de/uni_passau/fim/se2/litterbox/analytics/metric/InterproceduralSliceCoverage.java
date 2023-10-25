@@ -34,11 +34,10 @@ import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 import java.util.*;
 
 public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "interprocedural_slice_coverage";
+    public static final String NAME = "interprocedural_slice_coverage";
 
     @Override
-    public MetricResult calculateMetric(T node) {
-
+    public double calculateMetric(T node) {
         Map<Defineable, Double> coverageMap = new HashMap<>();
 
         node.accept(new ScratchVisitor() {
@@ -52,8 +51,9 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
                     ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
                     SliceProfile sliceProfile = new SliceProfile(pdg);
                     Map<Defineable, Set<Stmt>> profileMap = sliceProfile.getProfileMap();
-                    for (Defineable defineable : profileMap.keySet()) {
-                        Set<Stmt> slice = profileMap.get(defineable);
+                    for (Map.Entry<Defineable, Set<Stmt>> entry : profileMap.entrySet()) {
+                        Defineable defineable = entry.getKey();
+                        Set<Stmt> slice = entry.getValue();
                         int length = getScriptLength(pdg);
                         double coverage = length > 0 ? slice.size() / (double) getScriptLength(pdg) : 0.0;
                         if (!coverageMap.containsKey(defineable)) {
@@ -68,10 +68,10 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
         });
 
         if (coverageMap.isEmpty()) {
-            return new MetricResult(NAME, 0.0);
+            return 0.0;
         }
         double coverage = coverageMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        return new MetricResult(NAME, coverage / coverageMap.size());
+        return coverage / coverageMap.size();
     }
 
     private int getScriptLength(ProgramDependenceGraph pdg) {

@@ -18,12 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public interface MetricExtractor<T extends ASTNode> {
 
-    MetricResult calculateMetric(T node);
+    double calculateMetric(T node);
 
     String getName();
 }

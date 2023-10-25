@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
-    public final static String NAME = "halstead_volume";
+    public static final String NAME = "halstead_volume";
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         node.accept(halstead);
         // The program volume (V) is the information contents of the program, measured in mathematical bits
@@ -36,9 +36,9 @@ public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
         int size = halstead.getUniqueOperands() + halstead.getUniqueOperators();
         if (size == 0) {
             // Empty project
-            return new MetricResult(NAME, 0.0);
+            return 0.0;
         }
-        return new MetricResult(NAME, length * Math.log(size) / Math.log(2));
+        return length * Math.log(size) / Math.log(2);
     }
 
     @Override

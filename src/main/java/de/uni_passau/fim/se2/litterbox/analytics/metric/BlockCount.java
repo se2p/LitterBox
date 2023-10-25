@@ -81,7 +81,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     private boolean fixedBlock = false;
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
         insideProcedure = false;
@@ -89,7 +89,7 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
         node.accept(this);
         insideScript = false;
-        return new MetricResult(NAME, count);
+        return count;
     }
 
     @Override

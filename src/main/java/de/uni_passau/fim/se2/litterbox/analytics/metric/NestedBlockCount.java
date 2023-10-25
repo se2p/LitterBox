@@ -83,11 +83,11 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     }
 
     @Override
-    public MetricResult calculateMetric(T node) {
+    public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         maxNestedDepth = 0;
         node.accept(this);
-        return new MetricResult(NAME, maxNestedDepth);
+        return maxNestedDepth;
     }
 
     @Override

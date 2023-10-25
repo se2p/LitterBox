@@ -32,14 +32,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreUserInteractivity implements MetricExtractor<Program>, ScratchVisitor {
-    public final static String NAME = "ct_score_user_interactivity";
+    public static final String NAME = "ct_score_user_interactivity";
     private int score = 0;
 
     @Override
-    public MetricResult calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         score = 0;
         program.accept(this);
-        return new MetricResult(NAME, score);
+        return score;
     }
 
     @Override
