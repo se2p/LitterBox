@@ -53,7 +53,8 @@ public final class RefactoringTool {
         registerRefactoring(new MergeEventsIntoForeverFinder(), refactorings); // extract events from forever backwards
         registerRefactoring(new MergeLoopsFinder(), refactorings); // split loop backwards
         registerRefactoring(new MergeScriptsFinder(), refactorings); // split script backwards
-        registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings); // split script after repeat until backwards
+        // split script after repeat until backwards
+        registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings);
         registerRefactoring(new SequenceToLoopFinder(), refactorings); // loop unrolling backwards
         registerRefactoring(new SplitIfFinder(), refactorings); // split if body
         registerRefactoring(new SplitLoopFinder(), refactorings); // split loop
@@ -70,7 +71,9 @@ public final class RefactoringTool {
         return Collections.unmodifiableList(refactorings);
     }
 
-    static void registerRefactoring(RefactoringFinder refactoringFinder, Map<String, RefactoringFinder> refactoringFinders) {
+    static void registerRefactoring(
+            RefactoringFinder refactoringFinder, Map<String, RefactoringFinder> refactoringFinders
+    ) {
         refactoringFinders.put(refactoringFinder.getName(), refactoringFinder);
     }
 }

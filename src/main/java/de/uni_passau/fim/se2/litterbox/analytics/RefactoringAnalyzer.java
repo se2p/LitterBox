@@ -91,7 +91,9 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
             );
             Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
             for (RefactorSequence solution : uniqueSolutions) {
-                RefactorSequence empty = new RefactorSequence(program, solution.getMutation(), solution.getCrossover(), Collections.emptyList());
+                RefactorSequence empty = new RefactorSequence(
+                        program, solution.getMutation(), solution.getCrossover(), Collections.emptyList()
+                );
                 if (dominance.test(empty, solution)) {
                     log.log(Level.FINE, "Found dominating solution " + solution.getFitnessMap());
                 }
@@ -112,7 +114,9 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
         Preconditions.checkArgument(fitnessFunctions.size() >= 2);
         NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
         NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
-        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
+        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(
+                ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint()
+        );
         double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).toList());
 
         for (int i = 0; i < solutions.size(); i++) {
@@ -155,8 +159,12 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactoringFinders);
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program, mutation, crossover, refactoringFinders);
-        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(
+                program, mutation, crossover, refactoringFinders
+        );
+        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(
+                chromosomeGenerator, POPULATION_SIZE
+        );
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
@@ -194,7 +202,8 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
         }
     }
 
-    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) throws IOException {
+    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix)
+            throws IOException {
         Path outputPath = refactoredPath == null ? fileEntry.toPath().getParent() : refactoredPath;
         File folder = outputPath.toFile();
         if (!folder.exists()) {

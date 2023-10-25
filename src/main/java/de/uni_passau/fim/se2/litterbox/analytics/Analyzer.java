@@ -131,10 +131,11 @@ public abstract class Analyzer<R> {
     }
 
     /**
-     * First uses {@link #check(File)} to parse and check the program, then writes the result to the output file.
+     * First uses {@link #check(Program)} to parse and check the program, then writes the result to the output file.
      *
-     * <p>In case a subclass can more efficiently combine those two operations, e.g., to avoid (partial) calculation of
-     * the check results, it should overwrite this method.
+     * <p>In case a subclass can more efficiently combine the two operations {@link #check(Program)} and
+     * {@link #writeResultToFile(Path, Program, Object)}, e.g., to avoid (partial) recalculation of the check results,
+     * it should overwrite this method.
      *
      * @param file The input file that contains the Scratch program.
      * @throws IOException In case either reading the program fails, or writing to the output file fails.
@@ -149,6 +150,13 @@ public abstract class Analyzer<R> {
         writeResultToFile(file.toPath(), program, result);
     }
 
+    /**
+     * Reads the Scratch program from the sb3- or json-file and performs the analysis on it.
+     *
+     * @param file A sb3 or json Scratch project file.
+     * @return The analysis result.
+     * @throws ParsingException Thrown in case the program cannot be read from the file.
+     */
     public R check(final File file) throws ParsingException {
         Program program = extractProgram(file);
         if (program == null) {
@@ -158,9 +166,23 @@ public abstract class Analyzer<R> {
         return check(program);
     }
 
-    protected abstract void writeResultToFile(Path projectFile, Program program, R checkResult) throws IOException;
-
+    /**
+     * Performs the analysis on a program.
+     *
+     * @param program Some Scratch program.
+     * @return The analysis result.
+     */
     public abstract R check(Program program);
+
+    /**
+     * Writes the analysis result to the output destination {@link #output}.
+     *
+     * @param projectFile The path of the sb3 or json file from which the program was originally read.
+     * @param program The analysed program.
+     * @param checkResult The analysis result.
+     * @throws IOException Thrown in case writing to the destination fails.
+     */
+    protected abstract void writeResultToFile(Path projectFile, Program program, R checkResult) throws IOException;
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.

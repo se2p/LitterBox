@@ -61,8 +61,17 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer<Stream<R>> {
 
     protected abstract Path outputFileName(File inputFile);
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Overwritten to return an empty stream instead of throwing an exception in case the program cannot be
+     * read/parsed.
+     *
+     * @param file {@inheritDoc}
+     * @return {@inheritDoc}
+     */
     @Override
-    public final Stream<R> check(File file) {
+    public final Stream<R> check(final File file) {
         final Program program = extractProgram(file);
         if (program == null) {
             log.warning("Could not read program in file " + file);

@@ -95,16 +95,16 @@ public class FeatureTool {
             for (ASTNode target : targets) {
                 List<String> row = new ArrayList<>();
                 row.add(program.getIdent().getName());
-                String uniqueID = "";
+                String uniqueId = "";
                 if (target instanceof Script) {
                     scriptCount = scriptCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
                 } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
                 }
 
-                row.add(uniqueID);
+                row.add(uniqueId);
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
@@ -131,18 +131,18 @@ public class FeatureTool {
             targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
 
             for (ASTNode target : targets) {
-                String uniqueID = "";
+                String uniqueId = "";
                 if (target instanceof Script) {
                     scriptCount = scriptCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
                 } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
                 }
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
                     double metricResult = extractor.calculateMetric(target);
-                    results.add(new FeatureResult(extractor.getName(), uniqueID, metricResult));
+                    results.add(new FeatureResult(extractor.getName(), uniqueId, metricResult));
                 }
             }
         }
