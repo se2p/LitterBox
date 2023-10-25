@@ -21,17 +21,18 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public abstract class MLPreprocessingAnalyzer<R> extends Analyzer<R> {
+public abstract class MLPreprocessingAnalyzer<R> extends Analyzer<Stream<R>> {
     private static final Logger log = Logger.getLogger(MLPreprocessingAnalyzer.class.getName());
 
     protected final MLOutputPath outputPath;
@@ -57,20 +58,27 @@ public abstract class MLPreprocessingAnalyzer<R> extends Analyzer<R> {
         this.actorNameNormalizer = commonOptions.actorNameNormalizer();
     }
 
-    protected abstract Stream<R> process(File inputFile) throws IOException;
-
     protected abstract String resultToString(R result);
 
     protected abstract Path outputFileName(File inputFile);
 
     @Override
-    protected void checkAndWrite(final File fileEntry, final Path csv) throws IOException {
-        runProcessingSteps(fileEntry);
+    public final Stream<R> check(File file) {
+        final Program program = extractProgram(file);
+        if (program == null) {
+            log.warning("Could not read program in file " + file);
+            return Stream.empty();
+        }
+
+        return check(program);
     }
 
-    private void runProcessingSteps(final File inputFile) throws IOException {
-        final Stream<String> output = process(inputFile).filter(Objects::nonNull).map(this::resultToString);
-        writeResultToOutput(inputFile, output);
+    @Override
+    protected void writeResultToFile(
+            final Path projectFile, final Program program, final Stream<R> checkResult
+    ) throws IOException {
+        final Stream<String> results = checkResult.map(this::resultToString);
+        writeResultToOutput(projectFile.toFile(), results);
     }
 
     private void writeResultToOutput(final File inputFile, final Stream<String> result) throws IOException {

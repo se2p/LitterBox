@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FeatureTool {
 
@@ -69,7 +68,7 @@ public class FeatureTool {
     );
 
     public List<String> getMetricNames() {
-        return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
+        return metrics.stream().map(MetricExtractor::getName).toList();
     }
 
     public List<MetricExtractor<ASTNode>> getAnalyzers() {
@@ -108,7 +107,7 @@ public class FeatureTool {
                 row.add(uniqueID);
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
-                    row.add(Double.toString(extractor.calculateMetric(target).value()));
+                    row.add(Double.toString(extractor.calculateMetric(target)));
                 }
                 String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
                 row.add(stringScratchCode);
@@ -142,8 +141,8 @@ public class FeatureTool {
                 }
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
-                    MetricResult metricResult = extractor.calculateMetric(target);
-                    results.add(new FeatureResult(metricResult.name(), uniqueID, metricResult.value()));
+                    double metricResult = extractor.calculateMetric(target);
+                    results.add(new FeatureResult(extractor.getName(), uniqueID, metricResult));
                 }
             }
         }

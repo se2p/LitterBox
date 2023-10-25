@@ -120,7 +120,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     @Test
     void testNoCrashOnUnparseableProgam() {
         final TokenizingAnalyzer analyzer = getAnalyzer(true, true, false, false);
-        assertEquals(0, analyzer.process(inputFile("unparseable.json")).count());
+        assertEquals(0, analyzer.check(inputFile("unparseable.json")).count());
     }
 
     @ParameterizedTest
@@ -128,7 +128,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     void testWholeProgramSingleSequence(boolean includeStage) {
         final TokenizingAnalyzer analyzer = getAnalyzer(includeStage, true, false, false);
 
-        final var output = analyzer.process(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile("multipleSprites.json")).collect(Collectors.toList());
         assertThat(output).hasSize(1);
         assertThat(output.get(0).label()).isEqualTo("multipleSprites");
 
@@ -152,7 +152,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     void testSequencePerSprite(boolean includeStage) {
         final TokenizingAnalyzer analyzer = getAnalyzer(includeStage, false, false, false);
 
-        final var output = analyzer.process(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile("multipleSprites.json")).collect(Collectors.toList());
 
         int expectedSpriteCount = includeStage ? 3 : 2;
         assertThat(output).hasSize(expectedSpriteCount);
@@ -169,7 +169,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     void testSequencePerScript(boolean abstractTokens) {
         final TokenizingAnalyzer analyzer = getAnalyzer(true, false, abstractTokens, true);
 
-        final var output = analyzer.process(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile("multipleSprites.json")).collect(Collectors.toList());
 
         if (abstractTokens) {
             assertEquals(abstractScriptSequences, output);
@@ -183,7 +183,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     void testSequencePerProcedureDefinition(boolean abstractTokens) {
         final TokenizingAnalyzer analyzer = getAnalyzer(true, false, abstractTokens, true);
 
-        final var output = analyzer.process(inputFile("customBlocks.json")).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile("customBlocks.json")).collect(Collectors.toList());
         assertThat(output).hasSize(2);
 
         final List<TokenSequence> expectedOutput;
@@ -220,7 +220,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final TokenizingAnalyzer analyzer = getAnalyzer(false, false, abstractTokens, true);
 
         final File inputFile = inputFile("ml_preprocessing/tokenizer/custom_procedure_call.json");
-        final List<TokenSequence> output = analyzer.process(inputFile).collect(Collectors.toList());
+        final List<TokenSequence> output = analyzer.check(inputFile).collect(Collectors.toList());
 
         final TokenSequence expectedOutput;
         if (abstractTokens) {
@@ -246,7 +246,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final TokenizingAnalyzer analyzer = getAnalyzer(false, true, true, false);
 
         final File inputFile = inputFile("ml_preprocessing/shared/pen_blocks.json");
-        final var output = analyzer.process(inputFile).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile).collect(Collectors.toList());
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens().get(0)).hasSize(27);
@@ -261,7 +261,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final TokenizingAnalyzer analyzer = getAnalyzer(false, true, true, false);
 
         final File inputFile = inputFile("ml_preprocessing/shared/tts_blocks.json");
-        final var output = analyzer.process(inputFile).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile).collect(Collectors.toList());
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens()).hasSize(1);
@@ -276,7 +276,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final TokenizingAnalyzer analyzer = getAnalyzer(false, true, abstractTokens, false);
 
         final File inputFile = inputFile("ml_preprocessing/shared/music_blocks.json");
-        final var output = analyzer.process(inputFile).collect(Collectors.toList());
+        final var output = analyzer.check(inputFile).collect(Collectors.toList());
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens()).hasSize(1);

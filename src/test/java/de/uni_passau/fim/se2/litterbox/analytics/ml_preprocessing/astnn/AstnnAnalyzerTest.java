@@ -119,7 +119,7 @@ class AstnnAnalyzerTest {
         final AstnnAnalyzer analyzer = new AstnnAnalyzer(
                 options(programPath, includeStage, includeDefaultSprites, wholeProgram)
         );
-        return analyzer.process(programPath.toFile());
+        return analyzer.check(programPath.toFile());
     }
 
     private MLPreprocessorCommonOptions options(

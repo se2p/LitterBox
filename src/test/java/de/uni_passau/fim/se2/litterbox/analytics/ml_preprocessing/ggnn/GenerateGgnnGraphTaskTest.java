@@ -89,7 +89,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(inputPath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, inputPath, includeStage, true, true, null, ActorNameNormalizer.getDefault()
+                program, includeStage, true, true, null, ActorNameNormalizer.getDefault()
         );
 
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
@@ -105,7 +105,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(inputPath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, inputPath, includeStage, false, false, null, ActorNameNormalizer.getDefault()
+                program, includeStage, false, false, null, ActorNameNormalizer.getDefault()
         );
 
         int expectedSprites;
@@ -130,7 +130,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
         GgnnProgramGraph spriteGraph = graphs.get(0);
         assertThat(spriteGraph.getLabel()).isEqualTo("sprite");
-        assertThat(spriteGraph.getFilename()).endsWith("guarded_by.json");
+        assertThat(spriteGraph.getFilename()).endsWith("guarded_by");
         assertThat(spriteGraph.getContextGraph().getNodeLabels()).hasSize(spriteGraph.getContextGraph().getNodeTypes().size());
 
         Pair<String> edge = Pair.of("Variable", "BiggerThan");
@@ -342,7 +342,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     ) throws Exception {
         Program program = getAST(fixturePath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, fixturePath, includeStage, includeDefaultSprites, wholeProgram, label,
+                program, includeStage, includeDefaultSprites, wholeProgram, label,
                 ActorNameNormalizer.getDefault()
         );
         return graphTask.getProgramGraphs();

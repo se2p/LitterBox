@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-record TokenSequence(
+public record TokenSequence(
         String label,
         @JsonProperty("subLabels") List<String> labelSubTokens,
         List<List<String>> tokens,

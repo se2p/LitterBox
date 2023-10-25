@@ -63,27 +63,8 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         this.annotationOutput = annotationOutput;
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry      the file to analyze
-     * @param reportFileName the file in which to write the results
-     */
     @Override
-    void checkAndWrite(File fileEntry, Path reportFileName) {
-        Program program = extractProgram(fileEntry);
-        Set<Issue> issues = check(program);
-        generateOutput(program, issues, reportFileName, outputPerScript);
-        createAnnotatedFile(fileEntry, program, issues, annotationOutput);
-    }
-
-    @Override
-    public Set<Issue> check(File fileEntry) {
-        Program program = extractProgram(fileEntry);
-        return check(program);
-    }
-
-    private Set<Issue> check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder issueFinder : issueFinders) {
@@ -91,6 +72,12 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
             issues.addAll(issueFinder.check(program));
         }
         return issues;
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
+        generateOutput(program, result, output, outputPerScript);
+        createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {

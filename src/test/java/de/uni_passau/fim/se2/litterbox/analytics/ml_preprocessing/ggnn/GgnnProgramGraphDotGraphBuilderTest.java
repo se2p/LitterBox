@@ -36,7 +36,7 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         Path filePath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(filePath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, filePath, true, true, false, null, ActorNameNormalizer.getDefault()
+                program, true, true, false, null, ActorNameNormalizer.getDefault()
         );
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(3);
@@ -56,7 +56,7 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         Path filePath = Path.of("src", "test", "fixtures", "multipleSprites.json");
         Program program = getAST(filePath.toString());
         GenerateGgnnGraphTask graphTask = new GenerateGgnnGraphTask(
-                program, filePath, true, true, true, null, ActorNameNormalizer.getDefault()
+                program, true, true, true, null, ActorNameNormalizer.getDefault()
         );
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(1);

@@ -51,17 +51,17 @@ public abstract class Analyzer<R> {
      * <p>If the input is a file it will be directly analyzed, if it is a director all files in the
      * directory will be analyzed one after another.</p>
      */
-    public void analyzeFile() throws IOException {
+    public final void analyzeFile() throws IOException {
         File file = input.toFile();
         if (file.exists() && file.isDirectory()) {
             List<Path> listOfFiles = getProgramPaths(file.toPath());
             for (Path filePath : listOfFiles) {
                 File fileEntry = filePath.toFile();
-                checkAndWrite(fileEntry, output);
+                checkAndWrite(fileEntry);
                 deleteFile(fileEntry);
             }
         } else if (file.exists() && !file.isDirectory()) {
-            checkAndWrite(file, output);
+            checkAndWrite(file);
             deleteFile(file);
         } else {
             log.severe("Folder or file '" + file.getName() + "' does not exist");
@@ -95,7 +95,7 @@ public abstract class Analyzer<R> {
      *
      * @param projectList is the path to a file containing all the ids of projects that should be analyzed.
      */
-    public void analyzeMultiple(Path projectList) {
+    public final void analyzeMultiple(Path projectList) {
         try (Stream<String> lines = Files.lines(projectList)) {
             List<String> pids = lines.toList();
             for (String pid : pids) {
@@ -114,7 +114,7 @@ public abstract class Analyzer<R> {
      *
      * @param pid is the id of the project that should be analyzed.
      */
-    public void analyzeSingle(String pid) throws IOException {
+    public final void analyzeSingle(String pid) throws IOException {
         Path path = input.resolve(pid + ".json");
         File projectFile = path.toFile();
         if (!projectFile.exists()) {
@@ -126,13 +126,41 @@ public abstract class Analyzer<R> {
             }
         }
 
-        checkAndWrite(projectFile, output);
+        checkAndWrite(projectFile);
         deleteFile(projectFile);
     }
 
-    abstract void checkAndWrite(File fileEntry, Path csv) throws IOException;
+    /**
+     * First uses {@link #check(File)} to parse and check the program, then writes the result to the output file.
+     *
+     * <p>In case a subclass can more efficiently combine those two operations, e.g., to avoid (partial) calculation of
+     * the check results, it should overwrite this method.
+     *
+     * @param file The input file that contains the Scratch program.
+     * @throws IOException In case either reading the program fails, or writing to the output file fails.
+     */
+    protected void checkAndWrite(final File file) throws IOException {
+        final Program program = extractProgram(file);
+        if (program == null) {
+            return;
+        }
 
-    public abstract R check(File fileEntry) throws IOException;
+        final R result = check(program);
+        writeResultToFile(file.toPath(), program, result);
+    }
+
+    public R check(final File file) throws ParsingException {
+        Program program = extractProgram(file);
+        if (program == null) {
+            throw new ParsingException("Program could not be read or parsed");
+        }
+
+        return check(program);
+    }
+
+    protected abstract void writeResultToFile(Path projectFile, Program program, R checkResult) throws IOException;
+
+    public abstract R check(Program program);
 
     /**
      * Extracts a Scratch Program from a Json or sb3 file.
@@ -140,10 +168,9 @@ public abstract class Analyzer<R> {
      * @param fileEntry of the json or sb3 file
      * @return the parsed program or null in case the program could not be loaded or parsed
      */
-    protected Program extractProgram(File fileEntry) {
-        Program program = null;
+    protected final Program extractProgram(File fileEntry) {
         try {
-            program = parser.parseFile(fileEntry);
+            return parser.parseFile(fileEntry);
         } catch (IOException e) {
             log.severe("Could not load program from file " + fileEntry.getName());
         } catch (ParsingException e) {
@@ -151,6 +178,7 @@ public abstract class Analyzer<R> {
         } catch (RuntimeException e) {
             log.severe("Could not parse program for file " + fileEntry.getName() + ".");
         }
-        return program;
+
+        return null;
     }
 }

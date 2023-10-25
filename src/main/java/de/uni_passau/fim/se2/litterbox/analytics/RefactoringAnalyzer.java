@@ -50,7 +50,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class RefactoringAnalyzer extends Analyzer<Void> {
 
@@ -73,16 +72,7 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
     }
 
     @Override
-    void checkAndWrite(File fileEntry, Path reportName) throws IOException {
-        final Instant startProgramExtraction = Instant.now();
-        Program program = extractProgram(fileEntry);
-        if (program == null) {
-            // Todo error message
-            return;
-        }
-        final Instant endProgramExtraction = Instant.now();
-        final long programExtractionTime = Duration.between(startProgramExtraction, endProgramExtraction).toMillis();
-
+    protected void writeResultToFile(Path projectFile, Program program, Void result) throws IOException {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
         final Instant startRefactoringSearch = Instant.now();
@@ -91,9 +81,14 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
         final long refactoringSearchTime = Duration.between(startRefactoringSearch, endRefactoringSearch).toMillis();
         if (!solutions.isEmpty()) {
             int iteration = nsgaii.getIteration();
-            List<RefactorSequence> uniqueSolutions = solutions.stream().filter(distinctByFitness(RefactorSequence::getFitnessMap)).collect(Collectors.toList());
-            generateProjectsFromParetoFront(fileEntry, reportName, nsgaii.getFitnessFunctions(), uniqueSolutions, iteration,
-                    programExtractionTime, refactoringSearchTime, program);
+            List<RefactorSequence> uniqueSolutions = solutions
+                    .stream()
+                    .filter(distinctByFitness(RefactorSequence::getFitnessMap))
+                    .toList();
+            generateProjectsFromParetoFront(
+                    projectFile.toFile(), output, nsgaii.getFitnessFunctions(), uniqueSolutions, iteration,
+                    refactoringSearchTime
+            );
             Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
             for (RefactorSequence solution : uniqueSolutions) {
                 RefactorSequence empty = new RefactorSequence(program, solution.getMutation(), solution.getCrossover(), Collections.emptyList());
@@ -107,19 +102,18 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
     }
 
     @Override
-    public Void check(File fileEntry) throws IOException {
+    public Void check(Program program) {
         return null;
     }
 
     private void generateProjectsFromParetoFront(File fileEntry, Path reportName,
             List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration,
-            long programExtractionTime, long refactoringSearchTime, Program originalProgram) throws IOException {
+            long refactoringSearchTime) throws IOException {
         Preconditions.checkArgument(fitnessFunctions.size() >= 2);
         NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
         NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
         final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint());
-        double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).collect(Collectors.toList()));
-
+        double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).toList());
 
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
@@ -134,9 +128,9 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
                 sb.append(',');
             }
             log.log(Level.FINE, sb.toString());
-            generateOutput(i,
-                    refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, programExtractionTime,
-                    refactoringSearchTime);
+            generateOutput(
+                    i, refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, refactoringSearchTime
+            );
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
@@ -178,7 +172,7 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
 
     private void generateOutput(
             int index, Program program, RefactorSequence refactorSequence, Path reportFileName, double hyperVolume,
-            int iteration, long programExtractionTime, long refactoringSearchTime
+            int iteration, long refactoringSearchTime
     ) throws IOException {
         if (reportFileName == null) {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
@@ -189,7 +183,7 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
             )) {
                 reportGenerator.generateReport(
                         index, program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
-                        programExtractionTime, refactoringSearchTime
+                        refactoringSearchTime
                 );
             }
         } else {

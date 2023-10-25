@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class TokenizerAbstractTokenTest extends AbstractTokenCheck {
+class TokenizerAbstractTokenTest extends AbstractTokenCheck {
 
     @Override
     protected Set<String> getSpecialAllowedTokens() {
@@ -59,7 +59,7 @@ public class TokenizerAbstractTokenTest extends AbstractTokenCheck {
     void testAllBlocksVisitableAbstract(final String filename) {
         final TokenizingAnalyzer analyzer = getAnalyzer();
         final File inputFile = Path.of(filename).toFile();
-        final Stream<TokenSequence> output = analyzer.process(inputFile);
+        final Stream<TokenSequence> output = analyzer.check(inputFile);
 
         output
                 .map(TokenSequence::tokens)

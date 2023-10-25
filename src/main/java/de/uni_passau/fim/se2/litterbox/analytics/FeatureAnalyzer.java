@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -30,36 +29,26 @@ import java.util.logging.Logger;
 public class FeatureAnalyzer extends Analyzer<List<FeatureResult>> {
 
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
-    private FeatureTool featureTool;
+    private final FeatureTool featureTool;
 
     public FeatureAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
         this.featureTool = new FeatureTool();
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     */
     @Override
-    void checkAndWrite(File fileEntry, Path csv) {
-        Program program = extractProgram(fileEntry);
-        if (program == null) {
-            // Todo error message
-            return;
-        }
-
+    protected void writeResultToFile(Path projectFile, Program program, List<FeatureResult> checkResult)
+            throws IOException {
         try {
-            featureTool.createCSVFile(program, csv);
+            featureTool.createCSVFile(program, output);
         } catch (IOException e) {
-            log.warning("Could not create CSV File: " + csv);
+            log.warning("Could not create CSV File: " + output);
+            throw e;
         }
     }
 
     @Override
-    public List<FeatureResult> check(File fileEntry) throws IOException {
-        Program program = extractProgram(fileEntry);
+    public List<FeatureResult> check(Program program) {
         return featureTool.calculateFeatures(program);
     }
 }

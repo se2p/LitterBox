@@ -24,16 +24,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNa
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.apache.commons.io.FilenameUtils;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GenerateGgnnGraphTask {
-    private final Path inputPath;
     private final Program program;
     private final boolean includeStage;
     private final boolean includeDefaultSprites;
@@ -41,10 +38,9 @@ public class GenerateGgnnGraphTask {
     private final ActorNameNormalizer actorNameNormalizer;
     private final String labelName;
 
-    public GenerateGgnnGraphTask(Program program, Path inputPath, boolean includeStage, boolean includeDefaultSprites,
+    public GenerateGgnnGraphTask(Program program, boolean includeStage, boolean includeDefaultSprites,
                                  boolean wholeProgramAsSingleGraph, String labelName,
                                  ActorNameNormalizer actorNameNormalizer) {
-        this.inputPath = inputPath;
         this.program = program;
         this.includeStage = includeStage;
         this.includeDefaultSprites = includeDefaultSprites;
@@ -76,8 +72,7 @@ public class GenerateGgnnGraphTask {
         List<GgnnProgramGraph> graphs;
 
         if (wholeProgramAsSingleGraph) {
-            String label = Objects.requireNonNullElseGet(labelName,
-                    () -> FilenameUtils.removeExtension(inputPath.getFileName().toString()));
+            String label = Objects.requireNonNullElseGet(labelName, () -> program.getIdent().getName());
             graphs = List.of(buildProgramGraph(program, label));
         } else {
             graphs = buildGraphs(program);
@@ -106,11 +101,11 @@ public class GenerateGgnnGraphTask {
 
     private GgnnProgramGraph buildProgramGraph(final Program program, String label) {
         GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program).build();
-        return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
+        return new GgnnProgramGraph(program.getIdent().getName(), label, contextGraph);
     }
 
     private GgnnProgramGraph buildProgramGraph(final Program program, final ActorDefinition actor, String label) {
         GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, actor).build();
-        return new GgnnProgramGraph(inputPath.toString(), label, contextGraph);
+        return new GgnnProgramGraph(program.getIdent().getName(), label, contextGraph);
     }
 }
