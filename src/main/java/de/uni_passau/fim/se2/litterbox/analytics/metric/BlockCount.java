@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
@@ -73,7 +72,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
+public class BlockCount<T extends ASTNode>
+        implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor,
+        TranslateExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;

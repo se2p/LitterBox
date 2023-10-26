@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -43,8 +42,8 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
     @Override
     public void visit(Script node) {
         ArrayList<MetricExtractor<Script>> list = new ArrayList<>();
-        list.add(new EventsBlockCount<>()); //TODO if you doesnt want to count events as kind of blocks
-                                            // add corner case for count_different_blocks == 0
+        // TODO if you doesnt want to count events as kind of blocks add corner case for count_different_blocks == 0
+        list.add(new EventsBlockCount<>());
         list.add(new SoundBlockCount<>());
         list.add(new MotionBlockCount<>());
         list.add(new LooksBlockCount<>());
@@ -52,7 +51,6 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         list.add(new SensingBlockCount<>());
         list.add(new VariablesBlockCount<>());
         list.add(new OperatorsBlockCount<>());
-
 
         double count = new BlockCount<Script>().calculateMetric(node);
 

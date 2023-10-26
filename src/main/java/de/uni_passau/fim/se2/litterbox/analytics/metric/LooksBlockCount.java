@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Size;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
@@ -50,7 +49,10 @@ public class LooksBlockCount<T extends ASTNode> implements MetricExtractor<T>, S
     @Override
     public void visit(ActorLookStmt node) {
         //these nodes are an ActorLookStmt but not from Look category in Scratch
-        if (node instanceof AskAndWait || node instanceof HideList || node instanceof HideVariable || node instanceof ShowList || node instanceof ShowVariable) {
+        if (
+                node instanceof AskAndWait || node instanceof HideList || node instanceof HideVariable
+                        || node instanceof ShowList || node instanceof ShowVariable
+        ) {
             return;
         }
         count++;

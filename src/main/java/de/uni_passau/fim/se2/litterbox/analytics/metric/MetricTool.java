@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.*;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;

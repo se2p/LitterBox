@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricTool;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.IOException;

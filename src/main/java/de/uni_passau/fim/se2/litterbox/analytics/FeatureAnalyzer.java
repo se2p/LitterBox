@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureResult;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
