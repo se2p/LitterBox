@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -26,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Program>, ScratchVisitor {
+    public static final String NAME = "ct_score_abstraction";
 
     private int score = 0;
 
@@ -65,6 +65,6 @@ public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Pr
 
     @Override
     public String getName() {
-        return "ct_score_abstraction";
+        return NAME;
     }
 }

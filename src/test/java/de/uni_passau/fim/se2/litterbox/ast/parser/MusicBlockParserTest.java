@@ -23,9 +23,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +30,7 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class MusicBlockParserTest implements JsonTest {
+class MusicBlockParserTest implements JsonTest {
     @Test
     void testParseMusicBlocks() throws IOException, ParsingException {
         final Program program = getAST("src/test/fixtures/stmtParser/manipulatedFixedNoteBlock.json");

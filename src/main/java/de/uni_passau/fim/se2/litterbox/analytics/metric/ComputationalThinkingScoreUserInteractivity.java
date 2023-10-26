@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -32,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreUserInteractivity implements MetricExtractor<Program>, ScratchVisitor {
-
+    public static final String NAME = "ct_score_user_interactivity";
     private int score = 0;
 
     @Override
@@ -119,6 +118,6 @@ public class ComputationalThinkingScoreUserInteractivity implements MetricExtrac
 
     @Override
     public String getName() {
-        return "ct_score_user_interactivity";
+        return NAME;
     }
 }

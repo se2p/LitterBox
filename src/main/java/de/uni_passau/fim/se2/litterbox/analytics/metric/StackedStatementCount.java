@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
@@ -51,7 +50,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class StackedStatementCount<T extends ASTNode>
+        implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor, TextToSpeechExtensionVisitor {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
@@ -305,7 +305,8 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//Variables
+
+    //Variables
 
     @Override
     public void visit(SetVariableTo node) {

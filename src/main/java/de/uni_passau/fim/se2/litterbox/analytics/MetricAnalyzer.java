@@ -18,40 +18,49 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class MetricAnalyzer extends Analyzer {
+public class MetricAnalyzer extends Analyzer<List<MetricResult>> {
 
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
-    private MetricTool issueTool;
+    private final MetricTool issueTool;
 
     public MetricAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
         this.issueTool = new MetricTool();
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     */
     @Override
-    void check(File fileEntry, Path csv) {
-        Program program = extractProgram(fileEntry);
+    protected void checkAndWrite(File file) throws IOException {
+        Program program = extractProgram(file);
         if (program == null) {
-            // Todo error message
             return;
         }
 
+        issueTool.createCSVFile(program, output);
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, List<MetricResult> checkResult)
+            throws IOException {
         try {
-            issueTool.createCSVFile(program, csv);
+            issueTool.createCSVFile(program, output);
         } catch (IOException e) {
-            log.warning("Could not create CSV File: " + csv);
+            log.warning("Could not create CSV file: " + output);
+            throw e;
         }
+    }
+
+    @Override
+    public List<MetricResult> check(Program program) {
+        return issueTool.calculateMetrics(program);
     }
 }

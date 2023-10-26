@@ -33,12 +33,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
-    private static final Logger log = Logger.getLogger(TokenizingAnalyzer.class.getName());
-
     private final ObjectMapper objectMapper;
 
     private final boolean sequencePerScript;
@@ -66,13 +63,7 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
     }
 
     @Override
-    protected Stream<TokenSequence> process(final File inputFile) {
-        final Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Cannot process program from file '" + inputFile.getName() + "'");
-            return Stream.empty();
-        }
-
+    public Stream<TokenSequence> check(final Program program) {
         final Stream<ActorDefinition> actors = getActors(program);
 
         final Stream<TokenSequence> result;

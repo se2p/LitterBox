@@ -21,14 +21,13 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-public class LeilaAnalyzer extends Analyzer {
+public class LeilaAnalyzer extends Analyzer<Void> {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(LeilaAnalyzer.class.getName());
@@ -53,28 +52,32 @@ public class LeilaAnalyzer extends Analyzer {
     }
 
     @Override
-    void check(File fileEntry, Path out) {
-        if (!out.toFile().isDirectory()) {
+    protected void writeResultToFile(Path fileEntry, Program program, Void result) {
+        if (!output.toFile().isDirectory()) {
             log.warning("Output path must be a folder");
             return;
         }
 
         PrintStream stream;
-        String outName = getIntermediateFileName(fileEntry.getName());
+        String outName = getIntermediateFileName(fileEntry.getFileName().toString());
 
         try {
-            Path outPath = out.resolve(outName);
+            Path outPath = output.resolve(outName);
             stream = new PrintStream(outPath.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.info("Creation of output stream not possible with output file " + outName);
             return;
         }
-        log.info("Starting to print " + fileEntry.getName() + " to file " + out);
+        log.info("Starting to print " + fileEntry.getFileName() + " to file " + output);
         LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, onNever);
-        Program program = extractProgram(fileEntry);
         visitor.visit(program);
         stream.close();
         log.info("Finished printing.");
+    }
+
+    @Override
+    public Void check(Program program) {
+        return null;
     }
 
     private String getIntermediateFileName(String name) {

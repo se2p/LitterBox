@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FeatureTool {
 
@@ -69,7 +67,7 @@ public class FeatureTool {
     );
 
     public List<String> getMetricNames() {
-        return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
+        return metrics.stream().map(MetricExtractor::getName).toList();
     }
 
     public List<MetricExtractor<ASTNode>> getAnalyzers() {
@@ -96,16 +94,16 @@ public class FeatureTool {
             for (ASTNode target : targets) {
                 List<String> row = new ArrayList<>();
                 row.add(program.getIdent().getName());
-                String uniqueID = "";
+                String uniqueId = "";
                 if (target instanceof Script) {
                     scriptCount = scriptCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
                 } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
-                    uniqueID = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                    uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
                 }
 
-                row.add(uniqueID);
+                row.add(uniqueId);
 
                 for (MetricExtractor<ASTNode> extractor : metrics) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
@@ -119,7 +117,38 @@ public class FeatureTool {
         printer.close();
     }
 
-    private String getScratchBlockCode(ASTNode target, Program program,ActorDefinition actorDefinition) {
+    public List<FeatureResult> calculateFeatures(Program program) {
+        int actorCount = 0;
+        List<ActorDefinition> actorDefinitions = getActors(program);
+        List<FeatureResult> results = new ArrayList<>();
+        for (ActorDefinition actorDefinition : actorDefinitions) {
+            int scriptCount = 0;
+            int procedureDefCount = 0;
+            actorCount = actorCount + 1;
+            List<ASTNode> targets = new ArrayList<>();
+            targets.addAll(actorDefinition.getScripts().getScriptList());
+            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
+
+            for (ASTNode target : targets) {
+                String uniqueId = "";
+                if (target instanceof Script) {
+                    scriptCount = scriptCount + 1;
+                    uniqueId = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                } else if (target instanceof ProcedureDefinition) {
+                    procedureDefCount = procedureDefCount + 1;
+                    uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                }
+
+                for (MetricExtractor<ASTNode> extractor : metrics) {
+                    double metricResult = extractor.calculateMetric(target);
+                    results.add(new FeatureResult(extractor.getName(), uniqueId, metricResult));
+                }
+            }
+        }
+        return results;
+    }
+
+    private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         if (target instanceof ProcedureDefinition) {
             visitor.setProgram(program);

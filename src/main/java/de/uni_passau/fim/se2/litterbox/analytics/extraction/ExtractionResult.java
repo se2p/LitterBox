@@ -16,25 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.extraction;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
+import java.util.List;
 
-public class HalsteadLength<T extends ASTNode> implements MetricExtractor<T> {
-    public static final String NAME = "halstead_length";
-
-    @Override
-    public double calculateMetric(T node) {
-        HalsteadVisitor halstead = new HalsteadVisitor();
-        node.accept(halstead);
-        // The program length (N) is the sum of the total number of operators and operands in the program
-
-        return halstead.getTotalOperands() + halstead.getTotalOperators();
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
+public record ExtractionResult(String name, List<String> result) {
 }

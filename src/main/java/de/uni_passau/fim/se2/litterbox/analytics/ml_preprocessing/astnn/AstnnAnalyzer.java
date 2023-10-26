@@ -53,13 +53,7 @@ public class AstnnAnalyzer extends MLPreprocessingAnalyzer<StatementTreeSequence
     }
 
     @Override
-    protected Stream<StatementTreeSequence> process(final File inputFile) {
-        final Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Stream.empty();
-        }
-
+    public Stream<StatementTreeSequence> check(final Program program) {
         final Stream<StatementTreeSequence> nodes;
         if (wholeProgram) {
             nodes = Stream.of(

@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "halstead_volume";
 
     @Override
     public double calculateMetric(T node) {
@@ -35,13 +35,13 @@ public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
         int size = halstead.getUniqueOperands() + halstead.getUniqueOperators();
         if (size == 0) {
             // Empty project
-            return 0;
+            return 0.0;
         }
         return length * Math.log(size) / Math.log(2);
     }
 
     @Override
     public String getName() {
-        return "halstead_volume";
+        return NAME;
     }
 }

@@ -25,12 +25,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer<String> {
-    private static final Logger log = Logger.getLogger(GgnnGraphAnalyzer.class.getName());
-
     private final boolean isDotStringGraph;
     private final String labelName;
 
@@ -43,19 +40,12 @@ public class GgnnGraphAnalyzer extends MLPreprocessingAnalyzer<String> {
     }
 
     @Override
-    protected Stream<String> process(File inputFile) {
-        Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Stream.empty();
-        }
-
+    public Stream<String> check(final Program program) {
         GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(
-                program, inputFile.toPath(), includeStage, includeDefaultSprites, wholeProgram, labelName,
-                actorNameNormalizer
+                program, includeStage, includeDefaultSprites, wholeProgram, labelName, actorNameNormalizer
         );
         if (isDotStringGraph) {
-            String label = FilenameUtils.removeExtension(inputFile.getName());
+            String label = program.getIdent().getName();
             return Stream.of(generateGgnnGraphTask.generateDotGraphData(label));
         } else {
             return generateGgnnGraphTask.generateJsonGraphData();

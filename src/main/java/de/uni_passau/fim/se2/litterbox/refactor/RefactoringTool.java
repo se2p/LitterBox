@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * Holds all Refactorings and executes them.
@@ -32,8 +31,6 @@ public final class RefactoringTool {
 
     private RefactoringTool() {
     }
-
-    private static final Logger log = Logger.getLogger(RefactoringTool.class.getName());
 
     private static Map<String, RefactoringFinder> generateRefactoringFinders() {
         Map<String, RefactoringFinder> refactorings = new LinkedHashMap<>();
@@ -56,7 +53,8 @@ public final class RefactoringTool {
         registerRefactoring(new MergeEventsIntoForeverFinder(), refactorings); // extract events from forever backwards
         registerRefactoring(new MergeLoopsFinder(), refactorings); // split loop backwards
         registerRefactoring(new MergeScriptsFinder(), refactorings); // split script backwards
-        registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings); // split script after repeat until backwards
+        // split script after repeat until backwards
+        registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings);
         registerRefactoring(new SequenceToLoopFinder(), refactorings); // loop unrolling backwards
         registerRefactoring(new SplitIfFinder(), refactorings); // split if body
         registerRefactoring(new SplitLoopFinder(), refactorings); // split loop
@@ -73,7 +71,9 @@ public final class RefactoringTool {
         return Collections.unmodifiableList(refactorings);
     }
 
-    static void registerRefactoring(RefactoringFinder refactoringFinder, Map<String, RefactoringFinder> refactoringFinders) {
+    static void registerRefactoring(
+            RefactoringFinder refactoringFinder, Map<String, RefactoringFinder> refactoringFinders
+    ) {
         refactoringFinders.put(refactoringFinder.getName(), refactoringFinder);
     }
 }

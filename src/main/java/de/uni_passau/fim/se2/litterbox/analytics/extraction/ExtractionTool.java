@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ExtractionTool {
 
@@ -43,7 +42,7 @@ public class ExtractionTool {
     }
 
     public List<String> getExtractorNames() {
-        return getExtractors().stream().map(NameExtraction::getName).collect(Collectors.toList());
+        return getExtractors().stream().map(NameExtraction::getName).toList();
     }
 
     public List<NameExtraction> getAnalyzers() {
@@ -58,13 +57,22 @@ public class ExtractionTool {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
-        for (NameExtraction extractor : getExtractors()) {
-            row.add(extractor.extractNames(program).toString());
+        List<ExtractionResult> extractions = extract(program);
+        for (ExtractionResult extraction : extractions) {
+            row.add(extraction.result().toString());
         }
 
         try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
             printer.printRecord(row);
             printer.flush();
         }
+    }
+
+    public List<ExtractionResult> extract(Program program) {
+        List<ExtractionResult> list = new ArrayList<>();
+        for (NameExtraction extractor : getExtractors()) {
+            list.add(new ExtractionResult(extractor.getName(), extractor.extractNames(program)));
+        }
+        return list;
     }
 }

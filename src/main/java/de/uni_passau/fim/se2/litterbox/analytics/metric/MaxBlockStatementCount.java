@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -33,7 +32,6 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
 
     public static final String NAME = "max_block_statement_count";
 
-    private double currentNumberOfBlocks;
     private double maxBlocks;
 
     @Override
@@ -98,14 +96,14 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     }
 
     public void getBlockCount(ASTNode node, boolean increment) {
-        this.currentNumberOfBlocks = 0;
+        double currentNumberOfBlocks;
         if (increment) {
-            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node);
+            currentNumberOfBlocks = new BlockCount<>().calculateMetric(node);
         } else {
-            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node) + 1;
+            currentNumberOfBlocks = new BlockCount<>().calculateMetric(node) + 1;
         }
 
-        this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+        this.maxBlocks = Math.max(this.maxBlocks, currentNumberOfBlocks);
     }
 
     @Override

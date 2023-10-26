@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -27,7 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ComputationalThinkingScoreParallelization implements MetricExtractor<Program>, ScratchVisitor {
-
+    public static final String NAME = "ct_score_parallelization";
     private int score = 0;
     private Map<Event, Integer> eventMap = new LinkedHashMap<>();
 

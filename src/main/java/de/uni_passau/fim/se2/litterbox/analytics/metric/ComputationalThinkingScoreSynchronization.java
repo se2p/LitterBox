@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -28,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreSynchronization implements MetricExtractor<Program>, ScratchVisitor {
-
+    public static final String NAME = "ct_score_synchronization";
     private int score = 0;
 
     @Override
@@ -86,6 +85,6 @@ public class ComputationalThinkingScoreSynchronization implements MetricExtracto
 
     @Override
     public String getName() {
-        return "ct_score_synchronization";
+        return NAME;
     }
 }

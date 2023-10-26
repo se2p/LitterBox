@@ -23,26 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgene
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.io.File;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class Code2VecAnalyzer extends Code2Analyzer {
-
-    private static final Logger log = Logger.getLogger(Code2VecAnalyzer.class.getName());
 
     public Code2VecAnalyzer(final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript) {
         super(commonOptions, maxPathLength, isPerScript);
     }
 
     @Override
-    public Stream<ProgramFeatures> process(File inputFile) {
-        final Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Stream.empty();
-        }
-
+    public Stream<ProgramFeatures> check(final Program program) {
         final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
         final PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
                 pathType, maxPathLength, includeStage, program, includeDefaultSprites, programRelationFactory,

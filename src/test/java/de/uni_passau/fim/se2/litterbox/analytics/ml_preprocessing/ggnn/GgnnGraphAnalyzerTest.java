@@ -66,7 +66,7 @@ class GgnnGraphAnalyzerTest {
         );
         GgnnGraphAnalyzer analyzer = new GgnnGraphAnalyzer(commonOptions, false, null);
 
-        Stream<String> result = analyzer.process(Path.of("non_existing").toFile());
+        Stream<String> result = analyzer.check(Path.of("non_existing").toFile());
         assertThat(result.collect(Collectors.toList())).isEmpty();
     }
 

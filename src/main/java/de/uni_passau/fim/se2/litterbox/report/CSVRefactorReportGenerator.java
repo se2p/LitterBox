@@ -73,7 +73,6 @@ public class CSVRefactorReportGenerator implements AutoCloseable {
         headers.add("executed_generations");
         headers.add("seed");
         headers.add("hypervolume");
-        headers.add("program_extraction_time");
         headers.add("refactoring_search_time");
         headers.addAll(refactorings);
         headers.add("blocks_without_refactoring");
@@ -92,7 +91,7 @@ public class CSVRefactorReportGenerator implements AutoCloseable {
     }
 
     public void generateReport(int index, Program program, RefactorSequence refactorSequence, int populationSize,
-                               int maxGen, double hyperVolume, int iteration, long programExtractionTime,
+                               int maxGen, double hyperVolume, int iteration,
                                long refactoringSearchTime) throws IOException {
 
         List<String> row = new ArrayList<>();
@@ -103,7 +102,6 @@ public class CSVRefactorReportGenerator implements AutoCloseable {
         row.add(String.valueOf(iteration));
         row.add(String.valueOf(Randomness.getSeed()));
         row.add(String.valueOf(hyperVolume));
-        row.add(String.valueOf(programExtractionTime));
         row.add(String.valueOf(refactoringSearchTime));
         refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
                 .stream()

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.PathType;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.ProgramFeatures;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
@@ -34,6 +35,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
 
@@ -59,15 +61,6 @@ abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
     }
 
     @Override
-    protected void check(File fileEntry, Path csv) throws IOException {
-        if (this.pathType == PathType.SCRIPT) {
-            runPerScriptProcessingSteps(fileEntry);
-        } else {
-            super.check(fileEntry, csv);
-        }
-    }
-
-    @Override
     protected String resultToString(ProgramFeatures result) {
         return result.toString();
     }
@@ -77,10 +70,15 @@ abstract class Code2Analyzer extends MLPreprocessingAnalyzer<ProgramFeatures> {
         return Path.of(FilenameUtils.removeExtension(inputFile.getName()));
     }
 
-    protected void runPerScriptProcessingSteps(File inputFile) throws IOException {
-        final var output = process(inputFile);
-        var outputList = output.toList();
-        writeResultPerScriptToOutput(inputFile, outputList);
+    @Override
+    protected void writeResultToFile(
+            final Path projectFile, final Program program, final Stream<ProgramFeatures> checkResult
+    ) throws IOException {
+        if (pathType == PathType.SCRIPT) {
+            writeResultPerScriptToOutput(projectFile.toFile(), checkResult.toList());
+        } else {
+            super.writeResultToFile(projectFile, program, checkResult);
+        }
     }
 
     protected void writeResultPerScriptToOutput(File inputFile, List<ProgramFeatures> result) {

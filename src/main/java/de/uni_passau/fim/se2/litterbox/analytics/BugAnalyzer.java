@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class BugAnalyzer extends Analyzer {
+public class BugAnalyzer extends Analyzer<Set<Issue>> {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
@@ -63,24 +63,8 @@ public class BugAnalyzer extends Analyzer {
         this.annotationOutput = annotationOutput;
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry      the file to analyze
-     * @param reportFileName the file in which to write the results
-     */
     @Override
-    void check(File fileEntry, Path reportFileName) {
-        Program program = extractProgram(fileEntry);
-        if (program == null) {
-            return;
-        }
-        Set<Issue> issues = runFinders(program);
-        generateOutput(program, issues, reportFileName, outputPerScript);
-        createAnnotatedFile(fileEntry, program, issues, annotationOutput);
-    }
-
-    private Set<Issue> runFinders(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder issueFinder : issueFinders) {
@@ -88,6 +72,12 @@ public class BugAnalyzer extends Analyzer {
             issues.addAll(issueFinder.check(program));
         }
         return issues;
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
+        generateOutput(program, result, output, outputPerScript);
+        createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {

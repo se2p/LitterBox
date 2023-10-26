@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -34,10 +33,10 @@ import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 import java.util.*;
 
 public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "interprocedural_slice_coverage";
 
     @Override
     public double calculateMetric(T node) {
-
         Map<Defineable, Double> coverageMap = new HashMap<>();
 
         node.accept(new ScratchVisitor() {
@@ -51,8 +50,9 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
                     ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
                     SliceProfile sliceProfile = new SliceProfile(pdg);
                     Map<Defineable, Set<Stmt>> profileMap = sliceProfile.getProfileMap();
-                    for (Defineable defineable : profileMap.keySet()) {
-                        Set<Stmt> slice = profileMap.get(defineable);
+                    for (Map.Entry<Defineable, Set<Stmt>> entry : profileMap.entrySet()) {
+                        Defineable defineable = entry.getKey();
+                        Set<Stmt> slice = entry.getValue();
                         int length = getScriptLength(pdg);
                         double coverage = length > 0 ? slice.size() / (double) getScriptLength(pdg) : 0.0;
                         if (!coverageMap.containsKey(defineable)) {
@@ -82,6 +82,6 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
 
     @Override
     public String getName() {
-        return "interprocedural_slice_coverage";
+        return NAME;
     }
 }

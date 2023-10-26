@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgene
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.io.File;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -38,13 +37,7 @@ public class Code2SeqAnalyzer extends Code2Analyzer {
     }
 
     @Override
-    public Stream<ProgramFeatures> process(File inputFile) {
-        final Program program = extractProgram(inputFile);
-        if (program == null) {
-            log.warning("Program was null. File name was '" + inputFile.getName() + "'");
-            return Stream.empty();
-        }
-
+    public Stream<ProgramFeatures> check(final Program program) {
         final ProgramRelationFactory programRelationFactory = new ProgramRelationFactory();
         final PathFormatOptions pathFormatOptions = new PathFormatOptions("|", "|", "|", "", "", true, true);
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(

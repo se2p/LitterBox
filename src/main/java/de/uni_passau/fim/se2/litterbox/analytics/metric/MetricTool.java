@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.*;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -30,7 +29,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MetricTool {
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
@@ -119,7 +117,7 @@ public class MetricTool {
     }
 
     public List<String> getMetricNames() {
-        return getMetrics().stream().map(MetricExtractor::getName).collect(Collectors.toList());
+        return getMetrics().stream().map(MetricExtractor::getName).toList();
     }
 
     public List<MetricExtractor<Program>> getAnalyzers() {
@@ -134,13 +132,23 @@ public class MetricTool {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
-        for (MetricExtractor<Program> extractor : getMetrics()) {
-            row.add(Double.toString(extractor.calculateMetric(program)));
+        List<MetricResult> results = calculateMetrics(program);
+        for (MetricResult result : results) {
+            row.add(Double.toString(result.value()));
         }
 
         try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
             printer.printRecord(row);
             printer.flush();
         }
+    }
+
+    public List<MetricResult> calculateMetrics(Program program) {
+        List<MetricResult> results = new ArrayList<>();
+        for (MetricExtractor<Program> extractor : getMetrics()) {
+            double metricValue = extractor.calculateMetric(program);
+            results.add(new MetricResult(extractor.getName(), metricValue));
+        }
+        return results;
     }
 }

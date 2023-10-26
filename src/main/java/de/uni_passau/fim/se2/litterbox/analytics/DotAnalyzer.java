@@ -22,39 +22,24 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
-public class DotAnalyzer extends Analyzer {
-    private static final Logger log = Logger.getLogger(DotAnalyzer.class.getName());
-
+public class DotAnalyzer extends Analyzer<String> {
     public DotAnalyzer(Path input, Path output, boolean delete) {
         super(input, output, delete);
     }
 
     @Override
-    void check(File fileEntry, Path outputPath) {
-        Program program = extractProgram(fileEntry);
-        if (program == null) {
-            log.warning("Could not parse program in " + fileEntry.getPath());
-            return;
-        }
-
-        try {
-            createDotFile(program, outputPath);
-        } catch (IOException e) {
-            log.warning("Could not create dot File: " + outputPath);
+    protected void writeResultToFile(Path projectFile, Program program, String dotString) throws IOException {
+        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
+            bw.write(dotString);
         }
     }
 
-    private void createDotFile(Program program, Path outputPath) throws IOException {
-        final String dotString = DotVisitor.buildDotGraph(program);
-
-        try (BufferedWriter bw = Files.newBufferedWriter(outputPath)) {
-            bw.write(dotString);
-        }
+    @Override
+    public String check(Program program) {
+        return DotVisitor.buildDotGraph(program);
     }
 }

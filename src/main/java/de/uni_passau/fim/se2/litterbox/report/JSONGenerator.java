@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricTool;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.IOException;
@@ -29,9 +29,9 @@ public abstract class JSONGenerator {
     void addMetrics(JsonGenerator jsonGenerator, Program program) throws IOException {
         MetricTool tool = new MetricTool();
 
-        for (MetricExtractor metric : tool.getAnalyzers()) {
-            double value = metric.calculateMetric(program);
-            jsonGenerator.writeNumberField(metric.getName(), value);
+        for (MetricExtractor<Program> metric : tool.getAnalyzers()) {
+            double metricResult = metric.calculateMetric(program);
+            jsonGenerator.writeNumberField(metric.getName(), metricResult);
         }
     }
 }

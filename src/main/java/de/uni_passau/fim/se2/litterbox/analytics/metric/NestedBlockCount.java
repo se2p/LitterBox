@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
@@ -31,7 +30,6 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
 
     private int maxNestedDepth = 0;
     private int currentNestedDepth = 0;
-
 
     @Override
     public void visit(IfThenStmt node) {

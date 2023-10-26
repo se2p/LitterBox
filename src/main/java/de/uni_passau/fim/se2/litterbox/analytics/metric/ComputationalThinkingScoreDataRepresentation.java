@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
@@ -33,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ComputationalThinkingScoreDataRepresentation implements MetricExtractor<Program>, ScratchVisitor {
+    public static final String NAME = "ct_score_data_representation";
 
     private int score = 0;
 
@@ -152,6 +152,6 @@ public class ComputationalThinkingScoreDataRepresentation implements MetricExtra
 
     @Override
     public String getName() {
-        return "ct_score_data_representation";
+        return NAME;
     }
 }
