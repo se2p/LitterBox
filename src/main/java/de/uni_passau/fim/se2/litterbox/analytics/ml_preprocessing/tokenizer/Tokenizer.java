@@ -147,11 +147,10 @@ public class Tokenizer
     }
 
     private void visit(final ASTNode node, final Token opcode) {
-        if (MaskingType.Expression.equals(maskingStrategy.getMaskingType()) &&
-                maskingStrategy.getBlockId().equals(getBlockId(node))) {
+        if (MaskingType.Expression.equals(maskingStrategy.getMaskingType())
+                && maskingStrategy.getBlockId().equals(getBlockId(node))) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             visitChildren(node);
         }
@@ -1215,25 +1214,23 @@ public class Tokenizer
         try {
             if (node.getMetadata() instanceof DataBlockMetadata block) {
                 return block.getBlockId();
-            }
-            else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
                 return block.getBlockId();
             }
 
             if (node instanceof AttributeFromFixed attribute) {
                 return getBlockId(attribute.getParentNode());
             }
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored) { }
         return null;
     }
 
     private void visitFixedNodeOption(final FixedNodeOption option, final Token opcode) {
-        if (MaskingType.FixedOption.equals(maskingStrategy.getMaskingType()) &&
-                maskingStrategy.getBlockId().equals(getBlockId(option.getParentNode()))) {
+        if (MaskingType.FixedOption.equals(maskingStrategy.getMaskingType())
+                && maskingStrategy.getBlockId().equals(getBlockId(option.getParentNode()))) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             if (abstractFixedNodeOptions) {
                 visit(option, opcode);
             } else {

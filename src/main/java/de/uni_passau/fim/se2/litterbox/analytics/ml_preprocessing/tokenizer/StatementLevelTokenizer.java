@@ -109,12 +109,11 @@ public class StatementLevelTokenizer
         try {
             if (node.getMetadata() instanceof DataBlockMetadata block) {
                 return block.getBlockId();
-            }
-            else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
                 return block.getBlockId();
             }
+        } catch (Exception ignored) {
         }
-        catch (Exception ignored) { }
         return null;
     }
 
@@ -122,8 +121,7 @@ public class StatementLevelTokenizer
         if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
                 maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             visitChildren(node);
         }
@@ -133,8 +131,7 @@ public class StatementLevelTokenizer
         if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
                 maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
         }
     }

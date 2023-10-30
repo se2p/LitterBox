@@ -73,7 +73,8 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
                     this.abstractTokens, maskingStrategy);
         } else {
             tokenizeFunction = ((program, astNode) ->
-                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions, maskingStrategy));
+                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions,
+                            maskingStrategy));
         }
     }
 
