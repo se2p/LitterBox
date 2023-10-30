@@ -149,7 +149,7 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
-        protected abstract Analyzer getAnalyzer() throws Exception;
+        protected abstract Analyzer<?> getAnalyzer() throws Exception;
 
         /**
          * Override to implement custom parameter validation before the analyzer is run.
@@ -166,11 +166,11 @@ public class Main implements Callable<Integer> {
 
             validateParams();
 
-            final Analyzer analyzer = getAnalyzer();
+            final Analyzer<?> analyzer = getAnalyzer();
             return runAnalysis(analyzer);
         }
 
-        private int runAnalysis(final Analyzer analyzer) throws IOException {
+        private int runAnalysis(final Analyzer<?> analyzer) throws IOException {
             if (projectId != null) {
                 analyzer.analyzeSingle(projectId);
             } else if (projectList != null) {
