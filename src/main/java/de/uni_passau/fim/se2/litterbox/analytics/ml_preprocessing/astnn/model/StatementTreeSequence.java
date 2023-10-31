@@ -26,7 +26,7 @@ import java.util.List;
  * A sequence of statement trees as required for the ASTNN model together with a label.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public record StatementTreeSequence(String label, List<AstnnNode> statements) {
+public record StatementTreeSequence(String originalLabel, String label, List<AstnnNode> statements) {
     public int getMaxDepth() {
         return statements.stream().mapToInt(AstnnNode::getTreeDepth).max().orElse(0);
     }

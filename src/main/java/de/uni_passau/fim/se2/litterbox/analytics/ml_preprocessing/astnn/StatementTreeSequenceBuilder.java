@@ -43,9 +43,11 @@ class StatementTreeSequenceBuilder {
     public StatementTreeSequence build(
             final Program program, boolean includeStage, boolean includeDefaultSprites
     ) {
+        final String label = program.getIdent().getName();
         final AstnnNode node = toAstnnTransformer.transform(program, includeStage, includeDefaultSprites);
         final List<AstnnNode> statementTrees = build(node);
-        return new StatementTreeSequence(program.getIdent().getName(), statementTrees);
+
+        return new StatementTreeSequence(label, label, statementTrees);
     }
 
     public Stream<StatementTreeSequence> buildPerActor(
@@ -69,10 +71,16 @@ class StatementTreeSequenceBuilder {
      * @return The statement tree sequence for the actor.
      */
     public StatementTreeSequence build(final Program program, final ActorDefinition actor) {
+        String originalLabel = actor.getIdent().getName();
+        if (originalLabel.isEmpty()) {
+            originalLabel = NodeType.EMPTY_STRING.toString();
+        }
+
+        final String label = actorNameNormalizer.normalizeName(actor).orElse(NodeType.EMPTY_STRING.toString());
         final AstnnNode node = toAstnnTransformer.transform(program, actor);
         final List<AstnnNode> statementTrees = build(node);
-        final String label = actorNameNormalizer.normalizeName(actor).orElse(NodeType.EMPTY_STRING.toString());
-        return new StatementTreeSequence(label, statementTrees);
+
+        return new StatementTreeSequence(originalLabel, label, statementTrees);
     }
 
     private static List<AstnnNode> build(final AstnnNode rootNode) {
