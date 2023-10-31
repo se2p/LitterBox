@@ -57,9 +57,12 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class StatementLevelTokenizer
         implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
+    private static final Logger log = Logger.getLogger(StatementLevelTokenizer.class.getName());
+
     private final List<String> tokens = new ArrayList<>();
 
     private final boolean abstractTokens;
@@ -112,14 +115,15 @@ public class StatementLevelTokenizer
             } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
                 return block.getBlockId();
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.warning(e.getMessage());
         }
         return null;
     }
 
     private void visitControlBlock(final ASTNode node, final Token opcode) {
-        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
-                maskingStrategy.getBlockId().equals(getStatementId(node))) {
+        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType())
+                && maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
@@ -128,8 +132,8 @@ public class StatementLevelTokenizer
     }
 
     private void visit(final ASTNode node, final Token opcode) {
-        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType()) &&
-                maskingStrategy.getBlockId().equals(getStatementId(node))) {
+        if (MaskingType.Statement.equals(maskingStrategy.getMaskingType())
+                && maskingStrategy.getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);

@@ -88,9 +88,12 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Tokenizer
         implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
+
+    private static final Logger log = Logger.getLogger(Tokenizer.class.getName());
 
     private final BaseTokenVisitor tokenVisitor = TokenVisitorFactory.getDefaultTokenVisitor(true);
 
@@ -1221,7 +1224,8 @@ public class Tokenizer
             if (node instanceof AttributeFromFixed attribute) {
                 return getBlockId(attribute.getParentNode());
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.warning(e.getMessage());
         }
         return null;
     }
