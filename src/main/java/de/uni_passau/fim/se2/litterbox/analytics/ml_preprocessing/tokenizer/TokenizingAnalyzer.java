@@ -47,14 +47,16 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
     /**
      * An analyzer that flattens the program into a token sequence.
      *
-     * @param commonOptions     The common ML preprocessor options.
-     * @param sequencePerScript Generate one token sequence per script instead of one per actor.
-     * @param statementLevel    Generate a sequence consisting of only statement tokens
+     * @param commonOptions           The common ML preprocessor options.
+     * @param sequencePerScript       Generate one token sequence per script instead of one per actor.
+     * @param abstractFixedNodeOption Whether to replace fixed node options with an abstract token.
+     * @param statementLevel          Generate a sequence consisting of only statement tokens.
+     * @param maskingStrategy         The masking strategy to use.
      */
     public TokenizingAnalyzer(
             final MLPreprocessorCommonOptions commonOptions,
             final boolean sequencePerScript,
-            final boolean abstractFixedNodeOptions,
+            final boolean abstractFixedNodeOption,
             final boolean statementLevel,
             final MaskingStrategy maskingStrategy) {
         super(commonOptions);
@@ -73,7 +75,7 @@ public class TokenizingAnalyzer extends MLPreprocessingAnalyzer<TokenSequence> {
                     this.abstractTokens, maskingStrategy);
         } else {
             tokenizeFunction = ((program, astNode) ->
-                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOptions,
+                    Tokenizer.tokenize(program, astNode, this.abstractTokens, abstractFixedNodeOption,
                             maskingStrategy));
         }
     }
