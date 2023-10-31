@@ -1215,18 +1215,14 @@ public class Tokenizer
 
     private String getBlockId(final ASTNode node) {
         try {
-            if (node.getMetadata() instanceof DataBlockMetadata block) {
-                return block.getBlockId();
-            } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
-                return block.getBlockId();
-            }
-
-            if (node instanceof AttributeFromFixed attribute) {
-                return getBlockId(attribute.getParentNode());
-            }
-        } catch (Exception e) {
-            log.warning(e.getMessage());
+        if (node.getMetadata() instanceof DataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node instanceof AttributeFromFixed attribute) {
+            return getBlockId(attribute.getParentNode());
         }
+
         return null;
     }
 

@@ -110,14 +110,12 @@ public class StatementLevelTokenizer
 
     private String getStatementId(final ASTNode node) {
         try {
-            if (node.getMetadata() instanceof DataBlockMetadata block) {
-                return block.getBlockId();
-            } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
-                return block.getBlockId();
-            }
-        } catch (Exception e) {
-            log.warning(e.getMessage());
+        if (node.getMetadata() instanceof DataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            return block.getBlockId();
         }
+
         return null;
     }
 
