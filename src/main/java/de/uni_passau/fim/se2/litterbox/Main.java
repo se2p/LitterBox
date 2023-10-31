@@ -594,19 +594,19 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--abstract-fixed-node-options"},
-                description = "Replace fixed node options with abstract token"
+                description = "Replace fixed node options with abstract tokens."
         )
         boolean abstractFixedNodeOption = false;
 
         @CommandLine.Option(
                 names = {"--statement-level"},
-                description = "Generate a sequence consisting of only statement tokens"
+                description = "Generate a sequence consisting of only statement tokens."
         )
         boolean statementLevel = false;
 
         @CommandLine.Option(
                 names = {"--masked-statement-id"},
-                description = "ID of the statement to mask. Default: no statement to mask"
+                description = "Block-Id of the statement to mask. Default: no masking."
         )
         String maskedStatementId = null;
 
