@@ -289,7 +289,8 @@ class TokenizingAnalyzerTest implements JsonTest {
                         "music_changetempoby");
 
         if (abstractTokens) {
-            assertThat(output.get(0).tokens().get(0)).contains("music_noteliteral");
+            assertThat(output.get(0).tokens().get(0))
+                    .containsAtLeast("music_noteliteral", "music_drumliteral", "music_instrumentliteral");
         } else {
             assertThat(output.get(0).tokens().get(0))
                     .containsAtLeast("BASS_DRUM", "0.25", "60", "my_variable", "ORGAN");
@@ -339,7 +340,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                 abstractTokens,
                 ActorNameNormalizer.getDefault()
         );
-        return new TokenizingAnalyzer(common, sequencePerScript, false, false,
+        return new TokenizingAnalyzer(common, sequencePerScript, abstractTokens, false,
                 new MaskingStrategy(MaskingType.None, null));
     }
 }
