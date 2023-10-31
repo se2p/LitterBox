@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -620,7 +621,7 @@ public class Main implements Callable<Integer> {
             }
 
             return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
-                    statementLevel, new MaskingStrategy(MaskingType.None, null));
+                    statementLevel, MaskingStrategy.none());
         }
     }
 }

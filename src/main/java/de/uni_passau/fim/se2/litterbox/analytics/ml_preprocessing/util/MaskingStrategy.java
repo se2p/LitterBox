@@ -18,13 +18,34 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util;
 
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 public class MaskingStrategy {
     private final MaskingType maskingType;
     private final String blockId;
 
-    public MaskingStrategy(MaskingType maskingType, String blockId) {
+    private MaskingStrategy(final MaskingType maskingType, final String blockId) {
         this.maskingType = maskingType;
         this.blockId = blockId;
+    }
+
+    public static MaskingStrategy none() {
+        return new MaskingStrategy(MaskingType.None, null);
+    }
+
+    public static MaskingStrategy statement(final String blockId) {
+        Preconditions.checkNotNull(blockId);
+        return new MaskingStrategy(MaskingType.Statement, blockId);
+    }
+
+    public static MaskingStrategy expression(final String blockId) {
+        Preconditions.checkNotNull(blockId);
+        return new MaskingStrategy(MaskingType.Expression, blockId);
+    }
+
+    public static MaskingStrategy fixedOption(final String blockId) {
+        Preconditions.checkNotNull(blockId);
+        return new MaskingStrategy(MaskingType.FixedOption, blockId);
     }
 
     public MaskingType getMaskingType() {
