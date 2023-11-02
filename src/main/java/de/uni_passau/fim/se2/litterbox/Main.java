@@ -620,7 +620,9 @@ public class Main implements Callable<Integer> {
                 );
             }
 
-            final var maskingStrategy = maskedStatementId == null ? MaskingStrategy.none() : MaskingStrategy.statement(maskedStatementId);
+            final var maskingStrategy = maskedStatementId == null
+                    ? MaskingStrategy.none()
+                    : MaskingStrategy.statement(maskedStatementId);
             return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
                     statementLevel, maskingStrategy);
         }
