@@ -111,11 +111,10 @@ public class Tokenizer extends AbstractTokenizer {
 
     @Override
     protected void visit(final ASTNode node, final Token opcode) {
-        if (MaskingType.Expression.equals(getMaskingStrategy().getMaskingType())
+        final MaskingType maskingType = getMaskingStrategy().getMaskingType();
+
+        if ((MaskingType.Expression.equals(maskingType) || MaskingType.Statement.equals(maskingType))
                 && getMaskingStrategy().getBlockId().equals(getBlockId(node))) {
-            addToken(Token.MASK);
-        } else if (MaskingType.Statement.equals(getMaskingStrategy().getMaskingType())
-                && getMaskingStrategy().getBlockId().equals(getStatementId(node))) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);

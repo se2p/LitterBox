@@ -32,10 +32,15 @@ import java.util.List;
 
 public class StatementLevelTokenizer extends AbstractTokenizer {
 
+    private final boolean statementMasking;
+    private final String maskedBlockId;
+
     private StatementLevelTokenizer(final ProcedureDefinitionNameMapping procedureNameMapping,
                                     final boolean abstractTokens,
                                     final MaskingStrategy maskingStrategy) {
         super(procedureNameMapping, abstractTokens, maskingStrategy);
+        this.statementMasking = MaskingType.Statement.equals(getMaskingStrategy().getMaskingType());
+        this.maskedBlockId = getMaskingStrategy().getBlockId();
     }
 
     public static List<String> tokenize(final Program program,
@@ -58,8 +63,7 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
     }
 
     private void visitControlBlock(final ASTNode node, final Token opcode) {
-        if (MaskingType.Statement.equals(getMaskingStrategy().getMaskingType())
-                && getMaskingStrategy().getBlockId().equals(getStatementId(node))) {
+        if (statementMasking && maskedBlockId.equals(getStatementId(node))) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
@@ -69,8 +73,7 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
 
     @Override
     protected void visit(final ASTNode node, final Token opcode) {
-        if (MaskingType.Statement.equals(getMaskingStrategy().getMaskingType())
-                && getMaskingStrategy().getBlockId().equals(getStatementId(node))) {
+        if (statementMasking && maskedBlockId.equals(getStatementId(node))) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
