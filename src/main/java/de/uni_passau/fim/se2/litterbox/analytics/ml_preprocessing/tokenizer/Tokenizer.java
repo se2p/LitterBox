@@ -114,6 +114,9 @@ public class Tokenizer extends AbstractTokenizer {
         if (MaskingType.Expression.equals(getMaskingStrategy().getMaskingType())
                 && getMaskingStrategy().getBlockId().equals(getBlockId(node))) {
             addToken(Token.MASK);
+        } else if (MaskingType.Statement.equals(getMaskingStrategy().getMaskingType())
+                && getMaskingStrategy().getBlockId().equals(getStatementId(node))) {
+            addToken(Token.MASK);
         } else {
             addToken(opcode);
             visitChildren(node);

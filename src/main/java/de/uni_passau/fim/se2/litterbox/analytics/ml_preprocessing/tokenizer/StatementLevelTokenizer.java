@@ -22,8 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingSt
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -57,16 +55,6 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
                 new StatementLevelTokenizer(procedureNameMapping, abstractTokens, maskingStrategy);
         node.accept(v);
         return v.getTokens();
-    }
-
-    private String getStatementId(final ASTNode node) {
-        if (node.getMetadata() instanceof DataBlockMetadata block) {
-            return block.getBlockId();
-        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
-            return block.getBlockId();
-        }
-
-        return null;
     }
 
     private void visitControlBlock(final ASTNode node, final Token opcode) {

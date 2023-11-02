@@ -30,6 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
@@ -100,6 +102,16 @@ abstract class AbstractTokenizer
     }
 
     protected abstract void visit(final ASTNode node, final Token opcode);
+
+    protected String getStatementId(final ASTNode node) {
+        if (node.getMetadata() instanceof DataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            return block.getBlockId();
+        }
+
+        return null;
+    }
 
     @Override
     public void visitChildren(ASTNode node) {
