@@ -3,6 +3,7 @@ image: maven:3-eclipse-temurin-17
 stages:
   - build
   - test
+  - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
@@ -64,3 +65,10 @@ check-license-headers:
     policy: pull
   script:
     - mvn license:check
+
+deploy-gitlab:
+  stage: deploy
+  script:
+    - 'mvn deploy -s ci_settings.xml'
+  rules:
+   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

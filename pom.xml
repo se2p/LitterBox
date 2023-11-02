@@ -8,6 +8,26 @@
     <artifactId>Litterbox</artifactId>
     <version>1.9-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>gitlab-maven</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>gitlab-maven</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab-maven</id>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -118,6 +138,7 @@
                                 <exclude>**/README</exclude>
                                 <exclude>**/.gitlab-ci.yml</exclude>
                                 <exclude>**/pom.xml</exclude>
+                                <exclude>**/ci_settings.xml</exclude>
                                 <exclude>**/.editorconfig</exclude>
                                 <exclude>**/Jenkinsfile</exclude>
                                 <exclude>src/test/resources/**</exclude>
