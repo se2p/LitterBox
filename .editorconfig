@@ -17,6 +17,9 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = unset
 
+[*.yml]
+tab_width = 2
+
 [*.java]
 ij_java_blank_lines_after_anonymous_class_header = 0
 ij_java_blank_lines_after_class_header = 0
