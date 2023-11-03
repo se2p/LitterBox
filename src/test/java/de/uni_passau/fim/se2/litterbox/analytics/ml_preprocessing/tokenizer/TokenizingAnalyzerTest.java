@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -338,6 +339,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                 abstractTokens,
                 ActorNameNormalizer.getDefault()
         );
-        return new TokenizingAnalyzer(common, sequencePerScript);
+        return new TokenizingAnalyzer(common, sequencePerScript, abstractTokens, false,
+                MaskingStrategy.none());
     }
 }

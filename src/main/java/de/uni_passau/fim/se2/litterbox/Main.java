@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2Vec
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer.TokenizingAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -590,6 +591,24 @@ public class Main implements Callable<Integer> {
         )
         boolean sequencePerScript = false;
 
+        @CommandLine.Option(
+                names = {"--abstract-fixed-node-options"},
+                description = "Replace fixed node options with abstract tokens."
+        )
+        boolean abstractFixedNodeOption = false;
+
+        @CommandLine.Option(
+                names = {"--statement-level"},
+                description = "Generate a sequence consisting of only statement tokens."
+        )
+        boolean statementLevel = false;
+
+        @CommandLine.Option(
+                names = {"--masked-statement-id"},
+                description = "Block-Id of the statement to mask. Default: no masking."
+        )
+        String maskedStatementId = null;
+
         @Override
         protected TokenizingAnalyzer getAnalyzer() {
             if (wholeProgram && sequencePerScript) {
@@ -599,7 +618,11 @@ public class Main implements Callable<Integer> {
                 );
             }
 
-            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript);
+            final var maskingStrategy = maskedStatementId == null
+                    ? MaskingStrategy.none()
+                    : MaskingStrategy.statement(maskedStatementId);
+            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
+                    statementLevel, maskingStrategy);
         }
     }
 }

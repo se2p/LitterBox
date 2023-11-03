@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer;
 
 public enum Token {
     UNKNOWN("UNKNOWN"),
+    MASK("[MASK]"),
     BEGIN("BEGIN"),
     BEGIN_PROCEDURE("BEGIN_PROCEDURE"),
     BEGIN_SCRIPT("BEGIN_SCRIPT"),
