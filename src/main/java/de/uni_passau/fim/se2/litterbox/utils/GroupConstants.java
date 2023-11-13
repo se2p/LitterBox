@@ -26,4 +26,5 @@ public class GroupConstants {
     public static final String BUGS_SCRIPTS = "script-bugs";
     public static final String PERFUMES = "perfumes";
     public static final String DEFAULT = "default";
+    public static final String BAD = "bad";
 }
