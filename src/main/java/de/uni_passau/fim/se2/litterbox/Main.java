@@ -282,6 +282,7 @@ public class Main implements Callable<Integer> {
             System.out.printf(detectorFormat, GroupConstants.BUGS, messages.getInfo(GroupConstants.BUGS));
             System.out.printf(detectorFormat, GroupConstants.SMELLS, messages.getInfo(GroupConstants.SMELLS));
             System.out.printf(detectorFormat, GroupConstants.PERFUMES, messages.getInfo(GroupConstants.PERFUMES));
+            System.out.printf(detectorFormat, GroupConstants.FLAWS, messages.getInfo(GroupConstants.FLAWS));
 
             System.out.println(System.lineSeparator());
             System.out.printf(detectorFormat, "Bugpatterns:", "");

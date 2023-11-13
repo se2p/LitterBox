@@ -285,7 +285,7 @@ public class IssueTool {
 
         switch (commandString) {
             case ALL -> finders = new ArrayList<>(generateAllFinders().values());
-            case BAD -> {
+            case FLAWS -> {
                 finders = new ArrayList<>(generateBugFinders().values());
                 finders.addAll(generateSmellFinders().values());
             }
