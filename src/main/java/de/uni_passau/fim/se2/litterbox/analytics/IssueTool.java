@@ -45,7 +45,7 @@ public class IssueTool {
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     private static final boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
-    private static Map<String, IssueFinder> generateBugFinders() {
+    public static Map<String, IssueFinder> generateBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
         if (LOAD_GENERAL) {
             registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);

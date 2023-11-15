@@ -18,7 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.IssueParser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
@@ -46,6 +48,8 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     private Path annotationOutput;
     private final boolean ignoreLooseBlocks;
     private final boolean outputPerScript;
+
+    private Path oldResultPath;
 
     public BugAnalyzer(
             Path input, Path output, String detectors,
@@ -76,8 +80,31 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
+        if (oldResultPath != null) {
+            Set<Issue> oldResults = null;
+            oldResults = readOldIssues();
+            checkIfOldIssuesFixed(program, result, oldResults);
+        }
         generateOutput(program, result, output, outputPerScript);
         createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
+    }
+
+    private Set<Issue> readOldIssues() {
+        File file = oldResultPath.toFile();
+        if (file.exists()) {
+            IssueParser parser = new IssueParser();
+            try {
+                return parser.parseFile(file);
+            } catch (IOException e) {
+                log.severe("Could not load program from file " + file.getName());
+            } catch (ParsingException e) {
+                log.severe("Could not parse program for file " + file.getName() + ". " + e.getMessage());
+            }
+            return null;
+        } else {
+            log.severe("File '" + file.getName() + "' does not exist");
+            return null;
+        }
     }
 
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
@@ -122,6 +149,10 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
+    }
+
+    public void setOldResultPath(Path oldResultPath) {
+        this.oldResultPath = oldResultPath;
     }
 }
 

@@ -352,6 +352,8 @@ public final class Constants {
     public static final String NOTE_KEY = "NOTE";
     public static final String DRUM_KEY = "DRUM";
 
+    public static final String ISSUES_KEY = "issues";
+
     /**
      * The default sprite names in the various languages in lowercase.
      *
