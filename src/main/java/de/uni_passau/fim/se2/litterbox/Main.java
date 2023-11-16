@@ -229,10 +229,10 @@ public class Main implements Callable<Integer> {
         boolean outputPerScript;
 
         @CommandLine.Option(
-                names = {"-r", "--report_old"},
-                description = "Path to old analyser results, which should be compared to new analysis."
+                names = {"-r", "--report_prior"},
+                description = "Path to prior analyser results, which should be compared to new analysis."
         )
-        Path oldResultPath;
+        Path priorResultPath;
 
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
@@ -253,8 +253,8 @@ public class Main implements Callable<Integer> {
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }
-            if (oldResultPath != null) {
-                analyzer.setOldResultPath(oldResultPath);
+            if (priorResultPath != null) {
+                analyzer.setPriorResultPath(priorResultPath);
             }
 
             return analyzer;

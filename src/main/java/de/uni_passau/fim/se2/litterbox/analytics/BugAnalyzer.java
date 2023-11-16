@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     private final boolean ignoreLooseBlocks;
     private final boolean outputPerScript;
 
-    private Path oldResultPath;
+    private Path priorResultPath;
 
     public BugAnalyzer(
             Path input, Path output, String detectors,
@@ -80,17 +81,22 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
-        if (oldResultPath != null) {
-            Set<Issue> oldResults = null;
-            oldResults = readOldIssues();
-            checkIfOldIssuesFixed(program, result, oldResults);
+        if (priorResultPath != null) {
+            Map<String, List<String>> oldResults = null;
+            oldResults = readPriorIssues();
+            checkIfPriorIssuesFixed(program, result, oldResults);
         }
         generateOutput(program, result, output, outputPerScript);
         createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
-    private Set<Issue> readOldIssues() {
-        File file = oldResultPath.toFile();
+    private void checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<String>> oldResults) {
+        System.out.println(oldResults);
+
+    }
+
+    private Map<String, List<String>> readPriorIssues() {
+        File file = priorResultPath.toFile();
         if (file.exists()) {
             IssueParser parser = new IssueParser();
             try {
@@ -151,8 +157,8 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         }
     }
 
-    public void setOldResultPath(Path oldResultPath) {
-        this.oldResultPath = oldResultPath;
+    public void setPriorResultPath(Path priorResultPath) {
+        this.priorResultPath = priorResultPath;
     }
 }
 

@@ -46,6 +46,7 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
         this.commentId = commentId;
     }
 
+    @Override
     public String getBlockId() {
         return blockId;
     }

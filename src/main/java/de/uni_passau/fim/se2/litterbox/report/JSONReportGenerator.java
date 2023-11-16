@@ -22,9 +22,12 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -72,21 +75,39 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::isDuplicateOf)
                 .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
+                .forEach(id -> {
+                    try {
+                        jsonGenerator.writeNumber(id);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     private void addSubsumingIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::isSubsumedBy)
                 .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
+                .forEach(id -> {
+                    try {
+                        jsonGenerator.writeNumber(id);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     private void addCoupledIssueIDs(Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
                 .filter(theIssue::areCoupled)
                 .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e);}});
+                .forEach(id -> {
+                    try {
+                        jsonGenerator.writeNumber(id);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     private void addSimilarIssueIDs(Issue theIssue, Collection<Issue> issues) {
@@ -117,15 +138,15 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         addMetrics(jsonGenerator, program);
         jsonGenerator.writeEndObject();
 
-        jsonGenerator.writeFieldName("issues");
+        jsonGenerator.writeFieldName(Constants.ISSUES_KEY);
         jsonGenerator.writeStartArray();
 
         for (Issue issue : issues) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeNumberField("id", issue.getId());
             jsonGenerator.writeStringField("finder", issue.getFinderName());
-            jsonGenerator.writeStringField("name", issue.getTranslatedFinderName());
-            jsonGenerator.writeStringField("type", issue.getIssueType().toString());
+            jsonGenerator.writeStringField(Constants.NAME_KEY, issue.getTranslatedFinderName());
+            jsonGenerator.writeStringField(Constants.ISSUE_TYPE_KEY, issue.getIssueType().toString());
             jsonGenerator.writeNumberField("severity", issue.getSeverity().getSeverityLevel());
             jsonGenerator.writeStringField("sprite", issue.getActorName());
 
@@ -173,6 +194,12 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
             addCodeEntry(issue.getScriptOrProcedureDefinition(), issue, "code");
             addCodeEntry(issue.getRefactoredScriptOrProcedureDefinition(), issue, "refactoring");
 
+            if (issue.getCodeLocation() != null) {
+                Metadata metadata = issue.getCodeLocation().getMetadata();
+                if (metadata instanceof BlockMetadata blockMetadata) {
+                    jsonGenerator.writeStringField(Constants.ISSUE_BLOCK_ID, blockMetadata.getBlockId());
+                }
+            }
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();

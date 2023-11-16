@@ -51,4 +51,9 @@ public class ProcedureMetadata extends AbstractNode implements BlockMetadata {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getBlockId() {
+        return definition.getBlockId();
+    }
 }
