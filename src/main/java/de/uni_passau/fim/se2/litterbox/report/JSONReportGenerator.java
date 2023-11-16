@@ -144,7 +144,7 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
         for (Issue issue : issues) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeNumberField("id", issue.getId());
-            jsonGenerator.writeStringField("finder", issue.getFinderName());
+            jsonGenerator.writeStringField(Constants.FINDER_KEY, issue.getFinderName());
             jsonGenerator.writeStringField(Constants.NAME_KEY, issue.getTranslatedFinderName());
             jsonGenerator.writeStringField(Constants.ISSUE_TYPE_KEY, issue.getIssueType().toString());
             jsonGenerator.writeNumberField("severity", issue.getSeverity().getSeverityLevel());

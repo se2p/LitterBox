@@ -356,6 +356,7 @@ public final class Constants {
     public static final String ISSUE_TYPE_KEY = "type";
 
     public static final String ISSUE_BLOCK_ID = "block-id";
+    public static final String FINDER_KEY = "finder";
 
     /**
      * The default sprite names in the various languages in lowercase.
