@@ -355,7 +355,7 @@ public final class Constants {
     public static final String ISSUES_KEY = "issues";
     public static final String ISSUE_TYPE_KEY = "type";
 
-    public static final String ISSUE_BLOCK_ID = "block-id";
+    public static final String ISSUE_BLOCK_ID = "issueLocationBlockId";
     public static final String FINDER_KEY = "finder";
 
     /**

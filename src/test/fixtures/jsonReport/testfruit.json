@@ -89,7 +89,7 @@
     "currentCostume" : 0,
     "code" : "[scratchblocks]\r\nwhen green flag clicked\r\nset [my variable v] to (0)\r\nmove (my variable) steps:: #ff0000 // ⇦  \uD83D\uDC1B   \r\nchange [my variable v] by (1)\r\n[/scratchblocks]\r\n",
     "refactoring" : "[scratchblocks]\r\n[/scratchblocks]\r\n",
-    "block-id" : "Jif;Ug!4[{,1su7{fvp}"
+    "issueLocationBlockId" : "Jif;Ug!4[{,1su7{fvp}"
   }, {
     "id" : 1,
     "finder" : "sprite_naming",
@@ -120,6 +120,6 @@
     "currentCostume" : 0,
     "code" : "[scratchblocks]\r\nwhen green flag clicked\r\nset [my variable v] to (0):: #167700 // ⇦  \uD83D\uDC4D   \r\nmove (my variable) steps\r\nchange [my variable v] by (1)\r\n[/scratchblocks]\r\n",
     "refactoring" : "[scratchblocks]\r\n[/scratchblocks]\r\n",
-    "block-id" : "Y[){h.ke?o`X~R0B-lg@"
+    "issueLocationBlockId" : "Y[){h.ke?o`X~R0B-lg@"
   } ]
 }

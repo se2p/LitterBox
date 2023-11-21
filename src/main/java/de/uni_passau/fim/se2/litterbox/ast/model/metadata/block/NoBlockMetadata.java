@@ -34,9 +34,4 @@ public class NoBlockMetadata extends AbstractNode implements BlockMetadata {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
-
-    @Override
-    public String getBlockId() {
-        return null;
-    }
 }
