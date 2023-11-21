@@ -23,10 +23,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -35,6 +38,24 @@ import java.util.stream.Stream;
 public class AstNodeUtil {
     private AstNodeUtil() {
         throw new IllegalCallerException("utility class");
+    }
+
+    /**
+     * Gets the block id of the given node, if it has one.
+     *
+     * @param node Some node of the AST.
+     * @return The block id of the node if it has one, {@code null} otherwise.
+     */
+    public static String getBlockId(final ASTNode node) {
+        if (node.getMetadata() instanceof DataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+            return block.getBlockId();
+        } else if (node.getMetadata() instanceof ProcedureMetadata procedure) {
+            return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
+        } else {
+            return null;
+        }
     }
 
     public static boolean isMetadata(final ASTNode node) {
