@@ -670,10 +670,6 @@ public class Tokenizer extends AbstractTokenizer {
     // region helper methods
 
     private String getBlockId(final ASTNode node) {
-        if (node instanceof Never) {
-            return null;
-        }
-
         if (node.getMetadata() instanceof DataBlockMetadata block) {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {

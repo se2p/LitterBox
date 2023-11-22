@@ -36,10 +36,4 @@ public class Never extends AbstractNode implements Event, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
-
-    @Override
-    public BlockMetadata getMetadata() {
-        throw new RuntimeException("Never event has no metadata");
-    }
-
 }
