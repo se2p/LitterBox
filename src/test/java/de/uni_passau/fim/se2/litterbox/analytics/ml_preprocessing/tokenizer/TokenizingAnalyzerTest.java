@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessor
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -32,6 +33,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -309,6 +311,23 @@ class TokenizingAnalyzerTest implements JsonTest {
         program.accept(noSpacesChecker);
     }
 
+    @Test
+    void testTokenizeUnconnectedScript() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/ml_preprocessing/tokenizer/unconnected_script.json");
+        final var analyzer = getAnalyzer(true, false, true, false,
+                MaskingStrategy.expression("NeSwTQKd7cASL.mXXiMu"));
+        final var tokenSequence = analyzer.check(program);
+        final var tokens = tokenSequence
+                .flatMap(sequence -> sequence.tokens().stream().findFirst().stream())
+                .filter(sequence -> sequence.contains(Token.MASK.getStrRep()))
+                .findFirst();
+        assertThat(tokens.isPresent()).isTrue();
+        assertThat(tokens.get()).isEqualTo(List.of(
+                "BEGIN", "BEGIN_SCRIPT", "event_never", "operator_and", Token.MASK.getStrRep(), "NOTHING", "END_SCRIPT",
+                "END")
+        );
+    }
+
     static class NoSpacesChecker implements ScratchVisitor {
         @Override
         public void visit(ASTNode node) {
@@ -329,6 +348,16 @@ class TokenizingAnalyzerTest implements JsonTest {
             boolean abstractTokens,
             boolean sequencePerScript
     ) {
+        return getAnalyzer(includeStage, wholeProgram, abstractTokens, sequencePerScript, MaskingStrategy.none());
+    }
+
+    private TokenizingAnalyzer getAnalyzer(
+            boolean includeStage,
+            boolean wholeProgram,
+            boolean abstractTokens,
+            boolean sequencePerScript,
+            MaskingStrategy maskingStrategy
+    ) {
         final MLPreprocessorCommonOptions common = new MLPreprocessorCommonOptions(
                 Path.of(""),
                 MLOutputPath.console(),
@@ -339,7 +368,6 @@ class TokenizingAnalyzerTest implements JsonTest {
                 abstractTokens,
                 ActorNameNormalizer.getDefault()
         );
-        return new TokenizingAnalyzer(common, sequencePerScript, abstractTokens, false,
-                MaskingStrategy.none());
+        return new TokenizingAnalyzer(common, sequencePerScript, abstractTokens, false, maskingStrategy);
     }
 }

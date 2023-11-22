@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -669,6 +670,10 @@ public class Tokenizer extends AbstractTokenizer {
     // region helper methods
 
     private String getBlockId(final ASTNode node) {
+        if (node instanceof Never) {
+            return null;
+        }
+
         if (node.getMetadata() instanceof DataBlockMetadata block) {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
