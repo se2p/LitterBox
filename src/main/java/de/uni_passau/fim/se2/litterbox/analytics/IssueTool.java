@@ -294,6 +294,15 @@ public class IssueTool {
                         .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
                 finders.addAll(strictFinders);
             }
+            case BAD_ISSUES ->  {
+                    List<IssueFinder> bugFinders   = new ArrayList<>(generateBugFinders().values());
+                List<IssueFinder> bugScriptsFinders   = new ArrayList<>(generateScriptsBugFinders().values());
+                List<IssueFinder> bugScriptsSmells   = new ArrayList<>(generateSmellFinders().values());
+                finders.addAll(bugFinders);
+                finders.addAll(bugScriptsFinders);
+                finders.addAll(bugScriptsSmells);
+            }
+
             default -> {
                 for (String detectorName : commandString.split(",")) {
                     Map<String, IssueFinder> allFinders = generateAllFinders();
