@@ -172,7 +172,9 @@ public class ResourceBundleTest {
         finders.addAll(new MetricTool().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
         finders.addAll(new ExtractionTool().getExtractorNames());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
+            if (!key.contains("fix")) {
+                assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
+            }
         }
     }
 
@@ -183,7 +185,9 @@ public class ResourceBundleTest {
         List<IssueFinder> allFinders = IssueTool.getFinders(GroupConstants.ALL);
         Set<String> hintKeys = allFinders.stream().flatMap(f -> f.getHintKeys().stream()).collect(Collectors.toSet());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);
+            if (!key.contains("fix")) {
+                assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);
+            }
         }
     }
 

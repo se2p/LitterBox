@@ -22,26 +22,29 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.Objects;
 
-public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
-    public static final String NAME = "missing_loop_sensing_fix";
+public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
+    public static final String NAME = "missing_loop_sensing_fix_wait";
     private final String bugLocationBlockId;
 
-    public MissingLoopSensingLoopFix(String bugLocationBlockId) {
+    public MissingLoopSensingWaitFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
     }
 
     public void visit(ASTNode node) {
         if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
-            StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
-            assert stmtList != null;
-            if (stmtList.getParentNode() instanceof UntilStmt || stmtList.getParentNode() instanceof RepeatForeverStmt) {
-                addIssue(node, node.getMetadata());
+            if (node.getParentNode() instanceof WaitUntil) {
+                StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
+                assert stmtList != null;
+                ASTNode lastNode = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
+                if (lastNode instanceof StopAll) {
+                    addIssue(node, node.getMetadata());
+                }
             }
         } else {
             visitChildren(node);

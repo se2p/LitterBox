@@ -18,9 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.MissingLoopSensingLoopFix;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.MissingLoopSensingWaitFix;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.IssueParser;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
@@ -32,10 +36,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class BugAnalyzer extends Analyzer<Set<Issue>> {
@@ -76,23 +77,84 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
             issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
             issues.addAll(issueFinder.check(program));
         }
+        if (priorResultPath != null) {
+            Map<String, List<String>> oldResults = readPriorIssues();
+            Set<Issue> fixed = checkIfPriorIssuesFixed(program, issues, oldResults);
+            issues.addAll(fixed);
+        }
         return issues;
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
-        if (priorResultPath != null) {
-            Map<String, List<String>> oldResults = null;
-            oldResults = readPriorIssues();
-            checkIfPriorIssuesFixed(program, result, oldResults);
-        }
         generateOutput(program, result, output, outputPerScript);
         createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
-    private void checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<String>> oldResults) {
-        System.out.println(oldResults);
+    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<String>> oldResults) {
+        Map<String, List<Issue>> resultsByFinder = sortResults(result);
+        Set<String> oldFinders = oldResults.keySet();
+        Set<Issue> fixedIssues = new HashSet<>();
+        for (String finder : oldFinders) {
+            if (resultsByFinder.containsKey(finder)) {
+                fixedIssues.addAll(compareLocations(finder, oldResults.get(finder), resultsByFinder.get(finder), program));
+            } else {
+                fixedIssues.addAll(checkOldFixed(finder, oldResults.get(finder), program));
+            }
+        }
+        return fixedIssues;
+    }
 
+    private Set<Issue> compareLocations(String finder, List<String> blockIds, List<Issue> result, Program program) {
+        Set<Issue> fixes = new HashSet<>();
+        for (String currentBlockId : blockIds) {
+            boolean found = false;
+            for (Issue currentIssue : result) {
+                if (currentBlockId.equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                fixes.addAll(checkOldFixed(finder, currentBlockId, program));
+            }
+        }
+        return fixes;
+    }
+
+    private Set<Issue> checkOldFixed(String finder, List<String> blockIds, Program program) {
+        Set<Issue> issues = new HashSet<>();
+        for (String blockId : blockIds) {
+            issues.addAll(checkOldFixed(finder, blockId, program));
+        }
+        return issues;
+    }
+
+    private Set<Issue> checkOldFixed(String finder, String blockId, Program program) {
+        Set<Issue> issues = new HashSet<>();
+        switch (finder) {
+            case MissingLoopSensing.NAME:
+                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(blockId);
+                issues.addAll(missingLoopSensingLoopFix.check(program));
+                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(blockId);
+                issues.addAll(missingLoopSensingWaitFix.check(program));
+        }
+        return issues;
+    }
+
+    private Map<String, List<Issue>> sortResults(Set<Issue> result) {
+        Map<String, List<Issue>> resultsByFinder = new HashMap<>();
+        for (Issue issue : result) {
+            String finderName = issue.getFinderName();
+            if (resultsByFinder.containsKey(finderName)) {
+                resultsByFinder.get(finderName).add(issue);
+            } else {
+                List<Issue> sortedIssues = new ArrayList<>();
+                sortedIssues.add(issue);
+                resultsByFinder.put(finderName, sortedIssues);
+            }
+        }
+        return resultsByFinder;
     }
 
     private Map<String, List<String>> readPriorIssues() {
