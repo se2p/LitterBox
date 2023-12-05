@@ -24,10 +24,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class MessageNeverReceivedFixTest implements JsonTest {
+public class ComparingLiteralsFixTest implements JsonTest {
 
     @Test
-    public void testMessageNeverReceivedFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MessageNeverReceivedFix(".2wswQ)SVO@}+-00EBc%"), "./src/test/fixtures/fix_heuristics/messageNeverReceivedFix.json");
+    public void testAllThreeComparisons() throws IOException, ParsingException {
+        assertThatFinderReports(1, new ComparingLiteralsFix("OxHILI,O8rPqHkxo{LTp"), "./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json");
+        assertThatFinderReports(1, new ComparingLiteralsFix("#KED@~hX@-QYZU4(@K|:"), "./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json");
+        assertThatFinderReports(1, new ComparingLiteralsFix("^2~XaWG{-bx4J1j_yPE|"), "./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json");
     }
 }

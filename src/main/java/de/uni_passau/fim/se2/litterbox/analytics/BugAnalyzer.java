@@ -18,9 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverReceived;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
-import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.MissingLoopSensingLoopFix;
-import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.MissingLoopSensingWaitFix;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.IssueParser;
@@ -133,11 +136,28 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     private Set<Issue> checkOldFixed(String finder, String blockId, Program program) {
         Set<Issue> issues = new HashSet<>();
         switch (finder) {
-            case MissingLoopSensing.NAME:
+            case ComparingLiterals.NAME -> {
+                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(blockId);
+                issues.addAll(comparingLiteralsFix.check(program));
+            }
+            case MessageNeverReceived.NAME -> {
+                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(blockId);
+                issues.addAll(messageNeverReceived.check(program));
+            }
+            case MessageNeverSent.NAME -> {
+                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(blockId);
+                issues.addAll(messageNeverSentFix.check(program));
+            }
+            case MissingLoopSensing.NAME -> {
                 MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(blockId);
                 issues.addAll(missingLoopSensingLoopFix.check(program));
                 MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(blockId);
                 issues.addAll(missingLoopSensingWaitFix.check(program));
+            }
+            case StutteringMovement.NAME -> {
+                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(blockId);
+                issues.addAll(stutteringMovementFix.check(program));
+            }
         }
         return issues;
     }

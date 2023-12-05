@@ -52,4 +52,15 @@ public class BugAnalyzerFixTest implements JsonTest {
         Assertions.assertTrue(issues.get(2).getFinder() instanceof MissingLoopSensingLoopFix);
         Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(2).getCodeLocation()));
     }
+
+    @Test
+    public void testComparingLiteralsMultiFix() throws IOException, ParsingException {
+        BugAnalyzer bugAnalyzer = new BugAnalyzer(Path.of("./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json"), null, "bugs", false, false, false);
+        bugAnalyzer.setPriorResultPath(Path.of("./src/test/fixtures/jsonReport/comparingLiteralsResult.json"));
+        List<Issue> issues = new ArrayList<>(bugAnalyzer.check(getAST("./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json")));
+        Assertions.assertEquals(6, issues.size());
+        Assertions.assertTrue(issues.get(3).getFinder() instanceof ComparingLiteralsFix);
+        Assertions.assertTrue(issues.get(4).getFinder() instanceof ComparingLiteralsFix);
+        Assertions.assertTrue(issues.get(5).getFinder() instanceof ComparingLiteralsFix);
+    }
 }

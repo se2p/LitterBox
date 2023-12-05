@@ -59,9 +59,13 @@ public class IssueParser {
         Map<String, List<String>> issues = new LinkedHashMap<>();
         while (iterable.hasNext()) {
             JsonNode currentIssue = iterable.next();
-            if (currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.BUG.toString())) {
+            if (currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.BUG.toString())
+                    || currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.SMELL.toString())) {
                 String name = currentIssue.get(FINDER_KEY).asText();
-                String block_id = currentIssue.get(ISSUE_BLOCK_ID).asText();
+                String block_id = "";
+                if (currentIssue.has(ISSUE_BLOCK_ID)) {
+                    block_id = currentIssue.get(ISSUE_BLOCK_ID).asText();
+                }
                 if (issues.containsKey(name)) {
                     issues.get(name).add(block_id);
                 } else {

@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class MessageNeverReceivedFixTest implements JsonTest {
+public class StutteringMovementFixTest implements JsonTest {
 
     @Test
-    public void testMessageNeverReceivedFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MessageNeverReceivedFix(".2wswQ)SVO@}+-00EBc%"), "./src/test/fixtures/fix_heuristics/messageNeverReceivedFix.json");
-    }
+    public void testStutteringMovementFix() throws IOException, ParsingException {
+        assertThatFinderReports(1, new StutteringMovementFix(".sw70nN+WhDhl=%3*_51"), "./src/test/fixtures/fix_heuristics/stutteringMovementFix.json");
+        }
 }
