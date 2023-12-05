@@ -81,7 +81,7 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
             issues.addAll(issueFinder.check(program));
         }
         if (priorResultPath != null) {
-            Map<String, List<String>> oldResults = readPriorIssues();
+            Map<String, List<IssueParser.IssueRecord>> oldResults = readPriorIssues();
             Set<Issue> fixed = checkIfPriorIssuesFixed(program, issues, oldResults);
             issues.addAll(fixed);
         }
@@ -94,7 +94,7 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
-    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<String>> oldResults) {
+    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueParser.IssueRecord>> oldResults) {
         Map<String, List<Issue>> resultsByFinder = sortResults(result);
         Set<String> oldFinders = oldResults.keySet();
         Set<Issue> fixedIssues = new HashSet<>();
@@ -108,54 +108,54 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         return fixedIssues;
     }
 
-    private Set<Issue> compareLocations(String finder, List<String> blockIds, List<Issue> result, Program program) {
+    private Set<Issue> compareLocations(String finder, List<IssueParser.IssueRecord> issueRecords, List<Issue> result, Program program) {
         Set<Issue> fixes = new HashSet<>();
-        for (String currentBlockId : blockIds) {
+        for (IssueParser.IssueRecord issueRecord : issueRecords) {
             boolean found = false;
             for (Issue currentIssue : result) {
-                if (currentBlockId.equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
+                if (issueRecord.blockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                fixes.addAll(checkOldFixed(finder, currentBlockId, program));
+                fixes.addAll(checkOldFixed(finder, issueRecord, program));
             }
         }
         return fixes;
     }
 
-    private Set<Issue> checkOldFixed(String finder, List<String> blockIds, Program program) {
+    private Set<Issue> checkOldFixed(String finder, List<IssueParser.IssueRecord> issueRecords, Program program) {
         Set<Issue> issues = new HashSet<>();
-        for (String blockId : blockIds) {
-            issues.addAll(checkOldFixed(finder, blockId, program));
+        for (IssueParser.IssueRecord issueRecord : issueRecords) {
+            issues.addAll(checkOldFixed(finder, issueRecord, program));
         }
         return issues;
     }
 
-    private Set<Issue> checkOldFixed(String finder, String blockId, Program program) {
+    private Set<Issue> checkOldFixed(String finder, IssueParser.IssueRecord issueRecord, Program program) {
         Set<Issue> issues = new HashSet<>();
         switch (finder) {
             case ComparingLiterals.NAME -> {
-                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(blockId);
+                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(issueRecord.blockId());
                 issues.addAll(comparingLiteralsFix.check(program));
             }
             case MessageNeverReceived.NAME -> {
-                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(blockId);
+                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(issueRecord.blockId());
                 issues.addAll(messageNeverReceived.check(program));
             }
             case MessageNeverSent.NAME -> {
-                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(blockId);
+                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(issueRecord.blockId());
                 issues.addAll(messageNeverSentFix.check(program));
             }
             case MissingLoopSensing.NAME -> {
-                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(blockId);
+                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(issueRecord.blockId());
                 issues.addAll(missingLoopSensingLoopFix.check(program));
-                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(blockId);
+                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(issueRecord.blockId());
                 issues.addAll(missingLoopSensingWaitFix.check(program));
             }
             case StutteringMovement.NAME -> {
-                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(blockId);
+                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(issueRecord.blockId());
                 issues.addAll(stutteringMovementFix.check(program));
             }
         }
@@ -177,7 +177,7 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         return resultsByFinder;
     }
 
-    private Map<String, List<String>> readPriorIssues() {
+    private Map<String, List<IssueParser.IssueRecord>> readPriorIssues() {
         File file = priorResultPath.toFile();
         if (file.exists()) {
             IssueParser parser = new IssueParser();

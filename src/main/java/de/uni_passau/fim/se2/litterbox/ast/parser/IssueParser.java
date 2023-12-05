@@ -35,7 +35,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class IssueParser {
 
-    public Map<String, List<String>> parseFile(File fileEntry) throws IOException, ParsingException {
+    public Map<String, List<IssueRecord>> parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
         if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {
             Logger.getGlobal().info("Now parsing issue report: " + fileName);
@@ -48,7 +48,7 @@ public class IssueParser {
         }
     }
 
-    private Map<String, List<String>> parseJsonFile(File fileEntry) throws IOException, ParsingException {
+    private Map<String, List<IssueRecord>> parseJsonFile(File fileEntry) throws IOException, ParsingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(fileEntry);
         Preconditions.checkNotNull(rootNode);
@@ -56,25 +56,30 @@ public class IssueParser {
             throw new ParsingException("The JSON File does not have an issues field.");
         }
         Iterator<JsonNode> iterable = rootNode.get(ISSUES_KEY).iterator();
-        Map<String, List<String>> issues = new LinkedHashMap<>();
+        Map<String, List<IssueRecord>> issues = new LinkedHashMap<>();
         while (iterable.hasNext()) {
             JsonNode currentIssue = iterable.next();
             if (currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.BUG.toString())
                     || currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.SMELL.toString())) {
                 String name = currentIssue.get(FINDER_KEY).asText();
+                String actorName = currentIssue.get(SPRRITE_KEY).asText();
                 String block_id = "";
                 if (currentIssue.has(ISSUE_BLOCK_ID)) {
                     block_id = currentIssue.get(ISSUE_BLOCK_ID).asText();
                 }
                 if (issues.containsKey(name)) {
-                    issues.get(name).add(block_id);
+                    issues.get(name).add(new IssueRecord(block_id, actorName));
                 } else {
-                    List<String> newBlockIdList = new ArrayList<>();
-                    newBlockIdList.add(block_id);
+                    List<IssueRecord> newBlockIdList = new ArrayList<>();
+                    newBlockIdList.add(new IssueRecord(block_id, actorName));
                     issues.put(name, newBlockIdList);
                 }
             }
         }
         return issues;
     }
+
+    public record IssueRecord(String blockId, String actorName) {
+    }
 }
+

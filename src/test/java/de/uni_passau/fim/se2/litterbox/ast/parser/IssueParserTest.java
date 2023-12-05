@@ -35,10 +35,10 @@ public class IssueParserTest implements JsonTest {
     public void testReadingBlockId() throws ParsingException, IOException {
         File file = new File("src/test/fixtures/jsonReport/testfruit.json");
         IssueParser issueParser = new IssueParser();
-        Map<String, List<String>> foundIssues = issueParser.parseFile(file);
-        Assertions.assertEquals(1, foundIssues.size());
+        Map<String, List<IssueParser.IssueRecord>> foundIssues = issueParser.parseFile(file);
+        Assertions.assertEquals(2, foundIssues.size());
         Assertions.assertEquals(MissingInitialization.NAME, foundIssues.keySet().toArray()[0]);
         Assertions.assertEquals(1, foundIssues.get(MissingInitialization.NAME).size());
-        Assertions.assertEquals("Jif;Ug!4[{,1su7{fvp}", foundIssues.get(MissingInitialization.NAME).get(0));
+        Assertions.assertEquals("Jif;Ug!4[{,1su7{fvp}", foundIssues.get(MissingInitialization.NAME).get(0).blockId());
     }
 }
