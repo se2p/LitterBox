@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverReceived;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -139,6 +136,10 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
             case ComparingLiterals.NAME -> {
                 ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(issueRecord.blockId());
                 issues.addAll(comparingLiteralsFix.check(program));
+            }
+            case ForeverInsideLoop.NAME -> {
+                ForeverInsideLoopFix foreverInsideLoopFix = new ForeverInsideLoopFix(issueRecord.actorName());
+                issues.addAll(foreverInsideLoopFix.check(program));
             }
             case MessageNeverReceived.NAME -> {
                 MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(issueRecord.blockId());
