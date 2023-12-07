@@ -149,6 +149,10 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
                 MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(issueRecord.blockId());
                 issues.addAll(messageNeverSentFix.check(program));
             }
+            case MissingCloneInitialization.NAME -> {
+                MissingCloneInitializationFix missingCloneInitializationFix = new MissingCloneInitializationFix(issueRecord.blockId());
+                issues.addAll(missingCloneInitializationFix.check(program));
+            }
             case MissingLoopSensing.NAME -> {
                 MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(issueRecord.blockId());
                 issues.addAll(missingLoopSensingLoopFix.check(program));

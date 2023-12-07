@@ -63,6 +63,7 @@ public class ForeverInsideLoopFix extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (insideScript && !alreadyFound) {
+            alreadyFound = true;
             addIssue(node, node.getMetadata());
         }
     }
@@ -70,6 +71,7 @@ public class ForeverInsideLoopFix extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (insideScript && !alreadyFound) {
+            alreadyFound = true;
             addIssue(node, node.getMetadata());
         }
     }
