@@ -28,6 +28,6 @@ public class StutteringMovementFixTest implements JsonTest {
 
     @Test
     public void testStutteringMovementFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new StutteringMovementFix(".sw70nN+WhDhl=%3*_51"), "./src/test/fixtures/fix_heuristics/stutteringMovementFix.json");
+        assertThatFinderReports(1, new StutteringMovementFix("KD^fSYMU~Z))Lqx1ptxw"), "./src/test/fixtures/fix_heuristics/stutteringMovementFix.json");
         }
 }

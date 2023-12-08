@@ -43,7 +43,7 @@ public class StutteringMovementFix extends AbstractIssueFinder {
         if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
             IfStmt ifStmt = AstNodeUtil.findParent(node, IfStmt.class);
             if (ifStmt != null && ifStmt.getBoolExpr() instanceof IsKeyPressed) {
-                StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
+                StmtList stmtList = AstNodeUtil.findParent(ifStmt, StmtList.class);
                 assert stmtList != null;
                 if (stmtList.getParentNode() instanceof UntilStmt || stmtList.getParentNode() instanceof RepeatForeverStmt) {
                     addIssue(node, node.getMetadata());
