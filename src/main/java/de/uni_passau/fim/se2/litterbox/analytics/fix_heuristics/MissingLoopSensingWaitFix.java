@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
@@ -44,7 +45,8 @@ public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
                 StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
                 assert stmtList != null;
                 ASTNode lastNode = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
-                if (lastNode instanceof StopAll) {
+                ASTNode stmtListParent = stmtList.getParentNode();
+                if (lastNode instanceof StopAll || stmtListParent instanceof ScriptEntity) {
                     addIssue(node, node.getMetadata());
                 }
             }

@@ -30,4 +30,9 @@ public class MissingLoopSensingWaitFixTest implements JsonTest {
     public void testLoopSensingFix() throws IOException, ParsingException {
         assertThatFinderReports(1, new MissingLoopSensingWaitFix("NG5_c]Sc%NFgdLaV]%Cq"), "./src/test/fixtures/fix_heuristics/missingLoopSensingStopWait.json");
     }
+
+    @Test
+    public void testLoopSensingWithoutStopFix() throws IOException, ParsingException {
+        assertThatFinderReports(1, new MissingLoopSensingWaitFix("9/_j,gpuA,GxfN~R%y_z"), "./src/test/fixtures/fix_heuristics/missingLoopSensingFixWithoutStop.json");
+    }
 }
