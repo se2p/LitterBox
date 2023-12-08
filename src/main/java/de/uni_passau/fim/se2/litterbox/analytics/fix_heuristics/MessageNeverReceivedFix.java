@@ -41,6 +41,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
     private final String bugLocationBlockId;
     private boolean firstRun;
     private String message = null;
+    private boolean alreadyFound = false;
 
     public MessageNeverReceivedFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
@@ -86,7 +87,8 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
     public void visit(ReceptionOfMessage node) {
         if (!firstRun) {
             if (node.getMsg().getMessage() instanceof StringLiteral text) {
-                if (text.getText().equals(message) && scriptNotEmpty(node.getParentNode())) {
+                if (!alreadyFound && text.getText().equals(message) && scriptNotEmpty(node.getParentNode())) {
+                    alreadyFound = true;
                     addIssue(node, node.getMetadata());
                 }
             }

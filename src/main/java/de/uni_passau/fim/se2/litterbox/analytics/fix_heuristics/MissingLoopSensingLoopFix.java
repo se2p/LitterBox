@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -36,7 +38,7 @@ public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
         this.bugLocationBlockId = bugLocationBlockId;
     }
 
-    public void visit(ASTNode node) {
+    private void checkIfFixed(ASTNode node) {
         if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
             StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
             assert stmtList != null;
@@ -46,6 +48,41 @@ public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
         } else {
             visitChildren(node);
         }
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(Touching node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(Equals node) {
+        checkIfFixed(node);
     }
 
     @Override

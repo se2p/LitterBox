@@ -43,6 +43,7 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
     private final String bugLocationBlockId;
     private boolean firstRun;
     private String message = null;
+    private boolean alreadyFound = false;
 
     public MessageNeverSentFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
@@ -78,7 +79,8 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (!firstRun) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
-                if (text.getText().equals(message) && scriptHasHead(node)) {
+                if (!alreadyFound && text.getText().equals(message) && scriptHasHead(node)) {
+                    alreadyFound = true;
                     addIssue(node, node.getMetadata());
                 }
             }
@@ -91,7 +93,8 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (!firstRun) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
-                if (text.getText().equals(message) && scriptHasHead(node)) {
+                if (!alreadyFound && text.getText().equals(message) && scriptHasHead(node)) {
+                    alreadyFound = true;
                     addIssue(node, node.getMetadata());
                 }
             }

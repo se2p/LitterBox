@@ -52,6 +52,7 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     private final boolean outputPerScript;
 
     private Path priorResultPath;
+    private List<String> fixHeuristicsNames;
 
     public BugAnalyzer(
             Path input, Path output, String detectors,
@@ -63,6 +64,19 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
         this.outputPerScript = outputPerScript;
         this.detectorNames = issueFinders.stream().map(IssueFinder::getName).toList();
         this.ignoreLooseBlocks = ignoreLooseBlocks;
+        generateFixHeuristicsNames();
+    }
+
+    private void generateFixHeuristicsNames() {
+        fixHeuristicsNames = new ArrayList<>();
+        fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
+        fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);
+        fixHeuristicsNames.add(MessageNeverReceivedFix.NAME);
+        fixHeuristicsNames.add(MessageNeverSentFix.NAME);
+        fixHeuristicsNames.add(MissingCloneInitializationFix.NAME);
+        fixHeuristicsNames.add(MissingLoopSensingLoopFix.NAME);
+        fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
+        fixHeuristicsNames.add(StutteringMovementFix.NAME);
     }
 
     public void setAnnotationOutput(Path annotationOutput) {
@@ -201,16 +215,20 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     }
 
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
+        List<String> detectorsToWrite = new ArrayList<>(detectorNames);
+        if (priorResultPath != null) {
+            detectorsToWrite.addAll(fixHeuristicsNames);
+        }
         try {
             if (reportFileName == null) {
-                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
+                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorsToWrite);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".json")) {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
                 try (CSVReportGenerator reportGenerator
-                             = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript)
+                             = new CSVReportGenerator(reportFileName, detectorsToWrite, outputPerScript)
                 ) {
                     reportGenerator.generateReport(program, issues);
                 }

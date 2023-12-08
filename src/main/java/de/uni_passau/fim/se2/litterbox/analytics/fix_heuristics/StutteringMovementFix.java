@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class StutteringMovementFix extends AbstractIssueFinder {
         this.bugLocationBlockId = bugLocationBlockId;
     }
 
-    public void visit(ASTNode node) {
+    private void checkIfFixed(ASTNode node) {
         if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
             IfStmt ifStmt = AstNodeUtil.findParent(node, IfStmt.class);
             if (ifStmt != null && ifStmt.getBoolExpr() instanceof IsKeyPressed) {
@@ -51,6 +52,31 @@ public class StutteringMovementFix extends AbstractIssueFinder {
         } else {
             visitChildren(node);
         }
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        checkIfFixed(node);
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        checkIfFixed(node);
     }
 
     @Override
