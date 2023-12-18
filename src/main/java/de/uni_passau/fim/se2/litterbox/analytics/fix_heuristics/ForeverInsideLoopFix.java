@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
 public class ForeverInsideLoopFix extends AbstractIssueFinder {
@@ -70,6 +71,14 @@ public class ForeverInsideLoopFix extends AbstractIssueFinder {
 
     @Override
     public void visit(UntilStmt node) {
+        if (insideScript && !alreadyFound) {
+            alreadyFound = true;
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
         if (insideScript && !alreadyFound) {
             alreadyFound = true;
             addIssue(node, node.getMetadata());
