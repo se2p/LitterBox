@@ -295,12 +295,12 @@ public class IssueTool {
                 finders.addAll(strictFinders);
             }
             case BAD_ISSUES ->  {
-                    List<IssueFinder> bugFinders   = new ArrayList<>(generateBugFinders().values());
+                List<IssueFinder> bugFinders   = new ArrayList<>(generateBugFinders().values());
                 List<IssueFinder> bugScriptsFinders   = new ArrayList<>(generateScriptsBugFinders().values());
-                List<IssueFinder> bugScriptsSmells   = new ArrayList<>(generateSmellFinders().values());
+
                 finders.addAll(bugFinders);
                 finders.addAll(bugScriptsFinders);
-                finders.addAll(bugScriptsSmells);
+
             }
 
             default -> {
