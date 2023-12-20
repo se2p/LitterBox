@@ -122,15 +122,17 @@ public class BugAnalyzer extends Analyzer<Set<Issue>> {
     private Set<Issue> compareLocations(String finder, List<IssueParser.IssueRecord> issueRecords, List<Issue> result, Program program) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueParser.IssueRecord issueRecord : issueRecords) {
-            boolean found = false;
-            for (Issue currentIssue : result) {
-                if (issueRecord.blockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
-                    found = true;
-                    break;
+            if (!issueRecord.blockId().equals("")) {
+                boolean found = false;
+                for (Issue currentIssue : result) {
+                    if (issueRecord.blockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
+                        found = true;
+                        break;
+                    }
                 }
-            }
-            if (!found) {
-                fixes.addAll(checkOldFixed(finder, issueRecord, program));
+                if (!found) {
+                    fixes.addAll(checkOldFixed(finder, issueRecord, program));
+                }
             }
         }
         return fixes;
