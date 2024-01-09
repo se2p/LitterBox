@@ -294,13 +294,15 @@ public class IssueTool {
                         .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
                 finders.addAll(strictFinders);
             }
-            case BAD_ISSUES ->  {
-                List<IssueFinder> bugFinders   = new ArrayList<>(generateBugFinders().values());
-                List<IssueFinder> bugScriptsFinders   = new ArrayList<>(generateScriptsBugFinders().values());
 
-                finders.addAll(bugFinders);
-                finders.addAll(bugScriptsFinders);
-
+            case GPT_EVAL ->  {
+                finders.add(new MessageNeverSent());
+                finders.add(new MissingLoopSensing());
+                finders.add(new ComparingLiterals());
+                finders.add(new MissingCloneInitialization());
+                finders.add(new MessageNeverReceived());
+                finders.add(new ForeverInsideLoop());
+                finders.add(new StutteringMovement());
             }
 
             default -> {
