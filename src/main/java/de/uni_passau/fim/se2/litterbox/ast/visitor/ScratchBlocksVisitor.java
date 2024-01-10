@@ -208,6 +208,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
+        if (hasContent) {
+            newLine();
+        }
+        emitNoSpace("//" + node.getIdent().getName());
+        hasContent = true;
         super.visit(node);
         currentActor = null;
     }
