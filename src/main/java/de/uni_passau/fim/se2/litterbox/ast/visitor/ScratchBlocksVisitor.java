@@ -99,6 +99,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -214,7 +215,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             if (hasContent) {
                 newLine();
             }
-            emitNoSpace("//" + node.getIdent().getName());
+            emitNoSpace("//Sprite: " + node.getIdent().getName());
             hasContent = true;
         }
         super.visit(node);
@@ -236,6 +237,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(ScriptList node) {
         for (Script script : node.getScriptList()) {
             if (hasContent) {
+                newLine();
+            }
+            if (addActorNames) {
+                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script.getEvent()));
                 newLine();
             }
             script.accept(this);
