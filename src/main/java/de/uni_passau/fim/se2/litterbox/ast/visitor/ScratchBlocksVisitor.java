@@ -151,6 +151,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     private boolean requireScript = true;
 
+    private boolean addActorNames = false;
+
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
@@ -208,11 +210,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
-        if (hasContent) {
-            newLine();
+        if (addActorNames) {
+            if (hasContent) {
+                newLine();
+            }
+            emitNoSpace("//" + node.getIdent().getName());
+            hasContent = true;
         }
-        emitNoSpace("//" + node.getIdent().getName());
-        hasContent = true;
         super.visit(node);
         currentActor = null;
     }
@@ -3275,5 +3279,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         emitNoSpace("(");
         emitNoSpace(node.getType().getName());
         emitNoSpace(" v)");
+    }
+
+    public void setAddActorNames(boolean addActorNames) {
+        this.addActorNames = addActorNames;
     }
 }
