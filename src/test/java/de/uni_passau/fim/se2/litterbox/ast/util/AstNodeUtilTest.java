@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -124,5 +127,30 @@ class AstNodeUtilTest implements JsonTest {
 
         final String nameWithReplacements = String.format("BlockWithInputs %s %s", replacement, replacement).trim();
         assertThat(procedureNames).containsExactly("BlockNoInputs", nameWithReplacements);
+    }
+
+    @Test
+    void testGetProcedureBlockId() throws Exception {
+        final Program program = getAST("src/test/fixtures/customBlocks.json");
+        final Stream<ProcedureDefinition> procedures = program.getActorDefinitionList().getDefinitions().stream()
+                .map(ActorDefinition::getProcedureDefinitionList)
+                .map(ProcedureDefinitionList::getList)
+                .flatMap(Collection::stream);
+
+        assertAll(procedures.map(proc -> () -> assertThat(AstNodeUtil.getBlockId(proc)).isNotNull()));
+    }
+
+    @Test
+    void testGetProcedureBlockIdOfDefinition() throws Exception {
+        final Program program = getAST("src/test/fixtures/customBlocks.json");
+        final ProcedureDefinition procedure = program.getActorDefinitionList().getDefinitions().stream()
+                .map(ActorDefinition::getProcedureDefinitionList)
+                .map(ProcedureDefinitionList::getList)
+                .flatMap(Collection::stream)
+                .filter(procedureDefinition -> "V-ChQTp}ZbGaPT;Mu5ok".equals(procedureDefinition.getIdent().getName()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(AstNodeUtil.getBlockId(procedure)).isEqualTo("V-ChQTp}ZbGaPT;Mu5ok");
     }
 }

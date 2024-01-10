@@ -63,21 +63,27 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
     }
 
     private void visitControlBlock(final ASTNode node, final Token opcode) {
-        if (statementMasking && maskedBlockId.equals(getStatementId(node))) {
+        if (shouldBeMasked(node)) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
+            addToken(Token.BEGIN);
             visitChildren(node);
+            addToken(Token.END);
         }
     }
 
     @Override
     protected void visit(final ASTNode node, final Token opcode) {
-        if (statementMasking && maskedBlockId.equals(getStatementId(node))) {
+        if (shouldBeMasked(node)) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
         }
+    }
+
+    private boolean shouldBeMasked(final ASTNode node) {
+        return statementMasking && maskedBlockId.equals(getStatementId(node));
     }
 
     @Override

@@ -132,10 +132,10 @@ abstract class AbstractTokenizer
 
     @Override
     public void visit(ActorDefinition node) {
-        addToken(Token.BEGIN);
+        addToken(Token.BEGIN_SPRITE);
         visitChildren(node.getProcedureDefinitionList());
         visitChildren(node.getScripts());
-        addToken(Token.END);
+        addToken(Token.END_SPRITE);
     }
 
     @Override

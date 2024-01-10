@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -55,6 +56,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
@@ -111,15 +113,20 @@ public class Tokenizer extends AbstractTokenizer {
 
     @Override
     protected void visit(final ASTNode node, final Token opcode) {
-        final MaskingType maskingType = getMaskingStrategy().getMaskingType();
-
-        if ((MaskingType.Expression.equals(maskingType) || MaskingType.Statement.equals(maskingType))
-                && getMaskingStrategy().getBlockId().equals(getBlockId(node))) {
+        if (shouldBeMasked(node)) {
             addToken(Token.MASK);
         } else {
             addToken(opcode);
             visitChildren(node);
         }
+    }
+
+    private boolean shouldBeMasked(final ASTNode node) {
+        final MaskingType maskingType = getMaskingStrategy().getMaskingType();
+        final boolean shouldMask = MaskingType.Expression.equals(maskingType)
+                || MaskingType.Statement.equals(maskingType);
+
+        return shouldMask && getMaskingStrategy().getBlockId().equals(getBlockId(node));
     }
 
     private void visit(final ASTNode node, final String token) {
@@ -252,27 +259,53 @@ public class Tokenizer extends AbstractTokenizer {
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        visit(node, Token.CONTROL_REPEAT);
+        visitControlBlockHead(node, Token.CONTROL_REPEAT, node.getTimes());
+        visitControlBlockBody(node.getStmtList());
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        visit(node, Token.CONTROL_FOREVER);
+        if (shouldBeMasked(node)) {
+            addToken(Token.MASK);
+        } else {
+            addToken(Token.CONTROL_FOREVER);
+        }
+        visitControlBlockBody(node.getStmtList());
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        visit(node, Token.CONTROL_IF);
+        visitControlBlockHead(node, Token.CONTROL_IF, node.getBoolExpr());
+        visitControlBlockBody(node.getThenStmts());
     }
 
     @Override
     public void visit(IfElseStmt node) {
-        visit(node, Token.CONTROL_IF_ELSE);
+        visitControlBlockHead(node, Token.CONTROL_IF_ELSE, node.getBoolExpr());
+        visitControlBlockBody(node.getThenStmts());
+        addToken(Token.ELSE);
+        visitControlBlockBody(node.getElseStmts());
     }
 
     @Override
     public void visit(UntilStmt node) {
-        visit(node, Token.CONTROL_REPEAT_UNTIL);
+        visitControlBlockHead(node, Token.CONTROL_REPEAT_UNTIL, node.getBoolExpr());
+        visitControlBlockBody(node.getStmtList());
+    }
+
+    private void visitControlBlockHead(final Stmt stmt, final Token opcode, final Expression condition) {
+        if (shouldBeMasked(stmt)) {
+            addToken(Token.MASK);
+        } else {
+            addToken(opcode);
+            condition.accept(this);
+        }
+    }
+
+    private void visitControlBlockBody(final StmtList stmtList) {
+        addToken(Token.BEGIN);
+        stmtList.accept(this);
+        addToken(Token.END);
     }
 
     @Override
@@ -291,9 +324,10 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     private void visitStop(final String target) {
-        // TODO: Use 'abstractFixedNodeOptions' parameter here
         addToken(Token.CONTROL_STOP);
-        if (!isAbstractTokens()) {
+        if (abstractFixedNodeOptions) {
+            addToken("stop_target");
+        } else {
             addToken(target);
         }
     }

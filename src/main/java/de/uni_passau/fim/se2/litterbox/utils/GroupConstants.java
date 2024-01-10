@@ -27,4 +27,5 @@ public class GroupConstants {
     public static final String PERFUMES = "perfumes";
     public static final String DEFAULT = "default";
    public static final String GPT_EVAL = "gpt_eval";
+    public static final String FLAWS = "flaws";
 }
