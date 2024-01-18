@@ -21,8 +21,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -87,7 +89,7 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
 
     @Override
     public void visit(StartedAsClone node) {
-        if (!firstRun && insideClonedActor && !alreadyFound) {
+        if (!firstRun && insideClonedActor && !alreadyFound && scriptNotEmpty(node.getParentNode())) {
             alreadyFound = true;
             addIssue(node, node.getMetadata());
         }
@@ -95,10 +97,15 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
 
     @Override
     public void visit(SpriteClicked node) {
-        if (!firstRun && insideClonedActor && !alreadyFound) {
+        if (!firstRun && insideClonedActor && !alreadyFound && scriptNotEmpty(node.getParentNode())) {
             alreadyFound = true;
             addIssue(node, node.getMetadata());
         }
+    }
+
+    private boolean scriptNotEmpty(ASTNode parentNode) {
+        assert (parentNode instanceof Script);
+        return ((Script) parentNode).getStmtList().hasStatements();
     }
 
     @Override
