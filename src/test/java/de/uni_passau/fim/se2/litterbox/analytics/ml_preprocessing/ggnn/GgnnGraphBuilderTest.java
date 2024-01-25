@@ -35,7 +35,7 @@ class GgnnGraphBuilderTest implements JsonTest {
         Program p = getAST("src/test/fixtures/multipleSprites.json");
         GgnnGraphBuilder builder = new GgnnGraphBuilder(p);
         GgnnProgramGraph.ContextGraph graph = builder.build();
-        Map<Integer, String> nodes = graph.getNodeLabels();
+        Map<Integer, String> nodes = graph.nodeLabels();
 
         List<Integer> nodeIndices = nodes.keySet().stream().sorted().toList();
         for (int i = 0; i < nodeIndices.size(); ++i) {
@@ -48,7 +48,7 @@ class GgnnGraphBuilderTest implements JsonTest {
         Program p = getAST("src/test/fixtures/ml_preprocessing/ggnn/literal_nodes.json");
         GgnnGraphBuilder builder = new GgnnGraphBuilder(p);
         GgnnProgramGraph.ContextGraph graph = builder.build();
-        Map<Integer, String> nodes = graph.getNodeLabels();
+        Map<Integer, String> nodes = graph.nodeLabels();
 
         Set<String> labels = new HashSet<>(nodes.values());
         // positive numbers remain as is; special symbols should not be removed from negative numbers;

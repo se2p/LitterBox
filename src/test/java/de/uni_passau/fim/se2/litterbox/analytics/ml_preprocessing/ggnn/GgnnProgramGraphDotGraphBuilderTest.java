@@ -46,7 +46,7 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         assertThat(substringCount(dotGraph, "subgraph")).isEqualTo(3);
 
         long totalEdges = graphs.stream()
-                .flatMapToLong(g -> g.getContextGraph().getEdges().values().stream().mapToLong(Set::size))
+                .flatMapToLong(g -> g.contextGraph().edges().values().stream().mapToLong(Set::size))
                 .sum();
         assertThat(substringCount(dotGraph, "->")).isEqualTo(totalEdges);
     }

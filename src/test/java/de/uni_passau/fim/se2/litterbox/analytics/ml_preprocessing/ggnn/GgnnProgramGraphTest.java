@@ -49,7 +49,7 @@ class GgnnProgramGraphTest implements JsonTest {
         GgnnGraphBuilder builder = new GgnnGraphBuilder(p);
         GgnnProgramGraph.ContextGraph graph = builder.build();
 
-        Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = graph.getEdges();
+        Map<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edges = graph.edges();
         int expectedSize = GgnnProgramGraph.EdgeType.values().length;
         assertThat(edges).hasSize(expectedSize);
     }

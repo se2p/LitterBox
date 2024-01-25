@@ -28,9 +28,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class GenerateGgnnGraphTask {
+    private static final Logger log = Logger.getLogger(GenerateGgnnGraphTask.class.getName());
+
     private final Program program;
     private final boolean includeStage;
     private final boolean includeDefaultSprites;
@@ -62,7 +66,13 @@ public class GenerateGgnnGraphTask {
             try {
                 return Stream.of(objectMapper.writeValueAsString(graph));
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                // can only happen in case LitterBox is used as a dependency and e.g., due to
+                // multiple competing Jackson versions in the classpath the conversion fails
+                log.log(
+                        Level.SEVERE,
+                        "Jackson could not convert the GGNN graph to JSON. Probable misconfiguration.",
+                        e
+                );
                 return Stream.empty();
             }
         });
