@@ -109,8 +109,10 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
         // intentionally empty
     }
 
-    protected Stream<? extends ASTNode> childrenWithoutMetadata(final ASTNode node) {
-        return node.getChildren().stream().filter(c -> !AstNodeUtil.isMetadata(c));
+    protected Stream<ASTNode> childrenWithoutMetadata(final ASTNode node) {
+        return node.getChildren().stream()
+                .filter(c -> !AstNodeUtil.isMetadata(c))
+                .map(ASTNode.class::cast);
     }
 
     static class ChildEdgesVisitor extends GgnnGraphEdgesVisitor {

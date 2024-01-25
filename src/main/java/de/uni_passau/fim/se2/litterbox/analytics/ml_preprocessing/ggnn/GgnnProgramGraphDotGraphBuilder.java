@@ -44,11 +44,11 @@ public class GgnnProgramGraphDotGraphBuilder {
     }
 
     public static String asDotGraph(final GgnnProgramGraph programGraph) {
-        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), 0, false);
+        return asDotGraph(programGraph.contextGraph(), programGraph.label(), 0, false);
     }
 
     public static String asDotSubgraph(final GgnnProgramGraph programGraph, int graphId) {
-        return asDotGraph(programGraph.getContextGraph(), programGraph.getLabel(), graphId, true);
+        return asDotGraph(programGraph.contextGraph(), programGraph.label(), graphId, true);
     }
 
     private static String asDotGraph(final GgnnProgramGraph.ContextGraph graph, final String label, int graphId,
@@ -65,13 +65,13 @@ public class GgnnProgramGraphDotGraphBuilder {
         sb.append("fontname=\"serif\";\n");
         sb.append("node[fontname=\"serif\"];\n");
 
-        for (Map.Entry<Integer, String> node : graph.getNodeLabels().entrySet()) {
+        for (Map.Entry<Integer, String> node : graph.nodeLabels().entrySet()) {
             appendNode(sb, graphId, node.getKey());
             sb.append(" [label=\"").append(node.getValue()).append("\"];\n");
         }
         sb.append('\n');
 
-        for (Map.Entry<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edgeGroup : graph.getEdges().entrySet()) {
+        for (Map.Entry<GgnnProgramGraph.EdgeType, Set<Pair<Integer>>> edgeGroup : graph.edges().entrySet()) {
             String edgeColor = getEdgeColor(edgeGroup.getKey());
 
             for (Pair<Integer> edge : edgeGroup.getValue()) {

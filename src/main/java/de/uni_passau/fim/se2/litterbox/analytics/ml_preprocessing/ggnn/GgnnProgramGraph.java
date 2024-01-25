@@ -18,70 +18,41 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Map;
 import java.util.Set;
 
-class GgnnProgramGraph {
-    private final String filename;
-    private final String label;
-    private final ContextGraph contextGraph;
-
-    public GgnnProgramGraph(String filename, String label, ContextGraph contextGraph) {
-        this.filename = filename;
-        this.label = label;
-        this.contextGraph = contextGraph;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public ContextGraph getContextGraph() {
-        return contextGraph;
-    }
-
-    static class ContextGraph {
-        private final Map<EdgeType, Set<Pair<Integer>>> edges;
-        private final Map<Integer, String> nodeLabels;
-        private final Map<Integer, String> nodeTypes;
-
-        public ContextGraph(Map<EdgeType, Set<Pair<Integer>>> edges, Map<Integer, String> nodeLabels,
-                            Map<Integer, String> nodeTypes) {
+public record GgnnProgramGraph(
+        String filename,
+        String label,
+        ContextGraph contextGraph
+) {
+    public record ContextGraph(
+            Map<EdgeType, Set<Pair<Integer>>> edges,
+            @JsonProperty("nodeLabelMap")
+            Map<Integer, String> nodeLabels,
+            @JsonProperty("nodeTypeMap")
+            Map<Integer, String> nodeTypes
+    ) {
+        public ContextGraph {
             for (EdgeType edgeType : EdgeType.values()) {
-                Preconditions.checkArgument(edges.containsKey(edgeType),
-                        "The context graph is missing edges of type %s!", edgeType);
+                Preconditions.checkArgument(
+                        edges.containsKey(edgeType),
+                        "The context graph is missing edges of type %s!",
+                        edgeType
+                );
             }
-
-            this.edges = edges;
-            this.nodeLabels = nodeLabels;
-            this.nodeTypes = nodeTypes;
-        }
-
-        public Map<EdgeType, Set<Pair<Integer>>> getEdges() {
-            return edges;
         }
 
         public Set<Pair<Integer>> getEdges(EdgeType edgeType) {
             return edges.get(edgeType);
         }
-
-        public Map<Integer, String> getNodeLabels() {
-            return nodeLabels;
-        }
-
-        public Map<Integer, String> getNodeTypes() {
-            return nodeTypes;
-        }
     }
 
-    enum EdgeType {
+    public enum EdgeType {
         /**
          * Links a parent to its children.
          */
