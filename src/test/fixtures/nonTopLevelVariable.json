@@ -1,0 +1,3757 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "n2HaSk=0!#Q0=D7~{!5?": [
+                    "up button",
+                    "0"
+                ],
+                "#q`KiTFQvVwX!%B[jbrF": [
+                    "music up",
+                    ""
+                ],
+                "r#%h84sw]o7f4HHyxK{f": [
+                    "down button",
+                    "0"
+                ],
+                "I).Yn(u7VOuOwIJ}CmEg": [
+                    "music down",
+                    ""
+                ],
+                "va6?EzbU(os2AtVoZb?*": [
+                    "left button",
+                    "0"
+                ],
+                "Fz_IHw}A6@hUV-[k!W=t": [
+                    "music left",
+                    ""
+                ],
+                "?)CBfCu,G%(,J0.liF+Q": [
+                    "music right",
+                    ""
+                ],
+                "*lh]O!eCP50B$yE5}?oT": [
+                    "right button",
+                    "0"
+                ],
+                "8nlfm}[8iXKX1FT78.cX": [
+                    "Score",
+                    340
+                ],
+                "2IaB3Wx4+(ZAWWvAhCQo": [
+                    "Who's turn?",
+                    "m&l"
+                ],
+                "c#m.+ObQ6W*fz=*?~:ja": [
+                    "Progress",
+                    0
+                ],
+                "0Wfq83!fc1P#iXdc*(O?": [
+                    "Current animation",
+                    "0"
+                ],
+                "Pz`yV9ZDR}0=J=sdOfz5": [
+                    "MUSIC READER",
+                    108987
+                ],
+                "G+]*tYy8pKhiKoryhC|y": [
+                    "Track",
+                    "1"
+                ],
+                "IK]kvyY|imp:cabi#[AL": [
+                    "die?",
+                    "0"
+                ],
+                "s.acNsc$q::f{a8BqUbo": [
+                    "CameraX",
+                    74.53811778376604
+                ],
+                "6sF|QJ;]nWnEhKZpe@TT": [
+                    "CameraY",
+                    20.000000000000007
+                ],
+                "!^hC?PdU{]tuB9rar2;~": [
+                    "■ Time between Bops",
+                    0.6
+                ],
+                "JvX*+yWYP?T?~N2w#X?W": [
+                    "■ Arrow Speed",
+                    8
+                ],
+                "V)m#v0nU:!U26{pLn;4/": [
+                    "■ Camera Smoothness",
+                    "0.60"
+                ],
+                "36qQPzLIKp:A_ab=c;%/": [
+                    "recorded?",
+                    "1"
+                ],
+                "I{Z{T(g+_j4E@94/%@{q": [
+                    "Misses",
+                    1
+                ],
+                "=*b8zvYSQ|M8L{yKh/8r": [
+                    "■ Turn Head Start",
+                    1
+                ],
+                "WqgM=0!F[mP+Xhh]C^j{": [
+                    "■ Mutliplayer Mode",
+                    "0"
+                ],
+                "qNl{X`yCt$Ul!io+p@7y": [
+                    "Visits",
+                    28
+                ],
+                "G.B_vR{pM:+ubUIgn8t0": [
+                    "Level",
+                    0
+                ],
+                "Y8f,A3aa3UO%SjK?K91/": [
+                    "Timer",
+                    0
+                ],
+                "}/#U,tFBv9,IUL`|$yQy": [
+                    "MusicID",
+                    "61"
+                ],
+                "xYPh+o,3iFXJ9F.U^[P*": [
+                    "Song Finished",
+                    "0"
+                ],
+                ".ufg;suJ@s7}/x]y-DWv": [
+                    "START SONG",
+                    "1"
+                ],
+                "V5k[#uB;NT~]Lm1E4[zb": [
+                    "■ Song Sound Delay",
+                    0.18
+                ],
+                "9)0lqzFKl.|fE[z[%VLe": [
+                    "■ Score Multiplier",
+                    "12"
+                ],
+                "6c_5r02lSmv[a?($~y+)": [
+                    "BOT ACTIVE?",
+                    "0"
+                ],
+                "^{BF[rsLTS[47n]Jh?ux": [
+                    "■ Character",
+                    1
+                ],
+                "h$6!QnE#MHVws+zMz^PT": [
+                    "Accuracy",
+                    0
+                ],
+                "82j@|EkV/6|GFOexu$0E": [
+                    "■ Dad OffsetX",
+                    0
+                ],
+                "ud5{jTf;me$+6D;^+XE*": [
+                    "■ Dad OffsetY",
+                    -4
+                ],
+                ";q?%r^|[tr?r%#^q]U-*": [
+                    "CameraZ",
+                    103.91914702170443
+                ],
+                "R09]w@K{3Hv/itS;PmIa": [
+                    "ChartPage",
+                    43
+                ],
+                "$KWFA*c7I#dlM+22g9TC": [
+                    "chartscroll?",
+                    "1"
+                ],
+                "$*9smM-{3/V$*s(q6R~N": [
+                    "Chart Replacing",
+                    "1/2"
+                ],
+                "g:g^C$%MG5ITi_sIjVSl": [
+                    "mobile controlls?",
+                    "0"
+                ],
+                "^VabL/g-t(z%2Jp:v+?7": [
+                    "☁ Players Online",
+                    "0",
+                    true
+                ],
+                "O1HbQ/tFQ6C;5-vd5yHs": [
+                    "Online Mode?",
+                    "0"
+                ],
+                "2`t%!;|GnA(KVLnqNpP3": [
+                    "☁ Player1Username",
+                    "2210291424281616",
+                    true
+                ],
+                "3H[c@WzS]QKfz/U}{F{^": [
+                    "☁ Player2Username",
+                    "2218201421101616",
+                    true
+                ],
+                "Gxtm(`U?eQH_E/sTP7{~": [
+                    "Player?",
+                    "0"
+                ],
+                "hbL27Rn760iH=7_cbY[W": [
+                    "BG Color",
+                    "40"
+                ],
+                "ZE!#i4jVZ5*?0Eh?m7bh": [
+                    "decode",
+                    "..."
+                ],
+                "_rbx5~JBZX_A``a9grM$": [
+                    "encode",
+                    "2114313439474744"
+                ],
+                "b2a;Ivdy@tiL,;:mFv#V": [
+                    "☁ Song Playing",
+                    "0",
+                    true
+                ],
+                "Ku5x[I:ZzX[,F`+nR(Jq": [
+                    "☁ Player1Information",
+                    "111270",
+                    true
+                ],
+                "ZfeH[48%-n3KXh9^f[%v": [
+                    "☁ Player2Information",
+                    "12140",
+                    true
+                ],
+                "U9d[iS@E1B%BFy]k^CeZ": [
+                    "Online miss",
+                    "0"
+                ],
+                "}]mTUg5hUI*+xW?A2zon": [
+                    "In match?",
+                    "0"
+                ],
+                "tTf.Q~tUz+4Ruc.6^yQ@": [
+                    "Player1Score",
+                    2971
+                ],
+                "-F~DdLTn/1qZ75ld0BJ+": [
+                    "Player2Score",
+                    ""
+                ],
+                "Fl_BW:L47f6DuCw+rDpO": [
+                    "☁ Progress Bar",
+                    "50",
+                    true
+                ],
+                "19eoH)#W@S?h-S6|i3pz": [
+                    "Player1Name",
+                    "0"
+                ],
+                "=2Y^gaIQB4ci`6RsC19Z": [
+                    "Player2Name",
+                    "..."
+                ],
+                ";gI@_O77$_t#dk8}xCTu": [
+                    "Down Scroll",
+                    "0"
+                ],
+                "7goXE;j64wozBlKeBwkn": [
+                    "V-Sync",
+                    "1"
+                ],
+                "2b|Q4e|$C4I:lAD(X?FS": [
+                    "Key Offset",
+                    "0"
+                ],
+                "8yvxSx=XQ1?OkeBx^k^+": [
+                    "Arrow Color",
+                    "1"
+                ],
+                "RXyCfD?LTZr86H5WY:R)": [
+                    "size%",
+                    "costume1"
+                ],
+                "8K,hcVOQd*z_GhsI}CG#": [
+                    "START MUSIC",
+                    "1"
+                ],
+                ";*@aZlrBx*skK)LPUOgk": [
+                    "Freeplay Songs",
+                    "0"
+                ],
+                "(oA711*@DIf[V5G5Tf[8": [
+                    "BopSize",
+                    "60"
+                ],
+                "zJKuH-:8+!O=v@r|$)f:": [
+                    "Cutscene Playing?",
+                    "-"
+                ],
+                "e*?$^6)=0Hw8G?k6W]=U": [
+                    "Cutscene Rolling",
+                    "1"
+                ],
+                "cbtj%Nd9@6ZenYK?=0K`": [
+                    "ChartEditorTool",
+                    "0"
+                ],
+                "d/!jIjpM~%4xD|{O7GZx": [
+                    "ChartEditorSongPlaying",
+                    "0"
+                ],
+                "h{vdsy]u~}vk`J(w3t#O": [
+                    "FrameC",
+                    6
+                ],
+                "0oY2#FZvClXuT}KDcE2e": [
+                    "FPS",
+                    32
+                ],
+                "[.FdWV1U,fLT[u}IX-qI": [
+                    "FPS Multiplier",
+                    0.9375
+                ],
+                "k;^0xMEn/`HD$G$43;Og": [
+                    "■ Accuracy Meter?",
+                    0
+                ],
+                "7e3,x}9t$-G:RZ!~.j;i": [
+                    "_Global Tick",
+                    75.04999999999788
+                ],
+                "?O-K3j^h6)=]t@x`BGOf": [
+                    "🔊",
+                    0
+                ],
+                "@^7e9P5IN2_+VOiXh9d-": [
+                    "HealthBarLength",
+                    1.63
+                ]
+            },
+            "lists": {
+                "3+cHf}jYLu]ujD}(`054": [
+                    "up button",
+                    []
+                ],
+                "%(p!H9ocf$6$h+.X%q~h": [
+                    "down button",
+                    []
+                ],
+                "V([gE#UXfwpV,;N6/+N7": [
+                    "left button",
+                    []
+                ],
+                "!TZ**|fpe1_s7ED)ee0L": [
+                    "right button",
+                    []
+                ],
+                "|vlExGRa[VG%M;g-7?ln": [
+                    "MUSIC",
+                    []
+                ],
+                "4D_lIqx7[*+dNo+TSS1x": [
+                    "DIALOGUE",
+                    [
+                        "bf",
+                        "I'm Boyfriend!"
+                    ]
+                ],
+                "~|S|j]-_dCJMV9dU]BW)": [
+                    "INSTRUCTIONS",
+                    []
+                ],
+                "X(f+:NBA:g=kQk!JY9+N": [
+                    "turns",
+                    []
+                ],
+                "B6vU]OpR8v)u/{XC,}]a": [
+                    "■ Arrow Speed",
+                    []
+                ],
+                "zd1`TWy;Q%rMnq#%tEud": [
+                    "■ Turn Speed",
+                    []
+                ],
+                "`[z*6*c^HwT%c[6cmmFr": [
+                    "■ Beat",
+                    []
+                ],
+                "0;}9h%G~e}UUm|_(+jF@": [
+                    "■ Camera Smoothness",
+                    [
+                    ]
+                ],
+                "G}W|tf*w[fL3wnWR1%Ui": [
+                    "■ Song Play Delay",
+                    [
+                    ]
+                ],
+                "]hk_A}Y*M(SoJJ6G4_U:": [
+                    "copyable music",
+                    []
+                ],
+                "tEv*Q8nsvXo+~?Y%4xi/": [
+                    "Freeplay Songlist",
+                    []
+                ],
+                "Uj@#N#?;30z$$gd;93-^": [
+                    "Recorded?",
+                    [
+                    ]
+                ],
+                "oF.#7oza1q^D8`t;h#`)": [
+                    "_Keybinds (expirimental)",
+                    [
+                        "left arrow",
+                        "down arrow",
+                        "up arrow",
+                        "right arrow"
+                    ]
+                ],
+                "TBUkwLsrWH{rmj!(8AaO": [
+                    "Widescreen Link",
+                    [
+                        "https://turbowarp.org/499887305?interpolate&clones=Infinity&offscreen&size=590x360",
+                        "Press the greenflag to make this tab disapear"
+                    ]
+                ],
+                "]t0JUm$i`$3_(4pyK{I7": [
+                    "■ Character",
+                    [
+                    ]
+                ],
+                "-5*llf*cd{qrs=j^3pEW": [
+                    "Notes Hit",
+                    [
+                        "0"
+                    ]
+                ],
+                "I9yGSLrL)V[$0UPwS@~7": [
+                    "NoteReplacing?",
+                    [
+                        ""
+                    ]
+                ],
+                ")w7W.),r}M;j~UxYO?c3": [
+                    "Chart Music Left",
+                    []
+                ],
+                "7(5[jU$wejFYEItnDKIe": [
+                    "Arrow Colors",
+                    [
+                        "0",
+                        "15",
+                        "0",
+                        "0",
+                        "Default"
+                    ]
+                ],
+                ".Xem~dxQ,XQ2KmJHu[p5": [
+                    "Chart Music Right",
+                    []
+                ],
+                "p({k%nIA~ROv4vuxb9i-": [
+                    "Chart Music Up",
+                    []
+                ],
+                "Na![VMRCj:dj=bZt#=LW": [
+                    "Chart Music Down",
+                    []
+                ],
+                "Bjbch|PAL)eNxw73yXph": [
+                    "Chart Turns",
+                    []
+                ],
+                "YJ}vxzVT1Enk^Z?Q.vvP": [
+                    "Mod Information",
+                    [
+                    ]
+                ],
+                "^s`TJ9}6zkW)Iv^mdr5c": [
+                    "_IntroText",
+                    [
+                        "Add your own intro text",
+                        "In the configure sprite"
+                    ]
+                ],
+                "|C55S?j^S~Z@;GV_jL|J": [
+                    "CODE",
+                    [
+                    ]
+                ],
+                "d,y_E0.IHdqeA6~Qd;GE": [
+                    "Capital",
+                    [
+                    ]
+                ],
+                "_VVFyI5=^J.ME/GXAc}c": [
+                    "test",
+                    []
+                ],
+                "T*?Oe6l}FRb=P0FL:sck": [
+                    "CameraTurns",
+                    [
+                    ]
+                ],
+                "32.|gi|4uqTuq}Nr._g%": [
+                    "DadInformation",
+                    [
+                        "130",
+                        "40",
+                        "-20"
+                    ]
+                ],
+                "q|GgH^8CT8kkdCpU1udn": [
+                    "angle",
+                    [
+                        "left",
+                        "down",
+                        "up",
+                        "right",
+                        "up",
+                        "down",
+                        "left"
+                    ]
+                ],
+                "GP|f]mtezv8/WA9eaF}j": [
+                    "ArrowBoard1Pos",
+                    [
+                    ]
+                ],
+                "aTYd*9}UZ^RS^7sw-klV": [
+                    "ArrowBoard2Pos",
+                    [
+                    ]
+                ],
+                "0`5M)gW+bFJf,-dRu?xf": [
+                    "arrowboardX",
+                    [
+                        "64",
+                        "114",
+                        "164",
+                        "214"
+                    ]
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "placeholder",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "e6d6e8ae5350602d7d2c78eb55f1c593",
+                    "md5ext": "e6d6e8ae5350602d7d2c78eb55f1c593.svg",
+                    "rotationCenterX": 362.3110768687188,
+                    "rotationCenterY": 183
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "arrow2",
+            "variables": {
+                "i_ZDakwMZ!NxuSPD|()!": [
+                    "music reader",
+                    879
+                ],
+                "cL[a%V~u~BN0$Z6MJ%f8": [
+                    "clone?",
+                    "0"
+                ],
+                "H0J?cDs@ncM6l%maiS27": [
+                    "music reader",
+                    0
+                ],
+                "Xo_SOtE];q9!n}G2e{+$": [
+                    "clone?",
+                    0
+                ],
+                "GR)t;OcAEAT=9^tAZIxA": [
+                    "Ghost",
+                    "0"
+                ],
+                "*r0-r3kh28!_2=[.qsA6": [
+                    "ArrowAngle",
+                    0
+                ],
+                "|=RWFLlDf}+/gfX%sQ6L": [
+                    "hitbarrier",
+                    0
+                ],
+                "[D6}hh$@*NGt_WQ}rx5;": [
+                    "ty",
+                    0
+                ],
+                "Xkh23RuMo5fBRD0Eg3;v": [
+                    "X position",
+                    "0"
+                ],
+                "u8(Q7b0]oNfbT6mvgaX9": [
+                    "Y position",
+                    "-180"
+                ],
+                "ZYAXr-/A^79_M87fZ;H$": [
+                    "missbarrier",
+                    0
+                ],
+                "xXHxq^/nciZA+[kc}MOf": [
+                    "ty2",
+                    0
+                ],
+                ")p[R:bnteFX!(3a#I%{-": [
+                    "PlayerInfoOnline",
+                    0
+                ],
+                "jCiaX~A7pGY^YdT[}P1m": [
+                    "Ghost",
+                    0
+                ],
+                "(NY=SaO50::@gurN9-j#": [
+                    "ArrowAngle",
+                    0
+                ],
+                "HmaRwF~zCO_(B$j^:2da": [
+                    "missbarrier",
+                    0
+                ],
+                "Q.oF-I}*;Yz~!;+!3QmZ": [
+                    "Y position",
+                    0
+                ],
+                "/]+kNA%lIO+QV*1MzL~^": [
+                    "X position",
+                    0
+                ],
+                "fP.p-Tn3oFIb2AATv?1b": [
+                    "Song Charting?",
+                    0
+                ],
+                "Ft6rytIt+WXvDHdzG7r@": [
+                    "#",
+                    0
+                ],
+                "v|^GOT[IGf#3h4o`Nz1j": [
+                    "id?",
+                    0
+                ],
+                "Aj?~plLr^owW/I`CoJfv": [
+                    "collum",
+                    0
+                ],
+                "-M{HohXfN3~9:_S#`Z^z": [
+                    "collumhor",
+                    0
+                ],
+                "uhy{IL9CPR|P:nw4E[Ef": [
+                    "item#",
+                    0
+                ],
+                "Q7{gMmmaG;{pziIU,P~_": [
+                    "?",
+                    0
+                ],
+                "k2%Qj*nZ}v@nz%2h:qYT": [
+                    "☁ High Score",
+                    0
+                ],
+                "hWje];y2NIw9u`;BFx7V": [
+                    "musicread",
+                    0
+                ],
+                ")a94rxF(:SzsiHZ_U[Rk": [
+                    "a",
+                    0
+                ],
+                "`ZvQqrq05FL3o2#^}oy)": [
+                    "#",
+                    0
+                ],
+                "|suimF3~NRUWm!M;%z9y": [
+                    "#2",
+                    0
+                ],
+                "#6{/I}y|UyrLVZQQc@o1": [
+                    "y",
+                    0
+                ],
+                "PH:4sxb1U;=,/Llf^z:5": [
+                    "role",
+                    0
+                ],
+                "u8o-b[UXUY3:Pt|};oiU": [
+                    "ghost effect",
+                    0
+                ],
+                "V5SBWCl|uY.uWi1%q*X%": [
+                    "Desti",
+                    0
+                ],
+                "l.!u$?o%{$p9goV8a$9)": [
+                    "clone purpose lmao",
+                    0
+                ],
+                "4(iDr-@:0tuVBOCfGp|I": [
+                    "cloneblockingpenalty",
+                    0
+                ],
+                "Tr}#$cXCr]/hAQd=zU/W": [
+                    "Arrow Input",
+                    0
+                ],
+                ",in6cbDAd|8@QbZA_rf{": [
+                    "min",
+                    0
+                ],
+                "8=/hrd;Xh#rkKaeTWHIn": [
+                    "max",
+                    0
+                ],
+                "P1R,P,PQhxo}To@R]SyD": [
+                    "Direction",
+                    0
+                ],
+                "ycDdIa[A]0+uHdr({hnF": [
+                    "#",
+                    0
+                ],
+                "E$BJFY~,q2Hv2%uxzn7+": [
+                    "x",
+                    0
+                ],
+                "Y62kiA[/w%ZN3;XL0z#b": [
+                    "#",
+                    0
+                ],
+                "52Qfw]``p}A5jr]x2+a5": [
+                    "turn?",
+                    0
+                ],
+                "pX870^.RZ|zz32w(9!$V": [
+                    "turnrecording?",
+                    0
+                ],
+                "Y+.5Z^v.uEVJciL6-K%=": [
+                    "mousemoving?",
+                    0
+                ],
+                "j2G$8{By`@E_`%8ab}8W": [
+                    "music reader",
+                    0
+                ],
+                "K6nFvsu2^m-JO|qQ3K8]": [
+                    "brightness",
+                    0
+                ],
+                "]*:E4qoIRNxQDdbpq-UO": [
+                    "hit?",
+                    0
+                ],
+                "+vdjCJy[7D,M_B5Vi7S#": [
+                    "ghost",
+                    0
+                ],
+                ",v^m)mt;Gzn?flO/N]1x": [
+                    "#",
+                    0
+                ],
+                "uYK!uGm);pw(~XJ[*r$^": [
+                    "time",
+                    0
+                ],
+                "8%.K]z-9::{%,g4frJ[F": [
+                    "Bathtub",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "FTg$FRTq!.|XWa1rc`{u": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "[BwS4O+n95Bl,q_^BF)4",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "mBCMv6QQvLYDBJ;nTvFV"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "5XAD{Fxgj`2`VYVEHtB*"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "mBCMv6QQvLYDBJ;nTvFV": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "FTg$FRTq!.|XWa1rc`{u",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "WSf~1Caax#ZG8c:xDa*="
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "hH238#,oLVRTj)QC|K`E"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "WSf~1Caax#ZG8c:xDa*=": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "mBCMv6QQvLYDBJ;nTvFV",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "bf"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "hH238#,oLVRTj)QC|K`E": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "mBCMv6QQvLYDBJ;nTvFV",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5XAD{Fxgj`2`VYVEHtB*": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "FTg$FRTq!.|XWa1rc`{u",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "GetNotes",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "nK`5j2w{Z(I54I5M[cN1": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "mjL]Z#pY+w:nnc}S%Q`_",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "eOmQgak,)y@x0Y.AKt#8"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "U?4$r~%P+4;KJS3td(@Z"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "eOmQgak,)y@x0Y.AKt#8": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "nK`5j2w{Z(I54I5M[cN1",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "dbm~JK}vVO?_v*%_LzaH"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "A,z}6gY0-ISgjV}cG@.h"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "dbm~JK}vVO?_v*%_LzaH": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "eOmQgak,)y@x0Y.AKt#8",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "m&l"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "A,z}6gY0-ISgjV}cG@.h": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "eOmQgak,)y@x0Y.AKt#8",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "U?4$r~%P+4;KJS3td(@Z": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "nK`5j2w{Z(I54I5M[cN1",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "GetNotes",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "kwYb)QXaYllH14cJj%fa": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": ".uaTEf!}kB1syP!%XFr0",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "f211Q5nJy*/!a,0UApZ)"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "gc@i(%TNAJ;R0X7*/@/q"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "f211Q5nJy*/!a,0UApZ)": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "kwYb)QXaYllH14cJj%fa",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            "uUP5x7_IpKQZ!,6Gdqbm"
+                        ],
+                        "OPERAND2": [
+                            2,
+                            "E)~@Fn:`Dmr(LtNKyUXT"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uUP5x7_IpKQZ!,6Gdqbm": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "f211Q5nJy*/!a,0UApZ)",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "bf"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "E)~@Fn:`Dmr(LtNKyUXT": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "f211Q5nJy*/!a,0UApZ)",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            [
+                                12,
+                                "Who's turn?",
+                                "2IaB3Wx4+(ZAWWvAhCQo"
+                            ],
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "gc@i(%TNAJ;R0X7*/@/q": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "kwYb)QXaYllH14cJj%fa",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "GetNotes",
+                        "argumentids": "[]",
+                        "warp": "false"
+                    }
+                },
+                "hz53tLlqN;GqIK@^-L(d": [
+                    12,
+                    "Online Mode?",
+                    "O1HbQ/tFQ6C;5-vd5yHs"
+                ],
+                "FD[hm+tHn-2oKi1m-3~f": [
+                    12,
+                    "Player?",
+                    "Gxtm(`U?eQH_E/sTP7{~"
+                ],
+                "R:Rt-?0kIuUu~@hj31wy": [
+                    12,
+                    "Player?",
+                    "Gxtm(`U?eQH_E/sTP7{~"
+                ],
+                "/y^9AwJd_?-*]YTL*W#N": [
+                    12,
+                    "Online Mode?",
+                    "O1HbQ/tFQ6C;5-vd5yHs"
+                ],
+                "fj?OXG8T~cQsl~DT!H]k": [
+                    12,
+                    "Player?",
+                    "Gxtm(`U?eQH_E/sTP7{~"
+                ],
+                "uW6=RaD3^C%h`lW1@O`)": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "Ej@{ASQ(yMjt.rUR+xPD": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "ZD[~Yn=3ea11p:6H@!q6": [
+                    12,
+                    "Player?",
+                    "Gxtm(`U?eQH_E/sTP7{~"
+                ],
+                "9n|0I0TY18?!T5%WYDi:": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "DEW#Q:Wk(}`X^N3U:dy:": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "+u5gQvfs3t.2p?F3=k0{": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "0mm(S0qB)!RJ@iqUvCZ/": [
+                    12,
+                    "Who's turn?",
+                    "2IaB3Wx4+(ZAWWvAhCQo"
+                ],
+                "R|bfon5ov,gp=~C^KNBa": [
+                    12,
+                    "Ghost",
+                    "jCiaX~A7pGY^YdT[}P1m"
+                ],
+                "Fq~ty(tf{v6+jH5T`4=c": [
+                    12,
+                    "Ghost",
+                    "jCiaX~A7pGY^YdT[}P1m"
+                ],
+                "bj)p1X!CZ!vR#{#gO3*F": [
+                    12,
+                    "Ghost",
+                    "jCiaX~A7pGY^YdT[}P1m"
+                ],
+                "0RW2;_2@sVN=oL3hg#i@": [
+                    12,
+                    "Ghost",
+                    "jCiaX~A7pGY^YdT[}P1m"
+                ]
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "reg_up end",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "1d7f7bbee0dd89285bcd019536b1eaa4",
+                    "md5ext": "1d7f7bbee0dd89285bcd019536b1eaa4.svg",
+                    "rotationCenterX": 12.039986417981936,
+                    "rotationCenterY": 17.66142500000001
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "missnote3",
+                    "assetId": "320829af9732c9124f568a56e5f4f4b6",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 165650,
+                    "md5ext": "320829af9732c9124f568a56e5f4f4b6.wav"
+                },
+                {
+                    "name": "missnote1",
+                    "assetId": "daf2fb6261e6115eb2af2932339ae0bb",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 28280,
+                    "md5ext": "daf2fb6261e6115eb2af2932339ae0bb.wav"
+                },
+                {
+                    "name": "missnote2",
+                    "assetId": "d46554c2d15e19824e490ba130fc8405",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 166764,
+                    "md5ext": "d46554c2d15e19824e490ba130fc8405.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": 0,
+            "y": -180,
+            "size": 60,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "#q`KiTFQvVwX!%B[jbrF",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "music up"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "I).Yn(u7VOuOwIJ}CmEg",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "music down"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Fz_IHw}A6@hUV-[k!W=t",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "music left"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "?)CBfCu,G%(,J0.liF+Q",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "music right"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 7,
+            "y": 34,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "8nlfm}[8iXKX1FT78.cX",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Score"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 215,
+            "y": 336,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "2IaB3Wx4+(ZAWWvAhCQo",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Who's turn?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 203,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "c#m.+ObQ6W*fz=*?~:ja",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Progress"
+            },
+            "spriteName": null,
+            "value": "100",
+            "width": 0,
+            "height": 0,
+            "x": -1,
+            "y": -1,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "0Wfq83!fc1P#iXdc*(O?",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Current animation"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "V([gE#UXfwpV,;N6/+N7",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "left button"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "%(p!H9ocf$6$h+.X%q~h",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "down button"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 152,
+            "visible": false
+        },
+        {
+            "id": "r#%h84sw]o7f4HHyxK{f",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "down button"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "|vlExGRa[VG%M;g-7?ln",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "MUSIC"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 168,
+            "height": 354,
+            "x": 310,
+            "y": 1,
+            "visible": false
+        },
+        {
+            "id": "Pz`yV9ZDR}0=J=sdOfz5",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "MUSIC READER"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "G+]*tYy8pKhiKoryhC|y",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Track"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "va6?EzbU(os2AtVoZb?*",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "left button"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "IK]kvyY|imp:cabi#[AL",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "die?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "uYK!uGm);pw(~XJ[*r$^",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "time"
+            },
+            "spriteName": "Death",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "s.acNsc$q::f{a8BqUbo",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "CameraX"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "6sF|QJ;]nWnEhKZpe@TT",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "CameraY"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 339,
+            "y": 37,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "loudness",
+            "mode": "default",
+            "opcode": "sensing_loudness",
+            "params": {},
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Y62kiA[/w%ZN3;XL0z#b",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#"
+            },
+            "spriteName": "Sprite2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "52Qfw]``p}A5jr]x2+a5",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "turn?"
+            },
+            "spriteName": "Sprite2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "!^hC?PdU{]tuB9rar2;~",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Time between Bops"
+            },
+            "spriteName": null,
+            "value": 0.6,
+            "width": 0,
+            "height": 0,
+            "x": 302,
+            "y": 246,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 1,
+            "isDiscrete": false
+        },
+        {
+            "id": "*CFO2F/9b;=}m7b{:M@=",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "e"
+            },
+            "spriteName": "EDITOR",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "JvX*+yWYP?T?~N2w#X?W",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Arrow Speed"
+            },
+            "spriteName": null,
+            "value": 8,
+            "width": 0,
+            "height": 0,
+            "x": 186,
+            "y": 324,
+            "visible": false,
+            "sliderMin": 1,
+            "sliderMax": 20,
+            "isDiscrete": true
+        },
+        {
+            "id": "V)m#v0nU:!U26{pLn;4/",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Camera Smoothness"
+            },
+            "spriteName": null,
+            "value": "0.60",
+            "width": 0,
+            "height": 0,
+            "x": 282,
+            "y": 305,
+            "visible": false,
+            "sliderMin": 1,
+            "sliderMax": 10,
+            "isDiscrete": true
+        },
+        {
+            "id": "!TZ**|fpe1_s7ED)ee0L",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "right button"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "36qQPzLIKp:A_ab=c;%/",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "recorded?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 47,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "I{Z{T(g+_j4E@94/%@{q",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Misses"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "=*b8zvYSQ|M8L{yKh/8r",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Turn Head Start"
+            },
+            "spriteName": null,
+            "value": 1,
+            "width": 0,
+            "height": 0,
+            "x": 337,
+            "y": 324,
+            "visible": false,
+            "sliderMin": 1,
+            "sliderMax": 60,
+            "isDiscrete": true
+        },
+        {
+            "id": "WqgM=0!F[mP+Xhh]C^j{",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Mutliplayer Mode"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 163,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 1,
+            "isDiscrete": true
+        },
+        {
+            "id": "}/#U,tFBv9,IUL`|$yQy",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "MusicID"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "xYPh+o,3iFXJ9F.U^[P*",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Song Finished"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "cL[a%V~u~BN0$Z6MJ%f8",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "clone?"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "4D_lIqx7[*+dNo+TSS1x",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "DIALOGUE"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "n^L7mG-2?cb?5cY-EFbM",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "dialogue play?"
+            },
+            "spriteName": "Dialogue",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 29,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "IHwfct*~JzEEwU==MA0$",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "recording?"
+            },
+            "spriteName": "EDITOR",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "~|S|j]-_dCJMV9dU]BW)",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "INSTRUCTIONS"
+            },
+            "spriteName": null,
+            "value": [
+                "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=",
+                "                           PLEASE READ THE INSTRUCTIONS!",
+                "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=",
+                "",
+                "Make sure you recorded the song by ID '1' if you are only recording ONE song",
+                "Once you click the green flag it will play the song and you to record the arrow-",
+                "-Presses. The project will automaticely stop once you are done.",
+                "",
+                "Add play song ID 'number of your recorded song'",
+                "",
+                "If you're making a custom week, You need to record multiple songs with",
+                "different ID's"
+            ],
+            "width": 480,
+            "height": 360,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": ".ufg;suJ@s7}/x]y-DWv",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "START SONG"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "X(f+:NBA:g=kQk!JY9+N",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "turns"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 164,
+            "height": 360,
+            "x": 134,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "B6vU]OpR8v)u/{XC,}]a",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Arrow Speed"
+            },
+            "spriteName": null,
+            "value": [
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                "8",
+                7
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "zd1`TWy;Q%rMnq#%tEud",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Turn Speed"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 155,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "`[z*6*c^HwT%c[6cmmFr",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Beat"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 212,
+            "visible": false
+        },
+        {
+            "id": "0;}9h%G~e}UUm|_(+jF@",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Camera Smoothness"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 155,
+            "y": 212,
+            "visible": false
+        },
+        {
+            "id": "G}W|tf*w[fL3wnWR1%Ui",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Song Play Delay"
+            },
+            "spriteName": null,
+            "value": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                "0",
+                0.18
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "V5k[#uB;NT~]Lm1E4[zb",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Song Sound Delay"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false,
+            "sliderMin": -1,
+            "sliderMax": 1,
+            "isDiscrete": false
+        },
+        {
+            "id": "3vqKZvZjI~~DS6_}](8}",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#"
+            },
+            "spriteName": "EDITOR",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "9)0lqzFKl.|fE[z[%VLe",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Score Multiplier"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 29,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "tEv*Q8nsvXo+~?Y%4xi/",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Freeplay Songlist"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 170,
+            "height": 266,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "3+cHf}jYLu]ujD}(`054",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "up button"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 14,
+            "visible": false
+        },
+        {
+            "id": "oF.#7oza1q^D8`t;h#`)",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "_Keybinds (expirimental)"
+            },
+            "spriteName": null,
+            "value": [
+                "left arrow",
+                "down arrow",
+                "up arrow",
+                "right arrow"
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 363,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "6c_5r02lSmv[a?($~y+)",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "BOT ACTIVE?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "TBUkwLsrWH{rmj!(8AaO",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Widescreen Link"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 480,
+            "height": 192,
+            "x": 0,
+            "y": 81,
+            "visible": false
+        },
+        {
+            "id": "]t0JUm$i`$3_(4pyK{I7",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "■ Character"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 143,
+            "height": 301,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "^{BF[rsLTS[47n]Jh?ux",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Character"
+            },
+            "spriteName": null,
+            "value": 1,
+            "width": 0,
+            "height": 0,
+            "x": 344,
+            "y": 206,
+            "visible": false,
+            "sliderMin": 1,
+            "sliderMax": 3,
+            "isDiscrete": true
+        },
+        {
+            "id": "-5*llf*cd{qrs=j^3pEW",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Notes Hit"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "|suimF3~NRUWm!M;%z9y",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#2"
+            },
+            "spriteName": "Letters",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "h$6!QnE#MHVws+zMz^PT",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Accuracy"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "82j@|EkV/6|GFOexu$0E",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Dad OffsetX"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 46,
+            "visible": false,
+            "sliderMin": -50,
+            "sliderMax": 50,
+            "isDiscrete": true
+        },
+        {
+            "id": "ud5{jTf;me$+6D;^+XE*",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "■ Dad OffsetY"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 86,
+            "visible": false,
+            "sliderMin": -50,
+            "sliderMax": 50,
+            "isDiscrete": true
+        },
+        {
+            "id": ";q?%r^|[tr?r%#^q]U-*",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "CameraZ"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "fP.p-Tn3oFIb2AATv?1b",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Song Charting?"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 159,
+            "y": 74,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Ft6rytIt+WXvDHdzG7r@",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 243,
+            "y": 18,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "R09]w@K{3Hv/itS;PmIa",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ChartPage"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 222,
+            "y": 335,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "v|^GOT[IGf#3h4o`Nz1j",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "id?"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 231,
+            "y": 91,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Aj?~plLr^owW/I`CoJfv",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "collum"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 117,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "$KWFA*c7I#dlM+22g9TC",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "chartscroll?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 282,
+            "y": 154,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "-M{HohXfN3~9:_S#`Z^z",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "collumhor"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 191,
+            "y": 192,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "uhy{IL9CPR|P:nw4E[Ef",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "item#"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 218,
+            "y": 25,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "I9yGSLrL)V[$0UPwS@~7",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "NoteReplacing?"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "$*9smM-{3/V$*s(q6R~N",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Chart Replacing"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 319,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "g:g^C$%MG5ITi_sIjVSl",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "mobile controlls?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 29,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ")w7W.),r}M;j~UxYO?c3",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Chart Music Left"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 167,
+            "height": 229,
+            "x": 310,
+            "y": 82,
+            "visible": false
+        },
+        {
+            "id": "7(5[jU$wejFYEItnDKIe",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Arrow Colors"
+            },
+            "spriteName": null,
+            "value": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "Default"
+            ],
+            "width": 114,
+            "height": 154,
+            "x": 160,
+            "y": 41,
+            "visible": false
+        },
+        {
+            "id": ".Xem~dxQ,XQ2KmJHu[p5",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Chart Music Right"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "p({k%nIA~ROv4vuxb9i-",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Chart Music Up"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 179,
+            "height": 360,
+            "x": 299,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "Na![VMRCj:dj=bZt#=LW",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Chart Music Down"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 213,
+            "visible": false
+        },
+        {
+            "id": "Bjbch|PAL)eNxw73yXph",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Chart Turns"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 245,
+            "height": 358,
+            "x": 232,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "Q7{gMmmaG;{pziIU,P~_",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "?"
+            },
+            "spriteName": "Chart Editor (coming soon)",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "pF[KBUCaFc{;gAv3C,Zc",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#"
+            },
+            "spriteName": "alphabet",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "YJ}vxzVT1Enk^Z?Q.vvP",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Mod Information"
+            },
+            "spriteName": null,
+            "value": [
+                "fnf mod",
+                "by",
+                "username",
+                "1",
+                "Levy2007",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "^s`TJ9}6zkW)Iv^mdr5c",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "_IntroText"
+            },
+            "spriteName": null,
+            "value": [
+                "Add your own intro text",
+                "In the configure sprite"
+            ],
+            "width": 234,
+            "height": 234,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "pGyI3h/D2~mv}i*(bqY|",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "animation"
+            },
+            "spriteName": "gf",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "^VabL/g-t(z%2Jp:v+?7",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Players Online"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 215,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "O1HbQ/tFQ6C;5-vd5yHs",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Online Mode?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "2`t%!;|GnA(KVLnqNpP3",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Player1Username"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 196,
+            "y": 21,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "3H[c@WzS]QKfz/U}{F{^",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Player2Username"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Gxtm(`U?eQH_E/sTP7{~",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Player?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 182,
+            "y": 0,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "hbL27Rn760iH=7_cbY[W",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "BG Color"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "|C55S?j^S~Z@;GV_jL|J",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "CODE"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "_rbx5~JBZX_A``a9grM$",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "encode"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZE!#i4jVZ5*?0Eh?m7bh",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "decode"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "d,y_E0.IHdqeA6~Qd;GE",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Capital"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 130,
+            "height": 307,
+            "x": 204,
+            "y": 51,
+            "visible": false
+        },
+        {
+            "id": "b2a;Ivdy@tiL,;:mFv#V",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Song Playing"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Ku5x[I:ZzX[,F`+nR(Jq",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Player1Information"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZfeH[48%-n3KXh9^f[%v",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Player2Information"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 34,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "U9d[iS@E1B%BFy]k^CeZ",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Online miss"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "}]mTUg5hUI*+xW?A2zon",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "In match?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "tTf.Q~tUz+4Ruc.6^yQ@",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Player1Score"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 364,
+            "y": 313,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "-F~DdLTn/1qZ75ld0BJ+",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Player2Score"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 56,
+            "y": 315,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Fl_BW:L47f6DuCw+rDpO",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "☁ Progress Bar"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 214,
+            "y": 335,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "19eoH)#W@S?h-S6|i3pz",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Player1Name"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 350,
+            "y": 268,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "=2Y^gaIQB4ci`6RsC19Z",
+            "mode": "large",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Player2Name"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 56,
+            "y": 291,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ";gI@_O77$_t#dk8}xCTu",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Down Scroll"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "7goXE;j64wozBlKeBwkn",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "V-Sync"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 372,
+            "y": 71,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "2b|Q4e|$C4I:lAD(X?FS",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Key Offset"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 352,
+            "y": 14,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "8yvxSx=XQ1?OkeBx^k^+",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Arrow Color"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "T*?Oe6l}FRb=P0FL:sck",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "CameraTurns"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 235,
+            "height": 343,
+            "x": 1,
+            "y": 14,
+            "visible": false
+        },
+        {
+            "id": "32.|gi|4uqTuq}Nr._g%",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "DadInformation"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 347,
+            "y": 54,
+            "visible": false
+        },
+        {
+            "id": "8K,hcVOQd*z_GhsI}CG#",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "START MUSIC"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ";*@aZlrBx*skK)LPUOgk",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Freeplay Songs"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "Uj@#N#?;30z$$gd;93-^",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Recorded?"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 219,
+            "height": 88,
+            "x": 259,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "]hk_A}Y*M(SoJJ6G4_U:",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "copyable music"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": ",v^m)mt;Gzn?flO/N]1x",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "#"
+            },
+            "spriteName": "Sprite3",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "(oA711*@DIf[V5G5Tf[8",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "BopSize"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "zJKuH-:8+!O=v@r|$)f:",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Cutscene Playing?"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "e*?$^6)=0Hw8G?k6W]=U",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Cutscene Rolling"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "cbtj%Nd9@6ZenYK?=0K`",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ChartEditorTool"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 115,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "d/!jIjpM~%4xD|{O7GZx",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ChartEditorSongPlaying"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "timer",
+            "mode": "default",
+            "opcode": "sensing_timer",
+            "params": {},
+            "spriteName": null,
+            "value": 2.608,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "0oY2#FZvClXuT}KDcE2e",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "FPS"
+            },
+            "spriteName": null,
+            "value": 32,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "[.FdWV1U,fLT[u}IX-qI",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "FPS Multiplier"
+            },
+            "spriteName": null,
+            "value": "1",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "q|GgH^8CT8kkdCpU1udn",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "angle"
+            },
+            "spriteName": null,
+            "value": [
+                "left",
+                "down",
+                "up",
+                "right",
+                "up",
+                "down",
+                "left"
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 205,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "GP|f]mtezv8/WA9eaF}j",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "ArrowBoard1Pos"
+            },
+            "spriteName": null,
+            "value": [
+                "left",
+                "0",
+                "0",
+                "90",
+                "1",
+                "down",
+                "0",
+                "0",
+                "90",
+                "1",
+                "up",
+                "0",
+                "0",
+                "90",
+                "1",
+                "right",
+                "0",
+                "0",
+                "90",
+                "1"
+            ],
+            "width": 261,
+            "height": 297,
+            "x": 201,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "id": "7e3,x}9t$-G:RZ!~.j;i",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "_Global Tick"
+            },
+            "spriteName": null,
+            "value": 123579.1000000007,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 266,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "|=RWFLlDf}+/gfX%sQ6L",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "hitbarrier"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "[D6}hh$@*NGt_WQ}rx5;",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ty"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 32,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "aTYd*9}UZ^RS^7sw-klV",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "ArrowBoard2Pos"
+            },
+            "spriteName": null,
+            "value": [
+                "left",
+                "0",
+                25.980762111,
+                "90",
+                "0.6",
+                "down",
+                "0",
+                25.980762111,
+                "90",
+                "0.6",
+                "up",
+                "0",
+                25.980762111,
+                "90",
+                "0.6",
+                "right",
+                "0",
+                25.980762111,
+                "90",
+                "0.6"
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 351,
+            "y": 61,
+            "visible": false
+        },
+        {
+            "id": "ZYAXr-/A^79_M87fZ;H$",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "missbarrier"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 59,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "xXHxq^/nciZA+[kc}MOf",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "ty2"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 86,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": ")p[R:bnteFX!(3a#I%{-",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "PlayerInfoOnline"
+            },
+            "spriteName": "arrow2",
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 113,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "0`5M)gW+bFJf,-dRu?xf",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "arrowboardX"
+            },
+            "spriteName": null,
+            "value": [
+                "64",
+                "114",
+                "164",
+                "214"
+            ],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false
+        },
+        {
+            "id": "@^7e9P5IN2_+VOiXh9d-",
+            "mode": "slider",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "HealthBarLength"
+            },
+            "spriteName": null,
+            "value": 1.63,
+            "width": 0,
+            "height": 0,
+            "x": 188,
+            "y": 35,
+            "visible": false,
+            "sliderMin": 1,
+            "sliderMax": 3,
+            "isDiscrete": false
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.1.14",
+        "agent": "minified example based on Scratch project 614907293"
+    }
+}
