@@ -24,22 +24,25 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DataExprParserTest implements JsonTest {
 
     @Test
-    public void testParseParam() throws IOException, ParsingException {
+    void testParseParam() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/parseParamInExprParser.json");
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         for (ActorDefinition actorDefinition : actorDefinitions) {
@@ -47,13 +50,29 @@ class DataExprParserTest implements JsonTest {
                 List<Script> scriptList = actorDefinition.getScripts().getScriptList();
                 Script script = scriptList.get(0);
                 Stmt stmt = script.getStmtList().getStmts().get(0);
-                assertTrue(stmt instanceof SetVariableTo);
+                assertInstanceOf(SetVariableTo.class, stmt);
                 SetVariableTo setVariableTo = (SetVariableTo) stmt;
                 Expression param = setVariableTo.getExpr();
-                assertTrue(param instanceof Parameter);
-                assertEquals(((Parameter) param).getName().getName(), "input");
-                assertEquals(((Parameter) param).getMetadata().getClass(), NonDataBlockMetadata.class);
+                assertInstanceOf(Parameter.class, param);
+                assertEquals("input", ((Parameter) param).getName().getName());
+                assertEquals(NonDataBlockMetadata.class, param.getMetadata().getClass());
             }
         }
+    }
+
+    @Test
+    void testParseNonTopLevelVariable() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/nonTopLevelVariable.json");
+        final List<Variable> variables = NodeFilteringVisitor.getBlocks(program, Variable.class);
+        assertThat(variables).isNotEmpty();
+
+        final Variable onlineModeVar = variables.stream()
+                .filter(variable -> "Online Mode?".equals(variable.getName().getName()))
+                .filter(variable -> variable.getMetadata() instanceof DataBlockMetadata)
+                .findFirst()
+                .orElseThrow();
+        final DataBlockMetadata varMetadata = (DataBlockMetadata) onlineModeVar.getMetadata();
+        assertThat(varMetadata.getX()).isEqualTo(0);
+        assertThat(varMetadata.getY()).isEqualTo(0);
     }
 }

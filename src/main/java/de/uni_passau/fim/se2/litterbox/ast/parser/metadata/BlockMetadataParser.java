@@ -55,11 +55,22 @@ public class BlockMetadataParser {
             Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a "
                     + "NonDataBlock. ID: " + blockId);
             ArrayNode data = (ArrayNode) blockNode;
-            if (data.size() != 5) {
-                throw new ParsingException("The project has malformated variables.");
+
+            final double x;
+            final double y;
+            if (data.size() == 5) {
+                x = data.get(DATA_INPUT_X_POS).asDouble();
+                y = data.get(DATA_INPUT_Y_POS).asDouble();
+            } else if (data.size() == 3) {
+                // non-top-level blocks do not have coordinates => since they are not visible, just use (0,0)
+                // not sure when this case can even happen, might have been a bug in the Scratch-VM when deleting
+                // scripts, or when converting from Scratch 2 to Scratch 3?
+                x = 0;
+                y = 0;
+            } else {
+                throw new ParsingException("The project has malformed variables.");
             }
-            double x = data.get(DATA_INPUT_X_POS).asDouble();
-            double y = data.get(DATA_INPUT_Y_POS).asDouble();
+
             return new DataBlockMetadata(blockId, x, y);
         }
     }
