@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class GenerateGgnnGraphTaskTest implements JsonTest {
     @ParameterizedTest
@@ -303,8 +304,46 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         assertHasEdges(stageGraph, GgnnProgramGraph.EdgeType.DATA_DEPENDENCY, List.of(expectedEdge));
     }
 
-    private void assertHasEdges(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType,
-                                final List<Pair<String>> expectedEdges) {
+    @Test
+    void testLabelIndicesWholeProgram() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph programGraph = graphs.get(0);
+
+        Set<Integer> expectedNodeIndices = programGraph.contextGraph().nodeLabels().entrySet().stream()
+                .filter(entry -> "Program".equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
+
+        assertThat(programGraph.labelNodes()).containsExactlyElementsIn(expectedNodeIndices);
+        assertThat(programGraph.labelNodes()).hasSize(1);
+    }
+
+    @Test
+    void testLabelIndicesSprite() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+
+        assertAll(graphs.stream().map(graph -> () -> assertHasSingleLabelNodeIndex(graph)));
+    }
+
+    private void assertHasSingleLabelNodeIndex(final GgnnProgramGraph graph) {
+        Set<Integer> expectedNodeIndices = graph.contextGraph().nodeLabels().entrySet().stream()
+                .filter(entry -> "ActorDefinition".equals(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
+
+        assertThat(graph.labelNodes()).containsExactlyElementsIn(expectedNodeIndices);
+        assertThat(graph.labelNodes()).hasSize(1);
+    }
+
+    private void assertHasEdges(
+            final GgnnProgramGraph graph,
+            final GgnnProgramGraph.EdgeType edgeType,
+            final List<Pair<String>> expectedEdges
+    ) {
         Set<Pair<Integer>> edges = graph.contextGraph().getEdges(edgeType);
         Map<Integer, String> nodeLabels = graph.contextGraph().nodeLabels();
         List<Pair<String>> labelledEdges = labelledEdges(edges, nodeLabels);

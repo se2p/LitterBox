@@ -22,14 +22,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GenerateGgnnGraphTask {
@@ -110,12 +110,24 @@ public class GenerateGgnnGraphTask {
     }
 
     private GgnnProgramGraph buildProgramGraph(final Program program, String label) {
-        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program).build();
-        return new GgnnProgramGraph(program.getIdent().getName(), label, contextGraph);
+        final GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program).build();
+        final Set<Integer> labelNodes = findNodesOfType(contextGraph, Program.class);
+        return new GgnnProgramGraph(program.getIdent().getName(), label, labelNodes, contextGraph);
     }
 
     private GgnnProgramGraph buildProgramGraph(final Program program, final ActorDefinition actor, String label) {
-        GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, actor).build();
-        return new GgnnProgramGraph(program.getIdent().getName(), label, contextGraph);
+        final GgnnProgramGraph.ContextGraph contextGraph = new GgnnGraphBuilder(program, actor).build();
+        final Set<Integer> labelNodes = findNodesOfType(contextGraph, ActorDefinition.class);
+        return new GgnnProgramGraph(program.getIdent().getName(), label, labelNodes, contextGraph);
+    }
+
+    private Set<Integer> findNodesOfType(
+            final GgnnProgramGraph.ContextGraph contextGraph,
+            final Class<? extends ASTNode> type
+    ) {
+        return contextGraph.nodeTypes().entrySet().stream()
+                .filter(entry -> entry.getValue().equals(type.getSimpleName()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
     }
 }
