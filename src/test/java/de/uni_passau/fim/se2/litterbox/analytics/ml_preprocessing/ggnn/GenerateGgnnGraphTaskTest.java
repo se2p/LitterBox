@@ -21,8 +21,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -35,6 +39,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class GenerateGgnnGraphTaskTest implements JsonTest {
     @ParameterizedTest
@@ -72,14 +77,15 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void testGraphEmptyProgram(boolean wholeProgram) throws Exception {
-        List<GgnnProgramGraph> graphs = getGraphs(Path.of("src", "test", "fixtures", "emptyProject.json"), false, wholeProgram);
+        Path path = Path.of("src", "test", "fixtures", "emptyProject.json");
+        List<GgnnProgramGraph> graphs = getGraphs(path, false, wholeProgram);
         assertThat(graphs).hasSize(1);
 
         int expectedNodeCount;
         if (wholeProgram) {
-            expectedNodeCount = 20;
+            expectedNodeCount = 16;
         } else {
-            expectedNodeCount = 8;
+            expectedNodeCount = 6;
         }
         assertThat(graphs.get(0).contextGraph().nodeLabels()).hasSize(expectedNodeCount);
     }
@@ -123,6 +129,48 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         assertThat(graphJsonl).hasSize(expectedSprites);
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testGraphDoesNotContainActorHelperNodes(final boolean wholeProgram) throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "multipleSprites.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, wholeProgram);
+
+        assertAll(graphs.stream().map(graph -> () -> assertNoHelperNodes(graph)));
+    }
+
+    private void assertNoHelperNodes(final GgnnProgramGraph graph) {
+        assertThat(graph.contextGraph().nodeTypes().values()).containsNoneOf(
+                DeclarationStmt.class.getSimpleName(),
+                DeclarationStmtList.class.getSimpleName(),
+                SetStmtList.class.getSimpleName()
+        );
+
+        Stream<Executable> metadataAssertions = graph.contextGraph().nodeTypes().values().stream()
+                .map(nodeType -> () -> {
+                    String message = String.format(
+                            "expected node types to not contain metadata nodes, but contained '%s'",
+                            nodeType
+                    );
+                    assertFalse(nodeType.matches("Metadata$"), message);
+                });
+        assertAll(metadataAssertions);
+    }
+
+    @Test
+    void testNextToken() throws Exception {
+        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by.json");
+        List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
+        assertThat(graphs).hasSize(1);
+
+        GgnnProgramGraph graph = graphs.get(0);
+
+        List<Pair<String>> edges = List.of(
+                Pair.of("Never", "StmtList"),
+                Pair.of("Say", "Think")
+        );
+        assertContainsEdges(graph, GgnnProgramGraph.EdgeType.NEXT_TOKEN, edges);
+    }
+
     @Test
     void testVariableGuardedBy() throws Exception {
         Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by.json");
@@ -140,7 +188,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
     @Test
     void testVariablesGuardedByIfElse() throws Exception {
-        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by_if_else_multiple.json");
+        Path inputPath = Path.of(
+                "src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by_if_else_multiple.json"
+        );
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
@@ -170,7 +220,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
     @Test
     void testAttributesOfGuardedBy() throws Exception {
-        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by_attribute_of.json");
+        Path inputPath = Path.of(
+                "src", "test", "fixtures", "ml_preprocessing", "ggnn", "guarded_by_attribute_of.json"
+        );
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
@@ -197,7 +249,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
     @Test
     void testVariableComputedFromNumericalAttributes() throws Exception {
-        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "computed_from_numerical_attributes.json");
+        Path inputPath = Path.of(
+                "src", "test", "fixtures", "ml_preprocessing", "ggnn", "computed_from_numerical_attributes.json"
+        );
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
@@ -215,7 +269,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
     @Test
     void testVariableComputedFromStringAttributes() throws Exception {
-        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "computed_from_string_attributes.json");
+        Path inputPath = Path.of(
+                "src", "test", "fixtures", "ml_preprocessing", "ggnn", "computed_from_string_attributes.json"
+        );
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
@@ -294,7 +350,9 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
     @Test
     void testAttributeDataDependency() throws Exception {
-        Path inputPath = Path.of("src", "test", "fixtures", "ml_preprocessing", "ggnn", "data_dependency_attribute.json");
+        Path inputPath = Path.of(
+                "src", "test", "fixtures", "ml_preprocessing", "ggnn", "data_dependency_attribute.json"
+        );
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
@@ -350,15 +408,39 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         assertThat(labelledEdges).containsExactlyElementsIn(expectedEdges);
     }
 
-    private void assertDifferentEdgeStartsCount(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount) {
+    private void assertContainsEdges(
+            final GgnnProgramGraph graph,
+            final GgnnProgramGraph.EdgeType edgeType,
+            final List<Pair<String>> expectedEdges
+    ) {
+        Set<Pair<Integer>> edges = graph.contextGraph().getEdges(edgeType);
+        Map<Integer, String> nodeLabels = graph.contextGraph().nodeLabels();
+        List<Pair<String>> labelledEdges = labelledEdges(edges, nodeLabels);
+        assertThat(labelledEdges).containsAtLeastElementsIn(expectedEdges);
+    }
+
+    private void assertDifferentEdgeStartsCount(
+            final GgnnProgramGraph graph,
+            final GgnnProgramGraph.EdgeType edgeType,
+            int expectedCount
+    ) {
         assertDifferentEdgeCounts(graph, edgeType, expectedCount, true);
     }
 
-    private void assertDifferentEdgeTargetsCount(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount) {
+    private void assertDifferentEdgeTargetsCount(
+            final GgnnProgramGraph graph,
+            final GgnnProgramGraph.EdgeType edgeType,
+            int expectedCount
+    ) {
         assertDifferentEdgeCounts(graph, edgeType, expectedCount, false);
     }
 
-    private void assertDifferentEdgeCounts(final GgnnProgramGraph graph, final GgnnProgramGraph.EdgeType edgeType, int expectedCount, boolean start) {
+    private void assertDifferentEdgeCounts(
+            final GgnnProgramGraph graph,
+            final GgnnProgramGraph.EdgeType edgeType,
+            int expectedCount,
+            boolean start
+    ) {
         Set<Pair<Integer>> paramEdges = graph.contextGraph().getEdges(edgeType);
         Set<Integer> edgeTargets = paramEdges.stream()
                 .map(p -> start ? p.getFst() : p.getSnd())

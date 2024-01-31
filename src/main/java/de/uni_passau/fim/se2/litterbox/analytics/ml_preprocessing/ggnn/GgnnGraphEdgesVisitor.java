@@ -30,14 +30,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
@@ -50,6 +48,12 @@ import java.util.*;
 import java.util.stream.Stream;
 
 abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
+    private static final Set<Class<? extends ASTNode>> IGNORED_NODE_TYPES = Set.of(
+            DeclarationStmtList.class,
+            DeclarationStmt.class,
+            SetStmtList.class
+    );
+
     protected final List<Pair<ASTNode>> edges = new ArrayList<>();
 
     static List<Pair<ASTNode>> getChildEdges(final ASTNode node) {
@@ -94,6 +98,10 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
         }
     }
 
+    protected boolean shouldBeIgnored(final ASTNode node) {
+        return IGNORED_NODE_TYPES.contains(node.getClass());
+    }
+
     @Override
     public void visit(DeclarationStmtList node) {
         // intentionally empty
@@ -109,16 +117,17 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
         // intentionally empty
     }
 
-    protected Stream<ASTNode> childrenWithoutMetadata(final ASTNode node) {
+    protected Stream<ASTNode> childrenWithoutIgnored(final ASTNode node) {
         return node.getChildren().stream()
                 .filter(c -> !AstNodeUtil.isMetadata(c))
+                .filter(c -> !shouldBeIgnored(c))
                 .map(ASTNode.class::cast);
     }
 
     static class ChildEdgesVisitor extends GgnnGraphEdgesVisitor {
         @Override
         public void visit(ASTNode node) {
-            childrenWithoutMetadata(node).forEach(child -> edges.add(Pair.of(node, child)));
+            childrenWithoutIgnored(node).forEach(child -> edges.add(Pair.of(node, child)));
             super.visit(node);
         }
     }
@@ -131,7 +140,9 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
                 ASTNode curr = children.get(i);
                 ASTNode next = children.get(i + 1);
 
-                if (!AstNodeUtil.isMetadata(curr) && !AstNodeUtil.isMetadata(next)) {
+                boolean isMetadata = AstNodeUtil.isMetadata(curr) || AstNodeUtil.isMetadata(next);
+                boolean isIgnored = shouldBeIgnored(curr) || shouldBeIgnored(next);
+                if (!isMetadata && !isIgnored) {
                     edges.add(Pair.of(curr, next));
                 }
             }
