@@ -28,6 +28,7 @@ import java.util.Set;
 public record GgnnProgramGraph(
         String filename,
         String label,
+        Set<Integer> labelNodes,
         ContextGraph contextGraph
 ) {
     public record ContextGraph(
