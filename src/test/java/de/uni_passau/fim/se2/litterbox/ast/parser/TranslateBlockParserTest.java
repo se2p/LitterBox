@@ -35,7 +35,7 @@ import static com.google.common.truth.Truth.assertThat;
 public class TranslateBlockParserTest implements JsonTest {
     @Test
     void testParseTranslateBlocks() throws IOException, ParsingException {
-        final Program program = getAST("src/test/fixtures/ml_preprocessing/shared/translate_blocks.json");
+        final Program program = getAST("src/test/fixtures/translate_blocks.json");
         assertNoUnspecifiedBlocks(program);
 
         final var translateTo = NodeFilteringVisitor.getBlocks(program, TranslateTo.class);
