@@ -28,15 +28,15 @@ produce an executable jar-file, run the following command:
 mvn package
 ```
 
-This will produce `target/Litterbox-1.8.jar`
+This will produce `target/Litterbox-1.8.full.jar`
 
 
 ## Using LitterBox
 
 To see an overview of the command line options available in LitterBox type:
 
-```
-java -jar Litterbox-1.8.jar --help
+```bash
+java -jar Litterbox-1.8.full.jar --help
 ```
 
 ### Basic usage
@@ -44,8 +44,8 @@ java -jar Litterbox-1.8.jar --help
 LitterBox parses the JSON file of a Scratch project, which contains
 its source code. Given such a JSON file, LitterBox is invoked as follows:
 
-```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json>
+```bash
+java -jar Litterbox-1.8.full.jar check --path <path/to/project.json>
 ```
 
 As a result, LitterBox will report any occurrences of bug patterns or
@@ -57,14 +57,14 @@ code smells in the project on the console.
 If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
-```
-java -jar Litterbox-1.8.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
+```bash
+java -jar Litterbox-1.8.full.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
 automatically from the Scratch-website, store it at the given path,
 and then run checks on it. Note that the Scratch project to be
-analyzed has to be shared publically for this.
+analyzed has to be shared publicly for this.
 
 
 ### Checking multiple projects
@@ -73,8 +73,8 @@ If you want to check several projects at once, you can put a list of
 project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
-```
-java -jar Litterbox-1.8.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
+```bash
+java -jar Litterbox-1.8.full.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -90,8 +90,8 @@ comma separated value (CSV) or JSON format. LitterBox uses the
 filename specified in order to decide whether to produce CSV or JSON
 output:
 
-```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json> --output <result.csv>
+```bash
+java -jar Litterbox-1.8.full.jar check --path <path/to/project.json> --output <result.csv>
 ```
 
 The CSV file will contain a high-level summary of the number of
@@ -102,8 +102,8 @@ Furthermore, LitterBox can produce an annotated version of the
 analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
-```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json> --annotate <results/>
+```bash
+java -jar Litterbox-1.8.full.jar check --path <path/to/project.json> --annotate <results/>
 ```
 
 
@@ -118,14 +118,17 @@ specify which bug patterns to check for. The option takes a
 comma-separated list of bug patterns, e.g.:
 
 
-```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
+```bash
+java -jar Litterbox-1.8.full.jar \
+    check \
+    --path <path/to/project.json> \
+    --detectors endless_recursion,call_without_definition
 ```
 
 A full list of available bug checkers can be retrieved using:
 
-```
-java -jar Litterbox-1.8.jar --help
+```bash
+java -jar Litterbox-1.8.full.jar --help
 ```
 
 To select all bug patterns, you can also use the term `bugs` in the
@@ -137,8 +140,12 @@ list; to select all code smell checks use `smells`.
 
 The bug patterns can be reported per scripts and procedures instead of for the whole program. In this case, only the bug patterns that can be detected through intra-scripts and intra-procedures analysis are considered.
 
-```
-java -jar Litterbox-1.8.jar check --path <path/to/project.json> --output <result.csv> --detectors script-bugs --scripts
+```bash
+java -jar Litterbox-1.8.full.jar check \
+    --path <path/to/project.json> \
+    --output <result.csv> \
+    --detectors script-bugs \
+    --scripts
 ```
 
 
@@ -148,7 +155,7 @@ To deactivate finders for the mBlock and Codey Rocky robots set the flag
 in the litterbox.properties file to false. This can reduce the run time of
 the analysis and the size of a resulting CSV file.
 
-```
+```properties
 issues.load_mblock=false
 ```
 
@@ -157,16 +164,19 @@ issues.load_mblock=false
 LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
-```
-java -jar Litterbox-1.8.jar stats --path <path/to/project.json> --output <statsfile.csv>
+```bash
+java -jar Litterbox-1.8.full.jar \
+    stats \
+    --path <path/to/project.json> \
+    --output <statsfile.csv>
 ```
 
 ### Automatically refactoring projects
 
 Since version 1.7 Litterbox can automatically refactor a given Scratch project to improve its readability:
 
-```
-java -jar Litterbox-1.8.jar \
+```bash
+java -jar Litterbox-1.8.full.jar \
     refactoring \
     --path <path/to/project.json> \
     --refactored-projects <path/to/output-dir>
@@ -182,8 +192,11 @@ The resulting set of refactored versions of the original project will be placed 
 To be able to use the code2vec model with the programming language Scratch, a scratch parser is needed to generate the required input representation. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
 Litterbox produces for each Scratch program a file with these rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with multiple projects and produces the output to the declared output folder. 
 
-```
-java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --path <path/to/json/project/or/folder/with/projects>
+```bash
+java -jar Litterbox-1.8.full.jar \
+    code2vec \
+    --output <path/to/folder/for/the/output> \
+    --path <path/to/json/project/or/folder/with/projects>
 ```
 
 There are some differences between Scratch and "normal" programming languages like Java, but the most important is,
@@ -194,8 +207,12 @@ and creates path contexts from every single sprite in a project.
 
 LitterBox can generate the context paths per scripts and procedures. Given a Scratch program as input, it produces for each script and procedure a file containing the needed input representation for the code2vec model. 
 
-```
-java -jar Litterbox-1.8.jar code2vec --output <path/to/folder/for/the/output> --path <path/to/json/project/or/folder/with/projects> --scripts
+```bash
+java -jar Litterbox-1.8.full.jar \
+    code2vec \
+    --output <path/to/folder/for/the/output> \
+    --path <path/to/json/project/or/folder/with/projects> \
+    --scripts
 ``` 
 
 ## Adding new bug patterns or code smells
