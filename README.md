@@ -187,34 +187,6 @@ refactorings that optimize code readability metrics such as size, complexity and
 The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
 
-### Code2Vec output
-
-To be able to use the code2vec model with the programming language Scratch, a scratch parser is needed to generate the required input representation. According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
-Litterbox produces for each Scratch program a file with these rules. It's like a Scratch extractor. Litterbox needs a path to a single file or a folder with multiple projects and produces the output to the declared output folder. 
-
-```bash
-java -jar Litterbox-1.8.full.jar \
-    code2vec \
-    --output <path/to/folder/for/the/output> \
-    --path <path/to/json/project/or/folder/with/projects>
-```
-
-There are some differences between Scratch and "normal" programming languages like Java, but the most important is,
-that Scratch has no methods and therefore no method names. Because of that, Litterbox uses sprite names like method names 
-and creates path contexts from every single sprite in a project.
-
-#### Code2vec output per script
-
-LitterBox can generate the context paths per scripts and procedures. Given a Scratch program as input, it produces for each script and procedure a file containing the needed input representation for the code2vec model. 
-
-```bash
-java -jar Litterbox-1.8.full.jar \
-    code2vec \
-    --output <path/to/folder/for/the/output> \
-    --path <path/to/json/project/or/folder/with/projects> \
-    --scripts
-``` 
-
 ## Adding new bug patterns or code smells
 
 To implement your own bug patterns, extend the `AbstractIssueFinder`
