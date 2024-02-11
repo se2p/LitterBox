@@ -128,7 +128,7 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
-        protected abstract Analyzer<?> getAnalyzer() throws Exception;
+        protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
         /**
          * Override to implement custom parameter validation before the analyzer is run.
@@ -145,17 +145,19 @@ public class Main implements Callable<Integer> {
 
             validateParams();
 
-            final Analyzer<?> analyzer = getAnalyzer();
+            final FileAnalyzer<?> analyzer = getAnalyzer();
             return runAnalysis(analyzer);
         }
 
-        private int runAnalysis(final Analyzer<?> analyzer) throws IOException {
+        private int runAnalysis(final FileAnalyzer<?> analyzer) throws IOException {
             if (projectId != null) {
-                analyzer.analyzeSingle(projectId);
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
+                projectIdAnalyzer.analyzeSingle(projectId);
             } else if (projectList != null) {
-                analyzer.analyzeMultiple(projectList);
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
+                projectIdAnalyzer.analyzeMultiple(projectList);
             } else {
-                analyzer.analyzeFile();
+                analyzer.analyzeFile(projectPath);
             }
 
             return 0;
@@ -215,7 +217,6 @@ public class Main implements Callable<Integer> {
             final String detector = String.join(",", detectors);
 
             final BugAnalyzer analyzer = new BugAnalyzer(
-                    projectPath,
                     outputPath,
                     detector,
                     ignoreLooseBlocks,
@@ -293,7 +294,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(projectPath, outputPath, deleteProject);
+            return new FeatureAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -316,7 +317,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected LeilaAnalyzer getAnalyzer() {
-            return new LeilaAnalyzer(projectPath, outputPath, nonDeterministic, false, deleteProject);
+            return new LeilaAnalyzer(outputPath, nonDeterministic, false, deleteProject);
         }
     }
 
@@ -339,12 +340,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected RefactoringAnalyzer getAnalyzer() {
-            return new RefactoringAnalyzer(
-                    projectPath,
-                    outputPath,
-                    refactoredPath,
-                    deleteProject
-            );
+            return new RefactoringAnalyzer(outputPath, refactoredPath, deleteProject);
         }
     }
 
@@ -362,7 +358,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected MetricAnalyzer getAnalyzer() {
-            return new MetricAnalyzer(projectPath, outputPath, deleteProject);
+            return new MetricAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -380,7 +376,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected ExtractionAnalyzer getAnalyzer() {
-            return new ExtractionAnalyzer(projectPath, outputPath, deleteProject);
+            return new ExtractionAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -398,7 +394,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected DotAnalyzer getAnalyzer() {
-            return new DotAnalyzer(projectPath, outputPath, deleteProject);
+            return new DotAnalyzer(outputPath, deleteProject);
         }
     }
 }

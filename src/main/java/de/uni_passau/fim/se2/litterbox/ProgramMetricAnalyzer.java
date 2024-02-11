@@ -16,25 +16,46 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.metric;
+package de.uni_passau.fim.se2.litterbox;
 
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.*;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
-import org.apache.commons.csv.CSVPrinter;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MetricTool {
+public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>> {
+
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     private static final boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
-    private List<MetricExtractor<Program>> getMetrics() {
+    @Override
+    public List<MetricResult> analyze(Program program) {
+        return calculateMetrics(program);
+    }
+
+    private List<MetricResult> calculateMetrics(Program program) {
+        List<MetricResult> results = new ArrayList<>();
+        for (MetricExtractor<Program> extractor : getMetrics()) {
+            double metricValue = extractor.calculateMetric(program);
+            results.add(new MetricResult(extractor.getName(), metricValue));
+        }
+        return results;
+    }
+
+    public List<String> getMetricNames() {
+        return getMetrics().stream().map(MetricExtractor::getName).toList();
+    }
+
+    public List<MetricExtractor<Program>> getAnalyzers() {
+        return Collections.unmodifiableList(getMetrics());
+    }
+
+    public List<MetricExtractor<Program>> getMetrics() {
         List<MetricExtractor<Program>> metricList = new ArrayList<>();
         if (LOAD_GENERAL) {
             metricList.add(new AvgBlockStatementCount<>());
@@ -114,41 +135,5 @@ public class MetricTool {
             metricList.add(new ShakingStrengthBlockCount<>());
         }
         return metricList;
-    }
-
-    public List<String> getMetricNames() {
-        return getMetrics().stream().map(MetricExtractor::getName).toList();
-    }
-
-    public List<MetricExtractor<Program>> getAnalyzers() {
-        return Collections.unmodifiableList(getMetrics());
-    }
-
-    public void createCSVFile(Program program, Path fileName) throws IOException {
-        final List<String> headers = new ArrayList<>();
-        headers.add("project");
-        getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
-
-        final List<String> row = new ArrayList<>();
-        row.add(program.getIdent().getName());
-
-        List<MetricResult> results = calculateMetrics(program);
-        for (MetricResult result : results) {
-            row.add(Double.toString(result.value()));
-        }
-
-        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
-            printer.printRecord(row);
-            printer.flush();
-        }
-    }
-
-    public List<MetricResult> calculateMetrics(Program program) {
-        List<MetricResult> results = new ArrayList<>();
-        for (MetricExtractor<Program> extractor : getMetrics()) {
-            double metricValue = extractor.calculateMetric(program);
-            results.add(new MetricResult(extractor.getName(), metricValue));
-        }
-        return results;
     }
 }

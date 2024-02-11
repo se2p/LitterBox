@@ -19,21 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-public class DotAnalyzer extends FileAnalyzer<String> {
-    public DotAnalyzer(Path output, boolean delete) {
-        super(new DotGraphAnalyzer(), output, delete);
-    }
+public class DotGraphAnalyzer implements ProgramAnalyzer<String> {
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, String dotString) throws IOException {
-        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-            bw.write(dotString);
-        }
+    public String analyze(Program program) {
+        return DotVisitor.buildDotGraph(program);
     }
 }

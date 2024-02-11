@@ -19,21 +19,29 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-public class DotAnalyzer extends FileAnalyzer<String> {
-    public DotAnalyzer(Path output, boolean delete) {
-        super(new DotGraphAnalyzer(), output, delete);
+public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
+    private final List<IssueFinder> issueFinders;
+    private final boolean ignoreLooseBlocks;
+
+    public ProgramBugAnalyzer(final String detectors, final boolean ignoreLooseBlocks) {
+        this.issueFinders = IssueTool.getFinders(detectors);
+        this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, String dotString) throws IOException {
-        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-            bw.write(dotString);
+    public Set<Issue> analyze(Program program) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
+        for (IssueFinder issueFinder : issueFinders) {
+            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(issueFinder.check(program));
         }
+        return issues;
     }
 }

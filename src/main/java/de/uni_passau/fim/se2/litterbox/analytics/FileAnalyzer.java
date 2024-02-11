@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
-import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,18 +28,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
-public abstract class Analyzer<R> {
+public abstract class FileAnalyzer<R> {
 
-    private static final Logger log = Logger.getLogger(Analyzer.class.getName());
+    private static final Logger log = Logger.getLogger(FileAnalyzer.class.getName());
+
+    private final Scratch3Parser parser = new Scratch3Parser();
+
+    protected final ProgramAnalyzer<R> analyzer;
     protected final Path output;
     protected final boolean delete;
-    private final Scratch3Parser parser = new Scratch3Parser();
-    private final Path input;
 
-    protected Analyzer(Path input, Path output, boolean delete) {
-        this.input = input;
+    public FileAnalyzer(final ProgramAnalyzer<R> analyzer, final Path output, boolean delete) {
+        this.analyzer = analyzer;
         this.output = output;
         this.delete = delete;
     }
@@ -51,7 +51,7 @@ public abstract class Analyzer<R> {
      * <p>If the input is a file it will be directly analyzed, if it is a director all files in the
      * directory will be analyzed one after another.</p>
      */
-    public final void analyzeFile() throws IOException {
+    public final void analyzeFile(final Path input) throws IOException {
         File file = input.toFile();
         if (file.exists() && file.isDirectory()) {
             List<Path> listOfFiles = getProgramPaths(file.toPath());
@@ -71,7 +71,7 @@ public abstract class Analyzer<R> {
     private static List<Path> getProgramPaths(Path dirPath) throws IOException {
         try (var files = Files.walk(dirPath, 1)) {
             return files.filter(p -> !Files.isDirectory(p))
-                    .filter(Analyzer::isPossibleScratchFile)
+                    .filter(FileAnalyzer::isPossibleScratchFile)
                     .toList();
         }
     }
@@ -91,51 +91,12 @@ public abstract class Analyzer<R> {
     }
 
     /**
-     * Analyze multiple files based on a list of project ids in the given file.
+     * First uses {@link ProgramAnalyzer#analyze(Program)} to parse and check the program, then writes the result to the
+     * output file.
      *
-     * @param projectList is the path to a file containing all the ids of projects that should be analyzed.
-     */
-    public final void analyzeMultiple(Path projectList) {
-        try (Stream<String> lines = Files.lines(projectList)) {
-            List<String> pids = lines.toList();
-            for (String pid : pids) {
-                analyzeSingle(pid);
-            }
-        } catch (IOException e) {
-            log.warning("Could not read project list at " + projectList);
-        }
-    }
-
-    /**
-     * Analyzes a single project based on the given project id.
-     *
-     * <p>If a file with the given project id exists in the path with which this analyzer was initialized, the project
-     * will be directly analyzed, otherwise it will be downloaded to the configured path and analyzed afterwards.</p>
-     *
-     * @param pid is the id of the project that should be analyzed.
-     */
-    public final void analyzeSingle(String pid) throws IOException {
-        Path path = input.resolve(pid + ".json");
-        File projectFile = path.toFile();
-        if (!projectFile.exists()) {
-            try {
-                Downloader.downloadAndSaveProject(pid, input);
-            } catch (IOException e) {
-                log.warning("Could not download project with PID: " + pid);
-                return;
-            }
-        }
-
-        checkAndWrite(projectFile);
-        deleteFile(projectFile);
-    }
-
-    /**
-     * First uses {@link #check(Program)} to parse and check the program, then writes the result to the output file.
-     *
-     * <p>In case a subclass can more efficiently combine the two operations {@link #check(Program)} and
-     * {@link #writeResultToFile(Path, Program, Object)}, e.g., to avoid (partial) recalculation of the check results,
-     * it should overwrite this method.
+     * <p>In case a subclass can more efficiently combine the two operations {@link ProgramAnalyzer#analyze(Program)}
+     * and {@link #writeResultToFile(Path, Program, Object)}, e.g., to avoid (partial) recalculation of the check
+     * results, it should overwrite this method.
      *
      * @param file The input file that contains the Scratch program.
      * @throws IOException In case either reading the program fails, or writing to the output file fails.
@@ -146,33 +107,9 @@ public abstract class Analyzer<R> {
             return;
         }
 
-        final R result = check(program);
+        final R result = analyzer.analyze(program);
         writeResultToFile(file.toPath(), program, result);
     }
-
-    /**
-     * Reads the Scratch program from the sb3- or json-file and performs the analysis on it.
-     *
-     * @param file A sb3 or json Scratch project file.
-     * @return The analysis result.
-     * @throws ParsingException Thrown in case the program cannot be read from the file.
-     */
-    public R check(final File file) throws ParsingException {
-        Program program = extractProgram(file);
-        if (program == null) {
-            throw new ParsingException("Program could not be read or parsed");
-        }
-
-        return check(program);
-    }
-
-    /**
-     * Performs the analysis on a program.
-     *
-     * @param program Some Scratch program.
-     * @return The analysis result.
-     */
-    public abstract R check(Program program);
 
     /**
      * Writes the analysis result to the output destination {@link #output}.

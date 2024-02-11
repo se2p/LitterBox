@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-public class LeilaAnalyzer extends Analyzer<Void> {
+public class LeilaAnalyzer extends FileAnalyzer<Void> {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(LeilaAnalyzer.class.getName());
@@ -37,15 +37,14 @@ public class LeilaAnalyzer extends Analyzer<Void> {
     /**
      * Constructor for the leila analyzer.
      *
-     * @param input path to folder or file that should be analyzed
      * @param output Path to file or folder for the resulting .sc file(s);
      *               has to be a folder if multiple projects are analysed
      *               (file will be created if not existing yet, path has to exist
      * @param nonDet flag whether attributes in intermediate language should be
-     *               non deterministic (i.e. not initialized)
+     *               non-deterministic (i.e. not initialized)
      */
-    public LeilaAnalyzer(Path input, Path output, boolean nonDet, boolean onNever, boolean delete) {
-        super(input, output, delete);
+    public LeilaAnalyzer(Path output, boolean nonDet, boolean onNever, boolean delete) {
+        super(new LeilaProgramAnalyzer(), output, delete);
         this.nonDet = nonDet;
         this.onNever = onNever;
 
@@ -75,13 +74,15 @@ public class LeilaAnalyzer extends Analyzer<Void> {
         log.info("Finished printing.");
     }
 
-    @Override
-    public Void check(Program program) {
-        return null;
-    }
-
     private String getIntermediateFileName(String name) {
         String programName = name.substring(0, name.lastIndexOf("."));
         return programName + INTERMEDIATE_EXTENSION;
+    }
+
+    private static class LeilaProgramAnalyzer implements ProgramAnalyzer<Void> {
+        @Override
+        public Void analyze(Program program) {
+            return null;
+        }
     }
 }

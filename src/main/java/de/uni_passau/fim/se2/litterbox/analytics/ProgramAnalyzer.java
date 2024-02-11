@@ -20,20 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-public class DotAnalyzer extends FileAnalyzer<String> {
-    public DotAnalyzer(Path output, boolean delete) {
-        super(new DotGraphAnalyzer(), output, delete);
-    }
-
-    @Override
-    protected void writeResultToFile(Path projectFile, Program program, String dotString) throws IOException {
-        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-            bw.write(dotString);
-        }
-    }
+public interface ProgramAnalyzer<R> {
+    R analyze(final Program program);
 }
