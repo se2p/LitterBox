@@ -19,23 +19,27 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionResult;
-import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionTool;
+import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ExtractionAnalyzer extends Analyzer<List<ExtractionResult>> {
+public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
 
     private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
-    private final ExtractionTool issueTool;
 
-    public ExtractionAnalyzer(Path input, Path output, boolean delete) {
-        super(input, output, delete);
-        this.issueTool = new ExtractionTool();
+    private final ProgramExtractionAnalyzer analyzer;
+
+    public ExtractionAnalyzer(Path output, boolean delete) {
+        super(new ProgramExtractionAnalyzer(), output, delete);
+        this.analyzer = (ProgramExtractionAnalyzer) super.analyzer;
     }
 
     @Override
@@ -45,22 +49,36 @@ public class ExtractionAnalyzer extends Analyzer<List<ExtractionResult>> {
             return;
         }
 
-        issueTool.createCSVFile(program, output);
+        createCSVFile(program, output);
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, List<ExtractionResult> checkResult)
             throws IOException {
         try {
-            issueTool.createCSVFile(program, output);
+            createCSVFile(program, output);
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + output);
             throw e;
         }
     }
 
-    @Override
-    public List<ExtractionResult> check(Program program) {
-        return issueTool.extract(program);
+    public void createCSVFile(Program program, Path fileName) throws IOException {
+        final List<String> headers = new ArrayList<>();
+        headers.add("project");
+        analyzer.getExtractors().stream().map(NameExtraction::getName).forEach(headers::add);
+
+        final List<String> row = new ArrayList<>();
+        row.add(program.getIdent().getName());
+
+        List<ExtractionResult> extractions = analyzer.analyze(program);
+        for (ExtractionResult extraction : extractions) {
+            row.add(extraction.result().toString());
+        }
+
+        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
+            printer.printRecord(row);
+            printer.flush();
+        }
     }
 }

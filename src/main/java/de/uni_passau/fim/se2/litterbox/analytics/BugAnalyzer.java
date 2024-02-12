@@ -24,54 +24,37 @@ import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class BugAnalyzer extends Analyzer<Set<Issue>> {
+public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
     private static final String ANNOTATED_PROGRAM_SUFFIX = "_annotated";
 
     private final List<String> detectorNames;
-    private final List<IssueFinder> issueFinders;
     private Path annotationOutput;
-    private final boolean ignoreLooseBlocks;
     private final boolean outputPerScript;
 
     public BugAnalyzer(
-            Path input, Path output, String detectors,
+            Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
-        super(input, output, delete);
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
 
-        this.issueFinders = IssueTool.getFinders(detectors);
         this.outputPerScript = outputPerScript;
-        this.detectorNames = issueFinders.stream().map(IssueFinder::getName).toList();
-        this.ignoreLooseBlocks = ignoreLooseBlocks;
+        this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
     }
 
     public void setAnnotationOutput(Path annotationOutput) {
         this.annotationOutput = annotationOutput;
-    }
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        Set<Issue> issues = new LinkedHashSet<>();
-        for (IssueFinder issueFinder : issueFinders) {
-            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(issueFinder.check(program));
-        }
-        return issues;
     }
 
     @Override

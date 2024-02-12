@@ -18,8 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionTool;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
+import de.uni_passau.fim.se2.litterbox.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -169,8 +168,8 @@ public class ResourceBundleTest {
     public void checkSpuriousNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         Collection<String> finders = new HashSet<>(IssueTool.getAllFinderNames());
-        finders.addAll(new MetricTool().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
-        finders.addAll(new ExtractionTool().getExtractorNames());
+        finders.addAll(new ProgramMetricAnalyzer().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
+        finders.addAll(new ProgramExtractionAnalyzer().getExtractorNames());
         for (String key : Collections.list(names.getKeys())) {
             assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
         }
