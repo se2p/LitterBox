@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.params.ParameterizedTest;
