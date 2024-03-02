@@ -1,0 +1,287 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 2247,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "!FI_`+fGcpSI]iU}-yBs": {
+                    "opcode": "procedures_definition",
+                    "next": "i^,gxI}@,YMP$BwLI`Pt",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "MLb8Ho:{P:):OJImF:{?"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 349,
+                    "y": 47
+                },
+                "MLb8Ho:{P:):OJImF:{?": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "!FI_`+fGcpSI]iU}-yBs",
+                    "inputs": {
+                        ",i:VH3PiF[(I?Kr}{6m~": [
+                            1,
+                            "2aMIEU{]Gm:Hgc+FlwO9"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "block1 %b",
+                        "argumentids": "[\",i:VH3PiF[(I?Kr}{6m~\"]",
+                        "argumentnames": "[\"boolean\"]",
+                        "argumentdefaults": "[\"false\"]",
+                        "warp": "false"
+                    }
+                },
+                "2aMIEU{]Gm:Hgc+FlwO9": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "MLb8Ho:{P:):OJImF:{?",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "boolean",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "smS:S-3FAT5EL!q$yy_9": {
+                    "opcode": "procedures_definition",
+                    "next": "(zVV=xyY8?#H+pQ%z~L#",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "cQyn[I^bXq)@@6@iER{S"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 44,
+                    "y": 44
+                },
+                "cQyn[I^bXq)@@6@iER{S": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "smS:S-3FAT5EL!q$yy_9",
+                    "inputs": {
+                        "OwAO;Mx60xWaBY;oQB5u": [
+                            1,
+                            "/[%.erAlaMxk$hGRbt_6"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "block1 %b",
+                        "argumentids": "[\"OwAO;Mx60xWaBY;oQB5u\"]",
+                        "argumentnames": "[\"boolean\"]",
+                        "argumentdefaults": "[\"false\"]",
+                        "warp": "false"
+                    }
+                },
+                "/[%.erAlaMxk$hGRbt_6": {
+                    "opcode": "argument_reporter_boolean",
+                    "next": null,
+                    "parent": "cQyn[I^bXq)@@6@iER{S",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "boolean",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "(zVV=xyY8?#H+pQ%z~L#": {
+                    "opcode": "motion_turnleft",
+                    "next": null,
+                    "parent": "smS:S-3FAT5EL!q$yy_9",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "15"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "i^,gxI}@,YMP$BwLI`Pt": {
+                    "opcode": "motion_turnright",
+                    "next": null,
+                    "parent": "!FI_`+fGcpSI]iU}-yBs",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "15"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "}HXUyn7!3]]Y-B?F_]*i": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "zHg=^!Lz6w_Gj!B=DAt=",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 788,
+                    "y": 40
+                },
+                "zHg=^!Lz6w_Gj!B=DAt=": {
+                    "opcode": "procedures_call",
+                    "next": "N8-Ju@J[Sye7LYV[5rw;",
+                    "parent": "}HXUyn7!3]]Y-B?F_]*i",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "block1 %b",
+                        "argumentids": "[\",i:VH3PiF[(I?Kr}{6m~\"]",
+                        "warp": "false"
+                    }
+                },
+                "N8-Ju@J[Sye7LYV[5rw;": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "zHg=^!Lz6w_Gj!B=DAt=",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "block1 %b",
+                        "argumentids": "[\"OwAO;Mx60xWaBY;oQB5u\"]",
+                        "warp": "false"
+                    }
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 81363,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "two custom blocks both named 'block1' with one boolean parameter. The turn left one was created first, the turn right one afterwards."
+    }
+}
