@@ -69,6 +69,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <finalName>${project.name}-${project.version}.full</finalName>
                             <transformers>
                                 <transformer
