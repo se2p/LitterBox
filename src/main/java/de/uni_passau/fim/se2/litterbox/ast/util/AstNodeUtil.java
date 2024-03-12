@@ -18,21 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.util;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPERAND1_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPERAND2_KEY;
 
 public class AstNodeUtil {
     private AstNodeUtil() {
@@ -120,6 +123,18 @@ public class AstNodeUtil {
     }
 
     /**
+     * Tells if the given AST node is an input of the requested kind.
+     * @param child     The node to inspect.
+     * @param inputKind The request input kind (a string, corresponds to the input keys in the {@code project.json}.)
+     * @return {@code true} if the {@code child} is used as the specified input, {@code false} otherwise.
+     */
+    public static boolean isInputOfKind(final ASTNode child, final String inputKind) {
+        final IsInputOfVisitor visitor = new IsInputOfVisitor();
+        child.getParentNode().accept(visitor);
+        return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
+    }
+
+    /**
      * Replaces all parameter placeholders with the given substitution.
      *
      * <p>Replaces
@@ -161,5 +176,45 @@ public class AstNodeUtil {
                 .replace("%n", replacementN)
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    private static class IsInputOfVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+        private final Map<String, ASTNode> inputs = new HashMap<>();
+
+        private IsInputOfVisitor() {
+        }
+
+        @Override
+        public void visit(Add node) {
+            inputs.put(OPERAND1_KEY, node.getOperand1());
+            inputs.put(OPERAND2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(Minus node) {
+            inputs.put(OPERAND1_KEY, node.getOperand1());
+            inputs.put(OPERAND2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(Mult node) {
+            inputs.put(OPERAND1_KEY, node.getOperand1());
+            inputs.put(OPERAND2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(Div node) {
+            inputs.put(OPERAND1_KEY, node.getOperand1());
+            inputs.put(OPERAND2_KEY, node.getOperand2());
+        }
+
+        // TODO: Which other methods from ScratchVisitor must be overridden?
+
+        // TODO: Create overrides for methods from:
+        //  - MusicExtensionVisitor?
+        //  - PenExtensionVisitor?
+        //  - TextToSpeechExtensionVisitor?
+        //  - TranslateExtensionVisitor?
     }
 }
