@@ -18,24 +18,46 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.util;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPERAND1_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPERAND2_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class AstNodeUtil {
     private AstNodeUtil() {
@@ -106,8 +128,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     *         Might return {@code node} itself if it has matching type.
-     *         Returns {@code null} if no parent of the requested type could be found.
+     * Might return {@code node} itself if it has matching type.
+     * Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
@@ -120,18 +142,6 @@ public class AstNodeUtil {
         }
 
         return null;
-    }
-
-    /**
-     * Tells if the given AST node is an input of the requested kind.
-     * @param child     The node to inspect.
-     * @param inputKind The request input kind (a string, corresponds to the input keys in the {@code project.json}.)
-     * @return {@code true} if the {@code child} is used as the specified input, {@code false} otherwise.
-     */
-    public static boolean isInputOfKind(final ASTNode child, final String inputKind) {
-        final IsInputOfVisitor visitor = new IsInputOfVisitor();
-        child.getParentNode().accept(visitor);
-        return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
     /**
@@ -178,43 +188,505 @@ public class AstNodeUtil {
                 .trim();
     }
 
+    /**
+     * Tells if the given AST node is an input of the requested kind.
+     *
+     * @param child     The node to inspect.
+     * @param inputKind The request input kind (a string, corresponds to the input keys in the {@code project.json}.)
+     * @return {@code true} if the {@code child} is used as the specified input, {@code false} otherwise.
+     */
+    public static boolean isInputOfKind(final ASTNode child, final String inputKind) {
+        ASTNode parent = child.getParentNode();
+
+        if (parent == null) {
+            return false;
+        }
+
+        if (parent instanceof StmtList) {
+            parent = parent.getParentNode();
+        }
+
+        final IsInputOfVisitor visitor = new IsInputOfVisitor();
+        parent.accept(visitor);
+
+        return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
+    }
+
     private static class IsInputOfVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
             TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
-        private final Map<String, ASTNode> inputs = new HashMap<>();
+        private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
         }
 
+        /*
+         * Control blocks
+         */
+
         @Override
-        public void visit(Add node) {
+        public void visit(final RepeatForeverStmt node) {
+            inputs.put(SUBSTACK_KEY, getFirstStmtSubstack(node));
+        }
+
+        @Override
+        public void visit(final IfThenStmt node) {
+            inputs.put(CONDITION_KEY, node.getBoolExpr());
+            inputs.put(SUBSTACK_KEY, getFirstStmtSubstack(node));
+        }
+
+        @Override
+        public void visit(final IfElseStmt node) {
+            inputs.put(CONDITION_KEY, node.getBoolExpr());
+            inputs.put(SUBSTACK_KEY, getFirstStmtSubstack(node));
+            inputs.put(SUBSTACK2_KEY, getFirstStmtSubstack2(node));
+        }
+
+        @Override
+        public void visit(final RepeatTimesStmt node) {
+            inputs.put(TIMES_KEY, node.getTimes());
+            inputs.put(SUBSTACK_KEY, getFirstStmtSubstack(node));
+        }
+
+        @Override
+        public void visit(final UntilStmt node) {
+            inputs.put(CONDITION_KEY, node.getBoolExpr());
+            inputs.put(SUBSTACK_KEY, getFirstStmtSubstack(node));
+        }
+
+        @Override
+        public void visit(final WaitSeconds node) {
+            inputs.put(DURATION_KEY, node.getSeconds());
+        }
+
+        @Override
+        public void visit(final WaitUntil node) {
+            inputs.put(CONDITION_KEY, node.getUntil());
+        }
+
+        @Override
+        public void visit(final CreateCloneOf node) {
+            inputs.put(CLONE_OPTION, node.getStringExpr());
+        }
+
+        /*
+         * Event blocks
+         */
+
+        @Override
+        public void visit(final BroadcastAndWait node) {
+            inputs.put(BROADCAST_INPUT_KEY, node.getMessage());
+        }
+
+        @Override
+        public void visit(final Broadcast node) {
+            inputs.put(BROADCAST_INPUT_KEY, node.getMessage());
+        }
+
+        @Override
+        public void visit(final AttributeAboveValue node) {
+            inputs.put(VALUE_KEY, node.getValue());
+        }
+
+        /*
+         * Looks blocks
+         */
+
+        @Override
+        public void visit(final ChangeGraphicEffectBy node) {
+            inputs.put(CHANGE_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final ChangeLayerBy node) {
+            inputs.put(NUM_KEY, node.getNum());
+        }
+
+        @Override
+        public void visit(final ChangeSizeBy node) {
+            inputs.put(CHANGE_KEY, node.getNum());
+        }
+
+        @Override
+        public void visit(final Say node) {
+            inputs.put(MESSAGE_KEY, node.getString());
+        }
+
+        @Override
+        public void visit(final SayForSecs node) {
+            inputs.put(MESSAGE_KEY, node.getString());
+            inputs.put(SECS_KEY, node.getSecs());
+        }
+
+        @Override
+        public void visit(final SetGraphicEffectTo node) {
+            inputs.put(VALUE_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final SetSizeTo node) {
+            inputs.put(SIZE_KEY_CAP, node.getPercent());
+        }
+
+        @Override
+        public void visit(final SwitchBackdropAndWait node) {
+            inputs.put(BACKDROP_INPUT, node.getElementChoice());
+        }
+
+        @Override
+        public void visit(final SwitchBackdrop node) {
+            inputs.put(BACKDROP_INPUT, node.getElementChoice());
+        }
+
+        @Override
+        public void visit(final SwitchCostumeTo node) {
+            inputs.put(COSTUME_INPUT, node.getCostumeChoice());
+        }
+
+        @Override
+        public void visit(final Think node) {
+            inputs.put(MESSAGE_KEY, node.getThought());
+        }
+
+        @Override
+        public void visit(final ThinkForSecs node) {
+            inputs.put(MESSAGE_KEY, node.getThought());
+            inputs.put(SECS_KEY, node.getSecs());
+        }
+
+        /*
+         * Motion blocks
+         */
+
+        @Override
+        public void visit(final SetYTo node) {
+            inputs.put(Y, node.getNum());
+        }
+
+        @Override
+        public void visit(final SetXTo node) {
+            inputs.put(X, node.getNum());
+        }
+
+        @Override
+        public void visit(final PointTowards node) {
+            inputs.put(TOWARDS_KEY, node.getPosition());
+        }
+
+        @Override
+        public void visit(final ChangeYBy node) {
+            inputs.put(DY_KEY, node.getNum());
+        }
+
+        @Override
+        public void visit(final ChangeXBy node) {
+            inputs.put(DX_KEY, node.getNum());
+        }
+
+        @Override
+        public void visit(final PointInDirection node) {
+            inputs.put(DIRECTION_KEY_CAP, node.getDirection());
+        }
+
+        @Override
+        public void visit(final GlideSecsToXY node) {
+            inputs.put(X, node.getX());
+            inputs.put(Y, node.getY());
+            inputs.put(SECS_KEY, node.getSecs());
+        }
+
+        @Override
+        public void visit(final GlideSecsTo node) {
+            inputs.put(TO_KEY, node.getPosition());
+            inputs.put(SECS_KEY, node.getSecs());
+        }
+
+        @Override
+        public void visit(final GoToPosXY node) {
+            inputs.put(X, node.getX());
+            inputs.put(Y, node.getY());
+        }
+
+        @Override
+        public void visit(final GoToPos node) {
+            inputs.put(TO_KEY, node.getPosition());
+        }
+
+        @Override
+        public void visit(final TurnRight node) {
+            inputs.put(DEGREES_KEY, node.getDegrees());
+        }
+
+        @Override
+        public void visit(final TurnLeft node) {
+            inputs.put(DEGREES_KEY, node.getDegrees());
+        }
+
+        @Override
+        public void visit(final MoveSteps node) {
+            inputs.put(STEPS_KEY, node.getSteps());
+        }
+
+        /*
+         * Operator blocks
+         */
+
+        @Override
+        public void visit(final Add node) {
+            inputs.put(NUM1_KEY, node.getOperand1());
+            inputs.put(NUM2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Minus node) {
+            inputs.put(NUM1_KEY, node.getOperand1());
+            inputs.put(NUM2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Mult node) {
+            inputs.put(NUM1_KEY, node.getOperand1());
+            inputs.put(NUM2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Div node) {
+            inputs.put(NUM1_KEY, node.getOperand1());
+            inputs.put(NUM2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Mod node) {
+            inputs.put(NUM1_KEY, node.getOperand1());
+            inputs.put(NUM2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Equals node) {
             inputs.put(OPERAND1_KEY, node.getOperand1());
             inputs.put(OPERAND2_KEY, node.getOperand2());
         }
 
         @Override
-        public void visit(Minus node) {
+        public void visit(final LessThan node) {
             inputs.put(OPERAND1_KEY, node.getOperand1());
             inputs.put(OPERAND2_KEY, node.getOperand2());
         }
 
         @Override
-        public void visit(Mult node) {
+        public void visit(final BiggerThan node) {
             inputs.put(OPERAND1_KEY, node.getOperand1());
             inputs.put(OPERAND2_KEY, node.getOperand2());
         }
 
         @Override
-        public void visit(Div node) {
+        public void visit(final And node) {
             inputs.put(OPERAND1_KEY, node.getOperand1());
             inputs.put(OPERAND2_KEY, node.getOperand2());
         }
 
-        // TODO: Which other methods from ScratchVisitor must be overridden?
+        @Override
+        public void visit(final Or node) {
+            inputs.put(OPERAND1_KEY, node.getOperand1());
+            inputs.put(OPERAND2_KEY, node.getOperand2());
+        }
 
-        // TODO: Create overrides for methods from:
-        //  - MusicExtensionVisitor?
-        //  - PenExtensionVisitor?
-        //  - TextToSpeechExtensionVisitor?
-        //  - TranslateExtensionVisitor?
+        @Override
+        public void visit(final Not node) {
+            inputs.put(OPERAND_KEY, node.getOperand1());
+        }
+
+        @Override
+        public void visit(final LetterOf node) {
+            inputs.put(LETTER_KEY, node.getNum());
+            inputs.put(STRING_KEY, node.getStringExpr());
+        }
+
+        @Override
+        public void visit(final Join node) {
+            inputs.put(STRING1_KEY, node.getOperand1());
+            inputs.put(STRING2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final NumFunctOf node) {
+            inputs.put(NUM_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final Round node) {
+            inputs.put(NUM_KEY, node.getOperand1());
+        }
+
+        @Override
+        public void visit(final LengthOfString node) {
+            inputs.put(STRING_KEY, node.getStringExpr());
+        }
+
+        @Override
+        public void visit(final StringContains node) {
+            inputs.put(STRING1_KEY, node.getContaining());
+            inputs.put(STRING2_KEY, node.getContained());
+        }
+
+        @Override
+        public void visit(final PickRandom node) {
+            inputs.put(FROM_KEY, node.getOperand1());
+            inputs.put(TO_KEY, node.getOperand2());
+        }
+
+        /*
+         * Sensing blocks
+         */
+
+        @Override
+        public void visit(final KeyPressed node) {
+            inputs.put(KEY_OPTION, node.getKey());
+        }
+
+        @Override
+        public void visit(final AttributeOf node) {
+            inputs.put(OBJECT_KEY, node.getElementChoice());
+        }
+
+        @Override
+        public void visit(final AskAndWait node) {
+            inputs.put(QUESTION_KEY, node.getQuestion());
+        }
+
+        @Override
+        public void visit(final DistanceTo node) {
+            inputs.put(DISTANCETOMENU_KEY, node.getPosition());
+        }
+
+        @Override
+        public void visit(final ColorTouchingColor node) {
+            inputs.put(COLOR_KEY, node.getOperand1());
+            inputs.put(COLOR2_KEY, node.getOperand2());
+        }
+
+        @Override
+        public void visit(final SpriteTouchingColor node) {
+            inputs.put(COLOR_KEY, node.getColor());
+        }
+
+        @Override
+        public void visit(final Touching node) {
+            inputs.put(TOUCHINGOBJECTMENU, node.getTouchable());
+        }
+
+        /*
+         * Sound blocks
+         */
+
+        @Override
+        public void visit(final SetVolumeTo node) {
+            inputs.put(VOLUME_KEY_CAPS, node.getVolumeValue());
+        }
+
+        @Override
+        public void visit(final ChangeVolumeBy node) {
+            inputs.put(VOLUME_KEY_CAPS, node.getVolumeValue());
+        }
+
+        @Override
+        public void visit(final SetSoundEffectTo node) {
+            inputs.put(VALUE_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final ChangeSoundEffectBy node) {
+            inputs.put(VALUE_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final PlaySoundUntilDone node) {
+            inputs.put(SOUND_MENU, node.getElementChoice());
+        }
+
+        @Override
+        public void visit(final StartSound node) {
+            inputs.put(SOUND_MENU, node.getElementChoice());
+        }
+
+        /*
+         * Variable blocks
+         */
+
+        @Override
+        public void visit(final ListContains node) {
+            inputs.put(ITEM_KEY, node.getElement());
+        }
+
+        @Override
+        public void visit(final ItemOfVariable node) {
+            inputs.put(INDEX_KEY, node.getNum());
+        }
+
+        @Override
+        public void visit(final IndexOf node) {
+            inputs.put(ITEM_KEY, node.getExpr());
+        }
+
+        @Override
+        public void visit(final ReplaceItem node) {
+            inputs.put(ITEM_KEY, node.getString());
+            inputs.put(INDEX_KEY, node.getIndex());
+        }
+
+        @Override
+        public void visit(final InsertAt node) {
+            inputs.put(ITEM_KEY, node.getString());
+            inputs.put(INDEX_KEY, node.getIndex());
+        }
+
+        @Override
+        public void visit(final DeleteAllOf node) {
+            inputs.put(INDEX_KEY, node.getIdentifier());
+        }
+
+        @Override
+        public void visit(final AddTo node) {
+            inputs.put(ITEM_KEY, node.getString());
+        }
+
+        @Override
+        public void visit(final ChangeVariableBy node) {
+            inputs.put(VALUE_KEY, node.getExpr());
+        }
+
+        @Override
+        public void visit(final SetVariableTo node) {
+            inputs.put(VALUE_KEY, node.getExpr());
+        }
+
+        /*
+         * Pen blocks
+         */
+
+        @Override
+        public void visit(final SetPenSizeTo node) {
+            inputs.put(SIZE_KEY_CAP, node.getValue());
+        }
+
+        @Override
+        public void visit(final ChangePenSizeBy node) {
+            inputs.put(SIZE_KEY_CAP, node.getValue());
+        }
+
+        @Override
+        public void visit(final SetPenColorParamTo node) {
+            inputs.put(COLOR_PARAM_BIG_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final ChangePenColorParamBy node) {
+            inputs.put(COLOR_PARAM_BIG_KEY, node.getParam());
+            inputs.put(VALUE_KEY, node.getValue());
+        }
+
+        @Override
+        public void visit(final SetPenColorToColorStmt node) {
+            inputs.put(COLOR_KEY, node.getColorExpr());
+        }
     }
 }
