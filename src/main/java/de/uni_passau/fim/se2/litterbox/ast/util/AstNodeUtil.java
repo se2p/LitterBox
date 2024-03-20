@@ -189,6 +189,59 @@ public class AstNodeUtil {
     }
 
     /**
+     * Creates a map that associates block IDs with the corresponding AST nodes, starting at the given root node.
+     *
+     * @param root The root of the tree.
+     * @return A map from block IDs to their AST nodes in the tree with {@code root} as root node.
+     */
+    public static Map<String, ASTNode> getBlockMap(final ASTNode root) {
+        final BlockMapVisitor visitor = new BlockMapVisitor();
+        root.accept(visitor);
+        return visitor.blockMap;
+    }
+
+    private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+        private final Map<String, ASTNode> blockMap = new LinkedHashMap<>();
+
+        private BlockMapVisitor() {
+        }
+
+        @Override
+        public void visit(final ASTNode node) {
+            final String blockId = AstNodeUtil.getBlockId(node);
+            if (blockId != null) {
+                blockMap.put(blockId, node);
+            }
+            visitChildren(node);
+        }
+    }
+
+    private static ASTNode getFirstStmtOrNull(final StmtList stmtList) {
+        return stmtList.hasStatements() ? stmtList.getStatement(0) : null;
+    }
+
+    private static ASTNode getFirstStmtSubstack(final ASTNode node) {
+        if (node instanceof IfStmt ifStmt) {
+            return getFirstStmtOrNull(ifStmt.getThenStmts());
+        }
+
+        if (node instanceof LoopStmt loopStmt) {
+            return getFirstStmtOrNull(loopStmt.getStmtList());
+        }
+
+        return null;
+    }
+
+    private static ASTNode getFirstStmtSubstack2(final ASTNode node) {
+        if (node instanceof IfElseStmt ifElseStmt) {
+            return getFirstStmtOrNull(ifElseStmt.getElseStmts());
+        }
+
+        return null;
+    }
+
+    /**
      * Tells if the given AST node is an input of the requested kind.
      *
      * @param child     The node to inspect.
