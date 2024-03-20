@@ -1,0 +1,149 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "control_if": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "CONDITION": [
+                            3,
+                            "operator_equals",
+                            null
+                        ],
+                        "SUBSTACK": [
+                            3,
+                            "motion_movesteps",
+                            null
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 44,
+                    "y": 44
+                },
+                "operator_equals": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "control_if",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "sensing_of",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "sensing_of": {
+                    "opcode": "sensing_of",
+                    "next": null,
+                    "parent": "operator_equals",
+                    "inputs": {
+                        "OBJECT": [
+                            1,
+                            "sensing_of_object_menu"
+                        ]
+                    },
+                    "fields": {
+                        "PROPERTY": [
+                            "backdrop #"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "sensing_of_object_menu": {
+                    "opcode": "sensing_of_object_menu",
+                    "next": null,
+                    "parent": "sensing_of",
+                    "inputs": {},
+                    "fields": {
+                        "OBJECT": [
+                            "_stage_"
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "motion_movesteps": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "control_if",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1123,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "redacted"
+    }
+}
