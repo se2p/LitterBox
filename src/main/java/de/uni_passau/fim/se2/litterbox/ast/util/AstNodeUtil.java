@@ -265,8 +265,7 @@ public class AstNodeUtil {
         return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
-    private static class IsInputOfVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor {
         private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
