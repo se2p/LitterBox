@@ -19,22 +19,11 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.astnn.AstnnAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2SeqAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.shared.ActorNameNormalizer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.tokenizer.TokenizingAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.MaskingStrategy;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,12 +45,6 @@ import java.util.concurrent.Callable;
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
                 Main.ExtractSubcommand.class,
-                // machine learning preprocessors
-                Main.AstnnSubcommand.class,
-                Main.Code2SeqSubcommand.class,
-                Main.Code2vecSubcommand.class,
-                Main.GgnnSubcommand.class,
-                Main.TokenizerSubcommand.class
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -81,12 +64,7 @@ import java.util.concurrent.Callable;
                 "%nExample for refactoring:%n"
                         + "java -jar Litterbox.jar refactor%n"
                         + "    --path ~/path/to/project%n"
-                        + "    -r ~/path/to/output/folder/for/refactored/project",
-                "%nExample for code2vec preprocessing:%n"
-                        + "java -jar Litterbox.jar code2vec%n"
-                        + "    --path ~/path/to/json/project/or/folder/with/projects%n"
-                        + "    -o ~/path/to/folder/or/file/for/the/output%n"
-                        + "    --max-path-length 8",
+                        + "    -r ~/path/to/output/folder/for/refactored/project"
         }
 )
 public class Main implements Callable<Integer> {
@@ -150,7 +128,7 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
-        protected abstract Analyzer<?> getAnalyzer() throws Exception;
+        protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
         /**
          * Override to implement custom parameter validation before the analyzer is run.
@@ -167,17 +145,19 @@ public class Main implements Callable<Integer> {
 
             validateParams();
 
-            final Analyzer<?> analyzer = getAnalyzer();
+            final FileAnalyzer<?> analyzer = getAnalyzer();
             return runAnalysis(analyzer);
         }
 
-        private int runAnalysis(final Analyzer<?> analyzer) throws IOException {
+        private int runAnalysis(final FileAnalyzer<?> analyzer) throws IOException {
             if (projectId != null) {
-                analyzer.analyzeSingle(projectId);
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
+                projectIdAnalyzer.analyzeSingle(projectId);
             } else if (projectList != null) {
-                analyzer.analyzeMultiple(projectList);
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
+                projectIdAnalyzer.analyzeMultiple(projectList);
             } else {
-                analyzer.analyzeFile();
+                analyzer.analyzeFile(projectPath);
             }
 
             return 0;
@@ -237,7 +217,6 @@ public class Main implements Callable<Integer> {
             final String detector = String.join(",", detectors);
 
             final BugAnalyzer analyzer = new BugAnalyzer(
-                    projectPath,
                     outputPath,
                     detector,
                     ignoreLooseBlocks,
@@ -315,7 +294,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(projectPath, outputPath, deleteProject);
+            return new FeatureAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -338,7 +317,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected LeilaAnalyzer getAnalyzer() {
-            return new LeilaAnalyzer(projectPath, outputPath, nonDeterministic, false, deleteProject);
+            return new LeilaAnalyzer(outputPath, nonDeterministic, false, deleteProject);
         }
     }
 
@@ -361,12 +340,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected RefactoringAnalyzer getAnalyzer() {
-            return new RefactoringAnalyzer(
-                    projectPath,
-                    outputPath,
-                    refactoredPath,
-                    deleteProject
-            );
+            return new RefactoringAnalyzer(outputPath, refactoredPath, deleteProject);
         }
     }
 
@@ -384,7 +358,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected MetricAnalyzer getAnalyzer() {
-            return new MetricAnalyzer(projectPath, outputPath, deleteProject);
+            return new MetricAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -402,7 +376,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected ExtractionAnalyzer getAnalyzer() {
-            return new ExtractionAnalyzer(projectPath, outputPath, deleteProject);
+            return new ExtractionAnalyzer(outputPath, deleteProject);
         }
     }
 
@@ -420,210 +394,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected DotAnalyzer getAnalyzer() {
-            return new DotAnalyzer(projectPath, outputPath, deleteProject);
-        }
-    }
-
-    abstract static class MLPreprocessorSubcommand extends LitterBoxSubcommand {
-        @CommandLine.Option(
-                names = {"-s", "--include-stage"},
-                description = "Include the stage like a regular sprite into the analysis."
-        )
-        boolean includeStage;
-
-        @CommandLine.Option(
-                names = {"-w", "--whole-program"},
-                description = "Treat the program as a single big sprite."
-        )
-        boolean wholeProgram;
-
-        @CommandLine.Option(
-                names = {"--include-default-sprites"},
-                description = "Include sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
-        )
-        boolean includeDefaultSprites;
-
-        @CommandLine.Option(
-                names = {"--abstract-tokens"},
-                description = "Replaces literal values and variable names with abstract tokens. "
-                        + "E.g., '1.0' -> 'numberliteral'."
-        )
-        boolean abstractTokens = false;
-
-        @CommandLine.Option(
-                names = {"--latin-only-sprite-names"},
-                description = "Normalise sprite names to include characters in the latin base alphabet (a-z) only."
-        )
-        boolean latinOnlyActorNames;
-
-        protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
-            if (outputPath != null) {
-                final File outputDirectory = outputPath.toFile();
-                if (outputDirectory.exists() && !outputDirectory.isDirectory()) {
-                    throw new CommandLine.ParameterException(
-                            spec.commandLine(),
-                            "The output path for a machine learning preprocessor must be a directory."
-                    );
-                }
-                return MLOutputPath.directory(outputDirectory.toPath());
-            } else {
-                return MLOutputPath.console();
-            }
-        }
-
-        protected final MLPreprocessorCommonOptions getCommonOptions() {
-            requireProjectPath();
-
-            final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
-                    includeDefaultSprites, abstractTokens, buildActorNameNormalizer());
-        }
-
-        private ActorNameNormalizer buildActorNameNormalizer() {
-            if (latinOnlyActorNames) {
-                return NodeNameUtil::normalizeSpriteNameLatinOnly;
-            } else {
-                return ActorNameNormalizer.getDefault();
-            }
-        }
-    }
-
-    @CommandLine.Command(
-            name = "astnn",
-            description = "Transform Scratch projects into the ASTNN input format."
-    )
-    static class AstnnSubcommand extends MLPreprocessorSubcommand {
-
-        @Override
-        protected AstnnAnalyzer getAnalyzer() {
-            return new AstnnAnalyzer(getCommonOptions());
-        }
-    }
-
-    private abstract static class Code2Subcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leaves. "
-                        + "Zero means there is no max path length. "
-                        + "Default: 8."
-        )
-        int maxPathLength = 8;
-
-        @CommandLine.Option(
-                names = {"--scripts"},
-                description = "Generate token per script."
-        )
-        boolean isPerScript = false;
-
-        @Override
-        protected void validateParams() throws CommandLine.ParameterException {
-            if (maxPathLength < 0) {
-                throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
-            }
-
-            if (wholeProgram && isPerScript) {
-                throw new CommandLine.ParameterException(
-                        spec.commandLine(),
-                        "The analysis must be done either per script or for whole program"
-                );
-            }
-        }
-    }
-
-    @CommandLine.Command(
-            name = "code2vec",
-            description = "Transform Scratch projects into the code2vec input format."
-    )
-    static class Code2vecSubcommand extends Code2Subcommand {
-
-        @Override
-        protected Code2VecAnalyzer getAnalyzer() {
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
-        }
-    }
-
-    @CommandLine.Command(
-            name = "code2seq",
-            description = "Transform Scratch projects into the code2seq input format."
-    )
-    static class Code2SeqSubcommand extends Code2Subcommand {
-
-        @Override
-        protected Code2SeqAnalyzer getAnalyzer() {
-            return new Code2SeqAnalyzer(getCommonOptions(), maxPathLength, isPerScript);
-        }
-    }
-
-    @CommandLine.Command(
-            name = "ggnn",
-            description = "Transform Scratch projects into the Gated Graph Neural Network input format."
-    )
-    static class GgnnSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--label"},
-                description = "Use a specific label for the graph instead of the file name."
-        )
-        String label;
-
-        @CommandLine.Option(
-                names = {"--dotgraph"},
-                description = "Generate a dot-graph representation of the GGNN graph."
-        )
-        boolean dotGraph;
-
-        @Override
-        protected GgnnGraphAnalyzer getAnalyzer() {
-            return new GgnnGraphAnalyzer(getCommonOptions(), dotGraph, label);
-        }
-    }
-
-    @CommandLine.Command(
-            name = "tokenizer",
-            description = "Transforms each Scratch project into a token sequence."
-    )
-    static class TokenizerSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--sequence-per-script"},
-                description = "Generate one token sequence per script instead of per sprite/program."
-                        + "Custom procedure definitions count as scripts."
-        )
-        boolean sequencePerScript = false;
-
-        @CommandLine.Option(
-                names = {"--abstract-fixed-node-options"},
-                description = "Replace fixed node options with abstract tokens."
-        )
-        boolean abstractFixedNodeOption = false;
-
-        @CommandLine.Option(
-                names = {"--statement-level"},
-                description = "Generate a sequence consisting of only statement tokens."
-        )
-        boolean statementLevel = false;
-
-        @CommandLine.Option(
-                names = {"--masked-statement-id"},
-                description = "Block-Id of the statement to mask. Default: no masking."
-        )
-        String maskedStatementId = null;
-
-        @Override
-        protected TokenizingAnalyzer getAnalyzer() {
-            if (wholeProgram && sequencePerScript) {
-                throw new CommandLine.ParameterException(
-                        spec.commandLine(),
-                        "Cannot generate one sequence for the whole program and sequences per script at the same time."
-                );
-            }
-
-            final var maskingStrategy = maskedStatementId == null
-                    ? MaskingStrategy.none()
-                    : MaskingStrategy.statement(maskedStatementId);
-            return new TokenizingAnalyzer(getCommonOptions(), sequencePerScript, abstractFixedNodeOption,
-                    statementLevel, maskingStrategy);
+            return new DotAnalyzer(outputPath, deleteProject);
         }
     }
 }

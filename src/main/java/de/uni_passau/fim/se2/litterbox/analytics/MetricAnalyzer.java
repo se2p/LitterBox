@@ -18,24 +18,28 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MetricAnalyzer extends Analyzer<List<MetricResult>> {
+public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
 
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
-    private final MetricTool issueTool;
 
-    public MetricAnalyzer(Path input, Path output, boolean delete) {
-        super(input, output, delete);
-        this.issueTool = new MetricTool();
+    private final ProgramMetricAnalyzer analyzer;
+
+    public MetricAnalyzer(Path output, boolean delete) {
+        super(new ProgramMetricAnalyzer(), output, delete);
+        this.analyzer = (ProgramMetricAnalyzer) super.analyzer;
     }
 
     @Override
@@ -45,22 +49,36 @@ public class MetricAnalyzer extends Analyzer<List<MetricResult>> {
             return;
         }
 
-        issueTool.createCSVFile(program, output);
+        createCSVFile(program, output);
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, List<MetricResult> checkResult)
             throws IOException {
         try {
-            issueTool.createCSVFile(program, output);
+            createCSVFile(program, output);
         } catch (IOException e) {
             log.warning("Could not create CSV file: " + output);
             throw e;
         }
     }
 
-    @Override
-    public List<MetricResult> check(Program program) {
-        return issueTool.calculateMetrics(program);
+    private void createCSVFile(Program program, Path fileName) throws IOException {
+        final List<String> headers = new ArrayList<>();
+        headers.add("project");
+        analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
+
+        final List<String> row = new ArrayList<>();
+        row.add(program.getIdent().getName());
+
+        List<MetricResult> results = analyzer.analyze(program);
+        for (MetricResult result : results) {
+            row.add(Double.toString(result.value()));
+        }
+
+        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
+            printer.printRecord(row);
+            printer.flush();
+        }
     }
 }
