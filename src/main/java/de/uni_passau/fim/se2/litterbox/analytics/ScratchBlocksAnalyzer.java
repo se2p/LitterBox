@@ -19,33 +19,22 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
-public class ScratchBlocksAnalyzer extends Analyzer<String> {
-    private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
+public class ScratchBlocksAnalyzer extends FileAnalyzer<String> {
 
-    public ScratchBlocksAnalyzer(Path input, Path output, boolean delete) {
-        super(input, output, delete);
-    }
-
-    public ScratchBlocksAnalyzer() {
-        super(null, null, false);
+    public ScratchBlocksAnalyzer(Path output, boolean delete) {
+        super(new ProgramScratchBlocksAnalyzer(), output, delete);
     }
 
     @Override
-    public String check(Program program) {
-        ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
-        vis.setAddActorNames(true);
-        program.accept(vis);
-        return vis.getScratchBlocks();
-    }
-
-    @Override
-    protected void writeResultToFile(Path projectFile, Program program, String checkResult) throws IOException {
-
+    protected void writeResultToFile(Path projectFile, Program program, String scratchBlocks) throws IOException {
+        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
+            bw.write(scratchBlocks);
+        }
     }
 }

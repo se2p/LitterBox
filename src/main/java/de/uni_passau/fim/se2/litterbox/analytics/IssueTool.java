@@ -299,7 +299,7 @@ public class IssueTool {
                 finders.addAll(strictFinders);
             }
 
-            case GPT_EVAL ->  {
+            case MOST_COMMON_BUGS ->  {
                 finders.add(new MessageNeverSent());
                 finders.add(new MissingLoopSensing());
                 finders.add(new ComparingLiterals());

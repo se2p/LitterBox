@@ -44,6 +44,7 @@ import java.util.concurrent.Callable;
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
+                Main.ScratchBlocksSubcommand.class,
                 Main.ExtractSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
@@ -395,6 +396,24 @@ public class Main implements Callable<Integer> {
         @Override
         protected DotAnalyzer getAnalyzer() {
             return new DotAnalyzer(outputPath, deleteProject);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "scratchblocks",
+            description = "Convert the project into a scratchblocks string."
+    )
+    static class ScratchBlocksSubcommand extends LitterBoxSubcommand {
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected ScratchBlocksAnalyzer getAnalyzer() {
+            return new ScratchBlocksAnalyzer(outputPath, deleteProject);
         }
     }
 }
