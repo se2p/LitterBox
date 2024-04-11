@@ -27,13 +27,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MultiAttributeModificationRobot;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.UnnecessaryTimeRobot;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
+import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import java.util.stream.Stream;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -280,47 +280,53 @@ public class IssueTool {
         return perfumeFinders;
     }
 
+    public static List<IssueFinder> getFinders(final FinderGroup finderGroup) {
+        final Collection<IssueFinder> finders = switch (finderGroup) {
+            case ALL -> generateAllFinders().values();
+            case SMELLS -> generateSmellFinders().values();
+            case BUGS -> generateBugFinders().values();
+            case BUGS_SCRIPTS -> generateScriptsBugFinders().values();
+            case PERFUMES -> generatePerfumeFinders().values();
+            case DEFAULT -> generateAllFinders().values().stream()
+                    .filter(f -> !f.getName().toLowerCase().endsWith("strict"))
+                    .toList();
+            case FLAWS -> {
+                final Collection<IssueFinder> bugFinders = generateBugFinders().values();
+                final Collection<IssueFinder> smellFinders = generateSmellFinders().values();
+                yield Stream.concat(bugFinders.stream(), smellFinders.stream()).toList();
+            }
+            case MOST_COMMON_BUGS -> List.of(
+                    new MessageNeverSent(),
+                    new MissingLoopSensing(),
+                    new ComparingLiterals(),
+                    new MissingCloneInitialization(),
+                    new MessageNeverReceived(),
+                    new ForeverInsideLoop(),
+                    new StutteringMovement()
+            );
+        };
+
+        return List.copyOf(finders);
+    }
+
     public static List<IssueFinder> getFinders(String commandString) {
+        final Optional<FinderGroup> issueType = FinderGroup.tryFromString(commandString);
+        if (issueType.isPresent()) {
+            return getFinders(issueType.get());
+        }
+
         List<IssueFinder> finders = new ArrayList<>();
 
-        switch (commandString) {
-            case ALL -> finders = new ArrayList<>(generateAllFinders().values());
-            case FLAWS -> {
-                finders = new ArrayList<>(generateBugFinders().values());
-                finders.addAll(generateSmellFinders().values());
+        for (String detectorName : commandString.split(",")) {
+            Map<String, IssueFinder> allFinders = generateAllFinders();
+            if (!allFinders.containsKey(detectorName)) {
+                // TODO: Hard crash might be more appropriate to notify user
+                log.log(Level.SEVERE, "Unknown finder: " + detectorName);
+                continue;
             }
-            case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
-            case BUGS_SCRIPTS -> finders = new ArrayList<>(generateScriptsBugFinders().values());
-            case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
-            case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
-            case DEFAULT -> {
-                var strictFinders = generateAllFinders().values().stream()
-                        .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
-                finders.addAll(strictFinders);
-            }
-
-            case MOST_COMMON_BUGS ->  {
-                finders.add(new MessageNeverSent());
-                finders.add(new MissingLoopSensing());
-                finders.add(new ComparingLiterals());
-                finders.add(new MissingCloneInitialization());
-                finders.add(new MessageNeverReceived());
-                finders.add(new ForeverInsideLoop());
-                finders.add(new StutteringMovement());
-            }
-
-            default -> {
-                for (String detectorName : commandString.split(",")) {
-                    Map<String, IssueFinder> allFinders = generateAllFinders();
-                    if (!allFinders.containsKey(detectorName)) {
-                        // TODO: Hard crash might be more appropriate to notify user
-                        log.log(Level.SEVERE, "Unknown finder: " + detectorName);
-                        continue;
-                    }
-                    finders.add(allFinders.get(detectorName));
-                }
-            }
+            finders.add(allFinders.get(detectorName));
         }
+
         return Collections.unmodifiableList(finders);
     }
 

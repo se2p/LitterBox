@@ -18,14 +18,35 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-public class GroupConstants {
-    public static final String ALL = "all";
-    public static final String CTSCORE = "ctscore";
-    public static final String SMELLS = "smells";
-    public static final String BUGS = "bugs";
-    public static final String BUGS_SCRIPTS = "script-bugs";
-    public static final String PERFUMES = "perfumes";
-    public static final String DEFAULT = "default";
-    public static final String MOST_COMMON_BUGS = "most_common_bugs";
-    public static final String FLAWS = "flaws";
+import java.util.Arrays;
+import java.util.Optional;
+
+/**
+ * Pre-defined groups of {@link de.uni_passau.fim.se2.litterbox.analytics.IssueFinder}.
+ */
+public enum FinderGroup {
+    ALL("all"),
+    SMELLS("smells"),
+    BUGS("bugs"),
+    BUGS_SCRIPTS("script-bugs"),
+    PERFUMES("perfumes"),
+    DEFAULT("default"),
+    FLAWS("flaws"),
+    MOST_COMMON_BUGS("most_common_bugs");
+
+    private final String group;
+
+    FinderGroup(final String group) {
+        this.group = group;
+    }
+
+    public static Optional<FinderGroup> tryFromString(final String groupName) {
+        return Arrays.stream(FinderGroup.values())
+                .filter(issueType -> issueType.group().equals(groupName))
+                .findAny();
+    }
+
+    public String group() {
+        return group;
+    }
 }

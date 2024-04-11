@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
@@ -258,11 +258,11 @@ public class Main implements Callable<Integer> {
             final String detectorFormat = "\t%-20s %-30s%n";
 
             System.out.println("Detectors:");
-            System.out.printf(detectorFormat, GroupConstants.ALL, messages.getInfo(GroupConstants.ALL));
-            System.out.printf(detectorFormat, GroupConstants.BUGS, messages.getInfo(GroupConstants.BUGS));
-            System.out.printf(detectorFormat, GroupConstants.SMELLS, messages.getInfo(GroupConstants.SMELLS));
-            System.out.printf(detectorFormat, GroupConstants.PERFUMES, messages.getInfo(GroupConstants.PERFUMES));
-            System.out.printf(detectorFormat, GroupConstants.FLAWS, messages.getInfo(GroupConstants.FLAWS));
+            System.out.printf(detectorFormat, FinderGroup.ALL, messages.getInfo(FinderGroup.ALL));
+            System.out.printf(detectorFormat, FinderGroup.BUGS, messages.getInfo(FinderGroup.BUGS));
+            System.out.printf(detectorFormat, FinderGroup.SMELLS, messages.getInfo(FinderGroup.SMELLS));
+            System.out.printf(detectorFormat, FinderGroup.PERFUMES, messages.getInfo(FinderGroup.PERFUMES));
+            System.out.printf(detectorFormat, FinderGroup.FLAWS, messages.getInfo(FinderGroup.FLAWS));
 
             System.out.println(System.lineSeparator());
             System.out.printf(detectorFormat, "Bugpatterns:", "");
