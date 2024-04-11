@@ -401,7 +401,7 @@ public class Main implements Callable<Integer> {
 
     @CommandLine.Command(
             name = "scratchblocks",
-            description = "Convert the project into a scratchblocks string."
+            description = "Convert the project into scratchblocks notation."
     )
     static class ScratchBlocksSubcommand extends LitterBoxSubcommand {
 
