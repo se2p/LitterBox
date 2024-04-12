@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -113,7 +113,7 @@ public class ResourceBundleTest {
     @ValueSource(strings = {"de", "en", "es"})
     public void checkBugResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
-        List<IssueFinder> bugFinders = IssueTool.getFinders(GroupConstants.BUGS);
+        List<IssueFinder> bugFinders = IssueTool.getFinders(FinderGroup.BUGS);
         for (IssueFinder finder : bugFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
@@ -127,7 +127,7 @@ public class ResourceBundleTest {
     @ValueSource(strings = {"de", "en", "es"})
     public void checkSmellResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
-        List<IssueFinder> smellFinders = IssueTool.getFinders(GroupConstants.SMELLS);
+        List<IssueFinder> smellFinders = IssueTool.getFinders(FinderGroup.SMELLS);
         for (IssueFinder finder : smellFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
@@ -141,7 +141,7 @@ public class ResourceBundleTest {
     @ValueSource(strings = {"de", "en", "es"})
     public void checkPerfumeResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
-        List<IssueFinder> perfumeFinders = IssueTool.getFinders(GroupConstants.PERFUMES);
+        List<IssueFinder> perfumeFinders = IssueTool.getFinders(FinderGroup.PERFUMES);
         for (IssueFinder finder : perfumeFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language " + locale + ", hint key " + key + " not found in resources").that(hints.keySet()).contains(key);
@@ -178,7 +178,7 @@ public class ResourceBundleTest {
     @ValueSource(strings = {"de", "en", "es"})
     public void checkSpuriousHints(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
-        List<IssueFinder> allFinders = IssueTool.getFinders(GroupConstants.ALL);
+        List<IssueFinder> allFinders = IssueTool.getFinders(FinderGroup.ALL);
         Set<String> hintKeys = allFinders.stream().flatMap(f -> f.getHintKeys().stream()).collect(Collectors.toSet());
         for (String key : Collections.list(names.getKeys())) {
             assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);

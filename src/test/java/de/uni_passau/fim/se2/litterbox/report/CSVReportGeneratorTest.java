@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
+import static de.uni_passau.fim.se2.litterbox.utils.FinderGroup.BUGS;
 
 public class CSVReportGeneratorTest implements JsonTest {
 

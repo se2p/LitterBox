@@ -159,6 +159,17 @@ public final class IssueTranslator {
         }
     }
 
+    /**
+     * Finds the translation for a finder group.
+     *
+     * @param finderGroup Some finder group.
+     * @return The translated name.
+     */
+    public String getInfo(final FinderGroup finderGroup) {
+        final String keyword = finderGroup.group();
+        return getInfo(keyword);
+    }
+
     public String getInfo(GeneralTerm keyword) {
         return getInfo(keyword.getKey());
     }
