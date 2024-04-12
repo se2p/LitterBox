@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.utils;
+package de.uni_passau.fim.se2.litterbox.analytics;
 
-public class GroupConstants {
-    public static final String ALL = "all";
-    public static final String CTSCORE = "ctscore";
-    public static final String SMELLS = "smells";
-    public static final String BUGS = "bugs";
-    public static final String BUGS_SCRIPTS = "script-bugs";
-    public static final String PERFUMES = "perfumes";
-    public static final String DEFAULT = "default";
-    public static final String MOST_COMMON_BUGS = "most_common_bugs";
-    public static final String FLAWS = "flaws";
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+
+public class ProgramScratchBlocksAnalyzer implements ProgramAnalyzer<String> {
+
+    @Override
+    public String analyze(Program program) {
+        ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
+        vis.setAddActorNames(true);
+        program.accept(vis);
+        return vis.getScratchBlocks();
+    }
 }

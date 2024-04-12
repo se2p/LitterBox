@@ -99,6 +99,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -150,6 +151,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     private final Set<String> issueNote = new LinkedHashSet<>();
 
     private boolean requireScript = true;
+
+    private boolean addActorNames = false;
 
     public ScratchBlocksVisitor() {
         super(null);
@@ -208,6 +211,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
+        if (addActorNames) {
+            if (hasContent) {
+                newLine();
+            }
+            emitNoSpace("//Sprite: " + node.getIdent().getName());
+            hasContent = true;
+        }
         super.visit(node);
         currentActor = null;
     }
@@ -227,6 +237,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(ScriptList node) {
         for (Script script : node.getScriptList()) {
             if (hasContent) {
+                newLine();
+            }
+            if (addActorNames) {
+                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script.getEvent()));
                 newLine();
             }
             script.accept(this);
@@ -3270,5 +3284,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         emitNoSpace("(");
         emitNoSpace(node.getType().getName());
         emitNoSpace(" v)");
+    }
+
+    public void setAddActorNames(boolean addActorNames) {
+        this.addActorNames = addActorNames;
     }
 }

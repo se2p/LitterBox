@@ -16,16 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.utils;
+package de.uni_passau.fim.se2.litterbox.analytics;
 
-public class GroupConstants {
-    public static final String ALL = "all";
-    public static final String CTSCORE = "ctscore";
-    public static final String SMELLS = "smells";
-    public static final String BUGS = "bugs";
-    public static final String BUGS_SCRIPTS = "script-bugs";
-    public static final String PERFUMES = "perfumes";
-    public static final String DEFAULT = "default";
-    public static final String MOST_COMMON_BUGS = "most_common_bugs";
-    public static final String FLAWS = "flaws";
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class ScratchBlocksAnalyzer extends FileAnalyzer<String> {
+
+    public ScratchBlocksAnalyzer(Path output, boolean delete) {
+        super(new ProgramScratchBlocksAnalyzer(), output, delete);
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, String scratchBlocks) throws IOException {
+        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
+            bw.write(scratchBlocks);
+        }
+    }
 }

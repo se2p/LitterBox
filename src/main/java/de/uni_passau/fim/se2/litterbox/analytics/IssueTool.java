@@ -298,6 +298,17 @@ public class IssueTool {
                         .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
                 finders.addAll(strictFinders);
             }
+
+            case MOST_COMMON_BUGS ->  {
+                finders.add(new MessageNeverSent());
+                finders.add(new MissingLoopSensing());
+                finders.add(new ComparingLiterals());
+                finders.add(new MissingCloneInitialization());
+                finders.add(new MessageNeverReceived());
+                finders.add(new ForeverInsideLoop());
+                finders.add(new StutteringMovement());
+            }
+
             default -> {
                 for (String detectorName : commandString.split(",")) {
                     Map<String, IssueFinder> allFinders = generateAllFinders();
