@@ -55,7 +55,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public void visit(ActorDefinition actor) {
         Preconditions.checkNotNull(program);
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procMap = program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
         visitChildren(actor);
     }
 
