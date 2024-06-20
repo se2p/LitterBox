@@ -33,7 +33,7 @@ import java.nio.file.Path;
 class JSONCreate implements JsonTest {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-   // @AfterAll
+    @AfterAll
     static void cleanUp() throws IOException {
         Files.delete(Path.of("createBroadcast_annotated.json"));
     }
