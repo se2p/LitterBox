@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,8 @@ class JSONCreate {
     public void createJSON() throws ParsingException, IOException {
         File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JsonNode prog = mapper.readTree(f);
-        Program test = ProgramParser.parseProgram("createBroadcast", prog);
+        Scratch3Parser parser = new Scratch3Parser();
+        Program test = parser.parseJsonNode("createBroadcast", prog);
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
