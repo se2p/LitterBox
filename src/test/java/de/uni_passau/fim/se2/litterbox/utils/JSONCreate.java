@@ -18,21 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-class JSONCreate {
+class JSONCreate implements JsonTest {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @AfterAll
@@ -42,10 +40,7 @@ class JSONCreate {
 
     @Test
     public void createJSON() throws ParsingException, IOException {
-        File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
-        JsonNode prog = mapper.readTree(f);
-        Scratch3Parser parser = new Scratch3Parser();
-        Program test = parser.parseJsonNode("createBroadcast", prog);
+        Program test = getAST("./src/test/fixtures/ifTouchingMinimal.json");
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
