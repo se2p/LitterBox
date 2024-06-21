@@ -202,7 +202,7 @@ expression      : numLiteral
                 | 'expression' //placeholder
                 ;
 
-boolExpression : ' '
+boolExpression : 'bool'
                ;
 
 
