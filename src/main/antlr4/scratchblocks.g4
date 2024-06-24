@@ -114,7 +114,7 @@ variableStmt    : 'set ['STRING' v] to 'expression
                 | 'hide list ['STRING' v]'
                 ;
 
-position        : '('  fixedPosition' v)'
+position        : '('fixedPosition' v)'
                 | expression
                 ;
 
@@ -128,11 +128,11 @@ rotation        : 'left-right'
                 | 'all around'
                 ;
 
-costumeSelect   : '('STRING' v)'
+costumeSelect   : '('STRING' v)' //costume
                 | expression
                 ;
 
-backdropSelect  : '('STRING' v)'
+backdropSelect  : '('STRING' v)' //backdrop
                 | 'next backdrop'
                 | 'previous backdrop'
                 | 'random backdrop'
@@ -154,7 +154,7 @@ forwardBackwardChoice: 'forward'
 layerChoice     : 'front'
                 | 'back';
 
-soundChoice     : '('STRING' v)'
+soundChoice     : '('STRING' v)' //sound
                 | expression
                 ;
 
@@ -168,11 +168,11 @@ stopChoice      : 'all'
                 ;
 
 cloneChoice     : '(myself v)'
-                | '('STRING' v)'
+                | '('STRING' v)' //sprite
                 | expression
                 ;
 
-message         : '('STRING 'v)'
+message         : '('STRING 'v)' //message
                 | expression
                 ;
 
@@ -199,8 +199,17 @@ expression      : '('numExpr')'
                 | '('STRING')' //variable
                 ;
 
-boolExpr : 'bool'
-               ;
+boolExpr : 'touching 'touchingChoice'?'
+         | 'touching color 'touchingColor'?'
+         | 'color 'touchingColor' is touching 'touchingColor'?'
+         | 'key 'key' pressed?'
+         | 'mouse down?'
+         | expression' > 'expression
+         | expression' = 'expression
+         | 'not 'expression
+         | expression' contains 'expression'?'
+         | '['STRING' v] contains 'expression'?'
+         ;
 
 numExpr     : NUMBER
             | 'x position'
@@ -231,6 +240,9 @@ numExpr     : NUMBER
             | expression' mod 'expression
             | 'round 'expression
             | mathChoice' of 'expression
+            | 'item 'expression' of ['STRING' v]'
+            | 'item # of 'expression' in ['STRING' v]'
+            | 'length of ['STRING' v]'
             ;
 
 stringLiteral   : '['STRING']';
@@ -244,7 +256,59 @@ nameNum     : 'number'
             | 'name'
             ;
 
+currentChoice   : 'year'
+                | 'month'
+                | 'date'
+                | 'day of the week'
+                | 'hour'
+                | 'minute'
+                | 'second'
+                ;
 
+mathChoice      : 'abs'
+                | 'floor'
+                | 'ceiling'
+                | 'sqrt'
+                | 'sin'
+                | 'cos'
+                | 'tan'
+                | 'asin'
+                | 'acos'
+                | 'atan'
+                | 'ln'
+                | 'log'
+                | 'e ^'
+                | '10 ^'
+                ;
+
+attributeChoice : '('STRING' v)' //variable
+                | '('fixedAttribute' v)'
+                | expression
+                ;
+
+fixedAttribute  : 'backdrop #'
+                | 'backdrop name'
+                | 'volume'
+                | 'x position'
+                | 'y position'
+                | 'direction'
+                | 'costume #'
+                | 'costume name'
+                | 'size'
+                ;
+
+touchingChoice  : '('fixedTouching' v)'
+                | '('STRING' v)'
+                | expression
+                ;
+
+fixedTouching   : 'any'
+                | 'edge'
+                ;
+
+touchingColor   : expression
+                | '[#'STRING']' //todo change this to hex value
+                ;
 
 /*
  * Lexer Rules
