@@ -307,14 +307,19 @@ fixedTouching   : 'any'
                 ;
 
 touchingColor   : expression
-                | '[#'STRING']' //todo change this to hex value
+                | '(' HEX ')'
                 ;
 
 /*
  * Lexer Rules
  */
 
+fragment HEX_DIGIT : [0-9a-fA-F];
+
 NUMBER          : [0-9]+ ('.' [0-9]+)?;
 STRING          : '"' ~["]* '"';
 WS              : [ \t\r\n]+ -> skip;
 COMMENT         : '//' ~[\r\n]* ;
+HEX: '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
+
