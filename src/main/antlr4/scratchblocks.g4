@@ -5,25 +5,36 @@ grammar scratchblocks;
  */
 
 // Define the entry point for the parser
-script          : (stmt | COMMENT)* EOF;  //wir sollten ein script als combination aus 0 oder 1 event und einer stmt list machen oder 0 event und ein expressionStmt
+actor           : scriptList (COMMENT)? EOF;
+
+scriptList      : (script)*;
+
+script          : event (COMMENT)?
+                | (event (COMMENT)?)? stmt stmtList
+                | expressionStmt (COMMENT)?
+                | 'define 'STRING (parameter)* //custom block
+                ;
+
+parameter       : '<'STRING'>'
+                | '('STRING')'
+                ;
 
 // Block rules
-stmt           : motionStmt
-                | looksStmt
-                | soundStmt
-                | eventStmt
-                | controlStmt
-                | sensingStmt
-                | expressionStmt  // kann nur ein einzelnes davon geben, also evtl auf script ebene setzen
-                | variableStmt
-//               | customBlock
+stmt            : motionStmt (COMMENT)?
+                | looksStmt (COMMENT)?
+                | soundStmt (COMMENT)?
+                | eventStmt (COMMENT)?
+                | controlStmt (COMMENT)?
+                | sensingStmt (COMMENT)?
+                | variableStmt (COMMENT)?
+                | STRING (exprOrLiteral)* //custom block call
                 ;
 
 event           : 'when green flag clicked'
                 | 'when ['key' v] key pressed'
                 | 'when this sprite clicked'
                 | 'when backdrop switches to ['STRING' v]'
-                | 'when 'eventChoice' > 'expression
+                | 'when 'eventChoice' > 'exprOrLiteral
                 | 'when I receive ['STRING' v]'
                 | 'when I start as a clone'
                 | 'when stage clicked'
@@ -31,60 +42,60 @@ event           : 'when green flag clicked'
 
 stmtList        : (stmt)*;
 
-motionStmt     : 'move 'expression' steps'
-                | 'turn @turnRight 'expression' degrees'  //was hat es mit dem @turnRight auf sich? ist das nicht einfach right in scratchblocks?
-                | 'turn @turnLeft 'expression' degrees'
+motionStmt     : 'move 'exprOrLiteral' steps'
+                | 'turn right 'exprOrLiteral' degrees'
+                | 'turn left 'exprOrLiteral' degrees'
                 | 'go to 'position
-                | 'go to x: 'expression' y: 'expression
-                | 'glide 'expression' secs to 'position
-                | 'glide 'expression' secs to x: 'expression' y: 'expression
-                | 'point in direction 'expression
+                | 'go to x: 'exprOrLiteral' y: 'exprOrLiteral
+                | 'glide 'exprOrLiteral' secs to 'position
+                | 'glide 'exprOrLiteral' secs to x: 'exprOrLiteral' y: 'exprOrLiteral
+                | 'point in direction 'exprOrLiteral
                 | 'point towards 'position
-                | 'change x by 'expression
-                | 'set x to 'expression
-                | 'change y by 'expression
-                | 'set y to 'expression
+                | 'change x by 'exprOrLiteral
+                | 'set x to 'exprOrLiteral
+                | 'change y by 'exprOrLiteral
+                | 'set y to 'exprOrLiteral
                 | 'if on edge, bounce'
                 | 'set rotation style ['rotation' v]'
                 ;
 
-looksStmt      : 'say 'expression' for 'expression' seconds'
-                | 'say 'expression
-                | 'think 'expression' for 'expression' seconds'
-                | 'think 'expression
+looksStmt      : 'say 'exprOrLiteral' for 'exprOrLiteral' seconds'
+                | 'say 'exprOrLiteral
+                | 'think 'exprOrLiteral' for 'exprOrLiteral' seconds'
+                | 'think 'exprOrLiteral
                 | 'switch costume to 'costumeSelect
                 | 'next costume'
                 | 'switch backdrop to 'backdropSelect
                 | 'next backdrop'
-                | 'change size by 'expression
-                | 'set size to 'expression' %'
-                | 'change ['colorEffect' v] effect by 'expression
-                | 'set ['colorEffect' v] effect to 'expression
+                | 'change size by 'exprOrLiteral
+                | 'set size to 'exprOrLiteral' %'
+                | 'change ['colorEffect' v] effect by 'exprOrLiteral
+                | 'set ['colorEffect' v] effect to 'exprOrLiteral
                 | 'clear graphic effects'
                 | 'show'
                 | 'hide'
                 | 'go to ['layerChoice' v] layer'
-                | 'go ['forwardBackwardChoice' v] 'expression' layers'
+                | 'go ['forwardBackwardChoice' v] 'exprOrLiteral' layers'
                 | 'switch backdrop to 'backdropSelect' and wait'
                 ;
 
 soundStmt      : 'play sound 'soundChoice' until done'
                 | 'play sound 'soundChoice
                 | 'stop all sounds'
-                | 'change ['soundEffect' v] effect by 'expression
-                | 'set ['soundEffect' v] effect to 'expression
+                | 'change ['soundEffect' v] effect by 'exprOrLiteral
+                | 'set ['soundEffect' v] effect to 'exprOrLiteral
                 | 'clear sound effects'
-                | 'change colume by 'expression
-                | 'set colume to 'expression' %'
+                | 'change colume by 'exprOrLiteral
+                | 'set colume to 'exprOrLiteral' %'
                 ;
 
-controlStmt    : 'wait 'expression' seconds'
-                | 'repeat 'expression stmtList'end'
+controlStmt    : 'wait 'exprOrLiteral' seconds'
+                | 'repeat 'exprOrLiteral stmtList'end'
                 | 'forever 'stmtList'end'
-                | 'if 'expression' then' stmtList'end'
-                | 'if 'expression' then' stmtList'else'stmtList'end'
-                | 'wait until 'expression
-                | 'repeat until 'expression stmtList'end'
+                | 'if 'exprOrLiteral' then' stmtList'end'
+                | 'if 'exprOrLiteral' then' stmtList'else'stmtList'end'
+                | 'wait until 'exprOrLiteral
+                | 'repeat until 'exprOrLiteral stmtList'end'
                 | 'stop ['stopChoice' v]'
                 | 'create clone of 'cloneChoice
                 | 'delete this clone'
@@ -94,28 +105,28 @@ eventStmt       : 'broadcast 'message
                 | ' broadcast 'message' and wait'
                 ;
 
-sensingStmt     : 'ask 'expression' and wait'
+sensingStmt     : 'ask 'exprOrLiteral' and wait'
                 | 'set drag mode ['dragmode' v]'
                 | 'reset timer'
                 ;
 
 expressionStmt  : expression;
 
-variableStmt    : 'set ['STRING' v] to 'expression
-                | 'change ['STRING' v] by 'expression
+variableStmt    : 'set ['STRING' v] to 'exprOrLiteral
+                | 'change ['STRING' v] by 'exprOrLiteral
                 | 'show variable ['STRING' v]'
                 | 'hide variable ['STRING' v]'
-                | 'add 'expression' to ['STRING' v]'
-                | 'delete 'expression' of ['STRING' v]'
+                | 'add 'exprOrLiteral' to ['STRING' v]'
+                | 'delete 'exprOrLiteral' of ['STRING' v]'
                 | 'delete all of ['STRING' v]'
-                | 'insert 'expression' at 'expression' of ['STRING' v]'
-                | 'replace item 'expression' of ['STRING' v] with 'expression
+                | 'insert 'exprOrLiteral' at 'exprOrLiteral' of ['STRING' v]'
+                | 'replace item 'exprOrLiteral' of ['STRING' v] with 'exprOrLiteral
                 | 'show list ['STRING' v]'
                 | 'hide list ['STRING' v]'
                 ;
 
 position        : '('fixedPosition' v)'
-                | expression
+                | exprOrLiteral
                 ;
 
 fixedPosition   : 'random position'
@@ -129,7 +140,7 @@ rotation        : 'left-right'
                 ;
 
 costumeSelect   : '('STRING' v)' //costume
-                | expression
+                | exprOrLiteral
                 ;
 
 backdropSelect  : '('STRING' v)' //backdrop
@@ -155,7 +166,7 @@ layerChoice     : 'front'
                 | 'back';
 
 soundChoice     : '('STRING' v)' //sound
-                | expression
+                | exprOrLiteral
                 ;
 
 soundEffect     : 'pitch'
@@ -169,11 +180,11 @@ stopChoice      : 'all'
 
 cloneChoice     : '(myself v)'
                 | '('STRING' v)' //sprite
-                | expression
+                | exprOrLiteral
                 ;
 
 message         : '('STRING 'v)' //message
-                | expression
+                | exprOrLiteral
                 ;
 
 dragmode        : 'draggable'
@@ -193,10 +204,14 @@ key             : 'space'
                 //TODO: other keys as regex?
                 ;
 
+exprOrLiteral      : '('NUMBER')'
+                | '['STRING']'
+                |  expression
+                ;
+
 expression      : '('numExpr')'
-                | stringLiteral
                 | '<'boolExpr'>'
-                | '('STRING')' //variable
+                | '('STRING')'//variable
                 ;
 
 boolExpr : 'touching 'touchingChoice'?'
@@ -204,15 +219,14 @@ boolExpr : 'touching 'touchingChoice'?'
          | 'color 'touchingColor' is touching 'touchingColor'?'
          | 'key 'key' pressed?'
          | 'mouse down?'
-         | expression' > 'expression
-         | expression' = 'expression
-         | 'not 'expression
-         | expression' contains 'expression'?'
-         | '['STRING' v] contains 'expression'?'
+         | exprOrLiteral' > 'exprOrLiteral
+         | exprOrLiteral' = 'exprOrLiteral
+         | 'not 'exprOrLiteral
+         | exprOrLiteral' contains 'exprOrLiteral'?'
+         | '['STRING' v] contains 'exprOrLiteral'?'
          ;
 
-numExpr     : NUMBER
-            | 'x position'
+numExpr     : 'x position'
             | 'y position'
             | 'direction'
             | 'costume ['nameNum' v]'
@@ -229,27 +243,25 @@ numExpr     : NUMBER
             | 'current 'currentChoice
             | 'days since 2000'
             | 'username'
-            | expression' + 'expression
-            | expression' - 'expression
-            | expression' * 'expression
-            | expression' / 'expression
-            | 'pick random 'expression' to 'expression
-            | 'join 'expression expression
-            | 'letter 'expression' of 'expression
-            | 'length of 'expression
-            | expression' mod 'expression
-            | 'round 'expression
-            | mathChoice' of 'expression
-            | 'item 'expression' of ['STRING' v]'
-            | 'item # of 'expression' in ['STRING' v]'
+            | exprOrLiteral' + 'exprOrLiteral
+            | exprOrLiteral' - 'exprOrLiteral
+            | exprOrLiteral' * 'exprOrLiteral
+            | exprOrLiteral' / 'exprOrLiteral
+            | 'pick random 'exprOrLiteral' to 'exprOrLiteral
+            | 'join 'exprOrLiteral exprOrLiteral
+            | 'letter 'exprOrLiteral' of 'exprOrLiteral
+            | 'length of 'exprOrLiteral
+            | exprOrLiteral' mod 'exprOrLiteral
+            | 'round 'exprOrLiteral
+            | mathChoice' of 'exprOrLiteral
+            | 'item 'exprOrLiteral' of ['STRING' v]'
+            | 'item # of 'exprOrLiteral' in ['STRING' v]'
             | 'length of ['STRING' v]'
             ;
 
-stringLiteral   : '['STRING']';
-
 distanceChoice  : '(mouse-pointer v)'
                 | '('STRING' v)'
-                expression
+                exprOrLiteral
                 ;
 
 nameNum     : 'number'
@@ -283,7 +295,7 @@ mathChoice      : 'abs'
 
 attributeChoice : '('STRING' v)' //variable
                 | '('fixedAttribute' v)'
-                | expression
+                | exprOrLiteral
                 ;
 
 fixedAttribute  : 'backdrop #'
@@ -299,14 +311,14 @@ fixedAttribute  : 'backdrop #'
 
 touchingChoice  : '('fixedTouching' v)'
                 | '('STRING' v)'
-                | expression
+                | exprOrLiteral
                 ;
 
 fixedTouching   : 'any'
                 | 'edge'
                 ;
 
-touchingColor   : expression
+touchingColor   : exprOrLiteral
                 | '(' HEX ')'
                 ;
 
