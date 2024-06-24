@@ -81,10 +81,10 @@ soundStmt      : 'play sound 'soundChoice' until done'
 controlStmt    : 'wait 'expression' seconds'
                 | 'repeat 'expression stmtList'end'
                 | 'forever 'stmtList'end'
-                | 'if 'boolExpression' then' stmtList'end'
-                | 'if 'boolExpression' then' stmtList'else'stmtList'end'
-                | 'wait until 'boolExpression
-                | 'repeat until 'boolExpression stmtList'end'
+                | 'if 'expression' then' stmtList'end'
+                | 'if 'expression' then' stmtList'else'stmtList'end'
+                | 'wait until 'expression
+                | 'repeat until 'expression stmtList'end'
                 | 'stop ['stopChoice' v]'
                 | 'create clone of 'cloneChoice
                 | 'delete this clone'
@@ -113,9 +113,6 @@ variableStmt    : 'set ['STRING' v] to 'expression
                 | 'show list ['STRING' v]'
                 | 'hide list ['STRING' v]'
                 ;
-
-numLiteral      : '('NUMBER')';
-stringLiteral   : '['STRING']';
 
 position        : '('  fixedPosition' v)'
                 | expression
@@ -196,14 +193,56 @@ key             : 'space'
                 //TODO: other keys as regex?
                 ;
 
-expression      : numLiteral
+expression      : '('numExpr')'
                 | stringLiteral
-                | boolExpression
-                | 'expression' //placeholder
+                | '<'boolExpr'>'
+                | '('STRING')' //variable
                 ;
 
-boolExpression : 'bool'
+boolExpr : 'bool'
                ;
+
+numExpr     : NUMBER
+            | 'x position'
+            | 'y position'
+            | 'direction'
+            | 'costume ['nameNum' v]'
+            | 'backdrop ['nameNum' v]'
+            | 'size'
+            | 'volume'
+            | 'distance to 'distanceChoice
+            | 'answer'
+            | 'mouse x'
+            | 'mouse y'
+            | 'loudness'
+            | 'timer'
+            | attributeChoice' of ('STRING' v)'
+            | 'current 'currentChoice
+            | 'days since 2000'
+            | 'username'
+            | expression' + 'expression
+            | expression' - 'expression
+            | expression' * 'expression
+            | expression' / 'expression
+            | 'pick random 'expression' to 'expression
+            | 'join 'expression expression
+            | 'letter 'expression' of 'expression
+            | 'length of 'expression
+            | expression' mod 'expression
+            | 'round 'expression
+            | mathChoice' of 'expression
+            ;
+
+stringLiteral   : '['STRING']';
+
+distanceChoice  : '(mouse-pointer v)'
+                | '('STRING' v)'
+                expression
+                ;
+
+nameNum     : 'number'
+            | 'name'
+            ;
 
 
 
