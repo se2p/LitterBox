@@ -21,8 +21,54 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ScratchblocksBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.ScratchblocksParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 
 public class ScratchBlocksToScratchVisitor extends ScratchblocksBaseVisitor<ASTNode> {
 
+    @Override
+    public ASTNode visitMoveSteps(ScratchblocksParser.MoveStepsContext ctx) {
 
+        Expression expr = (Expression) this.visitExprOrLiteral(ctx.exprOrLiteral());
+        NumExpr numExpr;
+        if (!(expr instanceof NumExpr)) {
+            numExpr = new AsNumber(expr);
+        } else {
+            numExpr = (NumExpr) expr;
+        }
+        return new MoveSteps(numExpr, new NoBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitExprOrLiteral(ScratchblocksParser.ExprOrLiteralContext ctx) {
+        return super.visitExprOrLiteral(ctx);
+    }
+
+    @Override
+    public ASTNode visitNumLiteral(ScratchblocksParser.NumLiteralContext ctx) {
+        return new NumberLiteral(Double.parseDouble(ctx.NUMBER().getText()));
+    }
+
+    @Override
+    protected ASTNode aggregateResult(ASTNode aggregate, ASTNode nextResult) {
+        if (aggregate instanceof Stmt && nextResult instanceof Stmt) {
+            StmtList list = new StmtList((Stmt) aggregate, (Stmt) nextResult);
+            return list;
+        } else if (nextResult == null) {
+            return aggregate;
+        } else if (aggregate instanceof StmtList && nextResult instanceof Stmt) {
+            ((StmtList) aggregate).getStmts().add((Stmt) nextResult);
+            return aggregate;
+        } else if (aggregate instanceof Stmt && nextResult instanceof StmtList) {
+            ((StmtList) nextResult).getStmts().add((Stmt) aggregate);
+            return nextResult;
+        }
+        return nextResult;
+    }
 }

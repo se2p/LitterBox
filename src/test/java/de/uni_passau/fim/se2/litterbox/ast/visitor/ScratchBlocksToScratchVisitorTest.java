@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ScratchblocksLexer;
 import de.uni_passau.fim.se2.litterbox.ScratchblocksParser;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -19,6 +20,7 @@ public class ScratchBlocksToScratchVisitorTest {
         ParseTree tree = parser.actor();
 
         ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
-        vis.visit(tree);
+        ASTNode node = vis.visit(tree);
+        System.out.println(node);
     }
 }

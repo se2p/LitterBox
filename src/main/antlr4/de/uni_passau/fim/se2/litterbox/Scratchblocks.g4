@@ -293,10 +293,13 @@ key                     : 'space'
                         | DIGIT
                         ;
 
-exprOrLiteral           : '('NUMBER')'
-                        | '['STRING']'
+exprOrLiteral           : numLiteral
+                        | stringLiteral
                         |  expression
                         ;
+
+numLiteral              : '('NUMBER')';
+stringLiteral           : '['STRING']';
 
 expression              : '('numExpr')'
                         | '<'boolExpr'>'
