@@ -24,9 +24,5 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public class ScratchBlocksToScratchVisitor extends ScratchblocksBaseVisitor<ASTNode> {
 
-    @Override
-    public ASTNode visitMotionStmt(ScratchblocksParser.MotionStmtContext ctx) {
-        System.out.println(ctx.exprOrLiteral(0).getText());
-        return super.visitMotionStmt(ctx);
-    }
+
 }
