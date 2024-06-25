@@ -5,17 +5,17 @@ grammar Scratchblocks;
  */
 
 // Define the entry point for the parser
-actor                   : scriptList (COMMENT)? EOF;
+actor                   : (COMMENT)? scriptList EOF;
 
 scriptList              : (script)*;
 
-script                  : event (COMMENT)?
-                        | (event (COMMENT)?)? stmt stmtList
-                        | expressionStmt (COMMENT)?
+script                  : (event)? stmtList
+                        | event
+                        | expressionStmt
                         | customBlock
                         ;
 
-customBlock             : 'define 'STRING (parameter)*;
+customBlock             : 'define 'STRING (parameter)* (COMMENT)?;
 
 parameter               : boolParam
                         | stringParam
@@ -35,14 +35,16 @@ stmt                    : motionStmt (COMMENT)?
                         | STRING (exprOrLiteral)* //custom block call
                         ;
 
-event                   : greenFlag
-                        | keyEvent
-                        | spriteClicked
-                        | backDropSwitchEvent
-                        | biggerEvent
-                        | receptionMessage
-                        | startAsClone
-                        | stageClicked
+stmtList                : (stmt)+;
+
+event                   : greenFlag (COMMENT)?
+                        | keyEvent (COMMENT)?
+                        | spriteClicked (COMMENT)?
+                        | backDropSwitchEvent (COMMENT)?
+                        | biggerEvent (COMMENT)?
+                        | receptionMessage (COMMENT)?
+                        | startAsClone (COMMENT)?
+                        | stageClicked (COMMENT)?
                         ;
 
 greenFlag               : 'when green flag clicked';
@@ -53,8 +55,6 @@ startAsClone            : 'when I start as a clone';
 receptionMessage        : 'when I receive ['STRING' v]';
 biggerEvent             : 'when 'eventChoice' > 'exprOrLiteral;
 backDropSwitchEvent     : 'when backdrop switches to ['STRING' v]';
-
-stmtList                : (stmt)*;
 
 motionStmt              : moveSteps
                         | turnRight
@@ -160,12 +160,12 @@ controlStmt             : waitSeconds
                         ;
 
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
-repeat                  : 'repeat 'exprOrLiteral stmtList'end';
-forever                 :  'forever 'stmtList'end';
-if                      : 'if 'exprOrLiteral' then' stmtList'end';
-ifElse                  : 'if 'exprOrLiteral' then' stmtList'else'stmtList'end';
+repeat                  : 'repeat 'exprOrLiteral (stmtList)?'end';
+forever                 :  'forever '(stmtList)?'end';
+if                      : 'if 'exprOrLiteral' then' (stmtList)?'end';
+ifElse                  : 'if 'exprOrLiteral' then' (stmtList)?'else'(stmtList)?'end';
 waitUntil               : 'wait until 'exprOrLiteral;
-repeatUntil             : 'repeat until 'exprOrLiteral stmtList'end';
+repeatUntil             : 'repeat until 'exprOrLiteral (stmtList)? 'end';
 stop                    : 'stop ['stopChoice' v]';
 createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
@@ -186,7 +186,7 @@ ask                     : 'ask 'exprOrLiteral' and wait';
 setDragMode             : 'set drag mode ['dragmode' v]';
 resetTimer              : 'reset timer';
 
-expressionStmt          : expression;
+expressionStmt          : expression (COMMENT)?;
 
 variableStmt            : setVar
                         | changeVar
@@ -295,7 +295,7 @@ key                     : 'space'
 
 exprOrLiteral           : numLiteral
                         | stringLiteral
-                        |  expression
+                        | expression
                         ;
 
 numLiteral              : '('NUMBER')';
