@@ -206,6 +206,7 @@
                         <configuration>
                             <visitor>true</visitor>
                         </configuration>
+                        <phase>generate-sources</phase>
                     </execution>
                 </executions>
             </plugin>

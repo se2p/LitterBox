@@ -1,4 +1,4 @@
-grammar scratchblocks;
+grammar Scratchblocks;
 
 /*
  * Parser Rules
