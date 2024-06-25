@@ -26,6 +26,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchblocksBaseVisitor<ASTN
 
     @Override
     public ASTNode visitMotionStmt(ScratchblocksParser.MotionStmtContext ctx) {
+        System.out.println(ctx.exprOrLiteral(0).getText());
         return super.visitMotionStmt(ctx);
     }
 }

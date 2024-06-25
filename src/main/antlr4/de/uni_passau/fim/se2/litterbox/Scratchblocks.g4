@@ -12,12 +12,17 @@ scriptList      : (script)*;
 script          : event (COMMENT)?
                 | (event (COMMENT)?)? stmt stmtList
                 | expressionStmt (COMMENT)?
-                | 'define 'STRING (parameter)* //custom block
+                | customBlock
                 ;
 
-parameter       : '<'STRING'>'
-                | '('STRING')'
+customBlock     : 'define 'STRING (parameter)*;
+
+parameter       : boolParam
+                | stringParam
                 ;
+
+boolParam       : '<'STRING'>';
+stringParam     : '('STRING')';
 
 // Block rules
 stmt            : motionStmt (COMMENT)?
@@ -30,64 +35,117 @@ stmt            : motionStmt (COMMENT)?
                 | STRING (exprOrLiteral)* //custom block call
                 ;
 
-event           : 'when green flag clicked'
-                | 'when ['key' v] key pressed'
-                | 'when this sprite clicked'
-                | 'when backdrop switches to ['STRING' v]'
-                | 'when 'eventChoice' > 'exprOrLiteral
-                | 'when I receive ['STRING' v]'
-                | 'when I start as a clone'
-                | 'when stage clicked'
+event           : greenFlag
+                | keyEvent
+                | spriteClicked
+                | backDropSwitchEvent
+                | biggerEvent
+                | receptionMessage
+                | startAsClone
+                | stageClicked
                 ;
+
+greenFlag       : 'when green flag clicked';
+keyEvent        : 'when ['key' v] key pressed';
+spriteClicked   : 'when this sprite clicked';
+stageClicked    : 'when stage clicked';
+startAsClone    : 'when I start as a clone';
+receptionMessage: 'when I receive ['STRING' v]';
+biggerEvent     : 'when 'eventChoice' > 'exprOrLiteral;
+backDropSwitchEvent: 'when backdrop switches to ['STRING' v]';
 
 stmtList        : (stmt)*;
 
-motionStmt     : 'move 'exprOrLiteral' steps'
-                | 'turn right 'exprOrLiteral' degrees'
-                | 'turn left 'exprOrLiteral' degrees'
-                | 'go to 'position
-                | 'go to x: 'exprOrLiteral' y: 'exprOrLiteral
-                | 'glide 'exprOrLiteral' secs to 'position
-                | 'glide 'exprOrLiteral' secs to x: 'exprOrLiteral' y: 'exprOrLiteral
-                | 'point in direction 'exprOrLiteral
-                | 'point towards 'position
-                | 'change x by 'exprOrLiteral
-                | 'set x to 'exprOrLiteral
-                | 'change y by 'exprOrLiteral
-                | 'set y to 'exprOrLiteral
-                | 'if on edge, bounce'
-                | 'set rotation style ['rotation' v]'
+motionStmt     : moveSteps
+                | turnRight
+                | turnLeft
+                | goToPos
+                | goToPosXY
+                | glideToPos
+                | glideToPosXY
+                | pointInDir
+                | pointTowards
+                | changeX
+                | setX
+                | changeY
+                | setY
+                | onEdge
+                | setRotation
                 ;
 
-looksStmt      : 'say 'exprOrLiteral' for 'exprOrLiteral' seconds'
-                | 'say 'exprOrLiteral
-                | 'think 'exprOrLiteral' for 'exprOrLiteral' seconds'
-                | 'think 'exprOrLiteral
-                | 'switch costume to 'costumeSelect
-                | 'next costume'
-                | 'switch backdrop to 'backdropSelect
-                | 'next backdrop'
-                | 'change size by 'exprOrLiteral
-                | 'set size to 'exprOrLiteral' %'
-                | 'change ['colorEffect' v] effect by 'exprOrLiteral
-                | 'set ['colorEffect' v] effect to 'exprOrLiteral
-                | 'clear graphic effects'
-                | 'show'
-                | 'hide'
-                | 'go to ['layerChoice' v] layer'
-                | 'go ['forwardBackwardChoice' v] 'exprOrLiteral' layers'
-                | 'switch backdrop to 'backdropSelect' and wait'
+moveSteps       : 'move 'exprOrLiteral' steps';
+turnRight       : 'turn right 'exprOrLiteral' degrees';
+turnLeft        : 'turn left 'exprOrLiteral' degrees';
+goToPos         : 'go to 'position;
+goToPosXY       : 'go to x: 'exprOrLiteral' y: 'exprOrLiteral;
+glideToPos      : 'glide 'exprOrLiteral' secs to 'position;
+glideToPosXY    : 'glide 'exprOrLiteral' secs to x: 'exprOrLiteral' y: 'exprOrLiteral;
+pointInDir      : 'point in direction 'exprOrLiteral;
+pointTowards    : 'point towards 'position;
+changeX         : 'change x by 'exprOrLiteral;
+setX            : 'set x to 'exprOrLiteral;
+changeY         : 'change y by 'exprOrLiteral;
+setY            : 'set y to 'exprOrLiteral;
+onEdge          : 'if on edge, bounce';
+setRotation     : 'set rotation style ['rotation' v]';
+
+looksStmt      : saySeconds
+                | say
+                | thinkSeconds
+                | think
+                | switchCostume
+                | nextCostume
+                | switchBackdrop
+                | nextBackdrop
+                | changeSize
+                | setSize
+                | changeColorEffect
+                | setColorEffect
+                | clearColorEffect
+                | show
+                | hide
+                | goToLayer
+                | goForwardBackwardLayer
+                | switchBackdropWait
                 ;
 
-soundStmt      : 'play sound 'soundChoice' until done'
-                | 'play sound 'soundChoice
-                | 'stop all sounds'
-                | 'change ['soundEffect' v] effect by 'exprOrLiteral
-                | 'set ['soundEffect' v] effect to 'exprOrLiteral
-                | 'clear sound effects'
-                | 'change colume by 'exprOrLiteral
-                | 'set colume to 'exprOrLiteral' %'
+saySeconds      : 'say 'exprOrLiteral' for 'exprOrLiteral' seconds';
+say             : 'say 'exprOrLiteral;
+thinkSeconds    : 'think 'exprOrLiteral' for 'exprOrLiteral' seconds';
+think           : 'think 'exprOrLiteral;
+switchCostume   : 'switch costume to 'costumeSelect;
+nextCostume     : 'next costume';
+switchBackdrop  : 'switch backdrop to 'backdropSelect;
+nextBackdrop    : 'next backdrop';
+changeSize      : 'change size by 'exprOrLiteral;
+setSize         : 'set size to 'exprOrLiteral' %';
+changeColorEffect: 'change ['colorEffect' v] effect by 'exprOrLiteral;
+setColorEffect  : 'set ['colorEffect' v] effect to 'exprOrLiteral;
+clearColorEffect: 'clear graphic effects';
+show            : 'show';
+hide            : 'hide';
+goToLayer       : 'go to ['layerChoice' v] layer';
+goForwardBackwardLayer: 'go ['forwardBackwardChoice' v] 'exprOrLiteral' layers';
+switchBackdropWait: 'switch backdrop to 'backdropSelect' and wait';
+
+soundStmt      : playSoundDone
+                | playSound
+                | stopSound
+                | changeSoundEffect
+                | setSoundEffect
+                | clearSoundEffect
+                | changeVolume
+                | setVolume
                 ;
+
+playSoundDone   : 'play sound 'soundChoice' until done';
+playSound       : 'play sound 'soundChoice;
+stopSound       : 'stop all sounds';
+changeSoundEffect: 'change ['soundEffect' v] effect by 'exprOrLiteral;
+setSoundEffect  : 'set ['soundEffect' v] effect to 'exprOrLiteral;
+clearSoundEffect: 'clear sound effects';
+changeVolume    : 'change volume by 'exprOrLiteral;
+setVolume       : 'set volume to 'exprOrLiteral' %';
 
 controlStmt    : 'wait 'exprOrLiteral' seconds'
                 | 'repeat 'exprOrLiteral stmtList'end'
