@@ -31,10 +31,10 @@ program                 : actorList EOF
 
 actorList               : (actor)+;
 
-actor                   : BEGIN_ACTOR scriptList;
+actor                   : BEGIN_ACTOR scriptList NEWLINE*;
 
 
-scriptList              : (script)*;
+scriptList              : (script (NEWLINE+)?)*;
 
 script                  : (event)? stmtList
                         | event
@@ -60,12 +60,12 @@ stmt                    : motionStmt (COMMENT)?
                         | sensingStmt (COMMENT)?
                         | variableStmt (COMMENT)?
                         | stringArgument (exprOrLiteral)+ //custom block call
-                        | ~('//'|BEGIN_ACTOR)(.)+? (exprOrLiteral)* //custom block call
+                        | ~(NEWLINE|'//'|BEGIN_ACTOR)~(NEWLINE)+? (exprOrLiteral)* //custom block call
                         ;
 
 
 
-stmtList                : (stmt)+;
+stmtList                : (stmt NEWLINE)+;
 
 event                   : greenFlag (COMMENT)?
                         | keyEvent (COMMENT)?
@@ -460,7 +460,7 @@ mathChoice              : 'abs'
                         | '10 ^'
                         ;
 
-attributeChoice         : '(' (.)*? ' v)' //variable
+attributeChoice         : '(' ~(NEWLINE)*? ' v)' //variable
                         | '('fixedAttribute' v)'
                         | exprOrLiteral
                         ;
@@ -489,7 +489,7 @@ touchingColorChoice     : exprOrLiteral
                         | '(' HEX ')'
                         ;
 
-stringArgument          : (.)*?;
+stringArgument          : ~(NEWLINE)*?;
 
 /*
  * Lexer Rules
@@ -503,11 +503,13 @@ NUMBER                  : (DIGIT)+ ('.' (DIGIT)+)?;
 
 KEY_CHAR                : [a-z];
 
-WS                      : [ \t\r\n]+ -> skip;
+NEWLINE                 : '\r\n' | '\n' ;
 
-BEGIN_ACTOR             : '//;Act' ~[\r\n]+  ;
+WS                      : [ \t]+ -> skip;
 
-COMMENT                 : '//' ~[\r\n]* ;
+BEGIN_ACTOR             : '//;Act' ~[\r\n]+ NEWLINE;
+
+COMMENT                 : '//' ~[\r\n]* NEWLINE;
 
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
