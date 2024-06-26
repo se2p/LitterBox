@@ -328,7 +328,7 @@ exprOrLiteral           : numLiteral
                         | expression
                         ;
 
-numLiteral              : '('NUMBER')';
+numLiteral              : '('(NUMBER|DIGIT)')';
 stringLiteral           : '['stringArgument']';
 
 expression              : '('numExpr')'
