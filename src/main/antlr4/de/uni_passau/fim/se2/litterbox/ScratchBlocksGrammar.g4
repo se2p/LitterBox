@@ -23,7 +23,16 @@ grammar ScratchBlocksGrammar;
  */
 
 // Define the entry point for the parser
-actor                   : (COMMENT)? scriptList EOF;
+
+program                 : actorList EOF
+                        | scriptList EOF
+                        | EOF
+                        ;
+
+actorList               : (actor)+;
+
+actor                   : BEGIN_ACTOR scriptList;
+
 
 scriptList              : (script)*;
 
@@ -33,14 +42,14 @@ script                  : (event)? stmtList
                         | customBlock
                         ;
 
-customBlock             : 'define 'STRING (parameter)* (COMMENT)?;
+customBlock             : 'define 'stringArgument (parameter)* (COMMENT)?;
 
 parameter               : boolParam
                         | stringParam
                         ;
 
-boolParam               : '<'STRING'>';
-stringParam             : '('STRING')';
+boolParam               : '<'stringArgument'>';
+stringParam             : '('stringArgument')';
 
 // Block rules
 stmt                    : motionStmt (COMMENT)?
@@ -50,8 +59,11 @@ stmt                    : motionStmt (COMMENT)?
                         | controlStmt (COMMENT)?
                         | sensingStmt (COMMENT)?
                         | variableStmt (COMMENT)?
-                        | STRING (exprOrLiteral)* //custom block call
+                        | stringArgument (exprOrLiteral)+ //custom block call
+                        | ~('//'|BEGIN_ACTOR)(.)+? (exprOrLiteral)* //custom block call
                         ;
+
+
 
 stmtList                : (stmt)+;
 
@@ -70,9 +82,9 @@ keyEvent                : 'when ['key' v] key pressed';
 spriteClicked           : 'when this sprite clicked';
 stageClicked            : 'when stage clicked';
 startAsClone            : 'when I start as a clone';
-receptionMessage        : 'when I receive ['STRING' v]';
+receptionMessage        : 'when I receive ['stringArgument' v]';
 biggerEvent             : 'when 'eventChoice' > 'exprOrLiteral;
-backDropSwitchEvent     : 'when backdrop switches to ['STRING' v]';
+backDropSwitchEvent     : 'when backdrop switches to ['stringArgument' v]';
 
 motionStmt              : moveSteps
                         | turnRight
@@ -95,8 +107,8 @@ moveSteps               : 'move 'exprOrLiteral' steps';
 turnRight               : 'turn right 'exprOrLiteral' degrees';
 turnLeft                : 'turn left 'exprOrLiteral' degrees';
 goToPos                 : 'go to 'position;
-goToPosXY               : 'go to x: 'exprOrLiteral' y: 'exprOrLiteral;
-glideToPos              : 'glide 'exprOrLiteral' secs to 'position;
+goToPosXY               : 'go to x: 'x=exprOrLiteral' y: 'exprOrLiteral;
+glideToPos              : 'glide 'time=exprOrLiteral' secs to 'position;
 glideToPosXY            : 'glide 'exprOrLiteral' secs to x: 'exprOrLiteral' y: 'exprOrLiteral;
 pointInDir              : 'point in direction 'exprOrLiteral;
 pointTowards            : 'point towards 'position;
@@ -219,17 +231,17 @@ variableStmt            : setVar
                         | hideList
                         ;
 
-setVar                  : 'set ['STRING' v] to 'exprOrLiteral;
-changeVar               : 'change ['STRING' v] by 'exprOrLiteral;
-showVar                 : 'show variable ['STRING' v]';
-hideVar                 : 'hide variable ['STRING' v]';
-addToList               : 'add 'exprOrLiteral' to ['STRING' v]';
-deleteFromList          : 'delete 'exprOrLiteral' of ['STRING' v]';
-deleteAllOfList         : 'delete all of ['STRING' v]';
-insertToList            : 'insert 'exprOrLiteral' at 'exprOrLiteral' of ['STRING' v]';
-replaceItemInList       : 'replace item 'exprOrLiteral' of ['STRING' v] with 'exprOrLiteral;
-showList                : 'show list ['STRING' v]';
-hideList                : 'hide list ['STRING' v]';
+setVar                  : 'set ['stringArgument' v] to 'exprOrLiteral;
+changeVar               : 'change ['stringArgument' v] by 'exprOrLiteral;
+showVar                 : 'show variable ['stringArgument' v]';
+hideVar                 : 'hide variable ['stringArgument' v]';
+addToList               : 'add 'exprOrLiteral' to ['stringArgument' v]';
+deleteFromList          : 'delete 'exprOrLiteral' of ['stringArgument' v]';
+deleteAllOfList         : 'delete all of ['stringArgument' v]';
+insertToList            : 'insert 'exprOrLiteral' at 'exprOrLiteral' of ['stringArgument' v]';
+replaceItemInList       : 'replace item 'exprOrLiteral' of ['stringArgument' v] with 'exprOrLiteral;
+showList                : 'show list ['stringArgument' v]';
+hideList                : 'hide list ['stringArgument' v]';
 
 position                : '('fixedPosition' v)'
                         | exprOrLiteral
@@ -237,7 +249,7 @@ position                : '('fixedPosition' v)'
 
 fixedPosition           : 'random position'
                         | 'mouse-pointer'
-                        | STRING
+                        | stringArgument
                         ;
 
 rotation                : 'left-right'
@@ -245,11 +257,11 @@ rotation                : 'left-right'
                         | 'all around'
                         ;
 
-costumeSelect           : '('STRING' v)' //costume
+costumeSelect           : '('stringArgument' v)' //costume
                         | exprOrLiteral
                         ;
 
-backdropSelect          : '('STRING' v)' //backdrop
+backdropSelect          : '('stringArgument' v)' //backdrop
                         | 'next backdrop'
                         | 'previous backdrop'
                         | 'random backdrop'
@@ -271,7 +283,7 @@ forwardBackwardChoice   : 'forward'
 layerChoice             : 'front'
                         | 'back';
 
-soundChoice             : '('STRING' v)' //sound
+soundChoice             : '('stringArgument' v)' //sound
                         | exprOrLiteral
                         ;
 
@@ -285,11 +297,11 @@ stopChoice              : 'all'
                         ;
 
 cloneChoice             : '(myself v)'
-                        | '('STRING' v)' //sprite
+                        | '('stringArgument' v)' //sprite
                         | exprOrLiteral
                         ;
 
-message                 : '('STRING 'v)' //message
+message                 : '('stringArgument 'v)' //message
                         | exprOrLiteral
                         ;
 
@@ -317,11 +329,11 @@ exprOrLiteral           : numLiteral
                         ;
 
 numLiteral              : '('NUMBER')';
-stringLiteral           : '['STRING']';
+stringLiteral           : '['stringArgument']';
 
 expression              : '('numExpr')'
                         | '<'boolExpr'>'
-                        | '('STRING')'//variable
+                        | '('stringArgument')'//variable
                         ;
 
 boolExpr                : touching
@@ -346,7 +358,7 @@ greaterThan             : exprOrLiteral' > 'exprOrLiteral;
 equal                   : exprOrLiteral' = 'exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : exprOrLiteral' contains 'exprOrLiteral'?';
-stringContains          : '['STRING' v] contains 'exprOrLiteral'?';
+stringContains          : '['stringArgument' v] contains 'exprOrLiteral'?';
 
 numExpr                 : xPosition
                         | yPosition
@@ -394,7 +406,7 @@ mouseX                  : 'mouse x';
 mouseY                  : 'mouse y';
 loudness                : 'loudness';
 timer                   : 'timer';
-actorAttribute          : attributeChoice' of ('STRING' v)';
+actorAttribute          : attributeChoice' of ('stringArgument' v)';
 currentTime             : 'current 'currentChoice;
 daysSince               : 'days since 2000';
 userName                : 'username';
@@ -409,13 +421,13 @@ lengthOf                : 'length of 'exprOrLiteral;
 modulo                  : exprOrLiteral' mod 'exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
 mathFunction            : mathChoice' of 'exprOrLiteral;
-itemAtIndex             : 'item 'exprOrLiteral' of ['STRING' v]';
-indexOfItem             : 'item # of 'exprOrLiteral' in ['STRING' v]';
-lengtOfList             : 'length of ['STRING' v]';
+itemAtIndex             : 'item 'exprOrLiteral' of ['stringArgument' v]';
+indexOfItem             : 'item # of 'exprOrLiteral' in ['stringArgument' v]';
+lengtOfList             : 'length of ['stringArgument' v]';
 
 
 distanceChoice          : '(mouse-pointer v)'
-                        | '('STRING' v)'
+                        | '('stringArgument' v)'
                         | exprOrLiteral
                         ;
 
@@ -448,7 +460,7 @@ mathChoice              : 'abs'
                         | '10 ^'
                         ;
 
-attributeChoice         : '('STRING' v)' //variable
+attributeChoice         : '(' (.)*? ' v)' //variable
                         | '('fixedAttribute' v)'
                         | exprOrLiteral
                         ;
@@ -465,7 +477,7 @@ fixedAttribute          : 'backdrop #'
                         ;
 
 touchingChoice          : '('fixedTouching' v)'
-                        | '('STRING' v)'
+                        | '('stringArgument' v)'
                         | exprOrLiteral
                         ;
 
@@ -476,6 +488,8 @@ fixedTouching           : 'any'
 touchingColorChoice     : exprOrLiteral
                         | '(' HEX ')'
                         ;
+
+stringArgument          : (.)*?;
 
 /*
  * Lexer Rules
@@ -489,12 +503,13 @@ NUMBER                  : (DIGIT)+ ('.' (DIGIT)+)?;
 
 KEY_CHAR                : [a-z];
 
-STRING                  : '"' ~["]* '"';
-
 WS                      : [ \t\r\n]+ -> skip;
+
+BEGIN_ACTOR             : '//;Act' ~[\r\n]+  ;
 
 COMMENT                 : '//' ~[\r\n]* ;
 
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
+
 
