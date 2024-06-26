@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ScratchblocksBaseVisitor;
-import de.uni_passau.fim.se2.litterbox.ScratchblocksParser;
+import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
+import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -30,10 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 
-public class ScratchBlocksToScratchVisitor extends ScratchblocksBaseVisitor<ASTNode> {
+public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
     @Override
-    public ASTNode visitMoveSteps(ScratchblocksParser.MoveStepsContext ctx) {
+    public ASTNode visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
 
         Expression expr = (Expression) this.visitExprOrLiteral(ctx.exprOrLiteral());
         NumExpr numExpr;
@@ -46,12 +46,12 @@ public class ScratchBlocksToScratchVisitor extends ScratchblocksBaseVisitor<ASTN
     }
 
     @Override
-    public ASTNode visitExprOrLiteral(ScratchblocksParser.ExprOrLiteralContext ctx) {
+    public ASTNode visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         return super.visitExprOrLiteral(ctx);
     }
 
     @Override
-    public ASTNode visitNumLiteral(ScratchblocksParser.NumLiteralContext ctx) {
+    public ASTNode visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
         return new NumberLiteral(Double.parseDouble(ctx.NUMBER().getText()));
     }
 
