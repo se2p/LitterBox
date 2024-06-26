@@ -30,45 +30,47 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 
+import java.util.List;
+
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
     @Override
-    public ASTNode visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
+    public StmtList visitStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
+        final List<Stmt> stmts = ctx.stmt().stream().map(stmt -> (Stmt) stmt.accept(this)).toList();
+        return new StmtList(stmts);
+    }
 
-        Expression expr = (Expression) this.visitExprOrLiteral(ctx.exprOrLiteral());
+    // region: statements
+
+    @Override
+    public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
+        Expression expr = (Expression) ctx.exprOrLiteral().accept(this);
         NumExpr numExpr;
-        if (!(expr instanceof NumExpr)) {
-            numExpr = new AsNumber(expr);
+
+        if (expr instanceof NumExpr num) {
+            numExpr = num;
         } else {
-            numExpr = (NumExpr) expr;
+            numExpr = new AsNumber(expr);
         }
+
         return new MoveSteps(numExpr, new NoBlockMetadata());
     }
 
-    @Override
-    public ASTNode visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
-        return super.visitExprOrLiteral(ctx);
-    }
+    // endregion: statements
+
+    // region: expressions
 
     @Override
-    public ASTNode visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
-        return new NumberLiteral(Double.parseDouble(ctx.NUMBER().getText()));
-    }
-
-    @Override
-    protected ASTNode aggregateResult(ASTNode aggregate, ASTNode nextResult) {
-        if (aggregate instanceof Stmt && nextResult instanceof Stmt) {
-            StmtList list = new StmtList((Stmt) aggregate, (Stmt) nextResult);
-            return list;
-        } else if (nextResult == null) {
-            return aggregate;
-        } else if (aggregate instanceof StmtList && nextResult instanceof Stmt) {
-            ((StmtList) aggregate).getStmts().add((Stmt) nextResult);
-            return aggregate;
-        } else if (aggregate instanceof Stmt && nextResult instanceof StmtList) {
-            ((StmtList) nextResult).getStmts().add((Stmt) aggregate);
-            return nextResult;
+    public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
+        final String value;
+        if (ctx.DIGIT() != null) {
+            value = ctx.DIGIT().getText();
+        } else {
+            value = ctx.NUMBER().getText();
         }
-        return nextResult;
+
+        return new NumberLiteral(Double.parseDouble(value));
     }
+
+    // endregion: expressions
 }
