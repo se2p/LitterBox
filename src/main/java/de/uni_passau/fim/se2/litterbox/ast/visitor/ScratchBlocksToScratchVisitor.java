@@ -36,15 +36,25 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public StmtList visitStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
-        final List<Stmt> stmts = ctx.stmt().stream().map(stmt -> (Stmt) stmt.accept(this)).toList();
+        final List<Stmt> stmts = ctx.stmt().stream().map(this::visitStmt).toList();
         return new StmtList(stmts);
     }
 
     // region: statements
 
     @Override
+    public Stmt visitStmt(ScratchBlocksGrammarParser.StmtContext ctx) {
+        if (ctx.controlStmt() != null) {
+            return (Stmt) visitControlStmt(ctx.controlStmt());
+        // todo: other cases
+        } else {
+            return (Stmt) super.visitStmt(ctx);
+        }
+    }
+
+    @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
-        Expression expr = (Expression) ctx.exprOrLiteral().accept(this);
+        Expression expr = visitExprOrLiteral(ctx.exprOrLiteral());
         NumExpr numExpr;
 
         if (expr instanceof NumExpr num) {
@@ -59,6 +69,17 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     // endregion: statements
 
     // region: expressions
+
+    @Override
+    public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+        if (ctx.numLiteral() != null) {
+            return visitNumLiteral(ctx.numLiteral());
+        } else if (ctx.stringLiteral() != null) {
+            return (Expression) visitStringLiteral(ctx.stringLiteral());
+        } else {
+            return (Expression) super.visitExpression(ctx.expression());
+        }
+    }
 
     @Override
     public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
