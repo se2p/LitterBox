@@ -507,7 +507,7 @@ NEWLINE                 : '\r\n' | '\n' ;
 
 WS                      : [ \t]+ -> skip;
 
-BEGIN_ACTOR             : '//;Act' ~[\r\n]+ NEWLINE;
+BEGIN_ACTOR             : '//;Act ' ~[\r\n]+ NEWLINE;
 
 COMMENT                 : '//' ~[\r\n]* NEWLINE;
 
