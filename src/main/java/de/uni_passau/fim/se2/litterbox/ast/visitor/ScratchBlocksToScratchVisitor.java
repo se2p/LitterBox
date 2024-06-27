@@ -148,8 +148,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
             String stringArgument = ctx.stringArgument().getText()
-                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "")
-                    .replace("\\\\", "\\");     // Remove superfluous \ from escaped chars
+                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "") // Remove superfluous \
+                    .replace("\\\\", "\\");     // Handle double backslash
             return new Variable(new StrId(stringArgument));
         } else {
             return super.visitExpression(ctx);
