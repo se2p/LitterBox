@@ -23,7 +23,6 @@ grammar ScratchBlocksGrammar;
  */
 
 // Define the entry point for the parser
-
 program                 : actorList EOF
                         | scriptList EOF
                         | EOF

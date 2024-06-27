@@ -32,7 +32,7 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void test() throws IOException {
-        ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString("move (10) steps"));
+        ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString("move (10) steps \n"));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ScratchBlocksGrammarParser parser = new ScratchBlocksGrammarParser(tokens);
         ParseTree tree = parser.actor();

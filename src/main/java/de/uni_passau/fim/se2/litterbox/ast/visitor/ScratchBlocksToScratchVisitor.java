@@ -54,7 +54,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
-        Expression expr = visitExprOrLiteral(ctx.exprOrLiteral());
+        Expression expr = (Expression) visitExprOrLiteral(ctx.exprOrLiteral());
         NumExpr numExpr;
 
         if (expr instanceof NumExpr num) {
@@ -70,6 +70,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     // region: expressions
 
+    /*
     @Override
     public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         if (ctx.numLiteral() != null) {
@@ -80,6 +81,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return (Expression) super.visitExpression(ctx.expression());
         }
     }
+     */
 
     @Override
     public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
