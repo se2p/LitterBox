@@ -318,8 +318,32 @@ key                     : 'space'
                         | 'right arrow'
                         | 'left arrow'
                         | 'any'
-                        | KEY_CHAR
-                        | DIGIT
+                        | 'a'
+                        | 'b'
+                        | 'c'
+                        | 'd'
+                        | 'e'
+                        | 'f'
+                        | 'g'
+                        | 'h'
+                        | 'i'
+                        | 'j'
+                        | 'k'
+                        | 'l'
+                        | 'm'
+                        | 'n'
+                        | 'o'
+                        | 'p'
+                        | 'q'
+                        | 'r'
+                        | 's'
+                        | 't'
+                        | 'u'
+                        | 'v'
+                        | 'w'
+                        | 'x'
+                        | 'y'
+                        | 'z'
                         ;
 
 exprOrLiteral           : numLiteral
@@ -500,8 +524,6 @@ DIGIT                   : [0-9];
 
 NUMBER                  : (DIGIT)+ ('.' (DIGIT)+)?;
 
-KEY_CHAR                : [a-z];
-
 NEWLINE                 : '\r\n' | '\n' ;
 
 WS                      : [ \t]+ -> skip;
@@ -513,4 +535,4 @@ COMMENT                 : '//' ~[\r\n]* NEWLINE;
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
-
+ANY                     : .;
