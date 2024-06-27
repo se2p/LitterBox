@@ -23,17 +23,20 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
@@ -65,6 +68,12 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         } else {
             return (Stmt) super.visitStmt(ctx);
         }
+    }
+
+    @Override
+    public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx){
+        Expression expr = (Expression) visitExpression(ctx.expression());
+        return new ExpressionStmt(expr);
     }
 
     @Override
@@ -151,6 +160,27 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return new RandomPos(new NoBlockMetadata());
         }
         return (Position) super.visitFixedPosition(ctx);
+    }
+
+    @Override
+    public SpriteTouchingColor visitTouchingColor(ScratchBlocksGrammarParser.TouchingColorContext ctx) {
+        Touchable color = visitTouchingColorChoice(ctx.touchingColorChoice());
+        return new SpriteTouchingColor(color, new NoBlockMetadata());
+    }
+
+    @Override
+    public Touchable visitTouchingColorChoice(ScratchBlocksGrammarParser.TouchingColorChoiceContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+        } else {
+            String rgbCode = ctx.HEX().getText();
+
+            long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
+            long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
+            long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
+
+            return new ColorLiteral(rNumber, gNumber, bNumber);
+        }
     }
 
     @Override

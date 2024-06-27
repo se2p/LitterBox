@@ -511,8 +511,8 @@ fixedTouching           : mousePointer
                         | 'edge'
                         ;
 
-touchingColorChoice     : exprOrLiteral
-                        | '(' HEX ')'
+touchingColorChoice     :'(' HEX ')'
+                        | exprOrLiteral
                         ;
 
 stringArgument          : ~(NEWLINE)*?;

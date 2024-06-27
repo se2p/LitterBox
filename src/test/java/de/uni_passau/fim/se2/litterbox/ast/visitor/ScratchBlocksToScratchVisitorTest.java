@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
@@ -53,10 +54,9 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void testSayWithLiteral() {
-        StmtList statements = getStatementList("say [ja!]\n");
-        Stmt stmt = statements.getStatement(0);
-        Assertions.assertInstanceOf(Say.class, stmt);
-        StringExpr expr = ((Say) stmt).getString();
+        StmtList statement = getStatementList("say [ja!]\n");
+        Assertions.assertInstanceOf(Say.class, statement.getStatement(0));
+        StringExpr expr = ((Say) statement.getStatement(0)).getString();
         Assertions.assertInstanceOf(StringLiteral.class, expr);
         Assertions.assertEquals("ja!", ((StringLiteral) expr).getText());
     }
