@@ -23,24 +23,30 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
@@ -62,6 +68,12 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         } else {
             return (Stmt) super.visitStmt(ctx);
         }
+    }
+
+    @Override
+    public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx){
+        Expression expr = (Expression) visitExpression(ctx.expression());
+        return new ExpressionStmt(expr);
     }
 
     // Motion Blocks
@@ -104,30 +116,51 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
      */
 
     @Override
-    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx){
+    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx) {
         Touchable touchable = visitTouchingChoice(ctx.touchingChoice());
-        return new Touching(touchable,new NoBlockMetadata());
+        return new Touching(touchable, new NoBlockMetadata());
     }
 
     @Override
-    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx){
-            if(ctx.exprOrLiteral() != null){
-                return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
-            } else if (ctx.stringArgument() != null){
-                return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()),new NoBlockMetadata());
-            }else if (ctx.fixedTouching() != null){
-                return visitFixedTouching(ctx.fixedTouching());
-            }
-            return (Touchable) super.visitTouchingChoice(ctx);
+    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+        } else if (ctx.stringArgument() != null) {
+            return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()), new NoBlockMetadata());
+        } else if (ctx.fixedTouching() != null) {
+            return visitFixedTouching(ctx.fixedTouching());
+        }
+        return (Touchable) super.visitTouchingChoice(ctx);
     }
 
     @Override
-    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx){
-            if(ctx.getText().equals("mouse-pointer")){
-                return new MousePointer(new NoBlockMetadata());
-            }else{
-                return new Edge(new NoBlockMetadata());
-            }
+    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx) {
+        if (ctx.getText().equals("mouse-pointer")) {
+            return new MousePointer(new NoBlockMetadata());
+        } else {
+            return new Edge(new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public SpriteTouchingColor visitTouchingColor(ScratchBlocksGrammarParser.TouchingColorContext ctx) {
+        Touchable color = visitTouchingColorChoice(ctx.touchingColorChoice());
+        return new SpriteTouchingColor(color, new NoBlockMetadata());
+    }
+
+    @Override
+    public Touchable visitTouchingColorChoice(ScratchBlocksGrammarParser.TouchingColorChoiceContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+        } else {
+            String rgbCode = ctx.HEX().getText();
+
+            long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
+            long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
+            long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
+
+            return new ColorLiteral(rNumber, gNumber, bNumber);
+        }
     }
 
     @Override
@@ -151,7 +184,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
             String stringArgument = ctx.stringArgument().getText()
-                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "") // Remove superfluous \
+                    .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
                     .replace("\\\\", "\\");     // Handle double backslash
             return new Variable(new StrId(stringArgument));
         } else {
@@ -173,7 +206,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         return numExpr;
     }
 
-    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx){
+    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         Expression expr = (Expression) visitExprOrLiteral(ctx);
         StringExpr stringExpr;
 
