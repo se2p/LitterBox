@@ -22,11 +22,14 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarLexer;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -48,15 +51,8 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void testSayWithLiteral() {
-        ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString("say [ja!]\n"));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ScratchBlocksGrammarParser parser = new ScratchBlocksGrammarParser(tokens);
-        ParseTree tree = parser.actor();
-
-        ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
-        ASTNode node = vis.visit(tree);
-        Assertions.assertInstanceOf(StmtList.class, node);
-        Stmt stmt = ((StmtList) node).getStatement(0);
+        StmtList statements = getStatementList("say [ja!]\n");
+        Stmt stmt = statements.getStatement(0);
         Assertions.assertInstanceOf(Say.class, stmt);
         StringExpr expr = ((Say) stmt).getString();
         Assertions.assertInstanceOf(StringLiteral.class, expr);
@@ -65,19 +61,28 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void testExprOrLiteralNum() {
-        StmtList statement = getStatementList("move (10) steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statement.getStatement(0));
+        StmtList statements = getStatementList("move (10) steps\n");
+        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
+        double value = ((NumberLiteral) moveSteps.getSteps()).getValue();
+        Assertions.assertEquals(10, value);
     }
 
     @Test
     public void testExprOrLiteralString() {
-        StmtList statement = getStatementList("move [a] steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statement.getStatement(0));
+        StmtList statements = getStatementList("move [a] steps\n");
+        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
+        String literal = ((StringLiteral) ((AsNumber) moveSteps.getSteps()).getOperand1()).getText();
+        Assertions.assertEquals("a", literal);
     }
 
     @Test
     public void testExprOrLiteralExpression() {
-        StmtList statement = getStatementList("move (\\\\a) steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statement.getStatement(0));
+        StmtList statements = getStatementList("move (\\)\\(\\_\\$\\\\\\\\\\\\a) steps\n");
+        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
+        String variableName = ((Variable) ((AsNumber) moveSteps.getSteps()).getOperand1()).getName().getName();
+        Assertions.assertEquals(")(_$\\\\\\a", variableName);
     }
 }
