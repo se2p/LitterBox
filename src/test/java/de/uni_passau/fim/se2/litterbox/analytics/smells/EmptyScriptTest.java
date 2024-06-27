@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +45,6 @@ public class EmptyScriptTest implements JsonTest {
     @Test
     public void testHint() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/smells/emptyScriptHint.json");
-        IssueTranslator.getInstance().setLanguage("en");
         EmptyScript parameterName = new EmptyScript();
         List<Issue> reports = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(1, reports.size());
