@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -31,16 +30,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 class JSONCreate implements JsonTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @AfterAll
     static void cleanUp() throws IOException {
-        Files.delete(Path.of("createBroadcast_annotated.json"));
+        Files.delete(Path.of("manipulatedBroadcast_annotated.json"));
     }
 
     @Test
     public void createJSON() throws ParsingException, IOException {
-        Program test = getAST("./src/test/fixtures/ifTouchingMinimal.json");
+        Program test = getAST("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
