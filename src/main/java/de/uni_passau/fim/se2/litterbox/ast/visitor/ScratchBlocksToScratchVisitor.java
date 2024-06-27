@@ -147,6 +147,18 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         return new StringLiteral(ctx.stringArgument().getText());
     }
 
+    @Override
+    public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
+        if (ctx.stringArgument() != null) {
+            String stringArgument = ctx.stringArgument().getText()
+                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "") // Remove superfluous \
+                    .replace("\\\\", "\\");     // Handle double backslash
+            return new Variable(new StrId(stringArgument));
+        } else {
+            return super.visitExpression(ctx);
+        }
+    }
+
     // endregion: expressions
 
     private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
@@ -171,22 +183,5 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             stringExpr = new AsString(expr);
         }
         return stringExpr;
-    }
-
-    @Override
-    public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
-        if (ctx.stringArgument() != null) {
-            String stringArgument = ctx.stringArgument().getText()
-                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "") // Remove superfluous \
-                    .replace("\\\\", "\\");     // Handle double backslash
-            return new Variable(new StrId(stringArgument));
-        } else {
-            return super.visitExpression(ctx);
-        }
-    }
-
-    @Override
-    public ASTNode visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
-        return super.visitStringArgument(ctx);
     }
 }
