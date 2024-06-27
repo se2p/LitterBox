@@ -58,8 +58,8 @@ stmt                    : motionStmt (COMMENT)?
                         | controlStmt (COMMENT)?
                         | sensingStmt (COMMENT)?
                         | variableStmt (COMMENT)?
-                        | stringArgument (exprOrLiteral)+ //custom block call
-                        | ~(NEWLINE|'//'|BEGIN_ACTOR)~(NEWLINE)+? (exprOrLiteral)* //custom block call
+                        | stringArgument (exprOrLiteral)+ (COMMENT)?                            //custom block call
+                        | ~(NEWLINE|'//'|BEGIN_ACTOR)~(NEWLINE)+? (exprOrLiteral)* (COMMENT)?   //custom block call
                         ;
 
 
