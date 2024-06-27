@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -34,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.List;
 
@@ -57,9 +60,16 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         }
     }
 
+    // Motion Blocks
+
     @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
         return new MoveSteps(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitTurnRight(ScratchBlocksGrammarParser.TurnRightContext ctx) {
+        return new TurnRight(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
@@ -130,5 +140,19 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             stringExpr = new AsString(expr);
         }
         return stringExpr;
+    }
+
+    @Override
+    public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
+        if (ctx.stringArgument() != null) {
+            return new Variable(new StrId(ctx.stringArgument().getText()));
+        } else {
+            return super.visitExpression(ctx);
+        }
+    }
+
+    @Override
+    public ASTNode visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
+        return super.visitStringArgument(ctx);
     }
 }
