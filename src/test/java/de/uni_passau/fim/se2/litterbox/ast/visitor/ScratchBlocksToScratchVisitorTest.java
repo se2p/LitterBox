@@ -57,7 +57,7 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void testExprOrLiteralExpression() {
-        StmtList statement = getStatementList("move (\\)) steps\n");
+        StmtList statement = getStatementList("move (\\\\a) steps\n");
         Assertions.assertInstanceOf(MoveSteps.class, statement.getStatement(0));
     }
 }

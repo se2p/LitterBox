@@ -42,6 +42,8 @@ import java.util.List;
 
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
+    private static final String SPECIAL_WITHOUT_BSLASH = "[!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~]";
+
     @Override
     public StmtList visitStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
         final List<Stmt> stmts = ctx.stmt().stream().map(this::visitStmt).toList();
@@ -145,7 +147,10 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new Variable(new StrId(ctx.stringArgument().getText()));
+            String stringArgument = ctx.stringArgument().getText()
+                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "")
+                    .replace("\\\\", "\\");     // Remove superfluous \ from escaped chars
+            return new Variable(new StrId(stringArgument));
         } else {
             return super.visitExpression(ctx);
         }
