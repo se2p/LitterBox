@@ -32,9 +32,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
@@ -64,8 +67,6 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         }
     }
 
-    // Motion Blocks
-
     @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
         return new MoveSteps(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
@@ -74,6 +75,12 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public ASTNode visitTurnRight(ScratchBlocksGrammarParser.TurnRightContext ctx) {
         return new TurnRight(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitGoToPos(ScratchBlocksGrammarParser.GoToPosContext ctx) {
+        Position position = visitPosition(ctx.position());
+        return new GoToPos(position, new NoBlockMetadata());
     }
 
     @Override
@@ -104,30 +111,46 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
      */
 
     @Override
-    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx){
+    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx) {
         Touchable touchable = visitTouchingChoice(ctx.touchingChoice());
-        return new Touching(touchable,new NoBlockMetadata());
+        return new Touching(touchable, new NoBlockMetadata());
     }
 
     @Override
-    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx){
-            if(ctx.exprOrLiteral() != null){
-                return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
-            } else if (ctx.stringArgument() != null){
-                return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()),new NoBlockMetadata());
-            }else if (ctx.fixedTouching() != null){
-                return visitFixedTouching(ctx.fixedTouching());
-            }
-            return (Touchable) super.visitTouchingChoice(ctx);
+    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+        } else if (ctx.stringArgument() != null) {
+            return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()), new NoBlockMetadata());
+        } else if (ctx.fixedTouching() != null) {
+            return visitFixedTouching(ctx.fixedTouching());
+        }
+        return (Touchable) super.visitTouchingChoice(ctx);
     }
 
     @Override
-    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx){
-            if(ctx.getText().equals("mouse-pointer")){
-                return new MousePointer(new NoBlockMetadata());
-            }else{
-                return new Edge(new NoBlockMetadata());
-            }
+    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx) {
+        if (ctx.getText().equals("mouse-pointer")) {
+            return new MousePointer(new NoBlockMetadata());
+        } else {
+            return new Edge(new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public Position visitPosition(ScratchBlocksGrammarParser.PositionContext ctx) {
+        if (ctx.fixedPosition() != null) {
+            return visitFixedPosition(ctx.fixedPosition());
+        }
+        return (Position) super.visitPosition(ctx);
+    }
+
+    @Override
+    public Position visitFixedPosition(ScratchBlocksGrammarParser.FixedPositionContext ctx) {
+        if (ctx.getText().equals("random position")) {
+            return new RandomPos(new NoBlockMetadata());
+        }
+        return (Position) super.visitFixedPosition(ctx);
     }
 
     @Override
@@ -151,7 +174,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
             String stringArgument = ctx.stringArgument().getText()
-                    .replaceAll("\\\\(?=[\\w"+SPECIAL_WITHOUT_BSLASH+"])", "") // Remove superfluous \
+                    .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
                     .replace("\\\\", "\\");     // Handle double backslash
             return new Variable(new StrId(stringArgument));
         } else {
@@ -173,7 +196,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         return numExpr;
     }
 
-    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx){
+    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         Expression expr = (Expression) visitExprOrLiteral(ctx);
         StringExpr stringExpr;
 

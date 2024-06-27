@@ -26,8 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.antlr.v4.runtime.CharStreams;
@@ -84,5 +86,13 @@ public class ScratchBlocksToScratchVisitorTest {
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         String variableName = ((Variable) ((AsNumber) moveSteps.getSteps()).getOperand1()).getName().getName();
         Assertions.assertEquals(")(_$\\\\\\a", variableName);
+    }
+
+    @Test
+    public void testPositionFixedRandom() {
+        StmtList statements = getStatementList("go to (random position v)\n");
+        Assertions.assertInstanceOf(GoToPos.class, statements.getStatement(0));
+        GoToPos goToPos = (GoToPos) statements.getStatement(0);
+        Assertions.assertInstanceOf(RandomPos.class, goToPos.getPosition());
     }
 }
