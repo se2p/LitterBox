@@ -35,12 +35,12 @@ class JSONCreate implements JsonTest {
 
     @AfterAll
     static void cleanUp() throws IOException {
-        Files.delete(Path.of("createBroadcast_annotated.json"));
+        Files.delete(Path.of("manipulatedBroadcast_annotated.json"));
     }
 
     @Test
     public void createJSON() throws ParsingException, IOException {
-        Program test = getAST("./src/test/fixtures/ifTouchingMinimal.json");
+        Program test = getAST("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
