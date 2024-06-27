@@ -106,9 +106,9 @@ moveSteps               : 'move 'exprOrLiteral' steps';
 turnRight               : 'turn right 'exprOrLiteral' degrees';
 turnLeft                : 'turn left 'exprOrLiteral' degrees';
 goToPos                 : 'go to 'position;
-goToPosXY               : 'go to x: 'x=exprOrLiteral' y: 'exprOrLiteral;
+goToPosXY               : 'go to x: 'x=exprOrLiteral' y: 'y=exprOrLiteral;
 glideToPos              : 'glide 'time=exprOrLiteral' secs to 'position;
-glideToPosXY            : 'glide 'exprOrLiteral' secs to x: 'exprOrLiteral' y: 'exprOrLiteral;
+glideToPosXY            : 'glide 'time=exprOrLiteral' secs to x: 'x=exprOrLiteral' y: 'y=exprOrLiteral;
 pointInDir              : 'point in direction 'exprOrLiteral;
 pointTowards            : 'point towards 'position;
 changeX                 : 'change x by 'exprOrLiteral;
@@ -138,9 +138,9 @@ looksStmt               : saySeconds
                         | switchBackdropWait
                         ;
 
-saySeconds              : 'say 'exprOrLiteral' for 'exprOrLiteral' seconds';
+saySeconds              : 'say 'text=exprOrLiteral' for 'time=exprOrLiteral' seconds';
 say                     : 'say 'exprOrLiteral;
-thinkSeconds            : 'think 'exprOrLiteral' for 'exprOrLiteral' seconds';
+thinkSeconds            : 'think 'text=exprOrLiteral' for 'time=exprOrLiteral' seconds';
 think                   : 'think 'exprOrLiteral;
 switchCostume           : 'switch costume to 'costumeSelect;
 nextCostume             : 'next costume';
@@ -237,8 +237,8 @@ hideVar                 : 'hide variable ['stringArgument' v]';
 addToList               : 'add 'exprOrLiteral' to ['stringArgument' v]';
 deleteFromList          : 'delete 'exprOrLiteral' of ['stringArgument' v]';
 deleteAllOfList         : 'delete all of ['stringArgument' v]';
-insertToList            : 'insert 'exprOrLiteral' at 'exprOrLiteral' of ['stringArgument' v]';
-replaceItemInList       : 'replace item 'exprOrLiteral' of ['stringArgument' v] with 'exprOrLiteral;
+insertToList            : 'insert 'insertion=exprOrLiteral' at 'location=exprOrLiteral' of ['stringArgument' v]';
+replaceItemInList       : 'replace item 'oldItem=exprOrLiteral' of ['stringArgument' v] with 'newItem= exprOrLiteral;
 showList                : 'show list ['stringArgument' v]';
 hideList                : 'hide list ['stringArgument' v]';
 
@@ -344,6 +344,7 @@ key                     : 'space'
                         | 'x'
                         | 'y'
                         | 'z'
+                        | DIGIT
                         ;
 
 exprOrLiteral           : numLiteral
@@ -374,13 +375,14 @@ boolExpr                : touching
 
 touching                : 'touching 'touchingChoice'?';
 touchingColor           : 'touching color 'touchingColorChoice'?';
-colorTouchingColor      : 'color 'touchingColorChoice' is touching 'touchingColorChoice'?';
+colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice'?';
 keyPressed              : 'key 'key' pressed?';
 mouseDown               : 'mouse down?';
-greaterThan             : exprOrLiteral' > 'exprOrLiteral;
-equal                   : exprOrLiteral' = 'exprOrLiteral;
+greaterThan             : firstExpr=exprOrLiteral' > 'secondExpr=exprOrLiteral;
+equal                   : firstExpr=exprOrLiteral' = 'secondExpr=exprOrLiteral;
+lessThan                : firstExpr=exprOrLiteral' < 'secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
-contains                : exprOrLiteral' contains 'exprOrLiteral'?';
+contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral'?';
 stringContains          : '['stringArgument' v] contains 'exprOrLiteral'?';
 
 numExpr                 : xPosition
@@ -433,15 +435,15 @@ actorAttribute          : attributeChoice' of ('stringArgument' v)';
 currentTime             : 'current 'currentChoice;
 daysSince               : 'days since 2000';
 userName                : 'username';
-addition                : exprOrLiteral' + 'exprOrLiteral;
-subtraction             : exprOrLiteral' - 'exprOrLiteral;
-multiplication          : exprOrLiteral' * 'exprOrLiteral;
-division                : exprOrLiteral' / 'exprOrLiteral;
-pickRandom              : 'pick random 'exprOrLiteral' to 'exprOrLiteral;
-join                    : 'join 'exprOrLiteral exprOrLiteral;
-getLetterAtIndex        : 'letter 'exprOrLiteral' of 'exprOrLiteral;
+addition                : firstExpr=exprOrLiteral' + 'secondExpr=exprOrLiteral;
+subtraction             : firstExpr=exprOrLiteral' - 'secondExpr=exprOrLiteral;
+multiplication          : firstExpr=exprOrLiteral' * 'secondExpr=exprOrLiteral;
+division                : firstExpr=exprOrLiteral' / 'secondExpr=exprOrLiteral;
+pickRandom              : 'pick random 'firstExpr=exprOrLiteral' to 'secondExpr=exprOrLiteral;
+join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
+getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral' of 'secondExpr=exprOrLiteral;
 lengthOf                : 'length of 'exprOrLiteral;
-modulo                  : exprOrLiteral' mod 'exprOrLiteral;
+modulo                  : firstExpr=exprOrLiteral' mod 'secondExpr=exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
 mathFunction            : mathChoice' of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral' of ['stringArgument' v]';

@@ -25,9 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 
 import java.util.List;
@@ -46,7 +51,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public Stmt visitStmt(ScratchBlocksGrammarParser.StmtContext ctx) {
         if (ctx.controlStmt() != null) {
             return (Stmt) visitControlStmt(ctx.controlStmt());
-        // todo: other cases
+            // todo: other cases
         } else {
             return (Stmt) super.visitStmt(ctx);
         }
@@ -54,16 +59,17 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
-        Expression expr = (Expression) visitExprOrLiteral(ctx.exprOrLiteral());
-        NumExpr numExpr;
+        return new MoveSteps(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
 
-        if (expr instanceof NumExpr num) {
-            numExpr = num;
-        } else {
-            numExpr = new AsNumber(expr);
-        }
+    @Override
+    public Say visitSay(ScratchBlocksGrammarParser.SayContext ctx) {
+        return new Say(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
 
-        return new MoveSteps(numExpr, new NoBlockMetadata());
+    @Override
+    public SayForSecs visitSaySeconds(ScratchBlocksGrammarParser.SaySecondsContext ctx) {
+        return new SayForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
     }
 
     // endregion: statements
@@ -95,5 +101,34 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         return new NumberLiteral(Double.parseDouble(value));
     }
 
+    @Override
+    public StringLiteral visitStringLiteral(ScratchBlocksGrammarParser.StringLiteralContext ctx) {
+        return new StringLiteral(ctx.stringArgument().getText());
+    }
+
     // endregion: expressions
+
+    private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+        Expression expr = (Expression) visitExprOrLiteral(ctx);
+        NumExpr numExpr;
+
+        if (expr instanceof NumExpr num) {
+            numExpr = num;
+        } else {
+            numExpr = new AsNumber(expr);
+        }
+        return numExpr;
+    }
+
+    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx){
+        Expression expr = (Expression) visitExprOrLiteral(ctx);
+        StringExpr stringExpr;
+
+        if (expr instanceof StringExpr str) {
+            stringExpr = str;
+        } else {
+            stringExpr = new AsString(expr);
+        }
+        return stringExpr;
+    }
 }
