@@ -22,6 +22,11 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarLexer;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -29,6 +34,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
 
 public class ScratchBlocksToScratchVisitorTest {
 
@@ -41,6 +49,23 @@ public class ScratchBlocksToScratchVisitorTest {
         ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
         ASTNode node = vis.visit(tree);
         return ((StmtList) node);
+    }
+
+    @Test
+    public void testSayWithLiteral(){
+        ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString("say [ja!]\n"));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ScratchBlocksGrammarParser parser = new ScratchBlocksGrammarParser(tokens);
+        ParseTree tree = parser.actor();
+
+        ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
+        ASTNode node = vis.visit(tree);
+        Assertions.assertInstanceOf(StmtList.class, node);
+        Stmt stmt = ((StmtList) node).getStatement(0);
+        Assertions.assertInstanceOf(Say.class, stmt);
+        StringExpr expr = ((Say) stmt).getString();
+        Assertions.assertInstanceOf(StringLiteral.class, expr);
+        Assertions.assertEquals("ja!", ((StringLiteral) expr).getText());
     }
 
     @Test

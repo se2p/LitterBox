@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -35,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
@@ -100,6 +102,33 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         }
     }
      */
+
+    @Override
+    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx){
+        Touchable touchable = visitTouchingChoice(ctx.touchingChoice());
+        return new Touching(touchable,new NoBlockMetadata());
+    }
+
+    @Override
+    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx){
+            if(ctx.exprOrLiteral() != null){
+                return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+            } else if (ctx.stringArgument() != null){
+                return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()),new NoBlockMetadata());
+            }else if (ctx.fixedTouching() != null){
+                return visitFixedTouching(ctx.fixedTouching());
+            }
+            return (Touchable) super.visitTouchingChoice(ctx);
+    }
+
+    @Override
+    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx){
+            if(ctx.getText().equals("mouse-pointer")){
+                return new MousePointer(new NoBlockMetadata());
+            }else{
+                return new Edge(new NoBlockMetadata());
+            }
+    }
 
     @Override
     public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {

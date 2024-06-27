@@ -247,7 +247,7 @@ position                : '('fixedPosition' v)'
                         ;
 
 fixedPosition           : 'random position'
-                        | 'mouse-pointer'
+                        | mousePointer
                         | stringArgument
                         ;
 
@@ -431,7 +431,7 @@ mouseX                  : 'mouse x';
 mouseY                  : 'mouse y';
 loudness                : 'loudness';
 timer                   : 'timer';
-actorAttribute          : attributeChoice' of ('stringArgument' v)';
+actorAttribute          : '['attributeChoice' v] of ('stringArgument' v)';
 currentTime             : 'current 'currentChoice;
 daysSince               : 'days since 2000';
 userName                : 'username';
@@ -451,7 +451,7 @@ indexOfItem             : 'item # of 'exprOrLiteral' in ['stringArgument' v]';
 lengtOfList             : 'length of ['stringArgument' v]';
 
 
-distanceChoice          : '(mouse-pointer v)'
+distanceChoice          : '('mousePointer' v)'
                         | '('stringArgument' v)'
                         | exprOrLiteral
                         ;
@@ -485,9 +485,8 @@ mathChoice              : 'abs'
                         | '10 ^'
                         ;
 
-attributeChoice         : '(' ~(NEWLINE)*? ' v)' //variable
-                        | '('fixedAttribute' v)'
-                        | exprOrLiteral
+attributeChoice         : ~(NEWLINE)*? //variable
+                        | fixedAttribute
                         ;
 
 fixedAttribute          : 'backdrop #'
@@ -506,7 +505,9 @@ touchingChoice          : '('fixedTouching' v)'
                         | exprOrLiteral
                         ;
 
-fixedTouching           : 'any'
+mousePointer            : 'mouse-pointer';
+
+fixedTouching           : mousePointer
                         | 'edge'
                         ;
 
