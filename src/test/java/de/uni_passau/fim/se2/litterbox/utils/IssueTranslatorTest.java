@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -25,6 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated  // ensure no parallel tests to avoid parallel mutation of global state (i.e. IssueTranslator language)
 class IssueTranslatorTest {
+
+    @AfterEach
+    void reset() {
+        IssueTranslator.getInstance().setLanguage("en");
+    }
+
     @Test
     void fallbackToEnglish() {
         IssueTranslator.getInstance().setLanguage("no");
