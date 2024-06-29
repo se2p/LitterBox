@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DeleteControlBlock extends CloneVisitor implements Refactoring {
 
@@ -44,7 +43,7 @@ public class DeleteControlBlock extends CloneVisitor implements Refactoring {
 
     @Override
     public ASTNode visit(StmtList stmtList) {
-        List<Stmt> statements = stmtList.getStmts().stream().filter(s -> s != this.controlStmt).collect(Collectors.toList());
+        List<Stmt> statements = stmtList.getStmts().stream().filter(s -> s != this.controlStmt).toList();
         return new StmtList(applyList(statements));
     }
 

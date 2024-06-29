@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CloneAnalysis {
 
@@ -74,8 +73,8 @@ public class CloneAnalysis {
 
         // For comparison, we normalize literals and tokens
         NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
-        List<Stmt> normalizedStatements1 = statements1.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
-        List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+        List<Stmt> normalizedStatements1 = statements1.stream().map(normalizationVisitor::apply).toList();
+        List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).toList();
 
         // Comparison matrix on the normalized statements
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2, root1 == root2);

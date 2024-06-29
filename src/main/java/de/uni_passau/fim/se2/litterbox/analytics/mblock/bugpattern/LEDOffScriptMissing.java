@@ -51,7 +51,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     private final Map<PositionType, RunningState> states = new HashMap<>();
     private final Map<PositionType, LEDStmt> lastStmts = new HashMap<>();
     private final Map<PositionType, List<LEDStmt>> lastStmtMap = new HashMap<>();
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -103,12 +102,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDStmt node) {
         if (!(node instanceof RockyLightStmt)) {
             boolean black = isBlack(node);
@@ -155,7 +148,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     private void resetMaps() {
         states.clear();
         lastStmts.clear();
-        forever = false;
     }
 
     private boolean isBlack(LEDStmt node) {

@@ -21,12 +21,11 @@ package de.uni_passau.fim.se2.litterbox.report;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ConsoleRefactorReportGenerator {
 
-    public void generateReport(Program program, List<Refactoring> refactorings) throws IOException {
+    public void generateReport(Program program, List<Refactoring> refactorings) {
 
         if (refactorings.isEmpty()) {
             System.out.println("No executable refactorings found.");

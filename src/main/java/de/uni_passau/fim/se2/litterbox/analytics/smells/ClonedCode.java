@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 abstract class ClonedCode extends AbstractIssueFinder {
 
@@ -47,7 +46,7 @@ abstract class ClonedCode extends AbstractIssueFinder {
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         List<Script> scripts;
         if (ignoreLooseBlocks) {
-            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).toList();
         } else {
             scripts = actor.getScripts().getScriptList();
         }

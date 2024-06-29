@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -31,7 +30,7 @@ public class TimecompParser {
     private static final String CURRENT_OPCODE = "sensing_current";
     private static final String CURRENT_MENU = "CURRENTMENU";
 
-    public static TimeComp parse(JsonNode current) throws ParsingException {
+    public static TimeComp parse(JsonNode current) {
         Preconditions.checkNotNull(current);
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(opcodeString.equals(CURRENT_OPCODE),

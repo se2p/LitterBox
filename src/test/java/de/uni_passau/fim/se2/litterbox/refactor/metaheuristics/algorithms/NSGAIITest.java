@@ -40,8 +40,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -130,8 +128,8 @@ class NSGAIITest implements JsonTest {
         int populationSize = 5;
 
         List<Stmt> stmtListProgram = getStmtListOfProgram(program);
-        List<String> stmtNamesProgram = stmtListProgram.stream().map(Stmt::getUniqueName).collect(Collectors.toList());
-        List<String> stmtNamesExpectedProgram = getStmtListOfProgram(expectedProgram).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+        List<String> stmtNamesProgram = stmtListProgram.stream().map(Stmt::getUniqueName).toList();
+        List<String> stmtNamesExpectedProgram = getStmtListOfProgram(expectedProgram).stream().map(Stmt::getUniqueName).toList();
         ControlStmt controlStmt = (ControlStmt) stmtListProgram.get(1);
         Refactoring deleteControlBlock = new DeleteControlBlock(controlStmt);
 
@@ -144,20 +142,20 @@ class NSGAIITest implements JsonTest {
         List<RefactorSequence> solutions = nsgaii.findSolution();
 
         for (RefactorSequence solution : solutions) {
-            List<String> actualRefactorings = solution.getExecutedRefactorings().stream().map(Refactoring::getName).collect(Collectors.toList());
+            List<String> actualRefactorings = solution.getExecutedRefactorings().stream().map(Refactoring::getName).toList();
 
             if (actualRefactorings.size() > 0) {
                 assertEquals(expectedRefactorings, actualRefactorings);
 
                 Program refactored = solution.getRefactoredProgram();
-                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).toList();
                 assertEquals(stmtNamesExpectedProgram, stmtNamesRefactoredProgram);
 
                 assertEquals(0, numberOfControlBlocks.getFitness(solution));
                 assertEquals(1, numberOfHelloBlocks.getFitness(solution));
             } else {
                 Program refactored = solution.getRefactoredProgram();
-                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).toList();
                 assertEquals(stmtNamesProgram, stmtNamesRefactoredProgram);
 
                 assertEquals(1, numberOfControlBlocks.getFitness(solution));

@@ -37,7 +37,6 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * When a sprite creates a
@@ -78,7 +77,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         final List<String> uninitializingActors
                 = clonedActors.stream()
                 .filter(s -> !whenStartsAsCloneActors.contains(s))
-                .collect(Collectors.toList());
+                .toList();
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         //in the first accept only the deletion blocks where searched, now issues are added

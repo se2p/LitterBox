@@ -37,8 +37,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import static com.google.common.truth.Truth.assertThat;
 
 public class UseTest implements JsonTest {
@@ -90,7 +88,7 @@ public class UseTest implements JsonTest {
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         VariableUseVisitor visitor = new VariableUseVisitor();
         nodes.get(0).getASTNode().accept(visitor);
 
@@ -156,7 +154,7 @@ public class UseTest implements JsonTest {
         // If the dropdown contains a variable or parameter we don't statically know what sprite
         // we're referring to, so for now we skip these definitions/uses...
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nouseattributewithvariable.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         for (CFGNode node : nodes) {
             assertThat(node.getDefinitions()).isEmpty();
             assertThat(node.getUses()).hasSize(1); // Visibility for say
@@ -166,7 +164,7 @@ public class UseTest implements JsonTest {
     @Test
     public void testTimerUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/timerBlock.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).toList();
         assertThat(nodes).hasSize(1);
         CFGNode node = nodes.iterator().next();
 

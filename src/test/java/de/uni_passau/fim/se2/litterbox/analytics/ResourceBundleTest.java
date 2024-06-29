@@ -79,7 +79,7 @@ public class ResourceBundleTest {
                 .matcher(hint)
                 .results()
                 .map(MatchResult::group)
-                .collect(Collectors.toList());
+                .toList();
         String currentToken = "";
         for (String match : matches) {
             if (!currentToken.isEmpty()) {
