@@ -144,7 +144,8 @@ public final class Randomness implements Serializable {
         return (T) set.toArray()[position];
     }
 
-    public static <T> T choice(T... elements) {
+    @SafeVarargs
+	public static <T> T choice(T... elements) {
         if (elements.length == 0) {
             return null;
         }

@@ -44,7 +44,6 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
     private final List<RobotMoveStmt> lastRunningList = new LinkedList<>();
     private RunningState state = NEVER;
     private RobotMoveStmt lastRunning = null;
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -63,13 +62,11 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
             } else if (state == STOPPED) {
                 state = NEVER;
                 lastRunning = null;
-                forever = false;
                 lastRunningList.clear();
                 return;
             }
             state = NEVER;
             lastRunning = null;
-            forever = false;
         }
         for (RobotMoveStmt stmt : lastRunningList) {
             addIssue(stmt);
@@ -96,7 +93,6 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        forever = true;
         visit((LoopStmt) node);
     }
 
