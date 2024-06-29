@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -129,7 +128,7 @@ class AstNodeUtilTest implements JsonTest {
                 .flatMap(Collection::stream)
                 .map(ProcedureInfo::getName)
                 .map(name -> AstNodeUtil.replaceProcedureParams(name, replacement))
-                .collect(Collectors.toList());
+                .toList();
 
         final String nameWithReplacements = String.format("BlockWithInputs %s %s", replacement, replacement).trim();
         assertThat(procedureNames).containsExactly("BlockNoInputs", nameWithReplacements);
