@@ -24,8 +24,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Class for computing the quality of a Pareto front in two-dimensional spaces using the
  * hyper-volume indicator. It measures the size of the space enclosed by all solutions on the Pareto
@@ -105,7 +103,7 @@ public final class HyperVolume2D<C extends Chromosome<C>> {
      */
     private double boundedRectangleArea(final Stream<C> p) {
         // TODO: kind of clumsy if you only have two elements...
-        final List<C> chromosomes = p.collect(toList());
+        final List<C> chromosomes = p.toList();
         final var previous = chromosomes.get(0);
         final var current = chromosomes.get(1);
 

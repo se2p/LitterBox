@@ -61,11 +61,9 @@ public class NumExprParser {
      * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
      * @return True iff the input of the containing block is parsable as NumExpr.
-     * @throws ParsingException If the JSON is malformed.
      */
     @SuppressWarnings("unused")
-    public static boolean parsableAsNumExpr(JsonNode containingBlock,
-                                            String inputKey, JsonNode allBlocks) throws ParsingException {
+    public static boolean parsableAsNumExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) {
         JsonNode inputs = containingBlock.get(INPUTS_KEY);
         ArrayNode exprArray = getExprArray(inputs, inputKey);
         int shadowIndicator = getShadowIndicator(exprArray);

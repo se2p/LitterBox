@@ -53,8 +53,7 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {"" + value};
-        return returnArray;
+        return new String[]{"" + value};
     }
 
     @Override

@@ -146,10 +146,10 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(ColorLiteral node) {
-        StringBuilder colorString = new StringBuilder();
-        colorString.append("#").append(String.format("%02x", node.getRed())).append(String.format("%02x", node.getGreen())).append(String.format("%02x", node.getBlue()));
-        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, COLOR_PICKER_PRIMITIVE,
-                colorString.toString()));
+        final String colorString = String.format("#%02x%02x%02x", node.getRed(), node.getGreen(), node.getBlue());
+        final String input = createTypeInput(INPUT_SAME_BLOCK_SHADOW, COLOR_PICKER_PRIMITIVE, colorString);
+
+        finishedJSONStrings.add(input);
     }
 
     private void createSimpleExpression(NonDataBlockMetadata metadata, Opcode opcode) {

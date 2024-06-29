@@ -83,11 +83,6 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(RockyLight node) {
         state = RUNNING;
         lastStmt = node;

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -30,6 +31,7 @@ import java.util.*;
  */
 public final class Randomness implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5934455398558935937L;
 
     private static long seed = 0;
@@ -145,7 +147,7 @@ public final class Randomness implements Serializable {
     }
 
     @SafeVarargs
-	public static <T> T choice(T... elements) {
+    public static <T> T choice(T... elements) {
         if (elements.length == 0) {
             return null;
         }

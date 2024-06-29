@@ -116,8 +116,7 @@ public class IssueBuilder {
 
     public Issue build() {
         validate();
-        Issue issue = new Issue(this);
-        return issue;
+        return new Issue(this);
     }
 
     public IssueFinder getFinder() {

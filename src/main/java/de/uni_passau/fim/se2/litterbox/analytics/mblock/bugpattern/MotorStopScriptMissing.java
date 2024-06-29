@@ -92,11 +92,6 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(RobotMoveStmt node) {
         boolean zero = isZeroPower(node);
         if (zero || node instanceof TimedStmt || node instanceof TurnLeft2 || node instanceof TurnRight2 || node instanceof MoveStop) {

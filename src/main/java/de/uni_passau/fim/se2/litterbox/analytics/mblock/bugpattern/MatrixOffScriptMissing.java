@@ -109,11 +109,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDMatrixStmt node) {
         boolean blank = isBlank(node);
         if (blank || node instanceof TimedStmt || node instanceof TurnOffFace || node instanceof TurnOffFacePort) {

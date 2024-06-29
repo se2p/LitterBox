@@ -102,11 +102,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDStmt node) {
         if (!(node instanceof RockyLightStmt)) {
             boolean black = isBlack(node);
