@@ -370,6 +370,9 @@ boolExpr                : touching
                         | mouseDown
                         | greaterThan
                         | equal
+                        | lessThan
+                        | and
+                        | or
                         | not
                         | contains
                         | stringContains
@@ -384,6 +387,8 @@ mouseDown               : 'mouse down?';
 greaterThan             : firstExpr=exprOrLiteral' > 'secondExpr=exprOrLiteral;
 equal                   : firstExpr=exprOrLiteral' = 'secondExpr=exprOrLiteral;
 lessThan                : firstExpr=exprOrLiteral' < 'secondExpr=exprOrLiteral;
+and                     : firstExpr=exprOrLiteral' and 'secondExpr=exprOrLiteral;
+or                       : firstExpr=exprOrLiteral' or 'secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral'?';
 stringContains          : '['stringArgument' v] contains 'exprOrLiteral'?';

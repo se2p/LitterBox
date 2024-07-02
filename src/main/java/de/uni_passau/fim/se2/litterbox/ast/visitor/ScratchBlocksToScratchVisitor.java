@@ -130,18 +130,18 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     // region: expressions
 
-    /*
+
     @Override
     public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         if (ctx.numLiteral() != null) {
             return visitNumLiteral(ctx.numLiteral());
         } else if (ctx.stringLiteral() != null) {
-            return (Expression) visitStringLiteral(ctx.stringLiteral());
+            return visitStringLiteral(ctx.stringLiteral());
         } else {
             return (Expression) super.visitExpression(ctx.expression());
         }
     }
-     */
+
 
     @Override
     public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx) {
@@ -250,6 +250,41 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
+    public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx){
+        return new LessThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
+    }
+
+    @Override
+    public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx){
+        return new Equals((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
+    }
+
+    @Override
+    public Not visitNot(ScratchBlocksGrammarParser.NotContext ctx){
+        return new Not( makeBoolExpr(ctx.exprOrLiteral()),new NoBlockMetadata());
+    }
+
+    @Override
+    public And visitAnd(ScratchBlocksGrammarParser.AndContext ctx){
+        return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr),new NoBlockMetadata());
+    }
+
+    @Override
+    public Or visitOr(ScratchBlocksGrammarParser.OrContext ctx){
+        return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr),new NoBlockMetadata());
+    }
+
+    @Override
+    public StringContains visitContains(ScratchBlocksGrammarParser.ContainsContext ctx){
+        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr),new NoBlockMetadata());
+    }
+
+    @Override
+    public ListContains visitStringContains(ScratchBlocksGrammarParser.StringContainsContext ctx){
+        return new ListContains(new StrId(ctx.stringArgument().getText()), visitExprOrLiteral(ctx.exprOrLiteral()),new NoBlockMetadata());
+    }
+
+    @Override
     public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
         final String value;
         if (ctx.DIGIT() != null) {
@@ -269,6 +304,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
+
+            //todo extract stringArgument visit
             String stringArgument = ctx.stringArgument().getText()
                     .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
                     .replace("\\\\", "\\");     // Handle double backslash
@@ -285,7 +322,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     // endregion: expressions
 
     private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
-        Expression expr = (Expression) visitExprOrLiteral(ctx);
+        Expression expr = visitExprOrLiteral(ctx);
         NumExpr numExpr;
 
         if (expr instanceof NumExpr num) {
@@ -297,7 +334,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
-        Expression expr = (Expression) visitExprOrLiteral(ctx);
+        Expression expr = visitExprOrLiteral(ctx);
         StringExpr stringExpr;
 
         if (expr instanceof StringExpr str) {
@@ -306,5 +343,17 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             stringExpr = new AsString(expr);
         }
         return stringExpr;
+    }
+
+    private BoolExpr makeBoolExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+        Expression expr = visitExprOrLiteral(ctx);
+        BoolExpr boolExpr;
+
+        if (expr instanceof BoolExpr bool) {
+            boolExpr = bool;
+        } else {
+            boolExpr = new AsBool(expr);
+        }
+        return boolExpr;
     }
 }
