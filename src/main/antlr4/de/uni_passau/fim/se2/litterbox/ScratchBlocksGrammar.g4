@@ -312,6 +312,9 @@ eventChoice             : 'loudness'
                         | 'timer'
                         ;
 
+keySelect               : '('key' v)'
+                        | exprOrLiteral;
+
 key                     : 'space'
                         | 'up arrow'
                         | 'down arrow'
@@ -376,7 +379,7 @@ boolExpr                : touching
 touching                : 'touching 'touchingChoice'?';
 touchingColor           : 'touching color 'touchingColorChoice'?';
 colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice'?';
-keyPressed              : 'key 'key' pressed?';
+keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
 greaterThan             : firstExpr=exprOrLiteral' > 'secondExpr=exprOrLiteral;
 equal                   : firstExpr=exprOrLiteral' = 'secondExpr=exprOrLiteral;
@@ -431,7 +434,9 @@ mouseX                  : 'mouse x';
 mouseY                  : 'mouse y';
 loudness                : 'loudness';
 timer                   : 'timer';
-actorAttribute          : '['attributeChoice' v] of ('stringArgument' v)';
+actorAttribute          : '['attributeChoice' v] of 'element;
+element                 : '('stringArgument' v)'
+                        | exprOrLiteral;
 currentTime             : 'current 'currentChoice;
 daysSince               : 'days since 2000';
 userName                : 'username';

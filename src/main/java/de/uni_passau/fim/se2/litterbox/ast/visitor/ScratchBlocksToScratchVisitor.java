@@ -20,15 +20,12 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -49,9 +46,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
@@ -193,6 +193,11 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
+    public ColorTouchingColor visitColorTouchingColor(ScratchBlocksGrammarParser.ColorTouchingColorContext ctx) {
+        return new ColorTouchingColor((Color) visitTouchingColorChoice(ctx.firstColor), (Color) visitTouchingColorChoice(ctx.secondColor), new NoBlockMetadata());
+    }
+
+    @Override
     public Touchable visitTouchingColorChoice(ScratchBlocksGrammarParser.TouchingColorChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
@@ -205,6 +210,43 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
             return new ColorLiteral(rNumber, gNumber, bNumber);
         }
+    }
+
+    @Override
+    public IsKeyPressed visitKeyPressed(ScratchBlocksGrammarParser.KeyPressedContext ctx) {
+        return new IsKeyPressed(visitKeySelect(ctx.keySelect()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Key visitKeySelect(ScratchBlocksGrammarParser.KeySelectContext ctx) {
+        if (ctx.key() != null){
+            return visitKey(ctx.key());
+        }else{
+            return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public Key visitKey(ScratchBlocksGrammarParser.KeyContext ctx) {
+        return switch (ctx.getText()) {
+            case "space" -> new Key(new NumberLiteral(SPACE), new NoBlockMetadata());
+            case "up arrow" -> new Key(new NumberLiteral(UPARROW), new NoBlockMetadata());
+            case "down arrow" -> new Key(new NumberLiteral(DOWNARROW), new NoBlockMetadata());
+            case "left arrow" -> new Key(new NumberLiteral(LEFTARROW), new NoBlockMetadata());
+            case "right arrow" -> new Key(new NumberLiteral(RIGHTARROW), new NoBlockMetadata());
+            case "any" -> new Key(new NumberLiteral(ANYKEY), new NoBlockMetadata());
+            default -> new Key(new NumberLiteral(ctx.getText().charAt(0)), new NoBlockMetadata());
+        };
+    }
+
+    @Override
+    public IsMouseDown visitMouseDown(ScratchBlocksGrammarParser.MouseDownContext ctx) {
+        return new IsMouseDown(new NoBlockMetadata());
+    }
+
+    @Override
+    public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx){
+        return new BiggerThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
     }
 
     @Override

@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -106,5 +109,26 @@ public class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("<touching color (#ff00ff)?>\n");
         Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
         Assertions.assertInstanceOf(SpriteTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    @Test
+    public void testColorTouchingColor() {
+        StmtList stmtList = getStmtList("<color (#ff00ff) is touching (#ffff00)?>\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(ColorTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    @Test
+    public void testKeyPressed() {
+        StmtList stmtList = getStmtList("<key (a v) pressed?>\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(IsKeyPressed.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    @Test
+    public void testBiggerThan() {
+        StmtList stmtList = getStmtList("<(7) > (2)>\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(BiggerThan.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 }
