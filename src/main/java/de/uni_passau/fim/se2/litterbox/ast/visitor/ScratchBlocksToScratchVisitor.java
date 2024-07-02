@@ -21,7 +21,11 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
@@ -36,6 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
@@ -51,6 +56,25 @@ import java.util.List;
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
     private static final String SPECIAL_WITHOUT_BSLASH = "[!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~]";
+
+    @Override
+    public ScriptEntity visitScript(ScratchBlocksGrammarParser.ScriptContext ctx) {
+        if (ctx.expressionStmt() != null) {
+            return new Script(new Never(), new StmtList(visitExpressionStmt(ctx.expressionStmt())));
+        } else if (ctx.stmtList() != null) {
+            if (ctx.event() != null) {
+                return new Script((Event) visitEvent(ctx.event()), visitStmtList(ctx.stmtList()));
+            } else {
+                return new Script(new Never(), visitStmtList(ctx.stmtList()));
+            }
+        } else if (ctx.event() != null) {
+            return new Script((Event) visitEvent(ctx.event()), new StmtList());
+        } else if (ctx.customBlock() != null) {
+            return (ScriptEntity) visit(ctx.customBlock());
+        } else {
+            return (ScriptEntity) super.visitScript(ctx);
+        }
+    }
 
     @Override
     public StmtList visitStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
@@ -71,7 +95,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
-    public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx){
+    public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx) {
         Expression expr = (Expression) visitExpression(ctx.expression());
         return new ExpressionStmt(expr);
     }
@@ -207,6 +231,10 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
                     .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
                     .replace("\\\\", "\\");     // Handle double backslash
             return new Variable(new StrId(stringArgument));
+        } else if (ctx.boolExpr() != null) {
+            return visitBoolExpr(ctx.boolExpr());
+        } else if (ctx.numExpr() != null) {
+            return visitNumExpr(ctx.numExpr());
         } else {
             return super.visitExpression(ctx);
         }
