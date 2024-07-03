@@ -28,7 +28,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingCo
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -130,5 +136,32 @@ public class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("<(7) > (2)>\n");
         Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
         Assertions.assertInstanceOf(BiggerThan.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    @Test
+    public void testCostumeName() {
+        StmtList stmtList = getStmtList("(costume [name v])\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(Costume.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    @Test
+    public void testAttributeOf() {
+        StmtList stmtList = getStmtList("([costume # v] of (Sprite1 v))\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        Assertions.assertInstanceOf(AttributeFromFixed.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
+        stmtList = getStmtList("([var v] of (Sprite1 v))\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        Assertions.assertInstanceOf(AttributeFromVariable.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
+    }
+
+    @Test
+    public void testCurrent() {
+        StmtList stmtList = getStmtList("(current [day of the week v])\n");
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        Assertions.assertInstanceOf(Current.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        Assertions.assertEquals("dayofweek", ((Current) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getTimeComp().getTypeName());
     }
 }

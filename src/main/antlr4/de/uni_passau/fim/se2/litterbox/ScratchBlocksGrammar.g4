@@ -375,7 +375,7 @@ boolExpr                : touching
                         | or
                         | not
                         | contains
-                        | stringContains
+                        | listContains
                         ;
 
 
@@ -391,7 +391,7 @@ and                     : firstExpr=exprOrLiteral' and 'secondExpr=exprOrLiteral
 or                       : firstExpr=exprOrLiteral' or 'secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral'?';
-stringContains          : '['stringArgument' v] contains 'exprOrLiteral'?';
+listContains          : '['stringArgument' v] contains 'exprOrLiteral'?';
 
 numExpr                 : xPosition
                         | yPosition
@@ -423,7 +423,7 @@ numExpr                 : xPosition
                         | mathFunction
                         | itemAtIndex
                         | indexOfItem
-                        | lengtOfList
+                        | lengthOfList
                         ;
 
 xPosition               : 'x position';
@@ -440,9 +440,7 @@ mouseY                  : 'mouse y';
 loudness                : 'loudness';
 timer                   : 'timer';
 actorAttribute          : '['attributeChoice' v] of 'element;
-element                 : '('stringArgument' v)'
-                        | exprOrLiteral;
-currentTime             : 'current 'currentChoice;
+currentTime             : 'current ['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
 addition                : firstExpr=exprOrLiteral' + 'secondExpr=exprOrLiteral;
@@ -455,11 +453,13 @@ getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral' of 'secondExpr=exprO
 lengthOf                : 'length of 'exprOrLiteral;
 modulo                  : firstExpr=exprOrLiteral' mod 'secondExpr=exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
-mathFunction            : mathChoice' of 'exprOrLiteral;
+mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral' of ['stringArgument' v]';
 indexOfItem             : 'item # of 'exprOrLiteral' in ['stringArgument' v]';
-lengtOfList             : 'length of ['stringArgument' v]';
+lengthOfList            : 'length of ['stringArgument' v]';
 
+element                 : '('stringArgument' v)'
+                        | exprOrLiteral;
 
 distanceChoice          : '('mousePointer' v)'
                         | '('stringArgument' v)'
@@ -495,8 +495,8 @@ mathChoice              : 'abs'
                         | '10 ^'
                         ;
 
-attributeChoice         : ~(NEWLINE)*? //variable
-                        | fixedAttribute
+attributeChoice         : fixedAttribute
+                        | stringArgument //variable
                         ;
 
 fixedAttribute          : 'backdrop #'

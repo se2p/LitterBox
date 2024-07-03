@@ -21,31 +21,37 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
@@ -96,8 +102,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx) {
-        Expression expr = (Expression) visitExpression(ctx.expression());
-        return new ExpressionStmt(expr);
+        return new ExpressionStmt(visitExpression(ctx.expression()));
     }
 
     @Override
@@ -130,7 +135,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     // region: expressions
 
-
+    // subregion: bool expressions
     @Override
     public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         if (ctx.numLiteral() != null) {
@@ -138,10 +143,9 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         } else if (ctx.stringLiteral() != null) {
             return visitStringLiteral(ctx.stringLiteral());
         } else {
-            return (Expression) super.visitExpression(ctx.expression());
+            return visitExpression(ctx.expression());
         }
     }
-
 
     @Override
     public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx) {
@@ -152,9 +156,9 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
-            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+            return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else if (ctx.stringArgument() != null) {
-            return new SpriteTouchable(new StringLiteral(ctx.stringArgument().getText()), new NoBlockMetadata());
+            return new SpriteTouchable(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
         } else if (ctx.fixedTouching() != null) {
             return visitFixedTouching(ctx.fixedTouching());
         }
@@ -175,15 +179,18 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         if (ctx.fixedPosition() != null) {
             return visitFixedPosition(ctx.fixedPosition());
         }
-        return (Position) super.visitPosition(ctx);
+        return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
     public Position visitFixedPosition(ScratchBlocksGrammarParser.FixedPositionContext ctx) {
         if (ctx.getText().equals("random position")) {
             return new RandomPos(new NoBlockMetadata());
+        } else if (ctx.mousePointer() != null) {
+            return new MousePos(new NoBlockMetadata());
+        } else {
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
         }
-        return (Position) super.visitFixedPosition(ctx);
     }
 
     @Override
@@ -219,9 +226,9 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public Key visitKeySelect(ScratchBlocksGrammarParser.KeySelectContext ctx) {
-        if (ctx.key() != null){
+        if (ctx.key() != null) {
             return visitKey(ctx.key());
-        }else{
+        } else {
             return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
         }
     }
@@ -245,44 +252,257 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
-    public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx){
-        return new BiggerThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
+    public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx) {
+        return new BiggerThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx){
-        return new LessThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
+    public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx) {
+        return new LessThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx){
-        return new Equals((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr),new NoBlockMetadata());
+    public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx) {
+        return new Equals((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Not visitNot(ScratchBlocksGrammarParser.NotContext ctx){
-        return new Not( makeBoolExpr(ctx.exprOrLiteral()),new NoBlockMetadata());
+    public Not visitNot(ScratchBlocksGrammarParser.NotContext ctx) {
+        return new Not(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public And visitAnd(ScratchBlocksGrammarParser.AndContext ctx){
-        return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr),new NoBlockMetadata());
+    public And visitAnd(ScratchBlocksGrammarParser.AndContext ctx) {
+        return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Or visitOr(ScratchBlocksGrammarParser.OrContext ctx){
-        return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr),new NoBlockMetadata());
+    public Or visitOr(ScratchBlocksGrammarParser.OrContext ctx) {
+        return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public StringContains visitContains(ScratchBlocksGrammarParser.ContainsContext ctx){
-        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr),new NoBlockMetadata());
+    public StringContains visitContains(ScratchBlocksGrammarParser.ContainsContext ctx) {
+        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public ListContains visitStringContains(ScratchBlocksGrammarParser.StringContainsContext ctx){
-        return new ListContains(new StrId(ctx.stringArgument().getText()), visitExprOrLiteral(ctx.exprOrLiteral()),new NoBlockMetadata());
+    public ListContains visitListContains(ScratchBlocksGrammarParser.ListContainsContext ctx) {
+        return new ListContains(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
+
+    //end subregion: bool expressions
+
+    //subregion num expression
+
+    @Override
+    public PositionX visitXPosition(ScratchBlocksGrammarParser.XPositionContext ctx) {
+        return new PositionX(new NoBlockMetadata());
+    }
+
+    @Override
+    public PositionY visitYPosition(ScratchBlocksGrammarParser.YPositionContext ctx) {
+        return new PositionY(new NoBlockMetadata());
+    }
+
+    @Override
+    public Direction visitDirection(ScratchBlocksGrammarParser.DirectionContext ctx) {
+        return new Direction(new NoBlockMetadata());
+    }
+
+    @Override
+    public Costume visitNumCostume(ScratchBlocksGrammarParser.NumCostumeContext ctx) {
+        return new Costume(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
+    }
+
+    @Override
+    public NameNum visitNameNum(ScratchBlocksGrammarParser.NameNumContext ctx) {
+        return new NameNum(ctx.getText());
+    }
+
+    @Override
+    public Backdrop visitNumBackdrop(ScratchBlocksGrammarParser.NumBackdropContext ctx) {
+        return new Backdrop(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Size visitSize(ScratchBlocksGrammarParser.SizeContext ctx) {
+        return new Size(new NoBlockMetadata());
+    }
+
+    @Override
+    public Volume visitVolume(ScratchBlocksGrammarParser.VolumeContext ctx) {
+        return new Volume(new NoBlockMetadata());
+    }
+
+    @Override
+    public DistanceTo visitDistanceTo(ScratchBlocksGrammarParser.DistanceToContext ctx) {
+        return new DistanceTo(visitDistanceChoice(ctx.distanceChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Position visitDistanceChoice(ScratchBlocksGrammarParser.DistanceChoiceContext ctx) {
+        if (ctx.mousePointer() != null) {
+            return new MousePos(new NoBlockMetadata());
+        } else if (ctx.stringArgument() != null) {
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        } else {
+            return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public Answer visitAnswer(ScratchBlocksGrammarParser.AnswerContext ctx) {
+        return new Answer(new NoBlockMetadata());
+    }
+
+    @Override
+    public MouseX visitMouseX(ScratchBlocksGrammarParser.MouseXContext ctx) {
+        return new MouseX(new NoBlockMetadata());
+    }
+
+    @Override
+    public MouseY visitMouseY(ScratchBlocksGrammarParser.MouseYContext ctx) {
+        return new MouseY(new NoBlockMetadata());
+    }
+
+    @Override
+    public Loudness visitLoudness(ScratchBlocksGrammarParser.LoudnessContext ctx) {
+        return new Loudness(new NoBlockMetadata());
+    }
+
+    @Override
+    public Timer visitTimer(ScratchBlocksGrammarParser.TimerContext ctx) {
+        return new Timer(new NoBlockMetadata());
+    }
+
+    @Override
+    public AttributeOf visitActorAttribute(ScratchBlocksGrammarParser.ActorAttributeContext ctx) {
+        return new AttributeOf(visitAttributeChoice(ctx.attributeChoice()), visitElement(ctx.element()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ElementChoice visitElement(ScratchBlocksGrammarParser.ElementContext ctx) {
+        if (ctx.stringArgument() != null) {
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        } else {
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public Attribute visitAttributeChoice(ScratchBlocksGrammarParser.AttributeChoiceContext ctx) {
+        if (ctx.fixedAttribute() != null) {
+            return new AttributeFromFixed(visitFixedAttribute(ctx.fixedAttribute()));
+        } else {
+            return new AttributeFromVariable(new Variable(new StrId(visitStringArgument(ctx.stringArgument()))));
+        }
+    }
+
+    @Override
+    public FixedAttribute visitFixedAttribute(ScratchBlocksGrammarParser.FixedAttributeContext ctx) {
+        return new FixedAttribute(ctx.getText());
+    }
+
+    @Override
+    public Current visitCurrentTime(ScratchBlocksGrammarParser.CurrentTimeContext ctx) {
+        return new Current(visitCurrentChoice(ctx.currentChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public TimeComp visitCurrentChoice(ScratchBlocksGrammarParser.CurrentChoiceContext ctx) {
+        if (ctx.getText().equals("day of the week")) {
+            return new TimeComp("dayofweek");
+        }
+        return new TimeComp(ctx.getText());
+    }
+
+    @Override
+    public DaysSince2000 visitDaysSince(ScratchBlocksGrammarParser.DaysSinceContext ctx) {
+        return new DaysSince2000(new NoBlockMetadata());
+    }
+
+    @Override
+    public Username visitUserName(ScratchBlocksGrammarParser.UserNameContext ctx) {
+        return new Username(new NoBlockMetadata());
+    }
+
+    @Override
+    public Add visitAddition(ScratchBlocksGrammarParser.AdditionContext ctx) {
+        return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public Minus visitSubtraction(ScratchBlocksGrammarParser.SubtractionContext ctx) {
+        return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public Mult visitMultiplication(ScratchBlocksGrammarParser.MultiplicationContext ctx) {
+        return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public Div visitDivision(ScratchBlocksGrammarParser.DivisionContext ctx) {
+        return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public PickRandom visitPickRandom(ScratchBlocksGrammarParser.PickRandomContext ctx) {
+        return new PickRandom(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public Join visitJoin(ScratchBlocksGrammarParser.JoinContext ctx) {
+        return new Join(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public LetterOf visitGetLetterAtIndex(ScratchBlocksGrammarParser.GetLetterAtIndexContext ctx) {
+        return new LetterOf(makeNumExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public LengthOfString visitLengthOf(ScratchBlocksGrammarParser.LengthOfContext ctx) {
+        return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Mod visitModulo(ScratchBlocksGrammarParser.ModuloContext ctx) {
+        return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    }
+
+    @Override
+    public Round visitRound(ScratchBlocksGrammarParser.RoundContext ctx) {
+        return new Round(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public NumFunctOf visitMathFunction(ScratchBlocksGrammarParser.MathFunctionContext ctx) {
+        return new NumFunctOf(visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public NumFunct visitMathChoice(ScratchBlocksGrammarParser.MathChoiceContext ctx) {
+        return new NumFunct(ctx.getText());
+    }
+
+    @Override
+    public ItemOfVariable visitItemAtIndex(ScratchBlocksGrammarParser.ItemAtIndexContext ctx) {
+        return new ItemOfVariable(makeNumExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public IndexOf visitIndexOfItem(ScratchBlocksGrammarParser.IndexOfItemContext ctx) {
+        return new IndexOf(visitExprOrLiteral(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public LengthOfVar visitLengthOfList(ScratchBlocksGrammarParser.LengthOfListContext ctx) {
+        return new LengthOfVar(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    //end subregion: num expressions
 
     @Override
     public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
@@ -298,25 +518,26 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public StringLiteral visitStringLiteral(ScratchBlocksGrammarParser.StringLiteralContext ctx) {
-        return new StringLiteral(ctx.stringArgument().getText());
+        return visitStringArgument(ctx.stringArgument());
     }
 
     @Override
-    public ASTNode visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
+    public Expression visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
-
-            //todo extract stringArgument visit
-            String stringArgument = ctx.stringArgument().getText()
-                    .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
-                    .replace("\\\\", "\\");     // Handle double backslash
-            return new Variable(new StrId(stringArgument));
+            return new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
         } else if (ctx.boolExpr() != null) {
-            return visitBoolExpr(ctx.boolExpr());
+            return (Expression) visitBoolExpr(ctx.boolExpr());
         } else if (ctx.numExpr() != null) {
-            return visitNumExpr(ctx.numExpr());
+            return (Expression) visitNumExpr(ctx.numExpr());
         } else {
-            return super.visitExpression(ctx);
+            return (Expression) super.visitExpression(ctx);
         }
+    }
+
+    public StringLiteral visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
+        return new StringLiteral(ctx.getText()
+                .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
+                .replace("\\\\", "\\")); // Handle double backslash
     }
 
     // endregion: expressions
