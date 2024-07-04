@@ -48,12 +48,32 @@ public class RepeatTimesLiteralExecutionTest implements JsonTest {
     }
 
     @Test
+    public void testRepeatTimesWithStopInNestedLoop() throws IOException, ParsingException {
+        assertThatFinderReports(0, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/repeatTimesWithStopInNestedLoop.json");
+    }
+
+    @Test
     public void testScriptWithTwoLoopsAndOtherElements() throws IOException, ParsingException {
         assertThatFinderReports(1, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/scriptWithTwoLoopsAndOtherElements.json");
     }
 
     @Test
+    public void testNestedRepeatTimesStmts() throws IOException, ParsingException {
+        assertThatFinderReports(1, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/nestedRepeatTimesStmts.json");
+    }
+
+    @Test
+    public void testRepeatTimesStmtInLoopStmt() throws IOException, ParsingException {
+        assertThatFinderReports(0, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/repeatTimesInLoop.json");
+    }
+
+    @Test
     public void testTwoScriptsWithConditionalLoops() throws IOException, ParsingException {
         assertThatFinderReports(1, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/twoScriptsWithConditionalLoops.json");
+    }
+
+    @Test
+    public void testTwoRepeatTimesStmts() throws IOException, ParsingException {
+        assertThatFinderReports(2, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/twoRepeatTimesStmts.json");
     }
 }
