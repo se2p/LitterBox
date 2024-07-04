@@ -260,8 +260,13 @@ costumeSelect           : '('stringArgument' v)' //costume
                         | exprOrLiteral
                         ;
 
-backdropSelect          : '('stringArgument' v)' //backdrop
-                        | 'next backdrop'
+backdropSelect          : '('fixedBackdrop' v)'
+                        | '('stringArgument' v)' //backdrop
+                        | exprOrLiteral
+                        ;
+
+
+fixedBackdrop           : 'next backdrop'
                         | 'previous backdrop'
                         | 'random backdrop'
                         ;

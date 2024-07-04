@@ -39,6 +39,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -174,5 +176,14 @@ public class ScratchBlocksToScratchVisitorTest {
         SetRotationStyle rotate = (SetRotationStyle) statements.getStatement(0);
         RotationStyle rotationStyle = rotate.getRotation();
         Assertions.assertEquals("don't rotate", rotationStyle.getTypeName());
+    }
+
+    @Test
+    public void testColorEffect() {
+        StmtList statements = getStmtList("set [pixelate v] effect to (2)\n");
+        Assertions.assertInstanceOf(SetGraphicEffectTo.class, statements.getStatement(0));
+        SetGraphicEffectTo setGraphic = (SetGraphicEffectTo) statements.getStatement(0);
+        GraphicEffect effect = setGraphic.getEffect();
+        Assertions.assertEquals("pixelate", effect.getTypeName());
     }
 }

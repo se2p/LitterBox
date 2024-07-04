@@ -21,8 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -45,8 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
@@ -92,6 +91,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public Stmt visitStmt(ScratchBlocksGrammarParser.StmtContext ctx) {
         if (ctx.motionStmt() != null) {
             return (Stmt) visitMotionStmt(ctx.motionStmt());
+        } else if (ctx.looksStmt() != null) {
+            return (Stmt) visitLooksStmt(ctx.looksStmt());
         } else if (ctx.controlStmt() != null) {
             return (Stmt) visitControlStmt(ctx.controlStmt());
             // todo: other cases
@@ -193,17 +194,17 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
-    public IfOnEdgeBounce visitOnEdge(ScratchBlocksGrammarParser.OnEdgeContext ctx){
+    public IfOnEdgeBounce visitOnEdge(ScratchBlocksGrammarParser.OnEdgeContext ctx) {
         return new IfOnEdgeBounce(new NoBlockMetadata());
     }
 
     @Override
-    public SetRotationStyle visitSetRotation(ScratchBlocksGrammarParser.SetRotationContext ctx){
-        return new SetRotationStyle(visitRotation(ctx.rotation()),new NoBlockMetadata());
+    public SetRotationStyle visitSetRotation(ScratchBlocksGrammarParser.SetRotationContext ctx) {
+        return new SetRotationStyle(visitRotation(ctx.rotation()), new NoBlockMetadata());
     }
 
     @Override
-    public RotationStyle visitRotation(ScratchBlocksGrammarParser.RotationContext ctx){
+    public RotationStyle visitRotation(ScratchBlocksGrammarParser.RotationContext ctx) {
         return new RotationStyle(ctx.getText());
     }
 
@@ -218,6 +219,130 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public SayForSecs visitSaySeconds(ScratchBlocksGrammarParser.SaySecondsContext ctx) {
         return new SayForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
+    }
+
+    @Override
+    public Think visitThink(ScratchBlocksGrammarParser.ThinkContext ctx) {
+        return new Think(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ThinkForSecs visitThinkSeconds(ScratchBlocksGrammarParser.ThinkSecondsContext ctx) {
+        return new ThinkForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
+    }
+
+    @Override
+    public SwitchCostumeTo visitSwitchCostume(ScratchBlocksGrammarParser.SwitchCostumeContext ctx) {
+        return new SwitchCostumeTo(visitCostumeSelect(ctx.costumeSelect()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ElementChoice visitCostumeSelect(ScratchBlocksGrammarParser.CostumeSelectContext ctx) {
+        if (ctx.stringArgument() != null) {
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        } else {
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public NextCostume visitNextCostume(ScratchBlocksGrammarParser.NextCostumeContext ctx) {
+        return new NextCostume(new NoBlockMetadata());
+    }
+
+    @Override
+    public SwitchBackdrop visitSwitchBackdrop(ScratchBlocksGrammarParser.SwitchBackdropContext ctx) {
+        return new SwitchBackdrop(visitBackdropSelect(ctx.backdropSelect()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SwitchBackdropAndWait visitSwitchBackdropWait(ScratchBlocksGrammarParser.SwitchBackdropWaitContext ctx) {
+        return new SwitchBackdropAndWait(visitBackdropSelect(ctx.backdropSelect()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ElementChoice visitBackdropSelect(ScratchBlocksGrammarParser.BackdropSelectContext ctx) {
+        if (ctx.fixedBackdrop() != null) {
+            return visitFixedBackdrop(ctx.fixedBackdrop());
+        } else if (ctx.stringArgument() != null) {
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        } else {
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public ElementChoice visitFixedBackdrop(ScratchBlocksGrammarParser.FixedBackdropContext ctx) {
+        return switch (ctx.getText()) {
+            case "next backdrop" -> new Next(new NoBlockMetadata());
+            case "previous backdrop" -> new Prev(new NoBlockMetadata());
+            default -> new Random(new NoBlockMetadata());
+        };
+    }
+
+    @Override
+    public NextBackdrop visitNextBackdrop(ScratchBlocksGrammarParser.NextBackdropContext ctx) {
+        return new NextBackdrop(new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeSizeBy visitChangeSize(ScratchBlocksGrammarParser.ChangeSizeContext ctx) {
+        return new ChangeSizeBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SetSizeTo visitSetSize(ScratchBlocksGrammarParser.SetSizeContext ctx) {
+        return new SetSizeTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeGraphicEffectBy visitChangeColorEffect(ScratchBlocksGrammarParser.ChangeColorEffectContext ctx) {
+        return new ChangeGraphicEffectBy(visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public GraphicEffect visitColorEffect(ScratchBlocksGrammarParser.ColorEffectContext ctx) {
+        return new GraphicEffect(ctx.getText());
+    }
+
+    @Override
+    public SetGraphicEffectTo visitSetColorEffect(ScratchBlocksGrammarParser.SetColorEffectContext ctx) {
+        return new SetGraphicEffectTo(visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ClearGraphicEffects visitClearColorEffect(ScratchBlocksGrammarParser.ClearColorEffectContext ctx) {
+        return new ClearGraphicEffects(new NoBlockMetadata());
+    }
+
+    @Override
+    public Show visitShow(ScratchBlocksGrammarParser.ShowContext ctx) {
+        return new Show(new NoBlockMetadata());
+    }
+
+    @Override
+    public Hide visitHide(ScratchBlocksGrammarParser.HideContext ctx) {
+        return new Hide(new NoBlockMetadata());
+    }
+
+    @Override
+    public GoToLayer visitGoToLayer(ScratchBlocksGrammarParser.GoToLayerContext ctx) {
+        return new GoToLayer(visitLayerChoice(ctx.layerChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public LayerChoice visitLayerChoice(ScratchBlocksGrammarParser.LayerChoiceContext ctx) {
+        return new LayerChoice(ctx.getText());
+    }
+
+    @Override
+    public ChangeLayerBy visitGoForwardBackwardLayer(ScratchBlocksGrammarParser.GoForwardBackwardLayerContext ctx) {
+        return new ChangeLayerBy(makeNumExpr(ctx.exprOrLiteral()), visitForwardBackwardChoice(ctx.forwardBackwardChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ForwardBackwardChoice visitForwardBackwardChoice(ScratchBlocksGrammarParser.ForwardBackwardChoiceContext ctx) {
+        return new ForwardBackwardChoice(ctx.getText());
     }
 
     //end subregion: looks blocks
