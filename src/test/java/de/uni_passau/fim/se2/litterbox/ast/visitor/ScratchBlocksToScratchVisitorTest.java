@@ -42,6 +42,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -163,5 +165,14 @@ public class ScratchBlocksToScratchVisitorTest {
         Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
         Assertions.assertInstanceOf(Current.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
         Assertions.assertEquals("dayofweek", ((Current) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getTimeComp().getTypeName());
+    }
+
+    @Test
+    public void testRotationStyle() {
+        StmtList statements = getStmtList("set rotation style [don't rotate v]\n");
+        Assertions.assertInstanceOf(SetRotationStyle.class, statements.getStatement(0));
+        SetRotationStyle rotate = (SetRotationStyle) statements.getStatement(0);
+        RotationStyle rotationStyle = rotate.getRotation();
+        Assertions.assertEquals("don't rotate", rotationStyle.getTypeName());
     }
 }

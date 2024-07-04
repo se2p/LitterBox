@@ -47,9 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -92,7 +90,9 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     @Override
     public Stmt visitStmt(ScratchBlocksGrammarParser.StmtContext ctx) {
-        if (ctx.controlStmt() != null) {
+        if (ctx.motionStmt() != null) {
+            return (Stmt) visitMotionStmt(ctx.motionStmt());
+        } else if (ctx.controlStmt() != null) {
             return (Stmt) visitControlStmt(ctx.controlStmt());
             // todo: other cases
         } else {
@@ -105,22 +105,111 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         return new ExpressionStmt(visitExpression(ctx.expression()));
     }
 
+    // begin subregion: motion blocks
     @Override
     public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
         return new MoveSteps(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ASTNode visitTurnRight(ScratchBlocksGrammarParser.TurnRightContext ctx) {
+    public TurnRight visitTurnRight(ScratchBlocksGrammarParser.TurnRightContext ctx) {
         return new TurnRight(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ASTNode visitGoToPos(ScratchBlocksGrammarParser.GoToPosContext ctx) {
+    public TurnLeft visitTurnLeft(ScratchBlocksGrammarParser.TurnLeftContext ctx) {
+        return new TurnLeft(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public GoToPos visitGoToPos(ScratchBlocksGrammarParser.GoToPosContext ctx) {
         Position position = visitPosition(ctx.position());
         return new GoToPos(position, new NoBlockMetadata());
     }
 
+    @Override
+    public Position visitPosition(ScratchBlocksGrammarParser.PositionContext ctx) {
+        if (ctx.fixedPosition() != null) {
+            return visitFixedPosition(ctx.fixedPosition());
+        }
+        return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Position visitFixedPosition(ScratchBlocksGrammarParser.FixedPositionContext ctx) {
+        if (ctx.getText().equals("random position")) {
+            return new RandomPos(new NoBlockMetadata());
+        } else if (ctx.mousePointer() != null) {
+            return new MousePos(new NoBlockMetadata());
+        } else {
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public GoToPosXY visitGoToPosXY(ScratchBlocksGrammarParser.GoToPosXYContext ctx) {
+        return new GoToPosXY(makeNumExpr(ctx.x), makeNumExpr(ctx.y), new NoBlockMetadata());
+    }
+
+    @Override
+    public GlideSecsTo visitGlideToPos(ScratchBlocksGrammarParser.GlideToPosContext ctx) {
+        Position position = visitPosition(ctx.position());
+        return new GlideSecsTo(makeNumExpr(ctx.time), position, new NoBlockMetadata());
+    }
+
+    @Override
+    public GlideSecsToXY visitGlideToPosXY(ScratchBlocksGrammarParser.GlideToPosXYContext ctx) {
+        return new GlideSecsToXY(makeNumExpr(ctx.time), makeNumExpr(ctx.x), makeNumExpr(ctx.y), new NoBlockMetadata());
+    }
+
+    @Override
+    public PointInDirection visitPointInDir(ScratchBlocksGrammarParser.PointInDirContext ctx) {
+        return new PointInDirection(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public PointTowards visitPointTowards(ScratchBlocksGrammarParser.PointTowardsContext ctx) {
+        return new PointTowards(visitPosition(ctx.position()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeXBy visitChangeX(ScratchBlocksGrammarParser.ChangeXContext ctx) {
+        return new ChangeXBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SetXTo visitSetX(ScratchBlocksGrammarParser.SetXContext ctx) {
+        return new SetXTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeYBy visitChangeY(ScratchBlocksGrammarParser.ChangeYContext ctx) {
+        return new ChangeYBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SetYTo visitSetY(ScratchBlocksGrammarParser.SetYContext ctx) {
+        return new SetYTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public IfOnEdgeBounce visitOnEdge(ScratchBlocksGrammarParser.OnEdgeContext ctx){
+        return new IfOnEdgeBounce(new NoBlockMetadata());
+    }
+
+    @Override
+    public SetRotationStyle visitSetRotation(ScratchBlocksGrammarParser.SetRotationContext ctx){
+        return new SetRotationStyle(visitRotation(ctx.rotation()),new NoBlockMetadata());
+    }
+
+    @Override
+    public RotationStyle visitRotation(ScratchBlocksGrammarParser.RotationContext ctx){
+        return new RotationStyle(ctx.getText());
+    }
+
+    //end subregion: motion blocks
+
+    // begin subregion: looks blocks
     @Override
     public Say visitSay(ScratchBlocksGrammarParser.SayContext ctx) {
         return new Say(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
@@ -130,6 +219,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     public SayForSecs visitSaySeconds(ScratchBlocksGrammarParser.SaySecondsContext ctx) {
         return new SayForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
     }
+
+    //end subregion: looks blocks
 
     // endregion: statements
 
@@ -171,25 +262,6 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return new MousePointer(new NoBlockMetadata());
         } else {
             return new Edge(new NoBlockMetadata());
-        }
-    }
-
-    @Override
-    public Position visitPosition(ScratchBlocksGrammarParser.PositionContext ctx) {
-        if (ctx.fixedPosition() != null) {
-            return visitFixedPosition(ctx.fixedPosition());
-        }
-        return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
-    }
-
-    @Override
-    public Position visitFixedPosition(ScratchBlocksGrammarParser.FixedPositionContext ctx) {
-        if (ctx.getText().equals("random position")) {
-            return new RandomPos(new NoBlockMetadata());
-        } else if (ctx.mousePointer() != null) {
-            return new MousePos(new NoBlockMetadata());
-        } else {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
         }
     }
 
