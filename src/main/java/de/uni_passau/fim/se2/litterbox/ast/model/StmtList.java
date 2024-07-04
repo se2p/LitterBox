@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -54,6 +55,13 @@ public class StmtList extends AbstractNode implements ASTNode {
 
     public boolean hasStatements() {
         return !stmts.isEmpty();
+    }
+
+    @Override
+    public String getScratchBlocks() {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
+        this.accept(visitor);
+        return visitor.getScratchBlocks();
     }
 
     @Override
