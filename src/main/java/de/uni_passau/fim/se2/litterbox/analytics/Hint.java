@@ -36,7 +36,9 @@ public class Hint {
     public static final String THEN_ELSE = "THENELSE";
     public static final String BLOCK_NAME = "BLOCKNAME";
     public static final String EVENT_HANDLER = "EVENTHANDLER";
+    public static final String STATEMENT = "STATEMENT";
     public static final String METHOD = "METHOD";
+    public static final String CONDITION = "CONDITION";
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 

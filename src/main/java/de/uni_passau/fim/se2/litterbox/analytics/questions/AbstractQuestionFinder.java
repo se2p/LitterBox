@@ -9,12 +9,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.*;
 
 public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
     protected final int MAX_CHOICES;
+    protected final String YES = IssueTranslator.getInstance().getInfo("yes");
+    protected final String NO = IssueTranslator.getInstance().getInfo("no");
 
     protected Set<String> choices;
     protected Set<String> answers;
