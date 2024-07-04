@@ -45,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
@@ -346,6 +347,64 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     //end subregion: looks blocks
+
+    //begin subregion: sound blocks
+
+    @Override
+    public PlaySoundUntilDone visitPlaySoundDone(ScratchBlocksGrammarParser.PlaySoundDoneContext ctx) {
+        return new PlaySoundUntilDone(visitSoundChoice(ctx.soundChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ElementChoice visitSoundChoice(ScratchBlocksGrammarParser.SoundChoiceContext ctx) {
+        if (ctx.stringArgument() != null) {
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+        } else {
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public StartSound visitPlaySound(ScratchBlocksGrammarParser.PlaySoundContext ctx) {
+        return new StartSound(visitSoundChoice(ctx.soundChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public StopAllSounds visitStopSound(ScratchBlocksGrammarParser.StopSoundContext ctx) {
+        return new StopAllSounds(new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeSoundEffectBy visitChangeSoundEffect(ScratchBlocksGrammarParser.ChangeSoundEffectContext ctx) {
+        return new ChangeSoundEffectBy(visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SetSoundEffectTo visitSetSoundEffect(ScratchBlocksGrammarParser.SetSoundEffectContext ctx) {
+        return new SetSoundEffectTo(visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SoundEffect visitSoundEffect(ScratchBlocksGrammarParser.SoundEffectContext ctx) {
+        return new SoundEffect(ctx.getText());
+    }
+
+    @Override
+    public ClearSoundEffects visitClearSoundEffect(ScratchBlocksGrammarParser.ClearSoundEffectContext ctx) {
+        return new ClearSoundEffects(new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeVolumeBy visitChangeVolume(ScratchBlocksGrammarParser.ChangeVolumeContext ctx) {
+        return new ChangeVolumeBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public SetVolumeTo visitSetVolume(ScratchBlocksGrammarParser.SetVolumeContext ctx) {
+        return new SetVolumeTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    //end subregion: sound blocks
 
     // endregion: statements
 
