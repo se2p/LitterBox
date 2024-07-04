@@ -1,43 +1,35 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-public class VariableInScript extends AbstractIssueFinder {
-    private Set<String> variablesInScript;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        variablesInScript = new LinkedHashSet<>();
-        return super.check(program);
-    }
+/**
+ * @QuestionType Strings
+ * @NumAnswers Multiple
+ * @Highlighted Script
+ * @Context Single script
+ */
+public class VariableInScript extends AbstractQuestionFinder {
 
     @Override
     public void visit(Script node) {
-        variablesInScript.clear();
+        answers.clear();
         super.visit(node);
 
-        if (variablesInScript.size() > 0) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withMetadata(node.getMetadata());
+        if (!answers.isEmpty()) {
+            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.ANSWER, variablesInScript.toString());
-            addIssue(builder.withCurrentNode(node).withHint(hint));
+            hint.setParameter(Hint.ANSWER, answers.toString());
+            addIssue(builder.withHint(hint));
         }
     }
 
     @Override
     public void visit(Variable node) {
-        variablesInScript.add("[var]" + node.getName().getName() + "[/var]");
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.QUESTION;
+        answers.add(node.getName().getScratchBlocks());
     }
 
     @Override

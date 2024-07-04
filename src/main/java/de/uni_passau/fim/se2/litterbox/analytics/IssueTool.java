@@ -249,11 +249,11 @@ public class IssueTool {
         Map<String, IssueFinder> questionFinders = new LinkedHashMap<>();
 
         if (LOAD_GENERAL) {
-            registerQuestionFinder(new VariableInScript(), questionFinders);
+            registerQuestionFinder(new BlockControllingLoop(), questionFinders);
             registerQuestionFinder(new ElementInLoopBody(), questionFinders);
             registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
             registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);
-            registerQuestionFinder(new BlockControllingLoop(), questionFinders);
+            registerQuestionFinder(new VariableInScript(), questionFinders);
         }
 
         return questionFinders;
