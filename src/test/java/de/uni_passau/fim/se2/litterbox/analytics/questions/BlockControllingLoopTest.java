@@ -33,6 +33,11 @@ public class BlockControllingLoopTest implements JsonTest {
     }
 
     @Test
+    public void testScriptWithTwoConditionLoops() throws IOException, ParsingException {
+        assertThatFinderReports(1, new BlockControllingLoop(), "src/test/fixtures/questions/twoControlStmtsInScript.json");
+    }
+
+    @Test
     public void testAllControlBlocks() throws IOException, ParsingException {
         assertThatFinderReports(2, new BlockControllingLoop(), "src/test/fixtures/questions/allControlBlocks.json");
     }

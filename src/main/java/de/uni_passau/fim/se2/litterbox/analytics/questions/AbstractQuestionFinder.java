@@ -4,6 +4,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
 
@@ -28,6 +31,35 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.QUESTION;
+    }
+
+    /**
+     * If there are more than {@code MAX_CHOICES} elements in {@code choices},
+     * choose {@code MAX_CHOICES} elements randomly. Otherwise, return all elements.
+     *
+     * @return a list of at most {@code MAX_CHOICES} elements from {@code choices}
+     */
+    protected String getChoices() {
+        ArrayList<String> list = new ArrayList<>(choices);
+        if (choices.size() > MAX_CHOICES) {
+            Collections.shuffle(list);
+            return list.subList(0, MAX_CHOICES).toString();
+        }
+        else {
+            return list.toString();
+        }
+    }
+
+    protected String wrappedScratchBlocks(Stmt node) {
+        return "[sbi]\n" + node.getScratchBlocks() + "[/sbi]";
+    }
+
+    protected String wrappedScratchBlocks(Expression node) {
+        return "[sbi]" + node.getScratchBlocks() + "[/sbi]";
+    }
+
+    protected String wrappedScratchBlocks(NumberLiteral node) {
+        return "<" + node.getScratchBlocks() + " :: grey ring>";
     }
 
 }
