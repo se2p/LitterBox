@@ -253,6 +253,7 @@ public class IssueTool {
             registerQuestionFinder(new BlockControllingLoop(), questionFinders);
             registerQuestionFinder(new ElementInLoopBody(), questionFinders);
             registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
+            registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
             registerQuestionFinder(new IfThenStatementExecution(), questionFinders);
             registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);
             registerQuestionFinder(new VariableInScript(), questionFinders);
