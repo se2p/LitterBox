@@ -264,6 +264,7 @@ public class IssueTool {
             registerQuestionFinder(new ScriptExecutionOrderSameActor(), questionFinders);
             registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
             registerQuestionFinder(new SetVariable(), questionFinders);
+            registerQuestionFinder(new StatementsInIfStatement(), questionFinders);
             registerQuestionFinder(new StatementTriggersEvent(), questionFinders);
             registerQuestionFinder(new VariableForActor(), questionFinders);
             registerQuestionFinder(new VariableInScript(), questionFinders);
