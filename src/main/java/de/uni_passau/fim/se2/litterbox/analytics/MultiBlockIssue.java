@@ -78,6 +78,10 @@ public class MultiBlockIssue extends Issue {
         return scripts.get(0);
     }
 
+    public List<ScriptEntity> getScriptsOrProcedureDefinitions() {
+        return scripts;
+    }
+
     public List<ASTNode> getNodes() {
         return Collections.unmodifiableList(nodes);
     }

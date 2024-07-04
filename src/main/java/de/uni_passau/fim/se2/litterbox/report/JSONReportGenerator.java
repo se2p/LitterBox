@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
@@ -33,7 +34,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -170,7 +173,12 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
 
             jsonGenerator.writeNumberField("currentCostume", actorMetadata.getCurrentCostume());
 
-            addCodeEntry(issue.getScriptOrProcedureDefinition(), issue, "code");
+            if (issue instanceof MultiBlockIssue) {
+                addCodeEntry(((MultiBlockIssue) issue).getScriptsOrProcedureDefinitions(), issue, "code");
+            }
+            else {
+                addCodeEntry(issue.getScriptOrProcedureDefinition(), issue, "code");
+            }
             addCodeEntry(issue.getRefactoredScriptOrProcedureDefinition(), issue, "refactoring");
 
             jsonGenerator.writeEndObject();
@@ -197,5 +205,24 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
             String scratchBlockCode = blockVisitor.getScratchBlocks();
             jsonGenerator.writeStringField(title, scratchBlockCode);
         }
+    }
+
+    private void addCodeEntry(List<ScriptEntity> locations, Issue issue, String title) throws IOException {
+        List<String> scripts = new ArrayList<>();
+        for (ScriptEntity location : locations) {
+            if (location == null) {
+                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
+                        + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+                scripts.add(emptyScript);
+            } else {
+                ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
+                blockVisitor.begin();
+                location.accept(blockVisitor);
+                blockVisitor.end();
+                String scratchBlockCode = blockVisitor.getScratchBlocks();
+                scripts.add(scratchBlockCode);
+            }
+        }
+        jsonGenerator.writeStringField(title, scripts.toString());
     }
 }
