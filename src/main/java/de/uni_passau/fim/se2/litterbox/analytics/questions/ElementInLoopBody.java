@@ -1,44 +1,49 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
-import java.util.*;
-
-public class ElementInLoopBody extends AbstractIssueFinder {
+/**
+ * @QuestionType Multiple Choice
+ * @NumAnswers Multiple
+ * @NumChoices {@code MAX_CHOICES}
+ * @Highlighted Script
+ * @Context Single script
+ */
+public class ElementInLoopBody extends AbstractQuestionFinder {
 
     private boolean insideLoop;
-    private Set<String> elementsInScript;
-    private Set<String> elementsInLoop;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        elementsInScript = new LinkedHashSet<>();
-        elementsInLoop = new LinkedHashSet<>();
-        return super.check(program);
-    }
 
     @Override
     public void visit(Script node) {
-        elementsInScript.clear();
-        elementsInLoop.clear();
+        choices.clear();
+        answers.clear();
         super.visit(node);
+        choices.removeAll(answers);
 
-        if (elementsInLoop.size() > 0 && elementsInLoop.size() < elementsInScript.size()) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW).withMetadata(node.getMetadata());
+        if (!answers.isEmpty() && !choices.isEmpty()) {
+            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.CHOICES, elementsInScript.toString());
-            hint.setParameter(Hint.ANSWER, elementsInLoop.toString());
-            addIssue(builder.withCurrentNode(node).withHint(hint));
+            hint.setParameter(Hint.CHOICES, getChoices());
+            hint.setParameter(Hint.ANSWER, getAnswers());
+            addIssue(builder.withHint(hint));
         }
     }
 
@@ -73,39 +78,95 @@ public class ElementInLoopBody extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        elementsInScript.add("[var]" + node.getName().getName() + "[/var]");
         if (insideLoop) {
-            elementsInLoop.add("[var]" + node.getName().getName() + "[/var]");
+            answers.add(wrappedScratchBlocks(node));
+        } else {
+            choices.add(wrappedScratchBlocks(node));
+        }
+    }
+
+    @Override
+    public void visit(NumExpr node) {
+        if (node instanceof SingularExpression) {
+            if (insideLoop) {
+                answers.add(wrappedScratchBlocks(node));
+            } else {
+                choices.add(wrappedScratchBlocks(node));
+            }
+        }
+        else {
+            super.visit(node);
         }
     }
 
     @Override
     public void visit(NumberLiteral node) {
-        elementsInScript.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         if (insideLoop) {
-            elementsInLoop.add("[lit]" + node.getScratchBlocks() + "[/lit]");
+            answers.add(wrappedScratchBlocks(node));
+        } else {
+            choices.add(wrappedScratchBlocks(node));
         }
     }
 
     @Override
     public void visit(StringLiteral node) {
-        elementsInScript.add("[lit]" + node.getScratchBlocks() + "[/lit]");
         if (insideLoop) {
-            elementsInLoop.add("[lit]" + node.getScratchBlocks() + "[/lit]");
+            answers.add(wrappedScratchBlocks(node));
+        } else {
+            choices.add(wrappedScratchBlocks(node));
         }
+    }
+
+    @Override
+    public void visit(ColorLiteral node) {
+        if (insideLoop) {
+            answers.add(wrappedScratchBlocks(node));
+        } else {
+            choices.add(wrappedScratchBlocks(node));
+        }
+    }
+
+    @Override
+    public void visit(ActorLookStmt node) {
+        inLookStmt = true;
+        super.visit(node);
+        inLookStmt = false;
+    }
+
+    @Override
+    public void visit(SpriteLookStmt node) {
+        inLookStmt = true;
+        super.visit(node);
+        inLookStmt = false;
+    }
+
+    @Override
+    public void visit(ActorSoundStmt node) {
+        inSoundStmt = true;
+        super.visit(node);
+        inSoundStmt = false;
+    }
+
+    @Override
+    public void visit(Broadcast node) {
+        inBroadcastStmt = true;
+        super.visit(node);
+        inBroadcastStmt = false;
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        inBroadcastStmt = true;
+        super.visit(node);
+        inBroadcastStmt = false;
     }
 
     @Override
     public void visit(Qualified node) {
         // Don't add actor to lists
-        if (node.getSecond() instanceof Variable) {
-            visit((Variable) node.getSecond());
+        if (node.getSecond() instanceof Variable variable) {
+            visit(variable);
         }
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.QUESTION;
     }
 
     @Override
