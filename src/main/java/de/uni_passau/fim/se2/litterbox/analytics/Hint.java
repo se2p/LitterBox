@@ -40,6 +40,7 @@ public class Hint {
     public static final String STATEMENT = "STATEMENT";
     public static final String METHOD = "METHOD";
     public static final String CONDITION = "CONDITION";
+    public static final String ACTOR = "ACTOR";
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
