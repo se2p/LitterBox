@@ -260,6 +260,7 @@ public class IssueTool {
             registerQuestionFinder(new ScriptsInProgram(), questionFinders);
             registerQuestionFinder(new ScriptsTriggeredByEvent(), questionFinders);
             registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
+            registerQuestionFinder(new ScriptExecutionOrderDifferentActors(), questionFinders);
             registerQuestionFinder(new ScriptExecutionOrderSameActor(), questionFinders);
             registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
             registerQuestionFinder(new SetVariable(), questionFinders);
