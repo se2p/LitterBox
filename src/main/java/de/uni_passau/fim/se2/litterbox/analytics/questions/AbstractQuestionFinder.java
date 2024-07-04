@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -75,6 +76,10 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         else {
             return list.toString();
         }
+    }
+
+    protected String wrappedScratchBlocks(Script node) {
+        return "[scratchblocks]\n" + node.getScratchBlocks() + "[/scratchblocks]";
     }
 
     protected String wrappedScratchBlocks(StmtList node) {
