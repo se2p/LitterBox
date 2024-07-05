@@ -192,7 +192,7 @@ waitSeconds             : 'wait 'exprOrLiteral' seconds';
 repeat                  : 'repeat 'exprOrLiteral (stmtList)?'end';
 forever                 : 'forever' NEWLINE (stmtList)? 'end';
 if                      : 'if 'exprOrLiteral' then' NEWLINE (stmtList)? 'end';
-ifElse                  : 'if 'exprOrLiteral' then' NEWLINE (stmtList)? 'else' NEWLINE (stmtList)? 'end';
+ifElse                  : 'if 'exprOrLiteral' then' NEWLINE (then=stmtList)? 'else' NEWLINE (else=stmtList)? 'end';
 waitUntil               : 'wait until 'exprOrLiteral;
 repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE (stmtList)? 'end';
 stop                    : 'stop ['stopChoice' v]';

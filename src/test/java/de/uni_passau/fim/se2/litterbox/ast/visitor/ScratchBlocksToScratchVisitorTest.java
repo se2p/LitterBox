@@ -41,11 +41,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -185,5 +187,19 @@ public class ScratchBlocksToScratchVisitorTest {
         SetGraphicEffectTo setGraphic = (SetGraphicEffectTo) statements.getStatement(0);
         GraphicEffect effect = setGraphic.getEffect();
         Assertions.assertEquals("pixelate", effect.getTypeName());
+    }
+
+    @Test
+    public void testStopAll() {
+        StmtList statements = getStmtList("stop [all v]\n");
+        Assertions.assertInstanceOf(StopAll.class, statements.getStatement(0));
+    }
+
+    @Test
+    public void testForever() {
+        StmtList statements = getStmtList("forever\n stop [all v]\n end\n");
+        Assertions.assertInstanceOf(RepeatForeverStmt.class, statements.getStatement(0));
+        RepeatForeverStmt forever = (RepeatForeverStmt) statements.getStatement(0);
+        Assertions.assertInstanceOf(StopAll.class,forever.getStmtList().getStatement(0));
     }
 }

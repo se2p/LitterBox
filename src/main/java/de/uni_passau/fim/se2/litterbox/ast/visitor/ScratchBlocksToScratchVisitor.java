@@ -46,8 +46,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -94,6 +100,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return (Stmt) visitMotionStmt(ctx.motionStmt());
         } else if (ctx.looksStmt() != null) {
             return (Stmt) visitLooksStmt(ctx.looksStmt());
+        } else if (ctx.soundStmt() != null) {
+            return (Stmt) visitSoundStmt(ctx.soundStmt());
         } else if (ctx.controlStmt() != null) {
             return (Stmt) visitControlStmt(ctx.controlStmt());
             // todo: other cases
@@ -405,6 +413,56 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     //end subregion: sound blocks
+
+    //begin subregion: control blocks
+
+    @Override
+    public WaitSeconds visitWaitSeconds(ScratchBlocksGrammarParser.WaitSecondsContext ctx) {
+        return new WaitSeconds(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public RepeatTimesStmt visitRepeat(ScratchBlocksGrammarParser.RepeatContext ctx) {
+        return new RepeatTimesStmt(makeNumExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+    }
+
+    @Override
+    public RepeatForeverStmt visitForever(ScratchBlocksGrammarParser.ForeverContext ctx) {
+        return new RepeatForeverStmt(makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+    }
+
+    @Override
+    public IfThenStmt visitIf(ScratchBlocksGrammarParser.IfContext ctx) {
+        return new IfThenStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+    }
+
+    @Override
+    public IfElseStmt visitIfElse(ScratchBlocksGrammarParser.IfElseContext ctx) {
+        return new IfElseStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.then), makeInnerStmtList(ctx.else_), new NoBlockMetadata());
+    }
+
+    @Override
+    public WaitUntil visitWaitUntil(ScratchBlocksGrammarParser.WaitUntilContext ctx) {
+        return new WaitUntil(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public UntilStmt visitRepeatUntil(ScratchBlocksGrammarParser.RepeatUntilContext ctx) {
+        return new UntilStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+    }
+
+    @Override
+    public Stmt visitStop(ScratchBlocksGrammarParser.StopContext ctx) {
+        if (ctx.stopChoice().getText().equals("all")) {
+            return new StopAll(new NoBlockMetadata());
+        } else if (ctx.stopChoice().getText().equals("this script")) {
+            return new StopThisScript(new NoBlockMetadata());
+        } else {
+            return new StopOtherScriptsInSprite(new NoBlockMetadata());
+        }
+    }
+
+    //end subregion: control blocks
 
     // endregion: statements
 
@@ -832,5 +890,16 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             boolExpr = new AsBool(expr);
         }
         return boolExpr;
+    }
+
+    private StmtList makeInnerStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
+        StmtList stmt;
+
+        if (ctx != null) {
+            stmt = visitStmtList(ctx);
+        } else {
+            stmt = new StmtList();
+        }
+        return stmt;
     }
 }
