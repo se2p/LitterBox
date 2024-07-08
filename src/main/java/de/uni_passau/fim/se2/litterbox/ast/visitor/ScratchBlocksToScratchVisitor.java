@@ -46,6 +46,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -459,6 +460,22 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return new StopThisScript(new NoBlockMetadata());
         } else {
             return new StopOtherScriptsInSprite(new NoBlockMetadata());
+        }
+    }
+
+    @Override
+    public CreateCloneOf visitCreateClone(ScratchBlocksGrammarParser.CreateCloneContext ctx){
+        return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), new NoBlockMetadata());
+    }
+
+    @Override
+    public StringExpr visitCloneChoice(ScratchBlocksGrammarParser.CloneChoiceContext ctx){
+        if(ctx.exprOrLiteral() != null){
+            return makeStringExpr(ctx.exprOrLiteral());
+        }else if(ctx.stringArgument() != null){
+            return new AsString(new StrId(visitStringArgument(ctx.stringArgument())));
+        }else{
+            return new AsString(new StrId(new StringLiteral("myself")));
         }
     }
 
