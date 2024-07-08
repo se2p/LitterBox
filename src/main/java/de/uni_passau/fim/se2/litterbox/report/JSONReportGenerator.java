@@ -27,13 +27,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricTool;
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -108,8 +103,8 @@ public class JSONReportGenerator implements ReportGenerator {
                 .stream()
                 .collect(
                         Collectors.toUnmodifiableMap(
-                            MetricExtractor::getName,
-                            metric -> metric.calculateMetric(program)
+                                MetricExtractor::getName,
+                                metric -> metric.calculateMetric(program)
                         )
                 );
     }
@@ -207,7 +202,8 @@ public class JSONReportGenerator implements ReportGenerator {
     private record ReportDTO(
             Map<String, Double> metrics,
             List<IssueDTO> issues
-    ) {}
+    ) {
+    }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private record IssueDTO(
@@ -233,7 +229,9 @@ public class JSONReportGenerator implements ReportGenerator {
             String scratchBlocksCode,
             @JsonProperty("refactoring")
             String refactoringScratchBlocksCode
-    ) {}
+    ) {
+    }
 
-    private record SimilarIssue(int id, double distance) {}
+    private record SimilarIssue(int id, double distance) {
+    }
 }

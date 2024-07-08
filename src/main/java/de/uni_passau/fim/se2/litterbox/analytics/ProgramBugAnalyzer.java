@@ -18,20 +18,37 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.IssueParser;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
+    private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
+    private final Path priorResultsPath;
+
+    public ProgramBugAnalyzer(final String detectors, final boolean ignoreLooseBlocks, final Path priorResultsPath) {
+        this.issueFinders = IssueTool.getFinders(detectors);
+        this.ignoreLooseBlocks = ignoreLooseBlocks;
+        this.priorResultsPath = priorResultsPath;
+    }
 
     public ProgramBugAnalyzer(final String detectors, final boolean ignoreLooseBlocks) {
         this.issueFinders = IssueTool.getFinders(detectors);
         this.ignoreLooseBlocks = ignoreLooseBlocks;
+        this.priorResultsPath = null;
     }
 
     @Override
@@ -42,6 +59,122 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
             issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
             issues.addAll(issueFinder.check(program));
         }
+        if (priorResultsPath != null) {
+            Map<String, List<IssueParser.IssueRecord>> oldResults = readPriorIssues();
+            Set<Issue> fixed = checkIfPriorIssuesFixed(program, issues, oldResults);
+            issues.addAll(fixed);
+        }
         return issues;
+    }
+
+    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueParser.IssueRecord>> oldResults) {
+        Map<String, List<Issue>> resultsByFinder = sortResults(result);
+        Set<String> oldFinders = oldResults.keySet();
+        Set<Issue> fixedIssues = new HashSet<>();
+        for (String finder : oldFinders) {
+            if (resultsByFinder.containsKey(finder)) {
+                fixedIssues.addAll(compareLocations(finder, oldResults.get(finder), resultsByFinder.get(finder), program));
+            } else {
+                fixedIssues.addAll(checkOldFixed(finder, oldResults.get(finder), program));
+            }
+        }
+        return fixedIssues;
+    }
+
+    private Set<Issue> compareLocations(String finder, List<IssueParser.IssueRecord> issueRecords, List<Issue> result, Program program) {
+        Set<Issue> fixes = new HashSet<>();
+        for (IssueParser.IssueRecord issueRecord : issueRecords) {
+            if (!issueRecord.blockId().equals("")) {
+                boolean found = false;
+                for (Issue currentIssue : result) {
+                    if (issueRecord.blockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    fixes.addAll(checkOldFixed(finder, issueRecord, program));
+                }
+            }
+        }
+        return fixes;
+    }
+
+    private Set<Issue> checkOldFixed(String finder, List<IssueParser.IssueRecord> issueRecords, Program program) {
+        Set<Issue> issues = new HashSet<>();
+        for (IssueParser.IssueRecord issueRecord : issueRecords) {
+            issues.addAll(checkOldFixed(finder, issueRecord, program));
+        }
+        return issues;
+    }
+
+    private Set<Issue> checkOldFixed(String finder, IssueParser.IssueRecord issueRecord, Program program) {
+        Set<Issue> issues = new HashSet<>();
+        switch (finder) {
+            case ComparingLiterals.NAME -> {
+                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(issueRecord.blockId());
+                issues.addAll(comparingLiteralsFix.check(program));
+            }
+            case ForeverInsideLoop.NAME -> {
+                ForeverInsideLoopFix foreverInsideLoopFix = new ForeverInsideLoopFix(issueRecord.actorName());
+                issues.addAll(foreverInsideLoopFix.check(program));
+            }
+            case MessageNeverReceived.NAME -> {
+                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(issueRecord.blockId());
+                issues.addAll(messageNeverReceived.check(program));
+            }
+            case MessageNeverSent.NAME -> {
+                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(issueRecord.blockId());
+                issues.addAll(messageNeverSentFix.check(program));
+            }
+            case MissingCloneInitialization.NAME -> {
+                MissingCloneInitializationFix missingCloneInitializationFix = new MissingCloneInitializationFix(issueRecord.blockId());
+                issues.addAll(missingCloneInitializationFix.check(program));
+            }
+            case MissingLoopSensing.NAME -> {
+                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(issueRecord.blockId());
+                issues.addAll(missingLoopSensingLoopFix.check(program));
+                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(issueRecord.blockId());
+                issues.addAll(missingLoopSensingWaitFix.check(program));
+            }
+            case StutteringMovement.NAME -> {
+                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(issueRecord.blockId());
+                issues.addAll(stutteringMovementFix.check(program));
+            }
+        }
+        return issues;
+    }
+
+    private Map<String, List<Issue>> sortResults(Set<Issue> result) {
+        Map<String, List<Issue>> resultsByFinder = new HashMap<>();
+        for (Issue issue : result) {
+            String finderName = issue.getFinderName();
+            if (resultsByFinder.containsKey(finderName)) {
+                resultsByFinder.get(finderName).add(issue);
+            } else {
+                List<Issue> sortedIssues = new ArrayList<>();
+                sortedIssues.add(issue);
+                resultsByFinder.put(finderName, sortedIssues);
+            }
+        }
+        return resultsByFinder;
+    }
+
+    private Map<String, List<IssueParser.IssueRecord>> readPriorIssues() {
+        File file = priorResultsPath.toFile();
+        if (file.exists()) {
+            IssueParser parser = new IssueParser();
+            try {
+                return parser.parseFile(file);
+            } catch (IOException e) {
+                log.severe("Could not load program from file " + file.getName());
+            } catch (ParsingException e) {
+                log.severe("Could not parse program for file " + file.getName() + ". " + e.getMessage());
+            }
+            return null;
+        } else {
+            log.severe("File '" + file.getName() + "' does not exist");
+            return null;
+        }
     }
 }
