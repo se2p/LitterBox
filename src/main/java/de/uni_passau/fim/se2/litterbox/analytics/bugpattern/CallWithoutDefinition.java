@@ -25,7 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -35,7 +37,7 @@ import java.util.List;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    private List<String> proceduresDef;
+    private Set<String> proceduresDef;
     private List<CallStmt> calledProcedures;
 
     private void checkCalls() {
@@ -55,7 +57,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
-        proceduresDef = new ArrayList<>();
+        proceduresDef = new HashSet<>();
         super.visit(actor);
         checkCalls();
     }

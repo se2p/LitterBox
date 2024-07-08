@@ -21,8 +21,11 @@ package de.uni_passau.fim.se2.litterbox.utils;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public final class IssueTranslator {
+
+    private static final Logger log = Logger.getLogger(IssueTranslator.class.getName());
 
     private static IssueTranslator instance;
     private ResourceBundle hints;
@@ -63,7 +66,7 @@ public final class IssueTranslator {
     }
 
     /**
-     * Private constructor to avoid instatiation of singleton.
+     * Private constructor to avoid instantiation of singleton.
      */
     private IssueTranslator() {
         locale = Locale.ENGLISH;
@@ -90,40 +93,33 @@ public final class IssueTranslator {
      * @param lang that identifies the locale to set
      */
     public void setLanguage(String lang) {
+        final Locale newLocale;
         if (lang == null) {
-            locale = Locale.ENGLISH;
+            newLocale = Locale.ENGLISH;
         } else {
-            locale = Locale.forLanguageTag(lang);
+            newLocale = Locale.forLanguageTag(lang);
         }
-        loadResourceBundles();
+
+        if (!locale.equals(newLocale)) {
+            locale = newLocale;
+            loadResourceBundles();
+        }
     }
 
     private void loadResourceBundles() {
-        try {
-            names = ResourceBundle.getBundle("IssueNames", locale);
-        } catch (MissingResourceException e) {
-            names = ResourceBundle.getBundle("IssueNames", Locale.ENGLISH);
-            System.err.println("Could not load resource bundle for language "
-                    + locale.toLanguageTag()
-                    + "; Defaulting to english");
-        }
+        names = loadResourceBundle("IssueNames", locale);
+        hints = loadResourceBundle("IssueHints", locale);
+        general = loadResourceBundle("GeneralTerms", locale);
+    }
 
+    private ResourceBundle loadResourceBundle(final String name, final Locale locale) {
         try {
-            hints = ResourceBundle.getBundle("IssueHints", locale);
+            return  ResourceBundle.getBundle(name, locale);
         } catch (MissingResourceException e) {
-            hints = ResourceBundle.getBundle("IssueHints", Locale.ENGLISH);
-            System.err.println("Could not load resource bundle for language "
+            log.warning("Could not load resource bundle for language "
                     + locale.toLanguageTag()
-                    + "; Defaulting to english");
-        }
-
-        try {
-            general = ResourceBundle.getBundle("GeneralTerms", locale);
-        } catch (MissingResourceException e) {
-            general = ResourceBundle.getBundle("GeneralTerms", Locale.ENGLISH);
-            System.err.println("Could not load resource bundle for language "
-                    + locale.toLanguageTag()
-                    + "; Defaulting to english");
+                    + ". Defaulting to English.");
+            return ResourceBundle.getBundle(name, Locale.ENGLISH);
         }
     }
 
@@ -161,6 +157,17 @@ public final class IssueTranslator {
         } else {
             return keyword;
         }
+    }
+
+    /**
+     * Finds the translation for a finder group.
+     *
+     * @param finderGroup Some finder group.
+     * @return The translated name.
+     */
+    public String getInfo(final FinderGroup finderGroup) {
+        final String keyword = finderGroup.group();
+        return getInfo(keyword);
     }
 
     public String getInfo(GeneralTerm keyword) {

@@ -148,7 +148,7 @@ public class NumValueVisitor implements ScratchVisitor {
         return endValue;
     }
 
-    public double calculateEndValue(ASTNode node) throws Exception {
+    public double calculateEndValue(ASTNode node) {
         node.accept(this);
         return endValue;
     }

@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+import static de.uni_passau.fim.se2.litterbox.utils.FinderGroup.ALL;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class GeneralTestMBlock implements JsonTest {

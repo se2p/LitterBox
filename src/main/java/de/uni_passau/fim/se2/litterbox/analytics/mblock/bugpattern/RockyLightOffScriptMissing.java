@@ -42,7 +42,6 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
     private final List<RockyLightStmt> lastStmtList = new LinkedList<>();
     private RunningState state = NEVER;
     private RockyLightStmt lastStmt = null;
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -61,13 +60,11 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
             } else if (state == STOPPED) {
                 state = NEVER;
                 lastStmt = null;
-                forever = false;
                 lastStmtList.clear();
                 return;
             }
             state = NEVER;
             lastStmt = null;
-            forever = false;
         }
         for (RockyLightStmt stmt : lastStmtList) {
             addIssue(stmt);
@@ -83,12 +80,6 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
         if (!(node.getEvent() instanceof Never)) {
             node.getStmtList().accept(this);
         }
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
     }
 
     @Override

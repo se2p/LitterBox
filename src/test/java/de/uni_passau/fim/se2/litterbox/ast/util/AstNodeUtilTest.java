@@ -20,12 +20,18 @@
 package de.uni_passau.fim.se2.litterbox.ast.util;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,13 +41,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AstNodeUtilTest implements JsonTest {
     @ParameterizedTest
@@ -123,7 +128,7 @@ class AstNodeUtilTest implements JsonTest {
                 .flatMap(Collection::stream)
                 .map(ProcedureInfo::getName)
                 .map(name -> AstNodeUtil.replaceProcedureParams(name, replacement))
-                .collect(Collectors.toList());
+                .toList();
 
         final String nameWithReplacements = String.format("BlockWithInputs %s %s", replacement, replacement).trim();
         assertThat(procedureNames).containsExactly("BlockNoInputs", nameWithReplacements);
@@ -152,5 +157,74 @@ class AstNodeUtilTest implements JsonTest {
                 .orElseThrow();
 
         assertThat(AstNodeUtil.getBlockId(procedure)).isEqualTo("V-ChQTp}ZbGaPT;Mu5ok");
+    }
+
+    @Test
+    void testGetBlockMap() throws Exception {
+        final Program program = getAST("src/test/fixtures/inputs.json");
+        final Map<String, ASTNode> blockMap = AstNodeUtil.getBlockMap(program);
+        final Consumer<String> isExpectedClass = (String blockId) -> {
+            final Class<?> clazz = switch (blockId) {
+                case "operator_equals" -> Equals.class;
+                case "control_if" -> IfStmt.class;
+                case "sensing_of" -> AttributeOf.class;
+                case "motion_movesteps" -> MoveSteps.class;
+                case "sensing_of_object_menu" -> WithExpr.class;
+                default -> throw new IllegalArgumentException(blockId);
+            };
+
+            assertThat(clazz.isAssignableFrom(blockMap.get(blockId).getClass())).isTrue();
+        };
+
+        assertAll(blockMap.keySet().stream().map(blockId -> () -> isExpectedClass.accept(blockId)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"operator_equals", "motion_movesteps", "sensing_of"})
+    void testIsInputOfKindBlocks(final String blockId) throws Exception {
+        final Program program = getAST("src/test/fixtures/inputs.json");
+        final ASTNode block = AstNodeUtil.getBlockMap(program).get(blockId);
+        final String inputKey = switch (blockId) {
+            case "operator_equals" -> CONDITION_KEY;
+            case "sensing_of" -> OPERAND1_KEY;
+            case "motion_movesteps" -> SUBSTACK_KEY;
+            default -> throw new IllegalArgumentException();
+        };
+
+        assertThat(AstNodeUtil.isInputOfKind(block, inputKey)).isTrue();
+
+        final Stream<String> otherKeys = Stream.of(CONDITION_KEY, OPERAND1_KEY, SUBSTACK_KEY, OPERAND2_KEY, STEPS_KEY)
+                .filter(key -> !key.equals(inputKey));
+
+        assertAll(otherKeys.map(key -> () -> assertThat(AstNodeUtil.isInputOfKind(block, key)).isFalse()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"operator_equals", "motion_movesteps"})
+    void testIsInputOfKindPrimitives(final String parentId) throws Exception {
+        final Program program = getAST("src/test/fixtures/inputs.json");
+        final ASTNode block = AstNodeUtil.getBlockMap(program).get(parentId);
+        final ASTNode input;
+        final String inputKind;
+
+        switch (parentId) {
+            case "operator_equals":
+                input = ((Equals) block).getOperand2();
+                inputKind = OPERAND2_KEY;
+                break;
+            case "motion_movesteps":
+                input = ((MoveSteps) block).getSteps();
+                inputKind = STEPS_KEY;
+                break;
+            default:
+                throw new IllegalArgumentException(parentId);
+        }
+
+        assertThat(AstNodeUtil.isInputOfKind(input, inputKind)).isTrue();
+
+        final Stream<String> otherKeys = Stream.of(CONDITION_KEY, OPERAND1_KEY, SUBSTACK_KEY, OPERAND2_KEY, STEPS_KEY)
+                .filter(key -> !key.equals(inputKind));
+
+        assertAll(otherKeys.map(key -> () -> assertThat(AstNodeUtil.isInputOfKind(input, key)).isFalse()));
     }
 }

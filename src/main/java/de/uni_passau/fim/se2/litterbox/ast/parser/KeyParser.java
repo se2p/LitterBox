@@ -75,7 +75,7 @@ public class KeyParser {
             case "right arrow" -> new Key(new NumberLiteral(RIGHTARROW), metadata);
             case "any" -> new Key(new NumberLiteral(ANYKEY), metadata);
             default -> {
-                if (keyValue.length() > 0) {
+                if (!keyValue.isEmpty()) {
                     yield new Key(new NumberLiteral(keyValue.charAt(0)), metadata);
                 } else {
                     // It is not clear how this can happen, but it happens sometimes.

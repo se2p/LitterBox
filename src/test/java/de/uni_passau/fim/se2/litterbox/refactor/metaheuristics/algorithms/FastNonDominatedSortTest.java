@@ -40,7 +40,6 @@ import static org.mockito.Mockito.*;
 class FastNonDominatedSortTest {
 
     @Test
-    @SuppressWarnings("unchecked")
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {
         MinimizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1);
@@ -61,7 +60,6 @@ class FastNonDominatedSortTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void testDominationCheck() {
         MaximizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfHelloBlocks.class);
         MinimizingFitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);

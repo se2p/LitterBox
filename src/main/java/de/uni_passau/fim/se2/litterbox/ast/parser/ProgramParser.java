@@ -32,16 +32,15 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.IS_STAGE_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
-public class ProgramParser {
+class ProgramParser {
 
-    public static Program parseProgram(String programName, JsonNode programNode) throws ParsingException {
+    static Program parseProgram(String programName, JsonNode programNode) throws ParsingException {
         final ProgramParserState state = new ProgramParserState();
 
         Preconditions.checkNotNull(programName);
@@ -75,8 +74,7 @@ public class ProgramParser {
 
         Iterable<JsonNode> iterable = () -> programNode.get(TARGETS_KEY).iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
-        List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get(IS_STAGE_KEY).asBoolean()))
-                .collect(Collectors.toList());
+        List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get(IS_STAGE_KEY).asBoolean())).toList();
 
         List<ActorDefinition> actorDefinitions = new LinkedList<>();
         actorDefinitions.add(stage);

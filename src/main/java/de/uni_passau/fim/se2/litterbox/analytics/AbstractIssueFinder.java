@@ -55,7 +55,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public void visit(ActorDefinition actor) {
         Preconditions.checkNotNull(program);
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procMap = program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
         visitChildren(actor);
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 new Hint(getName())));
@@ -140,7 +140,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssueWithLooseComment(Hint hint) {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 hint));

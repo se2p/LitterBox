@@ -51,7 +51,7 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RefactoringAnalyzer extends Analyzer<Void> {
+public class RefactoringAnalyzer extends FileAnalyzer<Void> {
 
     private static final Logger log = Logger.getLogger(RefactoringAnalyzer.class.getName());
     private final List<RefactoringFinder> refactoringFinders;
@@ -60,8 +60,8 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
     private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
     private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
 
-    public RefactoringAnalyzer(Path input, Path output, Path refactoredPath, boolean delete) {
-        super(input, output, delete);
+    public RefactoringAnalyzer(Path output, Path refactoredPath, boolean delete) {
+        super(new RefactoringProgramAnalyzer(), output, delete);
         this.refactoredPath = refactoredPath;
         refactoringFinders = RefactoringTool.getRefactoringFinders();
     }
@@ -101,11 +101,6 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
         } else {
             log.log(Level.FINE, "NSGA-II found no solutions!");
         }
-    }
-
-    @Override
-    public Void check(Program program) {
-        return null;
     }
 
     private void generateProjectsFromParetoFront(File fileEntry, Path reportName,
@@ -213,6 +208,14 @@ public class RefactoringAnalyzer extends Analyzer<Void> {
             JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
         } else {
             JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
+        }
+    }
+
+    private static class RefactoringProgramAnalyzer implements ProgramAnalyzer<Void> {
+
+        @Override
+        public Void analyze(Program program) {
+            return null;
         }
     }
 }

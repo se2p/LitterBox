@@ -235,6 +235,37 @@ public class CFGTest implements JsonTest {
     }
 
     @Test
+    void testCallCustomBlockDifferentParameterCount() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customBlockOverloaded.json");
+        // 3x(event, call, procedure, return) + entry + exit
+        assertThat(cfg.getNumNodes()).isEqualTo(14);
+        // 3x: (entry->event->exit->call->procedure->return->exit)
+        assertThat(cfg.getNumEdges()).isEqualTo(18);
+    }
+
+    /*
+     * In this case the control flow looks like
+     *
+     * CallStmt1 -> CustomBlock -> TurnLeft -> Return1 -> CallStmt2 -(back to CallStmt1)
+     *                                    |--> Return2 -> Exit
+     *
+     * Even though the program has two identical custom blocks.
+     *
+     * The Scratch VM seems to use the one created last for both call statements, even after a project load. However,
+     * since the blocks are stored in the JSON as an object indexed by their blockID which essentially is a set of
+     * key->value mappings, we have no way of knowing which one was first.
+     * Therefore, the behaviour of having only one of the two overloaded custom procedures in the CFG and using it for
+     * both calls is at least somewhat consistent with what Scratch actually does and probably the best we can do here.
+     */
+    @Test
+    void testCallCustomBlockOverloadedIdentical() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customBlockOverloadedIdentical.json");
+        // entry, exit, green flag, turn left, turn right, 2xreturn, 2xcall stmt, but only one custom block
+        assertThat(cfg.getNumNodes()).isEqualTo(10);
+        assertThat(cfg.getNumEdges()).isEqualTo(11);
+    }
+
+    @Test
     public void testNextBackdrop() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
         assertThat(cfg.getNumNodes()).isEqualTo(4);

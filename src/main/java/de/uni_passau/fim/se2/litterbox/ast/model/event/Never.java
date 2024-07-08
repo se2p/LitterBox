@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -36,10 +35,4 @@ public class Never extends AbstractNode implements Event, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
-
-    @Override
-    public BlockMetadata getMetadata() {
-        throw new RuntimeException("Never event has no metadata");
-    }
-
 }

@@ -160,7 +160,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/smells/emptySprite.json");
 
         EmptySprite emptySprite = new EmptySprite();
-        Assertions.assertEquals(emptySprite.NAME, emptySprite.getName());
+        Assertions.assertEquals(EmptySprite.NAME, emptySprite.getName());
         Set<Issue> issues = emptySprite.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();

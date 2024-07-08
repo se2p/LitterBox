@@ -50,7 +50,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     private final Map<PortType, RunningState> states = new HashMap<>();
     private final Map<PortType, MBlockStmt> lastStmts = new HashMap<>();
     private final Map<PortType, List<MBlockStmt>> lastStmtMap = new HashMap<>();
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -110,12 +109,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDMatrixStmt node) {
         boolean blank = isBlank(node);
         if (blank || node instanceof TimedStmt || node instanceof TurnOffFace || node instanceof TurnOffFacePort) {
@@ -146,7 +139,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     private void resetMaps() {
         states.clear();
         lastStmts.clear();
-        forever = false;
     }
 
     private boolean isBlank(LEDMatrixStmt node) {

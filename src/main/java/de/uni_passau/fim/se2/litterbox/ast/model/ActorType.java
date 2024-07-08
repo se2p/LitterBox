@@ -29,7 +29,7 @@ public class ActorType extends AbstractNode implements ASTLeaf {
 
     private enum Type {
         STAGE,
-        SPRITE;
+        SPRITE
     }
 
     private Type type;
@@ -84,8 +84,7 @@ public class ActorType extends AbstractNode implements ASTLeaf {
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {type.name()};
-        return returnArray;
+        return new String[]{type.name()};
     }
 
     @Override

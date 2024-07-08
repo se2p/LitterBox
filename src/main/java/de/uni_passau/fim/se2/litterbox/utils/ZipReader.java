@@ -59,7 +59,7 @@ public final class ZipReader {
         try (
                 InputStream is = file.getInputStream(entry);
                 InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr);
+                BufferedReader br = new BufferedReader(isr)
         ) {
             return br.lines().collect(Collectors.joining("\n"));
         }

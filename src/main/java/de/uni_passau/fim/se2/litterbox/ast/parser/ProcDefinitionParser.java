@@ -117,7 +117,8 @@ public class ProcDefinitionParser {
         List<BlockMetadata> paramMeta = new ArrayList<>();
         collectParameters(paraTypes, paramMeta, blocks, proto, argumentIdsNode, argumentDefaultsNode);
 
-        String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
+        String methodName = getMethodName(proto);
+
         LocalIdentifier ident = getProcedureIdentifier(def, blocks, proto);
 
         final String actorName = state.getCurrentActor().getName();
@@ -142,6 +143,12 @@ public class ProcDefinitionParser {
         return new ProcedureDefinition(ident, parameterDefinitionList, stmtList, meta);
     }
 
+    private static String getMethodName(JsonNode proto) {
+        String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
+        // %n exists from some methods (probably due to conversion from Scratch 2), but it is not possible to construct
+        // such methods in Scratch any more. The number/text input is always created as %s using the Scratch UI.
+        return methodName.replace("%n", "%s");
+    }
 
     private static ArrayNode getArgumentIdsNode(JsonNode proto, ObjectMapper mapper) throws ParsingException {
         JsonNode argumentIds = proto.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);

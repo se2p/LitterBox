@@ -3402,8 +3402,6 @@ public class CloneVisitor {
         return id.toString();
     }
 
-    ;
-
     /**
      * Default implementation of visit method for {@link Speak}.
      *

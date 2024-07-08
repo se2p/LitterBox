@@ -78,7 +78,21 @@ public class CallStmtParser {
             }
         }
 
-        return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
-                new ExpressionList(expressions), BlockMetadataParser.parse(identifier, current));
+        StrId callStmtId = getCallStmtIdentifier(current);
+        return new CallStmt(
+                callStmtId,
+                new ExpressionList(expressions),
+                BlockMetadataParser.parse(identifier, current)
+        );
+    }
+
+    private static StrId getCallStmtIdentifier(final JsonNode current) {
+        String identifier = current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText();
+        // %n parameters probably only exist when converting from Scratch 2 programs. At the same time, Scratch converts
+        // procedures to have %s parameters instead, though. Therefore, the matching by name is broken in those cases.
+        // => convert all number (%n) parameter types to number/text (%s) parameter types, too
+        identifier = identifier.replace("%n", "%s");
+
+        return new StrId(identifier);
     }
 }

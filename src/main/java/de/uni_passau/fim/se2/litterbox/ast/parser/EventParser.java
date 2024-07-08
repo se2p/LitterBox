@@ -37,7 +37,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotB
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode.*;
 
 public class EventParser {
 

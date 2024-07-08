@@ -123,7 +123,7 @@ public class ProcedureDefinitionNameMapping {
         return getProcedureForHash(actor.getIdent().getName(), hash);
     }
 
-    private Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
+    public Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
         return getProcedures().getOrDefault(actorName, Collections.emptyMap());
     }
 

@@ -114,7 +114,7 @@ public class SymbolTable {
      *
      * @param ident     of the variable
      * @param actorName which defines the variable
-     * @return
+     * @return The variable, if one can be found.
      */
     public Optional<VariableInfo> getVariable(String ident, String variableName, String actorName) {
         String key = ident + variableName + actorName;
@@ -156,7 +156,7 @@ public class SymbolTable {
      *
      * @param ident     of the list
      * @param actorName which defines the variable
-     * @return
+     * @return The info, if one can be found.
      */
     public Optional<ExpressionListInfo> getList(String ident, String listName, String actorName) {
         String key = ident + listName + actorName;

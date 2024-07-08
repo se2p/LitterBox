@@ -36,11 +36,6 @@ public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
     }
 
     @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }

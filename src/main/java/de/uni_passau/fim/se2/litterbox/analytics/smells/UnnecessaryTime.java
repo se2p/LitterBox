@@ -105,7 +105,7 @@ public class UnnecessaryTime extends AbstractIssueFinder {
             return num.getValue() <= 0;
         } else if (node instanceof AsNumber num) {
             if (num.getOperand1() instanceof StringLiteral stringLiteral) {
-                return stringLiteral.getText().equals("");
+                return stringLiteral.getText().isEmpty();
             }
         }
         return false;

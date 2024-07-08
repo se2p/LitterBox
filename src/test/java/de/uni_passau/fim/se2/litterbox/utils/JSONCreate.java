@@ -18,33 +18,27 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-class JSONCreate {
-    private static final ObjectMapper mapper = new ObjectMapper();
+class JSONCreate implements JsonTest {
 
     @AfterAll
     static void cleanUp() throws IOException {
-        Files.delete(Path.of("createBroadcast_annotated.json"));
+        Files.delete(Path.of("manipulatedBroadcast_annotated.json"));
     }
 
     @Test
     public void createJSON() throws ParsingException, IOException {
-        File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
-        JsonNode prog = mapper.readTree(f);
-        Program test = ProgramParser.parseProgram("createBroadcast", prog);
+        Program test = getAST("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
