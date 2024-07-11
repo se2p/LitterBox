@@ -18,7 +18,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  * @Highlighted If Statement
  * @Context Single script
  */
-public class BlockControllingIfStatement extends AbstractQuestionFinder {
+public class IfBlockCondition extends AbstractQuestionFinder {
     private boolean ifStmtFound;
     private IssueBuilder builder;
 
@@ -90,6 +90,6 @@ public class BlockControllingIfStatement extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "block_controlling_if_statement";
+        return "if_block_condition";
     }
 }
