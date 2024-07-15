@@ -56,7 +56,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                 currentScript = scripts.get(0);
                 currentActor = actorForScript.get(currentScript);
 
-                IssueBuilder builder = prepareIssueBuilder(currentScript).withSeverity(IssueSeverity.LOW);
+                IssueBuilder builder = prepareIssueBuilder(currentScript.getEvent()).withSeverity(IssueSeverity.LOW);
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
                 hint.setParameter(Hint.ANSWER, eventStatements.get(event).toString());

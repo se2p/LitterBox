@@ -38,7 +38,7 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
         choices.removeAll(answers);
 
         if (!answers.isEmpty() && !choices.isEmpty()) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            IssueBuilder builder = prepareIssueBuilder(node.getEvent()).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
             hint.setParameter(Hint.ANSWER, answers.toString());

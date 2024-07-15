@@ -36,8 +36,8 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
                 scriptEntities.add(node.getScripts().getScript(0));
                 scriptEntities.add(node.getScripts().getScript(1));
-                nodes.add(node.getScripts().getScript(0));
-                nodes.add(node.getScripts().getScript(1));
+                nodes.add(node.getScripts().getScript(0).getEvent());
+                nodes.add(node.getScripts().getScript(1).getEvent());
 
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.EVENT, event);

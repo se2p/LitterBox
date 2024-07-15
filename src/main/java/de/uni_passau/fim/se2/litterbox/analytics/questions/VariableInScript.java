@@ -20,7 +20,7 @@ public class VariableInScript extends AbstractQuestionFinder {
         super.visit(node);
 
         if (!answers.isEmpty()) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            IssueBuilder builder = prepareIssueBuilder(node.getEvent()).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.ANSWER, answers.toString());
             addIssue(builder.withHint(hint));
