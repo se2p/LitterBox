@@ -46,7 +46,7 @@ class StatementTriggersEventTest implements JsonTest {
 
         for (Issue issue : issues) {
             String hint = issue.getHint();
-            String pattern = "\\[choices]\\[(\\[sbi](?:(?!\\[sbi]).)*\\[/sbi], ){3}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]]\\[/choices]";
+            String pattern = "\\[choices]\\[(\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){3}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]]\\[/choices]";
             assertThat(hint).containsMatch(Pattern.compile(pattern, Pattern.DOTALL));
         }
     }

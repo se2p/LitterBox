@@ -54,10 +54,10 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         ArrayList<String> list = new ArrayList<>(choices);
         if (choices.size() > MAX_CHOICES) {
             Collections.shuffle(list);
-            return list.subList(0, MAX_CHOICES).toString();
+            return "[" + String.join("|", list.subList(0, MAX_CHOICES)) + "]";
         }
         else {
-            return list.toString();
+            return "[" + String.join("|", list) + "]";
         }
     }
 
@@ -71,10 +71,10 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         ArrayList<String> list = new ArrayList<>(answers);
         if (answers.size() > MAX_CHOICES) {
             Collections.shuffle(list);
-            return list.subList(0, MAX_CHOICES).toString();
+            return "[" + String.join("|", list.subList(0, MAX_CHOICES)) + "]";
         }
         else {
-            return list.toString();
+            return "[" + String.join("|", list) + "]";
         }
     }
 

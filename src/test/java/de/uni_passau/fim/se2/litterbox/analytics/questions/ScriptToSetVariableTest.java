@@ -46,8 +46,8 @@ class ScriptToSetVariableTest implements JsonTest {
 
         for (Issue issue : issues) {
             String hint = issue.getHint();
-            String choices = "\\[choices]\\[(\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks], ){3}\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/choices]";
-            String answer = "\\[a-c]\\[scratchblocks](?:(?!\\[scratchblocks]).)*set \\[my variable v] to \\(0\\)(?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/a-c]";
+            String choices = "\\[choices]\\[(\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\|){3}\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/choices]";
+            String answer = "\\[solutions]\\[scratchblocks](?:(?!\\[scratchblocks]).)*set \\[my variable v] to \\(0\\)(?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/solutions]";
             assertThat(hint).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
             assertThat(hint).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }

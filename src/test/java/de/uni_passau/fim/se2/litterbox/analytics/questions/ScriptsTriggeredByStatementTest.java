@@ -27,11 +27,11 @@ class ScriptsTriggeredByStatementTest implements JsonTest {
 
         for (Issue issue : issues) {
             String answer;
-            if (issue.getHint().contains("[a-c][[scratchblocks]\nwhen backdrop switches to [backdrop1 v]")) {
-                answer = "\\[a-c]\\[\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/a-c]";
+            if (issue.getHint().contains("[solutions][[scratchblocks]\nwhen backdrop switches to [backdrop1 v]")) {
+                answer = "\\[solutions]\\[\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/solutions]";
             }
             else {
-                answer = "\\[a-c]\\[\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks], \\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/a-c]";
+                answer = "\\[solutions]\\[\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\|\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]]\\[/solutions]";
             }
             assertThat(issue.getHint()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }

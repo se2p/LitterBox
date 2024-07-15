@@ -60,9 +60,9 @@ class IfElseStatementExecutionTest implements JsonTest {
         for (Issue issue : issues) {
             String hint = issue.getHint();
             if (hint.contains("TRUE"))
-                assertThat(hint).containsMatch("\\[a-c]\\[scratchblocks]\nset \\[new variable v] to \\(0\\)");
+                assertThat(hint).containsMatch("\\[solutions]\\[scratchblocks]\nset \\[new variable v] to \\(0\\)");
             else
-                assertThat(hint).containsMatch("\\[a-c]\\[scratchblocks]\nplay sound \\(Meow v\\) until done");
+                assertThat(hint).containsMatch("\\[solutions]\\[scratchblocks]\nplay sound \\(Meow v\\) until done");
         }
     }
 }
