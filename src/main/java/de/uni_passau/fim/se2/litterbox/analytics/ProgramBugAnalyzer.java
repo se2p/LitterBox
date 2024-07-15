@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
-    private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(ProgramBugAnalyzer.class.getName());
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
     private final Path priorResultsPath;
@@ -69,22 +69,26 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
 
     private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueParser.IssueRecord>> oldResults) {
         Map<String, List<Issue>> resultsByFinder = sortResults(result);
-        Set<String> oldFinders = oldResults.keySet();
         Set<Issue> fixedIssues = new HashSet<>();
-        for (String finder : oldFinders) {
+
+        for (var entry : oldResults.entrySet()) {
+            String finder = entry.getKey();
+            List<IssueParser.IssueRecord> finderResults = entry.getValue();
+
             if (resultsByFinder.containsKey(finder)) {
-                fixedIssues.addAll(compareLocations(finder, oldResults.get(finder), resultsByFinder.get(finder), program));
+                fixedIssues.addAll(compareLocations(finder, finderResults, resultsByFinder.get(finder), program));
             } else {
-                fixedIssues.addAll(checkOldFixed(finder, oldResults.get(finder), program));
+                fixedIssues.addAll(checkOldFixed(finder, finderResults, program));
             }
         }
+
         return fixedIssues;
     }
 
     private Set<Issue> compareLocations(String finder, List<IssueParser.IssueRecord> issueRecords, List<Issue> result, Program program) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueParser.IssueRecord issueRecord : issueRecords) {
-            if (!issueRecord.blockId().equals("")) {
+            if (!issueRecord.blockId().isEmpty()) {
                 boolean found = false;
                 for (Issue currentIssue : result) {
                     if (issueRecord.blockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
@@ -141,23 +145,15 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
                 StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(issueRecord.blockId());
                 issues.addAll(stutteringMovementFix.check(program));
             }
+            default -> {
+                // do nothing since we do not have a fix check for this type
+            }
         }
         return issues;
     }
 
     private Map<String, List<Issue>> sortResults(Set<Issue> result) {
-        Map<String, List<Issue>> resultsByFinder = new HashMap<>();
-        for (Issue issue : result) {
-            String finderName = issue.getFinderName();
-            if (resultsByFinder.containsKey(finderName)) {
-                resultsByFinder.get(finderName).add(issue);
-            } else {
-                List<Issue> sortedIssues = new ArrayList<>();
-                sortedIssues.add(issue);
-                resultsByFinder.put(finderName, sortedIssues);
-            }
-        }
-        return resultsByFinder;
+        return result.stream().collect(Collectors.groupingBy(Issue::getFinderName));
     }
 
     private Map<String, List<IssueParser.IssueRecord>> readPriorIssues() {

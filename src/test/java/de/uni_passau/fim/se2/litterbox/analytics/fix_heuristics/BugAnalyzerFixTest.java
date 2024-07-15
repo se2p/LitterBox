@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -41,7 +40,7 @@ public class BugAnalyzerFixTest implements JsonTest {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingStopResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingStopWait.json").toFile())));
         Assertions.assertEquals(2, issues.size());
-        Assertions.assertTrue(issues.get(1).getFinder() instanceof MissingLoopSensingWaitFix);
+        Assertions.assertInstanceOf(MissingLoopSensingWaitFix.class, issues.get(1).getFinder());
         Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(1).getCodeLocation()));
     }
 

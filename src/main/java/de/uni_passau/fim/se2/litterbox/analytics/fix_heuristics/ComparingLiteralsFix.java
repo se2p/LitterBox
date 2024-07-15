@@ -40,8 +40,7 @@ public class ComparingLiteralsFix extends AbstractIssueFinder {
 
     @Override
     public void visit(BiggerThan node) {
-        if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
-            if (checkNotStatic(node.getOperand1(), node.getOperand2())) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
                 addIssue(node, node.getMetadata());
             }
         }
