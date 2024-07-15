@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
@@ -35,6 +34,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.IssueTool.generateFixHeuristicsNames;
+
 public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
@@ -45,7 +46,6 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     private Path annotationOutput;
     private final boolean outputPerScript;
 
-    private List<String> fixHeuristicsNames;
     private final Path priorResultPath;
 
     public BugAnalyzer(
@@ -66,20 +66,7 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
         super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, priorResultPath), output, delete);
         this.outputPerScript = outputPerScript;
         this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
-        generateFixHeuristicsNames();
         this.priorResultPath = priorResultPath;
-    }
-
-    private void generateFixHeuristicsNames() {
-        fixHeuristicsNames = new ArrayList<>();
-        fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
-        fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);
-        fixHeuristicsNames.add(MessageNeverReceivedFix.NAME);
-        fixHeuristicsNames.add(MessageNeverSentFix.NAME);
-        fixHeuristicsNames.add(MissingCloneInitializationFix.NAME);
-        fixHeuristicsNames.add(MissingLoopSensingLoopFix.NAME);
-        fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
-        fixHeuristicsNames.add(StutteringMovementFix.NAME);
     }
 
     public void setAnnotationOutput(Path annotationOutput) {
@@ -95,7 +82,7 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
         List<String> detectorsToWrite = new ArrayList<>(detectorNames);
         if (priorResultPath != null) {
-            detectorsToWrite.addAll(fixHeuristicsNames);
+            detectorsToWrite.addAll(generateFixHeuristicsNames());
         }
         try {
             if (reportFileName == null) {
