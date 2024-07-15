@@ -27,11 +27,13 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
         super.visit(node);
 
         triggeredScripts.forEach((event, scripts) -> {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.EVENT, event.getScratchBlocksWithoutNewline());
-            hint.setParameter(Hint.ANSWER, Integer.toString(scripts.size()));
-            addIssue(builder.withHint(hint));
+            if (!event.getScratchBlocks().equals("")) {
+                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.EVENT, event.getScratchBlocksWithoutNewline());
+                hint.setParameter(Hint.ANSWER, Integer.toString(scripts.size()));
+                addIssue(builder.withHint(hint));
+            }
         });
     }
 

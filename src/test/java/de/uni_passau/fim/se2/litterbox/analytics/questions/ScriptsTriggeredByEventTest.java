@@ -43,4 +43,9 @@ class ScriptsTriggeredByEventTest implements JsonTest {
     public void testMultipleEventsInDifferentActors() throws IOException, ParsingException {
         assertThatFinderReports(5, new ScriptsTriggeredByEvent(), "./src/test/fixtures/questions/eventsTriggeredByStatements.json");
     }
+
+    @Test
+    public void testScriptWithNoEvent() throws IOException, ParsingException {
+        assertThatFinderReports(0, new ScriptsTriggeredByEvent(), "./src/test/fixtures/questions/scriptWithNoEvent.json");
+    }
 }
