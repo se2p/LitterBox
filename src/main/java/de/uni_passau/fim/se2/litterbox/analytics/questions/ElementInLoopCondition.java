@@ -3,7 +3,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -38,7 +40,14 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
         choices.removeAll(answers);
 
         if (!answers.isEmpty() && !choices.isEmpty()) {
-            IssueBuilder builder = prepareIssueBuilder(node.getEvent()).withSeverity(IssueSeverity.LOW);
+
+            ASTNode topBlockCurrent;
+            if (!(node.getEvent() instanceof Never)) {
+                topBlockCurrent = node.getEvent();
+            } else {
+                topBlockCurrent = node.getStmtList().getStmts().get(0);
+            }
+            IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
             hint.setParameter(Hint.ANSWER, answers.toString());

@@ -3,12 +3,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
@@ -56,7 +58,13 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                 currentScript = scripts.get(0);
                 currentActor = actorForScript.get(currentScript);
 
-                IssueBuilder builder = prepareIssueBuilder(currentScript.getEvent()).withSeverity(IssueSeverity.LOW);
+                ASTNode topBlockCurrent;
+                if (!(currentScript.getEvent() instanceof Never)) {
+                    topBlockCurrent = currentScript.getEvent();
+                } else {
+                    topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
+                }
+                IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
                 hint.setParameter(Hint.ANSWER, eventStatements.get(event).toString());
