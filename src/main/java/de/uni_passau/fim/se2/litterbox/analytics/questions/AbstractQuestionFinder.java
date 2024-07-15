@@ -116,4 +116,19 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     protected String wrappedScratchBlocks(ColorLiteral node) {
         return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
     }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        return first.getActor() == other.getActor();
+    }
 }
