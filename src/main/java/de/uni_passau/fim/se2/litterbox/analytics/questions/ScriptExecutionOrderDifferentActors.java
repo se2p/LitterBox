@@ -7,6 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,8 +67,8 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
                 scriptEntities.add(script1);
                 scriptEntities.add(script2);
-                nodes.add(script1.getEvent());
-                nodes.add(script2.getEvent());
+                nodes.add(!(script1.getEvent() instanceof Never) ? script1.getEvent() : script1.getStmtList().getStmts().get(0));
+                nodes.add(!(script2.getEvent() instanceof Never) ? script2.getEvent() : script2.getStmtList().getStmts().get(0));
 
                 MultiBlockIssue issue = new MultiBlockIssue(
                         this,
@@ -86,7 +87,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
     @Override
     public void visit(Script node) {
-        scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocks(),
+        scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
                 k -> new HashMap<>()).computeIfAbsent(currentActor.getIdent().getScratchBlocks(),
                 k -> new ArrayList<>()).add(node);
     }
