@@ -36,7 +36,7 @@ public class SetVariable extends AbstractQuestionFinder {
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
                 IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
                 Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, identifier.getScratchBlocks());
+                hint.setParameter(Hint.HINT_VARIABLE, identifier.getScratchBlocksWithoutNewline());
                 hint.setParameter(Hint.ANSWER, getExpressionValue(expression));
                 addIssue(builder.withHint(hint));
             }

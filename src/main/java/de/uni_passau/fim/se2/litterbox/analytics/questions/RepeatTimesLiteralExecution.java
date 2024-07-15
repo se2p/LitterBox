@@ -40,7 +40,7 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
                     IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
                     Hint hint = new Hint(getName());
-                    hint.setParameter(Hint.STATEMENT, stmt.getScratchBlocks());
+                    hint.setParameter(Hint.STATEMENT, stmt.getScratchBlocksWithoutNewline());
                     hint.setParameter(Hint.ANSWER, String.valueOf(num.getValue()));
                     addIssue(builder.withHint(hint));
                 }

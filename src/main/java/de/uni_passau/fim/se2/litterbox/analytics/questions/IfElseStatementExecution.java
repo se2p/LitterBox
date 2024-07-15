@@ -29,7 +29,7 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.CONDITION, condition.getScratchBlocks());
+            hint.setParameter(Hint.CONDITION, condition.getScratchBlocksWithoutNewline());
             hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
             hint.setParameter(Hint.ANSWER, conditionValue ? thenStmts : elseStmts);
             hint.setParameter(Hint.CHOICES, "[" + (conditionValue ? elseStmts : thenStmts) + "]");

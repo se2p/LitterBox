@@ -17,7 +17,7 @@ public class ScriptsForActor extends AbstractQuestionFinder {
         currentActor = node;
         IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
         Hint hint = new Hint(getName());
-        hint.setParameter(Hint.ACTOR, node.getIdent().getScratchBlocks());
+        hint.setParameter(Hint.ACTOR, node.getIdent().getScratchBlocksWithoutNewline());
         hint.setParameter(Hint.ANSWER, Integer.toString(node.getScripts().getSize()));
         addIssue(builder.withHint(hint));
     }

@@ -28,8 +28,8 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.STATEMENT, statement.getScratchBlocks());
-            hint.setParameter(Hint.CONDITION, condition.getScratchBlocks());
+            hint.setParameter(Hint.STATEMENT, statement.getScratchBlocksWithoutNewline());
+            hint.setParameter(Hint.CONDITION, condition.getScratchBlocksWithoutNewline());
             hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
             hint.setParameter(Hint.ANSWER, conditionValue ? YES : NO);
             addIssue(builder.withHint(hint));
