@@ -63,7 +63,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (firstRun && Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -74,7 +74,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (firstRun && Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }

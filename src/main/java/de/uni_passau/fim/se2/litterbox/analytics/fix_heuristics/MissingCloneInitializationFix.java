@@ -75,7 +75,7 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (firstRun && Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
                 final String spriteName = strId.getName();
                 if (spriteName.equals("_myself_")) {

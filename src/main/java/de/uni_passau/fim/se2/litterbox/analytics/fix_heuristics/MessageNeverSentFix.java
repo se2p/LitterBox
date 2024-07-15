@@ -65,7 +65,7 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        if (firstRun && Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (scriptNotEmpty(node.getParentNode())) {
                 if (node.getMsg().getMessage() instanceof StringLiteral text) {
                     message = text.getText();

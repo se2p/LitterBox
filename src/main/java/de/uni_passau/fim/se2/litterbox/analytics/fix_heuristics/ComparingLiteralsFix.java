@@ -28,8 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-import java.util.Objects;
-
 public class ComparingLiteralsFix extends AbstractIssueFinder {
     public static final String NAME = "comparing_literals_fix";
     private final String bugLocationBlockId;
@@ -41,14 +39,13 @@ public class ComparingLiteralsFix extends AbstractIssueFinder {
     @Override
     public void visit(BiggerThan node) {
         if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
-                addIssue(node, node.getMetadata());
-            }
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(LessThan node) {
-        if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
             if (checkNotStatic(node.getOperand1(), node.getOperand2())) {
                 addIssue(node, node.getMetadata());
             }
@@ -57,7 +54,7 @@ public class ComparingLiteralsFix extends AbstractIssueFinder {
 
     @Override
     public void visit(Equals node) {
-        if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
             if (checkNotStatic(node.getOperand1(), node.getOperand2())) {
                 addIssue(node, node.getMetadata());
             }

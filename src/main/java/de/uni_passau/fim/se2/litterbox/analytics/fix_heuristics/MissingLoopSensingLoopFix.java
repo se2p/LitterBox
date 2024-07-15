@@ -39,7 +39,7 @@ public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
     }
 
     private void checkIfFixed(ASTNode node) {
-        if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
             assert stmtList != null;
             if (stmtList.getParentNode() instanceof UntilStmt || stmtList.getParentNode() instanceof RepeatForeverStmt) {

@@ -53,6 +53,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -198,6 +199,10 @@ public class AstNodeUtil {
         final BlockMapVisitor visitor = new BlockMapVisitor();
         root.accept(visitor);
         return visitor.blockMap;
+    }
+
+    public static boolean hasBlockId(ASTNode node, String bugLocationBlockId) {
+        return Objects.equals(getBlockId(node), bugLocationBlockId);
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,

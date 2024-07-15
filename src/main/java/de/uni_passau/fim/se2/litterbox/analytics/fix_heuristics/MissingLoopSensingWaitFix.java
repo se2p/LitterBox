@@ -40,7 +40,7 @@ public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
     }
 
     private void checkIfFixed(ASTNode node) {
-        if (Objects.equals(AstNodeUtil.getBlockId(node), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (node.getParentNode() instanceof WaitUntil) {
                 StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
                 assert stmtList != null;
