@@ -95,25 +95,25 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected String wrappedScratchBlocks(NumberLiteral node) {
-        return "<" + node.getScratchBlocks() + " :: grey ring>";
+        return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
     }
 
     protected String wrappedScratchBlocks(StringLiteral node) {
         if (inLookStmt) {
-            return "<" + node.getScratchBlocks() + " :: look ring>";
+            return "[sbi]<" + node.getScratchBlocks() + " :: look ring>[/sbi]";
         }
         else if (inSoundStmt) {
-            return "<" + node.getScratchBlocks() + " :: sound ring>";
+            return "[sbi]<" + node.getScratchBlocks() + " :: sound ring>[/sbi]";
         }
         else if (inBroadcastStmt) {
-            return "<" + node.getScratchBlocks() + " :: control ring>";
+            return "[sbi]<" + node.getScratchBlocks() + " :: control ring>[/sbi]";
         }
         else {
-            return "<" + node.getScratchBlocks() + " :: grey ring>";
+            return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
         }
     }
 
     protected String wrappedScratchBlocks(ColorLiteral node) {
-        return "<" + node.getScratchBlocks() + " :: grey ring>";
+        return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
     }
 }
