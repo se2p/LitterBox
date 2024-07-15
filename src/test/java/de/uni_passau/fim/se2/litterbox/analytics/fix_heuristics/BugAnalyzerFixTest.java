@@ -51,7 +51,7 @@ public class BugAnalyzerFixTest implements JsonTest {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingMultiResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingMultiFixOne.json").toFile())));
         Assertions.assertEquals(3, issues.size());
-        Assertions.assertTrue(issues.get(2).getFinder() instanceof MissingLoopSensingLoopFix);
+        Assertions.assertInstanceOf(MissingLoopSensingLoopFix.class, issues.get(2).getFinder());
         Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(2).getCodeLocation()));
     }
 
@@ -61,9 +61,9 @@ public class BugAnalyzerFixTest implements JsonTest {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/comparingLiteralsResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json").toFile())));
         Assertions.assertEquals(6, issues.size());
-        Assertions.assertTrue(issues.get(3).getFinder() instanceof ComparingLiteralsFix);
-        Assertions.assertTrue(issues.get(4).getFinder() instanceof ComparingLiteralsFix);
-        Assertions.assertTrue(issues.get(5).getFinder() instanceof ComparingLiteralsFix);
+        Assertions.assertInstanceOf(ComparingLiteralsFix.class, issues.get(3).getFinder());
+        Assertions.assertInstanceOf(ComparingLiteralsFix.class, issues.get(4).getFinder());
+        Assertions.assertInstanceOf(ComparingLiteralsFix.class, issues.get(5).getFinder());
     }
 
 }

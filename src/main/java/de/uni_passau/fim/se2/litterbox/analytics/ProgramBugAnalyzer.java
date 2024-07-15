@@ -28,10 +28,12 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
     private static final Logger log = Logger.getLogger(ProgramBugAnalyzer.class.getName());
@@ -163,14 +165,15 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
             try {
                 return parser.parseFile(file);
             } catch (IOException e) {
-                log.severe("Could not load program from file " + file.getName());
+                log.severe("Could not load issues from file " + file.getName());
+                throw new RuntimeException("Could not load issues from file " + file.getName());
             } catch (ParsingException e) {
-                log.severe("Could not parse program for file " + file.getName() + ". " + e.getMessage());
+                log.severe("Could not parse issues for file " + file.getName() + ". " + e.getMessage());
+                throw new RuntimeException("Could not parse issues for file " + file.getName() + ". " + e.getMessage());
             }
-            return null;
         } else {
             log.severe("File '" + file.getName() + "' does not exist");
-            return null;
+            throw new RuntimeException("Could not load issues from file " + file.getName());
         }
     }
 }
