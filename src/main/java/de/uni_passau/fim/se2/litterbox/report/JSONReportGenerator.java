@@ -223,6 +223,6 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
                 scripts.add(scratchBlockCode);
             }
         }
-        jsonGenerator.writeStringField(title, scripts.toString());
+        jsonGenerator.writeStringField(title, String.join(" ", scripts));
     }
 }
