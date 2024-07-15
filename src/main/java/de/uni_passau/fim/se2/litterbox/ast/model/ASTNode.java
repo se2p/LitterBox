@@ -46,6 +46,13 @@ public interface ASTNode extends Visitable<ASTNode> {
         return visitor.getScratchBlocks();
     }
 
+    default String getScratchBlocksWithoutNewline() {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        this.accept(visitor);
+        String textWithPossibleNewlines = visitor.getScratchBlocks();
+        return textWithPossibleNewlines.replaceAll(System.lineSeparator(), "");
+    }
+
     default Opcode getOpcode() {
         return new NOPCode();
     }

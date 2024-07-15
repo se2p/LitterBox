@@ -87,11 +87,11 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected String wrappedScratchBlocks(Stmt node) {
-        return "[sbi]\n" + node.getScratchBlocks() + "[/sbi]";
+        return "[sbi]" + node.getScratchBlocksWithoutNewline() + "[/sbi]";
     }
 
     protected String wrappedScratchBlocks(Expression node) {
-        return "[sbi]" + node.getScratchBlocks() + "[/sbi]";
+        return "[sbi]" + node.getScratchBlocksWithoutNewline() + "[/sbi]";
     }
 
     protected String wrappedScratchBlocks(NumberLiteral node) {

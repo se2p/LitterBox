@@ -28,4 +28,12 @@ public interface Stmt extends ASTNode {
         this.accept(visitor);
         return visitor.getScratchBlocks();
     }
+
+    @Override
+    default String getScratchBlocksWithoutNewline() {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
+        this.accept(visitor);
+        String textWithPossibleNewlines = visitor.getScratchBlocks();
+        return textWithPossibleNewlines.replaceAll(System.lineSeparator(), "");
+    }
 }
