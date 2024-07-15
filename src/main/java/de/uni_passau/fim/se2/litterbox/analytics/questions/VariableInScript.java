@@ -22,14 +22,14 @@ public class VariableInScript extends AbstractQuestionFinder {
         if (!answers.isEmpty()) {
             IssueBuilder builder = prepareIssueBuilder(node.getEvent()).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.ANSWER, answers.toString());
+            hint.setParameter(Hint.ANSWER, answers.toString().replace("[", "").replace("]", ""));
             addIssue(builder.withHint(hint));
         }
     }
 
     @Override
     public void visit(Variable node) {
-        answers.add(node.getName().getScratchBlocks());
+        answers.add(node.getName().getName());
     }
 
     @Override
