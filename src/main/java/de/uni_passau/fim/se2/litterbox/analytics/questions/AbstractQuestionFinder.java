@@ -100,7 +100,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
     protected String wrappedScratchBlocks(StringLiteral node) {
         if (inLookStmt) {
-            return "[sbi]<" + node.getScratchBlocks() + " :: look ring>[/sbi]";
+            return "[sbi]<" + node.getScratchBlocks() + " :: looks ring>[/sbi]";
         }
         else if (inSoundStmt) {
             return "[sbi]<" + node.getScratchBlocks() + " :: sound ring>[/sbi]";
