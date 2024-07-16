@@ -65,8 +65,10 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
     @Override
     public void visit(Script node) {
-        scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
-                k -> new ArrayList<>()).add(node);
+        if (!(node.getEvent() instanceof Never)) {
+            scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
+                    k -> new ArrayList<>()).add(node);
+        }
     }
 
     @Override

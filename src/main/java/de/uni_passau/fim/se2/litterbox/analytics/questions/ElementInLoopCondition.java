@@ -50,7 +50,7 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
             IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, answers.toString());
+            hint.setParameter(Hint.ANSWER, getAnswers());
             addIssue(builder.withHint(hint));
         }
     }

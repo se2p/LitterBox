@@ -67,7 +67,8 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                 IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
-                hint.setParameter(Hint.ANSWER, eventStatements.get(event).toString());
+                answers = eventStatements.get(event);
+                hint.setParameter(Hint.ANSWER, getAnswers());
                 addIssue(builder.withHint(hint));
             }
         });

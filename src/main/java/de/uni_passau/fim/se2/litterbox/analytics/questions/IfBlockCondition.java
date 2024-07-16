@@ -33,7 +33,7 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         if (ifStmtFound && !choices.isEmpty()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, answers.toString());
+            hint.setParameter(Hint.ANSWER, getAnswers());
             addIssue(builder.withHint(hint));
         }
     }
