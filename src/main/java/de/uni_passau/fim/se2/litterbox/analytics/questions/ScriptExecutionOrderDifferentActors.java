@@ -50,8 +50,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                     script1 = actorsWithEvent.get(actor1).get(0);
                     script2 = actorsWithEvent.get(actor2).get(0);
                     hint.setParameter(Hint.CONDITION, "");
-                }
-                else {
+                } else {
                     actor1 = actors.get(0);
                     actor2 = actors.get(1);
                     script1 = actorsWithEvent.get(actor1).get(0);
@@ -87,9 +86,11 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
     @Override
     public void visit(Script node) {
-        scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
-                k -> new HashMap<>()).computeIfAbsent(currentActor.getIdent().getScratchBlocks(),
-                k -> new ArrayList<>()).add(node);
+        if (!(node.getEvent() instanceof Never)) {
+            scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
+                    k -> new HashMap<>()).computeIfAbsent(currentActor.getIdent().getScratchBlocks(),
+                    k -> new ArrayList<>()).add(node);
+        }
     }
 
     @Override
