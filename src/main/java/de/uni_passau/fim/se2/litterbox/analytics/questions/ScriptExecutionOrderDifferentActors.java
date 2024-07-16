@@ -66,8 +66,8 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
                 scriptEntities.add(script1);
                 scriptEntities.add(script2);
-                nodes.add(!(script1.getEvent() instanceof Never) ? script1.getEvent() : script1.getStmtList().getStmts().get(0));
-                nodes.add(!(script2.getEvent() instanceof Never) ? script2.getEvent() : script2.getStmtList().getStmts().get(0));
+                nodes.add(script1.getEvent());
+                nodes.add(script2.getEvent());
 
                 MultiBlockIssue issue = new MultiBlockIssue(
                         this,
