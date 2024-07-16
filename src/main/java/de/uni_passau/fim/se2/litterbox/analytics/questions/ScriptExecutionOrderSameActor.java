@@ -35,13 +35,13 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
                 List<ScriptEntity> scriptEntities = new ArrayList<>();
                 List<ASTNode> nodes = new ArrayList<>();
 
-                scriptEntities.add(node.getScripts().getScript(0));
-                scriptEntities.add(node.getScripts().getScript(1));
+                Script script1 = scripts.get(0);
+                Script script2 = scripts.get(1);
 
-                Script script1 = node.getScripts().getScript(0);
-                Script script2 = node.getScripts().getScript(1);
-                nodes.add(!(script1.getEvent() instanceof Never) ? script1.getEvent() : script1.getStmtList().getStmts().get(0));
-                nodes.add(!(script2.getEvent() instanceof Never) ? script2.getEvent() : script2.getStmtList().getStmts().get(0));
+                scriptEntities.add(script1);
+                scriptEntities.add(script2);
+                nodes.add(script1.getEvent());
+                nodes.add(script2.getEvent());
 
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.EVENT, event);
