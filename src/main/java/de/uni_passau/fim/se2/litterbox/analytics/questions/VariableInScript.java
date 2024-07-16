@@ -30,7 +30,7 @@ public class VariableInScript extends AbstractQuestionFinder {
             }
             IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.ANSWER, answers.toString().replace("[", "").replace("]", ""));
+            hint.setParameter(Hint.ANSWER, getAnswers());
             addIssue(builder.withHint(hint));
         }
     }
