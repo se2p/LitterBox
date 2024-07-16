@@ -34,6 +34,7 @@ public interface Stmt extends ASTNode {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
         this.accept(visitor);
         String textWithPossibleNewlines = visitor.getScratchBlocks();
-        return textWithPossibleNewlines.replaceAll(System.lineSeparator(), "");
+        String textWithoutNewlines = textWithPossibleNewlines.replaceAll(System.lineSeparator(), "");
+        return (textWithoutNewlines.endsWith("end")) ? textWithoutNewlines.substring(0, textWithoutNewlines.length() - 3) : textWithoutNewlines;
     }
 }
