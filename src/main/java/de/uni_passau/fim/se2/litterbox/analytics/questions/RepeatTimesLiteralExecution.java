@@ -36,7 +36,7 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                 super.visit(node);
 
                 if (node.getStmtList().hasStatements() && !hasStop) {
-                    ASTNode stmt = node.getStmtList().getStmts().get(0);
+                    ASTNode stmt = getSingleStmt(node.getStmtList().getStmts().get(0));
 
                     IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
                     Hint hint = new Hint(getName());

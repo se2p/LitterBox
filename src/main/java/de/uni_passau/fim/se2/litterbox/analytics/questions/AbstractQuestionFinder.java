@@ -11,6 +11,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.*;
@@ -130,5 +131,21 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         }
 
         return first.getActor() == other.getActor();
+    }
+
+    protected Stmt getSingleStmt(Stmt stmt) {
+        if (stmt instanceof IfThenStmt ifThenStmt) {
+            return new IfThenStmt(ifThenStmt.getBoolExpr(), new StmtList(), ifThenStmt.getMetadata());
+        } else if (stmt instanceof IfElseStmt ifElseStmt) {
+            return new IfElseStmt(ifElseStmt.getBoolExpr(), new StmtList(), new StmtList(), ifElseStmt.getMetadata());
+        } else if (stmt instanceof RepeatTimesStmt repeatTimesStmt) {
+            return new RepeatTimesStmt(repeatTimesStmt.getTimes(), new StmtList(), repeatTimesStmt.getMetadata());
+        } else if (stmt instanceof RepeatForeverStmt repeatForeverStmt) {
+            return new RepeatForeverStmt(new StmtList(), repeatForeverStmt.getMetadata());
+        } else if (stmt instanceof UntilStmt untilStmt) {
+            return new UntilStmt(untilStmt.getBoolExpr(), new StmtList(), untilStmt.getMetadata());
+        } else {
+            return stmt;
+        }
     }
 }

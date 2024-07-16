@@ -6,7 +6,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
 import java.util.Random;
 
@@ -24,7 +24,7 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
             boolean conditionValue = random.nextBoolean();
             BoolExpr condition = node.getBoolExpr();
             StmtList thenStmts = node.getThenStmts();
-            Stmt statement = thenStmts.getStatement(random.nextInt(thenStmts.getNumberOfStatements()));
+            Stmt statement = getSingleStmt(thenStmts.getStatement(random.nextInt(thenStmts.getNumberOfStatements())));
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = new Hint(getName());
