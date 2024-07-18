@@ -52,6 +52,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
@@ -477,6 +478,11 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
         } else {
             return new AsString(new StrId(new StringLiteral("myself")));
         }
+    }
+
+    @Override
+    public DeleteClone visitDeleteClone(ScratchBlocksGrammarParser.DeleteCloneContext ctx) {
+        return new DeleteClone(new NoBlockMetadata());
     }
 
     //end subregion: control blocks
