@@ -305,7 +305,7 @@ cloneChoice             : '(myself v)'
                         | exprOrLiteral
                         ;
 
-message                 : '('stringArgument 'v)' //message
+message                 : '('stringArgument' v)' //message
                         | exprOrLiteral
                         ;
 

@@ -40,6 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
@@ -199,6 +200,12 @@ public class ScratchBlocksToScratchVisitorTest {
         StmtList statements = getStmtList("forever\n stop [all v]\n end\n");
         Assertions.assertInstanceOf(RepeatForeverStmt.class, statements.getStatement(0));
         RepeatForeverStmt forever = (RepeatForeverStmt) statements.getStatement(0);
-        Assertions.assertInstanceOf(StopAll.class,forever.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(StopAll.class, forever.getStmtList().getStatement(0));
+    }
+
+    @Test
+    public void testBroadcast() {
+        StmtList statements = getStmtList("broadcast (message1 v)\n");
+        Assertions.assertInstanceOf(Broadcast.class, statements.getStatement(0));
     }
 }

@@ -45,10 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -106,6 +103,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return (Stmt) visitSoundStmt(ctx.soundStmt());
         } else if (ctx.controlStmt() != null) {
             return (Stmt) visitControlStmt(ctx.controlStmt());
+        } else if (ctx.eventStmt() != null) {
+            return (Stmt) visitEventStmt(ctx.eventStmt());
             // todo: other cases
         } else {
             return (Stmt) super.visitStmt(ctx);
@@ -486,6 +485,29 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     //end subregion: control blocks
+
+    //begin subregion: event statement blocks
+
+    @Override
+    public Broadcast visitBroadcast(ScratchBlocksGrammarParser.BroadcastContext ctx) {
+        return new Broadcast(visitMessage(ctx.message()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitBroadcastWait(ScratchBlocksGrammarParser.BroadcastWaitContext ctx) {
+        return super.visitBroadcastWait(ctx);
+    }
+
+    @Override
+    public Message visitMessage(ScratchBlocksGrammarParser.MessageContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new Message(makeStringExpr(ctx.exprOrLiteral()));
+        } else {
+            return new Message(visitStringArgument(ctx.stringArgument()));
+        }
+    }
+
+    //end subregion: event statement blocks
 
     // endregion: statements
 
