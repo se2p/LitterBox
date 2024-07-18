@@ -40,15 +40,18 @@ public class ColorParser {
         }
 
         if (rgbCode.startsWith("#")) {
-
-            long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
-            long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
-            long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
-
-            return new ColorLiteral(rNumber, gNumber, bNumber);
+            return ColorParser.getColorLiteralFromRGB(rgbCode);
         } else {
             final NumExpr numExpr = NumExprParser.parseNumExpr(state, current, inputName, allBlocks);
             return new FromNumber(numExpr);
         }
+    }
+
+    public static ColorLiteral getColorLiteralFromRGB(String rgbCode) {
+        long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
+        long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
+        long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
+
+        return new ColorLiteral(rNumber, gNumber, bNumber);
     }
 }

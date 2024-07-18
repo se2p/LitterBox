@@ -34,7 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -59,6 +58,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
 
 import java.util.List;
 
@@ -464,17 +464,17 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     @Override
-    public CreateCloneOf visitCreateClone(ScratchBlocksGrammarParser.CreateCloneContext ctx){
+    public CreateCloneOf visitCreateClone(ScratchBlocksGrammarParser.CreateCloneContext ctx) {
         return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public StringExpr visitCloneChoice(ScratchBlocksGrammarParser.CloneChoiceContext ctx){
-        if(ctx.exprOrLiteral() != null){
+    public StringExpr visitCloneChoice(ScratchBlocksGrammarParser.CloneChoiceContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
             return makeStringExpr(ctx.exprOrLiteral());
-        }else if(ctx.stringArgument() != null){
+        } else if (ctx.stringArgument() != null) {
             return new AsString(new StrId(visitStringArgument(ctx.stringArgument())));
-        }else{
+        } else {
             return new AsString(new StrId(new StringLiteral("myself")));
         }
     }
@@ -541,12 +541,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
         } else {
             String rgbCode = ctx.HEX().getText();
-
-            long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
-            long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
-            long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
-
-            return new ColorLiteral(rNumber, gNumber, bNumber);
+            return ColorParser.getColorLiteralFromRGB(rgbCode);
         }
     }
 
