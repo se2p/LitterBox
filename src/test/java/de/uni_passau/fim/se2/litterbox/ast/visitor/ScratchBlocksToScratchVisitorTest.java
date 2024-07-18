@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarLexer;
 import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
@@ -38,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
@@ -207,5 +209,17 @@ public class ScratchBlocksToScratchVisitorTest {
     public void testBroadcast() {
         StmtList statements = getStmtList("broadcast (message1 v)\n");
         Assertions.assertInstanceOf(Broadcast.class, statements.getStatement(0));
+        Message message = ((Broadcast) statements.getStatement(0)).getMessage();
+        Assertions.assertInstanceOf(Message.class, message);
+        Assertions.assertEquals("message1", ((StringLiteral) message.getMessage()).getText());
+    }
+
+    @Test
+    public void testAskAndWait() {
+        StmtList statements = getStmtList("ask [What's your name?] and wait\n");
+        Assertions.assertInstanceOf(AskAndWait.class, statements.getStatement(0));
+        StringExpr question = ((AskAndWait) statements.getStatement(0)).getQuestion();
+        Assertions.assertInstanceOf(StringExpr.class, question);
+        //Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
     }
 }

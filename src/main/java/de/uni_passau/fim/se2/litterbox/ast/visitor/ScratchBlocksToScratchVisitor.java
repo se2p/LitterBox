@@ -105,6 +105,8 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return (Stmt) visitControlStmt(ctx.controlStmt());
         } else if (ctx.eventStmt() != null) {
             return (Stmt) visitEventStmt(ctx.eventStmt());
+        } else if (ctx.sensingStmt() != null) {
+            return (Stmt) visitSensingStmt(ctx.sensingStmt());
             // todo: other cases
         } else {
             return (Stmt) super.visitStmt(ctx);
@@ -415,6 +417,29 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     //end subregion: sound blocks
 
+    //begin subregion: event statement blocks
+
+    @Override
+    public Broadcast visitBroadcast(ScratchBlocksGrammarParser.BroadcastContext ctx) {
+        return new Broadcast(visitMessage(ctx.message()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitBroadcastWait(ScratchBlocksGrammarParser.BroadcastWaitContext ctx) {
+        return super.visitBroadcastWait(ctx);
+    }
+
+    @Override
+    public Message visitMessage(ScratchBlocksGrammarParser.MessageContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new Message(makeStringExpr(ctx.exprOrLiteral()));
+        } else {
+            return new Message(visitStringArgument(ctx.stringArgument()));
+        }
+    }
+
+    //end subregion: event statement blocks
+
     //begin subregion: control blocks
 
     @Override
@@ -486,34 +511,36 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
 
     //end subregion: control blocks
 
-    //begin subregion: event statement blocks
+    //begin subregion: sensing blocks
 
     @Override
-    public Broadcast visitBroadcast(ScratchBlocksGrammarParser.BroadcastContext ctx) {
-        return new Broadcast(visitMessage(ctx.message()), new NoBlockMetadata());
+    public AskAndWait visitAsk(ScratchBlocksGrammarParser.AskContext ctx) {
+        return new AskAndWait(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ASTNode visitBroadcastWait(ScratchBlocksGrammarParser.BroadcastWaitContext ctx) {
-        return super.visitBroadcastWait(ctx);
+    public SetDragMode visitSetDragMode(ScratchBlocksGrammarParser.SetDragModeContext ctx) {
+        return new SetDragMode(visitDragmode(ctx.dragmode()), new NoBlockMetadata());
     }
 
     @Override
-    public Message visitMessage(ScratchBlocksGrammarParser.MessageContext ctx) {
-        if (ctx.exprOrLiteral() != null) {
-            return new Message(makeStringExpr(ctx.exprOrLiteral()));
-        } else {
-            return new Message(visitStringArgument(ctx.stringArgument()));
-        }
+    public DragMode visitDragmode(ScratchBlocksGrammarParser.DragmodeContext ctx) {
+        return new DragMode(ctx.getText());
     }
 
-    //end subregion: event statement blocks
+    @Override
+    public ResetTimer visitResetTimer(ScratchBlocksGrammarParser.ResetTimerContext ctx) {
+        return new ResetTimer(new NoBlockMetadata());
+    }
+
+    //end subregion: sensing blocks
 
     // endregion: statements
 
     // region: expressions
 
     // subregion: bool expressions
+
     @Override
     public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         if (ctx.numLiteral() != null) {
