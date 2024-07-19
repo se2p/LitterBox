@@ -544,7 +544,7 @@ NUMBER                  : (DIGIT)+ ('.' (DIGIT)+)?;
 
 NEWLINE                 : '\r\n' | '\n' ;
 
-WS                      : [ \t]+ -> skip;
+//WS                      : [ \t]+ -> skip;
 
 BEGIN_ACTOR             : '//;Act ' ~[\r\n]+ NEWLINE;
 

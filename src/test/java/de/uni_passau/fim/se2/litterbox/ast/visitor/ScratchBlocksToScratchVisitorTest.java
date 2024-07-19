@@ -199,7 +199,7 @@ public class ScratchBlocksToScratchVisitorTest {
 
     @Test
     public void testForever() {
-        StmtList statements = getStmtList("forever\n stop [all v]\n end\n");
+        StmtList statements = getStmtList("forever\nstop [all v]\nend\n");
         Assertions.assertInstanceOf(RepeatForeverStmt.class, statements.getStatement(0));
         RepeatForeverStmt forever = (RepeatForeverStmt) statements.getStatement(0);
         Assertions.assertInstanceOf(StopAll.class, forever.getStmtList().getStatement(0));
@@ -220,6 +220,6 @@ public class ScratchBlocksToScratchVisitorTest {
         Assertions.assertInstanceOf(AskAndWait.class, statements.getStatement(0));
         StringExpr question = ((AskAndWait) statements.getStatement(0)).getQuestion();
         Assertions.assertInstanceOf(StringExpr.class, question);
-        //Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
+        Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
     }
 }

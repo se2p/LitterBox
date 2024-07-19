@@ -47,6 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -534,6 +535,64 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     }
 
     //end subregion: sensing blocks
+
+    //begin subregion: variable blocks
+
+    @Override
+    public SetVariableTo visitSetVar(ScratchBlocksGrammarParser.SetVarContext ctx) {
+        return new SetVariableTo(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ChangeVariableBy visitChangeVar(ScratchBlocksGrammarParser.ChangeVarContext ctx) {
+        return new ChangeVariableBy(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ShowVariable visitShowVar(ScratchBlocksGrammarParser.ShowVarContext ctx) {
+        return new ShowVariable(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public HideVariable visitHideVar(ScratchBlocksGrammarParser.HideVarContext ctx) {
+        return new HideVariable(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public AddTo visitAddToList(ScratchBlocksGrammarParser.AddToListContext ctx) {
+        return new AddTo(makeStringExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public DeleteOf visitDeleteFromList(ScratchBlocksGrammarParser.DeleteFromListContext ctx) {
+        return new DeleteOf(makeNumExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public DeleteAllOf visitDeleteAllOfList(ScratchBlocksGrammarParser.DeleteAllOfListContext ctx) {
+        return new DeleteAllOf(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public InsertAt visitInsertToList(ScratchBlocksGrammarParser.InsertToListContext ctx) {
+        return new InsertAt(makeStringExpr(ctx.insertion), makeNumExpr(ctx.location), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public ReplaceItem visitReplaceItemInList(ScratchBlocksGrammarParser.ReplaceItemInListContext ctx) {
+        return new ReplaceItem(makeStringExpr(ctx.newItem), makeNumExpr(ctx.oldItem), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public ShowList visitShowList(ScratchBlocksGrammarParser.ShowListContext ctx) {
+        return new ShowList(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+
+    @Override
+    public HideList visitHideList(ScratchBlocksGrammarParser.HideListContext ctx) {
+        return new HideList(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+    }
+    //end subregion: variable blocks
 
     // endregion: statements
 
