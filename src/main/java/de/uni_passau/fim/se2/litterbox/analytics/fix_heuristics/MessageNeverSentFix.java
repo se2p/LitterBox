@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -38,7 +39,6 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
     private String message = null;
     private Map<String, Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>>> broadcastsScriptsActorPerMessage;
 
-
     public MessageNeverSentFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
     }
@@ -48,11 +48,28 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         issues = new LinkedHashSet<>();
-
+        broadcastsScriptsActorPerMessage = new LinkedHashMap<>();
         program.accept(this);
-
         if (message != null) {
+            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = broadcastsScriptsActorPerMessage.get(message);
+            if (actorScripts != null) {
+                Map.Entry<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> entry = actorScripts.entrySet().iterator().next();
+                ActorDefinition actor = entry.getKey();
+                currentActor = actor;
+                Map<ScriptEntity, List<ASTNode>> scriptsNodes = entry.getValue();
+                if (scriptsNodes != null) {
+                    Map.Entry<ScriptEntity, List<ASTNode>> entryList = scriptsNodes.entrySet().iterator().next();
 
+                    ScriptEntity scriptEntity = entryList.getKey();
+                    List<ASTNode> nodes = entryList.getValue();
+                    if (scriptEntity instanceof Script script) {
+                        currentScript = script;
+                    } else {
+                        currentProcedure = (ProcedureDefinition) scriptEntity;
+                    }
+                    addIssue(nodes.get(0), nodes.get(0).getMetadata());
+                }
+            }
         }
         return Collections.unmodifiableSet(issues);
     }
@@ -71,25 +88,58 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-            if (node.getMessage().getMessage() instanceof StringLiteral text) {
-                if (scriptHasHead(node)) {
-
-                }
+        if (node.getMessage().getMessage() instanceof StringLiteral text) {
+            if (scriptHasHead(node)) {
+                addNodeToMap(text.getText(), node);
             }
-            visitChildren(node);
+        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (!firstRun) {
-            if (node.getMessage().getMessage() instanceof StringLiteral text) {
-                if (!alreadyFound && text.getText().equals(message) && scriptHasHead(node)) {
-                    alreadyFound = true;
-                    addIssue(node, node.getMetadata());
+        if (node.getMessage().getMessage() instanceof StringLiteral text) {
+            if (scriptHasHead(node)) {
+                addNodeToMap(text.getText(), node);
+            }
+        }
+        visitChildren(node);
+    }
+
+    private void addNodeToMap(String text, ASTNode node) {
+        ScriptEntity script;
+        if (currentScript != null) {
+            script = currentScript;
+        } else {
+            script = currentProcedure;
+        }
+        if (broadcastsScriptsActorPerMessage.containsKey(text)) {
+            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = broadcastsScriptsActorPerMessage.get(text);
+            if (actorScripts.containsKey(currentActor)) {
+                Map<ScriptEntity, List<ASTNode>> scriptsNodes = actorScripts.get(currentActor);
+                if (scriptsNodes.containsKey(script)) {
+                    List<ASTNode> nodes = scriptsNodes.get(script);
+                    nodes.add(node);
+                } else {
+                    List<ASTNode> nodes = new ArrayList<>();
+                    nodes.add(node);
+                    scriptsNodes.put(script, nodes);
                 }
+            } else {
+                List<ASTNode> nodes = new ArrayList<>();
+                nodes.add(node);
+                Map<ScriptEntity, List<ASTNode>> scriptsNodes = new LinkedHashMap<>();
+                scriptsNodes.put(script, nodes);
+                actorScripts.put(currentActor, scriptsNodes);
             }
         } else {
-            visitChildren(node);
+            List<ASTNode> nodes = new ArrayList<>();
+            nodes.add(node);
+            Map<ScriptEntity, List<ASTNode>> scriptsNodes = new LinkedHashMap<>();
+            scriptsNodes.put(script, nodes);
+            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = new LinkedHashMap<>();
+            actorScripts.put(currentActor, scriptsNodes);
+            broadcastsScriptsActorPerMessage.put(text, actorScripts);
         }
     }
 
