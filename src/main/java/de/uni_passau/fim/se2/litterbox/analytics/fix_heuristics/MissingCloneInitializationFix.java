@@ -33,18 +33,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class MissingCloneInitializationFix extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_initialization_fix";
     private final String bugLocationBlockId;
-    private boolean firstRun = false;
     private String clonedActor;
-    private boolean insideClonedActor;
-    private boolean alreadyFound;
+    private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerActorName;
 
     public MissingCloneInitializationFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
@@ -55,27 +50,26 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         issues = new LinkedHashSet<>();
-        firstRun = true;
+        actorScriptsPerActorName = new LinkedHashMap<>();
         program.accept(this);
-        firstRun = false;
         if (clonedActor != null) {
-            program.accept(this);
+            Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerActorName.get(clonedActor);
+            if (actorEvents != null) {
+                Map.Entry<ActorDefinition, List<Script>> entry = actorEvents.entrySet().iterator().next();
+                ActorDefinition actor = entry.getKey();
+                List<Script> scripts = entry.getValue();
+                currentActor = actor;
+                Script script = scripts.get(0);
+                currentScript = script;
+                addIssue(script.getEvent(), script.getEvent().getMetadata());
+            }
         }
         return Collections.unmodifiableSet(issues);
     }
 
     @Override
-    public void visit(ActorDefinition node) {
-        if (!firstRun && node.getIdent().getName().equals(clonedActor)) {
-            insideClonedActor = true;
-        }
-        super.visit(node);
-        insideClonedActor = false;
-    }
-
-    @Override
     public void visit(CreateCloneOf node) {
-        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
                 final String spriteName = strId.getName();
                 if (spriteName.equals("_myself_")) {
@@ -89,18 +83,33 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
 
     @Override
     public void visit(StartedAsClone node) {
-        if (!firstRun && insideClonedActor && !alreadyFound && scriptNotEmpty(node.getParentNode())) {
-            alreadyFound = true;
-            addIssue(node, node.getMetadata());
+        if (scriptNotEmpty(node.getParentNode())) {
+            addScriptToMap();
+        }
+    }
+
+    private void addScriptToMap() {
+        if (actorScriptsPerActorName.containsKey(currentActor.getIdent().getName())) {
+            Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerActorName.get(currentActor.getIdent().getName());
+            if (actorScripts.containsKey(currentActor)) {
+                actorScripts.get(currentActor).add(currentScript);
+            } else {
+                List<Script> scripts = new ArrayList<>();
+                scripts.add(currentScript);
+                actorScripts.put(currentActor, scripts);
+            }
+        } else {
+            List<Script> scripts = new ArrayList<>();
+            scripts.add(currentScript);
+            Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
+            actorScripts.put(currentActor, scripts);
+            actorScriptsPerActorName.put(currentActor.getIdent().getName(), actorScripts);
         }
     }
 
     @Override
     public void visit(SpriteClicked node) {
-        if (!firstRun && insideClonedActor && !alreadyFound && scriptNotEmpty(node.getParentNode())) {
-            alreadyFound = true;
-            addIssue(node, node.getMetadata());
-        }
+        addScriptToMap();
     }
 
     private boolean scriptNotEmpty(ASTNode parentNode) {
