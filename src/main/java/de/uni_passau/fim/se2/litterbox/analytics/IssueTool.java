@@ -255,6 +255,7 @@ public class IssueTool {
             registerQuestionFinder(new IfBlockCondition(), questionFinders);
 //            registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
             registerQuestionFinder(new IfThenStatementExecution(), questionFinders);
+            registerQuestionFinder(new PurposeOfScript(), questionFinders);
             registerQuestionFinder(new PurposeOfVariable(), questionFinders);
             registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);
             registerQuestionFinder(new ScriptsForActor(), questionFinders);
