@@ -21,10 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -33,17 +30,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class MessageNeverSentFix extends AbstractIssueFinder {
     public static final String NAME = "message_never_sent_fix";
     private final String bugLocationBlockId;
-    private boolean firstRun;
     private String message = null;
-    private boolean alreadyFound = false;
+    private Map<String, Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>>> broadcastsScriptsActorPerMessage;
+
 
     public MessageNeverSentFix(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
@@ -54,18 +48,18 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         issues = new LinkedHashSet<>();
-        firstRun = true;
+
         program.accept(this);
-        firstRun = false;
+
         if (message != null) {
-            program.accept(this);
+
         }
         return Collections.unmodifiableSet(issues);
     }
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        if (firstRun && AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
             if (scriptNotEmpty(node.getParentNode())) {
                 if (node.getMsg().getMessage() instanceof StringLiteral text) {
                     message = text.getText();
@@ -77,16 +71,12 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (!firstRun) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
-                if (!alreadyFound && text.getText().equals(message) && scriptHasHead(node)) {
-                    alreadyFound = true;
-                    addIssue(node, node.getMetadata());
+                if (scriptHasHead(node)) {
+
                 }
             }
-        } else {
             visitChildren(node);
-        }
     }
 
     @Override
