@@ -1,0 +1,21 @@
+package de.uni_passau.fim.se2.litterbox.analytics.questions;
+
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+
+public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+        Hint hint = new Hint(getName());
+        addIssue(builder.withHint(hint));
+    }
+
+    @Override
+    public String getName() {
+        return "purpose_of_repeat_times_loop";
+    }
+}
