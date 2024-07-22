@@ -24,6 +24,6 @@ class PurposeOfRepeatUntilLoopTest implements JsonTest {
 
     @Test
     public void testNestedLoop() throws IOException, ParsingException {
-        assertThatFinderReports(1, new PurposeOfRepeatUntilLoop(), "src/test/fixtures/questions/nestedRepeatUntilStmt.json");
+        assertThatFinderReports(2, new PurposeOfRepeatUntilLoop(), "src/test/fixtures/questions/nestedRepeatUntilStmts.json");
     }
 }

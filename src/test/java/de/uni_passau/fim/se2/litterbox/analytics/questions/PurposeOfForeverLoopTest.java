@@ -25,6 +25,6 @@ class PurposeOfForeverLoopTest implements JsonTest {
 
     @Test
     public void testNestedLoop() throws IOException, ParsingException {
-        assertThatFinderReports(1, new PurposeOfForeverLoop(), "src/test/fixtures/questions/nestedForeverStmt.json");
+        assertThatFinderReports(2, new PurposeOfForeverLoop(), "src/test/fixtures/questions/nestedForeverStmts.json");
     }
 }

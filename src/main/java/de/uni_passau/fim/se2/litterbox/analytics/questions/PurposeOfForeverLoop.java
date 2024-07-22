@@ -17,6 +17,8 @@ public class PurposeOfForeverLoop extends AbstractQuestionFinder {
         IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
         Hint hint = new Hint(getName());
         addIssue(builder.withHint(hint));
+
+        super.visit(node);
     }
 
     @Override
