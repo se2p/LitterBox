@@ -38,6 +38,7 @@ public class Hint {
     public static final String EVENT_HANDLER = "EVENTHANDLER";
     public static final String EVENT = "EVENT";
     public static final String STATEMENT = "STATEMENT";
+    public static final String PROCEDURE = "PROCEDURE";
     public static final String METHOD = "METHOD";
     public static final String CONDITION = "CONDITION";
     public static final String ACTOR = "ACTOR";

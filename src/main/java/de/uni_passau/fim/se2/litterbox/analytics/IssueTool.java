@@ -250,6 +250,7 @@ public class IssueTool {
 
         if (LOAD_GENERAL) {
             registerQuestionFinder(new BlockControllingLoop(), questionFinders);
+            registerQuestionFinder(new DefinitionOfProcedure(), questionFinders);
             registerQuestionFinder(new ElementInLoopBody(), questionFinders);
             registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
             registerQuestionFinder(new IfBlockCondition(), questionFinders);
