@@ -13,6 +13,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.*;
@@ -98,6 +99,10 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
     protected String wrappedScratchBlocks(Expression node) {
         return "[sbi]" + node.getScratchBlocksWithoutNewline() + "[/sbi]";
+    }
+
+    protected String wrappedScratchBlocks(Variable node) {
+        return "[var]" + node.getName().getScratchBlocks() + "[/var]";
     }
 
     protected String wrappedScratchBlocks(NumberLiteral node) {
