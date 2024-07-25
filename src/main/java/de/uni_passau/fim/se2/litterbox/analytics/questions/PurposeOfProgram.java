@@ -14,6 +14,9 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
 
     @Override
     public void visit(Program node) {
+        super.visit(node);          // only needed so that an actor is set
+        currentScript = null;
+
         IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
         Hint hint = new Hint(getName());
         addIssue(builder.withHint(hint));
