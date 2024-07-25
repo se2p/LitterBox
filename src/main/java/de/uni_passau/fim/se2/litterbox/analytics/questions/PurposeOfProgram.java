@@ -16,6 +16,7 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
     public void visit(Program node) {
         super.visit(node);          // only needed so that an actor is set
         currentScript = null;
+        currentProcedure = null;
 
         IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
         Hint hint = new Hint(getName());

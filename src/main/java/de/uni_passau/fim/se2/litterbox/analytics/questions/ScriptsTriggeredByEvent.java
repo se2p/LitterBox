@@ -25,6 +25,8 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
     public void visit(Program node) {
         triggeredScripts = new HashMap<>();
         super.visit(node);
+        currentScript = null;
+        currentProcedure = null;
 
         triggeredScripts.forEach((event, scripts) -> {
             if (!event.getScratchBlocks().equals("")) {
