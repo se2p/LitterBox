@@ -5,8 +5,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -175,6 +177,16 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
         if (node.getSecond() instanceof Variable variable) {
             visit(variable);
         }
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        // Don't include keys as elements
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        // Don't include keys as elements
     }
 
     @Override
