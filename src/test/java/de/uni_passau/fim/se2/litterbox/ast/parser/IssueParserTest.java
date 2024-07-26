@@ -38,7 +38,7 @@ public class IssueParserTest implements JsonTest {
         IssueParser issueParser = new IssueParser();
         Map<String, List<IssueDTO>> foundIssues = issueParser.parseFile(file);
         Assertions.assertEquals(3, foundIssues.size());
-        Assertions.assertEquals(MissingInitialization.NAME, foundIssues.keySet().toArray()[0]);
+        Assertions.assertTrue(foundIssues.containsKey(MissingInitialization.NAME));
         Assertions.assertEquals(1, foundIssues.get(MissingInitialization.NAME).size());
         Assertions.assertEquals("Jif;Ug!4[{,1su7{fvp}", foundIssues.get(MissingInitialization.NAME).get(0).issueLocationBlockId());
     }
