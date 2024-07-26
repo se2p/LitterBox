@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDPos
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -30,8 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emo
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.MovingEmotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.LinkedList;
 import java.util.List;
