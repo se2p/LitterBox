@@ -209,6 +209,12 @@ public class Main implements Callable<Integer> {
         )
         boolean outputPerScript;
 
+        @CommandLine.Option(
+                names = {"-r", "--report_prior"},
+                description = "Path to prior analyser results, which should be compared to new analysis."
+        )
+        Path priorResultPath;
+
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             if (projectPath == null) {
@@ -216,14 +222,25 @@ public class Main implements Callable<Integer> {
             }
 
             final String detector = String.join(",", detectors);
-
-            final BugAnalyzer analyzer = new BugAnalyzer(
-                    outputPath,
-                    detector,
-                    ignoreLooseBlocks,
-                    deleteProject,
-                    outputPerScript
-            );
+            final BugAnalyzer analyzer;
+            if (priorResultPath == null) {
+                analyzer = new BugAnalyzer(
+                        outputPath,
+                        detector,
+                        ignoreLooseBlocks,
+                        deleteProject,
+                        outputPerScript
+                );
+            } else {
+                analyzer = new BugAnalyzer(
+                        outputPath,
+                        detector,
+                        ignoreLooseBlocks,
+                        deleteProject,
+                        outputPerScript,
+                        priorResultPath
+                );
+            }
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }

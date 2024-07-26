@@ -29,9 +29,12 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.IssueTool.generateFixHeuristicsNames;
 
 public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
 
@@ -43,14 +46,27 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     private Path annotationOutput;
     private final boolean outputPerScript;
 
+    private final Path priorResultPath;
+
     public BugAnalyzer(
             Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
-        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, null), output, delete);
 
         this.outputPerScript = outputPerScript;
         this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
+        priorResultPath = null;
+    }
+
+    public BugAnalyzer(
+            Path output, String detectors,
+            boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript, Path priorResultPath
+    ) {
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, priorResultPath), output, delete);
+        this.outputPerScript = outputPerScript;
+        this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
+        this.priorResultPath = priorResultPath;
     }
 
     public void setAnnotationOutput(Path annotationOutput) {
@@ -64,16 +80,20 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     }
 
     private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
+        List<String> detectorsToWrite = new ArrayList<>(detectorNames);
+        if (priorResultPath != null) {
+            detectorsToWrite.addAll(generateFixHeuristicsNames());
+        }
         try {
             if (reportFileName == null) {
-                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
+                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorsToWrite);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".json")) {
                 JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
                 try (CSVReportGenerator reportGenerator
-                             = new CSVReportGenerator(reportFileName, detectorNames, outputPerScript)
+                             = new CSVReportGenerator(reportFileName, detectorsToWrite, outputPerScript)
                 ) {
                     reportGenerator.generateReport(program, issues);
                 }

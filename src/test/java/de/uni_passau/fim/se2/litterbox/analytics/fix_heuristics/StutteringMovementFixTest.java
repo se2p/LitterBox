@@ -16,8 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-public enum IssueType {
-    BUG, SMELL, PERFUME, FIX
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+public class StutteringMovementFixTest implements JsonTest {
+
+    @Test
+    public void testStutteringMovementFix() throws IOException, ParsingException {
+        assertThatFinderReports(1, new StutteringMovementFix("KD^fSYMU~Z))Lqx1ptxw"), "./src/test/fixtures/fix_heuristics/stutteringMovementFix.json");
+        }
 }
