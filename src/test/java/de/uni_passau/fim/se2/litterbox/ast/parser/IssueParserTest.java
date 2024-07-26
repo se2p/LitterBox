@@ -36,7 +36,7 @@ public class IssueParserTest implements JsonTest {
     public void testReadingBlockId() throws ParsingException, IOException {
         File file = new File("src/test/fixtures/jsonReport/testfruit.json");
         IssueParser issueParser = new IssueParser();
-        Map<String, List<IssueDTO>> foundIssues = issueParser.parseFile(file);
+        Map<String, List<IssueDTO>> foundIssues = issueParser.getIssuesPerFinder(file);
         Assertions.assertEquals(3, foundIssues.size());
         Assertions.assertTrue(foundIssues.containsKey(MissingInitialization.NAME));
         Assertions.assertEquals(1, foundIssues.get(MissingInitialization.NAME).size());

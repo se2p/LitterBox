@@ -29,8 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-import java.util.Objects;
-
 public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing_fix_wait";
     private final String bugLocationBlockId;

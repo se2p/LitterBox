@@ -69,7 +69,9 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return issues;
     }
 
-    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults) {
+    private Set<Issue> checkIfPriorIssuesFixed(
+            Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults
+    ) {
         Map<String, List<Issue>> resultsByFinder = sortResults(result);
         Set<Issue> fixedIssues = new HashSet<>();
 
@@ -87,13 +89,16 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return fixedIssues;
     }
 
-    private Set<Issue> compareLocations(String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program) {
+    private Set<Issue> compareLocations(
+            String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program
+    ) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueDTO issueRecord : issueRecords) {
             if (!issueRecord.issueLocationBlockId().isEmpty()) {
                 boolean found = false;
                 for (Issue currentIssue : result) {
-                    if (issueRecord.issueLocationBlockId().equals(AstNodeUtil.getBlockId(currentIssue.getCodeLocation()))) {
+                    String issueBlockId = AstNodeUtil.getBlockId(currentIssue.getCodeLocation());
+                    if (Objects.equals(issueBlockId, issueRecord.issueLocationBlockId())) {
                         found = true;
                         break;
                     }
@@ -116,9 +121,11 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
 
     private Set<Issue> checkOldFixed(String finder, IssueDTO issueRecord, Program program) {
         Set<Issue> issues = new HashSet<>();
+        String location = issueRecord.issueLocationBlockId();
+
         switch (finder) {
             case ComparingLiterals.NAME -> {
-                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(issueRecord.issueLocationBlockId());
+                ComparingLiteralsFix comparingLiteralsFix = new ComparingLiteralsFix(location);
                 issues.addAll(comparingLiteralsFix.check(program));
             }
             case ForeverInsideLoop.NAME -> {
@@ -126,25 +133,26 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
                 issues.addAll(foreverInsideLoopFix.check(program));
             }
             case MessageNeverReceived.NAME -> {
-                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(issueRecord.issueLocationBlockId());
+                MessageNeverReceivedFix messageNeverReceived = new MessageNeverReceivedFix(location);
                 issues.addAll(messageNeverReceived.check(program));
             }
             case MessageNeverSent.NAME -> {
-                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(issueRecord.issueLocationBlockId());
+                MessageNeverSentFix messageNeverSentFix = new MessageNeverSentFix(location);
                 issues.addAll(messageNeverSentFix.check(program));
             }
             case MissingCloneInitialization.NAME -> {
-                MissingCloneInitializationFix missingCloneInitializationFix = new MissingCloneInitializationFix(issueRecord.issueLocationBlockId());
+                MissingCloneInitializationFix missingCloneInitializationFix
+                        = new MissingCloneInitializationFix(location);
                 issues.addAll(missingCloneInitializationFix.check(program));
             }
             case MissingLoopSensing.NAME -> {
-                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(issueRecord.issueLocationBlockId());
+                MissingLoopSensingLoopFix missingLoopSensingLoopFix = new MissingLoopSensingLoopFix(location);
                 issues.addAll(missingLoopSensingLoopFix.check(program));
-                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(issueRecord.issueLocationBlockId());
+                MissingLoopSensingWaitFix missingLoopSensingWaitFix = new MissingLoopSensingWaitFix(location);
                 issues.addAll(missingLoopSensingWaitFix.check(program));
             }
             case StutteringMovement.NAME -> {
-                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(issueRecord.issueLocationBlockId());
+                StutteringMovementFix stutteringMovementFix = new StutteringMovementFix(location);
                 issues.addAll(stutteringMovementFix.check(program));
             }
             default -> {
@@ -163,7 +171,7 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         if (file.exists()) {
             IssueParser parser = new IssueParser();
             try {
-                return parser.parseFile(file);
+                return parser.getIssuesPerFinder(file);
             } catch (IOException e) {
                 log.severe("Could not load issues from file " + file.getName());
                 throw new RuntimeException("Could not load issues from file " + file.getName());

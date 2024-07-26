@@ -38,26 +38,31 @@ public class ComparingLiteralsFix extends AbstractIssueFinder {
 
     @Override
     public void visit(BiggerThan node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
+        if (
+                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
+                        && checkNotStatic(node.getOperand1(), node.getOperand2())
+        ) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(LessThan node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
-            if (checkNotStatic(node.getOperand1(), node.getOperand2())) {
-                addIssue(node, node.getMetadata());
-            }
+        if (
+                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
+                        && checkNotStatic(node.getOperand1(), node.getOperand2())
+        ) {
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(Equals node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId) && checkNotStatic(node.getOperand1(), node.getOperand2())) {
-            if (checkNotStatic(node.getOperand1(), node.getOperand2())) {
-                addIssue(node, node.getMetadata());
-            }
+        if (
+                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
+                        && checkNotStatic(node.getOperand1(), node.getOperand2())
+        ) {
+            addIssue(node, node.getMetadata());
         }
     }
 

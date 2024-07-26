@@ -201,8 +201,8 @@ public class AstNodeUtil {
         return visitor.blockMap;
     }
 
-    public static boolean hasBlockId(ASTNode node, String bugLocationBlockId) {
-        return Objects.equals(getBlockId(node), bugLocationBlockId);
+    public static boolean hasBlockId(ASTNode node, String blockId) {
+        return Objects.equals(getBlockId(node), blockId);
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,

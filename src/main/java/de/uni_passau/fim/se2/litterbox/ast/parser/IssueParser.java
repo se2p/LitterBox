@@ -27,45 +27,40 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class IssueParser {
 
-    public Map<String, List<IssueDTO>> parseFile(File fileEntry) throws IOException, ParsingException {
-        String fileName = fileEntry.getName();
+    public ReportDTO parseIssueReport(final File issueReport) throws IOException, ParsingException {
+        if (!FilenameUtils.getExtension(issueReport.getName()).equalsIgnoreCase("json")) {
+            throw new ParsingException("This file type is not supported for issue reports.");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ReportDTO report = mapper.readValue(issueReport, ReportDTO.class);
+        if (report == null) {
+            throw new ParsingException("The JSON File is not a valid report.");
+        }
+
+        return report;
+    }
+
+    public Map<String, List<IssueDTO>> getIssuesPerFinder(final File file) throws IOException, ParsingException {
+        final String fileName = file.getName();
         if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {
             Logger.getGlobal().info("Now parsing issue report: " + fileName);
         }
 
-        if ((FilenameUtils.getExtension(fileName)).equalsIgnoreCase("json")) {
-            return parseJsonFile(fileEntry);
-        } else {
-            throw new ParsingException("This file type is not supported.");
-        }
+        final ReportDTO report = parseIssueReport(file);
+        return extractIssuesPerFinder(report);
     }
 
-    private Map<String, List<IssueDTO>> parseJsonFile(File fileEntry) throws IOException, ParsingException {
-        ObjectMapper mapper = new ObjectMapper();
-        ReportDTO report = mapper.readValue(fileEntry, ReportDTO.class);
-        if (report == null) {
-            throw new ParsingException("The JSON File is not a valid report.");
-        }
-        List<IssueDTO> issues = report.issues();
-        Map<String, List<IssueDTO>> issuesPerName = new LinkedHashMap<>();
-        for (IssueDTO issue : issues) {
-            if (issuesPerName.containsKey(issue.finder())) {
-                issuesPerName.get(issue.finder()).add(issue);
-            } else {
-                List<IssueDTO> issueList = new ArrayList<>();
-                issueList.add(issue);
-                issuesPerName.put(issue.finder(), issueList);
-            }
-        }
-        return issuesPerName;
+    private Map<String, List<IssueDTO>> extractIssuesPerFinder(final ReportDTO report)  {
+        return report.issues().stream().collect(Collectors.groupingBy(IssueDTO::finder));
     }
 }
 

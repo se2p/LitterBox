@@ -51,11 +51,10 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
         broadcastsScriptsActorPerMessage = new LinkedHashMap<>();
         program.accept(this);
         if (message != null) {
-            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = broadcastsScriptsActorPerMessage.get(message);
+            var actorScripts = broadcastsScriptsActorPerMessage.get(message);
             if (actorScripts != null) {
-                Map.Entry<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> entry = actorScripts.entrySet().iterator().next();
-                ActorDefinition actor = entry.getKey();
-                currentActor = actor;
+                var entry = actorScripts.entrySet().iterator().next();
+                currentActor = entry.getKey();
                 Map<ScriptEntity, List<ASTNode>> scriptsNodes = entry.getValue();
                 if (scriptsNodes != null) {
                     Map.Entry<ScriptEntity, List<ASTNode>> entryList = scriptsNodes.entrySet().iterator().next();
@@ -114,7 +113,7 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
             script = currentProcedure;
         }
         if (broadcastsScriptsActorPerMessage.containsKey(text)) {
-            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = broadcastsScriptsActorPerMessage.get(text);
+            var actorScripts = broadcastsScriptsActorPerMessage.get(text);
             if (actorScripts.containsKey(currentActor)) {
                 Map<ScriptEntity, List<ASTNode>> scriptsNodes = actorScripts.get(currentActor);
                 if (scriptsNodes.containsKey(script)) {

@@ -90,7 +90,8 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
 
     private void addScriptToMap() {
         if (actorScriptsPerActorName.containsKey(currentActor.getIdent().getName())) {
-            Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerActorName.get(currentActor.getIdent().getName());
+            String actorName = currentActor.getIdent().getName();
+            Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerActorName.get(actorName);
             if (actorScripts.containsKey(currentActor)) {
                 actorScripts.get(currentActor).add(currentScript);
             } else {

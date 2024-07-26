@@ -29,8 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-import java.util.Objects;
-
 public class StutteringMovementFix extends AbstractIssueFinder {
     public static final String NAME = "stuttering_movement_fix";
     private final String bugLocationBlockId;
@@ -45,7 +43,11 @@ public class StutteringMovementFix extends AbstractIssueFinder {
             if (ifStmt != null && ifStmt.getBoolExpr() instanceof IsKeyPressed) {
                 StmtList stmtList = AstNodeUtil.findParent(ifStmt, StmtList.class);
                 assert stmtList != null;
-                if (stmtList.getParentNode() instanceof UntilStmt || stmtList.getParentNode() instanceof RepeatForeverStmt) {
+
+                if (
+                        stmtList.getParentNode() instanceof UntilStmt
+                                || stmtList.getParentNode() instanceof RepeatForeverStmt
+                ) {
                     addIssue(node, node.getMetadata());
                 }
             }
