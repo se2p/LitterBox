@@ -28,8 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLight;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightOff;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBl
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.EmotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.HashMap;
 import java.util.LinkedList;

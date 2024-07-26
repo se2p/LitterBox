@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
     private final BlockMetadata menuMetadata;
