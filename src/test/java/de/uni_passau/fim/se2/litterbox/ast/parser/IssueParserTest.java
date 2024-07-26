@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,10 +36,10 @@ public class IssueParserTest implements JsonTest {
     public void testReadingBlockId() throws ParsingException, IOException {
         File file = new File("src/test/fixtures/jsonReport/testfruit.json");
         IssueParser issueParser = new IssueParser();
-        Map<String, List<IssueParser.IssueRecord>> foundIssues = issueParser.parseFile(file);
-        Assertions.assertEquals(2, foundIssues.size());
+        Map<String, List<IssueDTO>> foundIssues = issueParser.parseFile(file);
+        Assertions.assertEquals(3, foundIssues.size());
         Assertions.assertEquals(MissingInitialization.NAME, foundIssues.keySet().toArray()[0]);
         Assertions.assertEquals(1, foundIssues.get(MissingInitialization.NAME).size());
-        Assertions.assertEquals("Jif;Ug!4[{,1su7{fvp}", foundIssues.get(MissingInitialization.NAME).get(0).blockId());
+        Assertions.assertEquals("Jif;Ug!4[{,1su7{fvp}", foundIssues.get(MissingInitialization.NAME).get(0).issueLocationBlockId());
     }
 }

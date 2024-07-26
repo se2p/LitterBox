@@ -18,24 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.report.ReportDTO;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class IssueParser {
 
-    public Map<String, List<IssueRecord>> parseFile(File fileEntry) throws IOException, ParsingException {
+    public Map<String, List<IssueDTO>> parseFile(File fileEntry) throws IOException, ParsingException {
         String fileName = fileEntry.getName();
         if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {
             Logger.getGlobal().info("Now parsing issue report: " + fileName);
@@ -48,38 +48,24 @@ public class IssueParser {
         }
     }
 
-    private Map<String, List<IssueRecord>> parseJsonFile(File fileEntry) throws IOException, ParsingException {
+    private Map<String, List<IssueDTO>> parseJsonFile(File fileEntry) throws IOException, ParsingException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(fileEntry);
-        Preconditions.checkNotNull(rootNode);
-        if (!rootNode.has(ISSUES_KEY)) {
-            throw new ParsingException("The JSON File does not have an issues field.");
+        ReportDTO report = mapper.readValue(fileEntry, ReportDTO.class);
+        if (report == null) {
+            throw new ParsingException("The JSON File is not a valid report.");
         }
-        Iterator<JsonNode> iterable = rootNode.get(ISSUES_KEY).iterator();
-        Map<String, List<IssueRecord>> issues = new LinkedHashMap<>();
-        while (iterable.hasNext()) {
-            JsonNode currentIssue = iterable.next();
-            if (currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.BUG.toString())
-                    || currentIssue.get(ISSUE_TYPE_KEY).asText().equals(IssueType.SMELL.toString())) {
-                String name = currentIssue.get(FINDER_KEY).asText();
-                String actorName = currentIssue.get(SPRRITE_KEY).asText();
-                String block_id = "";
-                if (currentIssue.has(ISSUE_BLOCK_ID)) {
-                    block_id = currentIssue.get(ISSUE_BLOCK_ID).asText();
-                }
-                if (issues.containsKey(name)) {
-                    issues.get(name).add(new IssueRecord(block_id, actorName));
-                } else {
-                    List<IssueRecord> newBlockIdList = new ArrayList<>();
-                    newBlockIdList.add(new IssueRecord(block_id, actorName));
-                    issues.put(name, newBlockIdList);
-                }
+        List<IssueDTO> issues = report.issues();
+        Map<String, List<IssueDTO>> issuesPerName = new LinkedHashMap<>();
+        for (IssueDTO issue : issues) {
+            if (issuesPerName.containsKey(issue.finder())) {
+                issuesPerName.get(issue.finder()).add(issue);
+            } else {
+                List<IssueDTO> issueList = new ArrayList<>();
+                issueList.add(issue);
+                issuesPerName.put(issue.finder(), issueList);
             }
         }
-        return issues;
-    }
-
-    public record IssueRecord(String blockId, String actorName) {
+        return issuesPerName;
     }
 }
 

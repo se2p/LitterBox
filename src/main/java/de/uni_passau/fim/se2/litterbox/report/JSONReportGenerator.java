@@ -18,13 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -172,7 +169,7 @@ public class JSONReportGenerator implements ReportGenerator {
         return getRelatedIds(issues, theIssue, theIssue::areCoupled);
     }
 
-    private List<SimilarIssue> getSimilarIssues(final Collection<Issue> issues, final Issue theIssue) {
+    private List<SimilarIssueDTO> getSimilarIssues(final Collection<Issue> issues, final Issue theIssue) {
         return issues.stream()
                 .filter(issue -> issue != theIssue)
                 .filter(issue -> theIssue.getFinder() == issue.getFinder())
@@ -181,7 +178,7 @@ public class JSONReportGenerator implements ReportGenerator {
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .map(issue -> new SimilarIssue(issue.getId(), theIssue.getDistanceTo(issue)))
+                .map(issue -> new SimilarIssueDTO(issue.getId(), theIssue.getDistanceTo(issue)))
                 .toList();
     }
 
@@ -199,39 +196,5 @@ public class JSONReportGenerator implements ReportGenerator {
         }
     }
 
-    private record ReportDTO(
-            Map<String, Double> metrics,
-            List<IssueDTO> issues
-    ) {
-    }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private record IssueDTO(
-            int id,
-            String finder,
-            String name,
-            IssueType type,
-            int severity,
-            String sprite,
-            String issueLocationBlockId,
-            @JsonProperty("duplicate-of")
-            Set<Integer> duplicateOf,
-            @JsonProperty("subsumed-by")
-            Set<Integer> subsumedBy,
-            @JsonProperty("coupled-to")
-            Set<Integer> coupledTo,
-            @JsonProperty("similar-to")
-            List<SimilarIssue> similarTo,
-            String hint,
-            List<String> costumes,
-            int currentCostume,
-            @JsonProperty("code")
-            String scratchBlocksCode,
-            @JsonProperty("refactoring")
-            String refactoringScratchBlocksCode
-    ) {
-    }
-
-    private record SimilarIssue(int id, double distance) {
-    }
 }
