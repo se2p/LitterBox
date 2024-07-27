@@ -10,7 +10,7 @@ public class PurposeOfProcedure extends AbstractQuestionFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+        IssueBuilder builder = prepareIssueBuilder(node).withMetadata(node.getMetadata().getDefinition()).withSeverity(IssueSeverity.LOW);
         Hint hint = new Hint(getName());
         addIssue(builder.withHint(hint));
     }
