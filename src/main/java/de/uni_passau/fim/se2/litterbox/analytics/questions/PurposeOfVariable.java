@@ -10,8 +10,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @QuestionType Free Text
+ * @Highlighted Nothing
+ * @Context Whole program
+ */
 public class PurposeOfVariable extends AbstractQuestionFinder {
-
 
     private boolean inScript;
     private Set<String> variables;

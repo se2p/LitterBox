@@ -13,6 +13,13 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @QuestionType Multiple Choice
+ * @NumAnswers 1
+ * @NumChoices {@code MAX_CHOICES}
+ * @Highlighted Statement
+ * @Context Single script
+ */
 public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
     private Map<String, ProcedureDefinition> procedures;

@@ -5,6 +5,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
+/**
+ * @QuestionType Free Text
+ * @Highlighted Procedure
+ * @Context Single procedure
+ */
 public class PurposeOfProcedure extends AbstractQuestionFinder {
 
     @Override

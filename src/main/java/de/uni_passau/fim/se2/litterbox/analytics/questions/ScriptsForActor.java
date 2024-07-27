@@ -9,7 +9,7 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 /**
  * @QuestionType Number
  * @Highlighted Nothing
- * @Context One actor
+ * @Context Single actor
  */
 public class ScriptsForActor extends AbstractQuestionFinder {
 

@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 /**
  * @QuestionType Multiple Choice
- * @NumAnswers Multiple
+ * @NumAnswers {@code MAX_CHOICES}
  * @NumChoices {@code MAX_CHOICES}
  * @Highlighted Script
  * @Context Single script

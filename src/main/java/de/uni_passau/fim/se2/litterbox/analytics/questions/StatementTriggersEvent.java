@@ -28,7 +28,7 @@ import static java.util.Objects.isNull;
 
 /**
  * @QuestionType Multiple Choice
- * @NumAnswers Multiple
+ * @NumAnswers {@code MAX_CHOICES}
  * @NumChoices {@code MAX_CHOICES}
  * @Highlighted Script
  * @Context Single script

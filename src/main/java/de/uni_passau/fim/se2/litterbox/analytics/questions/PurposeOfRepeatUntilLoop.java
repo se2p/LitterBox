@@ -11,6 +11,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * @Context Single script
  */
 public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
+
     @Override
     public void visit(UntilStmt node) {
         IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);

@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @QuestionType Yes or No
  * @Highlighted Two scripts
- * @Context Actor
+ * @Context Single actor
  */
 public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 

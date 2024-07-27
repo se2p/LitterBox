@@ -10,7 +10,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 /**
  * @QuestionType Strings
- * @NumAnswers Multiple
+ * @NumAnswers {@code MAX_CHOICES}
  * @Highlighted Script
  * @Context Single script
  */

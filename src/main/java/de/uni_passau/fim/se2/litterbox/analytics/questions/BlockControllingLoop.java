@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
  * @Context Single script
  */
 public class BlockControllingLoop extends AbstractQuestionFinder {
+
     private boolean loopFound;
     private IssueBuilder builder;
 

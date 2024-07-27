@@ -5,6 +5,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 
+/**
+ * @QuestionType Free Text
+ * @Highlighted Loop
+ * @Context Single script
+ */
 public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
 
     @Override

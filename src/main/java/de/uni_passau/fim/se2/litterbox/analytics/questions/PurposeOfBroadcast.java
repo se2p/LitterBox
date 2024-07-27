@@ -10,6 +10,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * @QuestionType Free Text
+ * @Highlighted Statement
+ * @Context Single script
+ */
 public class PurposeOfBroadcast extends AbstractQuestionFinder {
 
     private Set<String> broadcastMessages;

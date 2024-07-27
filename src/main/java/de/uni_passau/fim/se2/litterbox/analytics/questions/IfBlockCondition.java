@@ -19,6 +19,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  * @Context Single script
  */
 public class IfBlockCondition extends AbstractQuestionFinder {
+
     private boolean ifStmtFound;
     private IssueBuilder builder;
 

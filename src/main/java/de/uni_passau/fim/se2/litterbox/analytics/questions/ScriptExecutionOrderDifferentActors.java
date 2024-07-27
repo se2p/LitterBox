@@ -17,11 +17,12 @@ import java.util.Map;
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers 1
- * @NumChoices 2
+ * @NumChoices 1
  * @Highlighted Two scripts
- * @Context Program
+ * @Context Whole program
  */
 public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder {
+
     Map<String, Map<String, List<Script>>> scriptsWithEvent;
 
     @Override
