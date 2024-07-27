@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @QuestionType Free Text
  * @Highlighted Statement
- * @Context Single script
+ * @Context Whole program
  */
 public class PurposeOfBroadcast extends AbstractQuestionFinder {
 

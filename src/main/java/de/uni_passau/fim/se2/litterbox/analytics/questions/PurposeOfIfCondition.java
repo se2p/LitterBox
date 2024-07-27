@@ -5,6 +5,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 
+/**
+ * @QuestionType Free Text
+ * @Highlighted If Statement
+ * @Context Single script
+ */
 public class PurposeOfIfCondition extends AbstractQuestionFinder {
 
     @Override
