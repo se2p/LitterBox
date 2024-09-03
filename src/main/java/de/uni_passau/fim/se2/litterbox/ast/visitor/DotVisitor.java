@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 
 /**
- * Visitor that creates a .dot output for a Program-AST
+ * Visitor that creates a .dot output for a Program-AST.
  */
 public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
     StringBuilder edgesString = new StringBuilder();

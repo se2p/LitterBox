@@ -45,7 +45,7 @@ public class CloneAnalysis {
     }
 
     /**
-     * Check a fraction of the AST for internal clones, i.e., compare it against itself
+     * Check a fraction of the AST for internal clones, i.e., compare it against itself.
      *
      * @param root starting point in the AST for the clone analysis
      * @return all clones found
