@@ -38,7 +38,7 @@ public final class ZipReader {
     }
 
     /**
-     * A method to extract the project.json file from a Scratch project (ZIP file)
+     * Extracts the project.json file from a Scratch project (ZIP file).
      *
      * @param path the file path
      * @return the JSON as a raw String
