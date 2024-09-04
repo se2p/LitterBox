@@ -287,9 +287,16 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visit(Clicked clicked) {
+    public void visit(SpriteClicked spriteClicked) {
         emitNoSpace("when this sprite clicked");
-        storeNotesForIssue(clicked);
+        storeNotesForIssue(spriteClicked);
+        newLine();
+    }
+
+    @Override
+    public void visit(StageClicked stageClicked) {
+        emitNoSpace("when this stage clicked");
+        storeNotesForIssue(stageClicked);
         newLine();
     }
 
@@ -691,6 +698,23 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         } else {
             node.getElementChoice().accept(this);
         }
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        emitNoSpace("switch backdrop to ");
+        if (node.getElementChoice() instanceof Next) {
+            emitNoSpace("(next backdrop v)");
+        } else if (node.getElementChoice() instanceof Prev) {
+            emitNoSpace("(previous backdrop v)");
+        } else if (node.getElementChoice() instanceof Random) {
+            emitNoSpace("(random backdrop v)");
+        } else {
+            node.getElementChoice().accept(this);
+        }
+        emitNoSpace(" and wait");
         storeNotesForIssue(node);
         newLine();
     }
