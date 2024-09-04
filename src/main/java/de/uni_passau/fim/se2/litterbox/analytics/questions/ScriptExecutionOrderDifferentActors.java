@@ -62,8 +62,8 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                 hint.setParameter(Hint.HINT_VARIABLE1, actor1);
                 hint.setParameter(Hint.HINT_VARIABLE2, actor2);
                 hint.setParameter(Hint.EVENT, event);
-                hint.setParameter(Hint.CHOICES, actor2);
-                hint.setParameter(Hint.ANSWER, actor1);
+                hint.setParameter(Hint.CHOICES, actor1);
+                hint.setParameter(Hint.ANSWER, actor2);
 
                 scriptEntities.add(script1);
                 scriptEntities.add(script2);

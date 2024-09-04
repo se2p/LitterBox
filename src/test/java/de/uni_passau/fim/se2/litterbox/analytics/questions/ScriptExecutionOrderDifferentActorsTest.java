@@ -41,7 +41,7 @@ class ScriptExecutionOrderDifferentActorsTest implements JsonTest {
 
         for (Issue issue : issues) {
             if (issue.getHint().contains("Stage")) {
-                assertThat(issue.getHint()).contains("[solutions]The script belonging to Stage[/solutions]");
+                assertThat(issue.getHint()).contains("[solutions]The script belonging to Sprite1[/solutions]");
             }
             else {
                 assertThat(issue.getHint()).contains("Suppose");
