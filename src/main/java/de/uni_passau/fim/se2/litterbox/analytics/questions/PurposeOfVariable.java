@@ -25,6 +25,7 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
         variables = new HashSet<>();
         super.visit(node);
         currentScript = null;
+        currentProcedure = null;
 
         for (String variable: variables) {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);

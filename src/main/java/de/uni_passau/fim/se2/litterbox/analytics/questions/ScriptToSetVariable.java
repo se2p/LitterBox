@@ -5,7 +5,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 
 import java.util.HashMap;
@@ -28,12 +27,9 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
     public void visit(Program node) {
         answers = new HashMap<>();
         super.visit(node);
-    }
 
-    @Override
-    public void visit(ScriptList node) {
-        choices.clear();
-        super.visit(node);
+        currentScript = null;
+        currentProcedure = null;
 
         if (!choices.isEmpty() && !answers.isEmpty()) {
             answers.forEach((variable, answer) -> {
@@ -57,8 +53,6 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         else {
             choices.add(wrappedScratchBlocks(node));
         }
-
-        currentScript = null;
     }
 
     @Override
