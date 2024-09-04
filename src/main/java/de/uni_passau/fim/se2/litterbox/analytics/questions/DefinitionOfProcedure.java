@@ -18,7 +18,7 @@ import java.util.Set;
  * @NumAnswers 1
  * @NumChoices {@code MAX_CHOICES}
  * @Highlighted Statement
- * @Context Single script
+ * @Context Single actor
  */
 public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
