@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
@@ -21,12 +22,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
+
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers {@code MAX_CHOICES}
  * @NumChoices {@code MAX_CHOICES}
  * @Highlighted Statement
- * @Context Single script
+ * @Context Whole program
  */
 public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
@@ -73,28 +76,33 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
         else
             event = node.getScratchBlocks();
 
-        scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
+        if (!(node instanceof Never))
+            scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
     }
 
     @Override
     public void visit(Broadcast node) {
-        String message = node.getMessage().getScratchBlocks();
-        eventStatements.putIfAbsent(message, node);
-        scriptForStmt.putIfAbsent(node, currentScript);
-        actorForStmt.putIfAbsent(node, currentActor);
+        if (!isNull(currentScript)) {
+            String message = node.getMessage().getScratchBlocks();
+            eventStatements.putIfAbsent(message, node);
+            scriptForStmt.putIfAbsent(node, currentScript);
+            actorForStmt.putIfAbsent(node, currentActor);
+        }
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        String message = node.getMessage().getScratchBlocks();
-        eventStatements.putIfAbsent(message, node);
-        scriptForStmt.putIfAbsent(node, currentScript);
-        actorForStmt.putIfAbsent(node, currentActor);
+        if (!isNull(currentScript)) {
+            String message = node.getMessage().getScratchBlocks();
+            eventStatements.putIfAbsent(message, node);
+            scriptForStmt.putIfAbsent(node, currentScript);
+            actorForStmt.putIfAbsent(node, currentActor);
+        }
     }
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if (node.getElementChoice() instanceof WithExpr) {
+        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
             String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);
@@ -104,7 +112,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if (node.getElementChoice() instanceof WithExpr) {
+        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
             String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);

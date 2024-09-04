@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
         currentProcedure = null;
 
         triggeredScripts.forEach((event, scripts) -> {
-            if (!event.getScratchBlocks().equals("")) {
+            if (!(event instanceof Never)) {
                 IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.EVENT, event.getScratchBlocksWithoutNewline());
