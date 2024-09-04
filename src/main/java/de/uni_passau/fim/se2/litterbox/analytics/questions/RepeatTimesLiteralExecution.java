@@ -17,19 +17,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
     private boolean hasStop;
-    private boolean inLoop;
+    private int inLoop;
 
     @Override
     public void visit(LoopStmt node) {
-        inLoop = true;
+        inLoop++;
         super.visit(node);
-        inLoop = false;
+        inLoop--;
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        if (!inLoop) {
-            inLoop = true;
+        if (inLoop == 0) {
+            inLoop++;
             hasStop = false;
 
             if (node.getTimes() instanceof NumberLiteral num) {
@@ -45,9 +45,12 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                     addIssue(builder.withHint(hint));
                 }
             }
+            inLoop--;
         }
         else {
+            inLoop++;
             visit(node.getStmtList());
+            inLoop--;
         }
     }
 

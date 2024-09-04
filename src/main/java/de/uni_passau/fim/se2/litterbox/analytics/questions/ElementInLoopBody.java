@@ -33,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
  */
 public class ElementInLoopBody extends AbstractQuestionFinder {
 
-    private boolean insideLoop;
+    private int insideLoop;
 
     @Override
     public void visit(Script node) {
@@ -59,9 +59,9 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        insideLoop = true;
+        insideLoop++;
         visit(node.getStmtList());
-        insideLoop = false;
+        insideLoop--;
     }
 
     @Override
@@ -73,22 +73,22 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
         else {
             visit((NumberLiteral) times);
         }
-        insideLoop = true;
+        insideLoop++;
         visit(node.getStmtList());
-        insideLoop = false;
+        insideLoop--;
     }
 
     @Override
     public void visit(UntilStmt node) {
         visit(node.getBoolExpr());
-        insideLoop = true;
+        insideLoop++;
         visit(node.getStmtList());
-        insideLoop = false;
+        insideLoop--;
     }
 
     @Override
     public void visit(Variable node) {
-        if (insideLoop) {
+        if (insideLoop > 0) {
             answers.add(wrappedScratchBlocks(node));
         } else {
             choices.add(wrappedScratchBlocks(node));
@@ -98,7 +98,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
     @Override
     public void visit(NumExpr node) {
         if (node instanceof SingularExpression) {
-            if (insideLoop) {
+            if (insideLoop > 0) {
                 answers.add(wrappedScratchBlocks(node));
             } else {
                 choices.add(wrappedScratchBlocks(node));
@@ -111,7 +111,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
 
     @Override
     public void visit(NumberLiteral node) {
-        if (insideLoop) {
+        if (insideLoop > 0) {
             answers.add(wrappedScratchBlocks(node));
         } else {
             choices.add(wrappedScratchBlocks(node));
@@ -120,7 +120,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
 
     @Override
     public void visit(StringLiteral node) {
-        if (insideLoop) {
+        if (insideLoop > 0) {
             answers.add(wrappedScratchBlocks(node));
         } else {
             choices.add(wrappedScratchBlocks(node));
@@ -129,7 +129,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
 
     @Override
     public void visit(ColorLiteral node) {
-        if (insideLoop) {
+        if (insideLoop > 0) {
             answers.add(wrappedScratchBlocks(node));
         } else {
             choices.add(wrappedScratchBlocks(node));
