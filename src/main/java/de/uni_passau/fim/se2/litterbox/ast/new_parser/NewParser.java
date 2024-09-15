@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawProject;
 
 import java.io.IOException;
@@ -31,7 +33,16 @@ public class NewParser {
             .findAndRegisterModules()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public RawProject parse(final Path projectJson) throws IOException {
-        return mapper.readValue(projectJson.toFile(), RawProject.class);
+    public Program parse(final Path projectJson) throws ParsingException {
+        try {
+            final RawProject project = mapper.readValue(projectJson.toFile(), RawProject.class);
+            return RawProjectConverter.convert(project, getProjectName(projectJson));
+        } catch (IOException e) {
+            throw new ParsingException("Could not read project JSON!", e);
+        }
+    }
+
+    private String getProjectName(final Path projectJson) {
+        return projectJson.getFileName().toString().replace(".json", "");
     }
 }

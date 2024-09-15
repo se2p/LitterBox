@@ -34,9 +34,9 @@ public record RawMonitor(
         int x,
         int y,
         boolean visible,
-        float sliderMin,
-        float sliderMax,
-        boolean isDiscrete
+        Double sliderMin,
+        Double sliderMax,
+        Boolean isDiscrete
 ) {
     public enum RawMonitorMode {
         DEFAULT("default"),

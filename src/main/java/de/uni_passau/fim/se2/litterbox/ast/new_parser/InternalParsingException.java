@@ -16,15 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
+package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-public record RawCostume(
-        String assetId,
-        String name,
-        String md5ext,
-        String dataFormat,
-        double bitmapResolution,
-        double rotationCenterX,
-        double rotationCenterY
-) {
+import java.io.Serial;
+
+class InternalParsingException extends RuntimeException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    InternalParsingException(String message) {
+        super(message);
+    }
+
+    InternalParsingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

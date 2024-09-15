@@ -18,5 +18,5 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
 
-public record RawSound(double rate, int sampleCount) {
+public record RawSound(String assetId, String name, String md5ext, String dataFormat, int rate, int sampleCount) {
 }
