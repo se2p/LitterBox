@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-class RawProjectConverter {
+final class RawProjectConverter {
     private final RawProject project;
     private final String projectName;
     private final ProgramParserState parserState;
@@ -64,10 +64,10 @@ class RawProjectConverter {
     }
 
     Program convert() {
-        final RawTargetConverter rawTargetConverter = new RawTargetConverter(parserState);
-
         final LocalIdentifier id = new StrId(projectName);
-        final List<ActorDefinition> actors = project.targets().stream().map(rawTargetConverter::convertTarget).toList();
+        final List<ActorDefinition> actors = project.targets().stream()
+                .map(target -> RawTargetConverter.convertTarget(parserState, target))
+                .toList();
         final ActorDefinitionList actorList = new ActorDefinitionList(actors);
         final ProgramMetadata metadata = convertMetadata();
 

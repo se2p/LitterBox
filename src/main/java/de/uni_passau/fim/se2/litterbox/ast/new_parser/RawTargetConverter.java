@@ -29,14 +29,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -45,21 +50,29 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-class RawTargetConverter {
+final class RawTargetConverter {
     private final ProgramParserState state;
+    private final RawTarget target;
 
-    RawTargetConverter(final ProgramParserState state) {
+    private RawTargetConverter(final ProgramParserState state, final RawTarget target) {
         this.state = state;
+        this.target = target;
     }
 
-    ActorDefinition convertTarget(final RawTarget target) {
+    public static ActorDefinition convertTarget(final ProgramParserState state, final RawTarget target) {
+        final RawTargetConverter converter = new RawTargetConverter(state, target);
+        return converter.convertTarget();
+    }
+
+    ActorDefinition convertTarget() {
         final LocalIdentifier ident = new StrId(target.name());
         state.setCurrentActor(ident);
 
@@ -70,16 +83,32 @@ class RawTargetConverter {
             actorType = ActorType.getSprite();
         }
 
-        final ActorMetadata metadata = convertActorMetadata(target);
-        final DeclarationStmtList decls = convertDecls(target);
-        final SetStmtList setStmtList = convertSetStmtList(target);
-        final ProcedureDefinitionList procedureDefinitionList = convertProcDefs(target);
-        final ScriptList scripts = convertScripts(target);
+        final ActorMetadata metadata = convertActorMetadata();
+        final DeclarationStmtList decls = convertDecls();
+        final SetStmtList setStmtList = convertSetStmtList();
+
+        final BlocksByOpcode topLevelBlocks = getBlocksByOpcode();
+        final ProcedureDefinitionList procedureDefinitionList = convertProcDefs(topLevelBlocks);
+        final ScriptList scripts = convertScripts();
 
         return new ActorDefinition(actorType, ident, decls, setStmtList, procedureDefinitionList, scripts, metadata);
     }
 
-    private ActorMetadata convertActorMetadata(final RawTarget target) {
+    private BlocksByOpcode getBlocksByOpcode() {
+        return new BlocksByOpcode(
+                target.blocks().entrySet().stream()
+                        .filter(entry -> entry.getValue() instanceof RawBlock.RawRegularBlock)
+                        .collect(Collectors.groupingBy(
+                                entry -> ((RawBlock.RawRegularBlock) entry.getValue()).opcode(),
+                                Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        entry -> (RawBlock.RawRegularBlock) entry.getValue()
+                                )
+                        ))
+        );
+    }
+
+    private ActorMetadata convertActorMetadata() {
         final CommentMetadataList commentsMetadataList = convertComments(target.comments());
         final ImageMetadataList costumes = convertCostumes(target.costumes());
         final SoundMetadataList sounds = convertSounds(target.sounds());
@@ -142,27 +171,27 @@ class RawTargetConverter {
         return new SoundMetadataList(soundMetadata);
     }
 
-    private DeclarationStmtList convertDecls(final RawTarget target) {
+    private DeclarationStmtList convertDecls() {
         final List<DeclarationStmt> declarations = new ArrayList<>();
 
         for (var entry : target.lists().entrySet()) {
-            declarations.add(convertList(target, entry.getKey(), entry.getValue()));
+            declarations.add(convertList(entry.getKey(), entry.getValue()));
         }
 
         for (var entry : target.broadcasts().entrySet()) {
-            declarations.add(convertBroadcast(target, entry.getKey(), entry.getValue()));
+            declarations.add(convertBroadcast(entry.getKey(), entry.getValue()));
         }
 
         for (var entry : target.variables().entrySet()) {
-            declarations.add(convertVariableDeclarations(target, entry.getKey(), entry.getValue()));
+            declarations.add(convertVariableDeclarations(entry.getKey(), entry.getValue()));
         }
 
-        declarations.addAll(convertAttributeDeclarations(target));
+        declarations.addAll(convertAttributeDeclarations());
 
         return new DeclarationStmtList(Collections.unmodifiableList(declarations));
     }
 
-    private DeclarationIdentAsTypeStmt convertList(final RawTarget target, final RawBlockId id, final RawList list) {
+    private DeclarationIdentAsTypeStmt convertList(final RawBlockId id, final RawList list) {
         final ExpressionList listValues = buildExpressionList(list);
 
         state.getSymbolTable().addExpressionListInfo(
@@ -185,23 +214,19 @@ class RawTargetConverter {
         return new ExpressionList(items);
     }
 
-    private DeclarationBroadcastStmt convertBroadcast(
-            final RawTarget target, final RawBlockId id, final String broadcast
-    ) {
+    private DeclarationBroadcastStmt convertBroadcast(final RawBlockId id, final String broadcast) {
         final Message message = new Message(new StringLiteral(broadcast));
         state.getSymbolTable().addMessage(broadcast, message, target.isStage(), target.name(), id.id());
 
         return new DeclarationBroadcastStmt(new StrId(broadcast), new StringType());
     }
 
-    private DeclarationIdentAsTypeStmt convertVariableDeclarations(
-            final RawTarget target, final RawBlockId id, final RawVariable<?> variable
-    ) {
+    private DeclarationIdentAsTypeStmt convertVariableDeclarations(final RawBlockId id, final RawVariable<?> variable) {
         final Type varType;
 
         if (variable.value() instanceof Boolean) {
             varType = new BooleanType();
-        } else if (variable.value() instanceof Double || variable.value() instanceof Integer) {
+        } else if (isNumericVariable(variable)) {
             varType = new NumberType();
         } else if (variable.value() instanceof String) {
             varType = new StringType();
@@ -218,7 +243,13 @@ class RawTargetConverter {
         return new DeclarationIdentAsTypeStmt(new Variable(new StrId(variable.variableName())), varType);
     }
 
-    private List<DeclarationStmt> convertAttributeDeclarations(final RawTarget target) {
+    private static boolean isNumericVariable(final RawVariable<?> variable) {
+        return variable.value() instanceof Double
+                || variable.value() instanceof Integer
+                || variable.value() instanceof Long;
+    }
+
+    private List<DeclarationStmt> convertAttributeDeclarations() {
         final List<DeclarationStmt> stmts = new ArrayList<>();
 
         if (target.volume() != null) {
@@ -269,7 +300,7 @@ class RawTargetConverter {
         return stmts;
     }
 
-    private SetStmtList convertSetStmtList(final RawTarget target) {
+    private SetStmtList convertSetStmtList() {
         final List<SetStmt> setStmts = new ArrayList<>();
 
         for (final RawList list : target.lists().values()) {
@@ -306,6 +337,8 @@ class RawTargetConverter {
             expr = new NumberLiteral(d);
         } else if (variable.value() instanceof Integer i) {
             expr = new NumberLiteral(i);
+        } else if (variable.value() instanceof Long l) {
+            expr = new NumberLiteral(l);
         } else {
             throw new InternalParsingException(
                     "Unsupported initial type for variable '"
@@ -318,13 +351,166 @@ class RawTargetConverter {
         return expr;
     }
 
-    private ProcedureDefinitionList convertProcDefs(final RawTarget target) {
-        // todo
-        return new ProcedureDefinitionList(Collections.emptyList());
+    private ProcedureDefinitionList convertProcDefs(final BlocksByOpcode blocks) {
+        final var procDefs = blocks.getBlocks(ProcedureOpcode.procedures_definition.getName());
+        final var procProtos = blocks.getBlocks(ProcedureOpcode.procedures_prototype.getName());
+
+        // each definition needs the prototype block because it holds the name of the procedure
+        Preconditions.checkArgument(procDefs.size() == procProtos.size());
+
+        final List<ProcedureDefinition> definitions = procDefs.entrySet().stream()
+                .map(entry -> convertProcDef(entry.getKey(), entry.getValue()))
+                .toList();
+
+        return new ProcedureDefinitionList(definitions);
     }
 
-    private ScriptList convertScripts(final RawTarget target) {
+    private ProcedureDefinition convertProcDef(
+            final RawBlockId definitionId, final RawBlock.RawRegularBlock procedureDefinition
+    ) {
+        final var prototypeBlockInfo = getProcedurePrototypeForDefinition(procedureDefinition);
+        final RawBlock.RawRegularBlock prototypeBlock = prototypeBlockInfo.getRight();
+
+        final LocalIdentifier ident = parseProcedureIdentifier(definitionId, prototypeBlock);
+        final ParameterDefinitionList parameters = convertProcedureParameters(prototypeBlock);
+
+        // todo: parse statements inside procedure
+        final StmtList stmts = new StmtList(Collections.emptyList());
+        final ProcedureMetadata metadata = convertProcedureMetadata(
+                definitionId, procedureDefinition, prototypeBlockInfo.getLeft(), prototypeBlock
+        );
+
+        final String methodName = getMethodName(prototypeBlock);
+        addProcedureToState(ident, methodName, parameters);
+
+        return new ProcedureDefinition(ident, parameters, stmts, metadata);
+    }
+
+    private void addProcedureToState(
+            final LocalIdentifier ident, final String methodName, final ParameterDefinitionList parameterDefinitionList
+    ) {
+        final String currentActor = state.getCurrentActor().getName();
+        state.getProcDefMap().addProcedure(ident, currentActor, methodName, parameterDefinitionList);
+    }
+
+    private Pair<RawBlockId, RawBlock.RawRegularBlock> getProcedurePrototypeForDefinition(
+            final RawBlock.RawRegularBlock procedureDefinition
+    ) {
+        final RawInput input = procedureDefinition.inputs().get(Constants.CUSTOM_BLOCK_KEY);
+
+        if (input.input() instanceof BlockRef.IdRef defId) {
+            final RawBlockId prototypeBlockId = defId.id();
+            final RawBlock prototype = target.blocks().get(prototypeBlockId);
+            if (prototype instanceof RawBlock.RawRegularBlock p) {
+                return Pair.of(prototypeBlockId, p);
+            } else {
+                throw new InternalParsingException(
+                        "Unexpected format for procedure prototype: " + prototypeBlockId.id()
+                );
+            }
+        } else {
+            throw new InternalParsingException("Expected procedure definition to contain reference to prototype!");
+        }
+    }
+
+    private String getMethodName(final RawBlock.RawRegularBlock procedurePrototype) {
+        final String baseName = getProcedurePrototypeInformation(procedurePrototype).proccode();
+
+        // %n exists from some methods (probably due to conversion from Scratch 2), but it is not possible to construct
+        // such methods in Scratch any more. The number/text input is always created as %s using the Scratch UI.
+        return baseName.replace("%n", "%s");
+    }
+
+    private LocalIdentifier parseProcedureIdentifier(
+            final RawBlockId definitionId, final RawBlock.RawRegularBlock procedurePrototype
+    ) {
+        return new StrId(procedurePrototype.parent().orElse(definitionId).id());
+    }
+
+    private ParameterDefinitionList convertProcedureParameters(final RawBlock.RawRegularBlock procedurePrototype) {
+        final RawMutation procInfo = getProcedurePrototypeInformation(procedurePrototype);
+        final List<String> argumentNames = procInfo.argumentnames();
+        final List<RawBlockId> argumentIds = procInfo.argumentids();
+        final List<RawMutation.ArgumentDefault<?>> argumentDefaults = procInfo.argumentdefaults();
+
+        final List<ParameterDefinition> definitions = new ArrayList<>();
+
+        for (int i = 0; i < argumentIds.size(); ++i) {
+            final StrId name = new StrId(argumentNames.get(i));
+            final String argumentId = argumentIds.get(i).id();
+            final RawInput argumentInput = procedurePrototype.inputs().get(argumentId);
+            final Type parameterType = getParameterTypeFromInput(name, argumentInput, argumentDefaults.get(i));
+
+            definitions.add(new ParameterDefinition(name, parameterType, new NoBlockMetadata()));
+        }
+
+        return new ParameterDefinitionList(Collections.unmodifiableList(definitions));
+    }
+
+    private static RawMutation getProcedurePrototypeInformation(final RawBlock.RawRegularBlock procedurePrototype) {
+        return procedurePrototype.mutation()
+                .orElseThrow(() -> new InternalParsingException("Incomplete procedure definition!"));
+    }
+
+    private Type getParameterTypeFromInput(
+            final StrId name, final RawInput argumentInput, final RawMutation.ArgumentDefault<?> argumentDefault
+    ) {
+        if (argumentInput == null) {
+            return getParameterType(name, argumentDefault);
+        } else if (argumentInput.input() instanceof BlockRef.IdRef inputIdRef) {
+            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+
+            if (inputBlock instanceof RawBlock.RawRegularBlock block) {
+                if (ProcedureOpcode.argument_reporter_boolean.getName().equals(block.opcode())) {
+                    return new BooleanType();
+                } else if (ProcedureOpcode.argument_reporter_string_number.getName().equals(block.opcode())) {
+                    return new StringType();
+                }
+            }
+        }
+
+        throw new InternalParsingException("Unknown parameter type format!");
+    }
+
+    private static Type getParameterType(final StrId name, final RawMutation.ArgumentDefault<?> defaultValue) {
+        final Type parameterType;
+
+        // implementation note: should be changed to pattern-matching switch when updating to Java 21
+        if (
+                defaultValue instanceof RawMutation.ArgumentDefault.StringArgumentDefault
+                        || defaultValue instanceof RawMutation.ArgumentDefault.NumArgumentDefault
+        ) {
+            parameterType = new StringType();
+        } else if (defaultValue instanceof RawMutation.ArgumentDefault.BoolArgumentDefault) {
+            parameterType = new BooleanType();
+        } else {
+            throw new InternalParsingException("Parameter '" + name.getName() + "' has unknown type!");
+        }
+
+        return parameterType;
+    }
+
+    private ProcedureMetadata convertProcedureMetadata(
+            final RawBlockId defId,
+            final RawBlock.RawRegularBlock procedureDefinition,
+            final RawBlockId protoId,
+            final RawBlock.RawRegularBlock procedurePrototype
+    ) {
+        final BlockMetadata defMeta = RawBlockMetadataConverter.convertBlockMetadata(defId, procedureDefinition);
+        final BlockMetadata protoMeta = RawBlockMetadataConverter.convertBlockMetadata(protoId, procedurePrototype);
+
+        return new ProcedureMetadata(defMeta, protoMeta);
+    }
+
+    private ScriptList convertScripts() {
         // todo
         return new ScriptList(Collections.emptyList());
+    }
+
+    private record BlocksByOpcode(Map<String, Map<RawBlockId, RawBlock.RawRegularBlock>> blocks) {
+        Map<RawBlockId, RawBlock.RawRegularBlock> getBlocks(final String opcode) {
+            final var opCodeBlocks = blocks.get(opcode);
+            return Objects.requireNonNullElse(opCodeBlocks, Collections.emptyMap());
+        }
     }
 }
