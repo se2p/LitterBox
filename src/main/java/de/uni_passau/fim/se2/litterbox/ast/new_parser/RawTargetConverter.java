@@ -50,6 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -61,6 +62,10 @@ import java.util.stream.Collectors;
 final class RawTargetConverter {
     private final ProgramParserState state;
     private final RawTarget target;
+
+    private final Set<String> menuOpCodes = Arrays.stream(DependentBlockOpcode.values())
+            .map(DependentBlockOpcode::getName)
+            .collect(Collectors.toSet());
 
     private RawTargetConverter(final ProgramParserState state, final RawTarget target) {
         this.state = state;
@@ -374,14 +379,15 @@ final class RawTargetConverter {
         final LocalIdentifier ident = parseProcedureIdentifier(definitionId, prototypeBlock);
         final ParameterDefinitionList parameters = convertProcedureParameters(prototypeBlock);
 
-        // todo: parse statements inside procedure
-        final StmtList stmts = new StmtList(Collections.emptyList());
+        final String methodName = getMethodName(prototypeBlock);
+        addProcedureToState(ident, methodName, parameters);
+
+        final StmtList stmts = procedureDefinition.next()
+                .map(stmtRoot -> RawScriptConverter.convertStmtList(state, target, stmtRoot))
+                .orElseGet(StmtList::new);
         final ProcedureMetadata metadata = convertProcedureMetadata(
                 definitionId, procedureDefinition, prototypeBlockInfo.getLeft(), prototypeBlock
         );
-
-        final String methodName = getMethodName(prototypeBlock);
-        addProcedureToState(ident, methodName, parameters);
 
         return new ProcedureDefinition(ident, parameters, stmts, metadata);
     }
@@ -503,8 +509,27 @@ final class RawTargetConverter {
     }
 
     private ScriptList convertScripts() {
-        // todo
-        return new ScriptList(Collections.emptyList());
+        final List<Script> scripts = target.blocks().entrySet().stream()
+                .filter(entry -> isPotentialScriptRoot(entry.getValue()))
+                .map(entry -> RawScriptConverter.convertScript(state, target, entry.getKey()))
+                .filter(Objects::nonNull)
+                .toList();
+
+        return new ScriptList(scripts);
+    }
+
+    private boolean isPotentialScriptRoot(final RawBlock block) {
+        if (block instanceof RawBlock.RawRegularBlock regularBlock) {
+            // exclude menus, since menus count as topLevel in the JSON File if the menu is replaced by another
+            // expression
+            return regularBlock.topLevel() && !menuOpCodes.contains(regularBlock.opcode());
+        } else if (block instanceof RawBlock.RawVariable v) {
+            return v.coordinates().isPresent();
+        } else if (block instanceof RawBlock.RawList l) {
+            return l.coordinates().isPresent();
+        } else {
+            return false;
+        }
     }
 
     private record BlocksByOpcode(Map<String, Map<RawBlockId, RawBlock.RawRegularBlock>> blocks) {
