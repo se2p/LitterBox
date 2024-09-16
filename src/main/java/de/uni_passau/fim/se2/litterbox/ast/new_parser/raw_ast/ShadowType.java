@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-enum ShadowType {
+public enum ShadowType {
     SHADOW(1),
     NO_SHADOW(2),
     OBSCURED_SHADOW(3);
