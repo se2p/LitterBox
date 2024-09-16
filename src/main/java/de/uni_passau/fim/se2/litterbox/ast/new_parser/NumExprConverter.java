@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
-final class NumExprConverter {
+final class NumExprConverter extends ExprConverter {
 
     private NumExprConverter() {
         throw new IllegalCallerException("utility class constructor");
@@ -85,12 +85,6 @@ final class NumExprConverter {
         );
 
         return hasCorrectShadow(exprBlock) || hasCorrectType;
-    }
-
-    private static boolean hasCorrectShadow(final RawInput exprBlock) {
-        return exprBlock.shadowType() == ShadowType.SHADOW || (
-                exprBlock.shadowType() == ShadowType.NO_SHADOW && !(exprBlock.input() instanceof BlockRef.IdRef)
-        );
     }
 
     private static boolean hasNumExprOpcode(final RawTarget target, final RawInput exprBlock) {

@@ -30,9 +30,9 @@ import java.util.Set;
 
 public class SymbolTable {
 
-    private Map<String, VariableInfo> variables;
-    private Map<String, MessageInfo> messages;
-    private Map<String, ExpressionListInfo> lists;
+    private final Map<String, VariableInfo> variables;
+    private final Map<String, MessageInfo> messages;
+    private final Map<String, ExpressionListInfo> lists;
 
     /**
      * The symbol table collects all information about variable, lists and messages.
@@ -92,10 +92,12 @@ public class SymbolTable {
      * @param global         indicates whether this variable is global and accessible for all actors
      * @param actorName      name of the actor where the variable is defined
      */
-    public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
-                                      String actorName) {
+    public ExpressionListInfo addExpressionListInfo(
+            String ident, String listName, ExpressionList expressionList, boolean global, String actorName
+    ) {
         ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
         lists.put(ident + listName + actorName, info);
+        return info;
     }
 
     public void addMessage(String name, Message message, boolean global, String actorName, String identifier) {
