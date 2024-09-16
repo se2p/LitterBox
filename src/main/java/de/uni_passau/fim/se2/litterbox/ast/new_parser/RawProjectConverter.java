@@ -36,7 +36,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderM
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 class RawProjectConverter {
     private final RawProject project;
@@ -83,8 +88,9 @@ class RawProjectConverter {
     }
 
     private MonitorMetadata convertMonitor(final RawMonitor monitor) {
+        final Map<String, String> params = Objects.requireNonNullElse(monitor.params(), Collections.emptyMap());
         final MonitorParamMetadataList paramMeta = new MonitorParamMetadataList(
-                monitor.params().entrySet().stream()
+               params.entrySet().stream()
                         .map(entry -> new MonitorParamMetadata(entry.getKey(), entry.getValue()))
                         .toList()
         );
@@ -93,6 +99,20 @@ class RawProjectConverter {
             final List<String> items = values.stream().map(v -> {
                 if (v instanceof String s) {
                     return s;
+                } else if (v instanceof Double d) {
+                    return Double.toString(d);
+                } else if (v instanceof Integer i) {
+                    return Integer.toString(i);
+                } else if (v instanceof Long l) {
+                    return Long.toString(l);
+                } else if (v instanceof BigInteger i) {
+                    return i.toString();
+                } else if (v instanceof BigDecimal d) {
+                    return d.toPlainString();
+                } else if (v instanceof Boolean b) {
+                    return b.toString();
+                } else if (v == null) {
+                    return "null";
                 } else {
                     throw new InternalParsingException("Monitor values list contains unexpected item: " + v);
                 }
@@ -113,7 +133,7 @@ class RawProjectConverter {
             );
         } else {
             final Object v = monitor.value();
-            if (!(v instanceof String || v instanceof Boolean || v instanceof Integer || v instanceof Double)) {
+            if (!isValidMonitorValue(v)) {
                 throw new InternalParsingException("Unknown monitor type! Neither list nor regular value.");
             }
 
@@ -129,10 +149,20 @@ class RawProjectConverter {
                     monitor.y(),
                     monitor.visible(),
                     monitor.value().toString(),
-                    monitor.sliderMin(),
-                    monitor.sliderMax(),
+                    Objects.requireNonNullElse(monitor.sliderMin(), 0.0),
+                    Objects.requireNonNullElse(monitor.sliderMax(), 100.0),
                     monitor.isDiscrete()
             );
         }
+    }
+
+    private static boolean isValidMonitorValue(final Object v) {
+        return v instanceof String
+                || v instanceof Boolean
+                || v instanceof Integer
+                || v instanceof Double
+                || v instanceof Long
+                || v instanceof BigInteger
+                || v instanceof BigDecimal;
     }
 }

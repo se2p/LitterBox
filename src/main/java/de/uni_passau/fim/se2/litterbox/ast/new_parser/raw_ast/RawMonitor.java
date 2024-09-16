@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Map;
@@ -34,9 +35,11 @@ public record RawMonitor(
         int x,
         int y,
         boolean visible,
+        @JsonAlias({"min", "sliderMin"})
         Double sliderMin,
+        @JsonAlias({"max", "sliderMax"})
         Double sliderMax,
-        Boolean isDiscrete
+        boolean isDiscrete
 ) {
     public enum RawMonitorMode {
         DEFAULT("default"),
