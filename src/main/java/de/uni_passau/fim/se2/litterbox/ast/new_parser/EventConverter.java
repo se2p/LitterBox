@@ -18,17 +18,32 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.BoardLaunch;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.BoardShaken;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.PressedState;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotButton;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 class EventConverter {
+
+    private static final String BCAST_OPTION = "BROADCAST_OPTION";
+    private static final String BRIGHTNESS_KEY = "BRIGHTNESS";
+    private static final String MENU_LIST_KEY = "MENU_LIST";
+    private static final String PRESSED_KEY = "IS_PRESS";
+
     private EventConverter() {
         throw new IllegalCallerException("utility class constructor");
     }
@@ -49,15 +64,56 @@ class EventConverter {
             case control_start_as_clone -> new StartedAsClone(metadata);
             case when_board_launch, main -> new BoardLaunch(metadata);
             case when_board_shake -> new BoardShaken(metadata);
-            case event_whenkeypressed -> null;
-            case event_whenbroadcastreceived -> null;
-            case event_whenbackdropswitchesto -> null;
-            case event_whengreaterthan -> null;
-            case when_button_press -> null;
-            case when_board_button -> null;
-            case when_board_tilt -> null;
-            case when_volume_over -> null;
-            case when_brightness_less -> null;
+            case event_whenbroadcastreceived -> {
+                final String message = event.fields().get(BCAST_OPTION).value().toString();
+                final Message msg = new Message(new StringLiteral(message));
+                yield new ReceptionOfMessage(msg, metadata);
+            }
+            case event_whenbackdropswitchesto -> {
+                final String backdropName = event.fields().get(Constants.BACKDROP_INPUT).value().toString();
+                final StrId backdropId = new StrId(backdropName);
+                yield new BackdropSwitchTo(backdropId, metadata);
+            }
+            case event_whenkeypressed -> {
+                final Key key = KeyConverter.convertKey(state, target, event);
+                yield new KeyPressed(key, metadata);
+            }
+            case event_whengreaterthan -> {
+                final String attributeName = event.fields().get(Constants.WHEN_GREATER_THAN_MENU).value().toString();
+                final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
+                final NumExpr value = NumExprConverter.convertNumExpr(
+                        state, target, event, event.inputs().get(Constants.VALUE_KEY)
+                );
+                yield new AttributeAboveValue(attr, value, metadata);
+            }
+            case when_volume_over -> {
+                final String attributeName = event.fields().get(MENU_LIST_KEY).value().toString();
+                final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
+                final NumExpr value = NumExprConverter.convertNumExpr(
+                        state, target, event, event.inputs().get(Constants.VALUE_KEY)
+                );
+                yield new AttributeAboveValue(attr, value, metadata);
+            }
+            case when_button_press -> {
+                final String buttonName = event.fields().get(Constants.BUTTONS_KEY).value().toString();
+                final RobotButton button = new RobotButton(buttonName);
+                yield new LaunchButton(button, metadata);
+            }
+            case when_board_button -> {
+                final String pressedState = event.fields().get(PRESSED_KEY).value().toString();
+                final PressedState pressed = new PressedState(pressedState);
+                yield new BoardButtonAction(pressed, metadata);
+            }
+            case when_board_tilt -> {
+                final String directionName = event.fields().get(Constants.DIRECTION_KEY_CAP).value().toString();
+                final RobotDirection direction = new RobotDirection(directionName);
+                yield new BoardTilted(direction, metadata);
+            }
+            case when_brightness_less -> {
+                final RawInput numExprInput = event.inputs().get(BRIGHTNESS_KEY);
+                final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, target, event, numExprInput);
+                yield new BrightnessLess(fieldValue, metadata);
+            }
         };
     }
 }

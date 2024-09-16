@@ -1,0 +1,63 @@
+package de.uni_passau.fim.se2.litterbox.ast.new_parser;
+
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+
+final class KeyConverter {
+    private static final int ANY_KEY = 0;
+    private static final int SPACE = 32;
+    private static final int LEFT_ARROW = 37;
+    private static final int UP_ARROW = 38;
+    private static final int RIGHT_ARROW = 39;
+    private static final int DOWN_ARROW = 40;
+
+    private KeyConverter() {
+        throw new IllegalCallerException("utility class constructor");
+    }
+
+    static Key convertKey(final ProgramParserState state, final RawTarget target, final RawBlock keyBlock) {
+        if (!(keyBlock instanceof RawBlock.RawRegularBlock regularBlock)) {
+            throw new InternalParsingException("Cannot parse key without opcode!");
+        }
+
+        final RawBlock.RawRegularBlock actualKeyBlock;
+        final BlockMetadata metadata;
+
+        if (BoolExprOpcode.sensing_keypressed.name().equals(regularBlock.opcode())) {
+            final var inputs = regularBlock.inputs();
+            throw new UnsupportedOperationException("todo: sensing_keypressed");
+        } else {
+            actualKeyBlock = regularBlock;
+            metadata = new NoBlockMetadata();
+        }
+
+        final String keyValue = actualKeyBlock.fields().get(Constants.KEY_OPTION).value().toString();
+        return convertKey(keyValue, metadata);
+    }
+
+    private static Key convertKey(final String keyValue, final BlockMetadata metadata) {
+        return switch (keyValue) {
+            case "space" -> new Key(new NumberLiteral(SPACE), metadata);
+            case "up arrow" -> new Key(new NumberLiteral(UP_ARROW), metadata);
+            case "down arrow" -> new Key(new NumberLiteral(DOWN_ARROW), metadata);
+            case "left arrow" -> new Key(new NumberLiteral(LEFT_ARROW), metadata);
+            case "right arrow" -> new Key(new NumberLiteral(RIGHT_ARROW), metadata);
+            case "any" -> new Key(new NumberLiteral(ANY_KEY), metadata);
+            default -> {
+                if (!keyValue.isEmpty()) {
+                    yield new Key(new NumberLiteral(keyValue.charAt(0)), metadata);
+                } else {
+                    // It is not clear how this can happen, but it happens sometimes.
+                    yield new Key(new NumberLiteral(0), metadata);
+                }
+            }
+        };
+    }
+}
