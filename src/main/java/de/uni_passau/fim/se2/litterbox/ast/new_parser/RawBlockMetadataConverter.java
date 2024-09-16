@@ -18,10 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.Coordinates;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
+
+import java.util.Optional;
 
 final class RawBlockMetadataConverter {
     private RawBlockMetadataConverter() {
@@ -29,7 +31,51 @@ final class RawBlockMetadataConverter {
     }
 
     static BlockMetadata convertBlockMetadata(final RawBlockId blockId, final RawBlock block) {
-        return new NoBlockMetadata();
-        // throw new UnsupportedOperationException("todo");
+        // implementation note: can be switch-case pattern when upgrading to Java 21
+        if (block instanceof RawBlock.RawRegularBlock regularBlock) {
+            return convertRegularBlockMetadata(blockId, regularBlock);
+        } else if (block instanceof RawBlock.ArrayBlock arrayBlock) {
+            return convertArrayBlockMetadata(blockId, arrayBlock);
+        } else {
+            // cannot happen as long as RawBlock sealed interface does not get additional implementations
+            throw new InternalParsingException("Unknown block type!");
+        }
+    }
+
+    private static BlockMetadata convertRegularBlockMetadata(
+            final RawBlockId id, final RawBlock.RawRegularBlock block
+    ) {
+        final String commentId = block.comment().map(RawBlockId::id).orElse(null);
+        final MutationMetadata mutation = block.mutation()
+                .map(ConverterUtilities::convertMutation)
+                .orElse(new NoMutationMetadata());
+
+        if (!block.topLevel()) {
+            return new NonDataBlockMetadata(commentId, id.id(), block.shadow(), mutation);
+        } else {
+            return new TopNonDataBlockMetadata(commentId, id.id(), block.shadow(), mutation, block.x(), block.y());
+        }
+    }
+
+    private static DataBlockMetadata convertArrayBlockMetadata(final RawBlockId id, final RawBlock.ArrayBlock block) {
+        final Optional<Coordinates> coordinates;
+
+        if (block instanceof RawBlock.RawVariable variable) {
+            coordinates = variable.coordinates();
+        } else if (block instanceof RawBlock.RawList list) {
+            coordinates = list.coordinates();
+        } else {
+            throw new InternalParsingException(
+                    "Did not expect to parse metadata for a literal block! Something is wrong."
+            );
+        }
+
+        // non-top-level blocks do not have coordinates => since they are not visible, just use (0,0)
+        // not sure when this case can even happen, might have been a bug in the Scratch-VM when deleting
+        // scripts, or when converting from Scratch 2 to Scratch 3?
+        final double x = coordinates.map(Coordinates::x).orElse(0.0);
+        final double y = coordinates.map(Coordinates::y).orElse(0.0);
+
+        return new DataBlockMetadata(id.id(), x, y);
     }
 }
