@@ -18,30 +18,60 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
 abstract class ExprConverter {
     protected ExprConverter() {
     }
 
-    static StringExpr convertExpr(
+    static Expression convertExpr(
             final ProgramParserState state,
             final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        throw new UnsupportedOperationException("todo: expr");
+        if (NumExprConverter.parseableAsNumExpr(target, exprBlock)) {
+            return NumExprConverter.convertNumExpr(state, target, containingBlock, exprBlock);
+        } else if (StringExprConverter.parseableAsStringExpr(target, exprBlock)) {
+            return StringExprConverter.convertStringExpr(state, target, containingBlock, exprBlock);
+        } else if (BoolExprConverter.parseableAsBoolExpr(target, exprBlock)) {
+            return BoolExprConverter.convertBoolExpr(state, target, containingBlock, exprBlock);
+        } else if (DataExprConverter.parseableAsDataExpr(target, exprBlock)) {
+            return DataExprConverter.convertDataExpr(state, target, containingBlock, exprBlock);
+        } else {
+            return new UnspecifiedExpression();
+        }
     }
 
     static ExpressionStmt convertExprStmt(
-        final ProgramParserState state,
-        final RawBlockId blockId,
-        final RawBlock exprBlock
+            final ProgramParserState state,
+            final RawBlockId blockId,
+            final RawBlock exprBlock
     ) {
         throw new UnsupportedOperationException("todo: expr statement");
+    }
+
+    static ExpressionStmt parseExprBlock(
+            final ProgramParserState state,
+            final RawTarget target,
+            final RawBlock exprBlock
+    ) {
+        final SymbolTable symbolTable = state.getSymbolTable();
+
+        if (exprBlock instanceof RawBlock.RawRegularBlock regularExprBlock) {
+            throw new UnsupportedOperationException("todo: expression statements");
+        } else if (exprBlock instanceof RawBlock.RawVariable variable) {
+            throw new UnsupportedOperationException("todo: variable expression statement");
+        } else if (exprBlock instanceof RawBlock.RawList list) {
+            throw new UnsupportedOperationException("todo: list expression statement");
+        } else {
+            throw new InternalParsingException("Unknown format for expression statement.");
+        }
     }
 
     protected static boolean hasCorrectShadow(final RawInput exprBlock) {
