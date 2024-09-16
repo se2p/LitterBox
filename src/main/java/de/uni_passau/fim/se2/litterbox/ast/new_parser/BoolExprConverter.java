@@ -36,7 +36,6 @@ final class BoolExprConverter extends ExprConverter {
 
     static BoolExpr convertBoolExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {

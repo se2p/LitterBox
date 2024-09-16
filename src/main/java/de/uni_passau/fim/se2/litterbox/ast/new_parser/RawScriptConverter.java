@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
@@ -43,29 +42,27 @@ final class RawScriptConverter {
     private final Logger log = Logger.getLogger(RawScriptConverter.class.getName());
 
     private final ProgramParserState state;
-    private final RawTarget target;
     private final RawStmtConverter stmtConverter;
 
-    private RawScriptConverter(final ProgramParserState state, final RawTarget target) {
+    private RawScriptConverter(final ProgramParserState state) {
         this.state = state;
-        this.target = target;
-        this.stmtConverter = new RawStmtConverter(state, target);
+        this.stmtConverter = new RawStmtConverter(state);
     }
 
-    static Script convertScript(final ProgramParserState state, final RawTarget target, final RawBlockId root) {
-        final RawScriptConverter converter = new RawScriptConverter(state, target);
+    static Script convertScript(final ProgramParserState state, final RawBlockId root) {
+        final RawScriptConverter converter = new RawScriptConverter(state);
         return converter.convertScript(root);
     }
 
     private Script convertScript(final RawBlockId rootId) {
-        final RawBlock rootBlock = target.blocks().get(rootId);
+        final RawBlock rootBlock = state.getBlock(rootId);
 
         if (rootBlock instanceof RawBlock.RawRegularBlock regularBlock) {
             final Event event;
             final Optional<RawBlockId> stmtListStart;
 
             if (isEvent(regularBlock)) {
-                event = EventConverter.convertEvent(state, target, rootId, regularBlock);
+                event = EventConverter.convertEvent(state, rootId, regularBlock);
                 stmtListStart = regularBlock.next();
             } else {
                 event = new Never();
@@ -94,19 +91,18 @@ final class RawScriptConverter {
      * Converts a statement list.
      *
      * @param state The current parser state.
-     * @param target The current actor.
      * @param root The first block of the statement list.
      * @return a statement list, or {@code null} in case the {@code root} does not point to a statement block.
      */
-    static StmtList convertStmtList(final ProgramParserState state, final RawTarget target, final RawBlockId root) {
-        final RawScriptConverter converter = new RawScriptConverter(state, target);
+    static StmtList convertStmtList(final ProgramParserState state, final RawBlockId root) {
+        final RawScriptConverter converter = new RawScriptConverter(state);
         return converter.convertStmtList(root);
     }
 
     private StmtList convertStmtList(final RawBlockId root) {
         final List<Stmt> stmts = new ArrayList<>();
 
-        final RawBlock startingBlock = target.blocks().get(root);
+        final RawBlock startingBlock = state.getBlock(root);
 
         if (startingBlock instanceof RawBlock.ArrayBlock) {
             final Stmt stmt = stmtConverter.convertStmt(root, startingBlock);
@@ -138,7 +134,7 @@ final class RawScriptConverter {
                     }
 
                     currentId = regularBlock.next().orElse(null);
-                    currentBlock = target.blocks().get(currentId);
+                    currentBlock = state.getBlock(currentId);
                 }
             }
         }

@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class ExpressionConverter {
@@ -31,7 +30,6 @@ final class ExpressionConverter {
 
     static Expression convertExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {

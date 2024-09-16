@@ -21,16 +21,13 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class RawStmtConverter {
     private final ProgramParserState state;
-    private final RawTarget target;
 
-    RawStmtConverter(final ProgramParserState state, final RawTarget target) {
+    RawStmtConverter(final ProgramParserState state) {
         this.state = state;
-        this.target = target;
     }
 
     Stmt convertStmt(final RawBlockId blockId, final RawBlock stmtBlock) {

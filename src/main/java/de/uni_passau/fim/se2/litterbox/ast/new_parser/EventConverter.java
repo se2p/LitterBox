@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
@@ -50,7 +49,6 @@ class EventConverter {
 
     static Event convertEvent(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlockId id,
             final RawBlock.RawRegularBlock event
     ) {
@@ -75,14 +73,14 @@ class EventConverter {
                 yield new BackdropSwitchTo(backdropId, metadata);
             }
             case event_whenkeypressed -> {
-                final Key key = KeyConverter.convertKey(state, target, event);
+                final Key key = KeyConverter.convertKey(state, event);
                 yield new KeyPressed(key, metadata);
             }
             case event_whengreaterthan -> {
                 final String attributeName = event.fields().get(Constants.WHEN_GREATER_THAN_MENU).value().toString();
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
                 final NumExpr value = NumExprConverter.convertNumExpr(
-                        state, target, event, event.inputs().get(Constants.VALUE_KEY)
+                        state, event, event.inputs().get(Constants.VALUE_KEY)
                 );
                 yield new AttributeAboveValue(attr, value, metadata);
             }
@@ -90,7 +88,7 @@ class EventConverter {
                 final String attributeName = event.fields().get(MENU_LIST_KEY).value().toString();
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
                 final NumExpr value = NumExprConverter.convertNumExpr(
-                        state, target, event, event.inputs().get(Constants.VALUE_KEY)
+                        state, event, event.inputs().get(Constants.VALUE_KEY)
                 );
                 yield new AttributeAboveValue(attr, value, metadata);
             }
@@ -111,7 +109,7 @@ class EventConverter {
             }
             case when_brightness_less -> {
                 final RawInput numExprInput = event.inputs().get(BRIGHTNESS_KEY);
-                final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, target, event, numExprInput);
+                final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, event, numExprInput);
                 yield new BrightnessLess(fieldValue, metadata);
             }
         };

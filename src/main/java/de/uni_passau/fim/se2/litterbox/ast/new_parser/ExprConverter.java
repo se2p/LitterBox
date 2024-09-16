@@ -31,18 +31,17 @@ abstract class ExprConverter {
 
     static Expression convertExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        if (NumExprConverter.parseableAsNumExpr(target, exprBlock)) {
-            return NumExprConverter.convertNumExpr(state, target, containingBlock, exprBlock);
-        } else if (StringExprConverter.parseableAsStringExpr(target, exprBlock)) {
-            return StringExprConverter.convertStringExpr(state, target, containingBlock, exprBlock);
-        } else if (BoolExprConverter.parseableAsBoolExpr(target, exprBlock)) {
-            return BoolExprConverter.convertBoolExpr(state, target, containingBlock, exprBlock);
-        } else if (DataExprConverter.parseableAsDataExpr(target, exprBlock)) {
-            return DataExprConverter.convertDataExpr(state, target, containingBlock, exprBlock);
+        if (NumExprConverter.parseableAsNumExpr(state.getCurrentTarget(), exprBlock)) {
+            return NumExprConverter.convertNumExpr(state, containingBlock, exprBlock);
+        } else if (StringExprConverter.parseableAsStringExpr(state.getCurrentTarget(), exprBlock)) {
+            return StringExprConverter.convertStringExpr(state, containingBlock, exprBlock);
+        } else if (BoolExprConverter.parseableAsBoolExpr(state.getCurrentTarget(), exprBlock)) {
+            return BoolExprConverter.convertBoolExpr(state, containingBlock, exprBlock);
+        } else if (DataExprConverter.parseableAsDataExpr(state.getCurrentTarget(), exprBlock)) {
+            return DataExprConverter.convertDataExpr(state, containingBlock, exprBlock);
         } else {
             return new UnspecifiedExpression();
         }
@@ -58,7 +57,6 @@ abstract class ExprConverter {
 
     static ExpressionStmt parseExprBlock(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock exprBlock
     ) {
         final SymbolTable symbolTable = state.getSymbolTable();

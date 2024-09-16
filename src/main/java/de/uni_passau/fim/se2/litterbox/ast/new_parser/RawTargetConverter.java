@@ -79,7 +79,7 @@ final class RawTargetConverter {
 
     ActorDefinition convertTarget() {
         final LocalIdentifier ident = new StrId(target.name());
-        state.setCurrentActor(ident);
+        state.setCurrentActor(ident, target);
 
         final ActorType actorType;
         if (target.isStage()) {
@@ -383,7 +383,7 @@ final class RawTargetConverter {
         addProcedureToState(ident, methodName, parameters);
 
         final StmtList stmts = procedureDefinition.next()
-                .map(stmtRoot -> RawScriptConverter.convertStmtList(state, target, stmtRoot))
+                .map(stmtRoot -> RawScriptConverter.convertStmtList(state, stmtRoot))
                 .orElseGet(StmtList::new);
         final ProcedureMetadata metadata = convertProcedureMetadata(
                 definitionId, procedureDefinition, prototypeBlockInfo.getLeft(), prototypeBlock
@@ -511,7 +511,7 @@ final class RawTargetConverter {
     private ScriptList convertScripts() {
         final List<Script> scripts = target.blocks().entrySet().stream()
                 .filter(entry -> isPotentialScriptRoot(entry.getValue()))
-                .map(entry -> RawScriptConverter.convertScript(state, target, entry.getKey()))
+                .map(entry -> RawScriptConverter.convertScript(state, entry.getKey()))
                 .filter(Objects::nonNull)
                 .toList();
 

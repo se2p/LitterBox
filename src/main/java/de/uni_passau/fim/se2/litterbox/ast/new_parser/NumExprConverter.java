@@ -40,12 +40,11 @@ final class NumExprConverter extends ExprConverter {
 
     static NumExpr convertNumExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        if (!parseableAsNumExpr(target, exprBlock)) {
-            final Expression expr = ExpressionConverter.convertExpr(state, target, containingBlock, exprBlock);
+        if (!parseableAsNumExpr(state.getCurrentTarget(), exprBlock)) {
+            final Expression expr = ExpressionConverter.convertExpr(state, containingBlock, exprBlock);
             return new AsNumber(expr);
         }
 
@@ -55,9 +54,9 @@ final class NumExprConverter extends ExprConverter {
 
         if (
                 exprBlock.input() instanceof BlockRef.IdRef exprInput
-                && target.blocks().get(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
+                && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return parseBlockNumExpr(state, target, exprInput.id(), exprInputRegularBlock);
+            return parseBlockNumExpr(state, exprInput.id(), exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -120,7 +119,6 @@ final class NumExprConverter extends ExprConverter {
 
     private static NumExpr parseBlockNumExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlockId id,
             final RawBlock.RawRegularBlock block
     ) {
@@ -156,49 +154,49 @@ final class NumExprConverter extends ExprConverter {
             case rocky_detect_grey -> new DetectGrey(metadata);
             case music_getTempo -> new Tempo(metadata);
             case operator_round -> {
-                final NumExpr num = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM_KEY));
+                final NumExpr num = convertNumExpr(state, block, block.inputs().get(Constants.NUM_KEY));
                 yield new Round(num, metadata);
             }
             case operator_length -> {
                 final RawInput stringInput = block.inputs().get(Constants.STRING_KEY);
-                final StringExpr stringExpr = StringExprConverter.convertStringExpr(state, target, block, stringInput);
+                final StringExpr stringExpr = StringExprConverter.convertStringExpr(state, block, stringInput);
                 yield new LengthOfString(stringExpr, metadata);
             }
             // binary operators
             case operator_add -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new Add(left, right, metadata);
             }
             case operator_subtract -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new Minus(left, right, metadata);
             }
             case operator_multiply -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new Mult(left, right, metadata);
             }
             case operator_divide -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new Div(left, right, metadata);
             }
             case operator_mod -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new Mod(left, right, metadata);
             }
             case operator_random -> {
-                final NumExpr left = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
                 yield new PickRandom(left, right, metadata);
             }
             // others
             case operator_mathop -> {
                 final NumFunct function = convertNumberFunction(block.fields().get(Constants.OPERATOR_KEY));
-                final NumExpr expr = convertNumExpr(state, target, block, block.inputs().get(Constants.NUM_KEY));
+                final NumExpr expr = convertNumExpr(state, block, block.inputs().get(Constants.NUM_KEY));
                 yield new NumFunctOf(function, expr, metadata);
             }
             case data_lengthoflist -> throw new UnsupportedOperationException("todo: length of list");

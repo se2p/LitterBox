@@ -40,7 +40,7 @@ final class KeyConverter {
         throw new IllegalCallerException("utility class constructor");
     }
 
-    static Key convertKey(final ProgramParserState state, final RawTarget target, final RawBlock keyBlock) {
+    static Key convertKey(final ProgramParserState state, final RawBlock keyBlock) {
         if (!(keyBlock instanceof RawBlock.RawRegularBlock regularBlock)) {
             throw new InternalParsingException("Cannot parse key without opcode!");
         }

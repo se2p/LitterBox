@@ -36,7 +36,6 @@ final class DataExprConverter extends ExprConverter {
 
     static Expression convertDataExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {

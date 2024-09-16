@@ -58,12 +58,11 @@ final class StringExprConverter extends ExprConverter {
 
     static StringExpr convertStringExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        if (!parseableAsStringExpr(target, exprBlock)) {
-            final Expression expr = ExpressionConverter.convertExpr(state, target, containingBlock, exprBlock);
+        if (!parseableAsStringExpr(state.getCurrentTarget(), exprBlock)) {
+            final Expression expr = ExpressionConverter.convertExpr(state, containingBlock, exprBlock);
             return new AsString(expr);
         }
 
@@ -73,9 +72,9 @@ final class StringExprConverter extends ExprConverter {
 
         if (
                 exprBlock.input() instanceof BlockRef.IdRef exprInput
-                        && target.blocks().get(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
+                        && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return parseBlockStringExpr(state, target, exprInput.id(), exprInputRegularBlock);
+            return parseBlockStringExpr(state, exprInput.id(), exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -132,7 +131,6 @@ final class StringExprConverter extends ExprConverter {
 
     private static StringExpr parseBlockStringExpr(
             final ProgramParserState state,
-            final RawTarget target,
             final RawBlockId id,
             final RawBlock.RawRegularBlock block
     ) {
@@ -146,20 +144,16 @@ final class StringExprConverter extends ExprConverter {
             case translate_getViewerLanguage -> new ViewerLanguage(metadata);
             case translate_getTranslate -> parseTranslate();
             case operator_join -> {
-                final StringExpr left = convertStringExpr(
-                        state, target, block, block.inputs().get(Constants.STRING1_KEY)
-                );
-                final StringExpr right = convertStringExpr(
-                        state, target, block, block.inputs().get(Constants.STRING2_KEY)
-                );
+                final StringExpr left = convertStringExpr(state, block, block.inputs().get(Constants.STRING1_KEY));
+                final StringExpr right = convertStringExpr(state, block, block.inputs().get(Constants.STRING2_KEY));
                 yield new Join(left, right, metadata);
             }
             case operator_letter_of -> {
                 final NumExpr num = NumExprConverter.convertNumExpr(
-                        state, target, block, block.inputs().get(Constants.LETTER_KEY)
+                        state, block, block.inputs().get(Constants.LETTER_KEY)
                 );
                 final StringExpr word = convertStringExpr(
-                        state, target, block, block.inputs().get(Constants.STRING_KEY)
+                        state, block, block.inputs().get(Constants.STRING_KEY)
                 );
                 yield new LetterOf(num, word, metadata);
             }
@@ -171,19 +165,18 @@ final class StringExprConverter extends ExprConverter {
                 final String name = block.fields().get(Constants.NUMBER_NAME_KEY).value().toString();
                 yield new Backdrop(new NameNum(name), metadata);
             }
-            case data_itemoflist -> parseItemOfList(state, target, metadata, block);
-            case sensing_of -> parseSensingOf(state, target, metadata, block);
+            case data_itemoflist -> parseItemOfList(state, metadata, block);
+            case sensing_of -> parseSensingOf(state, metadata, block);
         };
     }
 
     private static ItemOfVariable parseItemOfList(
             final ProgramParserState state,
-            final RawTarget target,
             final BlockMetadata metadata,
             final RawBlock.RawRegularBlock exprBlock
     ) {
         final NumExpr index = NumExprConverter.convertNumExpr(
-                state, target, exprBlock, exprBlock.inputs().get(Constants.INDEX_KEY)
+                state, exprBlock, exprBlock.inputs().get(Constants.INDEX_KEY)
         );
         final RawBlockId listId = exprBlock.fields().get(Constants.LIST_KEY).id()
                 .orElseThrow(() -> new InternalParsingException("ItemOfVariable block is missing reference to list!"));
@@ -215,7 +208,6 @@ final class StringExprConverter extends ExprConverter {
 
     private static AttributeOf parseSensingOf(
             final ProgramParserState state,
-            final RawTarget target,
             final BlockMetadata metadata,
             final RawBlock.RawRegularBlock exprBlock
     ) {
@@ -231,12 +223,12 @@ final class StringExprConverter extends ExprConverter {
 
         if (ShadowType.SHADOW.equals(input.shadowType())) {
             if (input.input() instanceof BlockRef.IdRef menuBlockRef) {
-                elementChoice = convertSensingOfMenu(state, target, menuBlockRef.id());
+                elementChoice = convertSensingOfMenu(state, menuBlockRef.id());
             } else {
                 throw new InternalParsingException("Expected a menu item for sensing block.");
             }
         } else {
-            final Expression expr = ExprConverter.convertExpr(state, target, exprBlock, input);
+            final Expression expr = ExprConverter.convertExpr(state, exprBlock, input);
             elementChoice = new WithExpr(expr, new NoBlockMetadata());
         }
 
@@ -244,9 +236,9 @@ final class StringExprConverter extends ExprConverter {
     }
 
     private static ElementChoice convertSensingOfMenu(
-            final ProgramParserState state, final RawTarget target, final RawBlockId menuId
+            final ProgramParserState state, final RawBlockId menuId
     ) {
-        final RawBlock menuBlock = target.blocks().get(menuId);
+        final RawBlock menuBlock = state.getCurrentTarget().blocks().get(menuId);
         final BlockMetadata menuMetadata = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
 
         if (menuBlock instanceof RawBlock.RawRegularBlock menuRegularBlock) {
@@ -255,7 +247,7 @@ final class StringExprConverter extends ExprConverter {
                 return new WithExpr(new StrId(actorName), menuMetadata);
             } else {
                 final Expression expr = ExpressionConverter.convertExpr(
-                        state, target, menuRegularBlock, menuRegularBlock.inputs().get(Constants.OBJECT_KEY)
+                        state, menuRegularBlock, menuRegularBlock.inputs().get(Constants.OBJECT_KEY)
                 );
                 return new WithExpr(expr, menuMetadata);
             }
