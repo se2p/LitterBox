@@ -18,9 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawMutation;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
 /**
  * Groups various small helper functions for the converters that are not worth having their own class.
@@ -30,7 +39,19 @@ final class ConverterUtilities {
         throw new IllegalCallerException("utility class constructor");
     }
 
+    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final String listName) {
+        return new Qualified(new StrId(listInfo.getActor()), new ScratchList(new StrId(listName)));
+    }
+
     static MutationMetadata convertMutation(final RawMutation mutation) {
         return new ProcedureMutationMetadata(mutation.warp());
+    }
+
+    static Touchable convertTouchable(final ProgramParserState state, final RawBlock block) {
+        throw new UnsupportedOperationException("todo: touchables");
+    }
+
+    static Color convertColor(final ProgramParserState state, final RawInput block) {
+        throw new UnsupportedOperationException("todo: colors");
     }
 }

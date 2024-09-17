@@ -23,10 +23,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class SymbolTable {
 
@@ -145,6 +146,25 @@ public class SymbolTable {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Tries to retrieve an existing list, or creates a new one with the given information.
+     *
+     * @param ident The block ID of the list.
+     * @param listName The name of the list.
+     * @param actorName The actor the list belongs to.
+     * @param expressionList The content of the list, if a new one gets created.
+     * @param global If the new list should be in global scope.
+     * @param newVarActor The actor the new variable should be in.
+     * @return The existing or newly added list.
+     */
+    public ExpressionListInfo getOrAddList(
+            final String ident, final String listName, final String actorName,
+            final Supplier<ExpressionList> expressionList, final boolean global, final String newVarActor
+    ) {
+        return getList(ident, listName, actorName)
+                .orElseGet(() -> addExpressionListInfo(ident, listName, expressionList.get(), global, newVarActor));
     }
 
     /**
