@@ -20,11 +20,11 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
@@ -41,23 +41,34 @@ final class KeyConverter {
     }
 
     static Key convertKey(final ProgramParserState state, final RawBlock keyBlock) {
-        if (!(keyBlock instanceof RawBlock.RawRegularBlock regularBlock)) {
+        if (!(keyBlock instanceof RawBlock.RawRegularBlock actualKeyBlock)) {
             throw new InternalParsingException("Cannot parse key without opcode!");
         }
 
-        final RawBlock.RawRegularBlock actualKeyBlock;
-        final BlockMetadata metadata;
+        if (BoolExprOpcode.sensing_keypressed.name().equals(actualKeyBlock.opcode())) {
+            final RawInput keyInput = actualKeyBlock.inputs().get(Constants.KEY_OPTION);
 
-        if (BoolExprOpcode.sensing_keypressed.name().equals(regularBlock.opcode())) {
-            final var inputs = regularBlock.inputs();
-            throw new UnsupportedOperationException("todo: sensing_keypressed");
+            if (ShadowType.SHADOW == keyInput.shadowType()
+                    && keyInput.input() instanceof BlockRef.IdRef menuIdRef
+                    && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+            ) {
+                final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
+                        menuIdRef.id(), menuBlock
+                );
+                final String keyValue = menuBlock.fields().get(Constants.KEY_OPTION).value().toString();
+
+                return convertKey(keyValue, metadata);
+            } else {
+                // if there is a variable or expression, we evaluate it and use it as key
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, actualKeyBlock, keyInput);
+                return new Key(numExpr, new NoBlockMetadata());
+            }
         } else {
-            actualKeyBlock = regularBlock;
-            metadata = new NoBlockMetadata();
-        }
+            final BlockMetadata metadata = new NoBlockMetadata();
+            final String keyValue = actualKeyBlock.fields().get(Constants.KEY_OPTION).value().toString();
 
-        final String keyValue = actualKeyBlock.fields().get(Constants.KEY_OPTION).value().toString();
-        return convertKey(keyValue, metadata);
+            return convertKey(keyValue, metadata);
+        }
     }
 
     private static Key convertKey(final String keyValue, final BlockMetadata metadata) {
