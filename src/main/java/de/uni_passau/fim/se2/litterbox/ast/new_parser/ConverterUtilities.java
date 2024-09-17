@@ -18,20 +18,26 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.BlockRef;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawMutation;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
@@ -51,8 +57,43 @@ final class ConverterUtilities {
         return new ProcedureMutationMetadata(mutation.warp());
     }
 
-    static Touchable convertTouchable(final ProgramParserState state, final RawBlock block) {
-        throw new UnsupportedOperationException("todo: touchables");
+    static Touchable convertTouchable(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
+        final String opcode = block.opcode();
+
+        if (BoolExprOpcode.sensing_touchingobject.name().equals(opcode)) {
+            final RawInput touched = block.inputs().get(Constants.TOUCHINGOBJECTMENU);
+
+            if (ShadowType.SHADOW == touched.shadowType()) {
+                return convertTouchableMenuOption(state.getCurrentTarget(), touched);
+            } else {
+                final Expression expr = ExpressionConverter.convertExpr(state, block, touched);
+                return new AsTouchable(expr);
+            }
+        } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcode)) {
+            return convertColor(state, block, block.inputs().get(Constants.COLOR_KEY));
+        } else {
+            throw new InternalParsingException("Unknown touchable type. Missing parser implementation.");
+        }
+    }
+
+    private static Touchable convertTouchableMenuOption(final RawTarget target, final RawInput touched) {
+        if (!(touched.input() instanceof BlockRef.IdRef touchedId)) {
+            throw new InternalParsingException("Unknown format for touched object.");
+        }
+
+        final RawBlock obj = target.blocks().get(touchedId.id());
+        if (!(obj instanceof RawBlock.RawRegularBlock touchedTarget)) {
+            throw new InternalParsingException("Unknown format for touched object.");
+        }
+
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(touchedId.id(), touchedTarget);
+
+        final String touchedObjectName = touchedTarget.fields().get(Constants.TOUCHINGOBJECTMENU).value().toString();
+        return switch (touchedObjectName) {
+            case Constants.MOUSE -> new MousePointer(metadata);
+            case Constants.TOUCHING_EDGE -> new Edge(metadata);
+            default -> new SpriteTouchable(new StringLiteral(touchedObjectName), metadata);
+        };
     }
 
     static Color convertColor(
