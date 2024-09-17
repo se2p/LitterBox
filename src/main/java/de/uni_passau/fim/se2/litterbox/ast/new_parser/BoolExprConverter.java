@@ -140,8 +140,8 @@ final class BoolExprConverter extends ExprConverter {
                 yield new Touching(touchable, metadata);
             }
             case sensing_coloristouchingcolor -> {
-                final Color a = ConverterUtilities.convertColor(state, block.inputs().get(Constants.COLOR_KEY));
-                final Color b = ConverterUtilities.convertColor(state, block.inputs().get(Constants.COLOR2_KEY));
+                final Color a = ConverterUtilities.convertColor(state, block, block.inputs().get(Constants.COLOR_KEY));
+                final Color b = ConverterUtilities.convertColor(state, block, block.inputs().get(Constants.COLOR2_KEY));
                 yield new ColorTouchingColor(a, b, metadata);
             }
             case sensing_touchingcolor -> {
