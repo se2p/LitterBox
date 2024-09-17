@@ -120,7 +120,7 @@ final class RawStmtConverter {
         addOpcodes(choices, SpriteMotionStmtOpcode.values(), new SpriteMotionStmtConverter(state));
         addOpcodes(choices, SpriteLookStmtOpcode.values(), new SpriteLookStmtConverter(state));
         addOpcodes(choices, ActorSoundStmtOpcode.values(), new ActorSoundStmtConverter(state));
-        addOpcodes(choices, CallStmtOpcode.values(), null);
+        addOpcodes(choices, CallStmtOpcode.values(), new CallStmtConverter(state));
         addOpcodes(choices, ListStmtOpcode.values(), null);
         addOpcodes(choices, SetStmtOpcode.values(), null);
         addOpcodes(choices, PenOpcode.values(), null);
