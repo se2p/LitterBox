@@ -117,7 +117,7 @@ final class RawStmtConverter {
         addOpcodes(choices, ActorLookStmtOpcode.values(), new ActorLookStmtConverter(state));
         addOpcodes(choices, ControlStmtOpcode.values(), new ControlStmtConverter(state));
         addOpcodes(choices, CommonStmtOpcode.values(), null);
-        addOpcodes(choices, SpriteMotionStmtOpcode.values(), null);
+        addOpcodes(choices, SpriteMotionStmtOpcode.values(), new SpriteMotionStmtConverter(state));
         addOpcodes(choices, SpriteLookStmtOpcode.values(), null);
         addOpcodes(choices, ActorSoundStmtOpcode.values(), null);
         addOpcodes(choices, CallStmtOpcode.values(), null);
@@ -125,6 +125,8 @@ final class RawStmtConverter {
         addOpcodes(choices, SetStmtOpcode.values(), null);
         addOpcodes(choices, PenOpcode.values(), null);
         addOpcodes(choices, TextToSpeechOpcode.values(), null);
+        addOpcodes(choices, MusicOpcode.values(), null);
+        // mBlock extension blocks
         addOpcodes(choices, EmotionStmtOpcode.values(), null);
         addOpcodes(choices, LEDMatrixStmtOpcode.values(), null);
         addOpcodes(choices, LEDStmtOpcode.values(), null);
@@ -132,7 +134,6 @@ final class RawStmtConverter {
         addOpcodes(choices, RobotMoveStmtOpcode.values(), null);
         addOpcodes(choices, ResetStmtOpcode.values(), null);
         addOpcodes(choices, IRStmtOpcode.values(), null);
-        addOpcodes(choices, MusicOpcode.values(), null);
 
         return choices;
     }
