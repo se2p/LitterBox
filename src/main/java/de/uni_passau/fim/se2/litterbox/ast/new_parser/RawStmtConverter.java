@@ -91,7 +91,7 @@ final class RawStmtConverter {
                 final Expression expr = ExpressionConverter.convertExprStmt(state, blockId, stmtBlock);
                 yield new ExpressionStmt(expr);
             }
-            case ActorLook -> null;
+            case ActorLook -> ActorLookStmtConverter.convertStmt(state, blockId, stmtBlock);
             case Control -> null;
             case Common -> null;
             case SpriteMotion -> null;
@@ -137,6 +137,7 @@ final class RawStmtConverter {
      *
      * @return A lookup table from opcode to suitable converter.
      */
+    // ToDo: benchmark this compared to the original style lookup
     private static Map<String, ConverterChoice> buildParserSelector() {
         final Map<String, ConverterChoice> choices = new HashMap<>();
 

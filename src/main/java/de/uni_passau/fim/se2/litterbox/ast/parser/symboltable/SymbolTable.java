@@ -76,10 +76,12 @@ public class SymbolTable {
      * @param type         of the variable
      * @param global       indicates whether this variable is global and accessible for all actors
      * @param actorName    name of the actor where the variable is defined
+     * @return The created variable.
      */
-    public void addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
+    public VariableInfo addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
         VariableInfo info = new VariableInfo(global, actorName, ident, type, variableName);
         variables.put(ident + variableName + actorName, info);
+        return info;
     }
 
     /**
@@ -146,6 +148,25 @@ public class SymbolTable {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Tries to retrieve an existing variable, or creates a new one with the given information.
+     *
+     * @param ident The block ID of the variable.
+     * @param variableName The name of the variable.
+     * @param actorName The actor the variable belongs to.
+     * @param newVarType The type of the variable, if a new one gets created.
+     * @param global If the new variable should be in global scope.
+     * @param newVarActor The actor the new variable should be in.
+     * @return The existing or newly added variable.
+     */
+    public VariableInfo getOrAddVariable(
+            final String ident, final String variableName, final String actorName, final Supplier<Type> newVarType,
+            final boolean global, final String newVarActor
+    ) {
+        return getVariable(ident, variableName, actorName)
+                .orElseGet(() -> addVariable(ident, variableName, newVarType.get(), global, newVarActor));
     }
 
     /**

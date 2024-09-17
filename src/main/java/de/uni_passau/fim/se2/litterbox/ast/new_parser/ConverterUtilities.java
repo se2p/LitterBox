@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -113,5 +114,11 @@ final class ConverterUtilities {
             final NumExpr numExpr = NumExprConverter.convertNumExpr(state, containingBlock, block);
             return new FromNumber(numExpr);
         }
+    }
+
+    static ElementChoice convertElementChoice(
+            final ProgramParserState state, final RawBlock.RawRegularBlock containingStmt
+    ) {
+        throw new UnsupportedOperationException("todo: element choice");
     }
 }
