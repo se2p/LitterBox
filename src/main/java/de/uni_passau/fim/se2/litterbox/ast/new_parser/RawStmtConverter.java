@@ -43,10 +43,11 @@ final class RawStmtConverter {
 
     private final ProgramParserState state;
 
-    private final Map<String, ConverterChoice> converterChoices = buildParserSelector();
+    private final Map<String, StmtConverter<?>> converterChoices;
 
     RawStmtConverter(final ProgramParserState state) {
         this.state = state;
+        this.converterChoices = buildConverterSelector();
     }
 
     Stmt convertStmt(final RawBlockId blockId, final RawBlock stmtBlock) {
@@ -73,7 +74,7 @@ final class RawStmtConverter {
         ) {
             throw new UnsupportedOperationException("todo: dead parameter conversion");
         } else if (converterChoices.containsKey(opcode)) {
-            return convertStmt(converterChoices.get(opcode), blockId, stmtBlock);
+            return converterChoices.get(opcode).convertStmt(blockId, stmtBlock);
         } else {
             if (PropertyLoader.getSystemBooleanProperty("parser.log_unknown_opcode")) {
                 log.warning("Block with ID '" + blockId + "' and unknown opcode '" + opcode + "'. ");
@@ -81,36 +82,6 @@ final class RawStmtConverter {
 
             return new UnspecifiedStmt();
         }
-    }
-
-    private Stmt convertStmt(
-            final ConverterChoice converterChoice, final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock
-    ) {
-        return switch (converterChoice) {
-            case Expression -> {
-                final Expression expr = ExpressionConverter.convertExprStmt(state, blockId, stmtBlock);
-                yield new ExpressionStmt(expr);
-            }
-            case ActorLook -> ActorLookStmtConverter.convertStmt(state, blockId, stmtBlock);
-            case Control -> null;
-            case Common -> null;
-            case SpriteMotion -> null;
-            case SpriteLook -> null;
-            case ActorSound -> null;
-            case Call -> null;
-            case List -> null;
-            case Set -> null;
-            case Pen -> null;
-            case TextToSpeech -> null;
-            case Emotion -> null;
-            case LedMatrix -> null;
-            case Led -> null;
-            case Speaker -> null;
-            case RobotMove -> null;
-            case Reset -> null;
-            case Ir -> null;
-            case Music -> null;
-        };
     }
 
     private boolean isTerminationStmt(final RawBlock.RawRegularBlock stmt) {
@@ -137,62 +108,51 @@ final class RawStmtConverter {
      *
      * @return A lookup table from opcode to suitable converter.
      */
-    // ToDo: benchmark this compared to the original style lookup
-    private static Map<String, ConverterChoice> buildParserSelector() {
-        final Map<String, ConverterChoice> choices = new HashMap<>();
+    private Map<String, StmtConverter<?>> buildConverterSelector() {
+        final Map<String, StmtConverter<?>> choices = new HashMap<>();
 
-        addOpcodes(choices, BoolExprOpcode.values(), ConverterChoice.Expression);
-        addOpcodes(choices, NumExprOpcode.values(), ConverterChoice.Expression);
-        addOpcodes(choices, StringExprOpcode.values(), ConverterChoice.Expression);
-        addOpcodes(choices, ActorLookStmtOpcode.values(), ConverterChoice.ActorLook);
-        addOpcodes(choices, ControlStmtOpcode.values(), ConverterChoice.Control);
-        addOpcodes(choices, CommonStmtOpcode.values(), ConverterChoice.Common);
-        addOpcodes(choices, SpriteMotionStmtOpcode.values(), ConverterChoice.SpriteMotion);
-        addOpcodes(choices, SpriteLookStmtOpcode.values(), ConverterChoice.SpriteLook);
-        addOpcodes(choices, ActorSoundStmtOpcode.values(), ConverterChoice.ActorSound);
-        addOpcodes(choices, CallStmtOpcode.values(), ConverterChoice.Call);
-        addOpcodes(choices, ListStmtOpcode.values(), ConverterChoice.List);
-        addOpcodes(choices, SetStmtOpcode.values(), ConverterChoice.Set);
-        addOpcodes(choices, PenOpcode.values(), ConverterChoice.Pen);
-        addOpcodes(choices, TextToSpeechOpcode.values(), ConverterChoice.TextToSpeech);
-        addOpcodes(choices, EmotionStmtOpcode.values(), ConverterChoice.Emotion);
-        addOpcodes(choices, LEDMatrixStmtOpcode.values(), ConverterChoice.LedMatrix);
-        addOpcodes(choices, LEDStmtOpcode.values(), ConverterChoice.Led);
-        addOpcodes(choices, SpeakerStmtOpcode.values(), ConverterChoice.Speaker);
-        addOpcodes(choices, RobotMoveStmtOpcode.values(), ConverterChoice.RobotMove);
-        addOpcodes(choices, ResetStmtOpcode.values(), ConverterChoice.Reset);
-        addOpcodes(choices, IRStmtOpcode.values(), ConverterChoice.Ir);
-        addOpcodes(choices, MusicOpcode.values(), ConverterChoice.Music);
+        addOpcodes(choices, BoolExprOpcode.values(), new ExprStmtConverter(state));
+        addOpcodes(choices, NumExprOpcode.values(), new ExprStmtConverter(state));
+        addOpcodes(choices, StringExprOpcode.values(), new ExprStmtConverter(state));
+        addOpcodes(choices, ActorLookStmtOpcode.values(), new ActorLookStmtConverter(state));
+        addOpcodes(choices, ControlStmtOpcode.values(), new ControlStmtConverter(state));
+        addOpcodes(choices, CommonStmtOpcode.values(), null);
+        addOpcodes(choices, SpriteMotionStmtOpcode.values(), null);
+        addOpcodes(choices, SpriteLookStmtOpcode.values(), null);
+        addOpcodes(choices, ActorSoundStmtOpcode.values(), null);
+        addOpcodes(choices, CallStmtOpcode.values(), null);
+        addOpcodes(choices, ListStmtOpcode.values(), null);
+        addOpcodes(choices, SetStmtOpcode.values(), null);
+        addOpcodes(choices, PenOpcode.values(), null);
+        addOpcodes(choices, TextToSpeechOpcode.values(), null);
+        addOpcodes(choices, EmotionStmtOpcode.values(), null);
+        addOpcodes(choices, LEDMatrixStmtOpcode.values(), null);
+        addOpcodes(choices, LEDStmtOpcode.values(), null);
+        addOpcodes(choices, SpeakerStmtOpcode.values(), null);
+        addOpcodes(choices, RobotMoveStmtOpcode.values(), null);
+        addOpcodes(choices, ResetStmtOpcode.values(), null);
+        addOpcodes(choices, IRStmtOpcode.values(), null);
+        addOpcodes(choices, MusicOpcode.values(), null);
 
         return choices;
     }
 
     private static void addOpcodes(
-            final Map<String, ConverterChoice> choices, final Opcode[] opcodes, final ConverterChoice choice
+            final Map<String, StmtConverter<?>> choices, final Opcode[] opcodes, final StmtConverter<?> choice
     ) {
         Arrays.stream(opcodes).map(Opcode::getName).forEach(v -> choices.put(v, choice));
     }
 
-    private enum ConverterChoice {
-        Expression,
-        ActorLook,
-        Control,
-        Common,
-        SpriteMotion,
-        SpriteLook,
-        ActorSound,
-        Call,
-        List,
-        Set,
-        Pen,
-        TextToSpeech,
-        Emotion,
-        LedMatrix,
-        Led,
-        Speaker,
-        RobotMove,
-        Reset,
-        Ir,
-        Music;
+    private static class ExprStmtConverter extends StmtConverter<ExpressionStmt> {
+
+        ExprStmtConverter(final ProgramParserState state) {
+            super(state);
+        }
+
+        @Override
+        ExpressionStmt convertStmt(RawBlockId blockId, RawBlock.RawRegularBlock block) {
+            final Expression expr = ExpressionConverter.convertExprStmt(state, blockId, block);
+            return new ExpressionStmt(expr);
+        }
     }
 }

@@ -20,35 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawField;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
-import java.util.Collections;
-
-class ActorLookStmtConverter {
-    private ActorLookStmtConverter() {
-        throw new IllegalCallerException("utility class constructor");
+final class ActorLookStmtConverter extends StmtConverter<ActorLookStmt> {
+    ActorLookStmtConverter(final ProgramParserState state) {
+        super(state);
     }
 
-    static ActorLookStmt convertStmt(
-            final ProgramParserState state, final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock
-    ) {
+    @Override
+    ActorLookStmt convertStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock) {
         final ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(stmtBlock.opcode());
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, stmtBlock);
 
@@ -70,19 +58,19 @@ class ActorLookStmtConverter {
             }
             case looks_cleargraphiceffects -> new ClearGraphicEffects(metadata);
             case data_showvariable -> {
-                final Identifier variable = getOrCreateReferencedVariable(state, stmtBlock);
+                final Identifier variable = getOrCreateReferencedVariable(stmtBlock);
                 yield new ShowVariable(variable, metadata);
             }
             case data_hidevariable -> {
-                final Identifier variable = getOrCreateReferencedVariable(state, stmtBlock);
+                final Identifier variable = getOrCreateReferencedVariable(stmtBlock);
                 yield new HideVariable(variable, metadata);
             }
             case data_showlist -> {
-                final Identifier variable = getOrCreateReferencedList(state, stmtBlock);
+                final Identifier variable = getOrCreateReferencedList(stmtBlock);
                 yield new ShowList(variable, metadata);
             }
             case data_hidelist -> {
-                final Identifier variable = getOrCreateReferencedList(state, stmtBlock);
+                final Identifier variable = getOrCreateReferencedList(stmtBlock);
                 yield new HideList(variable, metadata);
             }
             case looks_changeeffectby -> {
@@ -101,37 +89,5 @@ class ActorLookStmtConverter {
                 yield new SetGraphicEffectTo(effect, numExpr, metadata);
             }
         };
-    }
-
-    private static Qualified getOrCreateReferencedVariable(
-            final ProgramParserState state, final RawBlock.RawRegularBlock stmtBlock
-    ) {
-        final RawField varField = stmtBlock.fields().get(Constants.VARIABLE_KEY);
-        final String varName = varField.value().toString();
-        final RawBlockId varId = varField.id()
-                .orElseThrow(() -> new InternalParsingException("Missing variable id."));
-
-        final VariableInfo varInfo = state.getSymbolTable().getOrAddVariable(
-                varId.id(), varName, state.getCurrentActor().getName(),
-                StringType::new, true, "Stage"
-        );
-
-        return new Qualified(new StrId(varInfo.getActor()), new Variable(new StrId(varName)));
-    }
-
-    private static Qualified getOrCreateReferencedList(
-            final ProgramParserState state, final RawBlock.RawRegularBlock stmtBlock
-    ) {
-        final RawField listField = stmtBlock.fields().get(Constants.LIST_KEY);
-        final String listName = listField.value().toString();
-        final RawBlockId listId = listField.id()
-                .orElseThrow(() -> new InternalParsingException("Missing variable id."));
-
-        final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
-                listId.id(), listName, state.getCurrentActor().getName(),
-                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
-        );
-
-        return new Qualified(new StrId(listInfo.getActor()), new ScratchList(new StrId(listName)));
     }
 }
