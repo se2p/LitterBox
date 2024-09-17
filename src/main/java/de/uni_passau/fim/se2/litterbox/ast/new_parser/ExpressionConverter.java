@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
@@ -34,5 +35,20 @@ final class ExpressionConverter {
             final RawInput exprBlock
     ) {
         throw new UnsupportedOperationException("todo: convert expressions");
+    }
+
+    static Expression convertExprStmt(
+            final ProgramParserState state,
+            final RawBlock.ArrayBlock block
+    ) {
+        throw new UnsupportedOperationException("todo: convert expression stmts");
+    }
+
+    static Expression convertExprStmt(
+            final ProgramParserState state,
+            final RawBlockId blockId,
+            final RawBlock.RawRegularBlock block
+    ) {
+        throw new UnsupportedOperationException("todo: convert expression stmts");
     }
 }
