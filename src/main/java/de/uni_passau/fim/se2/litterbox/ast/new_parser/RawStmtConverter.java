@@ -161,16 +161,16 @@ final class RawStmtConverter {
         addOpcodes(choices, ListStmtOpcode.values(), new ListStmtConverter(state));
         addOpcodes(choices, SetStmtOpcode.values(), new SetStmtConverter(state));
         addOpcodes(choices, PenOpcode.values(), new PenStmtConverter(state));
-//        addOpcodes(choices, TextToSpeechOpcode.values(), null);
-//        addOpcodes(choices, MusicOpcode.values(), null);
-//        // mBlock extension blocks
-//        addOpcodes(choices, EmotionStmtOpcode.values(), null);
-//        addOpcodes(choices, LEDMatrixStmtOpcode.values(), null);
-//        addOpcodes(choices, LEDStmtOpcode.values(), null);
-//        addOpcodes(choices, SpeakerStmtOpcode.values(), null);
-//        addOpcodes(choices, RobotMoveStmtOpcode.values(), null);
-//        addOpcodes(choices, ResetStmtOpcode.values(), null);
-//        addOpcodes(choices, IRStmtOpcode.values(), null);
+        addOpcodes(choices, TextToSpeechOpcode.values(), new TextToSpeechStmtConverter(state));
+        addOpcodes(choices, MusicOpcode.values(), null);
+        // mBlock extension blocks
+        addOpcodes(choices, EmotionStmtOpcode.values(), null);
+        addOpcodes(choices, LEDMatrixStmtOpcode.values(), null);
+        addOpcodes(choices, LEDStmtOpcode.values(), null);
+        addOpcodes(choices, SpeakerStmtOpcode.values(), null);
+        addOpcodes(choices, RobotMoveStmtOpcode.values(), null);
+        addOpcodes(choices, ResetStmtOpcode.values(), null);
+        addOpcodes(choices, IRStmtOpcode.values(), null);
 
         return choices;
     }
