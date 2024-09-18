@@ -89,10 +89,10 @@ final class StringExprConverter extends ExprConverter {
      * @return True, iff the {@code exprBlock} can be parsed as {@link NumExpr}.
      */
     static boolean parseableAsStringExpr(final RawTarget target, final RawInput exprBlock) {
-        final boolean parseableAsNumberLiteral = isParseableAsStringLiteral(exprBlock);
-        final boolean hasNumExprOpcode = hasStringExprOpcode(target, exprBlock);
+        final boolean parseableAsStringLiteral = isParseableAsStringLiteral(exprBlock);
+        final boolean hasStringExprOpcode = hasStringExprOpcode(target, exprBlock);
 
-        return parseableAsNumberLiteral || hasNumExprOpcode;
+        return parseableAsStringLiteral || hasStringExprOpcode;
     }
 
     private static boolean isParseableAsStringLiteral(final RawInput exprBlock) {
@@ -100,11 +100,14 @@ final class StringExprConverter extends ExprConverter {
                 && (
                         // Raw color literals in string positions can only be achieved by JSON hacking.
                         // Since the JSON contains the hex-string of the color, though, we can parse it as string.
+                        //
+                        // Broadcasts behave like String messages.
                         exprInput.block() instanceof RawBlock.RawStringLiteral
                                 || exprInput.block() instanceof RawBlock.RawColorLiteral
+                                || exprInput.block() instanceof RawBlock.RawBroadcast
                 );
 
-        return hasCorrectShadow(exprBlock) || hasCorrectType;
+        return hasCorrectShadow(exprBlock) && hasCorrectType;
     }
 
     private static boolean hasStringExprOpcode(final RawTarget target, final RawInput exprBlock) {
