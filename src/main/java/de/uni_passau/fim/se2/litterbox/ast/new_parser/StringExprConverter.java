@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
@@ -33,6 +32,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.IRMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -142,7 +144,14 @@ final class StringExprConverter extends ExprConverter {
             case sensing_answer -> new Answer(metadata);
             case comm_receive_ir, detect_ir -> new IRMessage(metadata);
             case translate_getViewerLanguage -> new ViewerLanguage(metadata);
-            case translate_getTranslate -> parseTranslate();
+            case translate_getTranslate -> {
+                final TLanguage language = getLanguage(state, block);
+                final StringExpr text = StringExprConverter.convertStringExpr(
+                        state, block, block.inputs().get(Constants.WORDS_KEY)
+                );
+
+                yield new TranslateTo(text, language, metadata);
+            }
             case operator_join -> {
                 final StringExpr left = convertStringExpr(state, block, block.inputs().get(Constants.STRING1_KEY));
                 final StringExpr right = convertStringExpr(state, block, block.inputs().get(Constants.STRING2_KEY));
@@ -256,11 +265,25 @@ final class StringExprConverter extends ExprConverter {
         }
     }
 
-    /**
-     * Todo, see {@link de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser#parseTranslate(ProgramParserState, JsonNode, BlockMetadata, JsonNode)}
-     * @return todo
-     */
-    private static TranslateTo parseTranslate() {
-        throw new UnsupportedOperationException("todo: translate");
+    private static TLanguage getLanguage(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
+        final RawInput languageInput = block.inputs().get(Constants.LANGUAGE_INPUT_KEY);
+
+        if (
+                ShadowType.SHADOW.equals(languageInput.shadowType())
+                && languageInput.input() instanceof BlockRef.IdRef blockIdRef
+                && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock languageMenuBlock
+                && DependentBlockOpcode.translate_menu_languages.getName().equals(languageMenuBlock.opcode())
+        ) {
+            final RawField languageField = languageMenuBlock.fields().get(Constants.LANGUAGE_FIELDS_KEY);
+            final String languageName = languageField.value().toString();
+            final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
+                    blockIdRef.id(), languageMenuBlock
+            );
+
+            return new TFixedLanguage(languageName, metadata);
+        } else {
+            final Expression expr = ExpressionConverter.convertExpr(state, block, languageInput);
+            return new TExprLanguage(expr, new NoBlockMetadata());
+        }
     }
 }
