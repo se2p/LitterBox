@@ -117,6 +117,16 @@ final class ConverterUtilities {
             final long b = Long.parseLong(color.color().substring(5, 7), 16);
 
             return new ColorLiteral(r, g, b);
+        } else if (block.input() instanceof BlockRef.Block dataBlock
+                && dataBlock.block() instanceof RawBlock.RawStringLiteral color
+                && color.value().startsWith("#")) {
+            // temporary workaround to have same AST as old parser
+            // https://gitlab.infosun.fim.uni-passau.de/se2/scratch/litterbox/litterbox/-/issues/495
+            final long r = Long.parseLong(color.value().substring(1, 3), 16);
+            final long g = Long.parseLong(color.value().substring(3, 5), 16);
+            final long b = Long.parseLong(color.value().substring(5, 7), 16);
+
+            return new ColorLiteral(r, g, b);
         } else {
             final NumExpr numExpr = NumExprConverter.convertNumExpr(state, containingBlock, block);
             return new FromNumber(numExpr);
