@@ -20,17 +20,25 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.MCorePort;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
+
+import java.util.Collections;
 
 final class NumExprConverter extends ExprConverter {
 
@@ -83,7 +91,19 @@ final class NumExprConverter extends ExprConverter {
                         || exprInput.block() instanceof RawBlock.RawAngleBlockLiteral
         );
 
-        return hasCorrectShadow(exprBlock) || hasCorrectType;
+        boolean canBeParsedAsNumber = false;
+        if (exprBlock.input() instanceof BlockRef.Block exprInput
+                && exprInput.block() instanceof RawBlock.RawStringLiteral s
+        ) {
+            try {
+                Double.parseDouble(s.value());
+                canBeParsedAsNumber = true;
+            } catch (NumberFormatException e) {
+                // ignored, canBeParsedAsNumber already is false
+            }
+        }
+
+        return hasCorrectShadow(exprBlock) || canBeParsedAsNumber || hasCorrectType;
     }
 
     private static boolean hasNumExprOpcode(final RawTarget target, final RawInput exprBlock) {
@@ -111,6 +131,13 @@ final class NumExprConverter extends ExprConverter {
                 return new NumberLiteral(i.value());
             } else if (literalInput instanceof RawBlock.RawAngleBlockLiteral a) {
                 return new NumberLiteral(a.angle());
+            } else if (literalInput instanceof RawBlock.RawStringLiteral s) {
+                try {
+                    double parsed = Double.parseDouble(s.value());
+                    return new NumberLiteral(parsed);
+                } catch (NumberFormatException e) {
+                    return new AsNumber(new StringLiteral(s.value()));
+                }
             }
         }
 
@@ -189,8 +216,8 @@ final class NumExprConverter extends ExprConverter {
                 yield new Mod(left, right, metadata);
             }
             case operator_random -> {
-                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.NUM1_KEY));
-                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.NUM2_KEY));
+                final NumExpr left = convertNumExpr(state, block, block.inputs().get(Constants.FROM_KEY));
+                final NumExpr right = convertNumExpr(state, block, block.inputs().get(Constants.TO_KEY));
                 yield new PickRandom(left, right, metadata);
             }
             // others
@@ -199,10 +226,29 @@ final class NumExprConverter extends ExprConverter {
                 final NumExpr expr = convertNumExpr(state, block, block.inputs().get(Constants.NUM_KEY));
                 yield new NumFunctOf(function, expr, metadata);
             }
-            case data_lengthoflist -> throw new UnsupportedOperationException("todo: length of list");
-            case data_itemnumoflist -> throw new UnsupportedOperationException("todo: item of list");
-            case sensing_current -> throw new UnsupportedOperationException("todo: num expr now");
-            case sensing_distanceto -> throw new UnsupportedOperationException("todo: distance to");
+            case data_lengthoflist -> {
+                final ExpressionListInfo listInfo = getList(state, block);
+                final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listInfo.getVariableName());
+
+                yield new LengthOfVar(list, metadata);
+            }
+            case data_itemnumoflist -> {
+                final ExpressionListInfo listInfo = getList(state, block);
+                final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listInfo.getVariableName());
+                final Expression item = ExpressionConverter.convertExpr(
+                        state, block, block.inputs().get(Constants.ITEM_KEY)
+                );
+
+                yield new IndexOf(item, list, metadata);
+            }
+            case sensing_current -> {
+                final TimeComp timeComp = getTimeComp(block);
+                yield new Current(timeComp, metadata);
+            }
+            case sensing_distanceto -> {
+                final Position position = PositionConverter.convertPosition(state, block);
+                yield new DistanceTo(position, metadata);
+            }
             case rocky_detect_rgb -> {
                 final String rgbName = block.fields().get(Constants.RGB_KEY).value().toString();
                 final RGB rgb = new RGB(rgbName);
@@ -229,5 +275,22 @@ final class NumExprConverter extends ExprConverter {
     private static NumFunct convertNumberFunction(final RawField numberFunction) {
         final String opcode = numberFunction.value().toString();
         return new NumFunct(opcode);
+    }
+
+    private static ExpressionListInfo getList(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
+        final RawField listField = block.fields().get(Constants.LIST_KEY);
+        final RawBlockId listId = listField.id()
+                .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
+        final String listName = listField.value().toString();
+
+        return state.getSymbolTable().getOrAddList(
+                listId.id(), listName, state.getCurrentActor().getName(),
+                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
+        );
+    }
+
+    private static TimeComp getTimeComp(final RawBlock.RawRegularBlock sensingCurrentBlock) {
+        final String currentString = sensingCurrentBlock.fields().get("CURRENTMENU").value().toString();
+        return new TimeComp(currentString.toLowerCase());
     }
 }
