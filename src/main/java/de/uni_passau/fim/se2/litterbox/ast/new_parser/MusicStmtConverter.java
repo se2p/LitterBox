@@ -130,6 +130,13 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
                 return new FixedNote(i.value(), new NoBlockMetadata());
             } else if (arrayBlock.block() instanceof RawBlock.ArrayBlock.RawFloatBlockLiteral d) {
                 return new FixedNote(d.value(), new NoBlockMetadata());
+            } else if (arrayBlock.block() instanceof RawBlock.RawStringLiteral s) {
+                try {
+                    final double value = Double.parseDouble(s.value());
+                    return new FixedNote(value, new NoBlockMetadata());
+                } catch (NumberFormatException e) {
+                    throw new InternalParsingException("Unknown format for musical note in PlayNoteForBeats.", e);
+                }
             }
         }
 
