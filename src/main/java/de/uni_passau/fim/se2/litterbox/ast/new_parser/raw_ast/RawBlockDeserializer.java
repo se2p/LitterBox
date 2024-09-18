@@ -49,7 +49,7 @@ class RawBlockDeserializer extends JsonDeserializer<RawBlock> {
         final int blockType = root.get(0).asInt();
         return switch (blockType) {
             case 4, 5 -> new RawBlock.RawFloatBlockLiteral(root.get(1).asDouble());
-            case 6, 7 -> new RawBlock.RawIntBlockLiteral(root.get(1).asInt());
+            case 6, 7 -> new RawBlock.RawIntBlockLiteral(root.get(1).asLong());
             case 8 -> new RawBlock.RawAngleBlockLiteral(root.get(1).asDouble());
             case 9 -> new RawBlock.RawColorLiteral(root.get(1).asText());
             case 10 -> new RawBlock.RawStringLiteral(root.get(1).asText());

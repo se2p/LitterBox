@@ -44,7 +44,7 @@ public sealed interface RawBlock {
 
     record RawFloatBlockLiteral(double value) implements ArrayBlock {}
 
-    record RawIntBlockLiteral(int value) implements ArrayBlock {}
+    record RawIntBlockLiteral(long value) implements ArrayBlock {}
 
     record RawAngleBlockLiteral(double angle) implements ArrayBlock {}
 
