@@ -42,7 +42,7 @@ final class SetStmtConverter extends StmtConverter<SetStmt> {
         return switch (opcode) {
             case data_setvariableto -> {
                 final Qualified variable = getOrCreateReferencedVariable(block);
-                final Expression value = ExpressionConverter.convertExpr(
+                final Expression value = ExprConverter.convertExpr(
                         state, block, block.inputs().get(Constants.VALUE_KEY)
                 );
 

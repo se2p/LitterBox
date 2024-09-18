@@ -74,7 +74,7 @@ final class ConverterUtilities {
             if (ShadowType.SHADOW == touched.shadowType()) {
                 return convertTouchableMenuOption(state.getCurrentTarget(), touched);
             } else {
-                final Expression expr = ExpressionConverter.convertExpr(state, block, touched);
+                final Expression expr = ExprConverter.convertExpr(state, block, touched);
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcode)) {
@@ -135,7 +135,7 @@ final class ConverterUtilities {
         ) {
             return convertElementChoiceFromMenu(blockIdRef.id(), menuBlock);
         } else {
-            final Expression expr = ExpressionConverter.convertExpr(state, containingStmt, elementChoiceInput);
+            final Expression expr = ExprConverter.convertExpr(state, containingStmt, elementChoiceInput);
             return new WithExpr(expr, new NoBlockMetadata());
         }
     }

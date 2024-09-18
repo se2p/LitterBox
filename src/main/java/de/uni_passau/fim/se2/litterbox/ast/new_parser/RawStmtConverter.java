@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
@@ -52,8 +51,7 @@ final class RawStmtConverter {
 
     Stmt convertStmt(final RawBlockId blockId, final RawBlock stmtBlock) {
         if (stmtBlock instanceof RawBlock.ArrayBlock arrayBlock) {
-            final Expression expr = ExpressionConverter.convertExprStmt(state, arrayBlock);
-            return new ExpressionStmt(expr);
+            return ExprConverter.convertExprStmt(state, blockId, arrayBlock);
         } else if (stmtBlock instanceof RawBlock.RawRegularBlock regularBlock) {
             return converStmt(blockId, regularBlock);
         } else {
@@ -152,8 +150,7 @@ final class RawStmtConverter {
 
         @Override
         ExpressionStmt convertStmt(RawBlockId blockId, RawBlock.RawRegularBlock block) {
-            final Expression expr = ExpressionConverter.convertExprStmt(state, blockId, block);
-            return new ExpressionStmt(expr);
+            return ExprConverter.convertExprStmt(state, blockId, block);
         }
     }
 }

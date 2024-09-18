@@ -47,7 +47,7 @@ final class CallStmtConverter extends StmtConverter<CallStmt> {
             final RawInput input = block.inputs().get(argument.id());
 
             if (input != null) {
-                final Expression expr = ExpressionConverter.convertExpr(state, block, input);
+                final Expression expr = ExprConverter.convertExpr(state, block, input);
                 expressions.add(expr);
             } else {
                 expressions.add(new UnspecifiedBoolExpr());

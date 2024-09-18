@@ -52,7 +52,7 @@ final class NumExprConverter extends ExprConverter {
             final RawInput exprBlock
     ) {
         if (!parseableAsNumExpr(state.getCurrentTarget(), exprBlock)) {
-            final Expression expr = ExpressionConverter.convertExpr(state, containingBlock, exprBlock);
+            final Expression expr = ExprConverter.convertExpr(state, containingBlock, exprBlock);
             return new AsNumber(expr);
         }
 
@@ -235,9 +235,7 @@ final class NumExprConverter extends ExprConverter {
             case data_itemnumoflist -> {
                 final ExpressionListInfo listInfo = getList(state, block);
                 final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listInfo.getVariableName());
-                final Expression item = ExpressionConverter.convertExpr(
-                        state, block, block.inputs().get(Constants.ITEM_KEY)
-                );
+                final Expression item = ExprConverter.convertExpr(state, block, block.inputs().get(Constants.ITEM_KEY));
 
                 yield new IndexOf(item, list, metadata);
             }

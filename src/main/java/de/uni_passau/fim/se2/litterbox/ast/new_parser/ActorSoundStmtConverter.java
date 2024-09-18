@@ -95,7 +95,7 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
             return convertSoundChoiceMenu(blockIdRef.id());
         } else {
             final BlockMetadata metadata = new NoBlockMetadata();
-            final Expression expr = ExpressionConverter.convertExpr(state, block, soundInput);
+            final Expression expr = ExprConverter.convertExpr(state, block, soundInput);
             return new WithExpr(expr, metadata);
         }
     }

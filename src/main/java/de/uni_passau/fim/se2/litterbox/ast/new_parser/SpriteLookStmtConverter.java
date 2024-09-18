@@ -119,7 +119,7 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
             return convertCostumeChoiceMenu(blockIdRef.id());
         } else {
             final BlockMetadata metadata = new NoBlockMetadata();
-            final Expression expr = ExpressionConverter.convertExpr(state, block, costumeInput);
+            final Expression expr = ExprConverter.convertExpr(state, block, costumeInput);
             return new WithExpr(expr, metadata);
         }
     }

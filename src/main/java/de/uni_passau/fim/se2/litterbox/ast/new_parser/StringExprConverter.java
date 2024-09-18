@@ -64,7 +64,7 @@ final class StringExprConverter extends ExprConverter {
             final RawInput exprBlock
     ) {
         if (!parseableAsStringExpr(state.getCurrentTarget(), exprBlock)) {
-            final Expression expr = ExpressionConverter.convertExpr(state, containingBlock, exprBlock);
+            final Expression expr = ExprConverter.convertExpr(state, containingBlock, exprBlock);
             return new AsString(expr);
         }
 
@@ -255,7 +255,7 @@ final class StringExprConverter extends ExprConverter {
                 final String actorName = menuRegularBlock.fields().get(Constants.OBJECT_KEY).value().toString();
                 return new WithExpr(new StrId(actorName), menuMetadata);
             } else {
-                final Expression expr = ExpressionConverter.convertExpr(
+                final Expression expr = ExprConverter.convertExpr(
                         state, menuRegularBlock, menuRegularBlock.inputs().get(Constants.OBJECT_KEY)
                 );
                 return new WithExpr(expr, menuMetadata);
@@ -282,7 +282,7 @@ final class StringExprConverter extends ExprConverter {
 
             return new TFixedLanguage(languageName, metadata);
         } else {
-            final Expression expr = ExpressionConverter.convertExpr(state, block, languageInput);
+            final Expression expr = ExprConverter.convertExpr(state, block, languageInput);
             return new TExprLanguage(expr, new NoBlockMetadata());
         }
     }

@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
 abstract class ExprConverter {
+
     protected ExprConverter() {
     }
 
