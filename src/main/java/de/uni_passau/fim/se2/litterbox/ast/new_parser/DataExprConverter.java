@@ -18,11 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+
+import java.util.Collections;
 
 final class DataExprConverter extends ExprConverter {
 
@@ -31,7 +43,23 @@ final class DataExprConverter extends ExprConverter {
     }
 
     static boolean parseableAsDataExpr(final RawTarget target, final RawInput exprBlock) {
-        throw new UnsupportedOperationException("todo: is data expr?");
+        if (!(exprBlock.input() instanceof BlockRef.IdRef inputRef)) {
+            // If not an IdRef, we technically would have to look up the identifier stored in the Block in the
+            // symbol table. However, some JSON files contain references to IDs which are not present in the lookup
+            // tables, and we want to keep these without exception.
+            return true;
+        }
+
+        final RawBlock inputBlock = target.blocks().get(inputRef.id());
+        if (inputBlock == null) {
+            return true;
+        }
+
+        if (inputBlock instanceof RawBlock.RawRegularBlock regularInputBlock) {
+            return isParameter(regularInputBlock.opcode());
+        } else {
+            return false;
+        }
     }
 
     static Expression convertDataExpr(
@@ -39,6 +67,63 @@ final class DataExprConverter extends ExprConverter {
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        throw new UnsupportedOperationException("todo: data expr");
+        // convert to pattern-matching switch with Java 21
+        if (exprBlock.input() instanceof BlockRef.IdRef exprIdRef) {
+            final RawBlock referencedBlock = state.getBlock(exprIdRef.id());
+            if (!(referencedBlock instanceof RawBlock.RawRegularBlock referencedRegularBlock)) {
+                // should not happen if the parseableAsDataExpr check works as intended
+                throw new InternalParsingException("Unknown format for data expressions.");
+            }
+
+            if (isParameter(referencedRegularBlock.opcode())) {
+                return convertParameter(exprIdRef.id(), referencedRegularBlock);
+            }
+        } else if (exprBlock.input() instanceof BlockRef.Block exprArrayBlock) {
+            if (exprArrayBlock.block() instanceof RawBlock.RawVariable rawVariable) {
+                return convertVariable(state, rawVariable);
+            } else if (exprArrayBlock.block() instanceof RawBlock.RawList rawList) {
+                return convertList(state, rawList);
+            }
+        }
+
+        // should not happen if the parseableAsDataExpr check works as intended
+        throw new InternalParsingException("Unknown format for DataExpr.");
+    }
+
+    private static Expression convertParameter(
+            final RawBlockId blockId, final RawBlock.RawRegularBlock parameterBlock
+    ) {
+        final String name = parameterBlock.fields().get(Constants.VALUE_KEY).value().toString();
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, parameterBlock);
+
+        final Type type;
+        if (ProcedureOpcode.argument_reporter_boolean.name().equals(parameterBlock.opcode())) {
+            type = new BooleanType();
+        } else {
+            type = new StringType();
+        }
+
+        return new Parameter(new StrId(name), type, metadata);
+    }
+
+    private static Qualified convertVariable(final ProgramParserState state, final RawBlock.RawVariable variable) {
+        final VariableInfo variableInfo = state.getSymbolTable().getOrAddVariable(
+                variable.id().id(), variable.name(), state.getCurrentActor().getName(),
+                StringType::new, true, "Stage"
+        );
+        return ConverterUtilities.variableInfoToIdentifier(variableInfo, variable.name());
+    }
+
+    private static Qualified convertList(final ProgramParserState state, final RawBlock.RawList list) {
+        final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
+                list.id().id(), list.name(), state.getCurrentActor().getName(),
+                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
+        );
+        return ConverterUtilities.listInfoToIdentifier(listInfo, list.name());
+    }
+
+    private static boolean isParameter(final String opcode) {
+        return ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
+                || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode);
     }
 }

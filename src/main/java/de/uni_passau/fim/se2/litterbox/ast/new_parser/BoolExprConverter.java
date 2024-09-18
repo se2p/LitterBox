@@ -64,9 +64,9 @@ final class BoolExprConverter extends ExprConverter {
             // if not regular block: must be `null`, therefore this is a DataExpr, not a BoolExpr
             return inputBlock instanceof RawBlock.RawRegularBlock block
                     && BoolExprOpcode.contains(block.opcode());
+        } else {
+            return false;
         }
-
-        throw new UnsupportedOperationException("todo: is bool expr?");
     }
 
     static BoolExpr convertBoolExpr(

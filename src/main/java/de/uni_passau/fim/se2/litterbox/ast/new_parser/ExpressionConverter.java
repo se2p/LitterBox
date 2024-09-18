@@ -19,12 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class ExpressionConverter {
+
     private ExpressionConverter() {
         throw new IllegalCallerException("utility class constructor");
     }
@@ -34,7 +37,19 @@ final class ExpressionConverter {
             final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
-        throw new UnsupportedOperationException("todo: convert expressions");
+        final RawTarget target = state.getCurrentTarget();
+
+        if (NumExprConverter.parseableAsNumExpr(target, exprBlock)) {
+            return NumExprConverter.convertExpr(state, containingBlock, exprBlock);
+        } else if (StringExprConverter.parseableAsStringExpr(target, exprBlock)) {
+            return StringExprConverter.convertExpr(state, containingBlock, exprBlock);
+        } else if (BoolExprConverter.parseableAsBoolExpr(target, exprBlock)) {
+            return BoolExprConverter.convertExpr(state, containingBlock, exprBlock);
+        } else if (DataExprConverter.parseableAsDataExpr(target, exprBlock)) {
+            return DataExprConverter.convertExpr(state, containingBlock, exprBlock);
+        } else {
+            return new UnspecifiedExpression();
+        }
     }
 
     static Expression convertExprStmt(

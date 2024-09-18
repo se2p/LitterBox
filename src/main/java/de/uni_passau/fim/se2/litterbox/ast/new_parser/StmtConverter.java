@@ -21,11 +21,8 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawField;
@@ -56,11 +53,7 @@ abstract class StmtConverter<T extends Stmt> {
                 StringType::new, true, "Stage"
         );
 
-        return variableInfoToIdentifier(varInfo, varName);
-    }
-
-    private Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final String variableName) {
-        return new Qualified(new StrId(variableInfo.getActor()), new Variable(new StrId(variableName)));
+        return ConverterUtilities.variableInfoToIdentifier(varInfo, varName);
     }
 
     protected Qualified getOrCreateReferencedList(final RawBlock.RawRegularBlock stmtBlock) {
@@ -74,10 +67,6 @@ abstract class StmtConverter<T extends Stmt> {
                 () -> new ExpressionList(Collections.emptyList()), true, "Stage"
         );
 
-        return listInfoToIdentifier(listInfo, listName);
-    }
-
-    private Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final String listName) {
-        return new Qualified(new StrId(listInfo.getActor()), new ScratchList(new StrId(listName)));
+        return ConverterUtilities.listInfoToIdentifier(listInfo, listName);
     }
 }

@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.BlockRef;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
@@ -41,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawMutation;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
 /**
  * Groups various small helper functions for the converters that are not worth having their own class.
@@ -48,6 +50,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 final class ConverterUtilities {
     private ConverterUtilities() {
         throw new IllegalCallerException("utility class constructor");
+    }
+
+    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final String variableName) {
+        return new Qualified(new StrId(variableInfo.getActor()), new Variable(new StrId(variableName)));
     }
 
     static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final String listName) {
