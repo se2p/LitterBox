@@ -97,7 +97,12 @@ final class StringExprConverter extends ExprConverter {
 
     private static boolean isParseableAsStringLiteral(final RawInput exprBlock) {
         final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block exprInput
-                && exprInput.block() instanceof RawBlock.RawStringLiteral;
+                && (
+                        // Raw color literals in string positions can only be achieved by JSON hacking.
+                        // Since the JSON contains the hex-string of the color, though, we can parse it as string.
+                        exprInput.block() instanceof RawBlock.RawStringLiteral
+                                || exprInput.block() instanceof RawBlock.RawColorLiteral
+                );
 
         return hasCorrectShadow(exprBlock) || hasCorrectType;
     }
@@ -124,6 +129,8 @@ final class StringExprConverter extends ExprConverter {
                 return new StringLiteral(s.value());
             } else if (literalInput instanceof RawBlock.RawBroadcast b) {
                 return new StringLiteral(b.name());
+            } else if (literalInput instanceof RawBlock.RawColorLiteral c) {
+                return new StringLiteral(c.color());
             }
         }
 
