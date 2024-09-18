@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bo
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -279,6 +281,18 @@ final class BoolExprConverter extends ExprConverter {
 
         // note: order of if/else-if chain important, since AsNumber is a subclass of the other ones
         if (input instanceof AsNumber number) {
+            // temporary override to ignore issue described in
+            // https://gitlab.infosun.fim.uni-passau.de/se2/scratch/litterbox/litterbox/-/issues/494
+            if (rawInput.shadowType() == ShadowType.NO_SHADOW && number.getOperand1() instanceof Qualified q) {
+                final String value = q.getSecond().getName().getName();
+                try {
+                    final double d = Double.parseDouble(value);
+                    return new NumberLiteral(d);
+                } catch (NumberFormatException e) {
+                    return new StringLiteral(value);
+                }
+            }
+
             if (number.getOperand1() instanceof StringExpr op1) {
                 return op1;
             } else if (number.getOperand1() instanceof ComparableExpr op1) {
