@@ -56,6 +56,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -233,7 +235,11 @@ final class RawTargetConverter {
             varType = new BooleanType();
         } else if (isNumericVariable(variable)) {
             varType = new NumberType();
-        } else if (variable.value() instanceof String) {
+        } else if (variable.value() instanceof String
+                || variable.value() instanceof BigInteger
+                || variable.value() instanceof BigDecimal
+        ) {
+            // Javascript and therefore Scratch handles big integers like strings rather than numbers
             varType = new StringType();
         } else {
             throw new InternalParsingException(
@@ -344,6 +350,10 @@ final class RawTargetConverter {
             expr = new NumberLiteral(i);
         } else if (variable.value() instanceof Long l) {
             expr = new NumberLiteral(l);
+        } else if (variable.value() instanceof BigInteger i) {
+            expr = new StringLiteral(i.toString());
+        } else if (variable.value() instanceof BigDecimal d) {
+            expr = new StringLiteral(d.toPlainString());
         } else {
             throw new InternalParsingException(
                     "Unsupported initial type for variable '"
