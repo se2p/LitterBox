@@ -64,7 +64,7 @@ final class NumExprConverter extends ExprConverter {
                 exprBlock.input() instanceof BlockRef.IdRef exprInput
                 && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return parseBlockNumExpr(state, exprInput.id(), exprInputRegularBlock);
+            return convertNumExpr(state, exprInput.id(), exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -144,7 +144,7 @@ final class NumExprConverter extends ExprConverter {
         return new UnspecifiedNumExpr();
     }
 
-    private static NumExpr parseBlockNumExpr(
+    static NumExpr convertNumExpr(
             final ProgramParserState state,
             final RawBlockId id,
             final RawBlock.RawRegularBlock block

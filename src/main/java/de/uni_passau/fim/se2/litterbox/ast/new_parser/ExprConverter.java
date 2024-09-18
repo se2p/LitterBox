@@ -20,10 +20,16 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
 abstract class ExprConverter {
 
@@ -53,23 +59,41 @@ abstract class ExprConverter {
             final RawBlockId blockId,
             final RawBlock exprBlock
     ) {
-        throw new UnsupportedOperationException("todo: expr statement");
-    }
-
-    static ExpressionStmt parseExprBlock(
-            final ProgramParserState state,
-            final RawBlock exprBlock
-    ) {
         final SymbolTable symbolTable = state.getSymbolTable();
 
         if (exprBlock instanceof RawBlock.RawRegularBlock regularExprBlock) {
-            throw new UnsupportedOperationException("todo: expression statements");
+            final Expression expr = convertExprBlock(state, blockId, regularExprBlock);
+            return new ExpressionStmt(expr);
         } else if (exprBlock instanceof RawBlock.RawVariable variable) {
-            throw new UnsupportedOperationException("todo: variable expression statement");
+            final VariableInfo varInfo = symbolTable.getVariable(
+                    variable.id().id(), variable.name(), state.getCurrentActor().getName()
+            ).orElseThrow(() -> new InternalParsingException("Program contains unknown variable: " + variable.name()));
+            final Qualified varId = ConverterUtilities.variableInfoToIdentifier(varInfo, variable.name());
+
+            return new ExpressionStmt(varId);
         } else if (exprBlock instanceof RawBlock.RawList list) {
-            throw new UnsupportedOperationException("todo: list expression statement");
+            final ExpressionListInfo listInfo = symbolTable.getList(
+                    list.id().id(), list.name(), state.getCurrentActor().getName()
+            ).orElseThrow(() -> new InternalParsingException("Program contains unknown list: " + list.name()));
+            final Qualified listId = ConverterUtilities.listInfoToIdentifier(listInfo, list.name());
+
+            return new ExpressionStmt(listId);
         } else {
             throw new InternalParsingException("Unknown format for expression statement.");
+        }
+    }
+
+    private static Expression convertExprBlock(
+            final ProgramParserState state, final RawBlockId blockId, final RawBlock.RawRegularBlock block
+    ) {
+        if (NumExprOpcode.contains(block.opcode())) {
+            return NumExprConverter.convertNumExpr(state, blockId, block);
+        } else if (StringExprOpcode.contains(block.opcode())) {
+            return StringExprConverter.convertStringExpr(state, blockId, block);
+        } else if (BoolExprOpcode.contains(block.opcode())) {
+            return BoolExprConverter.convertBoolExpr(state, blockId, block);
+        } else {
+            throw new InternalParsingException("Unknown opcode for expression: " + block.opcode());
         }
     }
 

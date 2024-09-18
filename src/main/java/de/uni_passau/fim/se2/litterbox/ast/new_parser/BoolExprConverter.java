@@ -91,7 +91,7 @@ final class BoolExprConverter extends ExprConverter {
                 exprBlock.input() instanceof BlockRef.IdRef exprInput
                         && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return convertBlockBoolExpr(state, exprInput.id(), exprInputRegularBlock);
+            return convertBoolExpr(state, exprInput.id(), exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse BoolExpr.");
@@ -121,7 +121,7 @@ final class BoolExprConverter extends ExprConverter {
         return new UnspecifiedBoolExpr();
     }
 
-    static BoolExpr convertBlockBoolExpr(
+    static BoolExpr convertBoolExpr(
             final ProgramParserState state,
             final RawBlockId id,
             final RawBlock.RawRegularBlock block
