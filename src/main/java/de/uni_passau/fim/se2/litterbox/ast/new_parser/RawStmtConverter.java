@@ -123,7 +123,7 @@ final class RawStmtConverter {
         addOpcodes(choices, CallStmtOpcode.values(), new CallStmtConverter(state));
         addOpcodes(choices, ListStmtOpcode.values(), new ListStmtConverter(state));
         addOpcodes(choices, SetStmtOpcode.values(), new SetStmtConverter(state));
-        addOpcodes(choices, PenOpcode.values(), null);
+        addOpcodes(choices, PenOpcode.values(), new PenStmtConverter(state));
         addOpcodes(choices, TextToSpeechOpcode.values(), null);
         addOpcodes(choices, MusicOpcode.values(), null);
         // mBlock extension blocks
