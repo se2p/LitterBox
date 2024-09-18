@@ -78,4 +78,34 @@ final class RawBlockMetadataConverter {
 
         return new DataBlockMetadata(id.id(), x, y);
     }
+
+    public static BlockMetadata convertBlockWithMenuMetadata(
+            final RawBlockId blockId, final RawBlock.RawRegularBlock block, final BlockMetadata menuMetadata
+    ) {
+        final BlockMetadata mainBlockMetadata = convertBlockMetadata(blockId, block);
+
+        if (mainBlockMetadata instanceof TopNonDataBlockMetadata topNonDataBlockMetadata) {
+            return new TopNonDataBlockWithMenuMetadata(
+                    topNonDataBlockMetadata.getCommentId(),
+                    topNonDataBlockMetadata.getBlockId(),
+                    topNonDataBlockMetadata.isShadow(),
+                    topNonDataBlockMetadata.getMutation(),
+                    topNonDataBlockMetadata.getXPos(),
+                    topNonDataBlockMetadata.getYPos(),
+                    menuMetadata
+            );
+        } else if (mainBlockMetadata instanceof NonDataBlockMetadata nonDataBlockMetadata) {
+            // do *not* swap `if` and `else if` blocks: TopNonDataBlockMetadata extends NonDataBlockMetadata
+
+            return new NonDataBlockWithMenuMetadata(
+                    nonDataBlockMetadata.getCommentId(),
+                    nonDataBlockMetadata.getBlockId(),
+                    nonDataBlockMetadata.isShadow(),
+                    nonDataBlockMetadata.getMutation(),
+                    menuMetadata
+            );
+        } else {
+            throw new InternalParsingException("Unknown block metadata structure.");
+        }
+    }
 }

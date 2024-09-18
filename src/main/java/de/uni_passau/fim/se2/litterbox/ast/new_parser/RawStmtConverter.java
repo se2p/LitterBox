@@ -116,7 +116,7 @@ final class RawStmtConverter {
         addOpcodes(choices, StringExprOpcode.values(), new ExprStmtConverter(state));
         addOpcodes(choices, ActorLookStmtOpcode.values(), new ActorLookStmtConverter(state));
         addOpcodes(choices, ControlStmtOpcode.values(), new ControlStmtConverter(state));
-        addOpcodes(choices, CommonStmtOpcode.values(), null);
+        addOpcodes(choices, CommonStmtOpcode.values(), new CommonStmtConverter(state));
         addOpcodes(choices, SpriteMotionStmtOpcode.values(), new SpriteMotionStmtConverter(state));
         addOpcodes(choices, SpriteLookStmtOpcode.values(), new SpriteLookStmtConverter(state));
         addOpcodes(choices, ActorSoundStmtOpcode.values(), new ActorSoundStmtConverter(state));
