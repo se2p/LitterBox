@@ -96,7 +96,13 @@ final class ConverterUtilities {
 
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(touchedId.id(), touchedTarget);
 
-        final String touchedObjectName = touchedTarget.fields().get(Constants.TOUCHINGOBJECTMENU).value().toString();
+        final RawField field = touchedTarget.fields().get(Constants.TOUCHINGOBJECTMENU);
+        if (field.value() == null) {
+            // todo: temporary fix to make the AST match the old parser
+            return new SpriteTouchable(new StringLiteral("null"), metadata);
+        }
+
+        final String touchedObjectName = field.value().toString();
         return switch (touchedObjectName) {
             case Constants.MOUSE -> new MousePointer(metadata);
             case Constants.TOUCHING_EDGE -> new Edge(metadata);
