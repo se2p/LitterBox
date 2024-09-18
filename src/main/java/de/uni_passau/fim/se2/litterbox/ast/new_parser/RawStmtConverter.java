@@ -122,7 +122,7 @@ final class RawStmtConverter {
         addOpcodes(choices, ActorSoundStmtOpcode.values(), new ActorSoundStmtConverter(state));
         addOpcodes(choices, CallStmtOpcode.values(), new CallStmtConverter(state));
         addOpcodes(choices, ListStmtOpcode.values(), new ListStmtConverter(state));
-        addOpcodes(choices, SetStmtOpcode.values(), null);
+        addOpcodes(choices, SetStmtOpcode.values(), new SetStmtConverter(state));
         addOpcodes(choices, PenOpcode.values(), null);
         addOpcodes(choices, TextToSpeechOpcode.values(), null);
         addOpcodes(choices, MusicOpcode.values(), null);
