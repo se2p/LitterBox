@@ -20,11 +20,9 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -46,11 +44,33 @@ class RawBlockDeserializer extends JsonDeserializer<RawBlock> {
     }
 
     private RawBlock.ArrayBlock deserializeArrayBlock(final ArrayNode root) {
+        // The blockType just indicates what it *should* be if the user filled in the literal blocks as intended.
+        // E.g. in case a number is expected, the block type will still be 4 even if the user filled in a random string
+        // instead of a number.
         final int blockType = root.get(0).asInt();
+
         return switch (blockType) {
-            case 4, 5 -> new RawBlock.RawFloatBlockLiteral(root.get(1).asDouble());
-            case 6, 7 -> new RawBlock.RawIntBlockLiteral(root.get(1).asLong());
-            case 8 -> new RawBlock.RawAngleBlockLiteral(root.get(1).asDouble());
+            case 4, 5 -> {
+                if (root.get(1) instanceof ValueNode v && v.isNumber()) {
+                    yield new RawBlock.RawFloatBlockLiteral(v.asDouble());
+                } else {
+                    yield new RawBlock.RawStringLiteral(root.get(1).asText());
+                }
+            }
+            case 6, 7 -> {
+                if (root.get(1) instanceof ValueNode v && v.isLong()) {
+                    yield new RawBlock.RawIntBlockLiteral(v.asLong());
+                } else {
+                    yield new RawBlock.RawStringLiteral(root.get(1).asText());
+                }
+            }
+            case 8 -> {
+                if (root.get(1) instanceof ValueNode v && v.isNumber()) {
+                    yield new RawBlock.RawAngleBlockLiteral(v.asDouble());
+                } else {
+                    yield new RawBlock.RawStringLiteral(root.get(1).asText());
+                }
+            }
             case 9 -> new RawBlock.RawColorLiteral(root.get(1).asText());
             case 10 -> new RawBlock.RawStringLiteral(root.get(1).asText());
             case 11 -> {
