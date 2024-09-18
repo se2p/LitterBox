@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -125,6 +126,32 @@ final class ConverterUtilities {
     static ElementChoice convertElementChoice(
             final ProgramParserState state, final RawBlock.RawRegularBlock containingStmt
     ) {
-        throw new UnsupportedOperationException("todo: element choice");
+        final RawInput elementChoiceInput = containingStmt.inputs().get(Constants.BACKDROP_INPUT);
+
+        if (
+            ShadowType.SHADOW.equals(elementChoiceInput.shadowType())
+                    && elementChoiceInput.input() instanceof BlockRef.IdRef blockIdRef
+                    && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+        ) {
+            return convertElementChoiceFromMenu(blockIdRef.id(), menuBlock);
+        } else {
+            final Expression expr = ExpressionConverter.convertExpr(state, containingStmt, elementChoiceInput);
+            return new WithExpr(expr, new NoBlockMetadata());
+        }
+    }
+
+    private static ElementChoice convertElementChoiceFromMenu(
+            final RawBlockId menuBlockId, final RawBlock.RawRegularBlock menuBlock
+    ) {
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuBlockId, menuBlock);
+        final RawField reference = menuBlock.fields().get(Constants.BACKDROP_INPUT);
+        final String choiceName = reference.value().toString();
+
+        return switch (choiceName) {
+            case "next backdrop" -> new Next(metadata);
+            case "previous backdrop" -> new Prev(metadata);
+            case "random backdrop" -> new Random(metadata);
+            default -> new WithExpr(new StrId(choiceName), metadata);
+        };
     }
 }
