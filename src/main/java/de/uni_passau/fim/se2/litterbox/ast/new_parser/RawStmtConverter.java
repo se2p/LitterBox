@@ -18,9 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
@@ -65,7 +70,7 @@ final class RawStmtConverter {
         final String opcode = stmtBlock.opcode();
 
         if (isTerminationStmt(stmtBlock)) {
-            return convertTerminationStmt(stmtBlock);
+            return convertTerminationStmt(blockId, stmtBlock);
         } else if (
                 ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
                         || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)
@@ -94,8 +99,21 @@ final class RawStmtConverter {
         return "other scripts in sprite".equals(stopOptionValue) || "other scripts in stage".equals(stopOptionValue);
     }
 
-    private TerminationStmt convertTerminationStmt(final RawBlock.RawRegularBlock stmt) {
-        throw new UnsupportedOperationException("todo: termination");
+    private TerminationStmt convertTerminationStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmt) {
+        final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(stmt.opcode());
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, stmt);
+
+        return switch (opcode) {
+            case control_delete_this_clone -> new DeleteClone(metadata);
+            case control_stop -> {
+                final String stopOption = stmt.fields().get(Constants.STOP_OPTION).value().toString();
+                yield switch (stopOption) {
+                    case "all" -> new StopAll(metadata);
+                    case "this script" -> new StopThisScript(metadata);
+                    default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
+                };
+            }
+        };
     }
 
     /**
