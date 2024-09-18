@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -27,6 +28,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
@@ -58,7 +63,7 @@ final class RawStmtConverter {
         if (stmtBlock instanceof RawBlock.ArrayBlock arrayBlock) {
             return ExprConverter.convertExprStmt(state, blockId, arrayBlock);
         } else if (stmtBlock instanceof RawBlock.RawRegularBlock regularBlock) {
-            return converStmt(blockId, regularBlock);
+            return convertStmt(blockId, regularBlock);
         } else {
             // should never happen unless sealed interface RawBlock changes,
             // use pattern-matching switch when upgrading to Java 21
@@ -66,7 +71,7 @@ final class RawStmtConverter {
         }
     }
 
-    private Stmt converStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock) {
+    Stmt convertStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock) {
         final String opcode = stmtBlock.opcode();
 
         if (isTerminationStmt(stmtBlock)) {
@@ -75,7 +80,7 @@ final class RawStmtConverter {
                 ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
                         || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)
         ) {
-            throw new UnsupportedOperationException("todo: dead parameter conversion");
+            return convertDeadParameter(blockId, stmtBlock);
         } else if (converterChoices.containsKey(opcode)) {
             return converterChoices.get(opcode).convertStmt(blockId, stmtBlock);
         } else {
@@ -114,6 +119,22 @@ final class RawStmtConverter {
                 };
             }
         };
+    }
+
+    private ExpressionStmt convertDeadParameter(final RawBlockId blockId, final RawBlock.RawRegularBlock block) {
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
+        final String name = block.fields().get(Constants.VALUE_KEY).value().toString();
+
+        final Type type;
+        if (ProcedureOpcode.argument_reporter_boolean.name().equals(block.opcode())) {
+            type = new BooleanType();
+        } else {
+            type = new StringType();
+        }
+
+        final Parameter parameter = new Parameter(new StrId(name), type, metadata);
+
+        return new ExpressionStmt(parameter);
     }
 
     /**
