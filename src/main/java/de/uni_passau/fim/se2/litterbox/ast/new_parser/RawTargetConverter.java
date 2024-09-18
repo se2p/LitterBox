@@ -43,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
@@ -59,6 +60,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 final class RawTargetConverter {
@@ -279,12 +281,12 @@ final class RawTargetConverter {
                 final var name = new StringLiteral(Constants.TEMPO_KEY);
                 stmts.add(new DeclarationAttributeAsTypeStmt(name, new NumberType()));
             }
-            if (attrs.videoState() != null) {
-                final var name = new StringLiteral(Constants.VIDSTATE_KEY);
-                stmts.add(new DeclarationAttributeAsTypeStmt(name, new StringType()));
-            }
             if (attrs.videoTransparency() != null) {
                 final var name = new StringLiteral(Constants.VIDTRANSPARENCY_KEY);
+                stmts.add(new DeclarationAttributeAsTypeStmt(name, new NumberType()));
+            }
+            if (attrs.videoState() != null) {
+                final var name = new StringLiteral(Constants.VIDSTATE_KEY);
                 stmts.add(new DeclarationAttributeAsTypeStmt(name, new StringType()));
             }
             if (attrs.textToSpeechLanguage() != null) {
@@ -313,6 +315,8 @@ final class RawTargetConverter {
 
     private SetStmtList convertSetStmtList() {
         final List<SetStmt> setStmts = new ArrayList<>();
+
+        setStmts.addAll(convertActorAttributes(target));
 
         for (final RawList list : target.lists().values()) {
             final SetVariableTo setVariableTo = new SetVariableTo(
@@ -364,6 +368,67 @@ final class RawTargetConverter {
         }
 
         return expr;
+    }
+
+    private List<SetStmt> convertActorAttributes(final RawTarget target) {
+        final List<SetStmt> stmts = new ArrayList<>();
+
+        final BiConsumer<String, Double> addNumber = (name, value) -> {
+            final StringLiteral n = new StringLiteral(name);
+            final NumberLiteral v = new NumberLiteral(value);
+            stmts.add(new SetAttributeTo(n, v, new NoBlockMetadata()));
+        };
+        final BiConsumer<String, String> addString = (name, value) -> {
+            final StringLiteral n = new StringLiteral(name);
+            final StringLiteral v = new StringLiteral(value);
+            stmts.add(new SetAttributeTo(n, v, new NoBlockMetadata()));
+        };
+        final BiConsumer<String, Boolean> addBool = (name, value) -> {
+            final StringLiteral n = new StringLiteral(name);
+            final BoolLiteral v = new BoolLiteral(value);
+            stmts.add(new SetAttributeTo(n, v, new NoBlockMetadata()));
+        };
+
+        if (target.volume() != null) {
+            addNumber.accept(Constants.VOLUME_KEY, target.volume());
+        }
+        if (target.layerOrder() != null) {
+            addNumber.accept(Constants.LAYERORDER_KEY, target.layerOrder().doubleValue());
+        }
+
+        if (target.stageAttributes() != null && target.isStage()) {
+            final RawTarget.StageAttributes attrs = target.stageAttributes();
+
+            if (attrs.tempo() != null) {
+                addNumber.accept(Constants.TEMPO_KEY, attrs.tempo().doubleValue());
+            }
+            if (attrs.videoTransparency() != null) {
+                addNumber.accept(Constants.VIDTRANSPARENCY_KEY, attrs.videoTransparency());
+            }
+            if (attrs.videoState() != null) {
+                addString.accept(Constants.VIDSTATE_KEY, attrs.videoState());
+            }
+            if (attrs.textToSpeechLanguage() != null) {
+                addString.accept(Constants.TEXT_TO_SPEECH_KEY, attrs.textToSpeechLanguage());
+            }
+        }
+
+        if (target.spriteAttributes() != null && !target.isStage()) {
+            final RawTarget.SpriteAttributes attrs = target.spriteAttributes();
+
+            addBool.accept(Constants.VISIBLE_KEY, attrs.visible());
+            addNumber.accept(Constants.X_KEY, attrs.x());
+            addNumber.accept(Constants.Y_KEY, attrs.y());
+            addNumber.accept(Constants.SIZE_KEY, attrs.size());
+            addNumber.accept(Constants.DIRECTION_KEY, attrs.direction());
+            addBool.accept(Constants.DRAG_KEY, attrs.draggable());
+
+            if (attrs.rotationStyle() != null) {
+                addString.accept(Constants.ROTATIONSTYLE_KEY, attrs.rotationStyle());
+            }
+        }
+
+        return stmts;
     }
 
     private ProcedureDefinitionList convertProcDefs(final BlocksByOpcode blocks) {
