@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
@@ -99,11 +98,11 @@ final class NumExprConverter extends ExprConverter {
                 Double.parseDouble(s.value());
                 canBeParsedAsNumber = true;
             } catch (NumberFormatException e) {
-                // ignored, canBeParsedAsNumber already is false
+                // ignored, canBeParsedAsNumber false by default
             }
         }
 
-        return hasCorrectShadow(exprBlock) || canBeParsedAsNumber || hasCorrectType;
+        return hasCorrectShadow(exprBlock) && (canBeParsedAsNumber || hasCorrectType);
     }
 
     private static boolean hasNumExprOpcode(final RawTarget target, final RawInput exprBlock) {
@@ -136,7 +135,8 @@ final class NumExprConverter extends ExprConverter {
                     double parsed = Double.parseDouble(s.value());
                     return new NumberLiteral(parsed);
                 } catch (NumberFormatException e) {
-                    return new AsNumber(new StringLiteral(s.value()));
+                    // note: if the parseable as number check works, we should never end up here
+                    throw new InternalParsingException("Cannot parse number: " + s.value(), e);
                 }
             }
         }
