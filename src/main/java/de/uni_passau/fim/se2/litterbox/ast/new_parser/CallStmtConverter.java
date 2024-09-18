@@ -19,8 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
@@ -48,7 +50,12 @@ final class CallStmtConverter extends StmtConverter<CallStmt> {
 
             if (input != null) {
                 final Expression expr = ExprConverter.convertExpr(state, block, input);
-                expressions.add(expr);
+                if (expr instanceof UnspecifiedStringExpr) {
+                    // to make it identical to the old parser
+                    expressions.add(new UnspecifiedExpression());
+                } else {
+                    expressions.add(expr);
+                }
             } else {
                 expressions.add(new UnspecifiedBoolExpr());
             }
