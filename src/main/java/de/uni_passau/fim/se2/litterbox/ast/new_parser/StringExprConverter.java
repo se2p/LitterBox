@@ -50,7 +50,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
 import java.util.Collections;
-import java.util.Optional;
 
 final class StringExprConverter extends ExprConverter {
 
@@ -190,29 +189,17 @@ final class StringExprConverter extends ExprConverter {
         final RawBlockId listId = exprBlock.fields().get(Constants.LIST_KEY).id()
                 .orElseThrow(() -> new InternalParsingException("ItemOfVariable block is missing reference to list!"));
         final String listName = exprBlock.fields().get(Constants.LIST_KEY).value().toString();
-        final ExpressionListInfo listInfo = getListInfo(state, listId, listName);
+        final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
+                listId.id(), listName, state.getCurrentActor().getName(),
+                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
+        );
+
         final Identifier variable = new Qualified(
                 new StrId(listInfo.getActor()),
                 new ScratchList(new StrId(listInfo.getVariableName()))
         );
 
         return new ItemOfVariable(index, variable, metadata);
-    }
-
-    private static ExpressionListInfo getListInfo(
-            final ProgramParserState state, final RawBlockId listId, final String listName
-    ) {
-        final Optional<ExpressionListInfo> listInfo = state.getSymbolTable().getList(
-                listId.id(), listName, state.getCurrentActor().getName()
-        );
-        if (listInfo.isPresent()) {
-            return listInfo.get();
-        } else {
-            final ExpressionList content = new ExpressionList(Collections.emptyList());
-            return state.getSymbolTable().addExpressionListInfo(
-                    listId.id(), listName, content, true, state.getCurrentActor().getName()
-            );
-        }
     }
 
     private static AttributeOf parseSensingOf(
