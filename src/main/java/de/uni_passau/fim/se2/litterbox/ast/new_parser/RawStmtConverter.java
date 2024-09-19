@@ -166,7 +166,7 @@ final class RawStmtConverter {
         // mBlock extension blocks
         addOpcodes(choices, EmotionStmtOpcode.values(), new EmotionStmtConverter(state));
         addOpcodes(choices, LEDMatrixStmtOpcode.values(), new LedMatrixStmtConverter(state));
-        addOpcodes(choices, LEDStmtOpcode.values(), null);
+        addOpcodes(choices, LEDStmtOpcode.values(), new LedStmtConverter(state));
         addOpcodes(choices, SpeakerStmtOpcode.values(), null);
         addOpcodes(choices, RobotMoveStmtOpcode.values(), null);
         addOpcodes(choices, ResetStmtOpcode.values(), null);
