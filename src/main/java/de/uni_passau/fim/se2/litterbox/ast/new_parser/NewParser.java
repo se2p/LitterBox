@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawProject;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,8 +36,27 @@ public class NewParser {
 
     public Program parse(final Path projectJson) throws ParsingException {
         try {
-            final RawProject project = mapper.readValue(projectJson.toFile(), RawProject.class);
-            return RawProjectConverter.convert(project, getProjectName(projectJson));
+            final RawProject rawProject = mapper.readValue(projectJson.toFile(), RawProject.class);
+            final Program program = RawProjectConverter.convert(rawProject, getProjectName(projectJson));
+
+            final ParentVisitor v = new ParentVisitor();
+            program.accept(v);
+
+            return program;
+        } catch (IOException e) {
+            throw new ParsingException("Could not read project JSON!", e);
+        }
+    }
+
+    public Program parse(final String name, final String projectJson) throws ParsingException {
+        try {
+            final RawProject project = mapper.readValue(projectJson, RawProject.class);
+            final Program program = RawProjectConverter.convert(project, name);
+
+            final ParentVisitor v = new ParentVisitor();
+            program.accept(v);
+
+            return program;
         } catch (IOException e) {
             throw new ParsingException("Could not read project JSON!", e);
         }
