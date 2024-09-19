@@ -30,11 +30,9 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 
 final class RawScriptConverter {
@@ -123,14 +121,18 @@ final class RawScriptConverter {
                         final Stmt stmt = stmtConverter.convertStmt(currentId, currentBlock);
                         stmts.add(stmt);
                     } catch (InternalParsingException e) {
-                        log.warning(
-                                "Skipping block with ID '"
-                                        + currentId.id()
-                                        + "' and opcode '"
-                                        + opcode
-                                        + "'. Ignoring this block. Problem: "
-                                        + e.getMessage()
-                        );
+                        if (PropertyLoader.getSystemBooleanProperty("parser.skip_broken_blocks")) {
+                            log.warning(
+                                    "Skipping block with ID '"
+                                            + currentId.id()
+                                            + "' and opcode '"
+                                            + opcode
+                                            + "'. Ignoring this block. Problem: "
+                                            + e.getMessage()
+                            );
+                        } else {
+                            throw e;
+                        }
                     }
 
                     currentId = regularBlock.next().orElse(null);
