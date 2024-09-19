@@ -249,7 +249,14 @@ final class StringExprConverter extends ExprConverter {
 
         if (menuBlock instanceof RawBlock.RawRegularBlock menuRegularBlock) {
             if (DependentBlockOpcode.sensing_of_object_menu.getName().equalsIgnoreCase(menuRegularBlock.opcode())) {
-                final String actorName = menuRegularBlock.fields().get(Constants.OBJECT_KEY).value().toString();
+                final RawField field = menuRegularBlock.fields().get(Constants.OBJECT_KEY);
+                if (field.value() == null) {
+                    throw new InternalParsingException(
+                            "Invalid project file. Menu for sensing_of block has no value."
+                    );
+                }
+
+                final String actorName = field.value().toString();
                 return new WithExpr(new StrId(actorName), menuMetadata);
             } else {
                 final Expression expr = ExprConverter.convertExpr(
