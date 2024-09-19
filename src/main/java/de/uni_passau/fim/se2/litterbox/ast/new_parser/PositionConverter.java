@@ -28,10 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.BlockRef;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.ShadowType;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
@@ -77,7 +74,15 @@ final class PositionConverter {
             final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
                     menuIdRef.id(), positionBlock
             );
-            final String positionName = positionBlock.fields().get(inputKey).value().toString();
+
+            final RawField field = positionBlock.fields().get(inputKey);
+            if (field.value() == null) {
+                throw new InternalParsingException(
+                        "Invalid project file. Menu for '" + block.opcode() + "' block has no value."
+                );
+            }
+
+            final String positionName = field.value().toString();
 
             return switch (positionName) {
                 case Constants.MOUSE -> new MousePos(metadata);
