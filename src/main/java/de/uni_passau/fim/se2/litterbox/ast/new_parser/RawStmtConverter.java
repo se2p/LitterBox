@@ -164,7 +164,7 @@ final class RawStmtConverter {
         addOpcodes(choices, TextToSpeechOpcode.values(), new TextToSpeechStmtConverter(state));
         addOpcodes(choices, MusicOpcode.values(), new MusicStmtConverter(state));
         // mBlock extension blocks
-        addOpcodes(choices, EmotionStmtOpcode.values(), null);
+        addOpcodes(choices, EmotionStmtOpcode.values(), new EmotionStmtConverter(state));
         addOpcodes(choices, LEDMatrixStmtOpcode.values(), null);
         addOpcodes(choices, LEDStmtOpcode.values(), null);
         addOpcodes(choices, SpeakerStmtOpcode.values(), null);
