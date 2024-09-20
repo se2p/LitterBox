@@ -170,7 +170,7 @@ final class RawStmtConverter {
         addOpcodes(choices, SpeakerStmtOpcode.values(), new SpeakerStmtConverter(state));
         addOpcodes(choices, RobotMoveStmtOpcode.values(), new RobotMoveStmtConverter(state));
         addOpcodes(choices, ResetStmtOpcode.values(), new ResetStmtConverter(state));
-        addOpcodes(choices, IRStmtOpcode.values(), null);
+        addOpcodes(choices, IRStmtOpcode.values(), new IrStmtConverter(state));
 
         return choices;
     }
