@@ -207,7 +207,7 @@ final class BoolExprConverter extends ExprConverter {
             case event_connect_rocky -> new ConnectRobot(metadata);
             case event_is_shaked -> new RobotShaken(metadata);
             case event_is_tilt -> {
-                final String direction = block.getFieldValueAsString(KnownFields.ORIENTATE);
+                final String direction = block.getFieldValueAsString(KnownFields.DIRECTION);
                 final RobotDirection robotDirection = new RobotDirection(direction);
                 yield new RobotTilted(robotDirection, metadata);
             }
