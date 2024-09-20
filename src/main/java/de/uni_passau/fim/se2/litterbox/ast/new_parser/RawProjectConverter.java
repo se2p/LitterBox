@@ -65,6 +65,12 @@ final class RawProjectConverter {
 
     Program convert() {
         final LocalIdentifier id = new StrId(projectName);
+
+        final long stageCount = project.targets().stream().filter(RawTarget::isStage).count();
+        if (stageCount != 1) {
+            throw new InternalParsingException("Expected exactly one stage. Got " + stageCount + ".");
+        }
+
         final List<ActorDefinition> actors = project.targets().stream()
                 .map(target -> RawTargetConverter.convertTarget(parserState, target))
                 .toList();
