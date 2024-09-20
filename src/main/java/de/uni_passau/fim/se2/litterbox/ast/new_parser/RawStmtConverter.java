@@ -81,6 +81,9 @@ final class RawStmtConverter {
             return convertDeadParameter(blockId, stmtBlock);
         } else if (converterChoices.containsKey(opcode)) {
             return converterChoices.get(opcode).convertStmt(blockId, stmtBlock);
+        } else if (converterChoices.containsKey(Opcode.removePrefix(opcode))) {
+            final String withoutMBlockPrefix = Opcode.removePrefix(opcode);
+            return converterChoices.get(withoutMBlockPrefix).convertStmt(blockId, stmtBlock);
         } else {
             if (PropertyLoader.getSystemBooleanProperty("parser.log_unknown_opcode")) {
                 log.warning("Block with ID '" + blockId + "' has unknown opcode '" + opcode + "'. ");
