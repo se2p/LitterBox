@@ -75,7 +75,8 @@ final class RawProjectConverter {
     }
 
     private ProgramMetadata convertMetadata() {
-        final List<MonitorMetadata> monitorMetadataList = project.monitors().stream()
+        final List<RawMonitor> monitors = Objects.requireNonNullElse(project.monitors(), Collections.emptyList());
+        final List<MonitorMetadata> monitorMetadataList = monitors.stream()
                 .map(this::convertMonitor)
                 .toList();
         final MonitorMetadataList monitorMetadata = new MonitorMetadataList(monitorMetadataList);
