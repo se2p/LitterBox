@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
@@ -77,14 +78,14 @@ final class ActorLookStmtConverter extends StmtConverter<ActorLookStmt> {
                 final NumExpr numExpr = NumExprConverter.convertNumExpr(
                         state, stmtBlock, stmtBlock.inputs().get(Constants.CHANGE_KEY)
                 );
-                final String effectName = stmtBlock.fields().get(Constants.EFFECT_KEY).value().toString();
+                final String effectName = stmtBlock.getFieldValueAsString(KnownFields.EFFECT);
                 yield new ChangeGraphicEffectBy(new GraphicEffect(effectName), numExpr, metadata);
             }
             case looks_seteffectto -> {
                 final NumExpr numExpr = NumExprConverter.convertNumExpr(
                         state, stmtBlock, stmtBlock.inputs().get(Constants.VALUE_KEY)
                 );
-                final String effectName = stmtBlock.fields().get(Constants.EFFECT_KEY).value().toString();
+                final String effectName = stmtBlock.getFieldValueAsString(KnownFields.EFFECT);
                 final GraphicEffect effect = new GraphicEffect(effectName);
                 yield new SetGraphicEffectTo(effect, numExpr, metadata);
             }

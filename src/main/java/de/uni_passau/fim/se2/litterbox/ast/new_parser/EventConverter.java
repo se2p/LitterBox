@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotD
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
@@ -38,10 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 class EventConverter {
 
-    private static final String BCAST_OPTION = "BROADCAST_OPTION";
     private static final String BRIGHTNESS_KEY = "BRIGHTNESS";
-    private static final String MENU_LIST_KEY = "MENU_LIST";
-    private static final String PRESSED_KEY = "IS_PRESS";
 
     private EventConverter() {
         throw new IllegalCallerException("utility class constructor");
@@ -63,12 +61,12 @@ class EventConverter {
             case when_board_launch, main -> new BoardLaunch(metadata);
             case when_board_shake -> new BoardShaken(metadata);
             case event_whenbroadcastreceived -> {
-                final String message = event.fields().get(BCAST_OPTION).value().toString();
+                final String message = event.getFieldValueAsString(KnownFields.BROADCAST_OPTION);
                 final Message msg = new Message(new StringLiteral(message));
                 yield new ReceptionOfMessage(msg, metadata);
             }
             case event_whenbackdropswitchesto -> {
-                final String backdropName = event.fields().get(Constants.BACKDROP_INPUT).value().toString();
+                final String backdropName = event.getFieldValueAsString(KnownFields.BACKDROP);
                 final StrId backdropId = new StrId(backdropName);
                 yield new BackdropSwitchTo(backdropId, metadata);
             }
@@ -77,7 +75,7 @@ class EventConverter {
                 yield new KeyPressed(key, metadata);
             }
             case event_whengreaterthan -> {
-                final String attributeName = event.fields().get(Constants.WHEN_GREATER_THAN_MENU).value().toString();
+                final String attributeName = event.getFieldValueAsString(KnownFields.WHEN_GREATER_THAN_MENU);
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
                 final NumExpr value = NumExprConverter.convertNumExpr(
                         state, event, event.inputs().get(Constants.VALUE_KEY)
@@ -85,7 +83,7 @@ class EventConverter {
                 yield new AttributeAboveValue(attr, value, metadata);
             }
             case when_volume_over -> {
-                final String attributeName = event.fields().get(MENU_LIST_KEY).value().toString();
+                final String attributeName = event.getFieldValueAsString(KnownFields.MENU_LIST);
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
                 final NumExpr value = NumExprConverter.convertNumExpr(
                         state, event, event.inputs().get(Constants.VALUE_KEY)
@@ -93,17 +91,17 @@ class EventConverter {
                 yield new AttributeAboveValue(attr, value, metadata);
             }
             case when_button_press -> {
-                final String buttonName = event.fields().get(Constants.BUTTONS_KEY).value().toString();
+                final String buttonName = event.getFieldValueAsString(KnownFields.BUTTONS);
                 final RobotButton button = new RobotButton(buttonName);
                 yield new LaunchButton(button, metadata);
             }
             case when_board_button -> {
-                final String pressedState = event.fields().get(PRESSED_KEY).value().toString();
+                final String pressedState = event.getFieldValueAsString(KnownFields.IS_PRESSED);
                 final PressedState pressed = new PressedState(pressedState);
                 yield new BoardButtonAction(pressed, metadata);
             }
             case when_board_tilt -> {
-                final String directionName = event.fields().get(Constants.DIRECTION_KEY_CAP).value().toString();
+                final String directionName = event.getFieldValueAsString(KnownFields.DIRECTION);
                 final RobotDirection direction = new RobotDirection(directionName);
                 yield new BoardTilted(direction, metadata);
             }

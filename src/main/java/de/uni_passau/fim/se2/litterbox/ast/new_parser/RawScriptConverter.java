@@ -120,7 +120,7 @@ final class RawScriptConverter {
                     try {
                         final Stmt stmt = stmtConverter.convertStmt(currentId, currentBlock);
                         stmts.add(stmt);
-                    } catch (InternalParsingException e) {
+                    } catch (InternalParsingException | IllegalArgumentException e) {
                         if (PropertyLoader.getSystemBooleanProperty("parser.skip_broken_blocks")) {
                             log.warning(
                                     "Skipping block with ID '"

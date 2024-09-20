@@ -96,7 +96,7 @@ final class ConverterUtilities {
 
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(touchedId.id(), touchedTarget);
 
-        final RawField field = touchedTarget.fields().get(Constants.TOUCHINGOBJECTMENU);
+        final RawField field = touchedTarget.getField(KnownFields.TOUCHINGOBJECTMENU);
         if (field.value() == null) {
             // todo: temporary fix to make the AST match the old parser
             return new SpriteTouchable(new StringLiteral("null"), metadata);
@@ -160,8 +160,7 @@ final class ConverterUtilities {
             final RawBlockId menuBlockId, final RawBlock.RawRegularBlock menuBlock
     ) {
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuBlockId, menuBlock);
-        final RawField reference = menuBlock.fields().get(Constants.BACKDROP_INPUT);
-        final String choiceName = reference.value().toString();
+        final String choiceName = menuBlock.getFieldValueAsString(KnownFields.BACKDROP);
 
         return switch (choiceName) {
             case "next backdrop" -> new Next(metadata);

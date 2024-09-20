@@ -176,11 +176,11 @@ final class StringExprConverter extends ExprConverter {
                 yield new LetterOf(num, word, metadata);
             }
             case looks_costumenumbername -> {
-                final String name = block.fields().get(Constants.NUMBER_NAME_KEY).value().toString();
+                final String name = block.getFieldValueAsString(KnownFields.NUMBER_NAME);
                 yield new Costume(new NameNum(name), metadata);
             }
             case looks_backdropnumbername -> {
-                final String name = block.fields().get(Constants.NUMBER_NAME_KEY).value().toString();
+                final String name = block.getFieldValueAsString(KnownFields.NUMBER_NAME);
                 yield new Backdrop(new NameNum(name), metadata);
             }
             case data_itemoflist -> parseItemOfList(state, metadata, block);
@@ -196,9 +196,9 @@ final class StringExprConverter extends ExprConverter {
         final NumExpr index = NumExprConverter.convertNumExpr(
                 state, exprBlock, exprBlock.inputs().get(Constants.INDEX_KEY)
         );
-        final RawBlockId listId = exprBlock.fields().get(Constants.LIST_KEY).id()
+        final RawBlockId listId = exprBlock.getField(KnownFields.LIST).id()
                 .orElseThrow(() -> new InternalParsingException("ItemOfVariable block is missing reference to list!"));
-        final String listName = exprBlock.fields().get(Constants.LIST_KEY).value().toString();
+        final String listName = exprBlock.getFieldValueAsString(KnownFields.LIST);
         final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
                 listId.id(), listName, state.getCurrentActor().getName(),
                 () -> new ExpressionList(Collections.emptyList()), true, "Stage"
@@ -217,7 +217,7 @@ final class StringExprConverter extends ExprConverter {
             final BlockMetadata metadata,
             final RawBlock.RawRegularBlock exprBlock
     ) {
-        final String property = exprBlock.fields().get("PROPERTY").value().toString();
+        final String property = exprBlock.getFieldValueAsString(KnownFields.PROPERTY);
         final Attribute attribute = switch (property) {
             case "y position", "x position", "direction", "costume #", "costume name", "size", "volume",
                  "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(property));
@@ -249,7 +249,7 @@ final class StringExprConverter extends ExprConverter {
 
         if (menuBlock instanceof RawBlock.RawRegularBlock menuRegularBlock) {
             if (DependentBlockOpcode.sensing_of_object_menu.getName().equalsIgnoreCase(menuRegularBlock.opcode())) {
-                final RawField field = menuRegularBlock.fields().get(Constants.OBJECT_KEY);
+                final RawField field = menuRegularBlock.getField(KnownFields.OBJECT);
                 if (field.value() == null) {
                     throw new InternalParsingException(
                             "Invalid project file. Menu for sensing_of block has no value."
@@ -278,8 +278,7 @@ final class StringExprConverter extends ExprConverter {
                 && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock languageMenuBlock
                 && DependentBlockOpcode.translate_menu_languages.getName().equals(languageMenuBlock.opcode())
         ) {
-            final RawField languageField = languageMenuBlock.fields().get(Constants.LANGUAGE_FIELDS_KEY);
-            final String languageName = languageField.value().toString();
+            final String languageName = languageMenuBlock.getFieldValueAsString(KnownFields.LANGUAGES);
             final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
                     blockIdRef.id(), languageMenuBlock
             );

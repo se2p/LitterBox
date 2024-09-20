@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDPos
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.LEDStmtOpcode;
@@ -33,8 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class LedStmtConverter extends StmtConverter<LEDStmt> {
 
-    private static final String COLORLIST_KEY = "COLORLIST";
-    private static final String LED_POSITION_KEY = "LED_POSTION";   // spelling error in mBlock
     private static final String RED_KEY = "R";
     private static final String GREEN_KEY = "G";
     private static final String BLUE_KEY = "B";
@@ -79,7 +78,7 @@ final class LedStmtConverter extends StmtConverter<LEDStmt> {
 
                     yield new RGBValuesPosition(ledPosition, red, green, blue, metadata);
                 } else {
-                    final String rgbName = block.fields().get(Constants.RGB_KEY).value().toString();
+                    final String rgbName = block.getFieldValueAsString(KnownFields.RGB);
                     final RGB rgb = new RGB(rgbName);
                     final NumExpr value = NumExprConverter.convertNumExpr(
                             state, block, block.inputs().get(Constants.VALUE_KEY)
@@ -90,7 +89,7 @@ final class LedStmtConverter extends StmtConverter<LEDStmt> {
             }
             case turn_off_led -> new LEDOff(metadata);
             case rocky_show_led_color -> {
-                final String colorName = block.fields().get(COLORLIST_KEY).value().toString();
+                final String colorName = block.getFieldValueAsString(KnownFields.COLORLIST);
                 final LEDColor color = new LEDColor(colorName);
                 yield new RockyLight(color, metadata);
             }
@@ -105,7 +104,7 @@ final class LedStmtConverter extends StmtConverter<LEDStmt> {
     }
 
     private LEDPosition getLedPosition(final RawBlock.RawRegularBlock block) {
-        final String positionName = block.fields().get(LED_POSITION_KEY).value().toString();
+        final String positionName = block.getFieldValueAsString(KnownFields.LED_POSITION);
         return new LEDPosition(positionName);
     }
 

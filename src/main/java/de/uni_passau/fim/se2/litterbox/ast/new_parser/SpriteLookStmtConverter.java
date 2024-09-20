@@ -94,12 +94,12 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
                 yield new SetSizeTo(size, metadata);
             }
             case looks_gotofrontback -> {
-                final String option = block.fields().get("FRONT_BACK").value().toString();
+                final String option = block.getFieldValueAsString(KnownFields.FRONT_BACK);
                 final LayerChoice choice = new LayerChoice(option);
                 yield new GoToLayer(choice, metadata);
             }
             case looks_goforwardbackwardlayers -> {
-                final String layerOption =  block.fields().get("FORWARD_BACKWARD").value().toString();
+                final String layerOption =  block.getFieldValueAsString(KnownFields.FORWARD_BACKWARD);
                 final ForwardBackwardChoice choice = new ForwardBackwardChoice(layerOption);
                 final NumExpr numExpr = NumExprConverter.convertNumExpr(
                         state, block, block.inputs().get(Constants.NUM_KEY)
@@ -130,7 +130,7 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
             throw new InternalParsingException("Unknown menu representation.");
         }
 
-        final String elementName = menuBlock.fields().get(Constants.COSTUME_INPUT).value().toString();
+        final String elementName = menuBlock.getFieldValueAsString(KnownFields.COSTUME);
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuRef, menu);
 
         return new WithExpr(new StrId(elementName), metadata);

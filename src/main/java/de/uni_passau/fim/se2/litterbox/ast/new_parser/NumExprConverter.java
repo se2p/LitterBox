@@ -222,7 +222,8 @@ final class NumExprConverter extends ExprConverter {
             }
             // others
             case operator_mathop -> {
-                final NumFunct function = convertNumberFunction(block.fields().get(Constants.OPERATOR_KEY));
+                final String functionName = block.getFieldValueAsString(KnownFields.OPERATOR);
+                final NumFunct function = new NumFunct(functionName);
                 final NumExpr expr = convertNumExpr(state, block, block.inputs().get(Constants.NUM_KEY));
                 yield new NumFunctOf(function, expr, metadata);
             }
@@ -248,35 +249,30 @@ final class NumExprConverter extends ExprConverter {
                 yield new DistanceTo(position, metadata);
             }
             case rocky_detect_rgb -> {
-                final String rgbName = block.fields().get(Constants.RGB_KEY).value().toString();
+                final String rgbName = block.getFieldValueAsString(KnownFields.RGB);
                 final RGB rgb = new RGB(rgbName);
                 yield new DetectRGBValue(rgb, metadata);
             }
             case detect_external_light -> {
-                final String portId = block.fields().get(Constants.PORT_KEY).value().toString();
+                final String portId = block.getFieldValueAsString(KnownFields.PORT);
                 final MCorePort port = new MCorePort(portId);
                 yield new DetectAmbientLightPort(port, metadata);
             }
             case detect_external_ultrasonic -> {
-                final String portId = block.fields().get(Constants.PORT_KEY).value().toString();
+                final String portId = block.getFieldValueAsString(KnownFields.PORT);
                 final MCorePort port = new MCorePort(portId);
                 yield new DetectDistancePort(port, metadata);
             }
             case detect_external_linefollower -> {
-                final String portId = block.fields().get(Constants.PORT_KEY).value().toString();
+                final String portId = block.getFieldValueAsString(KnownFields.PORT);
                 final MCorePort port = new MCorePort(portId);
                 yield new DetectLinePort(port, metadata);
             }
         };
     }
 
-    private static NumFunct convertNumberFunction(final RawField numberFunction) {
-        final String opcode = numberFunction.value().toString();
-        return new NumFunct(opcode);
-    }
-
     private static ExpressionListInfo getList(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
-        final RawField listField = block.fields().get(Constants.LIST_KEY);
+        final RawField listField = block.getField(KnownFields.LIST);
         final RawBlockId listId = listField.id()
                 .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
         final String listName = listField.value().toString();
@@ -288,7 +284,7 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static TimeComp getTimeComp(final RawBlock.RawRegularBlock sensingCurrentBlock) {
-        final String currentString = sensingCurrentBlock.fields().get("CURRENTMENU").value().toString();
+        final String currentString = sensingCurrentBlock.getFieldValueAsString(KnownFields.CURRENTMENU);
         return new TimeComp(currentString.toLowerCase());
     }
 }

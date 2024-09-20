@@ -50,11 +50,11 @@ final class PositionConverter {
         if (SpriteMotionStmtOpcode.motion_goto.name().equals(block.opcode())
                 || SpriteMotionStmtOpcode.motion_glideto.name().equals(block.opcode())
         ) {
-            return convertPositionInput(state, block, Constants.TO_KEY);
+            return convertPositionInput(state, block, Constants.TO_KEY, KnownFields.TO);
         } else if (SpriteMotionStmtOpcode.motion_pointtowards.name().equals(block.opcode())) {
-            return convertPositionInput(state, block, Constants.TOWARDS_KEY);
+            return convertPositionInput(state, block, Constants.TOWARDS_KEY, KnownFields.TOWARDS);
         } else if (NumExprOpcode.sensing_distanceto.name().equals(block.opcode())) {
-            return convertPositionInput(state, block, Constants.DISTANCETOMENU_KEY);
+            return convertPositionInput(state, block, Constants.DISTANCETOMENU_KEY, KnownFields.DISTANCE_TO_MENU);
         } else {
             throw new InternalParsingException(
                     "Did not expect block type '" + block.opcode() + "' to contain a reference to a relative position."
@@ -63,7 +63,10 @@ final class PositionConverter {
     }
 
     private static Position convertPositionInput(
-            final ProgramParserState state, final RawBlock.RawRegularBlock block, final String inputKey
+            final ProgramParserState state,
+            final RawBlock.RawRegularBlock block,
+            final String inputKey,
+            final KnownFields fieldKey
     ) {
         final RawInput positionInput = block.inputs().get(inputKey);
 
@@ -75,7 +78,7 @@ final class PositionConverter {
                     menuIdRef.id(), positionBlock
             );
 
-            final RawField field = positionBlock.fields().get(inputKey);
+            final RawField field = positionBlock.getField(fieldKey);
             if (field.value() == null) {
                 throw new InternalParsingException(
                         "Invalid project file. Menu for '" + block.opcode() + "' block has no value."

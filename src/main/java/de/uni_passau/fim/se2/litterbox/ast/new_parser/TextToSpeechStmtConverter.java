@@ -70,7 +70,7 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
                 && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.text2speech_menu_languages.getName().equals(menuBlock.opcode())
         ) {
-            final String languageName = menuBlock.fields().get(Constants.LANGUAGE_FIELDS_KEY).value().toString();
+            final String languageName = menuBlock.getFieldValueAsString(KnownFields.LANGUAGES);
             final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
             language = new FixedLanguage(languageName, menuMeta);
         } else {
@@ -90,7 +90,7 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
                 && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.text2speech_menu_voices.getName().equals(menuBlock.opcode())
         ) {
-            final String voiceName = menuBlock.fields().get(Constants.VOICE_FIELDS_KEY).value().toString();
+            final String voiceName = menuBlock.getFieldValueAsString(KnownFields.VOICES);
             final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
             voice = new FixedVoice(voiceName, menuMeta);
         } else {

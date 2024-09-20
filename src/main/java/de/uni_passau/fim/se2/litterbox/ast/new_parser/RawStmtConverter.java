@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
@@ -32,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
@@ -93,14 +93,14 @@ final class RawStmtConverter {
     }
 
     private boolean isTerminationStmt(final RawBlock.RawRegularBlock stmt) {
-        final boolean hasStopOption = stmt.fields().containsKey(STOP_OPTION);
+        final boolean hasStopOption = stmt.hasField(KnownFields.STOP_OPTION);
         final boolean otherScriptsExist = hasStopOption && referencesStopOthers(stmt);
 
         return TerminationStmtOpcode.contains(stmt.opcode()) && !otherScriptsExist;
     }
 
     private boolean referencesStopOthers(final RawBlock.RawRegularBlock stmt) {
-        final String stopOptionValue = stmt.fields().get(STOP_OPTION).value().toString();
+        final String stopOptionValue = stmt.getFieldValueAsString(KnownFields.STOP_OPTION);
         return "other scripts in sprite".equals(stopOptionValue) || "other scripts in stage".equals(stopOptionValue);
     }
 
@@ -111,7 +111,7 @@ final class RawStmtConverter {
         return switch (opcode) {
             case control_delete_this_clone -> new DeleteClone(metadata);
             case control_stop -> {
-                final String stopOption = stmt.fields().get(Constants.STOP_OPTION).value().toString();
+                final String stopOption = stmt.getFieldValueAsString(KnownFields.STOP_OPTION);
                 yield switch (stopOption) {
                     case "all" -> new StopAll(metadata);
                     case "this script" -> new StopThisScript(metadata);
@@ -123,7 +123,7 @@ final class RawStmtConverter {
 
     private ExpressionStmt convertDeadParameter(final RawBlockId blockId, final RawBlock.RawRegularBlock block) {
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
-        final String name = block.fields().get(Constants.VALUE_KEY).value().toString();
+        final String name = block.getFieldValueAsString(KnownFields.VALUE);
 
         final Type type;
         if (ProcedureOpcode.argument_reporter_boolean.name().equals(block.opcode())) {

@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.SoundL
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.SoundNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.speaker.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.SpeakerStmtOpcode;
@@ -31,11 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class SpeakerStmtConverter extends StmtConverter<SpeakerStmt> {
 
-    private static final String SOUNDLIST_KEY = "SOUNDLIST";
     private static final String SOUNDBEAT_KEY = "SOUNDBEAT";
-    private static final String SOUNDNOTE_KEY = "SOUNDNOTE";
     private static final String HZ_KEY = "HZ";
-    private static final String NOTE_KEY = "NOTE";
     private static final String BEAT_KEY = "BEAT";
 
     SpeakerStmtConverter(final ProgramParserState state) {
@@ -49,15 +47,15 @@ final class SpeakerStmtConverter extends StmtConverter<SpeakerStmt> {
 
         return switch (opcode) {
             case show_stop_allsound -> new StopAllSounds2(metadata);
-            case show_play_note_with_string -> getPlayNote(block, metadata, SOUNDNOTE_KEY, SOUNDBEAT_KEY);
-            case sound_play_note -> getPlayNote(block, metadata, NOTE_KEY, BEAT_KEY);
+            case show_play_note_with_string -> getPlayNote(block, metadata, KnownFields.SOUNDNOTE, SOUNDBEAT_KEY);
+            case sound_play_note -> getPlayNote(block, metadata, KnownFields.NOTE, BEAT_KEY);
             case show_play_sound -> {
-                final String name = block.fields().get(SOUNDLIST_KEY).value().toString();
+                final String name = block.getFieldValueAsString(KnownFields.SOUNDLIST);
                 final SoundList soundList = new SoundList(name);
                 yield new PlaySound(soundList, metadata);
             }
             case show_play_sound_wait -> {
-                final String name = block.fields().get(SOUNDLIST_KEY).value().toString();
+                final String name = block.getFieldValueAsString(KnownFields.SOUNDLIST);
                 final SoundList soundList = new SoundList(name);
                 yield new PlaySoundWait(soundList, metadata);
             }
@@ -92,10 +90,10 @@ final class SpeakerStmtConverter extends StmtConverter<SpeakerStmt> {
     private PlayNote getPlayNote(
             final RawBlock.RawRegularBlock block,
             final BlockMetadata metadata,
-            final String noteKey,
+            final KnownFields noteKey,
             final String beatKey
     ) {
-        final String noteName = block.fields().get(noteKey).value().toString();
+        final String noteName = block.getFieldValueAsString(noteKey);
         final SoundNote note = new SoundNote(noteName);
         final NumExpr beat = NumExprConverter.convertNumExpr(state, block, block.inputs().get(beatKey));
 

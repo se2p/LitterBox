@@ -46,12 +46,6 @@ import java.util.Collections;
 
 final class BoolExprConverter extends ExprConverter {
 
-    private static final String ORIENTATE_CAP = "ORIENTATE";
-    private static final String LINE_FOLLOW_STATE_KEY = "LINEFOLLOW_STATE";
-    private static final String BLACK_WHITE_KEY = "BLACK_WHITE";
-    private static final String OPTION_KEY = "OPTION";
-    private static final String REMOTE_KEY_KEY = "REMOTE_KEY";
-
     private BoolExprConverter() {
         throw new IllegalCallerException("utility class constructor");
     }
@@ -189,7 +183,7 @@ final class BoolExprConverter extends ExprConverter {
                 yield new StringContains(containing, contained, metadata);
             }
             case data_listcontainsitem -> {
-                final RawField listField = block.fields().get(Constants.LIST_KEY);
+                final RawField listField = block.getField(KnownFields.LIST);
                 final RawBlockId listId = listField.id()
                         .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
                 final String listName = listField.value().toString();
@@ -212,47 +206,43 @@ final class BoolExprConverter extends ExprConverter {
                 yield new LEDMatrixPosition(x, y, metadata);
             }
             case event_button_pressed -> {
-                final String buttonName = block.fields().get(Constants.BUTTONS_KEY).value().toString();
+                final String buttonName = block.getFieldValueAsString(KnownFields.BUTTONS);
                 final RobotButton button = new RobotButton(buttonName);
                 yield new RobotButtonPressed(button, metadata);
             }
             case event_connect_rocky -> new ConnectRobot(metadata);
             case event_is_shaked -> new RobotShaken(metadata);
             case event_is_tilt -> {
-                final String direction = block.fields().get(ORIENTATE_CAP).value().toString();
+                final String direction = block.getFieldValueAsString(KnownFields.ORIENTATE);
                 final RobotDirection robotDirection = new RobotDirection(direction);
                 yield new RobotTilted(robotDirection, metadata);
             }
             case event_is_orientate_to -> {
-                final String direction = block.fields().get(ORIENTATE_CAP).value().toString();
+                final String direction = block.getFieldValueAsString(KnownFields.ORIENTATE);
                 final PadOrientation orientation = new PadOrientation(direction);
                 yield new OrientateTo(orientation, metadata);
             }
             case rocky_event_obstacles_ahead -> new ObstaclesAhead(metadata);
             case event_is_color -> {
-                final String colorName = block.fields().get(Constants.COLOR_KEY).value().toString();
+                final String colorName = block.getFieldValueAsString(KnownFields.COLOR);
                 final LEDColor color = new LEDColor(colorName);
                 yield new SeeColor(color, metadata);
             }
             case event_external_linefollower -> {
-                final MCorePort port = new MCorePort(
-                        block.fields().get(Constants.PORT_KEY).value().toString()
-                );
+                final MCorePort port = new MCorePort(block.getFieldValueAsString(KnownFields.PORT));
                 final LineFollowState followState = new LineFollowState(
-                        block.fields().get(LINE_FOLLOW_STATE_KEY).value().toString()
+                        block.getFieldValueAsString(KnownFields.LINE_FOLLOW_STATE)
                 );
-                final BlackWhite bw = new BlackWhite(
-                        block.fields().get(BLACK_WHITE_KEY).value().toString()
-                );
+                final BlackWhite bw = new BlackWhite(block.getFieldValueAsString(KnownFields.BLACK_WHITE));
                 yield new PortOnLine(port, followState, bw, metadata);
             }
             case event_board_button_pressed -> {
-                final String buttonName = block.fields().get(OPTION_KEY).value().toString();
+                final String buttonName = block.getFieldValueAsString(KnownFields.OPTION);
                 final PressedState button = new PressedState(buttonName);
                 yield new BoardButtonPressed(button, metadata);
             }
             case event_ir_remote -> {
-                final String irButtonName = block.fields().get(REMOTE_KEY_KEY).value().toString();
+                final String irButtonName = block.getFieldValueAsString(KnownFields.REMOTE_KEY);
                 final IRRemoteButton button = new IRRemoteButton(irButtonName);
                 yield new IRButtonPressed(button, metadata);
             }

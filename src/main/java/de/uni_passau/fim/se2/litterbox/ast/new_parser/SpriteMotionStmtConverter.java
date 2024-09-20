@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
@@ -99,12 +100,12 @@ final class SpriteMotionStmtConverter extends StmtConverter<SpriteMotionStmt> {
             }
             case motion_ifonedgebounce -> new IfOnEdgeBounce(metadata);
             case motion_setrotationstyle -> {
-                final String rotation = block.fields().get(Constants.STYLE_KEY).value().toString();
+                final String rotation = block.getFieldValueAsString(KnownFields.STYLE);
                 final RotationStyle rotationStyle = new RotationStyle(rotation);
                 yield new SetRotationStyle(rotationStyle, metadata);
             }
             case sensing_setdragmode -> {
-                final String drag = block.fields().get(Constants.DRAGMODE_KEY).value().toString();
+                final String drag = block.getFieldValueAsString(KnownFields.DRAG_MODE);
                 final DragMode dragMode = new DragMode(drag);
                 yield new SetDragMode(dragMode, metadata);
             }

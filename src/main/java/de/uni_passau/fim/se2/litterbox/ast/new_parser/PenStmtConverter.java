@@ -99,8 +99,8 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
                 && state.getBlock(colorParamMenuRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.pen_menu_colorParam.getName().equals(menuBlock.opcode())
         ) {
-            final RawField colorField = menuBlock.fields().get(Constants.COLOR_PARAM_LITTLE_KEY);
-            final StringExpr color = new StringLiteral(colorField.value().toString());
+            final String colorField = menuBlock.getFieldValueAsString(KnownFields.COLOR_PARAM);
+            final StringExpr color = new StringLiteral(colorField);
             final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
                     colorParamMenuRef.id(), menuBlock
             );

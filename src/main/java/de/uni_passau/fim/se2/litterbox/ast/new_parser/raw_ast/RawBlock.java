@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @JsonDeserialize(using = RawBlockDeserializer.class)
 public sealed interface RawBlock {
@@ -38,7 +39,57 @@ public sealed interface RawBlock {
             double y,
             Optional<RawBlockId> comment,
             Optional<RawMutation> mutation
-    ) implements RawBlock {}
+    ) implements RawBlock {
+        public boolean hasField(final KnownFields field) {
+            return fields.containsKey(field.getName());
+        }
+
+        /**
+         * Gets the block field.
+         *
+         * @param field The type of the field.
+         * @return The field, if this block has it.
+         * @throws IllegalArgumentException In case this block does not have the requested field.
+         */
+        public RawField getField(final KnownFields field) throws IllegalArgumentException {
+            final RawField f = fields.get(field.getName());
+
+            if (f == null) {
+                throw new IllegalArgumentException("Block '" + opcode + "' has no field '" + field.getName() + "'.");
+            }
+
+            return f;
+        }
+
+        /**
+         * Gets the field value as String.
+         *
+         * <p>Most block fields values are stored as String anyway. For those, no conversion is necessary. Regardless,
+         * in case a conversion is required, this will be done using the {@link Object#toString()} method.
+         *
+         * <p>Implementation note: Enabling {@link java.util.logging.Level#FINE} logging logs cases when the internal
+         * conversion to String is performed.
+         *
+         * @param field The type of th field.
+         * @return The field value as String, potentially converted to String from another type.
+         * @throws IllegalArgumentException In case this block does not have the requested field.
+         */
+        public String getFieldValueAsString(final KnownFields field) throws IllegalArgumentException {
+            final RawField f = getField(field);
+
+            if (f.value() instanceof String s) {
+                return s;
+            } else {
+                Logger.getGlobal().fine(
+                        String.format(
+                                "Converting field '%s' of block '%s' to String. Was '%s'.",
+                                field.getName(), opcode, f.value().getClass().getSimpleName()
+                        )
+                );
+                return f.value().toString();
+            }
+        }
+    }
 
     sealed interface ArrayBlock extends RawBlock {}
 

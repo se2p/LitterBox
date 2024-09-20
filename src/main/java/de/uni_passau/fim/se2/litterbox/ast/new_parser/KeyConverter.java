@@ -55,7 +55,7 @@ final class KeyConverter {
                 final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
                         menuIdRef.id(), menuBlock
                 );
-                final String keyValue = menuBlock.fields().get(Constants.KEY_OPTION).value().toString();
+                final String keyValue = menuBlock.getFieldValueAsString(KnownFields.KEY_OPTION);
 
                 return convertKey(keyValue, metadata);
             } else {
@@ -65,7 +65,7 @@ final class KeyConverter {
             }
         } else {
             final BlockMetadata metadata = new NoBlockMetadata();
-            final String keyValue = actualKeyBlock.fields().get(Constants.KEY_OPTION).value().toString();
+            final String keyValue = actualKeyBlock.getFieldValueAsString(KnownFields.KEY_OPTION);
 
             return convertKey(keyValue, metadata);
         }

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -93,7 +92,7 @@ final class DataExprConverter extends ExprConverter {
     private static Expression convertParameter(
             final RawBlockId blockId, final RawBlock.RawRegularBlock parameterBlock
     ) {
-        final String name = parameterBlock.fields().get(Constants.VALUE_KEY).value().toString();
+        final String name = parameterBlock.getFieldValueAsString(KnownFields.VALUE);
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, parameterBlock);
 
         final Type type;

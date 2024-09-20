@@ -85,7 +85,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
                 && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.music_menu_DRUM.getName().equals(menuBlock.opcode())
         ) {
-            final String drumName = menuBlock.fields().get(Constants.DRUM_KEY).value().toString();
+            final String drumName = menuBlock.getFieldValueAsString(KnownFields.DRUM);
             final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
             drum = new FixedDrum(drumName, menuMeta);
         } else {
@@ -144,7 +144,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     }
 
     private static double getLiteralNoteValue(final RawBlock.RawRegularBlock menuBlock) {
-        final Object rawNoteValue = menuBlock.fields().get(Constants.NOTE_KEY).value();
+        final Object rawNoteValue = menuBlock.getField(KnownFields.NOTE).value();
 
         if (rawNoteValue instanceof Double d) {
             return d;
@@ -168,7 +168,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
                 && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.music_menu_INSTRUMENT.getName().equals(menuBlock.opcode())
         ) {
-            final String instrumentName = menuBlock.fields().get(Constants.INSTRUMENT_KEY).value().toString();
+            final String instrumentName = menuBlock.getFieldValueAsString(KnownFields.INSTRUMENT);
             final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
             instrument = new FixedInstrument(instrumentName, menuMeta);
         } else {

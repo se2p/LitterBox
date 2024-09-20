@@ -100,7 +100,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
     }
 
     private CommonStmt convertStop(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
-        final String stopOptionValue = block.fields().get(Constants.STOP_OPTION).value().toString();
+        final String stopOptionValue = block.getFieldValueAsString(KnownFields.STOP_OPTION);
 
         return switch (stopOptionValue) {
             case STOP_OTHER, STOP_OTHER_IN_STAGE -> new StopOtherScriptsInSprite(metadata);
@@ -134,7 +134,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
             throw new InternalParsingException("Unknown menu representation.");
         }
 
-        final String targetName = menuBlock.fields().get(Constants.CLONE_OPTION).value().toString();
+        final String targetName = menuBlock.getFieldValueAsString(KnownFields.CLONE_OPTION);
         final StrId target = new StrId(targetName);
 
         final BlockMetadata menuMetadata = RawBlockMetadataConverter.convertBlockMetadata(menuRef, menuBlock);

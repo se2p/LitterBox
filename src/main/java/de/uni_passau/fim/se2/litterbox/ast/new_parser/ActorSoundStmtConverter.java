@@ -68,7 +68,7 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
                 final NumExpr to = NumExprConverter.convertNumExpr(
                         state, block, block.inputs().get(Constants.VALUE_KEY)
                 );
-                final String effectName = block.fields().get(Constants.EFFECT_KEY).value().toString();
+                final String effectName = block.getFieldValueAsString(KnownFields.EFFECT);
                 final SoundEffect effect = new SoundEffect(effectName);
 
                 yield new SetSoundEffectTo(effect, to, metadata);
@@ -77,7 +77,7 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
                 final NumExpr by = NumExprConverter.convertNumExpr(
                         state, block, block.inputs().get(Constants.VALUE_KEY)
                 );
-                final String effectName = block.fields().get(Constants.EFFECT_KEY).value().toString();
+                final String effectName = block.getFieldValueAsString(KnownFields.EFFECT);
                 final SoundEffect effect = new SoundEffect(effectName);
 
                 yield new ChangeSoundEffectBy(effect, by, metadata);
@@ -106,7 +106,7 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
             throw new InternalParsingException("Unknown menu representation.");
         }
 
-        final String elementName = menuBlock.fields().get(Constants.SOUND_MENU).value().toString();
+        final String elementName = menuBlock.getFieldValueAsString(KnownFields.SOUND_MENU);
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuRef, menu);
 
         return new WithExpr(new StrId(elementName), metadata);

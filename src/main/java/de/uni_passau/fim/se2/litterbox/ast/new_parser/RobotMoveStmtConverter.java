@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.RobotMoveStmtOpcode;
@@ -90,9 +91,9 @@ final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
             case move -> {
                 final String directionName;
                 if (block.opcode().contains("mcore.")) {
-                    directionName = block.fields().get(MOVE_DIRECTION_KEY).value().toString();
+                    directionName = block.getFieldValueAsString(KnownFields.MOVE_DIRECTION);
                 } else {
-                    directionName = block.fields().get(Constants.DIRECTION_KEY_CAP).value().toString();
+                    directionName = block.getFieldValueAsString(KnownFields.DIRECTION);
                 }
 
                 final RobotDirection direction = new RobotDirection(directionName);

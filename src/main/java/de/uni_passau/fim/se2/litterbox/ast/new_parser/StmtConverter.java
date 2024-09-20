@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawField;
@@ -43,7 +43,7 @@ abstract class StmtConverter<T extends Stmt> {
     abstract T convertStmt(RawBlockId blockId, RawBlock.RawRegularBlock block);
 
     protected Qualified getOrCreateReferencedVariable(final RawBlock.RawRegularBlock stmtBlock) {
-        final RawField varField = stmtBlock.fields().get(Constants.VARIABLE_KEY);
+        final RawField varField = stmtBlock.getField(KnownFields.VARIABLE);
         final String varName = varField.value().toString();
         final RawBlockId varId = varField.id()
                 .orElseThrow(() -> new InternalParsingException("Missing variable id."));
@@ -57,7 +57,7 @@ abstract class StmtConverter<T extends Stmt> {
     }
 
     protected Qualified getOrCreateReferencedList(final RawBlock.RawRegularBlock stmtBlock) {
-        final RawField listField = stmtBlock.fields().get(Constants.LIST_KEY);
+        final RawField listField = stmtBlock.getField(KnownFields.LIST);
         final String listName = listField.value().toString();
         final RawBlockId listId = listField.id()
                 .orElseThrow(() -> new InternalParsingException("Missing variable id."));

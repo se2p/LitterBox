@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDMat
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.MCorePort;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.LEDMatrixStmtOpcode;
@@ -32,12 +33,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class LedMatrixStmtConverter extends StmtConverter<LEDMatrixStmt> {
 
-    private static final String PANEL_KEY = "PANEL";
     private static final String AXIS_X_KEY = "AXIS-X";
     private static final String AXIS_Y_KEY = "AXIS-Y";
     private static final String X_AXIS_KEY = "X";
     private static final String Y_AXIS_KEY = "Y";
-    private static final String FACE_PANEL_KEY = "FACE_PANEL";
 
     LedMatrixStmtConverter(ProgramParserState state) {
         super(state);
@@ -168,17 +167,17 @@ final class LedMatrixStmtConverter extends StmtConverter<LEDMatrixStmt> {
     }
 
     private LEDMatrix getPanel(final RawBlock.RawRegularBlock block) {
-        final String panel = block.fields().get(PANEL_KEY).value().toString();
+        final String panel = block.getFieldValueAsString(KnownFields.PANEL);
         return new LEDMatrix(panel);
     }
 
     private LEDMatrix getFacePanel(final RawBlock.RawRegularBlock block) {
-        final String panel = block.fields().get(FACE_PANEL_KEY).value().toString();
+        final String panel = block.getFieldValueAsString(KnownFields.FACE_PANEL);
         return new LEDMatrix(panel);
     }
 
     private MCorePort getPort(final RawBlock.RawRegularBlock block) {
-        final String portId = block.fields().get(Constants.PORT_KEY).value().toString();
+        final String portId = block.getFieldValueAsString(KnownFields.PORT);
         return new MCorePort(portId);
     }
 
