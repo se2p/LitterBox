@@ -596,12 +596,15 @@ final class RawTargetConverter {
             // exclude menus, since menus count as topLevel in the JSON File if the menu is replaced by another
             // expression
             return regularBlock.topLevel() && !menuOpCodes.contains(regularBlock.opcode());
-        } else if (block instanceof RawBlock.RawVariable v) {
-            return v.coordinates().isPresent();
-        } else if (block instanceof RawBlock.RawList l) {
-            return l.coordinates().isPresent();
         } else {
-            return false;
+            // see merge request !660
+            //
+            // They are not technically top-level variables unless they have coordinates. We still parse them as
+            // scripts, though.
+            // They seem to appear as part of standalone scripts that are not even shown in the code area in the Scratch
+            // UI. LitterBox parses them now as ExpressionStmt inside an unreachable "Never" script. This should be
+            // consistent with the actions that would happen in the Scratch VM.
+            return block instanceof RawBlock.RawVariable || block instanceof RawBlock.RawList;
         }
     }
 
