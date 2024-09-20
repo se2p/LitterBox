@@ -88,6 +88,7 @@ public enum KnownInputs {
     SECS("SECS"),
     SIZE("SIZE"),
     SOUNDBEAT("SOUNDBEAT"),
+    SOUNDVOLUME("SOUNDVOLUME"),
     SOUND_MENU("SOUND_MENU"),
     STEPS("STEPS"),
     STRING("STRING"),

@@ -80,7 +80,7 @@ class EventConverter {
             case when_volume_over -> {
                 final String attributeName = event.getFieldValueAsString(KnownFields.MENU_LIST);
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
-                final NumExpr value = NumExprConverter.convertNumExpr(state, event, KnownInputs.VALUE);
+                final NumExpr value = NumExprConverter.convertNumExpr(state, event, KnownInputs.SOUNDVOLUME);
                 yield new AttributeAboveValue(attr, value, metadata);
             }
             case when_button_press -> {
