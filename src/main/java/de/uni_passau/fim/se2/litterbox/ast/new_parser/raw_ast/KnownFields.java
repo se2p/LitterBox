@@ -42,7 +42,12 @@ public enum KnownFields {
     IS_PRESSED("IS_PRESS"),
     KEY_OPTION("KEY_OPTION"),
     LANGUAGES("languages"),
-    LED_POSITION("LED_POSITION"),
+    /**
+     * mBlock LED position.
+     *
+     * <p>Note: The typo in the value is intentional. The programs have a field named like this.
+     */
+    LED_POSITION("LED_POSTION"),
     LINE_FOLLOW_STATE("LINEFOLLOW_STATE"),
     LIST("LIST"),
     MENU_LIST("MENU_LIST"),
