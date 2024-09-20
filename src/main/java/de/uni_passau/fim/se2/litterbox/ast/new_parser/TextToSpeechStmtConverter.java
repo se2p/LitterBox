@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
@@ -51,9 +50,7 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
 
         return switch (opcode) {
             case text2speech_speakAndWait -> {
-                final StringExpr text = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.WORDS_KEY)
-                );
+                final StringExpr text = StringExprConverter.convertStringExpr(state, block, KnownInputs.WORDS);
                 yield new Speak(text, metadata);
             }
             case text2speech_setVoice -> convertSetVoice(block, metadata);
@@ -62,7 +59,7 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
     }
 
     private SetLanguage convertSetLanguage(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
-        final RawInput languageInput = block.inputs().get(Constants.LANGUAGE_INPUT_KEY);
+        final RawInput languageInput = block.getInput(KnownInputs.LANGUAGE);
         final Language language;
 
         if (ShadowType.SHADOW.equals(languageInput.shadowType())
@@ -82,7 +79,7 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
     }
 
     private SetVoice convertSetVoice(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
-        final RawInput voiceInput = block.inputs().get(Constants.VOICE_INPUT_KEY);
+        final RawInput voiceInput = block.getInput(KnownInputs.VOICE);
         final Voice voice;
 
         if (ShadowType.SHADOW.equals(voiceInput.shadowType())

@@ -39,6 +39,15 @@ abstract class ExprConverter {
     static Expression convertExpr(
             final ProgramParserState state,
             final RawBlock.RawRegularBlock containingBlock,
+            final KnownInputs exprInput
+    ) {
+        final RawInput input = containingBlock.getInput(exprInput);
+        return convertExpr(state, containingBlock, input);
+    }
+
+    static Expression convertExpr(
+            final ProgramParserState state,
+            final RawBlock.RawRegularBlock containingBlock,
             final RawInput exprBlock
     ) {
         if (NumExprConverter.parseableAsNumExpr(state.getCurrentTarget(), exprBlock)) {
@@ -48,7 +57,7 @@ abstract class ExprConverter {
         } else if (BoolExprConverter.parseableAsBoolExpr(state.getCurrentTarget(), exprBlock)) {
             return BoolExprConverter.convertBoolExpr(state, containingBlock, exprBlock);
         } else if (DataExprConverter.parseableAsDataExpr(state.getCurrentTarget(), exprBlock)) {
-            return DataExprConverter.convertDataExpr(state, containingBlock, exprBlock);
+            return DataExprConverter.convertDataExpr(state, exprBlock);
         } else {
             return new UnspecifiedExpression();
         }

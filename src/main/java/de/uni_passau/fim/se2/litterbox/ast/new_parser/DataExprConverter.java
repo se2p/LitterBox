@@ -61,11 +61,7 @@ final class DataExprConverter extends ExprConverter {
         }
     }
 
-    static Expression convertDataExpr(
-            final ProgramParserState state,
-            final RawBlock.RawRegularBlock containingBlock,
-            final RawInput exprBlock
-    ) {
+    static Expression convertDataExpr(final ProgramParserState state, final RawInput exprBlock) {
         // convert to pattern-matching switch with Java 21
         if (exprBlock.input() instanceof BlockRef.IdRef exprIdRef) {
             final RawBlock referencedBlock = state.getBlock(exprIdRef.id());

@@ -44,6 +44,10 @@ public sealed interface RawBlock {
             return fields.containsKey(field.getName());
         }
 
+        public boolean hasInput(final KnownInputs input) {
+            return inputs.containsKey(input.getName());
+        }
+
         /**
          * Gets the block field.
          *
@@ -89,6 +93,28 @@ public sealed interface RawBlock {
                 return f.value().toString();
             }
         }
+
+        /**
+         * Gets the block input.
+         *
+         * @param input The type of the input.
+         * @return The input, if this block has it.
+         * @throws IllegalArgumentException In case this block does not have the requested input.
+         */
+        public RawInput getInput(final KnownInputs input) throws IllegalArgumentException {
+            final RawInput i = inputs.get(input.getName());
+
+            if (i == null) {
+                throw new IllegalArgumentException("Block '" + opcode + "' has no input '" + input.getName() + "'.");
+            }
+
+            return i;
+        }
+
+        public Optional<RawInput> getOptionalInput(final KnownInputs input) {
+            return Optional.ofNullable(inputs.get(input.getName()));
+        }
+
     }
 
     sealed interface ArrayBlock extends RawBlock {}

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -47,33 +46,21 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
             case looks_show -> new Show(metadata);
             case looks_hide -> new Hide(metadata);
             case looks_sayforsecs -> {
-                final StringExpr message = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.MESSAGE_KEY)
-                );
-                final NumExpr secs = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.SECS_KEY)
-                );
+                final StringExpr message = StringExprConverter.convertStringExpr(state, block, KnownInputs.MESSAGE);
+                final NumExpr secs = NumExprConverter.convertNumExpr(state, block, KnownInputs.SECS);
                 yield new SayForSecs(message, secs, metadata);
             }
             case looks_say -> {
-                final StringExpr message = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.MESSAGE_KEY)
-                );
+                final StringExpr message = StringExprConverter.convertStringExpr(state, block, KnownInputs.MESSAGE);
                 yield new Say(message, metadata);
             }
             case looks_thinkforsecs -> {
-                final StringExpr message = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.MESSAGE_KEY)
-                );
-                final NumExpr secs = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.SECS_KEY)
-                );
+                final StringExpr message = StringExprConverter.convertStringExpr(state, block, KnownInputs.MESSAGE);
+                final NumExpr secs = NumExprConverter.convertNumExpr(state, block, KnownInputs.SECS);
                 yield new ThinkForSecs(message, secs, metadata);
             }
             case looks_think -> {
-                final StringExpr message = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.MESSAGE_KEY)
-                );
+                final StringExpr message = StringExprConverter.convertStringExpr(state, block, KnownInputs.MESSAGE);
                 yield new Think(message, metadata);
             }
             case looks_switchcostumeto -> {
@@ -82,15 +69,11 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
             }
             case looks_nextcostume -> new NextCostume(metadata);
             case looks_changesizeby -> {
-                final NumExpr size = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.CHANGE_KEY)
-                );
+                final NumExpr size = NumExprConverter.convertNumExpr(state, block, KnownInputs.CHANGE);
                 yield new ChangeSizeBy(size, metadata);
             }
             case looks_setsizeto -> {
-                final NumExpr size = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.SIZE_KEY_CAP)
-                );
+                final NumExpr size = NumExprConverter.convertNumExpr(state, block, KnownInputs.SIZE);
                 yield new SetSizeTo(size, metadata);
             }
             case looks_gotofrontback -> {
@@ -101,16 +84,14 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
             case looks_goforwardbackwardlayers -> {
                 final String layerOption =  block.getFieldValueAsString(KnownFields.FORWARD_BACKWARD);
                 final ForwardBackwardChoice choice = new ForwardBackwardChoice(layerOption);
-                final NumExpr numExpr = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.NUM_KEY)
-                );
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.NUM);
                 yield new ChangeLayerBy(numExpr, choice, metadata);
             }
         };
     }
 
     private ElementChoice convertCostumeChoice(final RawBlock.RawRegularBlock block) {
-        final RawInput costumeInput = block.inputs().get(Constants.COSTUME_INPUT);
+        final RawInput costumeInput = block.getInput(KnownInputs.COSTUME);
 
         if (
                 ShadowType.SHADOW.equals(costumeInput.shadowType())

@@ -36,10 +36,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.BlockRef;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawMutation;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -69,7 +65,7 @@ final class ConverterUtilities {
         final String opcode = block.opcode();
 
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcode)) {
-            final RawInput touched = block.inputs().get(Constants.TOUCHINGOBJECTMENU);
+            final RawInput touched = block.getInput(KnownInputs.TOUCHINGOBJECTMENU);
 
             if (ShadowType.SHADOW == touched.shadowType()) {
                 return convertTouchableMenuOption(state.getCurrentTarget(), touched);
@@ -78,7 +74,7 @@ final class ConverterUtilities {
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcode)) {
-            return convertColor(state, block, block.inputs().get(Constants.COLOR_KEY));
+            return convertColor(state, block, block.getInput(KnownInputs.COLOR));
         } else {
             throw new InternalParsingException("Unknown touchable type. Missing parser implementation.");
         }
@@ -142,7 +138,7 @@ final class ConverterUtilities {
     static ElementChoice convertElementChoice(
             final ProgramParserState state, final RawBlock.RawRegularBlock containingStmt
     ) {
-        final RawInput elementChoiceInput = containingStmt.inputs().get(Constants.BACKDROP_INPUT);
+        final RawInput elementChoiceInput = containingStmt.getInput(KnownInputs.BACKDROP);
 
         if (
             ShadowType.SHADOW.equals(elementChoiceInput.shadowType())

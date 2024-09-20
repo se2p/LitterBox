@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -55,6 +54,15 @@ final class StringExprConverter extends ExprConverter {
 
     private StringExprConverter() {
         throw new IllegalCallerException("utility class constructor");
+    }
+
+    static StringExpr convertStringExpr(
+            final ProgramParserState state,
+            final RawBlock.RawRegularBlock containingBlock,
+            final KnownInputs inputKey
+    ) {
+        final RawInput input = containingBlock.getInput(inputKey);
+        return convertStringExpr(state, containingBlock, input);
     }
 
     static StringExpr convertStringExpr(
@@ -155,24 +163,17 @@ final class StringExprConverter extends ExprConverter {
             case translate_getViewerLanguage -> new ViewerLanguage(metadata);
             case translate_getTranslate -> {
                 final TLanguage language = getLanguage(state, block);
-                final StringExpr text = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.WORDS_KEY)
-                );
-
+                final StringExpr text = StringExprConverter.convertStringExpr(state, block, KnownInputs.WORDS);
                 yield new TranslateTo(text, language, metadata);
             }
             case operator_join -> {
-                final StringExpr left = convertStringExpr(state, block, block.inputs().get(Constants.STRING1_KEY));
-                final StringExpr right = convertStringExpr(state, block, block.inputs().get(Constants.STRING2_KEY));
+                final StringExpr left = convertStringExpr(state, block, KnownInputs.STRING1);
+                final StringExpr right = convertStringExpr(state, block, KnownInputs.STRING2);
                 yield new Join(left, right, metadata);
             }
             case operator_letter_of -> {
-                final NumExpr num = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.LETTER_KEY)
-                );
-                final StringExpr word = convertStringExpr(
-                        state, block, block.inputs().get(Constants.STRING_KEY)
-                );
+                final NumExpr num = NumExprConverter.convertNumExpr(state, block, KnownInputs.LETTER);
+                final StringExpr word = convertStringExpr(state, block, KnownInputs.STRING);
                 yield new LetterOf(num, word, metadata);
             }
             case looks_costumenumbername -> {
@@ -193,9 +194,7 @@ final class StringExprConverter extends ExprConverter {
             final BlockMetadata metadata,
             final RawBlock.RawRegularBlock exprBlock
     ) {
-        final NumExpr index = NumExprConverter.convertNumExpr(
-                state, exprBlock, exprBlock.inputs().get(Constants.INDEX_KEY)
-        );
+        final NumExpr index = NumExprConverter.convertNumExpr(state, exprBlock, KnownInputs.INDEX);
         final RawBlockId listId = exprBlock.getField(KnownFields.LIST).id()
                 .orElseThrow(() -> new InternalParsingException("ItemOfVariable block is missing reference to list!"));
         final String listName = exprBlock.getFieldValueAsString(KnownFields.LIST);
@@ -225,7 +224,7 @@ final class StringExprConverter extends ExprConverter {
         };
 
         final ElementChoice elementChoice;
-        final RawInput input = exprBlock.inputs().get(Constants.OBJECT_KEY);
+        final RawInput input = exprBlock.getInput(KnownInputs.OBJECT);
 
         if (ShadowType.SHADOW.equals(input.shadowType())) {
             if (input.input() instanceof BlockRef.IdRef menuBlockRef) {
@@ -259,9 +258,7 @@ final class StringExprConverter extends ExprConverter {
                 final String actorName = field.value().toString();
                 return new WithExpr(new StrId(actorName), menuMetadata);
             } else {
-                final Expression expr = ExprConverter.convertExpr(
-                        state, menuRegularBlock, menuRegularBlock.inputs().get(Constants.OBJECT_KEY)
-                );
+                final Expression expr = ExprConverter.convertExpr(state, menuRegularBlock, KnownInputs.OBJECT);
                 return new WithExpr(expr, menuMetadata);
             }
         } else {
@@ -270,7 +267,7 @@ final class StringExprConverter extends ExprConverter {
     }
 
     private static TLanguage getLanguage(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
-        final RawInput languageInput = block.inputs().get(Constants.LANGUAGE_INPUT_KEY);
+        final RawInput languageInput = block.getInput(KnownInputs.LANGUAGE);
 
         if (
                 ShadowType.SHADOW.equals(languageInput.shadowType())

@@ -314,9 +314,7 @@ final class RawTargetConverter {
     }
 
     private SetStmtList convertSetStmtList() {
-        final List<SetStmt> setStmts = new ArrayList<>();
-
-        setStmts.addAll(convertActorAttributes(target));
+        final List<SetStmt> setStmts = new ArrayList<>(convertActorAttributes(target));
 
         for (final RawList list : target.lists().values()) {
             final SetVariableTo setVariableTo = new SetVariableTo(
@@ -477,7 +475,7 @@ final class RawTargetConverter {
     private Pair<RawBlockId, RawBlock.RawRegularBlock> getProcedurePrototypeForDefinition(
             final RawBlock.RawRegularBlock procedureDefinition
     ) {
-        final RawInput input = procedureDefinition.inputs().get(Constants.CUSTOM_BLOCK_KEY);
+        final RawInput input = procedureDefinition.getInput(KnownInputs.CUSTOM_BLOCK);
 
         if (input.input() instanceof BlockRef.IdRef defId) {
             final RawBlockId prototypeBlockId = defId.id();

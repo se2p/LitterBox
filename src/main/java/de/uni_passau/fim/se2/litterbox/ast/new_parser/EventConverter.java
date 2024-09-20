@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
@@ -31,15 +30,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 class EventConverter {
-
-    private static final String BRIGHTNESS_KEY = "BRIGHTNESS";
 
     private EventConverter() {
         throw new IllegalCallerException("utility class constructor");
@@ -77,17 +74,13 @@ class EventConverter {
             case event_whengreaterthan -> {
                 final String attributeName = event.getFieldValueAsString(KnownFields.WHEN_GREATER_THAN_MENU);
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
-                final NumExpr value = NumExprConverter.convertNumExpr(
-                        state, event, event.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr value = NumExprConverter.convertNumExpr(state, event, KnownInputs.VALUE);
                 yield new AttributeAboveValue(attr, value, metadata);
             }
             case when_volume_over -> {
                 final String attributeName = event.getFieldValueAsString(KnownFields.MENU_LIST);
                 final EventAttribute attr = new EventAttribute(attributeName.toLowerCase());
-                final NumExpr value = NumExprConverter.convertNumExpr(
-                        state, event, event.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr value = NumExprConverter.convertNumExpr(state, event, KnownInputs.VALUE);
                 yield new AttributeAboveValue(attr, value, metadata);
             }
             case when_button_press -> {
@@ -106,8 +99,7 @@ class EventConverter {
                 yield new BoardTilted(direction, metadata);
             }
             case when_brightness_less -> {
-                final RawInput numExprInput = event.inputs().get(BRIGHTNESS_KEY);
-                final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, event, numExprInput);
+                final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, event, KnownInputs.BRIGHTNESS);
                 yield new BrightnessLess(fieldValue, metadata);
             }
         };

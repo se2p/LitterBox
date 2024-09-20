@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -43,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
 import java.util.Collections;
+import java.util.Optional;
 
 final class BoolExprConverter extends ExprConverter {
 
@@ -136,8 +136,8 @@ final class BoolExprConverter extends ExprConverter {
                 yield new Touching(touchable, metadata);
             }
             case sensing_coloristouchingcolor -> {
-                final Color a = ConverterUtilities.convertColor(state, block, block.inputs().get(Constants.COLOR_KEY));
-                final Color b = ConverterUtilities.convertColor(state, block, block.inputs().get(Constants.COLOR2_KEY));
+                final Color a = ConverterUtilities.convertColor(state, block, block.getInput(KnownInputs.COLOR));
+                final Color b = ConverterUtilities.convertColor(state, block, block.getInput(KnownInputs.COLOR2));
                 yield new ColorTouchingColor(a, b, metadata);
             }
             case sensing_touchingcolor -> {
@@ -145,41 +145,37 @@ final class BoolExprConverter extends ExprConverter {
                 yield new SpriteTouchingColor(touchable, metadata);
             }
             case operator_gt -> new BiggerThan(
-                    castComparableExpr(state, block, Constants.OPERAND1_KEY),
-                    castComparableExpr(state, block, Constants.OPERAND2_KEY),
+                    castComparableExpr(state, block, KnownInputs.OPERAND1),
+                    castComparableExpr(state, block, KnownInputs.OPERAND2),
                     metadata
             );
             case operator_lt -> new LessThan(
-                    castComparableExpr(state, block, Constants.OPERAND1_KEY),
-                    castComparableExpr(state, block, Constants.OPERAND2_KEY),
+                    castComparableExpr(state, block, KnownInputs.OPERAND1),
+                    castComparableExpr(state, block, KnownInputs.OPERAND2),
                     metadata
             );
             case operator_equals -> new Equals(
-                    castComparableExpr(state, block, Constants.OPERAND1_KEY),
-                    castComparableExpr(state, block, Constants.OPERAND2_KEY),
+                    castComparableExpr(state, block, KnownInputs.OPERAND1),
+                    castComparableExpr(state, block, KnownInputs.OPERAND2),
                     metadata
             );
             case operator_and -> {
-                final BoolExpr left = convertCondition(state, block, Constants.OPERAND1_KEY);
-                final BoolExpr right = convertCondition(state, block, Constants.OPERAND2_KEY);
+                final BoolExpr left = convertCondition(state, block, KnownInputs.OPERAND1);
+                final BoolExpr right = convertCondition(state, block, KnownInputs.OPERAND2);
                 yield new And(left, right, metadata);
             }
             case operator_or -> {
-                final BoolExpr left = convertCondition(state, block, Constants.OPERAND1_KEY);
-                final BoolExpr right = convertCondition(state, block, Constants.OPERAND2_KEY);
+                final BoolExpr left = convertCondition(state, block, KnownInputs.OPERAND1);
+                final BoolExpr right = convertCondition(state, block, KnownInputs.OPERAND2);
                 yield new Or(left, right, metadata);
             }
             case operator_not -> {
-                final BoolExpr input = convertCondition(state, block, Constants.OPERAND_KEY);
+                final BoolExpr input = convertCondition(state, block, KnownInputs.OPERAND);
                 yield new Not(input, metadata);
             }
             case operator_contains -> {
-                final StringExpr containing = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.STRING1_KEY)
-                );
-                final StringExpr contained = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.STRING2_KEY)
-                );
+                final StringExpr containing = StringExprConverter.convertStringExpr(state, block, KnownInputs.STRING1);
+                final StringExpr contained = StringExprConverter.convertStringExpr(state, block, KnownInputs.STRING2);
                 yield new StringContains(containing, contained, metadata);
             }
             case data_listcontainsitem -> {
@@ -194,15 +190,13 @@ final class BoolExprConverter extends ExprConverter {
                 );
                 final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listName);
 
-                final StringExpr contained = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.ITEM_KEY)
-                );
+                final StringExpr contained = StringExprConverter.convertStringExpr(state, block, KnownInputs.ITEM);
 
                 yield new ListContains(list, contained, metadata);
             }
             case event_led_matrix_position_is_light -> {
-                final NumExpr x = NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.X));
-                final NumExpr y = NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.Y));
+                final NumExpr x = NumExprConverter.convertNumExpr(state, block, KnownInputs.X);
+                final NumExpr y = NumExprConverter.convertNumExpr(state, block, KnownInputs.Y);
                 yield new LEDMatrixPosition(x, y, metadata);
             }
             case event_button_pressed -> {
@@ -250,23 +244,23 @@ final class BoolExprConverter extends ExprConverter {
     }
 
     private static BoolExpr convertCondition(
-            final ProgramParserState state, final RawBlock.RawRegularBlock containingBlock, final String inputKey
+            final ProgramParserState state, final RawBlock.RawRegularBlock containingBlock, final KnownInputs inputKey
     ) {
-        final RawInput input = containingBlock.inputs().get(inputKey);
+        final Optional<RawInput> input = containingBlock.getOptionalInput(inputKey);
 
-        if (input == null) {
+        if (input.isEmpty()) {
             return new UnspecifiedBoolExpr();
         } else {
-            return convertBoolExpr(state, containingBlock, input);
+            return convertBoolExpr(state, containingBlock, input.get());
         }
     }
 
     private static ComparableExpr castComparableExpr(
             final ProgramParserState state,
             final RawBlock.RawRegularBlock containingBlock,
-            final String inputKey
+            final KnownInputs inputKey
     ) {
-        final RawInput rawInput = containingBlock.inputs().get(inputKey);
+        final RawInput rawInput = containingBlock.getInput(inputKey);
         final NumExpr input = NumExprConverter.convertNumExpr(state, containingBlock, rawInput);
 
         // note: order of if/else-if chain important, since AsNumber is a subclass of the other ones

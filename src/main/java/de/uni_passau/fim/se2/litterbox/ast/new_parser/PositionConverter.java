@@ -40,9 +40,9 @@ final class PositionConverter {
 
     static Position convertPosition(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
         if (
-                !block.inputs().containsKey(Constants.TO_KEY)
-                && !block.inputs().containsKey(Constants.TOWARDS_KEY)
-                && !block.inputs().containsKey(Constants.DISTANCETOMENU_KEY)
+                !block.hasInput(KnownInputs.TO)
+                && !block.hasInput(KnownInputs.TOWARDS)
+                && !block.hasInput(KnownInputs.DISTANCE_TO_MENU)
         ) {
             throw new InternalParsingException("Unknown position block.");
         }
@@ -50,11 +50,11 @@ final class PositionConverter {
         if (SpriteMotionStmtOpcode.motion_goto.name().equals(block.opcode())
                 || SpriteMotionStmtOpcode.motion_glideto.name().equals(block.opcode())
         ) {
-            return convertPositionInput(state, block, Constants.TO_KEY, KnownFields.TO);
+            return convertPositionInput(state, block, KnownInputs.TO, KnownFields.TO);
         } else if (SpriteMotionStmtOpcode.motion_pointtowards.name().equals(block.opcode())) {
-            return convertPositionInput(state, block, Constants.TOWARDS_KEY, KnownFields.TOWARDS);
+            return convertPositionInput(state, block, KnownInputs.TOWARDS, KnownFields.TOWARDS);
         } else if (NumExprOpcode.sensing_distanceto.name().equals(block.opcode())) {
-            return convertPositionInput(state, block, Constants.DISTANCETOMENU_KEY, KnownFields.DISTANCE_TO_MENU);
+            return convertPositionInput(state, block, KnownInputs.DISTANCE_TO_MENU, KnownFields.DISTANCE_TO_MENU);
         } else {
             throw new InternalParsingException(
                     "Did not expect block type '" + block.opcode() + "' to contain a reference to a relative position."
@@ -65,10 +65,10 @@ final class PositionConverter {
     private static Position convertPositionInput(
             final ProgramParserState state,
             final RawBlock.RawRegularBlock block,
-            final String inputKey,
+            final KnownInputs inputKey,
             final KnownFields fieldKey
     ) {
-        final RawInput positionInput = block.inputs().get(inputKey);
+        final RawInput positionInput = block.getInput(inputKey);
 
         if (ShadowType.SHADOW.equals(positionInput.shadowType())
                 && positionInput.input() instanceof BlockRef.IdRef menuIdRef

@@ -48,8 +48,6 @@ final class RawStmtConverter {
 
     private static final Logger log = Logger.getLogger(RawStmtConverter.class.getName());
 
-    private static final String STOP_OPTION = "STOP_OPTION";
-
     private final ProgramParserState state;
 
     private final Map<String, StmtConverter<?>> converterChoices;

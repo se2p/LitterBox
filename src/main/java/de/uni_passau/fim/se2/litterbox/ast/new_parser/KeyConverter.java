@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -46,7 +45,7 @@ final class KeyConverter {
         }
 
         if (BoolExprOpcode.sensing_keypressed.name().equals(actualKeyBlock.opcode())) {
-            final RawInput keyInput = actualKeyBlock.inputs().get(Constants.KEY_OPTION);
+            final RawInput keyInput = actualKeyBlock.getInput(KnownInputs.KEY_OPTION);
 
             if (ShadowType.SHADOW == keyInput.shadowType()
                     && keyInput.input() instanceof BlockRef.IdRef menuIdRef

@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
@@ -42,9 +42,7 @@ final class SetStmtConverter extends StmtConverter<SetStmt> {
         return switch (opcode) {
             case data_setvariableto -> {
                 final Qualified variable = getOrCreateReferencedVariable(block);
-                final Expression value = ExprConverter.convertExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final Expression value = ExprConverter.convertExpr(state, block, KnownInputs.VALUE);
 
                 yield new SetVariableTo(variable, value, metadata);
             }

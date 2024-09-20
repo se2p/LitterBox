@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
@@ -41,23 +41,15 @@ final class ListStmtConverter extends StmtConverter<ListStmt> {
 
         return switch (opcode) {
             case data_replaceitemoflist -> {
-                final StringExpr newValue = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.ITEM_KEY)
-                );
-                final NumExpr location = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.INDEX_KEY)
-                );
+                final StringExpr newValue = StringExprConverter.convertStringExpr(state, block, KnownInputs.ITEM);
+                final NumExpr location = NumExprConverter.convertNumExpr(state, block, KnownInputs.INDEX);
                 final Qualified list = getOrCreateReferencedList(block);
 
                 yield new ReplaceItem(newValue, location, list, metadata);
             }
             case data_insertatlist -> {
-                final StringExpr inserted = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.ITEM_KEY)
-                );
-                final NumExpr location = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.INDEX_KEY)
-                );
+                final StringExpr inserted = StringExprConverter.convertStringExpr(state, block, KnownInputs.ITEM);
+                final NumExpr location = NumExprConverter.convertNumExpr(state, block, KnownInputs.INDEX);
                 final Qualified list = getOrCreateReferencedList(block);
 
                 yield new InsertAt(inserted, location, list, metadata);
@@ -67,17 +59,13 @@ final class ListStmtConverter extends StmtConverter<ListStmt> {
                 yield new DeleteAllOf(list, metadata);
             }
             case data_deleteoflist -> {
-                final NumExpr expr = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.INDEX_KEY)
-                );
+                final NumExpr expr = NumExprConverter.convertNumExpr(state, block, KnownInputs.INDEX);
                 final Qualified list = getOrCreateReferencedList(block);
 
                 yield new DeleteOf(expr, list, metadata);
             }
             case data_addtolist -> {
-                final StringExpr expr = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.ITEM_KEY)
-                );
+                final StringExpr expr = StringExprConverter.convertStringExpr(state, block, KnownInputs.ITEM);
                 final Qualified list = getOrCreateReferencedList(block);
 
                 yield new AddTo(expr, list, metadata);

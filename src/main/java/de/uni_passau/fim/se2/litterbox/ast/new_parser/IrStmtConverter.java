@@ -18,21 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.IRStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.LearnWithTime;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendIR;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ir.SendLearnResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.IRStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class IrStmtConverter extends StmtConverter<IRStmt> {
-
-    private static final String AXIS_KEY = "AXIS";
 
     IrStmtConverter(final ProgramParserState state) {
         super(state);
@@ -47,15 +45,11 @@ final class IrStmtConverter extends StmtConverter<IRStmt> {
             case comm_learn_with_time -> new LearnWithTime(metadata);
             case comm_send_learn_result -> new SendLearnResult(metadata);
             case comm_send_ir -> {
-                final StringExpr text = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.STRING_KEY)
-                );
+                final StringExpr text = StringExprConverter.convertStringExpr(state, block, KnownInputs.STRING);
                 yield new SendIR(text, metadata);
             }
             case send_ir -> {
-                final StringExpr text = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.MESSAGE_KEY)
-                );
+                final StringExpr text = StringExprConverter.convertStringExpr(state, block, KnownInputs.MESSAGE);
                 yield new SendIR(text, metadata);
             }
         };

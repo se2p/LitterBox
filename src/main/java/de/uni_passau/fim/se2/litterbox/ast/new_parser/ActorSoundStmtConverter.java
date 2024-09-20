@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -53,30 +52,22 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
             case sound_cleareffects -> new ClearSoundEffects(metadata);
             case sound_stopallsounds -> new StopAllSounds(metadata);
             case sound_setvolumeto -> {
-                final NumExpr to = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VOLUME_KEY_CAPS)
-                );
+                final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.VOLUME);
                 yield new SetVolumeTo(to, metadata);
             }
             case sound_changevolumeby -> {
-                final NumExpr by = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VOLUME_KEY_CAPS)
-                );
+                final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.VOLUME);
                 yield new ChangeVolumeBy(by, metadata);
             }
             case sound_seteffectto -> {
-                final NumExpr to = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
                 final String effectName = block.getFieldValueAsString(KnownFields.EFFECT);
                 final SoundEffect effect = new SoundEffect(effectName);
 
                 yield new SetSoundEffectTo(effect, to, metadata);
             }
             case sound_changeeffectby -> {
-                final NumExpr by = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
                 final String effectName = block.getFieldValueAsString(KnownFields.EFFECT);
                 final SoundEffect effect = new SoundEffect(effectName);
 
@@ -86,7 +77,7 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
     }
 
     private ElementChoice getSoundElement(final RawBlock.RawRegularBlock block) {
-        final RawInput soundInput = block.inputs().get(Constants.SOUND_MENU);
+        final RawInput soundInput = block.getInput(KnownInputs.SOUND_MENU);
 
         if (
                 ShadowType.SHADOW.equals(soundInput.shadowType())

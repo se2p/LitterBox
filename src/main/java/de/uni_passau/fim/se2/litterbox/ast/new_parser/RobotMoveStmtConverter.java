@@ -18,26 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.RobotMoveStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
-
-    private static final String POWER_KEY = "POWER";
-    private static final String ANGLE_KEY = "ANGLE";
-    private static final String LEFT_POWER_KEY = "LEFT_POWER";
-    private static final String RIGHT_POWER_KEY = "RIGHT_POWER";
-    private static final String MOVE_DIRECTION_KEY = "MOVE_DIRECTION";
-    private static final String POWER_LEFT_KEY = "POWER_LEFT";
-    private static final String POWER_RIGHT_KEY = "POWER_RIGHT";
 
     RobotMoveStmtConverter(final ProgramParserState state) {
         super(state);
@@ -61,11 +53,11 @@ final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
                 yield new KeepBackwardTimed(power, time, metadata);
             }
             case move_left_with_angle -> {
-                final NumExpr angle = NumExprConverter.convertNumExpr(state, block, block.inputs().get(ANGLE_KEY));
+                final NumExpr angle = NumExprConverter.convertNumExpr(state, block, KnownInputs.ANGLE);
                 yield new TurnLeft2(angle, metadata);
             }
             case move_right_with_angle -> {
-                final NumExpr angle = NumExprConverter.convertNumExpr(state, block, block.inputs().get(ANGLE_KEY));
+                final NumExpr angle = NumExprConverter.convertNumExpr(state, block, KnownInputs.ANGLE);
                 yield new TurnRight2(angle, metadata);
             }
             case forward_time, move_forward_with_time-> {
@@ -106,11 +98,11 @@ final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
                 final NumExpr rightPower;
 
                 if (block.opcode().contains("mcore.")) {
-                    leftPower = NumExprConverter.convertNumExpr(state, block, block.inputs().get(POWER_LEFT_KEY));
-                    rightPower = NumExprConverter.convertNumExpr(state, block, block.inputs().get(POWER_RIGHT_KEY));
+                    leftPower = NumExprConverter.convertNumExpr(state, block, KnownInputs.POWER_LEFT);
+                    rightPower = NumExprConverter.convertNumExpr(state, block, KnownInputs.POWER_RIGHT);
                 } else {
-                    leftPower = NumExprConverter.convertNumExpr(state, block, block.inputs().get(LEFT_POWER_KEY));
-                    rightPower = NumExprConverter.convertNumExpr(state, block, block.inputs().get(RIGHT_POWER_KEY));
+                    leftPower = NumExprConverter.convertNumExpr(state, block, KnownInputs.LEFT_POWER);
+                    rightPower = NumExprConverter.convertNumExpr(state, block, KnownInputs.RIGHT_POWER);
                 }
 
                 yield new MoveSides(leftPower, rightPower, metadata);
@@ -119,10 +111,10 @@ final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
     }
 
     private NumExpr getPower(final RawBlock.RawRegularBlock block) {
-        return NumExprConverter.convertNumExpr(state, block, block.inputs().get(POWER_KEY));
+        return NumExprConverter.convertNumExpr(state, block, KnownInputs.POWER);
     }
 
     private NumExpr getTime(final RawBlock.RawRegularBlock block) {
-        return NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.TIME_KEY));
+        return NumExprConverter.convertNumExpr(state, block, KnownInputs.TIME);
     }
 }

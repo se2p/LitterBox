@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
@@ -48,15 +47,11 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
             case pen_penDown -> new PenDownStmt(metadata);
             case pen_penUp -> new PenUpStmt(metadata);
             case pen_setPenColorToColor -> {
-                final Color color = ConverterUtilities.convertColor(
-                        state, block, block.inputs().get(Constants.COLOR_KEY)
-                );
+                final Color color = ConverterUtilities.convertColor(state, block, block.getInput(KnownInputs.COLOR));
                 yield new SetPenColorToColorStmt(color, metadata);
             }
             case pen_setPenColorParamTo -> {
-                final NumExpr to = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
                 final ParamWithMetadata param = convertParam(block);
                 final BlockMetadata metadataWithParam = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
                         blockId, block, param.metadata()
@@ -65,9 +60,7 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
                 yield new SetPenColorParamTo(to, param.param(), metadataWithParam);
             }
             case pen_changePenColorParamBy -> {
-                final NumExpr by = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
                 final ParamWithMetadata param = convertParam(block);
                 final BlockMetadata metadataWithParam = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
                         blockId, block, param.metadata()
@@ -76,22 +69,18 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
                 yield new ChangePenColorParamBy(by, param.param(), metadataWithParam);
             }
             case pen_setPenSizeTo -> {
-                final NumExpr to = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.SIZE_KEY_CAP)
-                );
+                final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.SIZE);
                 yield new SetPenSizeTo(to, metadata);
             }
             case pen_changePenSizeBy -> {
-                final NumExpr by = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.SIZE_KEY_CAP)
-                );
+                final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.SIZE);
                 yield new ChangePenSizeBy(by, metadata);
             }
         };
     }
 
     private ParamWithMetadata convertParam(final RawBlock.RawRegularBlock block) {
-        final RawInput colorParamInput = block.inputs().get(Constants.COLOR_PARAM_BIG_KEY);
+        final RawInput colorParamInput = block.getInput(KnownInputs.COLOR_PARAM);
 
         if (
                 ShadowType.SHADOW.equals(colorParamInput.shadowType())

@@ -18,21 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.BlockRef;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 import java.util.Collections;
+import java.util.Optional;
 
 final class ControlStmtConverter extends StmtConverter<ControlStmt> {
 
@@ -48,38 +45,36 @@ final class ControlStmtConverter extends StmtConverter<ControlStmt> {
         return switch (opcode) {
             case control_if -> {
                 final BoolExpr condition = getCondition(stmt);
-                final StmtList stmtList = getSubstackStmtList(stmt, Constants.SUBSTACK_KEY);
+                final StmtList stmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK);
                 yield new IfThenStmt(condition, stmtList, metadata);
             }
             case control_if_else -> {
                 final BoolExpr condition = getCondition(stmt);
-                final StmtList thenStmtList = getSubstackStmtList(stmt, Constants.SUBSTACK_KEY);
-                final StmtList elseStmtList = getSubstackStmtList(stmt, Constants.SUBSTACK2_KEY);
+                final StmtList thenStmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK);
+                final StmtList elseStmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK2);
                 yield new IfElseStmt(condition, thenStmtList, elseStmtList, metadata);
             }
             case control_repeat -> {
-                final NumExpr repetitions = NumExprConverter.convertNumExpr(
-                        state, stmt, stmt.inputs().get(Constants.TIMES_KEY)
-                );
-                final StmtList stmtList = getSubstackStmtList(stmt, Constants.SUBSTACK_KEY);
+                final NumExpr repetitions = NumExprConverter.convertNumExpr(state, stmt, KnownInputs.TIMES);
+                final StmtList stmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK);
                 yield new RepeatTimesStmt(repetitions, stmtList, metadata);
             }
             case control_repeat_until -> {
                 final BoolExpr condition = getCondition(stmt);
-                final StmtList stmtList = getSubstackStmtList(stmt, Constants.SUBSTACK_KEY);
+                final StmtList stmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK);
                 yield new UntilStmt(condition, stmtList, metadata);
             }
             case control_forever -> {
-                final StmtList stmtList = getSubstackStmtList(stmt, Constants.SUBSTACK_KEY);
+                final StmtList stmtList = getSubstackStmtList(stmt, KnownInputs.SUBSTACK);
                 yield new RepeatForeverStmt(stmtList, metadata);
             }
         };
     }
 
-    private StmtList getSubstackStmtList(final RawBlock.RawRegularBlock stmt, final String inputKey) {
-        final RawInput substackInput = stmt.inputs().get(inputKey);
+    private StmtList getSubstackStmtList(final RawBlock.RawRegularBlock stmt, final KnownInputs inputKey) {
+        final Optional<RawInput> substackInput = stmt.getOptionalInput(inputKey);
 
-        if (substackInput != null && substackInput.input() instanceof BlockRef.IdRef stmtListRef) {
+        if (substackInput.isPresent() && substackInput.get().input() instanceof BlockRef.IdRef stmtListRef) {
            return RawScriptConverter.convertStmtList(state, stmtListRef.id());
         } else {
             return new StmtList(Collections.emptyList());
@@ -87,11 +82,11 @@ final class ControlStmtConverter extends StmtConverter<ControlStmt> {
     }
 
     private BoolExpr getCondition(final RawBlock.RawRegularBlock stmt) {
-        final RawInput conditionInput = stmt.inputs().get(Constants.CONDITION_KEY);
-        if (conditionInput == null) {
+        final Optional<RawInput> conditionInput = stmt.getOptionalInput(KnownInputs.CONDITION);
+        if (conditionInput.isEmpty()) {
             return new UnspecifiedBoolExpr();
         } else {
-            return BoolExprConverter.convertBoolExpr(state, stmt, conditionInput);
+            return BoolExprConverter.convertBoolExpr(state, stmt, conditionInput.get());
         }
     }
 }

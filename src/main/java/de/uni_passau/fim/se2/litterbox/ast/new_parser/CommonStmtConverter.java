@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
@@ -33,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
+
+import java.util.Optional;
 
 final class CommonStmtConverter extends StmtConverter<CommonStmt> {
 
@@ -50,9 +51,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
 
         return switch (opcode) {
             case control_wait -> {
-                final NumExpr waitTime = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.DURATION_KEY)
-                );
+                final NumExpr waitTime = NumExprConverter.convertNumExpr(state, block, KnownInputs.DURATION);
                 yield new WaitSeconds(waitTime, metadata);
             }
             case control_wait_until -> convertWaitUntil(block, metadata);
@@ -60,7 +59,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
             case control_create_clone_of -> convertCreateCloneOf(blockId, block);
             case event_broadcast -> {
                 final StringExpr broadcast = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.BROADCAST_INPUT_KEY)
+                        state, block, KnownInputs.BROADCAST_INPUT
                 );
                 final Message message = new Message(broadcast);
 
@@ -68,7 +67,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
             }
             case event_broadcastandwait -> {
                 final StringExpr broadcast = StringExprConverter.convertStringExpr(
-                        state, block, block.inputs().get(Constants.BROADCAST_INPUT_KEY)
+                        state, block, KnownInputs.BROADCAST_INPUT
                 );
                 final Message message = new Message(broadcast);
 
@@ -76,9 +75,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
             }
             case sensing_resettimer -> new ResetTimer(metadata);
             case data_changevariableby -> {
-                final NumExpr by = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
                 final Qualified variable = getOrCreateReferencedVariable(block);
 
                 yield new ChangeVariableBy(variable, by, metadata);
@@ -87,11 +84,11 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
     }
 
     private WaitUntil convertWaitUntil(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
-        final RawInput conditionInput = block.inputs().get(Constants.CONDITION_KEY);
+        final Optional<RawInput> conditionInput = block.getOptionalInput(KnownInputs.CONDITION);
         final BoolExpr condition;
 
-        if (conditionInput != null) {
-            condition = BoolExprConverter.convertBoolExpr(state, block, conditionInput);
+        if (conditionInput.isPresent()) {
+            condition = BoolExprConverter.convertBoolExpr(state, block, conditionInput.get());
         } else {
             condition = new UnspecifiedBoolExpr();
         }
@@ -109,7 +106,7 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
     }
 
     private CreateCloneOf convertCreateCloneOf(final RawBlockId blockId, final RawBlock.RawRegularBlock block) {
-        final RawInput cloneOptionInput = block.inputs().get(Constants.CLONE_OPTION);
+        final RawInput cloneOptionInput = block.getInput(KnownInputs.CLONE_OPTION);
 
         if (
                 ShadowType.SHADOW.equals(cloneOptionInput.shadowType())

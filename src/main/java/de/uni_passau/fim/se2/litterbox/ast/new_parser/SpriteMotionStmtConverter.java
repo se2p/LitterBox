@@ -18,15 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawInput;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
@@ -43,20 +42,20 @@ final class SpriteMotionStmtConverter extends StmtConverter<SpriteMotionStmt> {
 
         return switch (opcode) {
             case motion_movesteps -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.STEPS_KEY);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.STEPS);
                 yield new MoveSteps(numExpr, metadata);
             }
             case motion_turnright -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.DEGREES_KEY);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.DEGREES);
                 yield new TurnRight(numExpr, metadata);
             }
             case motion_turnleft -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.DEGREES_KEY);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.DEGREES);
                 yield new TurnLeft(numExpr, metadata);
             }
             case motion_gotoxy -> {
-                final NumExpr x = parseNumInput(block, Constants.X);
-                final NumExpr y = parseNumInput(block, Constants.Y);
+                final NumExpr x = NumExprConverter.convertNumExpr(state, block, KnownInputs.X);
+                final NumExpr y = NumExprConverter.convertNumExpr(state, block, KnownInputs.Y);
                 yield new GoToPosXY(x, y, metadata);
             }
             case motion_goto -> {
@@ -64,18 +63,18 @@ final class SpriteMotionStmtConverter extends StmtConverter<SpriteMotionStmt> {
                 yield new GoToPos(position, metadata);
             }
             case motion_glideto -> {
-                final NumExpr secs = parseNumInput(block, Constants.SECS_KEY);
+                final NumExpr secs = NumExprConverter.convertNumExpr(state, block, KnownInputs.SECS);
                 final Position position = PositionConverter.convertPosition(state, block);
                 yield new GlideSecsTo(secs, position, metadata);
             }
             case motion_glidesecstoxy -> {
-                final NumExpr secs = parseNumInput(block, Constants.SECS_KEY);
-                final NumExpr x = parseNumInput(block, Constants.X);
-                final NumExpr y = parseNumInput(block, Constants.Y);
+                final NumExpr secs = NumExprConverter.convertNumExpr(state, block, KnownInputs.SECS);
+                final NumExpr x = NumExprConverter.convertNumExpr(state, block, KnownInputs.X);
+                final NumExpr y = NumExprConverter.convertNumExpr(state, block, KnownInputs.Y);
                 yield new GlideSecsToXY(secs, x, y, metadata);
             }
             case motion_pointindirection -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.DIRECTION_KEY_CAP);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.DIRECTION);
                 yield new PointInDirection(numExpr, metadata);
             }
             case motion_pointtowards -> {
@@ -83,19 +82,19 @@ final class SpriteMotionStmtConverter extends StmtConverter<SpriteMotionStmt> {
                 yield new PointTowards(position, metadata);
             }
             case motion_changexby -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.DX_KEY);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.DX);
                 yield new ChangeXBy(numExpr, metadata);
             }
             case motion_changeyby -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.DY_KEY);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.DY);
                 yield new ChangeYBy(numExpr, metadata);
             }
             case motion_setx -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.X);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.X);
                 yield new SetXTo(numExpr, metadata);
             }
             case motion_sety -> {
-                final NumExpr numExpr = parseNumInput(block, Constants.Y);
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.Y);
                 yield new SetYTo(numExpr, metadata);
             }
             case motion_ifonedgebounce -> new IfOnEdgeBounce(metadata);
@@ -110,10 +109,5 @@ final class SpriteMotionStmtConverter extends StmtConverter<SpriteMotionStmt> {
                 yield new SetDragMode(dragMode, metadata);
             }
         };
-    }
-
-    private NumExpr parseNumInput(final RawBlock.RawRegularBlock block, final String inputKey) {
-        final RawInput input = block.inputs().get(inputKey);
-        return NumExprConverter.convertNumExpr(state, block, input);
     }
 }

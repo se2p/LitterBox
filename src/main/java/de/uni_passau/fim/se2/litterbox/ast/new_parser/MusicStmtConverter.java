@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
@@ -52,23 +51,17 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
         return switch (opcode) {
             case music_playDrumForBeats -> convertPlayDrumForBeats(block, metadata);
             case music_restForBeats -> {
-                final NumExpr beats = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.BEATS_KEY)
-                );
+                final NumExpr beats = NumExprConverter.convertNumExpr(state, block, KnownInputs.BEATS);
                 yield new RestForBeats(beats, metadata);
             }
             case music_playNoteForBeats -> convertPlayNoteForBeats(block, metadata);
             case music_setInstrument -> convertSetInstrument(block, metadata);
             case music_setTempo -> {
-                final NumExpr tempo = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.TEMPO_BIG_KEY)
-                );
+                final NumExpr tempo = NumExprConverter.convertNumExpr(state, block, KnownInputs.TEMPO);
                 yield new SetTempoTo(tempo, metadata);
             }
             case music_changeTempo -> {
-                final NumExpr tempo = NumExprConverter.convertNumExpr(
-                        state, block, block.inputs().get(Constants.TEMPO_BIG_KEY)
-                );
+                final NumExpr tempo = NumExprConverter.convertNumExpr(state, block, KnownInputs.TEMPO);
                 yield new ChangeTempoBy(tempo, metadata);
             }
         };
@@ -77,7 +70,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     private PlayDrumForBeats convertPlayDrumForBeats(
             final RawBlock.RawRegularBlock block, final BlockMetadata metadata
     ) {
-        final RawInput drumInput = block.inputs().get(Constants.DRUM_KEY);
+        final RawInput drumInput = block.getInput(KnownInputs.DRUM);
         final Drum drum;
 
         if (ShadowType.SHADOW.equals(drumInput.shadowType())
@@ -93,7 +86,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
             drum = new ExprDrum(expr, new NoBlockMetadata());
         }
 
-        final NumExpr beats = NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.BEATS_KEY));
+        final NumExpr beats = NumExprConverter.convertNumExpr(state, block, KnownInputs.BEATS);
 
         return new PlayDrumForBeats(drum, beats, metadata);
     }
@@ -101,7 +94,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     private PlayNoteForBeats convertPlayNoteForBeats(
             final RawBlock.RawRegularBlock block, final BlockMetadata metadata
     ) {
-        final RawInput noteInput = block.inputs().get(Constants.NOTE_KEY);
+        final RawInput noteInput = block.getInput(KnownInputs.NOTE);
         final Note note;
 
         if (ShadowType.SHADOW.equals(noteInput.shadowType())) {
@@ -111,7 +104,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
             note = new ExprNote(expr, new NoBlockMetadata());
         }
 
-        final NumExpr beats = NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.BEATS_KEY));
+        final NumExpr beats = NumExprConverter.convertNumExpr(state, block, KnownInputs.BEATS);
 
         return new PlayNoteForBeats(note, beats, metadata);
     }
@@ -160,7 +153,7 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     }
 
     private SetInstrumentTo convertSetInstrument(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
-        final RawInput instrumentInput = block.inputs().get(Constants.INSTRUMENT_KEY);
+        final RawInput instrumentInput = block.getInput(KnownInputs.INSTRUMENT);
         final Instrument instrument;
 
         if (ShadowType.SHADOW.equals(instrumentInput.shadowType())

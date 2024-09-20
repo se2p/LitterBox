@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDColor;
@@ -27,16 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.mblock.LEDStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 final class LedStmtConverter extends StmtConverter<LEDStmt> {
-
-    private static final String RED_KEY = "R";
-    private static final String GREEN_KEY = "G";
-    private static final String BLUE_KEY = "B";
 
     LedStmtConverter(ProgramParserState state) {
         super(state);
@@ -66,23 +62,15 @@ final class LedStmtConverter extends StmtConverter<LEDStmt> {
             case show_led_rgb -> {
                 if (block.opcode().contains("mcore.")) {
                     final LEDPosition ledPosition = getLedPosition(block);
-                    final NumExpr red = NumExprConverter.convertNumExpr(
-                            state, block, block.inputs().get(RED_KEY)
-                    );
-                    final NumExpr green = NumExprConverter.convertNumExpr(
-                            state, block, block.inputs().get(GREEN_KEY)
-                    );
-                    final NumExpr blue = NumExprConverter.convertNumExpr(
-                            state, block, block.inputs().get(BLUE_KEY)
-                    );
+                    final NumExpr red = NumExprConverter.convertNumExpr(state, block, KnownInputs.LED_RED);
+                    final NumExpr green = NumExprConverter.convertNumExpr(state, block, KnownInputs.LED_GREEN);
+                    final NumExpr blue = NumExprConverter.convertNumExpr(state, block, KnownInputs.LED_BLUE);
 
                     yield new RGBValuesPosition(ledPosition, red, green, blue, metadata);
                 } else {
                     final String rgbName = block.getFieldValueAsString(KnownFields.RGB);
                     final RGB rgb = new RGB(rgbName);
-                    final NumExpr value = NumExprConverter.convertNumExpr(
-                            state, block, block.inputs().get(Constants.VALUE_KEY)
-                    );
+                    final NumExpr value = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
 
                     yield new RGBValue(rgb, value, metadata);
                 }
@@ -109,10 +97,10 @@ final class LedStmtConverter extends StmtConverter<LEDStmt> {
     }
 
     private StringExpr getColor(final RawBlock.RawRegularBlock block) {
-        return StringExprConverter.convertStringExpr(state, block, block.inputs().get(Constants.COLOR_KEY));
+        return StringExprConverter.convertStringExpr(state, block, KnownInputs.COLOR);
     }
 
     private NumExpr getTime(final RawBlock.RawRegularBlock block) {
-        return NumExprConverter.convertNumExpr(state, block, block.inputs().get(Constants.TIME_KEY));
+        return NumExprConverter.convertNumExpr(state, block, KnownInputs.TIME);
     }
 }

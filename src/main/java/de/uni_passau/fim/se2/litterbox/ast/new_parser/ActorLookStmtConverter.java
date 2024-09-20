@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -26,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
@@ -44,7 +44,7 @@ final class ActorLookStmtConverter extends StmtConverter<ActorLookStmt> {
         return switch (opcode) {
             case sensing_askandwait -> {
                 final StringExpr question = StringExprConverter.convertStringExpr(
-                        state, stmtBlock, stmtBlock.inputs().get(Constants.QUESTION_KEY)
+                        state, stmtBlock, KnownInputs.QUESTION
                 );
                 yield new AskAndWait(question, metadata);
             }
@@ -75,16 +75,12 @@ final class ActorLookStmtConverter extends StmtConverter<ActorLookStmt> {
                 yield new HideList(variable, metadata);
             }
             case looks_changeeffectby -> {
-                final NumExpr numExpr = NumExprConverter.convertNumExpr(
-                        state, stmtBlock, stmtBlock.inputs().get(Constants.CHANGE_KEY)
-                );
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, stmtBlock, KnownInputs.CHANGE);
                 final String effectName = stmtBlock.getFieldValueAsString(KnownFields.EFFECT);
                 yield new ChangeGraphicEffectBy(new GraphicEffect(effectName), numExpr, metadata);
             }
             case looks_seteffectto -> {
-                final NumExpr numExpr = NumExprConverter.convertNumExpr(
-                        state, stmtBlock, stmtBlock.inputs().get(Constants.VALUE_KEY)
-                );
+                final NumExpr numExpr = NumExprConverter.convertNumExpr(state, stmtBlock, KnownInputs.VALUE);
                 final String effectName = stmtBlock.getFieldValueAsString(KnownFields.EFFECT);
                 final GraphicEffect effect = new GraphicEffect(effectName);
                 yield new SetGraphicEffectTo(effect, numExpr, metadata);
