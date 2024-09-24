@@ -194,7 +194,6 @@ final class RawTargetConverter {
         for (var entry : target.variables().entrySet()) {
             declarations.add(convertVariableDeclarations(entry.getKey(), entry.getValue()));
         }
-
         declarations.addAll(convertAttributeDeclarations());
 
         return new DeclarationStmtList(Collections.unmodifiableList(declarations));
@@ -519,8 +518,9 @@ final class RawTargetConverter {
             final String argumentId = argumentIds.get(i).id();
             final RawInput argumentInput = procedurePrototype.inputs().get(argumentId);
             final Type parameterType = getParameterTypeFromInput(name, argumentInput, argumentDefaults.get(i));
+            final BlockMetadata metadata = getParameterMetadata(argumentInput);
 
-            definitions.add(new ParameterDefinition(name, parameterType, new NoBlockMetadata()));
+            definitions.add(new ParameterDefinition(name, parameterType, metadata));
         }
 
         return new ParameterDefinitionList(Collections.unmodifiableList(definitions));
@@ -549,6 +549,17 @@ final class RawTargetConverter {
         }
 
         throw new InternalParsingException("Unknown parameter type format!");
+    }
+
+    private BlockMetadata getParameterMetadata(final RawInput argument) {
+        if (argument != null && argument.input() instanceof BlockRef.IdRef inputIdRef) {
+            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+            if (inputBlock instanceof RawBlock.RawRegularBlock block) {
+                return RawBlockMetadataConverter.convertBlockMetadata(inputIdRef.id(), block);
+            }
+        }
+
+        return new NoBlockMetadata();
     }
 
     private static Type getParameterType(final StrId name, final RawMutation.ArgumentDefault<?> defaultValue) {

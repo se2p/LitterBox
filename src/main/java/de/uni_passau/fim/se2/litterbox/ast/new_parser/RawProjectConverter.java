@@ -38,10 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 final class RawProjectConverter {
     private final RawProject project;

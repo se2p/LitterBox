@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
@@ -39,9 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
-import java.util.Collections;
 import java.util.Optional;
 
 final class BoolExprConverter extends ExprConverter {
@@ -179,19 +176,8 @@ final class BoolExprConverter extends ExprConverter {
                 yield new StringContains(containing, contained, metadata);
             }
             case data_listcontainsitem -> {
-                final RawField listField = block.getField(KnownFields.LIST);
-                final RawBlockId listId = listField.id()
-                        .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
-                final String listName = listField.value().toString();
-
-                final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
-                        listId.id(), listName, state.getCurrentActor().getName(),
-                        () -> new ExpressionList(Collections.emptyList()), true, "Stage"
-                );
-                final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listName);
-
+                final Qualified list = ConverterUtilities.getListField(state, block);
                 final StringExpr contained = StringExprConverter.convertStringExpr(state, block, KnownInputs.ITEM);
-
                 yield new ListContains(list, contained, metadata);
             }
             case event_led_matrix_position_is_light -> {

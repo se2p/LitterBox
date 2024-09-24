@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
@@ -34,9 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-
-import java.util.Collections;
 
 final class NumExprConverter extends ExprConverter {
 
@@ -235,14 +231,11 @@ final class NumExprConverter extends ExprConverter {
                 yield new NumFunctOf(function, expr, metadata);
             }
             case data_lengthoflist -> {
-                final ExpressionListInfo listInfo = getList(state, block);
-                final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listInfo.getVariableName());
-
+                final Qualified list = ConverterUtilities.getListField(state, block);
                 yield new LengthOfVar(list, metadata);
             }
             case data_itemnumoflist -> {
-                final ExpressionListInfo listInfo = getList(state, block);
-                final Qualified list = ConverterUtilities.listInfoToIdentifier(listInfo, listInfo.getVariableName());
+                final Qualified list = ConverterUtilities.getListField(state, block);
                 final Expression item = ExprConverter.convertExpr(state, block, KnownInputs.ITEM);
 
                 yield new IndexOf(item, list, metadata);
@@ -276,18 +269,6 @@ final class NumExprConverter extends ExprConverter {
                 yield new DetectLinePort(port, metadata);
             }
         };
-    }
-
-    private static ExpressionListInfo getList(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
-        final RawField listField = block.getField(KnownFields.LIST);
-        final RawBlockId listId = listField.id()
-                .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
-        final String listName = listField.value().toString();
-
-        return state.getSymbolTable().getOrAddList(
-                listId.id(), listName, state.getCurrentActor().getName(),
-                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
-        );
     }
 
     private static TimeComp getTimeComp(final RawBlock.RawRegularBlock sensingCurrentBlock) {

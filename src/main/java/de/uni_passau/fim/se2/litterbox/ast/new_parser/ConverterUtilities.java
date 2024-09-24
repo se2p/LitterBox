@@ -21,15 +21,13 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
@@ -41,6 +39,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
+import java.util.Collections;
+
 /**
  * Groups various small helper functions for the converters that are not worth having their own class.
  */
@@ -49,12 +49,52 @@ final class ConverterUtilities {
         throw new IllegalCallerException("utility class constructor");
     }
 
-    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final String variableName) {
-        return new Qualified(new StrId(variableInfo.getActor()), new Variable(new StrId(variableName)));
+    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final RawBlockId id, final String variableName) {
+        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0, 0);
+        final Variable variable = new Variable(new StrId(variableName), metadata);
+        return new Qualified(new StrId(variableInfo.getActor()), variable);
     }
 
-    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final String listName) {
-        return new Qualified(new StrId(listInfo.getActor()), new ScratchList(new StrId(listName)));
+    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final RawBlock.RawVariable variable) {
+        final DataBlockMetadata metadata = new DataBlockMetadata(
+                variable.id().id(),
+                variable.coordinates().map(Coordinates::x).orElse(0.0),
+                variable.coordinates().map(Coordinates::y).orElse(0.0)
+        );
+        final Variable v = new Variable(new StrId(variable.name()), metadata);
+
+        return new Qualified(new StrId(variableInfo.getActor()), v);
+    }
+
+    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlockId id, final String listName) {
+        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0.0, 0.0);
+        final ScratchList list = new ScratchList(new StrId(listName), metadata);
+        return new Qualified(new StrId(listInfo.getActor()), list);
+    }
+
+    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
+        final DataBlockMetadata metadata = new DataBlockMetadata(
+                list.id().id(),
+                list.coordinates().map(Coordinates::x).orElse(0.0),
+                list.coordinates().map(Coordinates::y).orElse(0.0)
+        );
+        final ScratchList l =  new ScratchList(new StrId(list.name()), metadata);
+
+        return new Qualified(new StrId(listInfo.getActor()), l);
+    }
+
+    static Qualified getListField(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
+        final RawField listField = block.getField(KnownFields.LIST);
+        final RawBlockId listId = listField.id()
+                .orElseThrow(() -> new InternalParsingException("Referenced list is missing an identifier."));
+        final String listName = listField.value().toString();
+
+        final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
+                listId.id(), listName, state.getCurrentActor().getName(),
+                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
+        );
+
+        return listInfoToIdentifier(listInfo, listId, listName);
     }
 
     static MutationMetadata convertMutation(final RawMutation mutation) {

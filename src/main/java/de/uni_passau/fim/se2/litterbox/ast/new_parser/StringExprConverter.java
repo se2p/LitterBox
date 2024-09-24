@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -35,20 +34,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParserState;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-
-import java.util.Collections;
 
 final class StringExprConverter extends ExprConverter {
 
@@ -184,31 +178,13 @@ final class StringExprConverter extends ExprConverter {
                 final String name = block.getFieldValueAsString(KnownFields.NUMBER_NAME);
                 yield new Backdrop(new NameNum(name), metadata);
             }
-            case data_itemoflist -> parseItemOfList(state, metadata, block);
+            case data_itemoflist -> {
+                final NumExpr index = NumExprConverter.convertNumExpr(state, block, KnownInputs.INDEX);
+                final Identifier variable = ConverterUtilities.getListField(state, block);
+                yield new ItemOfVariable(index, variable, metadata);
+            }
             case sensing_of -> parseSensingOf(state, metadata, block);
         };
-    }
-
-    private static ItemOfVariable parseItemOfList(
-            final ProgramParserState state,
-            final BlockMetadata metadata,
-            final RawBlock.RawRegularBlock exprBlock
-    ) {
-        final NumExpr index = NumExprConverter.convertNumExpr(state, exprBlock, KnownInputs.INDEX);
-        final RawBlockId listId = exprBlock.getField(KnownFields.LIST).id()
-                .orElseThrow(() -> new InternalParsingException("ItemOfVariable block is missing reference to list!"));
-        final String listName = exprBlock.getFieldValueAsString(KnownFields.LIST);
-        final ExpressionListInfo listInfo = state.getSymbolTable().getOrAddList(
-                listId.id(), listName, state.getCurrentActor().getName(),
-                () -> new ExpressionList(Collections.emptyList()), true, "Stage"
-        );
-
-        final Identifier variable = new Qualified(
-                new StrId(listInfo.getActor()),
-                new ScratchList(new StrId(listInfo.getVariableName()))
-        );
-
-        return new ItemOfVariable(index, variable, metadata);
     }
 
     private static AttributeOf parseSensingOf(
