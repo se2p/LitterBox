@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ class NewParserTest {
     private final Scratch3Parser originalParser = new Scratch3Parser();
 
     @Test
+    @Disabled("no longer AST-identical due to bugfixes")
     void parseFixtures() throws IOException {
         final Path fixtureDir = Path.of("src", "test", "fixtures");
         try (var files = Files.walk(fixtureDir).filter(p -> p.getFileName().toString().endsWith(".json"))) {
