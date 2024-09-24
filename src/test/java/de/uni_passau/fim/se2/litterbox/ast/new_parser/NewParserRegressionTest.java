@@ -1,13 +1,35 @@
+/*
+ * Copyright (C) 2019-2024 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.ast.new_parser;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -49,5 +71,19 @@ class NewParserRegressionTest implements JsonTest {
         final Qualified leftOperand = (Qualified) equalsBlock.getOperand1();
 
         assertInstanceOf(Variable.class, leftOperand.getSecond());
+    }
+
+    @Test
+    void backdropNamesStartingWithRandom() throws ParsingException, IOException {
+        final Program p = getAST("src/test/fixtures/parserRegressions/backdropNameStartsWithRandom.json");
+
+        final var switchBackdropBlock = NodeFilteringVisitor.getBlocks(p, SwitchBackdropAndWait.class).get(0);
+        assertInstanceOf(WithExpr.class, switchBackdropBlock.getElementChoice());
+        assertInstanceOf(StrId.class, ((WithExpr) switchBackdropBlock.getElementChoice()).getExpression());
+
+        final StrId switchToName = (StrId) ((WithExpr) switchBackdropBlock.getElementChoice()).getExpression();
+        assertThat(switchToName.getName()).isEqualTo("random backdrop1");
+
+        assertThat(NodeFilteringVisitor.getBlocks(p, Random.class)).isEmpty();
     }
 }
