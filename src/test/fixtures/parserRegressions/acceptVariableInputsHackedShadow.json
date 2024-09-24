@@ -1,0 +1,505 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "]j`kEDTrJ8$.9;7d.Nm:": [
+                    "Spikes and Lives",
+                    "0"
+                ],
+                "-M#4=kN=Y61mC8jETwLu": [
+                    "Gravity",
+                    -179
+                ],
+                "|*;x5?S^GiI0j9]O8vwA": [
+                    "Start",
+                    "0"
+                ],
+                "ZcU8#Y$)hkgcf4.lenv{": [
+                    "Life",
+                    "3"
+                ],
+                "WSO{Rt=KKBZ)u]KAYb8~": [
+                    "characters!",
+                    "0"
+                ],
+                "l[J}cF{)V^tsxwqyHc?D": [
+                    "Coin",
+                    "0"
+                ],
+                "+W5%O/tihDrs[=.Sguho": [
+                    "Timer",
+                    41
+                ]
+            },
+            "lists": {
+                "KO8uwFi)pwbAi_M$?FkM": [
+                    "Gravity",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Instructions",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "7542f4550f0a8a8b2f5b500a88ac8f71",
+                    "md5ext": "7542f4550f0a8a8b2f5b500a88ac8f71.svg",
+                    "rotationCenterX": 360,
+                    "rotationCenterY": 270
+                },
+                {
+                    "name": "1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "8405ec3c8f0388ef95678adf6b3a6354",
+                    "md5ext": "8405ec3c8f0388ef95678adf6b3a6354.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "2",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "0da803d6be854febe3822544f491c08c",
+                    "md5ext": "0da803d6be854febe3822544f491c08c.png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                },
+                {
+                    "name": "3",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "90c7782d131dd0d90772b88946316b00",
+                    "md5ext": "90c7782d131dd0d90772b88946316b00.svg",
+                    "rotationCenterX": 449.0925350000001,
+                    "rotationCenterY": 187.876765
+                },
+                {
+                    "name": "5",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "7bf02b27c7984c799489c77f3e0ed918",
+                    "md5ext": "7bf02b27c7984c799489c77f3e0ed918.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "6",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "6573b266c710a3615ec8198ab3845c2e",
+                    "md5ext": "6573b266c710a3615ec8198ab3845c2e.svg",
+                    "rotationCenterX": 452.09251500000005,
+                    "rotationCenterY": 187.876765
+                },
+                {
+                    "name": "9",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0a89a59f23dca9fe76b3a7516ee32697",
+                    "md5ext": "0a89a59f23dca9fe76b3a7516ee32697.svg",
+                    "rotationCenterX": 249.578105,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "10",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "887c85e45d0fbb7f54a2c71c4bb45333",
+                    "md5ext": "887c85e45d0fbb7f54a2c71c4bb45333.svg",
+                    "rotationCenterX": 267.0781250000009,
+                    "rotationCenterY": 267.5
+                },
+                {
+                    "name": "4",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "ce4c112b3d178628a20ee2bc23058be6",
+                    "md5ext": "ce4c112b3d178628a20ee2bc23058be6.svg",
+                    "rotationCenterX": 284.635915,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "7",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "55dd7bc2c1befb6ee8bd4cb4ff2236b1",
+                    "md5ext": "55dd7bc2c1befb6ee8bd4cb4ff2236b1.svg",
+                    "rotationCenterX": 324.635905,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "8",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "618a9a1a23dcd963033200a046cbc6f2",
+                    "md5ext": "618a9a1a23dcd963033200a046cbc6f2.svg",
+                    "rotationCenterX": 281.80466,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "11",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "f85347a6f02562655cdb586c10f98546",
+                    "md5ext": "f85347a6f02562655cdb586c10f98546.svg",
+                    "rotationCenterX": 421.57809000000003,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "Finished",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "72ff73fa1b9a696baf38737f3a9a2fbb",
+                    "md5ext": "72ff73fa1b9a696baf38737f3a9a2fbb.svg",
+                    "rotationCenterX": 247.50098500000001,
+                    "rotationCenterY": 183.7367723977334
+                },
+                {
+                    "name": "Game Over",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "ac2585f238c2e9f98e723377ca776cda",
+                    "md5ext": "ac2585f238c2e9f98e723377ca776cda.svg",
+                    "rotationCenterX": 241,
+                    "rotationCenterY": 182
+                },
+                {
+                    "name": "backdrop1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "ef9dd5247c2919ffab37e780920aa33e",
+                    "md5ext": "ef9dd5247c2919ffab37e780920aa33e.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "name": "Name Page ",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "83a73a692488e7bb47adad5eb329692f",
+                    "md5ext": "83a73a692488e7bb47adad5eb329692f.png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "hearts",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "#@zz[fQn:~gLvXnWA%?w": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "z^+O1v5]j#TeeLJowl#D",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -611,
+                    "y": -753
+                },
+                "z^+O1v5]j#TeeLJowl#D": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "#@zz[fQn:~gLvXnWA%?w",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "$|RwX,F(w?W_B9vpv(bc"
+                        ],
+                        "SUBSTACK": [
+                            1,
+                            null
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$|RwX,F(w?W_B9vpv(bc": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "z^+O1v5]j#TeeLJowl#D",
+                    "inputs": {
+                        "OPERAND1": [
+                            2,
+                            [
+                                12,
+                                "Life",
+                                "ZcU8#Y$)hkgcf4.lenv{"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {
+                ";~8(t+V8i5W/DnVd`|u%": {
+                    "blockId": "09]R*{w5%fpv/gncFNoD",
+                    "x": 32.9191436767577,
+                    "y": -286,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": ""
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "3",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "25720871505dfae78a4c174ca08c71ec",
+                    "md5ext": "25720871505dfae78a4c174ca08c71ec.png",
+                    "rotationCenterX": 287,
+                    "rotationCenterY": 76
+                },
+                {
+                    "name": "2",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "911062f47bbb1051eb94fa2a986ee746",
+                    "md5ext": "911062f47bbb1051eb94fa2a986ee746.png",
+                    "rotationCenterX": 287,
+                    "rotationCenterY": 76
+                },
+                {
+                    "name": "1",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "2443a7cf37caddf6d99d3fad664ae8c5",
+                    "md5ext": "2443a7cf37caddf6d99d3fad664ae8c5.png",
+                    "rotationCenterX": 287,
+                    "rotationCenterY": 76
+                },
+                {
+                    "name": "0",
+                    "bitmapResolution": 2,
+                    "dataFormat": "png",
+                    "assetId": "b7bd7ea7347b06d753cce0caf6995c72",
+                    "md5ext": "b7bd7ea7347b06d753cce0caf6995c72.png",
+                    "rotationCenterX": 0,
+                    "rotationCenterY": 0
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": false,
+            "x": -179,
+            "y": 162,
+            "size": 40,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "]j`kEDTrJ8$.9;7d.Nm:",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Spikes and Lives"
+            },
+            "spriteName": null,
+            "value": "0",
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "`jEk@4|i[#Fk?(8x)AV.-my variable",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "my variable"
+            },
+            "spriteName": null,
+            "value": -1197,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 66,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "KO8uwFi)pwbAi_M$?FkM",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "Gravity"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 33,
+            "visible": false
+        },
+        {
+            "id": "-M#4=kN=Y61mC8jETwLu",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Gravity"
+            },
+            "spriteName": null,
+            "value": -179,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 33,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "|*;x5?S^GiI0j9]O8vwA",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Start"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "ZcU8#Y$)hkgcf4.lenv{",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Life"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "WSO{Rt=KKBZ)u]KAYb8~",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "characters!"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "l[J}cF{)V^tsxwqyHc?D",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Coin"
+            },
+            "spriteName": null,
+            "value": "0",
+            "width": 0,
+            "height": 0,
+            "x": 378,
+            "y": 9,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "+W5%O/tihDrs[=.Sguho",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "Timer"
+            },
+            "spriteName": null,
+            "value": 41,
+            "width": 0,
+            "height": 0,
+            "x": 271,
+            "y": 9,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "4.5.471",
+        "agent": "accept variables with a NO_SHADOW input type from hacked JSON, since they still work as intended when running the project"
+    }
+}
