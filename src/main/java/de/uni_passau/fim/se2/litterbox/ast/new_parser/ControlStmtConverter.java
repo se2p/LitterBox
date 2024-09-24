@@ -75,7 +75,7 @@ final class ControlStmtConverter extends StmtConverter<ControlStmt> {
         final Optional<RawInput> substackInput = stmt.getOptionalInput(inputKey);
 
         if (substackInput.isPresent() && substackInput.get().input() instanceof BlockRef.IdRef stmtListRef) {
-           return RawScriptConverter.convertStmtList(state, stmtListRef.id());
+            return RawScriptConverter.convertStmtList(state, stmtListRef.id());
         } else {
             return new StmtList(Collections.emptyList());
         }

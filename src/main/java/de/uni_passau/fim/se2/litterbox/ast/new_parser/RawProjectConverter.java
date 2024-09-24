@@ -94,7 +94,7 @@ final class RawProjectConverter {
     private MonitorMetadata convertMonitor(final RawMonitor monitor) {
         final Map<String, String> params = Objects.requireNonNullElse(monitor.params(), Collections.emptyMap());
         final MonitorParamMetadataList paramMeta = new MonitorParamMetadataList(
-               params.entrySet().stream()
+                params.entrySet().stream()
                         .map(entry -> new MonitorParamMetadata(entry.getKey(), entry.getValue()))
                         .toList()
         );

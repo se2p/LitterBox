@@ -60,7 +60,7 @@ final class RobotMoveStmtConverter extends StmtConverter<RobotMoveStmt> {
                 final NumExpr angle = NumExprConverter.convertNumExpr(state, block, KnownInputs.ANGLE);
                 yield new TurnRight2(angle, metadata);
             }
-            case forward_time, move_forward_with_time-> {
+            case forward_time, move_forward_with_time -> {
                 final NumExpr power = getPower(block);
                 final NumExpr time = getTime(block);
                 yield new MoveForwardTimed(power, time, metadata);

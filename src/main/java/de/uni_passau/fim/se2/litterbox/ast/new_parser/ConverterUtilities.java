@@ -49,7 +49,9 @@ final class ConverterUtilities {
         throw new IllegalCallerException("utility class constructor");
     }
 
-    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final RawBlockId id, final String variableName) {
+    static Qualified variableInfoToIdentifier(
+            final VariableInfo variableInfo, final RawBlockId id, final String variableName
+    ) {
         final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0, 0);
         final Variable variable = new Variable(new StrId(variableName), metadata);
         return new Qualified(new StrId(variableInfo.getActor()), variable);
@@ -62,7 +64,9 @@ final class ConverterUtilities {
         return new Qualified(new StrId(variableInfo.getActor()), v);
     }
 
-    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlockId id, final String listName) {
+    static Qualified listInfoToIdentifier(
+            final ExpressionListInfo listInfo, final RawBlockId id, final String listName
+    ) {
         final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0.0, 0.0);
         final ScratchList list = new ScratchList(new StrId(listName), metadata);
         return new Qualified(new StrId(listInfo.getActor()), list);
@@ -155,9 +159,9 @@ final class ConverterUtilities {
         final RawInput elementChoiceInput = containingStmt.getInput(KnownInputs.BACKDROP);
 
         if (
-            ShadowType.SHADOW.equals(elementChoiceInput.shadowType())
-                    && elementChoiceInput.input() instanceof BlockRef.IdRef blockIdRef
-                    && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                ShadowType.SHADOW.equals(elementChoiceInput.shadowType())
+                && elementChoiceInput.input() instanceof BlockRef.IdRef blockIdRef
+                && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
         ) {
             return convertElementChoiceFromMenu(blockIdRef.id(), menuBlock);
         } else {

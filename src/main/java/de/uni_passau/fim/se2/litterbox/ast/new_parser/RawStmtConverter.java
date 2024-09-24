@@ -114,10 +114,10 @@ final class RawStmtConverter {
             case control_stop -> {
                 final String stopOption = stmt.getFieldValueAsString(KnownFields.STOP_OPTION);
                 yield switch (stopOption) {
-                    case "all" -> new StopAll(metadata);
-                    case "this script" -> new StopThisScript(metadata);
-                    default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
-                };
+                        case "all" -> new StopAll(metadata);
+                        case "this script" -> new StopThisScript(metadata);
+                        default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
+                    };
             }
         };
     }
