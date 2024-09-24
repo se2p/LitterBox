@@ -39,7 +39,7 @@ public class ProcedureJSONCreatorTest implements JsonTest {
     @Test
     public void testProcedureWithoutParam() {
         ActorDefinition fig1 = procedure.getActorDefinitionList().getDefinitions().get(1);
-        String jsonString = ProcedureJSONCreator.createProcedureJSONString(fig1.getProcedureDefinitionList().getList().get(0), fig1.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
+        String jsonString = ProcedureJSONCreator.createProcedureJSONString(fig1.getProcedureDefinitionList().getList().get(1), fig1.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
         Assertions.assertEquals("\"+-|[~F#Y=UN]Gx:/FpZK\": {\"opcode\": \"procedures_definition\",\"next\": null,\"parent\": null,\"inputs\": {\"custom_block\": [1,\"Q9B2dBWC+EXqV13*TGJ+\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 234.0,\"y\": 161.0},\"Q9B2dBWC+EXqV13*TGJ+\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"+-|[~F#Y=UN]Gx:/FpZK\",\"inputs\": {},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestMethode\",\"argumentids\": \"[]\",\"argumentnames\": \"[]\",\"argumentdefaults\": \"[]\",\"warp\": false}}"
                 , jsonString);
     }
@@ -47,7 +47,7 @@ public class ProcedureJSONCreatorTest implements JsonTest {
     @Test
     public void testProcedureWithParams() {
         ActorDefinition fig1 = procedure.getActorDefinitionList().getDefinitions().get(1);
-        String jsonString = ProcedureJSONCreator.createProcedureJSONString(fig1.getProcedureDefinitionList().getList().get(1), fig1.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
+        String jsonString = ProcedureJSONCreator.createProcedureJSONString(fig1.getProcedureDefinitionList().getList().get(0), fig1.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
         Assertions.assertEquals("\"bch@i8.w%Rl]%8L6ch5E\": {\"opcode\": \"procedures_definition\",\"next\": null,\"parent\": null,\"inputs\": {\"custom_block\": [1,\"[7{.Qd1;lR2`(BT47(g+\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 572.0,\"y\": 159.0},\"=l|2nJpb+DKNyKnN2vWJ\": {\"opcode\": \"argument_reporter_string_number\",\"next\": null,\"parent\": \"[7{.Qd1;lR2`(BT47(g+\",\"inputs\": {},\"fields\": {\"VALUE\": [\"number or text\",null]},\"shadow\": true,\"topLevel\": false},\"hHF#O59[Z;v$W1c1sEn[\": {\"opcode\": \"argument_reporter_boolean\",\"next\": null,\"parent\": \"[7{.Qd1;lR2`(BT47(g+\",\"inputs\": {},\"fields\": {\"VALUE\": [\"boolean\",null]},\"shadow\": true,\"topLevel\": false},\"[7{.Qd1;lR2`(BT47(g+\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"bch@i8.w%Rl]%8L6ch5E\",\"inputs\": {\"TestMit_%s_%b_argument_0\": [1,\"=l|2nJpb+DKNyKnN2vWJ\"],\"TestMit_%s_%b_argument_1\": [1,\"hHF#O59[Z;v$W1c1sEn[\"]},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestMit %s %b\",\"argumentids\": \"[\\\"TestMit_%s_%b_argument_0\\\",\\\"TestMit_%s_%b_argument_1\\\"]\",\"argumentnames\": \"[\\\"number or text\\\",\\\"boolean\\\"]\",\"argumentdefaults\": \"[\\\"\\\",\\\"false\\\"]\",\"warp\": false}}"
                 , jsonString);
     }

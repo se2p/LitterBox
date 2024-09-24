@@ -23,8 +23,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,11 +38,6 @@ class NewParserTest {
     private final NewParser parser = new NewParser();
 
     private final Scratch3Parser originalParser = new Scratch3Parser();
-
-    @BeforeAll
-    static void setUp() throws IOException {
-        FileUtils.deleteDirectory(Path.of("dot_diffs").toFile());
-    }
 
     @Test
     void parseFixtures() throws IOException {
@@ -65,7 +58,7 @@ class NewParserTest {
 
         try {
             try {
-                final Program project = parser.parse(projectJson);
+                final Program project = parser.parseJsonFile(projectJson.toFile());
                 assertNotNull(project);
                 checkStructurallyEqual(originalResult, project);
             } catch (ParsingException e) {

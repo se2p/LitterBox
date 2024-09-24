@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ class MergeDoubleIfTest implements JsonTest {
         File testFile = new File("src/test/fixtures/refactoring/testdoublestmts.json");
         Program program = null;
         try {
-            program = new Scratch3Parser().parseFile(testFile);
+            program = new NewParser().parseFile(testFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,7 +92,7 @@ class MergeDoubleIfTest implements JsonTest {
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
         Stmt stmt = refactoredStmtList.get(0);
-        assertTrue(stmt instanceof IfThenStmt);
+        assertInstanceOf(IfThenStmt.class, stmt);
     }
 
     @Test

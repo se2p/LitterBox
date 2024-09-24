@@ -20,21 +20,38 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
+// do not run parallel to other tests since we mutate the global property
+@Isolated
 public class InvalidRotationStyleTest implements JsonTest {
 
+    private static final String SKIP_BROKEN_BLOCKS_PROP = "parser.skip_broken_blocks";
+
+    private static boolean skipUnknown;
+
+    @BeforeAll
+    static void setUp() {
+        skipUnknown = PropertyLoader.getSystemBooleanProperty(SKIP_BROKEN_BLOCKS_PROP);
+        System.setProperty(SKIP_BROKEN_BLOCKS_PROP, "false");
+    }
+
+    @AfterAll
+    static void tearDown() {
+        System.setProperty(SKIP_BROKEN_BLOCKS_PROP, Boolean.toString(skipUnknown));
+    }
+
     @Test
-    public void testInvalidRotationStyle() throws IOException, ParsingException {
-        try {
-            getAST("./src/test/fixtures/stmtParser/invalidRotationStyle.json");
-            fail();
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+    public void testInvalidRotationStyle() {
+        assertThrows(
+                ParsingException.class,
+                () -> getAST("./src/test/fixtures/stmtParser/invalidRotationStyle.json")
+        );
     }
 }
