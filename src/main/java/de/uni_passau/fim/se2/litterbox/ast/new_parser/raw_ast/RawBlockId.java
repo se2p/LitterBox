@@ -21,7 +21,4 @@ package de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public record RawBlockId(@JsonValue String id) {
-    public RawBlockId {
-        // todo: validate that has required format for a block id
-    }
 }
