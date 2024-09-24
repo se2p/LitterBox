@@ -56,11 +56,7 @@ final class ConverterUtilities {
     }
 
     static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final RawBlock.RawVariable variable) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(
-                variable.id().id(),
-                variable.coordinates().map(Coordinates::x).orElse(0.0),
-                variable.coordinates().map(Coordinates::y).orElse(0.0)
-        );
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(variable.id(), variable);
         final Variable v = new Variable(new StrId(variable.name()), metadata);
 
         return new Qualified(new StrId(variableInfo.getActor()), v);
@@ -73,11 +69,7 @@ final class ConverterUtilities {
     }
 
     static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(
-                list.id().id(),
-                list.coordinates().map(Coordinates::x).orElse(0.0),
-                list.coordinates().map(Coordinates::y).orElse(0.0)
-        );
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(list.id(), list);
         final ScratchList l =  new ScratchList(new StrId(list.name()), metadata);
 
         return new Qualified(new StrId(listInfo.getActor()), l);
