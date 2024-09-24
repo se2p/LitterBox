@@ -76,14 +76,20 @@ abstract class ExprConverter {
         } else if (exprBlock instanceof RawBlock.RawVariable variable) {
             final VariableInfo varInfo = symbolTable.getVariable(
                     variable.id().id(), variable.name(), state.getCurrentActor().getName()
-            ).orElseThrow(() -> new InternalParsingException("Program contains unknown variable: " + variable.name()));
+            ).orElseThrow(() -> new InternalParsingException(
+                    "Program contains unknown variable '" + variable.name() + "' in actor '"
+                            + state.getCurrentActor().getName() + "'."
+            ));
             final Qualified varId = ConverterUtilities.variableInfoToIdentifier(varInfo, variable);
 
             return new ExpressionStmt(varId);
         } else if (exprBlock instanceof RawBlock.RawList list) {
             final ExpressionListInfo listInfo = symbolTable.getList(
                     list.id().id(), list.name(), state.getCurrentActor().getName()
-            ).orElseThrow(() -> new InternalParsingException("Program contains unknown list: " + list.name()));
+            ).orElseThrow(() -> new InternalParsingException(
+                    "Program contains unknown list '" + list.name() + "' in actor '"
+                            + state.getCurrentActor().getName() + "'."
+            ));
             final Qualified listId = ConverterUtilities.listInfoToIdentifier(listInfo, list);
 
             return new ExpressionStmt(listId);
