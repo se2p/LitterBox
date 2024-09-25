@@ -217,7 +217,7 @@ public final class RawTarget {
     }
 
     public record StageAttributes(
-            Integer tempo, String videoState, Double videoTransparency, String textToSpeechLanguage
+            Long tempo, String videoState, Double videoTransparency, String textToSpeechLanguage
     ) {
     }
 
