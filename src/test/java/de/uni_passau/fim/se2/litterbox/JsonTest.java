@@ -29,7 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -44,13 +45,14 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public interface JsonTest {
     boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
     default Program getAST(String fileName) throws IOException, ParsingException {
-        NewParser parser = new NewParser();
+        Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 
@@ -62,7 +64,7 @@ public interface JsonTest {
 
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
     static Program parseProgram(String fileName) throws IOException, ParsingException {
-        NewParser parser = new NewParser();
+        Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 
@@ -128,5 +130,13 @@ public interface JsonTest {
             issues.addAll(iF.check(program));
         }
         return issues;
+    }
+
+    static <T extends ASTNode> T getBlock(
+            final ASTNode root, final String blockId, final Class<T> expectedType
+    ) {
+        final ASTNode block = BlockByIdFinder.findBlock(root, blockId).orElseThrow();
+        assertInstanceOf(expectedType, block);
+        return expectedType.cast(block);
     }
 }

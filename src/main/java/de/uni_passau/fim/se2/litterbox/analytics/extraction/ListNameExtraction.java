@@ -34,7 +34,7 @@ public class ListNameExtraction implements ScratchVisitor, NameExtraction {
         final List<String> names = new ArrayList<>();
         Collection<ExpressionListInfo> variables = program.getSymbolTable().getLists().values();
         for (ExpressionListInfo variable : variables) {
-            names.add(variable.getVariableName());
+            names.add(variable.variableName());
         }
         return names;
     }

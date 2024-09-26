@@ -20,41 +20,5 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 
-import java.util.Objects;
-
-public class ArgumentInfo {
-
-    String name;
-    Type type;
-
-    public ArgumentInfo(String name, Type type) {
-        this.name = name;
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ArgumentInfo that = (ArgumentInfo) o;
-        return Objects.equals(name, that.name)
-                && Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, type);
-    }
+public record ArgumentInfo(String name, Type type) {
 }

@@ -157,15 +157,23 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
 
-        variablesInScope = varMap.values().stream().filter(v -> v.isGlobal() || v.getActor().equals(currentActor.getIdent().getName())).map(VariableInfo::getVariableName).collect(Collectors.toSet());
-        variablesInScope.addAll(listMap.values().stream().filter(v -> v.isGlobal() || v.getActor().equals(currentActor.getIdent().getName())).map(ExpressionListInfo::getVariableName).collect(Collectors.toSet()));
+        variablesInScope = varMap.values().stream()
+                .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
+                .map(VariableInfo::variableName)
+                .collect(Collectors.toSet());
+        variablesInScope.addAll(listMap.values().stream()
+                .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
+                .map(ExpressionListInfo::variableName)
+                .collect(Collectors.toSet()));
+
         if (procMap != null) {
             for (ProcedureInfo procInfo : procMap.values()) {
                 for (ArgumentInfo ai : procInfo.getArguments()) {
-                    variablesInScope.add(ai.getName());
+                    variablesInScope.add(ai.name());
                 }
             }
         }
+
         actor.getScripts().accept(this);
         actor.getProcedureDefinitionList().accept(this);
     }

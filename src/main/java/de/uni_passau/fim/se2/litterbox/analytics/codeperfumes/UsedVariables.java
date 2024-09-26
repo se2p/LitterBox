@@ -196,8 +196,8 @@ public class UsedVariables extends AbstractIssueFinder {
 
     private boolean flagVariable(Variable variable) {
         for (VariableInfo curr : variables) {
-            String actorNameInfo = curr.getActor();
-            String variableNameInfo = curr.getVariableName();
+            String actorNameInfo = curr.actor();
+            String variableNameInfo = curr.variableName();
             if (actorNameInfo.equals(actorName)
                     && variableNameInfo.equals(variable.getName().getName())) {
                 flaggedVariables.add(actorName + variable.getName().getName());
@@ -209,8 +209,8 @@ public class UsedVariables extends AbstractIssueFinder {
 
     private boolean flagList(ScratchList list) {
         for (ExpressionListInfo curr : lists) {
-            String actorNameInfo = curr.getActor();
-            String listNameInfo = curr.getVariableName();
+            String actorNameInfo = curr.actor();
+            String listNameInfo = curr.variableName();
             if (actorNameInfo.equals(actorName)
                     && listNameInfo.equals(list.getName().getName())) {
                 flaggedLists.add(actorName + list.getName().getName());

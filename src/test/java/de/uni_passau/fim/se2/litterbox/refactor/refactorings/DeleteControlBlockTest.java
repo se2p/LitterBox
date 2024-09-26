@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -40,7 +40,7 @@ class DeleteControlBlockTest {
         File testFile = new File("src/test/fixtures/refactoring/testdummyrefactorings.json");
         Program program = null;
         try {
-            program = new NewParser().parseFile(testFile);
+            program = new Scratch3Parser().parseFile(testFile);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -123,7 +123,7 @@ public class ScriptJSONCreator {
                 String messageText = ((StringLiteral) expr).getText();
                 String id;
                 if (symbol.getMessage(messageText).isPresent()) {
-                    id = symbol.getMessage(messageText).get().getIdentifier();
+                    id = symbol.getMessage(messageText).get().identifier();
                 } else {
                     id = "unspecified" + messageText;
                 }

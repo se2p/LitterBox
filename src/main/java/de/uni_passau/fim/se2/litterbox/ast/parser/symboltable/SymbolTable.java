@@ -242,8 +242,8 @@ public class SymbolTable {
         Set<Entry<String, ExpressionListInfo>> entries = lists.entrySet();
         for (Entry<String, ExpressionListInfo> current : entries) {
             ExpressionListInfo info = current.getValue();
-            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                return current.getValue().getIdent();
+            if (info.variableName().equals(name) && info.actor().equals(actor)) {
+                return current.getValue().ident();
             }
         }
         return null;
@@ -253,8 +253,8 @@ public class SymbolTable {
         Set<Entry<String, VariableInfo>> entries = variables.entrySet();
         for (Entry<String, VariableInfo> current : entries) {
             VariableInfo info = current.getValue();
-            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                return current.getValue().getIdent();
+            if (info.variableName().equals(name) && info.actor().equals(actor)) {
+                return current.getValue().ident();
             }
         }
         return null;

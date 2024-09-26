@@ -18,64 +18,80 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawProject;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.nio.file.Path;
 
 public class Scratch3Parser {
 
-    public Program parseJsonNode(String programName, JsonNode node) throws ParsingException, RuntimeException {
-        Program program = ProgramParser.parseProgram(programName, node);
-        program.accept(new ParentVisitor());
-        return program;
-    }
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .findAndRegisterModules()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public Program parseFile(File fileEntry) throws IOException, ParsingException {
-        String fileName = fileEntry.getName();
-        if (PropertyLoader.getSystemBooleanProperty("parser.log_file_name")) {
-            Logger.getGlobal().info("Now parsing program file: " + fileName);
-        }
+    public Program parseFile(final File projectFile) throws ParsingException {
+        final String fileName = projectFile.getName();
 
         if ((FilenameUtils.getExtension(fileName)).equalsIgnoreCase("json")) {
-            return parseJsonFile(fileEntry);
+            return parseJsonFile(projectFile);
         } else {
-            return parseSB3File(fileEntry);
+            return parseSB3File(projectFile);
         }
     }
 
-    public Program parseJsonFile(File fileEntry) throws IOException, ParsingException {
-        String fileName = fileEntry.getName();
-        String programName = getProgramName(fileName);
+    public Program parseSB3File(final File fileEntry) throws ParsingException {
+        final String fileName = fileEntry.getName();
+        final String programName = getProjectName(fileName);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(fileEntry);
-        return parseJsonNode(programName, rootNode);
+        try {
+            final String jsonString = ZipReader.getJsonString(fileEntry.toPath());
+            return parseString(programName, jsonString);
+        } catch (IOException e) {
+            throw new ParsingException("Could not read input file.", e);
+        }
     }
 
-    public Program parseSB3File(File fileEntry) throws IOException, ParsingException {
-        String fileName = fileEntry.getName();
-        String programName = getProgramName(fileName);
+    public Program parseJsonFile(final File projectJson) throws ParsingException {
+        try {
+            final RawProject rawProject = mapper.readValue(projectJson, RawProject.class);
+            final Program program = RawProjectConverter.convert(rawProject, getProjectName(projectJson.toPath()));
 
-        String jsonString = ZipReader.getJsonString(fileEntry.toPath());
-        return parseString(programName, jsonString);
+            final ParentVisitor v = new ParentVisitor();
+            program.accept(v);
+
+            return program;
+        } catch (IOException e) {
+            throw new ParsingException("Could not read project JSON!", e);
+        }
     }
 
-    public Program parseString(String programName, String json) throws ParsingException {
-        JsonNode rootNode = JsonParser.getTargetsNodeFromJSONString(json);
-        return parseJsonNode(programName, rootNode);
+    public Program parseString(final String name, final String projectJson) throws ParsingException {
+        try {
+            final RawProject project = mapper.readValue(projectJson, RawProject.class);
+            final Program program = RawProjectConverter.convert(project, name);
+
+            final ParentVisitor v = new ParentVisitor();
+            program.accept(v);
+
+            return program;
+        } catch (IOException e) {
+            throw new ParsingException("Could not read project JSON!", e);
+        }
     }
 
-    private String getProgramName(String fileName) {
+    private String getProjectName(final Path projectPath) {
+        return getProjectName(projectPath.getFileName().toString());
+    }
+
+    private String getProjectName(final String fileName) {
         return FilenameUtils.removeExtension(fileName);
     }
 }

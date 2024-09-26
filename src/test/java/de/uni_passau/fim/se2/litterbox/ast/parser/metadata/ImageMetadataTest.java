@@ -18,27 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUMES_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
-
-public class ImageMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-
+public class ImageMetadataTest implements JsonTest {
     @Test
-    public void testEmptyProgram() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        JsonNode empty = mapper.readTree(f);
-        ImageMetadataList meta = ImageMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
-                .get(COSTUMES_KEY));
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        ImageMetadataList meta = program.getActorDefinitionList().getDefinitions().get(0).getActorMetadata().getCostumes();
+
         Assertions.assertEquals(1, meta.getList().size());
         Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a", meta.getList().get(0).getAssetId());
         Assertions.assertEquals("svg", meta.getList().get(0).getDataFormat());

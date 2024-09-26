@@ -18,40 +18,48 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ActorMetadataTest {
 
+    private final Scratch3Parser parser = new Scratch3Parser();
+
     @Test
-    public void testActorMetadata() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+    public void testActorMetadata() throws ParsingException {
         File f = new File("./src/test/fixtures/emptyProject.json");
-        JsonNode empty = mapper.readTree(f);
-        ActorMetadata actor0 = ActorMetadataParser.parse(empty.get(TARGETS_KEY).get(0));
-        Assertions.assertTrue(actor0 instanceof StageMetadata);
-        StageMetadata stage = (StageMetadata) actor0;
-        ActorMetadata actor1 = ActorMetadataParser.parse(empty.get(TARGETS_KEY).get(1));
+        Program program = parser.parseFile(f);
 
-        Assertions.assertNotNull(stage.getCostumes());
-        Assertions.assertNotNull(stage.getSounds());
-        Assertions.assertNotNull(stage.getCommentsMetadata());
-        Assertions.assertNull(stage.getTextToSpeechLanguage());
-        Assertions.assertEquals(0, stage.getCurrentCostume());
+        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
+        assertTrue(stage.isStage());
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Assertions.assertFalse(actor.isStage());
 
-        Assertions.assertNotNull(actor1.getCostumes());
-        Assertions.assertNotNull(actor1.getSounds());
-        Assertions.assertNotNull(actor1.getCommentsMetadata());
-        Assertions.assertEquals(0, actor1.getCurrentCostume());
+        StageMetadata stageMeta = (StageMetadata) stage.getActorMetadata();
+        assertNotNull(stageMeta.getCostumes());
+        assertNotNull(stageMeta.getSounds());
+        assertNotNull(stageMeta.getCommentsMetadata());
+        assertNull(stageMeta.getTextToSpeechLanguage());
+        assertEquals(0, stageMeta.getCurrentCostume());
+
+        ActorMetadata actorMeta = actor.getActorMetadata();
+        assertNotNull(actorMeta.getCostumes());
+        assertNotNull(actorMeta.getSounds());
+        assertNotNull(actorMeta.getCommentsMetadata());
+        assertEquals(0, actorMeta.getCurrentCostume());
     }
 }
 

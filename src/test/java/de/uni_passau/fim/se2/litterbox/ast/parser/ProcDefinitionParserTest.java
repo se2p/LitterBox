@@ -70,22 +70,22 @@ public class ProcDefinitionParserTest implements JsonTest {
         Assertions.assertEquals(2,
                 procedureInfo.getArguments().length);
         Assertions.assertEquals("NumInput",
-                procedureInfo.getArguments()[0].getName());
+                procedureInfo.getArguments()[0].name());
         Assertions.assertEquals("Boolean",
-                procedureInfo.getArguments()[1].getName());
+                procedureInfo.getArguments()[1].name());
 
-        Truth.assertThat(procedureInfo.getArguments()[0].getType()).isInstanceOf(StringType.class);
-        Truth.assertThat(procedureInfo.getArguments()[1].getType()).isInstanceOf(BooleanType.class);
+        Truth.assertThat(procedureInfo.getArguments()[0].type()).isInstanceOf(StringType.class);
+        Truth.assertThat(procedureInfo.getArguments()[1].type()).isInstanceOf(BooleanType.class);
         Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().size());
-        Assertions.assertEquals(procedureInfo.getArguments()[1].getName(),
+        Assertions.assertEquals(procedureInfo.getArguments()[1].name(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getIdent().getName());
-        Assertions.assertEquals(procedureInfo.getArguments()[0].getName(),
+        Assertions.assertEquals(procedureInfo.getArguments()[0].name(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getIdent().getName());
         Assertions.assertEquals(NonDataBlockMetadata.class,
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getMetadata().getClass());
-        Assertions.assertEquals(procedureInfo.getArguments()[1].getType(),
+        Assertions.assertEquals(procedureInfo.getArguments()[1].type(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getType());
-        Assertions.assertEquals(procedureInfo.getArguments()[0].getType(),
+        Assertions.assertEquals(procedureInfo.getArguments()[0].type(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getType());
         Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
         Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
