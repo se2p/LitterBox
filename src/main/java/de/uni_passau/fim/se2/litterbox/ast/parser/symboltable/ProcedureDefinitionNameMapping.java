@@ -49,16 +49,6 @@ public class ProcedureDefinitionNameMapping {
         malformedProcedures = new ArrayList<>(other.malformedProcedures);
     }
 
-    public void addProcedure(LocalIdentifier localIdentifier,
-                             String actorName,
-                             String procedureName,
-                             String[] argumentNames,
-                             Type[] types) throws ParsingException {
-        final ProcedureInfo info = new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName);
-
-        addProcedureForActor(actorName, localIdentifier, info);
-    }
-
     public void addProcedure(
             final LocalIdentifier ident,
             final String actorName,
@@ -149,10 +139,6 @@ public class ProcedureDefinitionNameMapping {
 
     public Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
         return getProcedures().getOrDefault(actorName, Collections.emptyMap());
-    }
-
-    public void addMalformed(String malformed) {
-        malformedProcedures.add(malformed);
     }
 
     public boolean checkIfMalformed(String toCheck) {

@@ -19,13 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlock;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawBlockId;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.raw_ast.RawTarget;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlockId;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
-public class ProgramParserState {
+final class ProgramParserState {
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procDefMap;
 
@@ -34,7 +34,7 @@ public class ProgramParserState {
 
     public ProgramParserState() {
         symbolTable = new SymbolTable();
-        this.procDefMap = new ProcedureDefinitionNameMapping();
+        procDefMap = new ProcedureDefinitionNameMapping();
     }
 
     public SymbolTable getSymbolTable() {
@@ -61,10 +61,6 @@ public class ProgramParserState {
      */
     public RawBlock getBlock(final RawBlockId id) {
         return currentTarget.blocks().get(id);
-    }
-
-    public void setCurrentActor(LocalIdentifier currentActor) {
-        this.currentActor = currentActor;
     }
 
     public void setCurrentActor(final LocalIdentifier currentActor, final RawTarget currentTarget) {

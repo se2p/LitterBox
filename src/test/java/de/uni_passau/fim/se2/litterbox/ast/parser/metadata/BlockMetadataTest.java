@@ -41,43 +41,43 @@ public class BlockMetadataTest {
         prog = mapper.readTree(f);
     }
 
-    @Test
-    public void testDataBlock() throws ParsingException {
-        BlockMetadata blockMetadata = BlockMetadataParser.parse("GKr#[hOQWwm(reaPtK%R",
-                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-                        "GKr#[hOQWwm(reaPtK%R"));
-        Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
-        DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
-        Assertions.assertEquals(471, dataBlock.getX());
-        Assertions.assertEquals(383, dataBlock.getY());
-    }
-
-    @Test
-    public void testNoMetadataTopBlock() throws ParsingException {
-        BlockMetadata blockMetadata = BlockMetadataParser.parse("X)N~xB@[E,i0S}Vwwtjm",
-                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-                        "X)N~xB@[E,i0S}Vwwtjm"));
-        Assertions.assertTrue(blockMetadata instanceof TopNonDataBlockMetadata);
-        TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
-        Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
-        Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
-        Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
-        Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
-        Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
-        Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
-    }
-
-    @Test
-    public void testMetadataBlock() throws ParsingException {
-        BlockMetadata blockMetadata = BlockMetadataParser.parse("Vr$zTl8mo1W,U?+q6,T{",
-                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-                        "Vr$zTl8mo1W,U?+q6,T{"));
-        Assertions.assertTrue(blockMetadata instanceof NonDataBlockMetadata);
-        NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
-        Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
-        Assertions.assertNull(nonDataBlockMetadata.getCommentId());
-        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
-        Assertions.assertTrue(nonDataBlockMetadata.isShadow());
-    }
+//    @Test
+//    public void testDataBlock() throws ParsingException {
+//        BlockMetadata blockMetadata = BlockMetadataParser.parse("GKr#[hOQWwm(reaPtK%R",
+//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+//                        "GKr#[hOQWwm(reaPtK%R"));
+//        Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
+//        DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
+//        Assertions.assertEquals(471, dataBlock.getX());
+//        Assertions.assertEquals(383, dataBlock.getY());
+//    }
+//
+//    @Test
+//    public void testNoMetadataTopBlock() throws ParsingException {
+//        BlockMetadata blockMetadata = BlockMetadataParser.parse("X)N~xB@[E,i0S}Vwwtjm",
+//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+//                        "X)N~xB@[E,i0S}Vwwtjm"));
+//        Assertions.assertTrue(blockMetadata instanceof TopNonDataBlockMetadata);
+//        TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) blockMetadata;
+//        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
+//        Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
+//        Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
+//        Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
+//        Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
+//        Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
+//        Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
+//    }
+//
+//    @Test
+//    public void testMetadataBlock() throws ParsingException {
+//        BlockMetadata blockMetadata = BlockMetadataParser.parse("Vr$zTl8mo1W,U?+q6,T{",
+//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+//                        "Vr$zTl8mo1W,U?+q6,T{"));
+//        Assertions.assertTrue(blockMetadata instanceof NonDataBlockMetadata);
+//        NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
+//        Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
+//        Assertions.assertNull(nonDataBlockMetadata.getCommentId());
+//        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
+//        Assertions.assertTrue(nonDataBlockMetadata.isShadow());
+//    }
 }

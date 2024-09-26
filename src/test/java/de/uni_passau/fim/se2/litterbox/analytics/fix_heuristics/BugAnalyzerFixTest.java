@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class BugAnalyzerFixTest implements JsonTest {
 
-    private final NewParser parser = new NewParser();
+    private final Scratch3Parser parser = new Scratch3Parser();
 
     @Test
     public void testLoopSensingFix() throws ParsingException {

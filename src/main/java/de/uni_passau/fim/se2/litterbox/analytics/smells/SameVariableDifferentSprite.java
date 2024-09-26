@@ -41,11 +41,11 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
         for (int i = 0; i < varInfos.size() - 1; i++) {
-            String currentName = varInfos.get(i).getVariableName();
-            String currentActorName = varInfos.get(i).getActor();
+            String currentName = varInfos.get(i).variableName();
+            String currentActorName = varInfos.get(i).actor();
             for (int j = i + 1; j < varInfos.size(); j++) {
-                if (currentName.equals(varInfos.get(j).getVariableName())
-                        && !currentActorName.equals(varInfos.get(j).getActor())) {
+                if (currentName.equals(varInfos.get(j).variableName())
+                        && !currentActorName.equals(varInfos.get(j).actor())) {
                     found = true;
                     break;
                 }
@@ -65,11 +65,11 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
         Map<String, ExpressionListInfo> listInfoMap = program.getSymbolTable().getLists();
         ArrayList<ExpressionListInfo> listInfos = new ArrayList<>(listInfoMap.values());
         for (int i = 0; i < listInfos.size() - 1; i++) {
-            String currentName = listInfos.get(i).getVariableName();
-            String currentActorName = listInfos.get(i).getActor();
+            String currentName = listInfos.get(i).variableName();
+            String currentActorName = listInfos.get(i).actor();
             for (int j = i + 1; j < listInfos.size(); j++) {
-                if (currentName.equals(listInfos.get(j).getVariableName())
-                        && !currentActorName.equals(listInfos.get(j).getActor())) {
+                if (currentName.equals(listInfos.get(j).variableName())
+                        && !currentActorName.equals(listInfos.get(j).actor())) {
                     found = true;
                     break;
                 }
