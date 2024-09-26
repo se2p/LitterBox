@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -54,14 +53,13 @@ class ProgramParser {
 
         Iterable<JsonNode> iterable = () -> programNode.get(TARGETS_KEY).iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
-        Optional<JsonNode> stageNode = stream.filter(node -> node.get(IS_STAGE_KEY).asBoolean())
-                .findFirst(); //Is it necessary to check that only one stage exists?
+        List<JsonNode> stageNodes = stream.filter(node -> node.get(IS_STAGE_KEY).asBoolean()).toList();
 
-        if (stageNode.isEmpty()) {
-            throw new ParsingException("Program has no Stage");
+        if (stageNodes.size() != 1) {
+            throw new ParsingException("Expected exactly one stage. Got " + stageNodes.size() + ".");
         }
 
-        List<ActorDefinition> actorDefinitions = getActorDefinitions(state, programNode, stageNode.get());
+        List<ActorDefinition> actorDefinitions = getActorDefinitions(state, programNode, stageNodes.get(0));
 
         ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
         ProgramMetadata metadata = ProgramMetadataParser.parse(programNode);

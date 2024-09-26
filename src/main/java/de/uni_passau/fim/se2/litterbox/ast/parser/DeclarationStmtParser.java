@@ -216,6 +216,12 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
                 list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
             }
+
+            if (actorDefinitionNode.has(TEXT_TO_SPEECH_KEY) && !actorDefinitionNode.get(TEXT_TO_SPEECH_KEY).isNull()) {
+                keyExpr = new StringLiteral(TEXT_TO_SPEECH_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(TEXT_TO_SPEECH_KEY).isTextual());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+            }
         } else {
 
             if (actorDefinitionNode.has(VISIBLE_KEY)) {
@@ -264,8 +270,6 @@ public class DeclarationStmtParser {
     }
 
     public static List<SetStmt> parseAttributeDeclarationSetStmts(JsonNode actorDefinitionNode) {
-        //String ttSLang = "textToSpeechLanguage"; // Ignored as this is an extension
-
         StringExpr keyExpr;
         double jsonDouble;
         String jsonString;
@@ -323,6 +327,16 @@ public class DeclarationStmtParser {
                 keyExpr = new StringLiteral(VIDSTATE_KEY);
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
                 jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
+                stringExpr = new StringLiteral(jsonString);
+                setStmt = new SetAttributeTo(keyExpr, stringExpr,
+                        new NoBlockMetadata());
+                list.add(setStmt);
+            }
+
+            if (actorDefinitionNode.has(TEXT_TO_SPEECH_KEY) && !actorDefinitionNode.get(TEXT_TO_SPEECH_KEY).isNull()) {
+                keyExpr = new StringLiteral(TEXT_TO_SPEECH_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(TEXT_TO_SPEECH_KEY).isTextual());
+                jsonString = actorDefinitionNode.get(TEXT_TO_SPEECH_KEY).asText();
                 stringExpr = new StringLiteral(jsonString);
                 setStmt = new SetAttributeTo(keyExpr, stringExpr,
                         new NoBlockMetadata());

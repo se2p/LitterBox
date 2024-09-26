@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class Scratch3ParserTest {
 
-    private final Scratch3Parser parser = new Scratch3Parser();
+    private final NewParser parser = new NewParser();
 
     @ParameterizedTest
     @ValueSource(strings = {"emptyProject.sb3", "greenflag.json"})

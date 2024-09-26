@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -53,16 +54,39 @@ public class ProcedureDefinitionNameMapping {
                              String procedureName,
                              String[] argumentNames,
                              Type[] types) throws ParsingException {
+        final ProcedureInfo info = new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName);
 
-        Map<LocalIdentifier, ProcedureInfo> currentMap;
-        if (procedures.containsKey(actorName)) {
-            currentMap = procedures.get(actorName);
-        } else {
-            currentMap = new LinkedHashMap<>();
-            procedures.put(actorName, currentMap);
-        }
-        currentMap.put(localIdentifier,
-                new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
+        addProcedureForActor(actorName, localIdentifier, info);
+    }
+
+    public void addProcedure(
+            final LocalIdentifier ident,
+            final String actorName,
+            final String procedureName,
+            final ParameterDefinitionList parameters
+    ) {
+        final ArgumentInfo[] arguments = parameters.getParameterDefinitions().stream()
+                .map(parameterDefinition -> new ArgumentInfo(
+                        parameterDefinition.getIdent().getName(), parameterDefinition.getType()
+                ))
+                .toArray(ArgumentInfo[]::new);
+        final ProcedureInfo info = new ProcedureInfo(procedureName, arguments, actorName);
+
+        addProcedureForActor(actorName, ident, info);
+    }
+
+    private void addProcedureForActor(
+            final String actorName, final LocalIdentifier identifier, final ProcedureInfo procedure
+    ) {
+        procedures.compute(actorName, (actor, actorProcedureMap) -> {
+            if (actorProcedureMap == null) {
+                actorProcedureMap = new LinkedHashMap<>();
+            }
+
+            actorProcedureMap.put(identifier, procedure);
+
+            return actorProcedureMap;
+        });
     }
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) throws ParsingException {

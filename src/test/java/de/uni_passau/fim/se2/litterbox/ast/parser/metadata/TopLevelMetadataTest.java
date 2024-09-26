@@ -57,6 +57,7 @@ public class TopLevelMetadataTest implements JsonTest {
         Assertions.assertEquals(Variable.class, data.getClass());
         Assertions.assertEquals(DataBlockMetadata.class, data.getMetadata().getClass());
         DataBlockMetadata meta = (DataBlockMetadata) data.getMetadata();
+        Assertions.assertNotNull(meta.getBlockId());
         Assertions.assertEquals(471, meta.getX());
         Assertions.assertEquals(383, meta.getY());
     }

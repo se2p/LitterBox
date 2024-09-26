@@ -22,21 +22,21 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BugAnalyzerFixTest implements JsonTest {
 
+    private final NewParser parser = new NewParser();
+
     @Test
-    public void testLoopSensingFix() throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
+    public void testLoopSensingFix() throws ParsingException {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingStopResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingStopWait.json").toFile())));
         Assertions.assertEquals(2, issues.size());
@@ -46,8 +46,7 @@ public class BugAnalyzerFixTest implements JsonTest {
 
 
     @Test
-    public void testLoopSensingMultiFixOne() throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
+    public void testLoopSensingMultiFixOne() throws ParsingException {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingMultiResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingMultiFixOne.json").toFile())));
         Assertions.assertEquals(3, issues.size());
@@ -56,8 +55,7 @@ public class BugAnalyzerFixTest implements JsonTest {
     }
 
     @Test
-    public void testComparingLiteralsMultiFix() throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
+    public void testComparingLiteralsMultiFix() throws ParsingException {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/comparingLiteralsResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/comparingLiteralsFix.json").toFile())));
         Assertions.assertEquals(6, issues.size());

@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -50,7 +50,7 @@ public interface JsonTest {
     boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
     default Program getAST(String fileName) throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
+        NewParser parser = new NewParser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 
@@ -62,7 +62,7 @@ public interface JsonTest {
 
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
     static Program parseProgram(String fileName) throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
+        NewParser parser = new NewParser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 

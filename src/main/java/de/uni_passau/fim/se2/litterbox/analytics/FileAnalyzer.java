@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.new_parser.NewParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public abstract class FileAnalyzer<R> {
 
     private static final Logger log = Logger.getLogger(FileAnalyzer.class.getName());
 
-    private final Scratch3Parser parser = new Scratch3Parser();
+    private final NewParser parser = new NewParser();
 
     protected final ProgramAnalyzer<R> analyzer;
     protected final Path output;
@@ -130,8 +130,6 @@ public abstract class FileAnalyzer<R> {
     protected final Program extractProgram(File fileEntry) {
         try {
             return parser.parseFile(fileEntry);
-        } catch (IOException e) {
-            log.severe("Could not load program from file " + fileEntry.getName());
         } catch (ParsingException e) {
             log.severe("Could not parse program for file " + fileEntry.getName() + ". " + e.getMessage());
         } catch (RuntimeException e) {

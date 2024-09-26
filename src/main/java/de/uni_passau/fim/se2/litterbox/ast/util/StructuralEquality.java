@@ -275,6 +275,8 @@ public final class StructuralEquality {
             ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor,
             TranslateExtensionVisitor {
 
+        private static final double EPSILON = 1e-4;
+
         private final ASTLeaf compareTo;
 
         private final boolean ignoreLiterals;
@@ -326,7 +328,15 @@ public final class StructuralEquality {
         @Override
         public void visit(NumberLiteral node) {
             if (compareTo instanceof NumberLiteral n) {
-                areEqual = ignoreLiterals || Math.abs(n.getValue() - node.getValue()) < 1e-6;
+                if (ignoreLiterals) {
+                    areEqual = true;
+                    return;
+                }
+
+                final boolean bothInfinite = Double.isInfinite(n.getValue()) && Double.isInfinite(node.getValue());
+                final boolean bothNaN = Double.isNaN(n.getValue()) && Double.isNaN(node.getValue());
+
+                areEqual = bothInfinite || bothNaN || Math.abs(n.getValue() - node.getValue()) < EPSILON;
             }
         }
 
@@ -438,7 +448,7 @@ public final class StructuralEquality {
         @Override
         public void visit(FixedNote node) {
             if (compareTo instanceof FixedNote f) {
-                areEqual = Math.abs(f.getNote() - node.getNote()) < 1e-6;
+                areEqual = Math.abs(f.getNote() - node.getNote()) < EPSILON;
             }
         }
 
