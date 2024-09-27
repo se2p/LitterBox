@@ -1,7 +1,6 @@
 ![LitterBox Logo](src/main/resources/litterbox.png "LitterBox Logo")
 
-![License LGPL v3](https://img.shields.io/github/license/se2p/LitterBox?color=blue&style=flat-square)
-![Travis (.org)](https://img.shields.io/travis/se2p/LitterBox?style=flat-square)
+![License GPL v3](https://img.shields.io/github/license/se2p/LitterBox?color=blue&style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/se2p/LitterBox?style=flat-square)
 
 LitterBox is a static code analysis tool for detecting bugs in
