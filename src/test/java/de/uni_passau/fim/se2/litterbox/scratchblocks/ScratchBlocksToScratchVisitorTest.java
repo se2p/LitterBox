@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -65,6 +66,13 @@ class ScratchBlocksToScratchVisitorTest {
 
     private StmtList getStmtList(String scratchBlocksInput) {
         return getScript(scratchBlocksInput).getStmtList();
+    }
+
+    private Script parseScript(final String scratchBlocksInput) {
+        ScriptEntity scriptEntity = getScript(scratchBlocksInput);
+        assertInstanceOf(Script.class, scriptEntity);
+
+        return (Script) scriptEntity;
     }
 
     @Test
@@ -226,20 +234,25 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
-    void testFullScript1() {
-        ScriptEntity scriptEntity = getScript(
-                """
-                        when green flag clicked
-                        forever
-                        next costume
-                        wait (0.1) seconds
-                        end
-                        """
-        );
-        assertInstanceOf(Script.class, scriptEntity);
-
-        Script script = (Script) scriptEntity;
+    void testFullScriptGreenFlag() {
+        Script script = parseScript("""
+                when green flag clicked
+                forever
+                next costume
+                wait (0.1) seconds
+                end
+                """);
         assertInstanceOf(GreenFlag.class, script.getEvent());
+        assertEquals(1, script.getStmtList().getStmts().size());
+    }
+
+    @Test
+    void testFullScriptWhenKeyPressed() {
+        Script script = parseScript("""
+                when [any v] key pressed
+                set volume to (0) %
+                """);
+        assertInstanceOf(KeyPressed.class, script.getEvent());
         assertEquals(1, script.getStmtList().getStmts().size());
     }
 }

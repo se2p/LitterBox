@@ -20,9 +20,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -32,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -97,6 +96,50 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     @Override
     public GreenFlag visitGreenFlag(ScratchBlocksGrammarParser.GreenFlagContext ctx) {
         return new GreenFlag(new NoBlockMetadata());
+    }
+
+    @Override
+    public SpriteClicked visitSpriteClicked(ScratchBlocksGrammarParser.SpriteClickedContext ctx) {
+        return new SpriteClicked(new NoBlockMetadata());
+    }
+
+    @Override
+    public StageClicked visitStageClicked(ScratchBlocksGrammarParser.StageClickedContext ctx) {
+        return new StageClicked(new NoBlockMetadata());
+    }
+
+    @Override
+    public StartedAsClone visitStartAsClone(ScratchBlocksGrammarParser.StartAsCloneContext ctx) {
+        return new StartedAsClone(new NoBlockMetadata());
+    }
+
+    @Override
+    public KeyPressed visitKeyEvent(ScratchBlocksGrammarParser.KeyEventContext ctx) {
+        return new KeyPressed(visitKey(ctx.key()), new NoBlockMetadata());
+    }
+
+    @Override
+    public ReceptionOfMessage visitReceptionMessage(ScratchBlocksGrammarParser.ReceptionMessageContext ctx) {
+        Message msg = new Message(visitStringArgument(ctx.stringArgument()));
+        return new ReceptionOfMessage(msg, new NoBlockMetadata());
+    }
+
+    @Override
+    public AttributeAboveValue visitBiggerEvent(ScratchBlocksGrammarParser.BiggerEventContext ctx) {
+        EventAttribute attribute = visitEventChoice(ctx.eventChoice());
+        NumExpr value = makeNumExpr(ctx.exprOrLiteral());
+        return new AttributeAboveValue(attribute, value, new NoBlockMetadata());
+    }
+
+    @Override
+    public BackdropSwitchTo visitBackDropSwitchEvent(ScratchBlocksGrammarParser.BackDropSwitchEventContext ctx) {
+        LocalIdentifier backdrop = new StrId(visitStringArgument(ctx.stringArgument()));
+        return new BackdropSwitchTo(backdrop, new NoBlockMetadata());
+    }
+
+    @Override
+    public EventAttribute visitEventChoice(ScratchBlocksGrammarParser.EventChoiceContext ctx) {
+        return new EventAttribute(ctx.getText());
     }
 
     // endregion: events
