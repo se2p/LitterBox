@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
     private final BlockMetadata menuMetadata;
@@ -33,11 +32,6 @@ public class NonDataBlockWithMenuMetadata extends NonDataBlockMetadata {
 
     public BlockMetadata getMenuMetadata() {
         return menuMetadata;
-    }
-
-    @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
     }
 
     @Override

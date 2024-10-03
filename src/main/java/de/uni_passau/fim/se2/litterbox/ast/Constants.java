@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,131 +35,16 @@ public final class Constants {
      * Names and values are the same as in the Scratch 3 source code.
      */
     public static final int INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
-    public static final int INPUT_BLOCK_NO_SHADOW = 2; // no shadow
     public static final int INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
     public static final int MATH_NUM_PRIMITIVE = 4; // number
     public static final int POSITIVE_NUM_PRIMITIVE = 5; // positive number
     public static final int WHOLE_NUM_PRIMITIVE = 6; // positive integer
     public static final int INTEGER_NUM_PRIMITIVE = 7; // integer
-    public static final int ANGLE_NUM_PRIMITIVE = 8; // angle
     public static final int COLOR_PICKER_PRIMITIVE = 9; // colour
     public static final int TEXT_PRIMITIVE = 10; // string
     public static final int BROADCAST_PRIMITIVE = 11; // broadcast
     public static final int VAR_PRIMITIVE = 12; // variable
     public static final int LIST_PRIMITIVE = 13; // list
-
-    /*
-     * The terms "input array" and "(input) data array" refer to specific parts
-     * in the JSON file where inputs are stored.
-     *
-     * In the example
-     * "DEGREES": [1,[4,"15"]]
-     *
-     * [1,[4,"15"]] is the input array
-     * holding the input shadow indicator and the data array
-     *
-     * and [4,"15"] is the data array holding the input type and the input value.
-     *
-     * If the input array holds a variable or a list, there is another array
-     * holding information about the obscured input. This array is called
-     * "shadow array".
-     *
-     * In the example
-     * "inputs": {"DEGREES": [3, [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"], [4,"40"]]},
-     *
-     * [3, [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"], [4,"40"]]
-     * is the input array holding input shadow indicator, data array and shadow array,
-     *
-     * [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"] is the input array
-     *
-     * and [4,"40"] is the shadow array.
-     */
-
-    /**
-     * The position of the input shadow indicator in the input array.
-     */
-    public static final int POS_INPUT_SHADOW = 0;
-
-    /**
-     * The position of the data array holding input type and input value in the input array.
-     */
-    public static final int POS_DATA_ARRAY = 1;
-
-    /**
-     * The position of the shadow array in the input array.
-     */
-    public static final int POS_SHADOW_ARRAY = 2;
-
-    /**
-     * The position of the input type in the input and the shadow array.
-     */
-    public static final int POS_INPUT_TYPE = 0;
-
-    /**
-     * The position of the input value in the input data array and the shadow array.
-     */
-    public static final int POS_INPUT_VALUE = 1;
-
-    /**
-     * The position of the inputID in the data array. The inputID is either
-     * a variable ID or a list ID.
-     */
-    public static final int POS_INPUT_ID = 2;
-
-    /**
-     * The position of the field value in the field data array.
-     */
-    public static final int FIELD_VALUE = 0;
-
-    /**
-     * The position of the field reference in the field data array.
-     */
-    public static final int FIELD_REFERENCE = 1;
-
-    /**
-     * The position of the block ID in an expr array.
-     */
-    public static final int POS_BLOCK_ID = 1;
-
-    /**
-     * The position of the unique identifier in a LIST.
-     */
-    public static final int LIST_IDENTIFIER_POS = 1;
-
-    /**
-     * The position of the name in a LIST.
-     */
-    public static final int LIST_NAME_POS = 0;
-
-    /**
-     * The position of the unique identifier in a DATA_INPUT.
-     */
-    public static final int DATA_INPUT_IDENTIFIER_POS = 2;
-
-    /**
-     * The position of the name in a DATA_INPUT.
-     */
-    public static final int DATA_INPUT_NAME_POS = 1;
-
-    /**
-     * The position of the x in a top DATA_INPUT.
-     */
-    public static final int DATA_INPUT_X_POS = 3;
-
-    /**
-     * The position of the y in a top DATA_INPUT.
-     */
-    public static final int DATA_INPUT_Y_POS = 4;
-
-    /**
-     * The position of the unique identifier in a VARIABLE.
-     */
-    public static final int VARIABLE_IDENTIFIER_POS = 1;
-
-    /**
-     * The position of the name in a VARIABLE.
-     */
-    public static final int VARIABLE_NAME_POS = 0;
 
     /**
      * JSon Field Names of JSon Blocks.
@@ -176,21 +61,6 @@ public final class Constants {
     public static final String IS_STAGE_KEY = "isStage";
 
     public static final String OPERATOR_KEY = "OPERATOR";
-
-    /**
-     * The position of the variable's value in the declaration.
-     */
-    public static final int DECLARATION_VARIABLE_VALUE_POS = 1;
-
-    /**
-     * The position of the variable's name in the declaration.
-     */
-    public static final int DECLARATION_VARIABLE_NAME_POS = 0;
-
-    /**
-     * The position of the list's name in the declaration.
-     */
-    public static final int DECLARATION_LIST_NAME_POS = 0;
 
     /**
      * The position of the list's values in the declaration.
@@ -218,7 +88,6 @@ public final class Constants {
     public static final String EFFECT_KEY = "EFFECT";
     public static final String DRAGMODE_KEY = "DRAG_MODE";
     public static final String STYLE_KEY = "STYLE";
-    public static final String PEN_SIZE_KEY = "pen_size";
     public static final String COLOR_PARAM_BIG_KEY = "COLOR_PARAM";
     public static final String COLOR_PARAM_LITTLE_KEY = "colorParam";
     public static final String MUTATION_KEY = "mutation";
@@ -297,8 +166,6 @@ public final class Constants {
     public static final String VALUE_LOWER_KEY = "value";
     public static final String SLIDER_MIN_KEY = "sliderMin";
     public static final String SLIDER_MAX_KEY = "sliderMax";
-    public static final String MIN_KEY = "min";
-    public static final String MAX_KEY = "max";
     public static final String IS_DISCRETE_KEY = "isDiscrete";
     public static final String BLOCK_ID_KEY = "blockId";
     public static final String MINIMIZED_KEY = "minimized";
@@ -320,9 +187,6 @@ public final class Constants {
     public static final String KEY_OPTION = "KEY_OPTION";
     public static final String CUSTOM_BLOCK_KEY = "custom_block";
     public static final String EMPTY_VALUE = "{}";
-    public static final String BOOLEAN_DEFAULT = "false";
-    public static final String STRING_NUMBER_DEFAULT = "";
-    public static final String NUMBER_DEFAULT = "1";
     public static final String CURRENT_YEAR_FIELD = "CURRENTMENU";
     public static final String PROPERTY_FIELDS_KEY = "PROPERTY";
     public static final String WHEN_GREATER_THAN_MENU = "WHENGREATERTHANMENU";
@@ -335,22 +199,6 @@ public final class Constants {
     public static final String VOICE_FIELDS_KEY = "voices";
     public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
     public static final String LANGUAGE_FIELDS_KEY = "languages";
-
-    public static final String RGB_KEY = "RGB";
-    public static final String TIME_KEY = "TIME";
-    public static final String BUTTONS_KEY = "BUTTONS";
-    public static final String PORT_KEY = "PORT";
-    public static final String TEXT_KEY_CAPS = "TEXT";
-    public static final String NUMBER_KEY = "NUMBER";
-    public static final String NUMBER1_KEY = "NUMBER1";
-    public static final String NUMBER2_KEY = "NUMBER2";
-
-    public static final String BEATS_KEY = "BEATS";
-    public static final String TEMPO_BIG_KEY = "TEMPO";
-
-    public static final String INSTRUMENT_KEY = "INSTRUMENT";
-    public static final String NOTE_KEY = "NOTE";
-    public static final String DRUM_KEY = "DRUM";
 
     /**
      * The default sprite names in the various languages in lowercase.

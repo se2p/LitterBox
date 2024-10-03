@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DuplicatedScriptsCovering extends AbstractIssueFinder {
     private static final String NAME = "duplicated_scripts_covering";
@@ -46,7 +45,7 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
     public void visit(ScriptList node) {
         List<Script> scripts;
         if (ignoreLooseBlocks) {
-            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).toList();
         } else {
             scripts = node.getScriptList();
         }

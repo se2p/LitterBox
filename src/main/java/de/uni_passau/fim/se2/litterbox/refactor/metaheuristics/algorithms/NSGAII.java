@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
 
@@ -89,7 +88,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         }
 
         population = fastNonDominatedSort.fastNonDominatedSort(population).get(0);
-        return population.stream().distinct().collect(Collectors.toList()); // only return unique solutions
+        return population.stream().distinct().toList(); // only return unique solutions
     }
 
     @VisibleForTesting

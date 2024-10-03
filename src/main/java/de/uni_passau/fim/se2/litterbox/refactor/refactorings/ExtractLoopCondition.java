@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refactoring {
 
@@ -48,7 +47,7 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
         this.ifThenStmt = Preconditions.checkNotNull(ifThenStmt);
         TerminationStmt stopStmt = (TerminationStmt) ifThenStmt.getThenStmts().getStatement(0);
 
-        List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).collect(Collectors.toList());
+        List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).toList();
 
         UntilStmt replacementLoop = new UntilStmt(apply(ifThenStmt.getBoolExpr()), new StmtList(applyList(remainingStmts)), apply(foreverLoop.getMetadata()));
         replacement.add(replacementLoop);

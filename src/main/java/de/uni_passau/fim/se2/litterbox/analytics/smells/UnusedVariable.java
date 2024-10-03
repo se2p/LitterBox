@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -73,8 +73,8 @@ public class UnusedVariable extends AbstractIssueFinder {
         List<ActorDefinition> actors = program.getActorDefinitionList().getDefinitions();
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
             VariableInfo curr = entry.getValue();
-            String actorName = curr.getActor();
-            String name = curr.getVariableName();
+            String actorName = curr.actor();
+            String name = curr.variableName();
             boolean currFound = false;
             for (int i = 0; i < variableCalls.size() && !currFound; i++) {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)
@@ -101,8 +101,8 @@ public class UnusedVariable extends AbstractIssueFinder {
 
         for (Map.Entry<String, ExpressionListInfo> entry : listMap.entrySet()) {
             ExpressionListInfo curr = entry.getValue();
-            String actorName = curr.getActor();
-            String name = curr.getVariableName();
+            String actorName = curr.actor();
+            String name = curr.variableName();
             boolean currFound = false;
             for (int i = 0; i < variableCalls.size() && !currFound; i++) {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)

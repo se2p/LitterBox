@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public interface JsonTest {
     boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
@@ -128,5 +130,13 @@ public interface JsonTest {
             issues.addAll(iF.check(program));
         }
         return issues;
+    }
+
+    static <T extends ASTNode> T getBlock(
+            final ASTNode root, final String blockId, final Class<T> expectedType
+    ) {
+        final ASTNode block = BlockByIdFinder.findBlock(root, blockId).orElseThrow();
+        assertInstanceOf(expectedType, block);
+        return expectedType.cast(block);
     }
 }

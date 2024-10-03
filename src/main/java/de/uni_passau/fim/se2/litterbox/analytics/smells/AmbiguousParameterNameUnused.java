@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -64,9 +64,9 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = i + 1; j < arguments.length; j++) {
-                if (i != j && current.getName().equals(arguments[j].getName())) {
-                    if (!paraNames.contains(current.getName())) {
-                        paraNames.add(current.getName());
+                if (i != j && current.name().equals(arguments[j].name())) {
+                    if (!paraNames.contains(current.name())) {
+                        paraNames.add(current.name());
                     }
                     foundAmbiguousParam = true;
                 }

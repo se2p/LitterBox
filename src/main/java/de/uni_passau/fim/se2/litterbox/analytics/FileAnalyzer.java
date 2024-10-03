@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -130,8 +130,6 @@ public abstract class FileAnalyzer<R> {
     protected final Program extractProgram(File fileEntry) {
         try {
             return parser.parseFile(fileEntry);
-        } catch (IOException e) {
-            log.severe("Could not load program from file " + fileEntry.getName());
         } catch (ParsingException e) {
             log.severe("Could not parse program for file " + fileEntry.getName() + ". " + e.getMessage());
         } catch (RuntimeException e) {

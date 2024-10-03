@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
@@ -49,7 +48,7 @@ public class EmptySprite extends AbstractIssueFinder {
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
-            issues.add(new Issue(this, IssueSeverity.LOW, program, actor, (Script) null, null, null, hint));
+            issues.add(new Issue(this, IssueSeverity.LOW, program, actor, null, null, null, hint));
         }
     }
 

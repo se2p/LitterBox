@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -99,7 +99,7 @@ public class ActorJSONCreator {
         List<MessageInfo> messages = new ArrayList<>(symbol.getMessages().values());
         List<MessageInfo> currentMessages = new ArrayList<>();
         for (MessageInfo message : messages) {
-            if (message.getActor().equals(actor.getIdent().getName())) {
+            if (message.actor().equals(actor.getIdent().getName())) {
                 currentMessages.add(message);
             }
         }
@@ -107,16 +107,16 @@ public class ActorJSONCreator {
             MessageInfo info = currentMessages.get(i);
             JSONStringCreator.createFieldValue(
                     jsonString,
-                    info.getIdentifier(),
-                    ((StringLiteral) info.getMessage().getMessage()).getText()
+                    info.identifier(),
+                    ((StringLiteral) info.message().getMessage()).getText()
             ).append(",");
         }
         if (!currentMessages.isEmpty()) {
             MessageInfo info = currentMessages.get(currentMessages.size() - 1);
             JSONStringCreator.createFieldValue(
                     jsonString,
-                    info.getIdentifier(),
-                    ((StringLiteral) info.getMessage().getMessage()).getText()
+                    info.identifier(),
+                    ((StringLiteral) info.message().getMessage()).getText()
             );
         }
 

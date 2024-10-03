@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -1242,7 +1242,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
-                "move (10) steps" + System.lineSeparator() +
+                "turn right (15) degrees" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
 

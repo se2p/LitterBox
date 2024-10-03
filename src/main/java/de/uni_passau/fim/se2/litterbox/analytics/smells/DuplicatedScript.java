@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DuplicatedScript extends AbstractIssueFinder {
 
@@ -47,7 +46,7 @@ public class DuplicatedScript extends AbstractIssueFinder {
     public void visit(ScriptList node) {
         List<Script> scripts;
         if (ignoreLooseBlocks) {
-            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).toList();
         } else {
             scripts = node.getScriptList();
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * If the When I start as a clone event handler is used to start a script, but the sprite is never cloned,
@@ -59,7 +58,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
-                = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).collect(Collectors.toList());
+                = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).toList();
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         program.accept(this);

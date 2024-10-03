@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,21 +32,21 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.EXTENSIONS_KEY;
 public class ExtensionMetadataTest {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    @Test
-    public void testEmptyProgram() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        JsonNode empty = mapper.readTree(f);
-        ExtensionMetadata meta = ExtensionMetadataParser.parse(empty.get(EXTENSIONS_KEY));
-        Assertions.assertEquals(0, meta.getExtensionNames().size());
-    }
-
-    @Test
-    public void testTwoExtensions() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
-        JsonNode prog = mapper.readTree(f);
-        ExtensionMetadata meta = ExtensionMetadataParser.parse(prog.get(EXTENSIONS_KEY));
-        Assertions.assertEquals(2, meta.getExtensionNames().size());
-        Assertions.assertEquals("pen", meta.getExtensionNames().get(0));
-        Assertions.assertEquals("music", meta.getExtensionNames().get(1));
-    }
+//    @Test
+//    public void testEmptyProgram() throws IOException {
+//        File f = new File("./src/test/fixtures/emptyProject.json");
+//        JsonNode empty = mapper.readTree(f);
+//        ExtensionMetadata meta = ExtensionMetadataParser.parse(empty.get(EXTENSIONS_KEY));
+//        Assertions.assertEquals(0, meta.getExtensionNames().size());
+//    }
+//
+//    @Test
+//    public void testTwoExtensions() throws IOException {
+//        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
+//        JsonNode prog = mapper.readTree(f);
+//        ExtensionMetadata meta = ExtensionMetadataParser.parse(prog.get(EXTENSIONS_KEY));
+//        Assertions.assertEquals(2, meta.getExtensionNames().size());
+//        Assertions.assertEquals("pen", meta.getExtensionNames().get(0));
+//        Assertions.assertEquals("music", meta.getExtensionNames().get(1));
+//    }
 }

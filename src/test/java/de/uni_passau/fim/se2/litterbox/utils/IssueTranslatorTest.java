@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -25,7 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated  // ensure no parallel tests to avoid parallel mutation of global state (i.e. IssueTranslator language)
 class IssueTranslatorTest {
-    // @Test
+
+    @AfterEach
+    void reset() {
+        IssueTranslator.getInstance().setLanguage("en");
+    }
+
+    @Test
     void fallbackToEnglish() {
         IssueTranslator.getInstance().setLanguage("no");
         assertEquals("costume", getInfo(IssueTranslator.GeneralTerm.COSTUME));

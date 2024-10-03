@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,104 +18,85 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static de.uni_passau.fim.se2.litterbox.JsonTest.getBlock;
 
-public class ExpressionParserTest {
+public class ExpressionParserTest implements JsonTest {
 
-    private static JsonNode moveStepsScript;
-    private static JsonNode allExprTypesScript;
-    private static JsonNode literalBlock;
-    private static JsonNode containingBlock;
+    private static Program moveStepsScript;
+    private static MoveSteps containingBlock;
 
-    private static JsonNode twoNumExprSlotsNumExprs;
-    private static JsonNode addBlock;
-    private static JsonNode minusBlock;
-    private static JsonNode divBlock;
-    private static JsonNode multBlock;
-
-    private static ProgramParserState state;
+    private static MoveSteps addBlock;
+    private static MoveSteps minusBlock;
+    private static MoveSteps divBlock;
+    private static MoveSteps multBlock;
 
     @BeforeAll
-    public static void setup() throws IOException {
-        moveStepsScript = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/movesteps.json"));
-        allExprTypesScript = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/allexprtypes.json"));
-        twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON(
-                Path.of("./src/test/fixtures/twoNumExprSlotsNumExprs.json")
-        );
-        literalBlock = allExprTypesScript.get("QJ:02/{CIWEai#dfuC(k");
-        containingBlock = allExprTypesScript.get("K0-dZ/kW=hWWb/GpMt8:");
+    public static void setup() throws IOException, ParsingException {
+        moveStepsScript = JsonTest.parseProgram("./src/test/fixtures/movesteps.json");
+        Program allExprTypesScript = JsonTest.parseProgram("./src/test/fixtures/allexprtypes.json");
+        Program twoNumExprSlotsNumExprs = JsonTest.parseProgram("./src/test/fixtures/twoNumExprSlotsNumExprs.json");
+        containingBlock = getBlock(allExprTypesScript, "K0-dZ/kW=hWWb/GpMt8:", MoveSteps.class);
 
-        addBlock = twoNumExprSlotsNumExprs.get("$`zwlVu=MrX}[7_|OkP0");
-        minusBlock = twoNumExprSlotsNumExprs.get("kNxFx|sm51cAUYf?x(cR");
-        divBlock = twoNumExprSlotsNumExprs.get("b2JumU`zm:?3szh/07O(");
-        multBlock = twoNumExprSlotsNumExprs.get("IBYSC9r)0ccPx;?l-2M|");
-
-        state = new ProgramParserState();
-        state.setCurrentActor(new StrId("actor"));
+        addBlock = getBlock(twoNumExprSlotsNumExprs, "$`zwlVu=MrX}[7_|OkP0", MoveSteps.class);
+        minusBlock = getBlock(twoNumExprSlotsNumExprs, "kNxFx|sm51cAUYf?x(cR", MoveSteps.class);
+        divBlock = getBlock(twoNumExprSlotsNumExprs, "b2JumU`zm:?3szh/07O(", MoveSteps.class);
+        multBlock = getBlock(twoNumExprSlotsNumExprs, "IBYSC9r)0ccPx;?l-2M|", MoveSteps.class);
     }
 
     @Test
-    public void testParseNumber() throws ParsingException {
-        JsonNode inputs = moveStepsScript.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-        NumberLiteral result = NumExprParser.parseNumber(inputs, STEPS_KEY);
-        assertEquals("10.0", String.valueOf(result.getValue()));
+    public void testParseNumber() {
+        MoveSteps moveSteps = getBlock(moveStepsScript, "EU(l=G6)z8NGlJFcx|fS", MoveSteps.class);
+        assertEquals(new NumberLiteral(10.0), moveSteps.getSteps());
     }
 
     @Test
-    public void testParseNumExprLiteral() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(state, literalBlock, STEPS_KEY, allExprTypesScript);
-        assertTrue(numExpr instanceof NumberLiteral);
+    public void testParseNumExprBlock() {
+        assertInstanceOf(MouseX.class, containingBlock.getSteps());
     }
 
     @Test
-    public void testParseNumExprBlock() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(state, containingBlock, STEPS_KEY, allExprTypesScript);
-        assertTrue(numExpr instanceof MouseX);
-    }
-
-    @Test
-    public void testAdd() throws ParsingException {
-        NumExpr add = NumExprParser.parseNumExpr(state, addBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
-        assertTrue(add instanceof Add);
+    public void testAdd() {
+        NumExpr add = addBlock.getSteps();
+        assertInstanceOf(Add.class, add);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand2()).getValue()));
     }
 
     @Test
-    public void testMinus() throws ParsingException {
-        NumExpr minus = NumExprParser.parseNumExpr(state, minusBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
-        assertTrue(minus instanceof Minus);
+    public void testMinus() {
+        NumExpr minus = minusBlock.getSteps();
+        assertInstanceOf(Minus.class, minus);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand2()).getValue()));
     }
 
     @Test
-    public void testMult() throws ParsingException {
-        NumExpr mult = NumExprParser.parseNumExpr(state, multBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
-        assertTrue(mult instanceof Mult);
+    public void testMult() {
+        NumExpr mult = multBlock.getSteps();
+        assertInstanceOf(Mult.class, mult);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand2()).getValue()));
     }
 
     @Test
-    public void testDiv() throws ParsingException {
-        NumExpr div = NumExprParser.parseNumExpr(state, divBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
-        assertTrue(div instanceof Div);
+    public void testDiv() {
+        NumExpr div = divBlock.getSteps();
+        assertInstanceOf(Div.class, div);
+
         PickRandom pickRandom = (PickRandom) ((Div) div).getOperand1();
         assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getOperand1())).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) (pickRandom.getOperand2())).getValue()));
@@ -125,26 +106,11 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testNumFuncts() throws IOException {
-        JsonNode script = JsonParser.getBlocksNodeFromJSON(Path.of("./src/test/fixtures/numfuncts.json"));
-        JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
-        assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
+    public void testNumFuncts() throws IOException, ParsingException {
+        Program program = JsonTest.parseProgram("./src/test/fixtures/numfuncts.json");
+        ExpressionStmt stmt = getBlock(program, "xbBc!xS=1Yz2Yp/DF;JT", ExpressionStmt.class);
+        NumFunctOf pow10Block = (NumFunctOf) stmt.getExpression();
 
-        assertEquals(NumFunct.NumFunctType.POW10, (NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType());
-    }
-
-    @Test
-    public void testStatement() throws IOException {
-        JsonNode script = JsonParser.getBlocksNodeFromJSON(
-                Path.of("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json")
-        );
-        JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
-
-        Exception exception = assertThrows(ParsingException.class, () -> {
-            ExpressionParser.parseExprBlock(state, ".-Id3Zrhoe,6;Z+v_;IB", ifBlock, script);
-        });
-        String expectedMessage = " is an unexpected opcode for an expression";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertEquals(NumFunct.NumFunctType.POW10, pow10Block.getOperand1().getType());
     }
 }

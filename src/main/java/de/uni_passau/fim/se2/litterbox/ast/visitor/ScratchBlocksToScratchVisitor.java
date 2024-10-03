@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -57,11 +58,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 
 public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
@@ -655,7 +654,7 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
             return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
         } else {
             String rgbCode = ctx.HEX().getText();
-            return ColorParser.getColorLiteralFromRGB(rgbCode);
+            return ColorLiteral.tryFromRgbHexString(rgbCode);
         }
     }
 
@@ -676,12 +675,12 @@ public class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisit
     @Override
     public Key visitKey(ScratchBlocksGrammarParser.KeyContext ctx) {
         return switch (ctx.getText()) {
-            case "space" -> new Key(new NumberLiteral(SPACE), new NoBlockMetadata());
-            case "up arrow" -> new Key(new NumberLiteral(UPARROW), new NoBlockMetadata());
-            case "down arrow" -> new Key(new NumberLiteral(DOWNARROW), new NoBlockMetadata());
-            case "left arrow" -> new Key(new NumberLiteral(LEFTARROW), new NoBlockMetadata());
-            case "right arrow" -> new Key(new NumberLiteral(RIGHTARROW), new NoBlockMetadata());
-            case "any" -> new Key(new NumberLiteral(ANYKEY), new NoBlockMetadata());
+            case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), new NoBlockMetadata());
+            case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), new NoBlockMetadata());
+            case "down arrow" -> new Key(new NumberLiteral(KeyCode.DOWN_ARROW.getKeycode()), new NoBlockMetadata());
+            case "left arrow" -> new Key(new NumberLiteral(KeyCode.LEFT_ARROW.getKeycode()), new NoBlockMetadata());
+            case "right arrow" -> new Key(new NumberLiteral(KeyCode.RIGHT_ARROW.getKeycode()), new NoBlockMetadata());
+            case "any" -> new Key(new NumberLiteral(KeyCode.ANY_KEY.getKeycode()), new NoBlockMetadata());
             default -> new Key(new NumberLiteral(ctx.getText().charAt(0)), new NoBlockMetadata());
         };
     }

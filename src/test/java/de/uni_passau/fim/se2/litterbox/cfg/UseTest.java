@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -37,9 +38,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class UseTest implements JsonTest {
 
@@ -90,7 +90,7 @@ public class UseTest implements JsonTest {
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         VariableUseVisitor visitor = new VariableUseVisitor();
         nodes.get(0).getASTNode().accept(visitor);
 
@@ -148,7 +148,10 @@ public class UseTest implements JsonTest {
         Defineable var = node.getDefinitions().iterator().next().getDefinable();
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        assertThat(getUses(node)).containsExactly(var);
+
+        var uses = getUses(node);
+        assertThat(uses).hasSize(1);
+        assertIsEqualIgnoringMetadata(uses.stream().findFirst().orElseThrow(), var);
     }
 
     @Test
@@ -156,7 +159,7 @@ public class UseTest implements JsonTest {
         // If the dropdown contains a variable or parameter we don't statically know what sprite
         // we're referring to, so for now we skip these definitions/uses...
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nouseattributewithvariable.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         for (CFGNode node : nodes) {
             assertThat(node.getDefinitions()).isEmpty();
             assertThat(node.getUses()).hasSize(1); // Visibility for say
@@ -166,7 +169,7 @@ public class UseTest implements JsonTest {
     @Test
     public void testTimerUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/timerBlock.json");
-        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).collect(Collectors.toList());
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).toList();
         assertThat(nodes).hasSize(1);
         CFGNode node = nodes.iterator().next();
 
@@ -226,13 +229,40 @@ public class UseTest implements JsonTest {
         assertThat(waitOtherVar2).isInstanceOf(Variable.class);
 
         assertThat(globalVar1).isEqualTo(globalVar2);
-        assertThat(localVar1).isEqualTo(localVar2);
-        assertThat(waitOtherVar1).isEqualTo(waitOtherVar2);
+        assertIsEqualIgnoringMetadata(localVar1, localVar2);
+        assertIsEqualIgnoringMetadata(waitOtherVar1, waitOtherVar2);
     }
 
     private Set<Variable> getUses(CFGNode node) {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
         return visitor.getDefineables();
+    }
+
+    private void assertIsEqualIgnoringMetadata(final Defineable a, final Defineable b) {
+        if (a instanceof Variable varA && b instanceof Variable varB) {
+            Qualified idA = (Qualified) varA.getIdentifier();
+            Qualified idB = (Qualified) varB.getIdentifier();
+
+            assertThat(idA.getFirst()).isEqualTo(idB.getFirst());
+
+            if (
+                    idA.getSecond() instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varVarA &&
+                    idB.getSecond() instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varVarB
+            ) {
+                assertIsEqualIgnoringMetadata(varVarA, varVarB);
+            } else {
+                fail("Missing comparison implmentation.");
+            }
+        } else {
+            fail("Missing implementation for equals ignoring metadata.");
+        }
+    }
+
+    private void assertIsEqualIgnoringMetadata(
+            final de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varA,
+            final de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varB
+    ) {
+        assertThat(varA.getName()).isEqualTo(varB.getName());
     }
 }

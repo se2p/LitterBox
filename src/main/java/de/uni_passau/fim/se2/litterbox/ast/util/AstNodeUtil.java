@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -53,6 +53,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -198,6 +199,10 @@ public class AstNodeUtil {
         final BlockMapVisitor visitor = new BlockMapVisitor();
         root.accept(visitor);
         return visitor.blockMap;
+    }
+
+    public static boolean hasBlockId(ASTNode node, String blockId) {
+        return Objects.equals(getBlockId(node), blockId);
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,

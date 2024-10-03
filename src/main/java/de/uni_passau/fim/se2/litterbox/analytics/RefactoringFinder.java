@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,7 +29,7 @@ public interface RefactoringFinder {
      * Checks the given program for a specific refactoring.
      *
      * @param program The project to check
-     * @return a set of instantiated possible refactorings
+     * @return a list of instantiated possible refactorings
      */
     List<Refactoring> check(Program program);
 

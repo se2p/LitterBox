@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -38,7 +38,7 @@ public final class ZipReader {
     }
 
     /**
-     * A method to extract the project.json file from a Scratch project (ZIP file)
+     * Extracts the project.json file from a Scratch project (ZIP file).
      *
      * @param path the file path
      * @return the JSON as a raw String
@@ -59,7 +59,7 @@ public final class ZipReader {
         try (
                 InputStream is = file.getInputStream(entry);
                 InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr);
+                BufferedReader br = new BufferedReader(isr)
         ) {
             return br.lines().collect(Collectors.joining("\n"));
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ConsoleReportGenerator implements ReportGenerator {
 
@@ -47,7 +46,7 @@ public class ConsoleReportGenerator implements ReportGenerator {
             List<Issue> relevantIssues = issues
                     .stream()
                     .filter(i -> i.getFinderName().equals(detector))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!relevantIssues.isEmpty()) {
                 Issue firstIssue = relevantIssues.get(0);

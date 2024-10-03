@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -132,7 +132,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 new Hint(getName())));
@@ -140,7 +140,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssueWithLooseComment(Hint hint) {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 hint));

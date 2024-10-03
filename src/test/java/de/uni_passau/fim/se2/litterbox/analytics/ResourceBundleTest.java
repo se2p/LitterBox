@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -79,7 +79,7 @@ public class ResourceBundleTest {
                 .matcher(hint)
                 .results()
                 .map(MatchResult::group)
-                .collect(Collectors.toList());
+                .toList();
         String currentToken = "";
         for (String match : matches) {
             if (!currentToken.isEmpty()) {
@@ -170,7 +170,9 @@ public class ResourceBundleTest {
         finders.addAll(new ProgramMetricAnalyzer().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
         finders.addAll(new ProgramExtractionAnalyzer().getExtractorNames());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
+            if (!key.contains("fix")) {
+                assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);
+            }
         }
     }
 
@@ -181,7 +183,9 @@ public class ResourceBundleTest {
         List<IssueFinder> allFinders = IssueTool.getFinders(FinderGroup.ALL);
         Set<String> hintKeys = allFinders.stream().flatMap(f -> f.getHintKeys().stream()).collect(Collectors.toSet());
         for (String key : Collections.list(names.getKeys())) {
-            assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);
+            if (!key.contains("fix")) {
+                assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -873,7 +873,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
             String message = stringLiteral.getText();
             String messageId;
             if (symbolTable.getMessage(message).isPresent()) {
-                messageId = symbolTable.getMessage(message).get().getIdentifier();
+                messageId = symbolTable.getMessage(message).get().identifier();
             } else {
                 messageId = "unspecified" + message;
             }

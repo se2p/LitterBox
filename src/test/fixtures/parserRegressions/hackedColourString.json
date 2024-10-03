@@ -1,0 +1,152 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "fioX]).$Nv[K,}nz2rR{": [
+                    "NC",
+                    "0"
+                ],
+                "sX$^o1UhoUTC2C,/.Tsm": [
+                    "S_1",
+                    "on"
+                ],
+                "6c@ty0,NMMZ$4V4%%`*i": [
+                    "e2",
+                    "0"
+                ],
+                "2``=7,{#5H(Ji2I*Ce1O": [
+                    "e1",
+                    "0"
+                ],
+                "8L3n/u~ErN|L_[v{DqU|": [
+                    "ey1",
+                    "0"
+                ],
+                "2:AAp!!5oIA%kZgriyVu": [
+                    "S_2",
+                    0
+                ],
+                "AsfJ=^n:]qKI:r/E`!YC": [
+                    "costume anme",
+                    "5-0"
+                ],
+                "#+8Vsx+y.$;i%2P;*-ek": [
+                    "open info",
+                    0
+                ],
+                "hh,}z~so_R/aE6Bgq7y-": [
+                    "xx bio",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0f028d9a6e7ef17cc3c1dc0809669ea3",
+                    "md5ext": "0f028d9a6e7ef17cc3c1dc0809669ea3.svg",
+                    "rotationCenterX": 166,
+                    "rotationCenterY": 135.5
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite2",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "EVy4X]D=Gj]s1Z836t;i": {
+                    "opcode": "pen_setPenColorToColor",
+                    "next": null,
+                    "parent": "K7kl~cXuD:@6:ssWsJGg",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                10,
+                                "#e36bce"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "K7kl~cXuD:@6:ssWsJGg": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "EVy4X]D=Gj]s1Z836t;i",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 0,
+                    "y": 376
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "5a538cd3a1eef58ce13efd13a52b7ddc",
+                    "md5ext": "5a538cd3a1eef58ce13efd13a52b7ddc.svg",
+                    "rotationCenterX": 135.25,
+                    "rotationCenterY": 171.75
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 41.882352941176464,
+            "y": -266.11764705882354,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [
+        "pen"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "4.5.471",
+        "agent": "Colour stored as String literal instead of proper colour should not be parsed as colour."
+    }
+}

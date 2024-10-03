@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -31,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 class JSONCreate implements JsonTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @AfterAll
     static void cleanUp() throws IOException {

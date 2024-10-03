@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -57,6 +57,7 @@ public class TopLevelMetadataTest implements JsonTest {
         Assertions.assertEquals(Variable.class, data.getClass());
         Assertions.assertEquals(DataBlockMetadata.class, data.getMetadata().getClass());
         DataBlockMetadata meta = (DataBlockMetadata) data.getMetadata();
+        Assertions.assertNotNull(meta.getBlockId());
         Assertions.assertEquals(471, meta.getX());
         Assertions.assertEquals(383, meta.getY());
     }

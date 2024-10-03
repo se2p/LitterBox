@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -92,7 +92,7 @@ class MergeDoubleIfTest implements JsonTest {
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
         Stmt stmt = refactoredStmtList.get(0);
-        assertTrue(stmt instanceof IfThenStmt);
+        assertInstanceOf(IfThenStmt.class, stmt);
     }
 
     @Test

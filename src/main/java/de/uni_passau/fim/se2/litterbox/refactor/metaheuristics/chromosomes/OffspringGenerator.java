@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,13 +25,11 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class OffspringGenerator<C extends Solution<C>> {
 
     private final BinaryRankTournament<C> binaryRankTournament;
 
-    private static final Logger log = Logger.getLogger(OffspringGenerator.class.getName());
     private static final double CROSSOVER_PROBABILITY = PropertyLoader.getSystemDoubleProperty("nsga-ii.crossoverProbability");
 
     public OffspringGenerator(BinaryRankTournament<C> binaryRankTournament) {

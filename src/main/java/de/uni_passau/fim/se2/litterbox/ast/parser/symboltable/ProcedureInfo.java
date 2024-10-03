@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,9 +23,9 @@ import java.util.Objects;
 
 public class ProcedureInfo {
 
-    private String name;
-    private String actorName;
-    private ArgumentInfo[] arguments;
+    private final String name;
+    private final String actorName;
+    private final ArgumentInfo[] arguments;
 
     public ProcedureInfo(String name, ArgumentInfo[] arguments, String actorName) {
         this.name = name;

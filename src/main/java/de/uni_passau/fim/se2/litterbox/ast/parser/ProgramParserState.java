@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,18 +19,22 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlockId;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawTarget;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
-public class ProgramParserState {
+final class ProgramParserState {
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procDefMap;
 
     private LocalIdentifier currentActor;
+    private RawTarget currentTarget;
 
     public ProgramParserState() {
         symbolTable = new SymbolTable();
-        this.procDefMap = new ProcedureDefinitionNameMapping();
+        procDefMap = new ProcedureDefinitionNameMapping();
     }
 
     public SymbolTable getSymbolTable() {
@@ -45,7 +49,22 @@ public class ProgramParserState {
         return currentActor;
     }
 
-    public void setCurrentActor(LocalIdentifier currentActor) {
+    public RawTarget getCurrentTarget() {
+        return currentTarget;
+    }
+
+    /**
+     * Returns a block in the current target.
+     *
+     * @param id The identifier of the block.
+     * @return The block in the current target, if one can be found. {@code null} otherwise.
+     */
+    public RawBlock getBlock(final RawBlockId id) {
+        return currentTarget.blocks().get(id);
+    }
+
+    public void setCurrentActor(final LocalIdentifier currentActor, final RawTarget currentTarget) {
         this.currentActor = currentActor;
+        this.currentTarget = currentTarget;
     }
 }

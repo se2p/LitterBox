@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -160,7 +160,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/smells/emptySprite.json");
 
         EmptySprite emptySprite = new EmptySprite();
-        Assertions.assertEquals(emptySprite.NAME, emptySprite.getName());
+        Assertions.assertEquals(EmptySprite.NAME, emptySprite.getName());
         Set<Issue> issues = emptySprite.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();

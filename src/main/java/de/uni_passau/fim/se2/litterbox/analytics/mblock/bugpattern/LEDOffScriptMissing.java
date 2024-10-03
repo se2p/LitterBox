@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.LEDPos
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,7 +49,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     private final Map<PositionType, RunningState> states = new HashMap<>();
     private final Map<PositionType, LEDStmt> lastStmts = new HashMap<>();
     private final Map<PositionType, List<LEDStmt>> lastStmtMap = new HashMap<>();
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -103,12 +100,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDStmt node) {
         if (!(node instanceof RockyLightStmt)) {
             boolean black = isBlack(node);
@@ -155,7 +146,6 @@ public class LEDOffScriptMissing extends AbstractRobotFinder {
     private void resetMaps() {
         states.clear();
         lastStmts.clear();
-        forever = false;
     }
 
     private boolean isBlack(LEDStmt node) {

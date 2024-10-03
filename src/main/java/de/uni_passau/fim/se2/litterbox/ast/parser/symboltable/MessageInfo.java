@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,34 +20,5 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 
-public class MessageInfo {
-
-    boolean global;
-    String actor;
-    String identifier;
-    Message message;
-
-    public MessageInfo(boolean global, String actor, String ident,
-                       Message message) {
-        this.global = global;
-        this.actor = actor;
-        this.identifier = ident;
-        this.message = message;
-    }
-
-    public boolean isGlobal() {
-        return global;
-    }
-
-    public String getActor() {
-        return actor;
-    }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public Message getMessage() {
-        return message;
-    }
+public record MessageInfo(boolean global, String actor, String identifier, Message message) {
 }
