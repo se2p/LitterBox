@@ -255,4 +255,19 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(KeyPressed.class, script.getEvent());
         assertEquals(1, script.getStmtList().getStmts().size());
     }
+
+    @Test
+    void testFullScript1() {
+        Script script = parseScript("""
+                when [any v] key pressed
+                start sound (Rick_Astley_-_Never_Gonna_Give_You_Up_Qoret v)
+                show
+                forever
+                wait (0) seconds
+                next costume
+                end
+                """);
+        assertInstanceOf(KeyPressed.class, script.getEvent());
+        assertEquals(3, script.getStmtList().getStmts().size());
+    }
 }

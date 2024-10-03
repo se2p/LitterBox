@@ -168,7 +168,7 @@ soundStmt               : playSoundDone
                         ;
 
 playSoundDone           : 'play sound 'soundChoice' until done';
-playSound               : 'play sound 'soundChoice;
+playSound               : 'start sound 'soundChoice;
 stopSound               : 'stop all sounds';
 changeSoundEffect       : 'change ['soundEffect' v] effect by 'exprOrLiteral;
 setSoundEffect          : 'set ['soundEffect' v] effect to 'exprOrLiteral;
