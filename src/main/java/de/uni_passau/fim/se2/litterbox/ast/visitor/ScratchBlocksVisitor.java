@@ -321,7 +321,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StartedAsClone startedAsClone) {
-        emitToken("when I start as a clone");
+        emitNoSpace("when I start as a clone");
         storeNotesForIssue(startedAsClone);
         newLine();
     }
@@ -404,14 +404,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
-        emitToken("stop [other scripts in sprite v]");
+        emitNoSpace("stop [other scripts in sprite v]");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(StopThisScript node) {
-        emitToken("stop [this script v]");
+        emitNoSpace("stop [this script v]");
         storeNotesForIssue(node);
         newLine();
     }
@@ -426,14 +426,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(DeleteClone node) {
-        emitToken("delete this clone");
+        emitNoSpace("delete this clone");
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(RepeatForeverStmt repeatForeverStmt) {
-        emitToken("forever");
+        emitNoSpace("forever");
         storeNotesForIssue(repeatForeverStmt);
         newLine();
         beginIndentation();
@@ -1991,9 +1991,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
                     if (issue.getIssueType() == IssueType.PERFUME) {
-                        emitNoSpace(":: #167700");
+                        emitNoSpace(" :: #167700");
                     } else {
-                        emitNoSpace(":: #ff0000");
+                        emitNoSpace(" :: #ff0000");
                     }
                 }
                 hasIssue = true;

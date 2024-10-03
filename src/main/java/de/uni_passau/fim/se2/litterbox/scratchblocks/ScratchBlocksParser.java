@@ -32,9 +32,7 @@ public class ScratchBlocksParser {
 
     public ScriptEntity parseScript(final String scratchBlocksCode) {
         final ScratchBlocksGrammarParser parser = buildParser(scratchBlocksCode);
-        // FIXME: this probably will break when used outside the current tests since it might parse a full actor with
-        //        multiple scripts rather than just a single script?
-        final ParseTree tree = parser.actor();
+        final ParseTree tree = parser.script();
 
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
         final ASTNode node = vis.visit(tree);
