@@ -540,7 +540,7 @@ fragment HEX_DIGIT      : [0-9a-fA-F];
 
 DIGIT                   : [0-9];
 
-NUMBER                  : (DIGIT)+ ('.' (DIGIT)+)?;
+NUMBER                  : '-'? (DIGIT)+ ('.' (DIGIT)+)?;
 
 NEWLINE                 : '\r\n' | '\n' ;
 

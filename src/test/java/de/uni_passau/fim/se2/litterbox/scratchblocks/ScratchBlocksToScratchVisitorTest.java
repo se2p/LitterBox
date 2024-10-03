@@ -45,10 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicE
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.RotationStyle;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.junit.jupiter.api.Assertions;
@@ -222,6 +219,16 @@ class ScratchBlocksToScratchVisitorTest {
         StringExpr question = ((AskAndWait) statements.getStatement(0)).getQuestion();
         assertInstanceOf(StringExpr.class, question);
         Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
+    }
+
+    @Test
+    void testNegativeNumberLiteral() {
+        StmtList statements = getStmtList("go to x: (-1) y: (0)\n");
+        assertInstanceOf(GoToPosXY.class, statements.getStatement(0));
+
+        GoToPosXY goTo = (GoToPosXY) statements.getStatement(0);
+        assertInstanceOf(NumberLiteral.class, goTo.getX());
+        assertEquals(-1, ((NumberLiteral) goTo.getX()).getValue());
     }
 
     @Test
