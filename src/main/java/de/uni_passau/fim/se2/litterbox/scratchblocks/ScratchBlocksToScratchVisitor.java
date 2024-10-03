@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -90,6 +91,15 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         final List<Stmt> stmts = ctx.stmt().stream().map(this::visitStmt).toList();
         return new StmtList(stmts);
     }
+
+    // region: events
+
+    @Override
+    public GreenFlag visitGreenFlag(ScratchBlocksGrammarParser.GreenFlagContext ctx) {
+        return new GreenFlag(new NoBlockMetadata());
+    }
+
+    // endregion: events
 
     // region: statements
 
