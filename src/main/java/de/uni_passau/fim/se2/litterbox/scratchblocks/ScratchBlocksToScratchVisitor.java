@@ -304,7 +304,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     @Override
     public ElementChoice visitCostumeSelect(ScratchBlocksGrammarParser.CostumeSelectContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            StrId costumeId = new StrId(visitStringArgument(ctx.stringArgument()));
+            return new WithExpr(costumeId, new NoBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
         }
@@ -330,7 +331,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         if (ctx.fixedBackdrop() != null) {
             return visitFixedBackdrop(ctx.fixedBackdrop());
         } else if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            StrId backdropId = new StrId(visitStringArgument(ctx.stringArgument()));
+            return new WithExpr(backdropId, new NoBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
         }
@@ -432,7 +434,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     @Override
     public ElementChoice visitSoundChoice(ScratchBlocksGrammarParser.SoundChoiceContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            StrId soundId = new StrId(visitStringArgument(ctx.stringArgument()));
+            return new WithExpr(soundId, new NoBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
         }
