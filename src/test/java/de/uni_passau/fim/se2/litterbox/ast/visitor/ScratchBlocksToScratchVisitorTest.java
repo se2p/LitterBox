@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarLexer;
-import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -51,6 +49,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.Rotation
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarLexer;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;

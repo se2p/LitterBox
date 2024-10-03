@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarBaseVisitor;
-import de.uni_passau.fim.se2.litterbox.ScratchBlocksGrammarParser;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -59,6 +57,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarBaseVisitor;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
 
 import java.util.List;
 
