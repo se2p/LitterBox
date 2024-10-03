@@ -19,8 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -51,6 +53,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 class ScratchBlocksToScratchVisitorTest {
 
     private ScriptEntity getScript(String scratchBlocksInput) {
@@ -65,16 +70,16 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testSayWithLiteral() {
         StmtList statement = getStmtList("say [ja!]\n");
-        Assertions.assertInstanceOf(Say.class, statement.getStatement(0));
+        assertInstanceOf(Say.class, statement.getStatement(0));
         StringExpr expr = ((Say) statement.getStatement(0)).getString();
-        Assertions.assertInstanceOf(StringLiteral.class, expr);
+        assertInstanceOf(StringLiteral.class, expr);
         Assertions.assertEquals("ja!", ((StringLiteral) expr).getText());
     }
 
     @Test
     void testExprOrLiteralNum() {
         StmtList statements = getStmtList("move (10) steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         double value = ((NumberLiteral) moveSteps.getSteps()).getValue();
         Assertions.assertEquals(10, value);
@@ -83,7 +88,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testExprOrLiteralString() {
         StmtList statements = getStmtList("move [a] steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         String literal = ((StringLiteral) ((AsNumber) moveSteps.getSteps()).getOperand1()).getText();
         Assertions.assertEquals("a", literal);
@@ -92,7 +97,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testExprOrLiteralExpression() {
         StmtList statements = getStmtList("move (\\)\\(\\_\\$\\\\\\\\\\\\a) steps\n");
-        Assertions.assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         String variableName = ((Variable) ((AsNumber) moveSteps.getSteps()).getOperand1()).getName().getName();
         Assertions.assertEquals(")(_$\\\\\\a", variableName);
@@ -101,70 +106,70 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testPositionFixedRandom() {
         StmtList statements = getStmtList("go to (random position v)\n");
-        Assertions.assertInstanceOf(GoToPos.class, statements.getStatement(0));
+        assertInstanceOf(GoToPos.class, statements.getStatement(0));
         GoToPos goToPos = (GoToPos) statements.getStatement(0);
-        Assertions.assertInstanceOf(RandomPos.class, goToPos.getPosition());
+        assertInstanceOf(RandomPos.class, goToPos.getPosition());
     }
 
     @Test
     void testTouchingColor() {
         StmtList stmtList = getStmtList("<touching color (#ff00ff)?>\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(SpriteTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(SpriteTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 
     @Test
     void testColorTouchingColor() {
         StmtList stmtList = getStmtList("<color (#ff00ff) is touching (#ffff00)?>\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(ColorTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(ColorTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 
     @Test
     void testKeyPressed() {
         StmtList stmtList = getStmtList("<key (a v) pressed?>\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(IsKeyPressed.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(IsKeyPressed.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 
     @Test
     void testBiggerThan() {
         StmtList stmtList = getStmtList("<(7) > (2)>\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(BiggerThan.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(BiggerThan.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 
     @Test
     void testCostumeName() {
         StmtList stmtList = getStmtList("(costume [name v])\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(Costume.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(Costume.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
     }
 
     @Test
     void testAttributeOf() {
         StmtList stmtList = getStmtList("([costume # v] of (Sprite1 v))\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
-        Assertions.assertInstanceOf(AttributeFromFixed.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(AttributeFromFixed.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
         stmtList = getStmtList("([var v] of (Sprite1 v))\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
-        Assertions.assertInstanceOf(AttributeFromVariable.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(AttributeOf.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(AttributeFromVariable.class, ((AttributeOf) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getAttribute());
     }
 
     @Test
     void testCurrent() {
         StmtList stmtList = getStmtList("(current [day of the week v])\n");
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        Assertions.assertInstanceOf(Current.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        assertInstanceOf(Current.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
         Assertions.assertEquals("dayofweek", ((Current) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getTimeComp().getTypeName());
     }
 
     @Test
     void testRotationStyle() {
         StmtList statements = getStmtList("set rotation style [don't rotate v]\n");
-        Assertions.assertInstanceOf(SetRotationStyle.class, statements.getStatement(0));
+        assertInstanceOf(SetRotationStyle.class, statements.getStatement(0));
         SetRotationStyle rotate = (SetRotationStyle) statements.getStatement(0);
         RotationStyle rotationStyle = rotate.getRotation();
         Assertions.assertEquals("don't rotate", rotationStyle.getTypeName());
@@ -173,7 +178,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testColorEffect() {
         StmtList statements = getStmtList("set [pixelate v] effect to (2)\n");
-        Assertions.assertInstanceOf(SetGraphicEffectTo.class, statements.getStatement(0));
+        assertInstanceOf(SetGraphicEffectTo.class, statements.getStatement(0));
         SetGraphicEffectTo setGraphic = (SetGraphicEffectTo) statements.getStatement(0);
         GraphicEffect effect = setGraphic.getEffect();
         Assertions.assertEquals("pixelate", effect.getTypeName());
@@ -182,32 +187,59 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testStopAll() {
         StmtList statements = getStmtList("stop [all v]\n");
-        Assertions.assertInstanceOf(StopAll.class, statements.getStatement(0));
+        assertInstanceOf(StopAll.class, statements.getStatement(0));
     }
 
     @Test
     void testForever() {
         StmtList statements = getStmtList("forever\nstop [all v]\nend\n");
-        Assertions.assertInstanceOf(RepeatForeverStmt.class, statements.getStatement(0));
+        assertInstanceOf(RepeatForeverStmt.class, statements.getStatement(0));
         RepeatForeverStmt forever = (RepeatForeverStmt) statements.getStatement(0);
-        Assertions.assertInstanceOf(StopAll.class, forever.getStmtList().getStatement(0));
+        assertInstanceOf(StopAll.class, forever.getStmtList().getStatement(0));
     }
 
     @Test
     void testBroadcast() {
         StmtList statements = getStmtList("broadcast (message1 v)\n");
-        Assertions.assertInstanceOf(Broadcast.class, statements.getStatement(0));
+        assertInstanceOf(Broadcast.class, statements.getStatement(0));
         Message message = ((Broadcast) statements.getStatement(0)).getMessage();
-        Assertions.assertInstanceOf(Message.class, message);
+        assertInstanceOf(Message.class, message);
         Assertions.assertEquals("message1", ((StringLiteral) message.getMessage()).getText());
     }
 
     @Test
     void testAskAndWait() {
         StmtList statements = getStmtList("ask [What's your name?] and wait\n");
-        Assertions.assertInstanceOf(AskAndWait.class, statements.getStatement(0));
+        assertInstanceOf(AskAndWait.class, statements.getStatement(0));
         StringExpr question = ((AskAndWait) statements.getStatement(0)).getQuestion();
-        Assertions.assertInstanceOf(StringExpr.class, question);
+        assertInstanceOf(StringExpr.class, question);
         Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
+    }
+
+    @Test
+    void testGreenFlag() {
+        ScriptEntity scriptEntity = getScript("when green flag clicked\n");
+        assertInstanceOf(Script.class, scriptEntity);
+
+        Script script = (Script) scriptEntity;
+        assertInstanceOf(GreenFlag.class, script.getEvent());
+    }
+
+    @Test
+    void testFullScript1() {
+        ScriptEntity scriptEntity = getScript(
+                """
+                        when green flag clicked
+                        forever
+                        next costume
+                        wait (0.1) seconds
+                        end
+                        """
+        );
+        assertInstanceOf(Script.class, scriptEntity);
+
+        Script script = (Script) scriptEntity;
+        assertInstanceOf(GreenFlag.class, script.getEvent());
+        assertEquals(1, script.getStmtList().getStmts().size());
     }
 }
