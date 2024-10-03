@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -49,25 +48,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.Rotation
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarLexer;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class ScratchBlocksToScratchVisitorTest {
 
     private Script getScript(String scratchBlocksInput) {
-        ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString(scratchBlocksInput));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ScratchBlocksGrammarParser parser = new ScratchBlocksGrammarParser(tokens);
-        ParseTree tree = parser.actor();
-
-        ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
-        ASTNode node = vis.visit(tree);
-        return ((Script) node);
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        return parser.parseScript(scratchBlocksInput);
     }
 
     private StmtList getStmtList(String scratchBlocksInput) {
