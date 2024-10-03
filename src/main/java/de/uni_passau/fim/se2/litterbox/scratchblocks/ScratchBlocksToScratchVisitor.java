@@ -309,7 +309,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ChangeGraphicEffectBy visitChangeColorEffect(ScratchBlocksGrammarParser.ChangeColorEffectContext ctx) {
-        return new ChangeGraphicEffectBy(visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new ChangeGraphicEffectBy(
+                visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -319,7 +321,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public SetGraphicEffectTo visitSetColorEffect(ScratchBlocksGrammarParser.SetColorEffectContext ctx) {
-        return new SetGraphicEffectTo(visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new SetGraphicEffectTo(
+                visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -349,11 +353,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ChangeLayerBy visitGoForwardBackwardLayer(ScratchBlocksGrammarParser.GoForwardBackwardLayerContext ctx) {
-        return new ChangeLayerBy(makeNumExpr(ctx.exprOrLiteral()), visitForwardBackwardChoice(ctx.forwardBackwardChoice()), new NoBlockMetadata());
+        return new ChangeLayerBy(
+                makeNumExpr(ctx.exprOrLiteral()),
+                visitForwardBackwardChoice(ctx.forwardBackwardChoice()),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
-    public ForwardBackwardChoice visitForwardBackwardChoice(ScratchBlocksGrammarParser.ForwardBackwardChoiceContext ctx) {
+    public ForwardBackwardChoice visitForwardBackwardChoice(
+            ScratchBlocksGrammarParser.ForwardBackwardChoiceContext ctx
+    ) {
         return new ForwardBackwardChoice(ctx.getText());
     }
 
@@ -387,12 +397,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ChangeSoundEffectBy visitChangeSoundEffect(ScratchBlocksGrammarParser.ChangeSoundEffectContext ctx) {
-        return new ChangeSoundEffectBy(visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new ChangeSoundEffectBy(
+                visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+        );
     }
 
     @Override
     public SetSoundEffectTo visitSetSoundEffect(ScratchBlocksGrammarParser.SetSoundEffectContext ctx) {
-        return new SetSoundEffectTo(visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new SetSoundEffectTo(
+                visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -426,7 +440,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ASTNode visitBroadcastWait(ScratchBlocksGrammarParser.BroadcastWaitContext ctx) {
-        return super.visitBroadcastWait(ctx);
+        return new BroadcastAndWait(visitMessage(ctx.message()), new NoBlockMetadata());
     }
 
     @Override
@@ -449,7 +463,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public RepeatTimesStmt visitRepeat(ScratchBlocksGrammarParser.RepeatContext ctx) {
-        return new RepeatTimesStmt(makeNumExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+        return new RepeatTimesStmt(
+                makeNumExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -459,12 +475,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public IfThenStmt visitIf(ScratchBlocksGrammarParser.IfContext ctx) {
-        return new IfThenStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+        return new IfThenStmt(
+                makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+        );
     }
 
     @Override
     public IfElseStmt visitIfElse(ScratchBlocksGrammarParser.IfElseContext ctx) {
-        return new IfElseStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.then), makeInnerStmtList(ctx.else_), new NoBlockMetadata());
+        return new IfElseStmt(
+                makeBoolExpr(ctx.exprOrLiteral()),
+                makeInnerStmtList(ctx.then),
+                makeInnerStmtList(ctx.else_),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -474,7 +497,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public UntilStmt visitRepeatUntil(ScratchBlocksGrammarParser.RepeatUntilContext ctx) {
-        return new UntilStmt(makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+        return new UntilStmt(
+                makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -539,12 +564,20 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public SetVariableTo visitSetVar(ScratchBlocksGrammarParser.SetVarContext ctx) {
-        return new SetVariableTo(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new SetVariableTo(
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                visitExprOrLiteral(ctx.exprOrLiteral()),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public ChangeVariableBy visitChangeVar(ScratchBlocksGrammarParser.ChangeVarContext ctx) {
-        return new ChangeVariableBy(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new ChangeVariableBy(
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                visitExprOrLiteral(ctx.exprOrLiteral()),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -559,12 +592,20 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public AddTo visitAddToList(ScratchBlocksGrammarParser.AddToListContext ctx) {
-        return new AddTo(makeStringExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new AddTo(
+                makeStringExpr(ctx.exprOrLiteral()),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public DeleteOf visitDeleteFromList(ScratchBlocksGrammarParser.DeleteFromListContext ctx) {
-        return new DeleteOf(makeNumExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new DeleteOf(
+                makeNumExpr(ctx.exprOrLiteral()),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -574,12 +615,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public InsertAt visitInsertToList(ScratchBlocksGrammarParser.InsertToListContext ctx) {
-        return new InsertAt(makeStringExpr(ctx.insertion), makeNumExpr(ctx.location), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new InsertAt(
+                makeStringExpr(ctx.insertion),
+                makeNumExpr(ctx.location),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public ReplaceItem visitReplaceItemInList(ScratchBlocksGrammarParser.ReplaceItemInListContext ctx) {
-        return new ReplaceItem(makeStringExpr(ctx.newItem), makeNumExpr(ctx.oldItem), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new ReplaceItem(
+                makeStringExpr(ctx.newItem),
+                makeNumExpr(ctx.oldItem),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -645,13 +696,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ColorTouchingColor visitColorTouchingColor(ScratchBlocksGrammarParser.ColorTouchingColorContext ctx) {
-        return new ColorTouchingColor((Color) visitTouchingColorChoice(ctx.firstColor), (Color) visitTouchingColorChoice(ctx.secondColor), new NoBlockMetadata());
+        return new ColorTouchingColor(
+                (Color) visitTouchingColorChoice(ctx.firstColor),
+                (Color) visitTouchingColorChoice(ctx.secondColor),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public Touchable visitTouchingColorChoice(ScratchBlocksGrammarParser.TouchingColorChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
-            return new AsTouchable((Expression) visitExprOrLiteral(ctx.exprOrLiteral()));
+            return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else {
             String rgbCode = ctx.HEX().getText();
             return ColorLiteral.tryFromRgbHexString(rgbCode);
@@ -692,17 +747,29 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx) {
-        return new BiggerThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
+        return new BiggerThan(
+                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
+                (ComparableExpr) visit(ctx.secondExpr),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx) {
-        return new LessThan((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
+        return new LessThan(
+                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
+                (ComparableExpr) visit(ctx.secondExpr),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx) {
-        return new Equals((ComparableExpr) visitExprOrLiteral(ctx.firstExpr), (ComparableExpr) visit(ctx.secondExpr), new NoBlockMetadata());
+        return new Equals(
+                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
+                (ComparableExpr) visit(ctx.secondExpr),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -727,7 +794,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ListContains visitListContains(ScratchBlocksGrammarParser.ListContainsContext ctx) {
-        return new ListContains(new StrId(visitStringArgument(ctx.stringArgument())), visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new ListContains(
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                visitExprOrLiteral(ctx.exprOrLiteral()),
+                new NoBlockMetadata()
+        );
     }
 
     //end subregion: bool expressions
@@ -817,7 +888,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public AttributeOf visitActorAttribute(ScratchBlocksGrammarParser.ActorAttributeContext ctx) {
-        return new AttributeOf(visitAttributeChoice(ctx.attributeChoice()), visitElement(ctx.element()), new NoBlockMetadata());
+        return new AttributeOf(
+                visitAttributeChoice(ctx.attributeChoice()),
+                visitElement(ctx.element()),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -918,7 +993,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public NumFunctOf visitMathFunction(ScratchBlocksGrammarParser.MathFunctionContext ctx) {
-        return new NumFunctOf(visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new NumFunctOf(
+                visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -928,12 +1005,20 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ItemOfVariable visitItemAtIndex(ScratchBlocksGrammarParser.ItemAtIndexContext ctx) {
-        return new ItemOfVariable(makeNumExpr(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new ItemOfVariable(
+                makeNumExpr(ctx.exprOrLiteral()),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
     public IndexOf visitIndexOfItem(ScratchBlocksGrammarParser.IndexOfItemContext ctx) {
-        return new IndexOf(visitExprOrLiteral(ctx.exprOrLiteral()), new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new IndexOf(
+                visitExprOrLiteral(ctx.exprOrLiteral()),
+                new StrId(visitStringArgument(ctx.stringArgument())),
+                new NoBlockMetadata()
+        );
     }
 
     @Override
@@ -973,13 +1058,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         }
     }
 
+    @Override
     public StringLiteral visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
         return new StringLiteral(ctx.getText()
                 .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
                 .replace("\\\\", "\\")); // Handle double backslash
     }
-
-    // endregion: expressions
 
     private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
         Expression expr = visitExprOrLiteral(ctx);
@@ -1016,6 +1100,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         }
         return boolExpr;
     }
+
+    // endregion: expressions
 
     private StmtList makeInnerStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
         StmtList stmt;
