@@ -38,6 +38,7 @@ public class Script extends AbstractNode implements ScriptEntity {
         return event;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }

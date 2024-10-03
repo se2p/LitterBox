@@ -57,6 +57,7 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode, Script
         return parameterDefinitionList;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }

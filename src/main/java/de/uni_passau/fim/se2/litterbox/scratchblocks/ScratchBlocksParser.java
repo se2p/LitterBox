@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarLexer;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
 import org.antlr.v4.runtime.CharStreams;
@@ -30,14 +30,16 @@ public class ScratchBlocksParser {
 
     // todo: probably similar methods for whole actors and programs?
 
-    public Script parseScript(final String scratchBlocksCode) {
+    public ScriptEntity parseScript(final String scratchBlocksCode) {
         final ScratchBlocksGrammarParser parser = buildParser(scratchBlocksCode);
+        // FIXME: this probably will break when used outside the current tests since it might parse a full actor with
+        //        multiple scripts rather than just a single script?
         final ParseTree tree = parser.actor();
 
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
         final ASTNode node = vis.visit(tree);
 
-        if (node instanceof Script script) {
+        if (node instanceof ScriptEntity script) {
             return script;
         } else {
             throw new IllegalArgumentException(

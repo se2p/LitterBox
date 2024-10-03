@@ -19,4 +19,5 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 public interface ScriptEntity extends ASTNode {
+    StmtList getStmtList();
 }

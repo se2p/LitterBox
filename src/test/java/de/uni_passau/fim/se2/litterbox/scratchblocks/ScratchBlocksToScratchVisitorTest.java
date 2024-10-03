@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 
 class ScratchBlocksToScratchVisitorTest {
 
-    private Script getScript(String scratchBlocksInput) {
+    private ScriptEntity getScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
         return parser.parseScript(scratchBlocksInput);
     }
