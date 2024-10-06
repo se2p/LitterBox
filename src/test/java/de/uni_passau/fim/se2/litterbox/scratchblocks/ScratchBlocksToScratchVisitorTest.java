@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -43,12 +44,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -276,5 +279,14 @@ class ScratchBlocksToScratchVisitorTest {
                 """);
         assertInstanceOf(KeyPressed.class, script.getEvent());
         assertEquals(3, script.getStmtList().getStmts().size());
+    }
+
+    @Test
+    @Disabled("parser does not terminate in a reasonable amount of time")
+    // FIXME: grammar needs to be improved *somehow* to fix this
+    void testDeeplyNestedExpression() {
+        StmtList stmtList = getStmtList("wait (pick random (1) to ((60)-(((((((((((((((((((INFECTED)/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2)))) seconds");
+        WaitSeconds wait = (WaitSeconds) stmtList.getStatement(0);
+        assertInstanceOf(PickRandom.class, wait.getSeconds());
     }
 }
