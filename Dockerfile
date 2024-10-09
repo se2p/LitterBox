@@ -35,7 +35,7 @@ COPY src ./src
 # Lastly, make build-artifact naming version-independent
 RUN mvn -e -B package -DskipTests=${SKIP_TESTS} && \
     mkdir -p /build/bin && \
-    mv target/Litterbox-*-SNAPSHOT.full.jar bin/Litterbox.jar
+    mv target/Litterbox-*.full.jar bin/Litterbox.jar
 
 # Slim container image for running LitterBox
 FROM docker.io/library/eclipse-temurin:17-jre
