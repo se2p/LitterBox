@@ -34,7 +34,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "LitterBox",
         mixinStandardHelpOptions = true,
-        version = "LitterBox 1.9",
+        version = "LitterBox 1.10-SNAPSHOT",
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
