@@ -86,6 +86,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     private final String MASK = Token.MASK.getStrRep();
     private final String LITERAL_NUMBER = AbstractToken.LITERAL_NUMBER.toString();
+    private final String LITERAL_2 = "2";
     private final String NOTHING = Token.NOTHING.getStrRep();
     private final String ELSE = Token.ELSE.getStrRep();
 
@@ -216,7 +217,7 @@ class TokenizingAnalyzerTest implements JsonTest {
             ActorNameNormalizer.getDefault()
         );
         final TokenizingPreprocessor analyzer = new TokenizingPreprocessor(
-            common, true, false, false, MaskingStrategy.none()
+            common, true, false, TokenizingMethod.REGULAR, MaskingStrategy.none()
         );
         analyzer.processPerSprite(getFixture("unparseable.json"));
 
@@ -232,7 +233,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         if (fewerParentheses) {
             expected = List.of(
                 BEGIN_SPRITE, BEGIN_SCRIPT, EVENT_WHENFLAG_TOKEN,
-                MOTION_MOVESTEPS_TOKEN, BEGIN_NUM_STR_EXPR, "2", OPERATOR_ADD_TOKEN, "5", END_NUM_STR_EXPR,
+                MOTION_MOVESTEPS_TOKEN, BEGIN_NUM_STR_EXPR, LITERAL_2, OPERATOR_ADD_TOKEN, "5", END_NUM_STR_EXPR,
                 SOUND_CHANGEVOLUMEBY_TOKEN, BEGIN_NUM_STR_EXPR, "-10", END_NUM_STR_EXPR,
                 END_SCRIPT, END_SPRITE
             );
@@ -242,7 +243,7 @@ class TokenizingAnalyzerTest implements JsonTest {
                 BEGIN_SPRITE, BEGIN_SCRIPT,
                 EVENT_WHENFLAG_TOKEN,
                 MOTION_MOVESTEPS_TOKEN, BEGIN_NUM_STR_EXPR,
-                BEGIN_NUM_STR_EXPR, "2", END_NUM_STR_EXPR,
+                BEGIN_NUM_STR_EXPR, LITERAL_2, END_NUM_STR_EXPR,
                 OPERATOR_ADD_TOKEN,
                 BEGIN_NUM_STR_EXPR, "5", END_NUM_STR_EXPR,
                 END_NUM_STR_EXPR,
@@ -263,7 +264,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         if (fewerParentheses) {
             expected = List.of(
                 BEGIN_SPRITE, BEGIN_PROCEDURE, "custom_block",
-                "motion_turnright", BEGIN_NUM_STR_EXPR, "2", OPERATOR_ADD_TOKEN, "block_param", END_NUM_STR_EXPR,
+                "motion_turnright", BEGIN_NUM_STR_EXPR, LITERAL_2, OPERATOR_ADD_TOKEN, "block_param", END_NUM_STR_EXPR,
                 "motion_turnleft", BEGIN_NUM_STR_EXPR, "block_param", END_NUM_STR_EXPR,
                 END_PROCEDURE,
                 BEGIN_SCRIPT, EVENT_WHENFLAG_TOKEN,
@@ -277,7 +278,7 @@ class TokenizingAnalyzerTest implements JsonTest {
             expected = List.of(
                 BEGIN_SPRITE, BEGIN_PROCEDURE, "custom_block",
                 "motion_turnright", BEGIN_NUM_STR_EXPR,
-                BEGIN_NUM_STR_EXPR, "2", END_NUM_STR_EXPR,
+                BEGIN_NUM_STR_EXPR, LITERAL_2, END_NUM_STR_EXPR,
                 OPERATOR_ADD_TOKEN,
                 BEGIN_NUM_STR_EXPR, "block_param", END_NUM_STR_EXPR,
                 END_NUM_STR_EXPR,
@@ -784,6 +785,78 @@ class TokenizingAnalyzerTest implements JsonTest {
         assertMaskingSuccessful(strategy, expected);
     }
 
+    @Test
+    void testBinaryExpressionPrefixFewerParentheses() throws ParsingException, IOException {
+        final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX_FEWER_PARENTHESES);
+
+        final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_expr.json");
+        final var output = analyzer.processWholeProgram(input).toList();
+
+        assertThat(output).hasSize(1);
+        assertThat(output.get(0).tokens().get(0)).containsExactly(
+            BEGIN_SCRIPT,
+            Token.EVENT_NEVER.getStrRep(), CONTROL_WAIT,
+            OPERATOR_ADD_TOKEN, "1", Token.OPERATOR_DIVIDE.getStrRep(), LITERAL_2, "3",
+            END_SCRIPT
+        );
+    }
+
+    @Test
+    void testBinaryExpressionPrefix() throws ParsingException, IOException {
+        final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX);
+
+        final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_expr.json");
+        final var output = analyzer.processWholeProgram(input).toList();
+
+        assertThat(output).hasSize(1);
+        assertThat(output.get(0).tokens().get(0)).containsExactly(
+            BEGIN_SCRIPT,
+            Token.EVENT_NEVER.getStrRep(), CONTROL_WAIT, BEGIN_NUM_STR_EXPR,
+            OPERATOR_ADD_TOKEN, BEGIN_NUM_STR_EXPR, "1", END_NUM_STR_EXPR,
+            BEGIN_NUM_STR_EXPR, Token.OPERATOR_DIVIDE.getStrRep(),
+            BEGIN_NUM_STR_EXPR, LITERAL_2, END_NUM_STR_EXPR, BEGIN_NUM_STR_EXPR, "3", END_NUM_STR_EXPR,
+            END_NUM_STR_EXPR,
+            END_NUM_STR_EXPR,
+            END_SCRIPT
+        );
+    }
+
+    @Test
+    void testBinaryBoolExpressionPrefixFewerParentheses() throws ParsingException, IOException {
+        final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX_FEWER_PARENTHESES);
+
+        final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_bool_expr.json");
+        final var output = analyzer.processWholeProgram(input).toList();
+
+        assertThat(output).hasSize(1);
+        assertThat(output.get(0).tokens().get(0)).containsExactly(
+            BEGIN_SCRIPT,
+            Token.EVENT_NEVER.getStrRep(),
+            Token.OPERATOR_AND.getStrRep(), Token.OPERATOR_NOT.getStrRep(), NOTHING,
+            Token.OPERATOR_OR.getStrRep(), NOTHING, NOTHING,
+            END_SCRIPT
+        );
+    }
+
+    @Test
+    void testBinaryBoolExpressionPrefix() throws ParsingException, IOException {
+        final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX);
+
+        final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_bool_expr.json");
+        final var output = analyzer.processWholeProgram(input).toList();
+
+        assertThat(output).hasSize(1);
+        assertThat(output.get(0).tokens().get(0)).containsExactly(
+            BEGIN_SCRIPT,
+            Token.EVENT_NEVER.getStrRep(),
+            BEGIN_BOOL_EXPR, Token.OPERATOR_AND.getStrRep(), BEGIN_BOOL_EXPR, Token.OPERATOR_NOT.getStrRep(),
+            BEGIN_BOOL_EXPR, NOTHING, END_BOOL_EXPR, BEGIN_BOOL_EXPR, Token.OPERATOR_OR.getStrRep(), BEGIN_BOOL_EXPR,
+            NOTHING, END_BOOL_EXPR, END_BOOL_EXPR, BEGIN_BOOL_EXPR, NOTHING,
+            END_BOOL_EXPR, END_BOOL_EXPR, END_BOOL_EXPR,
+            END_SCRIPT
+        );
+    }
+
     static class NoSpacesChecker implements ScratchVisitor {
 
         @Override
@@ -825,6 +898,19 @@ class TokenizingAnalyzerTest implements JsonTest {
             abstractTokens,
             ActorNameNormalizer.getDefault()
         );
-        return new TokenizingProgramPreprocessor(common, maskingStrategy, abstractTokens, false, sequencePerScript);
+        return new TokenizingProgramPreprocessor(
+            common, maskingStrategy, abstractTokens, TokenizingMethod.REGULAR, sequencePerScript
+        );
+    }
+
+    private TokenizingProgramPreprocessor getPrefixAnalyzer(final TokenizingMethod tokenizingMethod) {
+        final MLPreprocessorCommonOptions common = new MLPreprocessorCommonOptions(
+            MLOutputPath.console(),
+            true,
+            true,
+            false,
+            ActorNameNormalizer.getDefault()
+        );
+        return new TokenizingProgramPreprocessor(common, MaskingStrategy.none(), false, tokenizingMethod, true);
     }
 }

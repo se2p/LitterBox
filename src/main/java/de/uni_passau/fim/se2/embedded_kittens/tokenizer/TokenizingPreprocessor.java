@@ -35,12 +35,12 @@ public class TokenizingPreprocessor extends MLFilePreprocessor<TokenSequence> {
         final MLPreprocessorCommonOptions commonOptions,
         final boolean sequencePerScript,
         final boolean abstractFixedNodeOption,
-        final boolean statementLevel,
+        final TokenizingMethod tokenizingMethod,
         final MaskingStrategy maskingStrategy
     ) {
         super(
             new TokenizingProgramPreprocessor(
-                commonOptions, maskingStrategy, abstractFixedNodeOption, statementLevel, sequencePerScript
+                commonOptions, maskingStrategy, abstractFixedNodeOption, tokenizingMethod, sequencePerScript
             ), commonOptions.outputPath()
         );
     }

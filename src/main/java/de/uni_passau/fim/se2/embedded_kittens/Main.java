@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.embedded_kittens.ggnn.GgnnOutputFormat;
 import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.embedded_kittens.shared.WholeProgramFileProcessor;
 import de.uni_passau.fim.se2.embedded_kittens.shared.WholeProgramJsonProcessor;
+import de.uni_passau.fim.se2.embedded_kittens.tokenizer.TokenizingMethod;
 import de.uni_passau.fim.se2.embedded_kittens.tokenizer.TokenizingPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
@@ -356,10 +357,14 @@ public class Main implements Callable<Integer> {
         boolean abstractFixedNodeOption = false;
 
         @CommandLine.Option(
-            names = { "--statement-level" },
-            description = "Generate a sequence consisting of only statement tokens."
+            names = { "--tokenizing-method" },
+            defaultValue = "REGULAR",
+            description = "Selects the tokenizing method that should be used (case-sensitive): "
+                + "Regular (`REGULAR`), regular with prefix notation for binary expressions (`PREFIX`), "
+                + "prefix without parentheses around literals (`PREFIX_FEWER_PARENTHESES`), "
+                + "or only statements (`STATEMENT_LEVEL`). Default: REGULAR"
         )
-        boolean statementLevel = false;
+        TokenizingMethod tokenizingMethod;
 
         @CommandLine.Option(
             names = { MASKED_BLOCK_ID },
@@ -432,7 +437,7 @@ public class Main implements Callable<Integer> {
             }
 
             return new TokenizingPreprocessor(
-                getCommonOptions(), sequencePerScript, abstractFixedNodeOption, statementLevel, getMaskingStrategy()
+                getCommonOptions(), sequencePerScript, abstractFixedNodeOption, tokenizingMethod, getMaskingStrategy()
             );
         }
     }

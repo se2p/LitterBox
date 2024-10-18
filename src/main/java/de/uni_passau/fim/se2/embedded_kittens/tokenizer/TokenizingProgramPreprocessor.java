@@ -46,20 +46,24 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
 
     public TokenizingProgramPreprocessor(
         final MLPreprocessorCommonOptions commonOptions, final MaskingStrategy maskingStrategy,
-        final boolean abstractFixedNodeOption, final boolean statementLevel, final boolean sequencePerScript
+        final boolean abstractFixedNodeOption, final TokenizingMethod tokenizingMethod, final boolean sequencePerScript
     ) {
         super(commonOptions);
 
         this.sequencePerScript = sequencePerScript;
 
-        if (statementLevel) {
-            tokenizeFunction = (program, astNode) -> StatementLevelTokenizer
-                .tokenize(program, astNode, commonOptions.abstractTokens(), maskingStrategy);
-        }
-        else {
-            tokenizeFunction = (program, astNode) -> Tokenizer
+        tokenizeFunction = switch (tokenizingMethod) {
+            case REGULAR -> (program, astNode) -> Tokenizer
                 .tokenize(program, astNode, commonOptions.abstractTokens(), abstractFixedNodeOption, maskingStrategy);
-        }
+            case PREFIX -> (program, astNode) -> PrefixTokenizer
+                .tokenize(program, astNode, commonOptions.abstractTokens(), abstractFixedNodeOption, maskingStrategy);
+            case PREFIX_FEWER_PARENTHESES -> (program, astNode) -> PrefixTokenizer
+                .tokenizeWithReducedParentheses(
+                    program, astNode, commonOptions.abstractTokens(), abstractFixedNodeOption, maskingStrategy
+                );
+            case STATEMENT_LEVEL -> (program, astNode) -> StatementLevelTokenizer
+                .tokenize(program, astNode, commonOptions.abstractTokens(), maskingStrategy);
+        };
     }
 
     @Override

@@ -89,7 +89,7 @@ class TokenizerAbstractTokenTest extends AbstractTokenCheck {
             ActorNameNormalizer.getDefault()
         );
         return new TokenizingProgramPreprocessor(
-            common, MaskingStrategy.none(), false, false, false
+            common, MaskingStrategy.none(), false, TokenizingMethod.REGULAR, false
         );
     }
 }

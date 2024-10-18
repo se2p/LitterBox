@@ -96,21 +96,21 @@ public class Tokenizer extends AbstractTokenizer {
      * <li>{@code movesteps (my_variable)} and {@code movesteps (div (my_variable) (3))}</li>
      * </ul>
      */
-    private final boolean parenthesiseAtoms;
+    protected final boolean parenthesiseExpressions;
 
     private final BaseTokenVisitor tokenVisitor = TokenVisitorFactory.getDefaultTokenVisitor(false);
     private final boolean abstractFixedNodeOptions;
 
-    private Tokenizer(
+    protected Tokenizer(
         final ProcedureDefinitionNameMapping procedureNameMapping,
         final boolean abstractTokens,
         final boolean abstractFixedNodeOptions,
-        final boolean parenthesiseAtoms,
+        final boolean parenthesiseExpressions,
         final MaskingStrategy maskingStrategy
     ) {
         super(procedureNameMapping, abstractTokens, maskingStrategy);
         this.abstractFixedNodeOptions = abstractFixedNodeOptions;
-        this.parenthesiseAtoms = parenthesiseAtoms;
+        this.parenthesiseExpressions = parenthesiseExpressions;
     }
 
     public static List<String> tokenize(
@@ -172,7 +172,7 @@ public class Tokenizer extends AbstractTokenizer {
         }
     }
 
-    private boolean shouldBeMasked(final ASTNode node) {
+    protected boolean shouldBeMasked(final ASTNode node) {
         return getMaskingStrategy().shouldBeMasked(node);
     }
 
@@ -192,7 +192,7 @@ public class Tokenizer extends AbstractTokenizer {
         }
     }
 
-    private void visitChild(final ASTNode child) {
+    protected void visitChild(final ASTNode child) {
         if (child instanceof Expression childExpr) {
             visitExpression(childExpr);
         }
@@ -531,7 +531,7 @@ public class Tokenizer extends AbstractTokenizer {
 
     // region operators
 
-    private void visitBinaryOperator(final BinaryExpression<?, ?> node, final Token opcode) {
+    protected void visitBinaryOperator(final BinaryExpression<?, ?> node, final Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
         }
@@ -665,8 +665,8 @@ public class Tokenizer extends AbstractTokenizer {
 
     // region expressions
 
-    private void visitExpression(final Expression expr) {
-        if (!parenthesiseAtoms && isLiteralInsideExpression(expr)) {
+    protected void visitExpression(final Expression expr) {
+        if (!parenthesiseExpressions && isLiteralInsideExpression(expr)) {
             expr.accept(this);
         }
         else if (expr instanceof AsExprType asExprType) {
@@ -706,11 +706,11 @@ public class Tokenizer extends AbstractTokenizer {
         }
     }
 
-    private void visitBoolExpr(final Expression expr) {
+    protected void visitBoolExpr(final Expression expr) {
         visitSurrounded(Token.BEGIN_BOOL_EXPR, expr, Token.END_BOOL_EXPR);
     }
 
-    private void visitNumOrStringExpr(final Expression expr) {
+    protected void visitNumOrStringExpr(final Expression expr) {
         visitSurrounded(Token.BEGIN_NUM_STR_EXPR, expr, Token.END_NUM_STR_EXPR);
     }
 
