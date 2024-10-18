@@ -405,7 +405,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
             "Direction", "MouseY", "Timer", "Backdrop", "DaysSince2000"
         )
             .map(target -> Pair.of(VAR_TYPE, target))
-            .collect(Collectors.toList());
+            .toList();
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, expectedEdges);
     }
 
@@ -421,7 +421,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
 
         List<Pair<String>> expectedEdges = Stream.of("Answer", "AttributeOf", "Username")
             .map(target -> Pair.of(VAR_TYPE, target))
-            .collect(Collectors.toList());
+            .toList();
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, expectedEdges);
     }
 
@@ -698,7 +698,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
     }
 
     private List<Pair<String>> labelledEdges(final Set<Pair<Integer>> edges, final Map<Integer, String> labels) {
-        return edges.stream().map(e -> labelledEdge(labels, e)).collect(Collectors.toList());
+        return edges.stream().map(e -> labelledEdge(labels, e)).toList();
     }
 
     private Pair<String> labelledEdge(final Map<Integer, String> labels, final Pair<Integer> edge) {

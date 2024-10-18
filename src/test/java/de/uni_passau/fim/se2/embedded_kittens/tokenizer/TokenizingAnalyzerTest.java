@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -55,40 +54,40 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 class TokenizingAnalyzerTest implements JsonTest {
 
-    private final String STAGE_LABEL = "stage";
-    private final String SPRITE_LABEL = "sprite";
+    private static final String STAGE_LABEL = "stage";
+    private static final String SPRITE_LABEL = "sprite";
 
-    private final String BEGIN_SUBSTACK = Token.BEGIN_SUBSTACK.getStrRep();
-    private final String END_SUBSTACK = Token.END_SUBSTACK.getStrRep();
-    private final String BEGIN_SPRITE = Token.BEGIN_SPRITE.getStrRep();
-    private final String END_SPRITE = Token.END_SPRITE.getStrRep();
-    private final String BEGIN_SCRIPT = Token.BEGIN_SCRIPT.getStrRep();
-    private final String END_SCRIPT = Token.END_SCRIPT.getStrRep();
-    private final String BEGIN_PROCEDURE = Token.BEGIN_PROCEDURE.getStrRep();
-    private final String END_PROCEDURE = Token.END_PROCEDURE.getStrRep();
-    private final String BEGIN_NUM_STR_EXPR = Token.BEGIN_NUM_STR_EXPR.getStrRep();
-    private final String END_NUM_STR_EXPR = Token.END_NUM_STR_EXPR.getStrRep();
-    private final String BEGIN_BOOL_EXPR = Token.BEGIN_BOOL_EXPR.getStrRep();
-    private final String END_BOOL_EXPR = Token.END_BOOL_EXPR.getStrRep();
+    private static final String BEGIN_SUBSTACK = Token.BEGIN_SUBSTACK.getStrRep();
+    private static final String END_SUBSTACK = Token.END_SUBSTACK.getStrRep();
+    private static final String BEGIN_SPRITE = Token.BEGIN_SPRITE.getStrRep();
+    private static final String END_SPRITE = Token.END_SPRITE.getStrRep();
+    private static final String BEGIN_SCRIPT = Token.BEGIN_SCRIPT.getStrRep();
+    private static final String END_SCRIPT = Token.END_SCRIPT.getStrRep();
+    private static final String BEGIN_PROCEDURE = Token.BEGIN_PROCEDURE.getStrRep();
+    private static final String END_PROCEDURE = Token.END_PROCEDURE.getStrRep();
+    private static final String BEGIN_NUM_STR_EXPR = Token.BEGIN_NUM_STR_EXPR.getStrRep();
+    private static final String END_NUM_STR_EXPR = Token.END_NUM_STR_EXPR.getStrRep();
+    private static final String BEGIN_BOOL_EXPR = Token.BEGIN_BOOL_EXPR.getStrRep();
+    private static final String END_BOOL_EXPR = Token.END_BOOL_EXPR.getStrRep();
 
-    private final String EVENT_WHENFLAG_TOKEN = "event_whenflagclicked";
-    private final String LOOKS_SAY_TOKEN = "looks_say";
-    private final String MOTION_MOVESTEPS_TOKEN = "motion_movesteps";
-    private final String OPERATOR_ADD_TOKEN = "operator_add";
-    private final String SOUND_CHANGEVOLUMEBY_TOKEN = "sound_changevolumeby";
-    private final String CONTROL_IF_ELSE = "control_if_else";
-    private final String CONTROL_IF = "control_if";
-    private final String SENSING_MOUSEDOWN = "sensing_mousedown";
-    private final String CONTROL_WAIT = "control_wait";
-    private final String SOUND_STOPALLSOUNDS = "sound_stopallsounds";
-    private final String CONTROL_STOP = "control_stop";
-    private final String STOP_TARGET = "stop_target";
+    private static final String EVENT_WHENFLAG_TOKEN = "event_whenflagclicked";
+    private static final String LOOKS_SAY_TOKEN = "looks_say";
+    private static final String MOTION_MOVESTEPS_TOKEN = "motion_movesteps";
+    private static final String OPERATOR_ADD_TOKEN = "operator_add";
+    private static final String SOUND_CHANGEVOLUMEBY_TOKEN = "sound_changevolumeby";
+    private static final String CONTROL_IF_ELSE = "control_if_else";
+    private static final String CONTROL_IF = "control_if";
+    private static final String SENSING_MOUSEDOWN = "sensing_mousedown";
+    private static final String CONTROL_WAIT = "control_wait";
+    private static final String SOUND_STOPALLSOUNDS = "sound_stopallsounds";
+    private static final String CONTROL_STOP = "control_stop";
+    private static final String STOP_TARGET = "stop_target";
 
-    private final String MASK = Token.MASK.getStrRep();
-    private final String LITERAL_NUMBER = AbstractToken.LITERAL_NUMBER.toString();
-    private final String LITERAL_2 = "2";
-    private final String NOTHING = Token.NOTHING.getStrRep();
-    private final String ELSE = Token.ELSE.getStrRep();
+    private static final String MASK = Token.MASK.getStrRep();
+    private static final String LITERAL_NUMBER = AbstractToken.LITERAL_NUMBER.toString();
+    private static final String LITERAL_2 = "2";
+    private static final String NOTHING = Token.NOTHING.getStrRep();
+    private static final String ELSE = Token.ELSE.getStrRep();
 
     private final List<TokenSequence> concreteScriptSequences = List.of(
         TokenSequenceBuilder.build(
@@ -319,10 +318,10 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testWholeProgramSingleSequence(boolean includeStage) throws ParsingException, IOException {
+    void testWholeProgramSingleSequence(boolean includeStage) throws ParsingException {
         final var analyzer = getAnalyzer(includeStage, false, false);
 
-        final var output = analyzer.processWholeProgram(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.processWholeProgram(inputFile("multipleSprites.json")).toList();
         assertThat(output).hasSize(1);
         assertThat(output.get(0).label()).isEqualTo("multipleSprites");
 
@@ -344,10 +343,10 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testSequencePerSprite(boolean includeStage) throws ParsingException, IOException {
+    void testSequencePerSprite(boolean includeStage) throws ParsingException {
         final var analyzer = getAnalyzer(includeStage, false, false);
 
-        final var output = analyzer.processSprites(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.processSprites(inputFile("multipleSprites.json")).toList();
 
         int expectedSpriteCount = includeStage ? 3 : 2;
         assertThat(output).hasSize(expectedSpriteCount);
@@ -362,10 +361,10 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testSequencePerScript(boolean abstractTokens) throws ParsingException, IOException {
+    void testSequencePerScript(boolean abstractTokens) throws ParsingException {
         final var analyzer = getAnalyzer(true, abstractTokens, true);
 
-        final var output = analyzer.processSprites(inputFile("multipleSprites.json")).collect(Collectors.toList());
+        final var output = analyzer.processSprites(inputFile("multipleSprites.json")).toList();
 
         if (abstractTokens) {
             assertEquals(abstractScriptSequences, output);
@@ -377,10 +376,10 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testSequencePerProcedureDefinition(boolean abstractTokens) throws ParsingException, IOException {
+    void testSequencePerProcedureDefinition(boolean abstractTokens) throws ParsingException {
         final var analyzer = getAnalyzer(true, abstractTokens, true);
 
-        final var output = analyzer.processSprites(inputFile("customBlocks.json")).collect(Collectors.toList());
+        final var output = analyzer.processSprites(inputFile("customBlocks.json")).toList();
         assertThat(output).hasSize(2);
 
         final List<TokenSequence> expectedOutput;
@@ -438,11 +437,11 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testCustomProcedureCall(boolean abstractTokens) throws ParsingException, IOException {
+    void testCustomProcedureCall(boolean abstractTokens) throws ParsingException {
         final var analyzer = getAnalyzer(false, abstractTokens, true);
 
         final Program input = inputFile("ml_preprocessing/tokenizer/custom_procedure_call.json");
-        final List<TokenSequence> output = analyzer.processSprites(input).collect(Collectors.toList());
+        final List<TokenSequence> output = analyzer.processSprites(input).toList();
 
         final TokenSequence expectedOutput;
         if (abstractTokens) {
@@ -483,11 +482,11 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testTransformPenBlocks() throws ParsingException, IOException {
+    void testTransformPenBlocks() throws ParsingException {
         final var analyzer = getAnalyzer(false, true, false);
 
         final Program input = inputFile("ml_preprocessing/shared/pen_blocks.json");
-        final var output = analyzer.processWholeProgram(input).collect(Collectors.toList());
+        final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens().get(0)).hasSize(47);
@@ -498,11 +497,11 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testTransformTtsBlocks() throws ParsingException, IOException {
+    void testTransformTtsBlocks() throws ParsingException {
         final var analyzer = getAnalyzer(false, true, false);
 
         final Program input = inputFile("ml_preprocessing/shared/tts_blocks.json");
-        final var output = analyzer.processWholeProgram(input).collect(Collectors.toList());
+        final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens()).hasSize(1);
@@ -513,11 +512,11 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testTransformMusicBlocks(boolean abstractTokens) throws ParsingException, IOException {
+    void testTransformMusicBlocks(boolean abstractTokens) throws ParsingException {
         final var analyzer = getAnalyzer(false, abstractTokens, false);
 
         final Program input = inputFile("ml_preprocessing/shared/music_blocks.json");
-        final var output = analyzer.processWholeProgram(input).collect(Collectors.toList());
+        final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
         assertThat(output.get(0).tokens()).hasSize(1);
@@ -786,7 +785,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testBinaryExpressionPrefixFewerParentheses() throws ParsingException, IOException {
+    void testBinaryExpressionPrefixFewerParentheses() throws ParsingException {
         final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX_FEWER_PARENTHESES);
 
         final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_expr.json");
@@ -802,7 +801,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testBinaryExpressionPrefix() throws ParsingException, IOException {
+    void testBinaryExpressionPrefix() throws ParsingException {
         final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX);
 
         final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_expr.json");
@@ -822,7 +821,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testBinaryBoolExpressionPrefixFewerParentheses() throws ParsingException, IOException {
+    void testBinaryBoolExpressionPrefixFewerParentheses() throws ParsingException {
         final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX_FEWER_PARENTHESES);
 
         final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_bool_expr.json");
@@ -839,7 +838,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testBinaryBoolExpressionPrefix() throws ParsingException, IOException {
+    void testBinaryBoolExpressionPrefix() throws ParsingException {
         final var analyzer = getPrefixAnalyzer(TokenizingMethod.PREFIX);
 
         final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_bool_expr.json");
@@ -868,7 +867,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         }
     }
 
-    private Program inputFile(final String fixture) throws ParsingException, IOException {
+    private Program inputFile(final String fixture) throws ParsingException {
         final File programFile = Path.of("src", "test", "fixtures").resolve(fixture).toFile();
         return new Scratch3Parser().parseFile(programFile);
     }

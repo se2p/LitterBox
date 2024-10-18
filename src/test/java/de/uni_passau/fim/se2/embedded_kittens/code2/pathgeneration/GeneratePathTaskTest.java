@@ -25,7 +25,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -85,7 +84,7 @@ class GeneratePathTaskTest implements JsonTest {
         List<String> pathContexts = pathContextsForCode2Vec
             .stream()
             .map(ProgramFeatures::toString)
-            .collect(Collectors.toList());
+            .toList();
 
         assertThat(pathContexts).contains(CAT_PATHS);
         assertThat(pathContexts).contains(ABBY_PATHS);
@@ -131,7 +130,7 @@ class GeneratePathTaskTest implements JsonTest {
             .stream()
             .flatMap(features -> features.getFeatures().stream())
             .map(ProgramRelation::toString)
-            .collect(Collectors.toList());
+            .toList();
 
         if (includeStage) {
             assertThat(pathContexts).hasSize(5);
@@ -155,7 +154,7 @@ class GeneratePathTaskTest implements JsonTest {
         List<String> pathContexts = pathContextsForCode2Vec
             .stream()
             .map(ProgramFeatures::toStringWithoutNodeName)
-            .collect(Collectors.toList());
+            .toList();
 
         ScriptCount<ASTNode> scriptCount = new ScriptCount<>();
         int scriptCountPerProgram = (int) scriptCount.calculateMetric(program);
