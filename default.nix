@@ -5,11 +5,11 @@
   makeWrapper,
   maven,
 }: let
-  litterboxMlVersion = "1.0-SNAPSHOT";
+  embeddedKittensVersion = "1.1-SNAPSHOT";
 in
   maven.buildMavenPackage rec {
     pname = "embedded-kittens";
-    version = litterboxMlVersion;
+    version = embeddedKittensVersion;
 
     src = ./.;
 

@@ -43,7 +43,7 @@ import picocli.CommandLine;
 @CommandLine.Command(
     name = "EmbeddedKittens",
     mixinStandardHelpOptions = true,
-    version = "EmbeddedKittens 1.0-SNAPSHOT",
+    version = "EmbeddedKittens 1.1-SNAPSHOT",
     subcommands = {
         Main.AstnnSubcommand.class,
         Main.Code2SeqSubcommand.class,
