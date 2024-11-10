@@ -6,7 +6,7 @@
 
     <groupId>de.uni_passau.fim.se2</groupId>
     <artifactId>embedded-kittens</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <licenses>
         <license>
             <name>GPL-3.0-or-later</name>

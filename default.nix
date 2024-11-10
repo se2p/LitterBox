@@ -5,7 +5,7 @@
   makeWrapper,
   maven,
 }: let
-  embeddedKittensVersion = "1.1-SNAPSHOT";
+  embeddedKittensVersion = "1.1.0-SNAPSHOT";
 in
   maven.buildMavenPackage rec {
     pname = "embedded-kittens";
