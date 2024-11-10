@@ -106,7 +106,7 @@ public class Main implements Callable<Integer> {
             names = { "--exclude-stage" },
             description = "Ignore the stage when performing the analysis."
         )
-        boolean excludeStage;
+        boolean excludeStage = false;
 
         @CommandLine.ArgGroup(exclusive = true)
         WholeProgramGroup wholeProgram = new WholeProgramGroup();
@@ -127,10 +127,10 @@ public class Main implements Callable<Integer> {
         }
 
         @CommandLine.Option(
-            names = { "--include-default-sprites" },
-            description = "Include sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
+            names = { "--exclude-default-sprites" },
+            description = "Ignore sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
         )
-        boolean includeDefaultSprites;
+        boolean excludeDefaultSprites = false;
 
         @CommandLine.Option(
             names = { "--abstract-tokens" },
@@ -220,7 +220,7 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             return new MLPreprocessorCommonOptions(
-                getOutputPath(), !excludeStage, includeDefaultSprites, abstractTokens, buildActorNameNormalizer()
+                getOutputPath(), !excludeStage, !excludeDefaultSprites, abstractTokens, buildActorNameNormalizer()
             );
         }
 
