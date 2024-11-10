@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- CLI: Replace `--include-stage` with `--exclude-stage` to include the stage by default.
+- CLI: Replace `--include-default-sprites` with `--exclude-default-sprites` to include sprites that have the automatically generated default name unless they are explicitly excluded.
+
 
 ## [1.0.0] - 2024-10-17
 
