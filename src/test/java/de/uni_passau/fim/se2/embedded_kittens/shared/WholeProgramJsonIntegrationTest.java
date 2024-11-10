@@ -34,13 +34,12 @@ class WholeProgramJsonIntegrationTest extends CliTest {
 
     private static final String GGNN_CMD = "ggnn";
     private static final String INPUT_FLAG = "-p";
-    private static final String INCLUDE_STAGE = "--include-stage";
     private static final String WHOLE_PROGRAM_FLAG = "--whole-program-json";
 
     @Test
     void noWholeProgramAndWholeProgramJsonAllowed() {
         int exitCode = commandLine.execute(
-            GGNN_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", INCLUDE_STAGE, WHOLE_PROGRAM_FLAG,
+            GGNN_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", WHOLE_PROGRAM_FLAG,
             "--whole-program"
         );
         assertThat(exitCode).isEqualTo(2);
@@ -50,7 +49,7 @@ class WholeProgramJsonIntegrationTest extends CliTest {
     @Test
     void ggnnProcessProgramWithMultipleSprites() {
         commandLine.execute(
-            GGNN_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", INCLUDE_STAGE, WHOLE_PROGRAM_FLAG
+            GGNN_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", WHOLE_PROGRAM_FLAG
         );
         assertEmptyStdErr();
 
@@ -65,7 +64,7 @@ class WholeProgramJsonIntegrationTest extends CliTest {
     @ValueSource(strings = { GGNN_CMD, "astnn", "code2vec", "code2seq", "tokenizer" })
     void processProgramWithMultipleSprites(final String modelParam) {
         commandLine.execute(
-            modelParam, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", INCLUDE_STAGE, WHOLE_PROGRAM_FLAG
+            modelParam, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", WHOLE_PROGRAM_FLAG
         );
         assertEmptyStdErr();
 

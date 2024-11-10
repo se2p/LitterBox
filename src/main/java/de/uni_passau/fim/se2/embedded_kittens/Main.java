@@ -103,10 +103,10 @@ public class Main implements Callable<Integer> {
         Path outputPath;
 
         @CommandLine.Option(
-            names = { "-s", "--include-stage" },
-            description = "Include the stage like a regular sprite into the analysis."
+            names = { "--exclude-stage" },
+            description = "Ignore the stage when performing the analysis."
         )
-        boolean includeStage;
+        boolean excludeStage;
 
         @CommandLine.ArgGroup(exclusive = true)
         WholeProgramGroup wholeProgram = new WholeProgramGroup();
@@ -220,7 +220,7 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             return new MLPreprocessorCommonOptions(
-                getOutputPath(), includeStage, includeDefaultSprites, abstractTokens, buildActorNameNormalizer()
+                getOutputPath(), !excludeStage, includeDefaultSprites, abstractTokens, buildActorNameNormalizer()
             );
         }
 

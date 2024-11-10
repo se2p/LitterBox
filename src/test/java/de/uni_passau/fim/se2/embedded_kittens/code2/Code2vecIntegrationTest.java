@@ -38,7 +38,7 @@ class Code2vecIntegrationTest extends CliTest {
     @Test
     void processProgramWithMultipleSpritesToFile(@TempDir Path tempDir) throws IOException {
         commandLine.execute(
-            "code2vec", "-p", "src/test/fixtures/multipleSprites.json", "--include-stage", "-o", tempDir.toString()
+            "code2vec", "-p", "src/test/fixtures/multipleSprites.json", "-o", tempDir.toString()
         );
 
         final List<String> outputLines = Files.readAllLines(tempDir.resolve("multipleSprites.txt"));
@@ -59,7 +59,7 @@ class Code2vecIntegrationTest extends CliTest {
         Files.copy(fixture, input.resolve("a").resolve(fixture.getFileName()));
         Files.copy(fixture, input.resolve("a").resolve("b").resolve(fixture.getFileName()));
 
-        commandLine.execute("code2vec", "-p", input.toString(), "--include-stage", "-o", output.toString());
+        commandLine.execute("code2vec", "-p", input.toString(), "-o", output.toString());
 
         assertThat(Files.walk(output).filter(p -> p.toFile().isFile())).hasSize(3);
         assertThat(Files.walk(output).filter(p -> p.toFile().isDirectory())).hasSize(3);

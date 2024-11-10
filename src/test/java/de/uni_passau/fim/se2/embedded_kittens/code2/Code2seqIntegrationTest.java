@@ -64,7 +64,7 @@ class Code2seqIntegrationTest extends CliTest {
 
     @Test
     void processProgramWithMultipleSprites() {
-        commandLine.execute(C2S_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", "--include-stage");
+        commandLine.execute(C2S_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json");
         assertEmptyStdErr();
 
         final List<String> outputLines = getOutput().lines().toList();
@@ -79,7 +79,7 @@ class Code2seqIntegrationTest extends CliTest {
     @Test
     void processProgramWithMultipleSpritesToFile(@TempDir Path tempDir) throws IOException {
         commandLine.execute(
-            C2S_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", "--include-stage", "-o", tempDir.toString()
+            C2S_CMD, INPUT_FLAG, "src/test/fixtures/multipleSprites.json", "-o", tempDir.toString()
         );
         assertEmptyStdErr();
 
