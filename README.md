@@ -46,7 +46,16 @@ java -jar embedded-kittens-1.0.full.jar code2vec --help
 
 ## Output formats
 
-### Code2vec output
+The currently supported formats are suitable for the following models:
+
+- [ASTNN](https://doi.org/10.1109/ICSE.2019.00086)
+- [code2vec](https://doi.org/10.1145/3291636)
+- [code2seq](https://arxiv.org/abs/1808.01400)
+- [GGNN](https://arxiv.org/abs/1711.00740)
+- and tokenised sequences for Transformers/LSTM/…
+
+
+### Example: code2vec output
 
 To be able to use the code2vec model with the programming language Scratch, a scratch parser is needed to generate the required input representation.
 According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
