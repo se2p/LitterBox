@@ -47,25 +47,13 @@ test:
     variables:
         JACOCO_CSV_LOCATION: "$CI_PROJECT_DIR/target/site/jacoco/jacoco.csv"
     artifacts:
-        paths:
-            - target/site/jacoco/
         reports:
             metrics: metrics.txt
+            coverage_report:
+                coverage_format: jacoco
+                path: target/site/jacoco/jacoco.xml
             junit:
                 - target/surefire-reports/TEST-*.xml
-
-show-coverage:
-    stage: test
-    needs:
-        - test
-    image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.9
-    script:
-        - python /opt/cover2cover.py target/site/jacoco/jacoco.xml $CI_PROJECT_DIR/src/main/java/ > coverage.xml
-    artifacts:
-        reports:
-            coverage_report:
-                coverage_format: cobertura
-                path: coverage.xml
 
 ################################################################################
 # lint
