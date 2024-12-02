@@ -1,3 +1,6 @@
+include:
+    - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+
 image: maven:3-eclipse-temurin-17
 
 stages:
