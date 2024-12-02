@@ -31,6 +31,7 @@ public enum Token {
     MASK("[MASK]"),
     NOTHING("NOTHING"),
     ELSE("ELSE"),
+    // MATTERS("MATTERS"),
 
     BEGIN_BOOL_EXPR("<"),
     BEGIN_NUM_STR_EXPR("("),
