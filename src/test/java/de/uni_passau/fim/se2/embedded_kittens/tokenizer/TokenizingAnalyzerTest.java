@@ -856,6 +856,21 @@ class TokenizingAnalyzerTest implements JsonTest {
         );
     }
 
+    @Test
+    void testStatementLevel() throws ParsingException {
+        final var analyzer = getPrefixAnalyzer(TokenizingMethod.STATEMENT_LEVEL);
+        final Program input = inputFile("ml_preprocessing/tokenizer/simple_binary_expr.json");
+        final var output = analyzer.processWholeProgram(input).toList();
+
+        assertThat(output).hasSize(1);
+        assertThat(output.get(0).tokens().get(0)).containsExactly(
+            BEGIN_SCRIPT,
+            Token.EVENT_NEVER.getStrRep(),
+            Token.CONTROL_WAIT.getStrRep(),
+            END_SCRIPT
+        );
+    }
+
     static class NoSpacesChecker implements ScratchVisitor {
 
         @Override

@@ -108,7 +108,19 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
 
     @Override
     public void visit(IfElseStmt node) {
-        visitControlBlock(node, Token.CONTROL_IF_ELSE);
+        if (shouldBeMasked(node)) {
+            addToken(Token.MASK);
+        }
+        else {
+            addToken(Token.CONTROL_IF_ELSE);
+            addToken(Token.BEGIN_SUBSTACK);
+            visitChildren(node.getThenStmts());
+            addToken(Token.END_SUBSTACK);
+            addToken(Token.ELSE);
+            addToken(Token.BEGIN_SUBSTACK);
+            visitChildren(node.getElseStmts());
+            addToken(Token.END_SUBSTACK);
+        }
     }
 
     @Override
