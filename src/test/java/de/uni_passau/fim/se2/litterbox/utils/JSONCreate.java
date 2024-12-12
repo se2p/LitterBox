@@ -19,26 +19,41 @@
 package de.uni_passau.fim.se2.litterbox.utils;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 class JSONCreate implements JsonTest {
 
     @AfterAll
     static void cleanUp() throws IOException {
         Files.delete(Path.of("manipulatedBroadcast_annotated.json"));
+        Files.delete(Path.of("foreverInLoop_annotated.json"));
     }
 
     @Test
     public void createJSON() throws ParsingException, IOException {
         Program test = getAST("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JSONFileCreator.writeJsonFromProgram(test, "_annotated");
+    }
+
+    @Test
+    public void createAnnotatedJSON() throws ParsingException, IOException {
+        Program prog = getAST("./src/test/fixtures/bugpattern/foreverInLoop.json");
+        ForeverInsideLoop fil = new ForeverInsideLoop();
+        Set<Issue> issues = fil.check(prog);
+        CommentGenerator gen = new CommentGenerator();
+        gen.generateReport(prog, issues);
+        JSONFileCreator.writeJsonFromProgram(prog, "_annotated");
     }
 }
