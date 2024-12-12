@@ -709,6 +709,23 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
+    public void visit(SwitchBackdropAndWait node) {
+        emitNoSpace("switch backdrop to ");
+        if (node.getElementChoice() instanceof Next) {
+            emitNoSpace("(next backdrop v)");
+        } else if (node.getElementChoice() instanceof Prev) {
+            emitNoSpace("(previous backdrop v)");
+        } else if (node.getElementChoice() instanceof Random) {
+            emitNoSpace("(random backdrop v)");
+        } else {
+            node.getElementChoice().accept(this);
+        }
+        emitNoSpace(" and wait");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
     public void visit(NextBackdrop node) {
         emitNoSpace("next backdrop");
         storeNotesForIssue(node);
