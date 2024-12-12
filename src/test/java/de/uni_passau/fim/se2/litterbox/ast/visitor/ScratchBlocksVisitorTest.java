@@ -43,6 +43,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
+    public void testSwitchBackdropAndWait() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/switchBackdropAndWait.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString(StandardCharsets.UTF_8);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "switchBackdropAndWait " + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
     public void testMotionBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/motionblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
