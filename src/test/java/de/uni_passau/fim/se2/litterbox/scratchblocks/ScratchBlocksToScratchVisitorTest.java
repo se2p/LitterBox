@@ -24,10 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
@@ -45,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffe
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -288,5 +286,12 @@ class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("wait (pick random (1) to ((60)-(((((((((((((((((((INFECTED)/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2)))) seconds");
         WaitSeconds wait = (WaitSeconds) stmtList.getStatement(0);
         assertInstanceOf(PickRandom.class, wait.getSeconds());
+    }
+
+    @Test
+    void testNestedBoolExpr() {
+        StmtList stmtList = getStmtList("wait until <<<(mouse x) < (-113)> and <(mouse x) > (-123)>> and <<(mouse y) < (-93)> and <(mouse y) > (-101)>>>\n");
+        WaitUntil waitUntil = (WaitUntil) stmtList.getStatement(0);
+        assertInstanceOf(And.class, waitUntil.getUntil());
     }
 }
