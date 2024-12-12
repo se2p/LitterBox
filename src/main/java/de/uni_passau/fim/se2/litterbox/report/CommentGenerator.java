@@ -75,8 +75,6 @@ public class CommentGenerator implements ReportGenerator {
         hintText = hintText.replace(" ]","");
         hintText = hintText.replace(" v)"," )");
 
-       // hintText = hintText.replace("\"", "\\\"");
-
         return hintText;
     }
 
