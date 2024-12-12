@@ -54,7 +54,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String result = os.toString(StandardCharsets.UTF_8);
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "switchBackdropAndWait " + System.lineSeparator() +
+                "switch backdrop to (Hintergrund1 v) and wait" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
