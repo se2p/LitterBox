@@ -62,14 +62,21 @@ public class CommentGenerator implements ReportGenerator {
         hintText = hintText.replace("[LEQ]","<");
         hintText = hintText.replace("[GEQ]",">");
         hintText = hintText.replace("[EQ]","=");
+        hintText = hintText.replace("[b]", "");
+        hintText = hintText.replace("[/b]", "");
         hintText = hintText.replace("[/bc]","");
         hintText = hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
         hintText = hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
+        //if there is a linebreak followed by a whitespace, the whitespace should be removed for styling reasons
+        hintText = hintText.replace("[newLine] ", "\n");
+        hintText = hintText.replace("[newLine]", "\n");
         hintText = hintText.replace("[","");
         hintText = hintText.replace(" v]","");
         hintText = hintText.replace(" ]","");
         hintText = hintText.replace(" v)"," )");
-        hintText = hintText.replace("\"", "\\\"");
+
+       // hintText = hintText.replace("\"", "\\\"");
+
         return hintText;
     }
 

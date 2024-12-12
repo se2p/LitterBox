@@ -146,7 +146,7 @@ final class RawTargetConverter {
                             comment.text()
                     );
                 })
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         return new CommentMetadataList(commentMetadata);
     }
 
