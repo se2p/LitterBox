@@ -156,18 +156,19 @@ class ScratchBlocksToScratchVisitorTest {
         assertHasExprStmt(stmtList, expressionType);
     }
 
-    /*
-     * Binary number operations without spaces around the operator are parsed as variables.
-     */
     @ParameterizedTest
     @MethodSource("binaryNumberOperators")
     void testBinaryNumberOperatorNoSpaces(final String operator, final Class<?> expressionType) {
         final String expr = String.format("((4)%s(1))", operator);
         final StmtList stmtList = getStmtList(expr);
 
-        final Expression parsed = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
-        assertInstanceOf(Variable.class, parsed);
-        assertEquals(String.format("(4)%s(1)", operator), ((Variable) parsed).getName().getName());
+        if ("mod".equals(operator)) {
+            final Expression parsed = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
+            assertInstanceOf(Variable.class, parsed);
+            assertEquals(String.format("(4)%s(1)", operator), ((Variable) parsed).getName().getName());
+        } else {
+            assertHasExprStmt(stmtList, expressionType);
+        }
     }
 
     @ParameterizedTest

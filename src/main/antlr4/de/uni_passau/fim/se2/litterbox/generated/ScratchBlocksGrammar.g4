@@ -448,10 +448,10 @@ actorAttribute          : '['attributeChoice' v] of 'element;
 currentTime             : 'current ['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
-addition                : firstExpr=exprOrLiteral' + 'secondExpr=exprOrLiteral;
-subtraction             : firstExpr=exprOrLiteral' - 'secondExpr=exprOrLiteral;
-multiplication          : firstExpr=exprOrLiteral' * 'secondExpr=exprOrLiteral;
-division                : firstExpr=exprOrLiteral' / 'secondExpr=exprOrLiteral;
+addition                : firstExpr=exprOrLiteral WS? '+' WS? secondExpr=exprOrLiteral;
+subtraction             : firstExpr=exprOrLiteral WS? '-' WS? secondExpr=exprOrLiteral;
+multiplication          : firstExpr=exprOrLiteral WS? '*' WS? secondExpr=exprOrLiteral;
+division                : firstExpr=exprOrLiteral WS? '/' WS? secondExpr=exprOrLiteral;
 pickRandom              : 'pick random 'firstExpr=exprOrLiteral' to 'secondExpr=exprOrLiteral;
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral' of 'secondExpr=exprOrLiteral;
@@ -544,7 +544,7 @@ NUMBER                  : '-'? (DIGIT)+ ('.' (DIGIT)+)?;
 
 NEWLINE                 : '\r\n' | '\n' ;
 
-//WS                      : [ \t]+ -> skip;
+WS                      : [ \t]+;
 
 BEGIN_ACTOR             : '//;Act ' ~[\r\n]+ NEWLINE;
 
