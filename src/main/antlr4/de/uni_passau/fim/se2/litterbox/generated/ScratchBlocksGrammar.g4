@@ -530,7 +530,8 @@ touchingColorChoice     :'(' HEX ')'
                         | exprOrLiteral
                         ;
 
-stringArgument          : ~(NEWLINE)*?;
+// escape sequences, or anything else that is not a newline or an unescaped special character
+stringArgument          : (ESC | ~(NEWLINE|LPAREN|RPAREN|LBRACK|RBRACK))*?;
 
 /*
  * Lexer Rules
@@ -552,5 +553,11 @@ COMMENT                 : '//' ~[\r\n]* NEWLINE;
 
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
+
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]';
+LPAREN                  : '(';
+RPAREN                  : ')';
+LBRACK                  : '[';
+RBRACK                  : ']';
 
 ANY                     : .;

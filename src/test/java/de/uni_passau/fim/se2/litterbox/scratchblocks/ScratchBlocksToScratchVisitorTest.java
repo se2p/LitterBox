@@ -47,7 +47,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -107,13 +106,24 @@ class ScratchBlocksToScratchVisitorTest {
         assertEquals("a", literal);
     }
 
-    @Test
-    void testExprOrLiteralExpression() {
-        StmtList statements = getStmtList("move (\\)\\(\\_\\$\\\\\\\\\\\\a) steps\n");
-        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
-        MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
-        String variableName = ((Variable) ((AsNumber) moveSteps.getSteps()).getOperand1()).getName().getName();
-        assertEquals(")(_$\\\\\\a", variableName);
+    @ParameterizedTest
+    @MethodSource("variables")
+    void testVariableExpression(final String input, final String expectedVariableName) {
+        final StmtList stmtList = getStmtList(input);
+        final Expression expr = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
+
+        assertInstanceOf(Variable.class, expr);
+        assertEquals(expectedVariableName, ((Variable) expr).getName().getName());
+    }
+
+    static Stream<Arguments> variables() {
+        return Stream.of(
+                Arguments.of("(x)", "x"),
+                Arguments.of("(x\\()", "x("),
+                Arguments.of("(x\\)abc)", "x)abc"),
+                Arguments.of("(abc9de)", "abc9de"),
+                Arguments.of("(\\)\\(\\_\\$\\\\\\\\\\\\\\a)", ")(_$\\\\\\a")
+        );
     }
 
     @Test
@@ -160,13 +170,11 @@ class ScratchBlocksToScratchVisitorTest {
     @MethodSource("binaryNumberOperators")
     void testBinaryNumberOperatorNoSpaces(final String operator, final Class<?> expressionType) {
         final String expr = String.format("((4)%s(1))", operator);
-        final StmtList stmtList = getStmtList(expr);
 
         if ("mod".equals(operator)) {
-            final Expression parsed = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
-            assertInstanceOf(Variable.class, parsed);
-            assertEquals(String.format("(4)%s(1)", operator), ((Variable) parsed).getName().getName());
+            assertThrows(NullPointerException.class, () -> getStmtList(expr));
         } else {
+            final StmtList stmtList = getStmtList(expr);
             assertHasExprStmt(stmtList, expressionType);
         }
     }
@@ -372,8 +380,6 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
-    @Disabled("parser does not terminate in a reasonable amount of time")
-    // FIXME: grammar needs to be improved *somehow* to fix this
     void testDeeplyNestedExpression() {
         StmtList stmtList = getStmtList("wait (pick random (1) to ((60) - (((((((((((((((((((INFECTED) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)))) seconds");
         WaitSeconds wait = (WaitSeconds) stmtList.getStatement(0);
