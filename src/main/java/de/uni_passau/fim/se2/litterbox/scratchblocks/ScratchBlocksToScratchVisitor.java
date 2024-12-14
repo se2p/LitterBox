@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -64,7 +65,19 @@ import java.util.List;
 
 class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
 
+    private static final String NEW_ACTOR_PREFIX = "//;Act ";
+
     private static final String SPECIAL_WITHOUT_BSLASH = "[!\"#$%&'()*+,\\-./:;<=>?@\\[\\]^_`{|}~]";
+
+    private StrId currentActor = new StrId(new StringLiteral("Stage"));
+
+    @Override
+    public ASTNode visitActor(ScratchBlocksGrammarParser.ActorContext ctx) {
+        final String actorName = ctx.BEGIN_ACTOR().getText().replace(NEW_ACTOR_PREFIX, "").trim();
+        currentActor = new StrId(new StringLiteral(actorName));
+
+        return super.visitActor(ctx);
+    }
 
     @Override
     public ScriptEntity visitScript(ScratchBlocksGrammarParser.ScriptContext ctx) {
@@ -805,7 +818,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx) {
         return new BiggerThan(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visit(ctx.secondExpr),
+                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
                 new NoBlockMetadata()
         );
     }
@@ -814,7 +827,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx) {
         return new LessThan(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visit(ctx.secondExpr),
+                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
                 new NoBlockMetadata()
         );
     }
@@ -823,7 +836,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx) {
         return new Equals(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visit(ctx.secondExpr),
+                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
                 new NoBlockMetadata()
         );
     }
@@ -1104,7 +1117,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     @Override
     public Expression visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
+            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
+            return new Qualified(currentActor, variable);
         } else if (ctx.boolExpr() != null) {
             return (Expression) visitBoolExpr(ctx.boolExpr());
         } else if (ctx.numExpr() != null) {
