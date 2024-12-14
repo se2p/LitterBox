@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -41,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -173,10 +175,42 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
             return (Stmt) visitEventStmt(ctx.eventStmt());
         } else if (ctx.sensingStmt() != null) {
             return (Stmt) visitSensingStmt(ctx.sensingStmt());
-            // todo: other cases
+        } else if (ctx.customBlockCallStmt() != null) {
+            return visitCustomBlockCallStmt(ctx.customBlockCallStmt());
         } else {
+            // throw new UnsupportedOperationException instead since we are missing an implementation?
             return (Stmt) super.visitStmt(ctx);
         }
+    }
+
+    @Override
+    public CallStmt visitCustomBlockCallStmt(ScratchBlocksGrammarParser.CustomBlockCallStmtContext ctx) {
+        StringBuilder name = new StringBuilder(customBlockCallStmtName(ctx));
+        final ExpressionList arguments = new ExpressionList(
+                ctx.exprOrLiteral().stream().map(this::visitExprOrLiteral).toList()
+        );
+
+        for (final Expression expr : arguments.getExpressions()) {
+            if (expr instanceof BoolExpr) {
+                name.append(" %b");
+            } else {
+                name.append(" %s");
+            }
+        }
+
+        return new CallStmt(new StrId(name.toString()), arguments, new NoBlockMetadata());
+    }
+
+    private String customBlockCallStmtName(final ScratchBlocksGrammarParser.CustomBlockCallStmtContext ctx) {
+        final String name;
+
+        if (ctx.stringArgument() != null) {
+            name = visitStringArgument(ctx.stringArgument()).getText();
+        } else {
+            name = unescape(ctx.customBlockCallPrefix().getText());
+        }
+
+        return name.trim();
     }
 
     @Override
@@ -1130,9 +1164,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public StringLiteral visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
-        return new StringLiteral(ctx.getText()
+        return new StringLiteral(unescape(ctx.getText()));
+    }
+
+    private String unescape(final String s) {
+        return s
                 .replaceAll("\\\\(?=[\\w" + SPECIAL_WITHOUT_BSLASH + "])", "") // Remove superfluous \
-                .replace("\\\\", "\\")); // Handle double backslash
+                .replace("\\\\", "\\"); // Handle double backslash
     }
 
     private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {

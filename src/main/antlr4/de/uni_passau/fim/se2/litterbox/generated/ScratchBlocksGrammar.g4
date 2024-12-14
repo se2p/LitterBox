@@ -35,8 +35,8 @@ actor                   : BEGIN_ACTOR scriptList NEWLINE*;
 
 scriptList              : (script (NEWLINE+)?)*;
 
-script                  : expressionStmt NEWLINE?
-                        | customBlock NEWLINE?
+script                  : expressionStmt NEWLINE
+                        | customBlock NEWLINE
                         | event NEWLINE (stmtList)?
                         | stmtList
                         ;
@@ -58,11 +58,14 @@ stmt                    : motionStmt (COMMENT)?
                         | controlStmt (COMMENT)?
                         | sensingStmt (COMMENT)?
                         | variableStmt (COMMENT)?
-                        | stringArgument (exprOrLiteral)+ (COMMENT)?                            //custom block call
-                        | ~(NEWLINE|'//'|BEGIN_ACTOR)~(NEWLINE)+? (exprOrLiteral)* (COMMENT)?   //custom block call
+                        | customBlockCallStmt
                         ;
 
+customBlockCallStmt     : stringArgument exprOrLiteral (WS exprOrLiteral)* (COMMENT)?
+                        | customBlockCallPrefix (WS? | (WS exprOrLiteral)*) (COMMENT)?
+                        ;
 
+customBlockCallPrefix   : (ESC|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|~(NEWLINE|DELIM))+?;
 
 stmtList                : (stmt NEWLINE)+;
 
@@ -389,14 +392,14 @@ touchingColor           : 'touching color 'touchingColorChoice WS? '?';
 colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
 keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
-greaterThan             : firstExpr=exprOrLiteral' > 'secondExpr=exprOrLiteral;
-equal                   : firstExpr=exprOrLiteral' = 'secondExpr=exprOrLiteral;
-lessThan                : firstExpr=exprOrLiteral' < 'secondExpr=exprOrLiteral;
-and                     : firstExpr=exprOrLiteral' and 'secondExpr=exprOrLiteral;
-or                       : firstExpr=exprOrLiteral' or 'secondExpr=exprOrLiteral;
+greaterThan             : firstExpr=exprOrLiteral ' > ' secondExpr=exprOrLiteral;
+equal                   : firstExpr=exprOrLiteral WS? '=' WS? secondExpr=exprOrLiteral;
+lessThan                : firstExpr=exprOrLiteral ' < ' secondExpr=exprOrLiteral;
+and                     : firstExpr=exprOrLiteral WS? 'and' WS? secondExpr=exprOrLiteral;
+or                      : firstExpr=exprOrLiteral WS? 'or' WS? secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral'?';
-listContains          : '['stringArgument' v] contains 'exprOrLiteral'?';
+listContains            : '['stringArgument' v] contains 'exprOrLiteral'?';
 
 numExpr                 : xPosition
                         | yPosition
@@ -456,7 +459,7 @@ pickRandom              : 'pick random 'firstExpr=exprOrLiteral' to 'secondExpr=
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral' of 'secondExpr=exprOrLiteral;
 lengthOf                : 'length of 'exprOrLiteral;
-modulo                  : firstExpr=exprOrLiteral' mod 'secondExpr=exprOrLiteral;
+modulo                  : firstExpr=exprOrLiteral WS? 'mod' WS? secondExpr=exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
 mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral' of ['stringArgument' v]';
@@ -532,7 +535,7 @@ touchingColorChoice     : LBRACK HEX RBRACK
                         ;
 
 // escape sequences, or anything else that is not a newline or an unescaped special character
-stringArgument          : (ESC | ~(NEWLINE|LPAREN|RPAREN|LBRACK|RBRACK))*?;
+stringArgument          : (ESC | ~(NEWLINE|DELIM))*?;
 
 /*
  * Lexer Rules
@@ -555,10 +558,13 @@ COMMENT                 : '//' ~[\r\n]* NEWLINE;
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
-ESC                     : '\\(' | '\\)' | '\\[' | '\\]';
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>';
 LPAREN                  : '(';
 RPAREN                  : ')';
 LBRACK                  : '[';
 RBRACK                  : ']';
+LANGLE                  : '<';
+RANGLE                  : '>';
+DELIM                   : LPAREN | RPAREN | LBRACK | RBRACK | LANGLE | RANGLE;
 
 ANY                     : .;

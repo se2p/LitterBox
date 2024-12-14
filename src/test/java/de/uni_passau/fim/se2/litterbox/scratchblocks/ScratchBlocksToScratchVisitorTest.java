@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
@@ -49,16 +50,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScratchBlocksToScratchVisitorTest {
 
@@ -173,12 +175,8 @@ class ScratchBlocksToScratchVisitorTest {
     <T extends Expression> void testBinaryNumberOperatorNoSpaces(final String operator, final Class<T> expressionType) {
         final String expr = String.format("((4)%s(1))", operator);
 
-        if ("mod".equals(operator)) {
-            assertThrows(NullPointerException.class, () -> getStmtList(expr));
-        } else {
-            final StmtList stmtList = getStmtList(expr);
-            assertHasExprStmt(stmtList, expressionType);
-        }
+        final StmtList stmtList = getStmtList(expr);
+        assertHasExprStmt(stmtList, expressionType);
     }
 
     @ParameterizedTest
@@ -194,9 +192,9 @@ class ScratchBlocksToScratchVisitorTest {
      */
     @ParameterizedTest
     @MethodSource("binaryBoolOperators")
-    void testBinaryBoolOperatorNoSpaces(final String operator, final Class<?> expressionType) {
+    <T extends Expression> void testBinaryBoolOperatorNoSpaces(final String operator, final Class<T> expressionType) {
         final String expr = String.format("<<mouse down?>%s<mouse down?>>", operator);
-        assertThrows(NullPointerException.class, () -> getStmtList(expr));
+        assertHasExprStmt(getStmtList(expr), expressionType);
     }
 
     @ParameterizedTest
@@ -212,9 +210,15 @@ class ScratchBlocksToScratchVisitorTest {
      */
     @ParameterizedTest
     @MethodSource("binaryComparisonOperators")
-    void testBinaryComparisonOperatorNoSpaces(final String operator, final Class<?> expressionType) {
+    <T extends Expression> void testBinaryComparisonOperatorNoSpaces(final String operator, final Class<T> expressionType) {
         final String expr = String.format("<(3)%s(4)>", operator);
-        assertThrows(NullPointerException.class, () -> getStmtList(expr));
+
+        if ("=".equals(operator)) {
+            assertHasExprStmt(getStmtList(expr), expressionType);
+        } else {
+            // fixme: this should probably not be parsed at all
+            assertStatementType(expr, CallStmt.class);
+        }
     }
 
     static Stream<Arguments> binaryNumberOperators() {
@@ -406,6 +410,59 @@ class ScratchBlocksToScratchVisitorTest {
         final ColorTouchingColor colourExpr = assertExpressionType(waitUntil.getUntil(), ColorTouchingColor.class);
         assertEquals(new ColorLiteral(0x31, 0x00, 0x00), colourExpr.getOperand1());
         assertEquals(new ColorLiteral(0x80, 0x00, 0xff), colourExpr.getOperand2());
+    }
+
+    @Test
+    void testScriptWithCustomBlockCall() {
+        final String scriptCode = """
+                when green flag clicked
+                Left
+                """.stripIndent();
+        final CallStmt callStmt = assertStatementType(scriptCode, CallStmt.class);
+        assertEquals("Left", callStmt.getIdent().getName());
+    }
+
+    @Test
+    void testScriptWithCustomBlockCallAndParameter() {
+        final String scriptCode = """
+                when green flag clicked
+                Left (23)
+                """.stripIndent();
+        final CallStmt callStmt = assertStatementType(scriptCode, CallStmt.class);
+        assertEquals("Left %s", callStmt.getIdent().getName());
+        assertEquals(1, callStmt.getExpressions().getExpressions().size());
+    }
+
+    @Test
+    void testScriptWithCustomBlockCallAndParameters() {
+        final String scriptCode = """
+                when green flag clicked
+                Left (23) [abc]
+                """.stripIndent();
+        final CallStmt callStmt = assertStatementType(scriptCode, CallStmt.class);
+        assertEquals("Left %s %s", callStmt.getIdent().getName());
+
+        final List<Expression> arguments = callStmt.getExpressions().getExpressions();
+        assertEquals(2, arguments.size());
+        assertInstanceOf(NumberLiteral.class, arguments.get(0));
+        assertInstanceOf(StringLiteral.class, arguments.get(1));
+    }
+
+    // todo: implement in parser
+    @Test
+    @Disabled("not yet implemented: callStmt with text between/after parameters")
+    void testScriptWithCustomBlockCallAndInterleavedName() {
+        final String scriptCode = """
+                when green flag clicked
+                Left (23) of [abc]
+                """.stripIndent();
+        final CallStmt callStmt = assertStatementType(scriptCode, CallStmt.class);
+        assertEquals("Left %s of %s", callStmt.getIdent().getName());
+
+        final List<Expression> arguments = callStmt.getExpressions().getExpressions();
+        assertEquals(2, arguments.size());
+        assertInstanceOf(NumberLiteral.class, arguments.get(0));
+        assertInstanceOf(StringLiteral.class, arguments.get(1));
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
