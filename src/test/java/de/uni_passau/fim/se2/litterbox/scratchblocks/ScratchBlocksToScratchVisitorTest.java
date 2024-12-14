@@ -24,10 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -48,17 +47,25 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScratchBlocksToScratchVisitorTest {
 
     private ScriptEntity getScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
         return parser.parseScript(scratchBlocksInput);
     }
 
@@ -79,7 +86,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(Say.class, statement.getStatement(0));
         StringExpr expr = ((Say) statement.getStatement(0)).getString();
         assertInstanceOf(StringLiteral.class, expr);
-        Assertions.assertEquals("ja!", ((StringLiteral) expr).getText());
+        assertEquals("ja!", ((StringLiteral) expr).getText());
     }
 
     @Test
@@ -88,7 +95,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         double value = ((NumberLiteral) moveSteps.getSteps()).getValue();
-        Assertions.assertEquals(10, value);
+        assertEquals(10, value);
     }
 
     @Test
@@ -97,7 +104,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         String literal = ((StringLiteral) ((AsNumber) moveSteps.getSteps()).getOperand1()).getText();
-        Assertions.assertEquals("a", literal);
+        assertEquals("a", literal);
     }
 
     @Test
@@ -106,7 +113,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(MoveSteps.class, statements.getStatement(0));
         MoveSteps moveSteps = (MoveSteps) statements.getStatement(0);
         String variableName = ((Variable) ((AsNumber) moveSteps.getSteps()).getOperand1()).getName().getName();
-        Assertions.assertEquals(")(_$\\\\\\a", variableName);
+        assertEquals(")(_$\\\\\\a", variableName);
     }
 
     @Test
@@ -120,29 +127,113 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testTouchingColor() {
         StmtList stmtList = getStmtList("<touching color (#ff00ff)?>\n");
-        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        assertInstanceOf(SpriteTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertHasExprStmt(stmtList, SpriteTouchingColor.class);
     }
 
     @Test
     void testColorTouchingColor() {
         StmtList stmtList = getStmtList("<color (#ff00ff) is touching (#ffff00)?>\n");
-        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        assertInstanceOf(ColorTouchingColor.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertHasExprStmt(stmtList, ColorTouchingColor.class);
     }
 
     @Test
     void testKeyPressed() {
         StmtList stmtList = getStmtList("<key (a v) pressed?>\n");
-        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        assertInstanceOf(IsKeyPressed.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertHasExprStmt(stmtList, IsKeyPressed.class);
     }
 
     @Test
     void testBiggerThan() {
         StmtList stmtList = getStmtList("<(7) > (2)>\n");
+        assertHasExprStmt(stmtList, BiggerThan.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource("binaryNumberOperators")
+    void testBinaryNumberOperatorSpaced(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("((7) %s (2))", operator);
+        StmtList stmtList = getStmtList(expr);
+        assertHasExprStmt(stmtList, expressionType);
+    }
+
+    /*
+     * Binary number operations without spaces around the operator are parsed as variables.
+     */
+    @ParameterizedTest
+    @MethodSource("binaryNumberOperators")
+    void testBinaryNumberOperatorNoSpaces(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("((4)%s(1))", operator);
+        final StmtList stmtList = getStmtList(expr);
+
+        final Expression parsed = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
+        assertInstanceOf(Variable.class, parsed);
+        assertEquals(String.format("(4)%s(1)", operator), ((Variable) parsed).getName().getName());
+    }
+
+    @ParameterizedTest
+    @MethodSource("binaryBoolOperators")
+    void testBinaryBoolOperatorSpaced(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("<<mouse down?> %s <mouse down?>>", operator);
+        StmtList stmtList = getStmtList(expr);
+        assertHasExprStmt(stmtList, expressionType);
+    }
+
+    /*
+     * Binary expressions without spaces around the operator cannot be parsed.
+     */
+    @ParameterizedTest
+    @MethodSource("binaryBoolOperators")
+    void testBinaryBoolOperatorNoSpaces(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("<<mouse down?>%s<mouse down?>>", operator);
+        assertThrows(NullPointerException.class, () -> getStmtList(expr));
+    }
+
+    @ParameterizedTest
+    @MethodSource("binaryComparisonOperators")
+    void testBinaryComparisonOperatorSpaced(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("<(3) %s (90)>", operator);
+        StmtList stmtList = getStmtList(expr);
+        assertHasExprStmt(stmtList, expressionType);
+    }
+
+    /*
+     * Binary expressions without spaces around the operator cannot be parsed.
+     */
+    @ParameterizedTest
+    @MethodSource("binaryComparisonOperators")
+    void testBinaryComparisonOperatorNoSpaces(final String operator, final Class<?> expressionType) {
+        final String expr = String.format("<(3)%s(4)>", operator);
+        assertThrows(NullPointerException.class, () -> getStmtList(expr));
+    }
+
+    private void assertHasExprStmt(final StmtList stmtList, final Class<?> expressionType) {
         assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        assertInstanceOf(BiggerThan.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+        assertInstanceOf(expressionType, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
+    }
+
+    static Stream<Arguments> binaryNumberOperators() {
+        return Stream.of(
+                Arguments.of("+", Add.class),
+                Arguments.of("-", Minus.class),
+                Arguments.of("*", Mult.class),
+                Arguments.of("/", Div.class),
+                Arguments.of("mod", Mod.class)
+        );
+    }
+
+    static Stream<Arguments> binaryBoolOperators() {
+        return Stream.of(
+                Arguments.of("and", And.class),
+                Arguments.of("or", Or.class)
+        );
+    }
+
+    static Stream<Arguments> binaryComparisonOperators() {
+        return Stream.of(
+                Arguments.of(">", BiggerThan.class),
+                Arguments.of("<", LessThan.class),
+                Arguments.of("=", Equals.class)
+        );
     }
 
     @Test
@@ -169,7 +260,7 @@ class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("(current [day of the week v])\n");
         assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
         assertInstanceOf(Current.class, ((ExpressionStmt) stmtList.getStatement(0)).getExpression());
-        Assertions.assertEquals("dayofweek", ((Current) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getTimeComp().getTypeName());
+        assertEquals("dayofweek", ((Current) ((ExpressionStmt) stmtList.getStatement(0)).getExpression()).getTimeComp().getTypeName());
     }
 
     @Test
@@ -178,7 +269,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(SetRotationStyle.class, statements.getStatement(0));
         SetRotationStyle rotate = (SetRotationStyle) statements.getStatement(0);
         RotationStyle rotationStyle = rotate.getRotation();
-        Assertions.assertEquals("don't rotate", rotationStyle.getTypeName());
+        assertEquals("don't rotate", rotationStyle.getTypeName());
     }
 
     @Test
@@ -187,7 +278,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(SetGraphicEffectTo.class, statements.getStatement(0));
         SetGraphicEffectTo setGraphic = (SetGraphicEffectTo) statements.getStatement(0);
         GraphicEffect effect = setGraphic.getEffect();
-        Assertions.assertEquals("pixelate", effect.getTypeName());
+        assertEquals("pixelate", effect.getTypeName());
     }
 
     @Test
@@ -210,7 +301,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(Broadcast.class, statements.getStatement(0));
         Message message = ((Broadcast) statements.getStatement(0)).getMessage();
         assertInstanceOf(Message.class, message);
-        Assertions.assertEquals("message1", ((StringLiteral) message.getMessage()).getText());
+        assertEquals("message1", ((StringLiteral) message.getMessage()).getText());
     }
 
     @Test
@@ -219,7 +310,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(AskAndWait.class, statements.getStatement(0));
         StringExpr question = ((AskAndWait) statements.getStatement(0)).getQuestion();
         assertInstanceOf(StringExpr.class, question);
-        Assertions.assertEquals("What's your name?", ((StringLiteral) question).getText());
+        assertEquals("What's your name?", ((StringLiteral) question).getText());
     }
 
     @Test
@@ -283,7 +374,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Disabled("parser does not terminate in a reasonable amount of time")
     // FIXME: grammar needs to be improved *somehow* to fix this
     void testDeeplyNestedExpression() {
-        StmtList stmtList = getStmtList("wait (pick random (1) to ((60)-(((((((((((((((((((INFECTED)/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2))/(2)))) seconds");
+        StmtList stmtList = getStmtList("wait (pick random (1) to ((60) - (((((((((((((((((((INFECTED) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)) / (2)))) seconds");
         WaitSeconds wait = (WaitSeconds) stmtList.getStatement(0);
         assertInstanceOf(PickRandom.class, wait.getSeconds());
     }
