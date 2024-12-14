@@ -32,10 +32,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
@@ -391,5 +393,25 @@ class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("wait until <<<(mouse x) < (-113)> and <(mouse x) > (-123)>> and <<(mouse y) < (-93)> and <(mouse y) > (-101)>>>\n");
         WaitUntil waitUntil = (WaitUntil) stmtList.getStatement(0);
         assertInstanceOf(And.class, waitUntil.getUntil());
+    }
+
+    @Test
+    void testWaitUntilColorTouchingColor() {
+        final String stmt = "wait until <color (#310000) is touching [#8000ff] ?>";
+        final WaitUntil waitUntil = assertStatementType(stmt, WaitUntil.class);
+        final ColorTouchingColor colourExpr = assertExpressionType(waitUntil.getUntil(), ColorTouchingColor.class);
+        assertEquals(new ColorLiteral(0x31, 0x00, 0x00), colourExpr.getOperand1());
+        assertEquals(new ColorLiteral(0x80, 0x00, 0xff), colourExpr.getOperand2());
+    }
+
+    private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
+        final StmtList stmtList = getStmtList(stmt);
+        assertInstanceOf(stmtType, stmtList.getStatement(0));
+        return stmtType.cast(stmtList.getStatement(0));
+    }
+
+    private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
+        assertInstanceOf(exprType, expr);
+        return exprType.cast(expr);
     }
 }

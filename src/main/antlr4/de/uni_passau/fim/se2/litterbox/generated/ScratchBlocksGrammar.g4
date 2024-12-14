@@ -384,9 +384,9 @@ boolExpr                : touching
                         ;
 
 
-touching                : 'touching 'touchingChoice'?';
-touchingColor           : 'touching color 'touchingColorChoice'?';
-colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice'?';
+touching                : 'touching 'touchingChoice WS? '?';
+touchingColor           : 'touching color 'touchingColorChoice WS? '?';
+colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
 keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
 greaterThan             : firstExpr=exprOrLiteral' > 'secondExpr=exprOrLiteral;
@@ -526,7 +526,8 @@ fixedTouching           : mousePointer
                         | 'edge'
                         ;
 
-touchingColorChoice     :'(' HEX ')'
+touchingColorChoice     : LBRACK HEX RBRACK
+                        | LPAREN HEX RPAREN
                         | exprOrLiteral
                         ;
 
