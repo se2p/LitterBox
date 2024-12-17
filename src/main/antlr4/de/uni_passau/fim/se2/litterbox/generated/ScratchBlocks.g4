@@ -202,7 +202,7 @@ controlStmt             : waitSeconds
                         ;
 
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
-repeat                  : 'repeat 'exprOrLiteral (stmtList)?'end';
+repeat                  : 'repeat 'exprOrLiteral NEWLINE (stmtList)?'end';
 forever                 : 'forever' NEWLINE (stmtList)? 'end';
 if                      : 'if 'exprOrLiteral' then' NEWLINE (stmtList)? 'end';
 ifElse                  : 'if 'exprOrLiteral' then' NEWLINE (then=stmtList)? 'else' NEWLINE (else=stmtList)? 'end';

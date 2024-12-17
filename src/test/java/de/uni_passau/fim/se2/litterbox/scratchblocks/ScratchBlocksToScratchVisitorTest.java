@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -48,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -466,6 +464,42 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(StringLiteral.class, arguments.get(1));
     }
 
+    @Test
+    void testChangeColorEffect() {
+        StmtList stmtList = getStmtList("change [color v] effect by (25)\nchange [fisheye v] effect by (25)\n");
+        final Stmt stmt1= stmtList.getStatement(0);
+        assertInstanceOf(ChangeGraphicEffectBy.class, stmt1);
+        assertEquals("color",((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
+        final Stmt stmt2= stmtList.getStatement(1);
+        assertInstanceOf(ChangeGraphicEffectBy.class, stmt2);
+        assertEquals("fisheye",((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
+    }
+
+    @Test
+    void testSetColorEffect() {
+        StmtList stmtList = getStmtList("set [color v] effect to (25)\nset [fisheye v] effect to (25)\n");
+        final Stmt stmt1 = stmtList.getStatement(0);
+        assertInstanceOf(SetGraphicEffectTo.class, stmt1);
+        assertEquals("color",((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
+        final Stmt stmt2= stmtList.getStatement(1);
+        assertInstanceOf(SetGraphicEffectTo.class, stmt2);
+        assertEquals("fisheye",((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
+    }
+
+    @Test
+    void testRepeat() {
+        final String stmtList = """
+                repeat (10)
+                stop [all v]
+                end
+                """.stripIndent();
+        final RepeatTimesStmt repeatTimesStmt = assertStatementType(stmtList, RepeatTimesStmt.class);
+        assertInstanceOf(NumberLiteral.class, repeatTimesStmt.getTimes());
+
+        assertEquals(1, repeatTimesStmt.getStmtList().getStmts().size());
+        assertInstanceOf(StopAll.class, repeatTimesStmt.getStmtList().getStatement(0));
+    }
+
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
         final StmtList stmtList = getStmtList(stmt);
         assertInstanceOf(stmtType, stmtList.getStatement(0));
@@ -483,27 +517,5 @@ class ScratchBlocksToScratchVisitorTest {
     private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
         assertInstanceOf(exprType, expr);
         return exprType.cast(expr);
-    }
-
-    @Test
-    void testChangeColorEffect() {
-        StmtList stmtList = getStmtList("change [color v] effect by (25)\nchange [fisheye v] effect by (25)\n");
-        final Stmt stmt1= stmtList.getStatement(0);
-        assertInstanceOf(ChangeGraphicEffectBy.class, stmt1);
-        assertEquals("color",((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
-        assertInstanceOf(ChangeGraphicEffectBy.class, stmt2);
-        assertEquals("fisheye",((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
-    }
-
-    @Test
-    void testSetColorEffect() {
-        StmtList stmtList = getStmtList("set [color v] effect to (25)\nset [fisheye v] effect to (25)\n");
-        final Stmt stmt1= stmtList.getStatement(0);
-        assertInstanceOf(SetGraphicEffectTo.class, stmt1);
-        assertEquals("color",((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
-        assertInstanceOf(SetGraphicEffectTo.class, stmt2);
-        assertEquals("fisheye",((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
     }
 }
