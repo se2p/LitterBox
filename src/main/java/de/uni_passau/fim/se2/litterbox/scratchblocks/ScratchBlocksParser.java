@@ -20,8 +20,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarLexer;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,7 +30,7 @@ public class ScratchBlocksParser {
     // todo: probably similar methods for whole actors and programs?
 
     public ScriptEntity parseScript(final String scratchBlocksCode) {
-        final ScratchBlocksGrammarParser parser = buildParser(scratchBlocksCode);
+        final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(scratchBlocksCode);
         final ParseTree tree = parser.script();
 
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
@@ -46,9 +45,9 @@ public class ScratchBlocksParser {
         }
     }
 
-    private ScratchBlocksGrammarParser buildParser(final String scratchBlocks) {
-        final ScratchBlocksGrammarLexer lexer = new ScratchBlocksGrammarLexer(CharStreams.fromString(scratchBlocks));
+    private de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser buildParser(final String scratchBlocks) {
+        final ScratchBlocksLexer lexer = new ScratchBlocksLexer(CharStreams.fromString(scratchBlocks));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        return new ScratchBlocksGrammarParser(tokens);
+        return new de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser(tokens);
     }
 }

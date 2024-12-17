@@ -60,12 +60,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarBaseVisitor;
-import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksGrammarParser;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
+import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser;
 
 import java.util.List;
 
-class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTNode> {
+class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     private static final String NEW_ACTOR_PREFIX = "//;Act ";
 
@@ -74,7 +74,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     private StrId currentActor = new StrId(new StringLiteral("Stage"));
 
     @Override
-    public ASTNode visitActor(ScratchBlocksGrammarParser.ActorContext ctx) {
+    public ASTNode visitActor(ScratchBlocksParser.ActorContext ctx) {
         final String actorName = ctx.BEGIN_ACTOR().getText().replace(NEW_ACTOR_PREFIX, "").trim();
         currentActor = new StrId(new StringLiteral(actorName));
 
@@ -82,7 +82,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ScriptEntity visitScript(ScratchBlocksGrammarParser.ScriptContext ctx) {
+    public ScriptEntity visitScript(ScratchBlocksParser.ScriptContext ctx) {
         if (ctx.expressionStmt() != null) {
             return new Script(new Never(), new StmtList(visitExpressionStmt(ctx.expressionStmt())));
         } else if (ctx.stmtList() != null) {
@@ -101,7 +101,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public StmtList visitStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
+    public StmtList visitStmtList(ScratchBlocksParser.StmtListContext ctx) {
         final List<Stmt> stmts = ctx.stmt().stream().map(this::visitStmt).toList();
         return new StmtList(stmts);
     }
@@ -109,51 +109,51 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     // region: events
 
     @Override
-    public GreenFlag visitGreenFlag(ScratchBlocksGrammarParser.GreenFlagContext ctx) {
+    public GreenFlag visitGreenFlag(ScratchBlocksParser.GreenFlagContext ctx) {
         return new GreenFlag(new NoBlockMetadata());
     }
 
     @Override
-    public SpriteClicked visitSpriteClicked(ScratchBlocksGrammarParser.SpriteClickedContext ctx) {
+    public SpriteClicked visitSpriteClicked(ScratchBlocksParser.SpriteClickedContext ctx) {
         return new SpriteClicked(new NoBlockMetadata());
     }
 
     @Override
-    public StageClicked visitStageClicked(ScratchBlocksGrammarParser.StageClickedContext ctx) {
+    public StageClicked visitStageClicked(ScratchBlocksParser.StageClickedContext ctx) {
         return new StageClicked(new NoBlockMetadata());
     }
 
     @Override
-    public StartedAsClone visitStartAsClone(ScratchBlocksGrammarParser.StartAsCloneContext ctx) {
+    public StartedAsClone visitStartAsClone(ScratchBlocksParser.StartAsCloneContext ctx) {
         return new StartedAsClone(new NoBlockMetadata());
     }
 
     @Override
-    public KeyPressed visitKeyEvent(ScratchBlocksGrammarParser.KeyEventContext ctx) {
+    public KeyPressed visitKeyEvent(ScratchBlocksParser.KeyEventContext ctx) {
         return new KeyPressed(visitKey(ctx.key()), new NoBlockMetadata());
     }
 
     @Override
-    public ReceptionOfMessage visitReceptionMessage(ScratchBlocksGrammarParser.ReceptionMessageContext ctx) {
+    public ReceptionOfMessage visitReceptionMessage(ScratchBlocksParser.ReceptionMessageContext ctx) {
         Message msg = new Message(visitStringArgument(ctx.stringArgument()));
         return new ReceptionOfMessage(msg, new NoBlockMetadata());
     }
 
     @Override
-    public AttributeAboveValue visitBiggerEvent(ScratchBlocksGrammarParser.BiggerEventContext ctx) {
+    public AttributeAboveValue visitBiggerEvent(ScratchBlocksParser.BiggerEventContext ctx) {
         EventAttribute attribute = visitEventChoice(ctx.eventChoice());
         NumExpr value = makeNumExpr(ctx.exprOrLiteral());
         return new AttributeAboveValue(attribute, value, new NoBlockMetadata());
     }
 
     @Override
-    public BackdropSwitchTo visitBackDropSwitchEvent(ScratchBlocksGrammarParser.BackDropSwitchEventContext ctx) {
+    public BackdropSwitchTo visitBackDropSwitchEvent(ScratchBlocksParser.BackDropSwitchEventContext ctx) {
         LocalIdentifier backdrop = new StrId(visitStringArgument(ctx.stringArgument()));
         return new BackdropSwitchTo(backdrop, new NoBlockMetadata());
     }
 
     @Override
-    public EventAttribute visitEventChoice(ScratchBlocksGrammarParser.EventChoiceContext ctx) {
+    public EventAttribute visitEventChoice(ScratchBlocksParser.EventChoiceContext ctx) {
         return new EventAttribute(ctx.getText());
     }
 
@@ -162,7 +162,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     // region: statements
 
     @Override
-    public Stmt visitStmt(ScratchBlocksGrammarParser.StmtContext ctx) {
+    public Stmt visitStmt(ScratchBlocksParser.StmtContext ctx) {
         if (ctx.motionStmt() != null) {
             return (Stmt) visitMotionStmt(ctx.motionStmt());
         } else if (ctx.looksStmt() != null) {
@@ -184,7 +184,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public CallStmt visitCustomBlockCallStmt(ScratchBlocksGrammarParser.CustomBlockCallStmtContext ctx) {
+    public CallStmt visitCustomBlockCallStmt(ScratchBlocksParser.CustomBlockCallStmtContext ctx) {
         StringBuilder name = new StringBuilder(customBlockCallStmtName(ctx));
         final ExpressionList arguments = new ExpressionList(
                 ctx.exprOrLiteral().stream().map(this::visitExprOrLiteral).toList()
@@ -201,7 +201,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         return new CallStmt(new StrId(name.toString()), arguments, new NoBlockMetadata());
     }
 
-    private String customBlockCallStmtName(final ScratchBlocksGrammarParser.CustomBlockCallStmtContext ctx) {
+    private String customBlockCallStmtName(final ScratchBlocksParser.CustomBlockCallStmtContext ctx) {
         final String name;
 
         if (ctx.stringArgument() != null) {
@@ -214,34 +214,34 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Stmt visitExpressionStmt(ScratchBlocksGrammarParser.ExpressionStmtContext ctx) {
+    public Stmt visitExpressionStmt(ScratchBlocksParser.ExpressionStmtContext ctx) {
         return new ExpressionStmt(visitExpression(ctx.expression()));
     }
 
     // begin subregion: motion blocks
     @Override
-    public MoveSteps visitMoveSteps(ScratchBlocksGrammarParser.MoveStepsContext ctx) {
+    public MoveSteps visitMoveSteps(ScratchBlocksParser.MoveStepsContext ctx) {
         return new MoveSteps(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public TurnRight visitTurnRight(ScratchBlocksGrammarParser.TurnRightContext ctx) {
+    public TurnRight visitTurnRight(ScratchBlocksParser.TurnRightContext ctx) {
         return new TurnRight(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public TurnLeft visitTurnLeft(ScratchBlocksGrammarParser.TurnLeftContext ctx) {
+    public TurnLeft visitTurnLeft(ScratchBlocksParser.TurnLeftContext ctx) {
         return new TurnLeft(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public GoToPos visitGoToPos(ScratchBlocksGrammarParser.GoToPosContext ctx) {
+    public GoToPos visitGoToPos(ScratchBlocksParser.GoToPosContext ctx) {
         Position position = visitPosition(ctx.position());
         return new GoToPos(position, new NoBlockMetadata());
     }
 
     @Override
-    public Position visitPosition(ScratchBlocksGrammarParser.PositionContext ctx) {
+    public Position visitPosition(ScratchBlocksParser.PositionContext ctx) {
         if (ctx.fixedPosition() != null) {
             return visitFixedPosition(ctx.fixedPosition());
         }
@@ -249,7 +249,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Position visitFixedPosition(ScratchBlocksGrammarParser.FixedPositionContext ctx) {
+    public Position visitFixedPosition(ScratchBlocksParser.FixedPositionContext ctx) {
         if (ctx.getText().equals("random position")) {
             return new RandomPos(new NoBlockMetadata());
         } else if (ctx.mousePointer() != null) {
@@ -260,63 +260,63 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public GoToPosXY visitGoToPosXY(ScratchBlocksGrammarParser.GoToPosXYContext ctx) {
+    public GoToPosXY visitGoToPosXY(ScratchBlocksParser.GoToPosXYContext ctx) {
         return new GoToPosXY(makeNumExpr(ctx.x), makeNumExpr(ctx.y), new NoBlockMetadata());
     }
 
     @Override
-    public GlideSecsTo visitGlideToPos(ScratchBlocksGrammarParser.GlideToPosContext ctx) {
+    public GlideSecsTo visitGlideToPos(ScratchBlocksParser.GlideToPosContext ctx) {
         Position position = visitPosition(ctx.position());
         return new GlideSecsTo(makeNumExpr(ctx.time), position, new NoBlockMetadata());
     }
 
     @Override
-    public GlideSecsToXY visitGlideToPosXY(ScratchBlocksGrammarParser.GlideToPosXYContext ctx) {
+    public GlideSecsToXY visitGlideToPosXY(ScratchBlocksParser.GlideToPosXYContext ctx) {
         return new GlideSecsToXY(makeNumExpr(ctx.time), makeNumExpr(ctx.x), makeNumExpr(ctx.y), new NoBlockMetadata());
     }
 
     @Override
-    public PointInDirection visitPointInDir(ScratchBlocksGrammarParser.PointInDirContext ctx) {
+    public PointInDirection visitPointInDir(ScratchBlocksParser.PointInDirContext ctx) {
         return new PointInDirection(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public PointTowards visitPointTowards(ScratchBlocksGrammarParser.PointTowardsContext ctx) {
+    public PointTowards visitPointTowards(ScratchBlocksParser.PointTowardsContext ctx) {
         return new PointTowards(visitPosition(ctx.position()), new NoBlockMetadata());
     }
 
     @Override
-    public ChangeXBy visitChangeX(ScratchBlocksGrammarParser.ChangeXContext ctx) {
+    public ChangeXBy visitChangeX(ScratchBlocksParser.ChangeXContext ctx) {
         return new ChangeXBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SetXTo visitSetX(ScratchBlocksGrammarParser.SetXContext ctx) {
+    public SetXTo visitSetX(ScratchBlocksParser.SetXContext ctx) {
         return new SetXTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ChangeYBy visitChangeY(ScratchBlocksGrammarParser.ChangeYContext ctx) {
+    public ChangeYBy visitChangeY(ScratchBlocksParser.ChangeYContext ctx) {
         return new ChangeYBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SetYTo visitSetY(ScratchBlocksGrammarParser.SetYContext ctx) {
+    public SetYTo visitSetY(ScratchBlocksParser.SetYContext ctx) {
         return new SetYTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public IfOnEdgeBounce visitOnEdge(ScratchBlocksGrammarParser.OnEdgeContext ctx) {
+    public IfOnEdgeBounce visitOnEdge(ScratchBlocksParser.OnEdgeContext ctx) {
         return new IfOnEdgeBounce(new NoBlockMetadata());
     }
 
     @Override
-    public SetRotationStyle visitSetRotation(ScratchBlocksGrammarParser.SetRotationContext ctx) {
+    public SetRotationStyle visitSetRotation(ScratchBlocksParser.SetRotationContext ctx) {
         return new SetRotationStyle(visitRotation(ctx.rotation()), new NoBlockMetadata());
     }
 
     @Override
-    public RotationStyle visitRotation(ScratchBlocksGrammarParser.RotationContext ctx) {
+    public RotationStyle visitRotation(ScratchBlocksParser.RotationContext ctx) {
         return new RotationStyle(ctx.getText());
     }
 
@@ -324,32 +324,32 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     // begin subregion: looks blocks
     @Override
-    public Say visitSay(ScratchBlocksGrammarParser.SayContext ctx) {
+    public Say visitSay(ScratchBlocksParser.SayContext ctx) {
         return new Say(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SayForSecs visitSaySeconds(ScratchBlocksGrammarParser.SaySecondsContext ctx) {
+    public SayForSecs visitSaySeconds(ScratchBlocksParser.SaySecondsContext ctx) {
         return new SayForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
     }
 
     @Override
-    public Think visitThink(ScratchBlocksGrammarParser.ThinkContext ctx) {
+    public Think visitThink(ScratchBlocksParser.ThinkContext ctx) {
         return new Think(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ThinkForSecs visitThinkSeconds(ScratchBlocksGrammarParser.ThinkSecondsContext ctx) {
+    public ThinkForSecs visitThinkSeconds(ScratchBlocksParser.ThinkSecondsContext ctx) {
         return new ThinkForSecs(makeStringExpr(ctx.text), makeNumExpr(ctx.time), new NoBlockMetadata());
     }
 
     @Override
-    public SwitchCostumeTo visitSwitchCostume(ScratchBlocksGrammarParser.SwitchCostumeContext ctx) {
+    public SwitchCostumeTo visitSwitchCostume(ScratchBlocksParser.SwitchCostumeContext ctx) {
         return new SwitchCostumeTo(visitCostumeSelect(ctx.costumeSelect()), new NoBlockMetadata());
     }
 
     @Override
-    public ElementChoice visitCostumeSelect(ScratchBlocksGrammarParser.CostumeSelectContext ctx) {
+    public ElementChoice visitCostumeSelect(ScratchBlocksParser.CostumeSelectContext ctx) {
         if (ctx.stringArgument() != null) {
             StrId costumeId = new StrId(visitStringArgument(ctx.stringArgument()));
             return new WithExpr(costumeId, new NoBlockMetadata());
@@ -359,22 +359,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public NextCostume visitNextCostume(ScratchBlocksGrammarParser.NextCostumeContext ctx) {
+    public NextCostume visitNextCostume(ScratchBlocksParser.NextCostumeContext ctx) {
         return new NextCostume(new NoBlockMetadata());
     }
 
     @Override
-    public SwitchBackdrop visitSwitchBackdrop(ScratchBlocksGrammarParser.SwitchBackdropContext ctx) {
+    public SwitchBackdrop visitSwitchBackdrop(ScratchBlocksParser.SwitchBackdropContext ctx) {
         return new SwitchBackdrop(visitBackdropSelect(ctx.backdropSelect()), new NoBlockMetadata());
     }
 
     @Override
-    public SwitchBackdropAndWait visitSwitchBackdropWait(ScratchBlocksGrammarParser.SwitchBackdropWaitContext ctx) {
+    public SwitchBackdropAndWait visitSwitchBackdropWait(ScratchBlocksParser.SwitchBackdropWaitContext ctx) {
         return new SwitchBackdropAndWait(visitBackdropSelect(ctx.backdropSelect()), new NoBlockMetadata());
     }
 
     @Override
-    public ElementChoice visitBackdropSelect(ScratchBlocksGrammarParser.BackdropSelectContext ctx) {
+    public ElementChoice visitBackdropSelect(ScratchBlocksParser.BackdropSelectContext ctx) {
         if (ctx.fixedBackdrop() != null) {
             return visitFixedBackdrop(ctx.fixedBackdrop());
         } else if (ctx.stringArgument() != null) {
@@ -386,7 +386,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ElementChoice visitFixedBackdrop(ScratchBlocksGrammarParser.FixedBackdropContext ctx) {
+    public ElementChoice visitFixedBackdrop(ScratchBlocksParser.FixedBackdropContext ctx) {
         return switch (ctx.getText()) {
             case "next backdrop" -> new Next(new NoBlockMetadata());
             case "previous backdrop" -> new Prev(new NoBlockMetadata());
@@ -395,22 +395,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public NextBackdrop visitNextBackdrop(ScratchBlocksGrammarParser.NextBackdropContext ctx) {
+    public NextBackdrop visitNextBackdrop(ScratchBlocksParser.NextBackdropContext ctx) {
         return new NextBackdrop(new NoBlockMetadata());
     }
 
     @Override
-    public ChangeSizeBy visitChangeSize(ScratchBlocksGrammarParser.ChangeSizeContext ctx) {
+    public ChangeSizeBy visitChangeSize(ScratchBlocksParser.ChangeSizeContext ctx) {
         return new ChangeSizeBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SetSizeTo visitSetSize(ScratchBlocksGrammarParser.SetSizeContext ctx) {
+    public SetSizeTo visitSetSize(ScratchBlocksParser.SetSizeContext ctx) {
         return new SetSizeTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public ChangeGraphicEffectBy visitChangeColorEffect(ScratchBlocksGrammarParser.ChangeColorEffectContext ctx) {
+    public ChangeGraphicEffectBy visitChangeColorEffect(ScratchBlocksParser.ChangeColorEffectContext ctx) {
         if (ctx.colorEffect() != null) {
             return new ChangeGraphicEffectBy(
                     visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
@@ -422,12 +422,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public GraphicEffect visitColorEffect(ScratchBlocksGrammarParser.ColorEffectContext ctx) {
+    public GraphicEffect visitColorEffect(ScratchBlocksParser.ColorEffectContext ctx) {
         return new GraphicEffect(ctx.getText());
     }
 
     @Override
-    public SetGraphicEffectTo visitSetColorEffect(ScratchBlocksGrammarParser.SetColorEffectContext ctx) {
+    public SetGraphicEffectTo visitSetColorEffect(ScratchBlocksParser.SetColorEffectContext ctx) {
         if (ctx.colorEffect() != null) {
             return new SetGraphicEffectTo(
                     visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
@@ -440,32 +440,32 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ClearGraphicEffects visitClearColorEffect(ScratchBlocksGrammarParser.ClearColorEffectContext ctx) {
+    public ClearGraphicEffects visitClearColorEffect(ScratchBlocksParser.ClearColorEffectContext ctx) {
         return new ClearGraphicEffects(new NoBlockMetadata());
     }
 
     @Override
-    public Show visitShow(ScratchBlocksGrammarParser.ShowContext ctx) {
+    public Show visitShow(ScratchBlocksParser.ShowContext ctx) {
         return new Show(new NoBlockMetadata());
     }
 
     @Override
-    public Hide visitHide(ScratchBlocksGrammarParser.HideContext ctx) {
+    public Hide visitHide(ScratchBlocksParser.HideContext ctx) {
         return new Hide(new NoBlockMetadata());
     }
 
     @Override
-    public GoToLayer visitGoToLayer(ScratchBlocksGrammarParser.GoToLayerContext ctx) {
+    public GoToLayer visitGoToLayer(ScratchBlocksParser.GoToLayerContext ctx) {
         return new GoToLayer(visitLayerChoice(ctx.layerChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public LayerChoice visitLayerChoice(ScratchBlocksGrammarParser.LayerChoiceContext ctx) {
+    public LayerChoice visitLayerChoice(ScratchBlocksParser.LayerChoiceContext ctx) {
         return new LayerChoice(ctx.getText());
     }
 
     @Override
-    public ChangeLayerBy visitGoForwardBackwardLayer(ScratchBlocksGrammarParser.GoForwardBackwardLayerContext ctx) {
+    public ChangeLayerBy visitGoForwardBackwardLayer(ScratchBlocksParser.GoForwardBackwardLayerContext ctx) {
         return new ChangeLayerBy(
                 makeNumExpr(ctx.exprOrLiteral()),
                 visitForwardBackwardChoice(ctx.forwardBackwardChoice()),
@@ -475,7 +475,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ForwardBackwardChoice visitForwardBackwardChoice(
-            ScratchBlocksGrammarParser.ForwardBackwardChoiceContext ctx
+            ScratchBlocksParser.ForwardBackwardChoiceContext ctx
     ) {
         return new ForwardBackwardChoice(ctx.getText());
     }
@@ -485,12 +485,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //begin subregion: sound blocks
 
     @Override
-    public PlaySoundUntilDone visitPlaySoundDone(ScratchBlocksGrammarParser.PlaySoundDoneContext ctx) {
+    public PlaySoundUntilDone visitPlaySoundDone(ScratchBlocksParser.PlaySoundDoneContext ctx) {
         return new PlaySoundUntilDone(visitSoundChoice(ctx.soundChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public ElementChoice visitSoundChoice(ScratchBlocksGrammarParser.SoundChoiceContext ctx) {
+    public ElementChoice visitSoundChoice(ScratchBlocksParser.SoundChoiceContext ctx) {
         if (ctx.stringArgument() != null) {
             StrId soundId = new StrId(visitStringArgument(ctx.stringArgument()));
             return new WithExpr(soundId, new NoBlockMetadata());
@@ -500,46 +500,46 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public StartSound visitPlaySound(ScratchBlocksGrammarParser.PlaySoundContext ctx) {
+    public StartSound visitPlaySound(ScratchBlocksParser.PlaySoundContext ctx) {
         return new StartSound(visitSoundChoice(ctx.soundChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public StopAllSounds visitStopSound(ScratchBlocksGrammarParser.StopSoundContext ctx) {
+    public StopAllSounds visitStopSound(ScratchBlocksParser.StopSoundContext ctx) {
         return new StopAllSounds(new NoBlockMetadata());
     }
 
     @Override
-    public ChangeSoundEffectBy visitChangeSoundEffect(ScratchBlocksGrammarParser.ChangeSoundEffectContext ctx) {
+    public ChangeSoundEffectBy visitChangeSoundEffect(ScratchBlocksParser.ChangeSoundEffectContext ctx) {
         return new ChangeSoundEffectBy(
                 visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public SetSoundEffectTo visitSetSoundEffect(ScratchBlocksGrammarParser.SetSoundEffectContext ctx) {
+    public SetSoundEffectTo visitSetSoundEffect(ScratchBlocksParser.SetSoundEffectContext ctx) {
         return new SetSoundEffectTo(
                 visitSoundEffect(ctx.soundEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public SoundEffect visitSoundEffect(ScratchBlocksGrammarParser.SoundEffectContext ctx) {
+    public SoundEffect visitSoundEffect(ScratchBlocksParser.SoundEffectContext ctx) {
         return new SoundEffect(ctx.getText());
     }
 
     @Override
-    public ClearSoundEffects visitClearSoundEffect(ScratchBlocksGrammarParser.ClearSoundEffectContext ctx) {
+    public ClearSoundEffects visitClearSoundEffect(ScratchBlocksParser.ClearSoundEffectContext ctx) {
         return new ClearSoundEffects(new NoBlockMetadata());
     }
 
     @Override
-    public ChangeVolumeBy visitChangeVolume(ScratchBlocksGrammarParser.ChangeVolumeContext ctx) {
+    public ChangeVolumeBy visitChangeVolume(ScratchBlocksParser.ChangeVolumeContext ctx) {
         return new ChangeVolumeBy(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SetVolumeTo visitSetVolume(ScratchBlocksGrammarParser.SetVolumeContext ctx) {
+    public SetVolumeTo visitSetVolume(ScratchBlocksParser.SetVolumeContext ctx) {
         return new SetVolumeTo(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
@@ -548,17 +548,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //begin subregion: event statement blocks
 
     @Override
-    public Broadcast visitBroadcast(ScratchBlocksGrammarParser.BroadcastContext ctx) {
+    public Broadcast visitBroadcast(ScratchBlocksParser.BroadcastContext ctx) {
         return new Broadcast(visitMessage(ctx.message()), new NoBlockMetadata());
     }
 
     @Override
-    public ASTNode visitBroadcastWait(ScratchBlocksGrammarParser.BroadcastWaitContext ctx) {
+    public ASTNode visitBroadcastWait(ScratchBlocksParser.BroadcastWaitContext ctx) {
         return new BroadcastAndWait(visitMessage(ctx.message()), new NoBlockMetadata());
     }
 
     @Override
-    public Message visitMessage(ScratchBlocksGrammarParser.MessageContext ctx) {
+    public Message visitMessage(ScratchBlocksParser.MessageContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return new Message(makeStringExpr(ctx.exprOrLiteral()));
         } else {
@@ -571,31 +571,31 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //begin subregion: control blocks
 
     @Override
-    public WaitSeconds visitWaitSeconds(ScratchBlocksGrammarParser.WaitSecondsContext ctx) {
+    public WaitSeconds visitWaitSeconds(ScratchBlocksParser.WaitSecondsContext ctx) {
         return new WaitSeconds(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public RepeatTimesStmt visitRepeat(ScratchBlocksGrammarParser.RepeatContext ctx) {
+    public RepeatTimesStmt visitRepeat(ScratchBlocksParser.RepeatContext ctx) {
         return new RepeatTimesStmt(
                 makeNumExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public RepeatForeverStmt visitForever(ScratchBlocksGrammarParser.ForeverContext ctx) {
+    public RepeatForeverStmt visitForever(ScratchBlocksParser.ForeverContext ctx) {
         return new RepeatForeverStmt(makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
     }
 
     @Override
-    public IfThenStmt visitIf(ScratchBlocksGrammarParser.IfContext ctx) {
+    public IfThenStmt visitIf(ScratchBlocksParser.IfContext ctx) {
         return new IfThenStmt(
                 makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public IfElseStmt visitIfElse(ScratchBlocksGrammarParser.IfElseContext ctx) {
+    public IfElseStmt visitIfElse(ScratchBlocksParser.IfElseContext ctx) {
         return new IfElseStmt(
                 makeBoolExpr(ctx.exprOrLiteral()),
                 makeInnerStmtList(ctx.then),
@@ -605,19 +605,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public WaitUntil visitWaitUntil(ScratchBlocksGrammarParser.WaitUntilContext ctx) {
+    public WaitUntil visitWaitUntil(ScratchBlocksParser.WaitUntilContext ctx) {
         return new WaitUntil(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public UntilStmt visitRepeatUntil(ScratchBlocksGrammarParser.RepeatUntilContext ctx) {
+    public UntilStmt visitRepeatUntil(ScratchBlocksParser.RepeatUntilContext ctx) {
         return new UntilStmt(
                 makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public Stmt visitStop(ScratchBlocksGrammarParser.StopContext ctx) {
+    public Stmt visitStop(ScratchBlocksParser.StopContext ctx) {
         if (ctx.stopChoice().getText().equals("all")) {
             return new StopAll(new NoBlockMetadata());
         } else if (ctx.stopChoice().getText().equals("this script")) {
@@ -628,12 +628,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public CreateCloneOf visitCreateClone(ScratchBlocksGrammarParser.CreateCloneContext ctx) {
+    public CreateCloneOf visitCreateClone(ScratchBlocksParser.CreateCloneContext ctx) {
         return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public StringExpr visitCloneChoice(ScratchBlocksGrammarParser.CloneChoiceContext ctx) {
+    public StringExpr visitCloneChoice(ScratchBlocksParser.CloneChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return makeStringExpr(ctx.exprOrLiteral());
         } else if (ctx.stringArgument() != null) {
@@ -644,7 +644,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public DeleteClone visitDeleteClone(ScratchBlocksGrammarParser.DeleteCloneContext ctx) {
+    public DeleteClone visitDeleteClone(ScratchBlocksParser.DeleteCloneContext ctx) {
         return new DeleteClone(new NoBlockMetadata());
     }
 
@@ -653,22 +653,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //begin subregion: sensing blocks
 
     @Override
-    public AskAndWait visitAsk(ScratchBlocksGrammarParser.AskContext ctx) {
+    public AskAndWait visitAsk(ScratchBlocksParser.AskContext ctx) {
         return new AskAndWait(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public SetDragMode visitSetDragMode(ScratchBlocksGrammarParser.SetDragModeContext ctx) {
+    public SetDragMode visitSetDragMode(ScratchBlocksParser.SetDragModeContext ctx) {
         return new SetDragMode(visitDragmode(ctx.dragmode()), new NoBlockMetadata());
     }
 
     @Override
-    public DragMode visitDragmode(ScratchBlocksGrammarParser.DragmodeContext ctx) {
+    public DragMode visitDragmode(ScratchBlocksParser.DragmodeContext ctx) {
         return new DragMode(ctx.getText());
     }
 
     @Override
-    public ResetTimer visitResetTimer(ScratchBlocksGrammarParser.ResetTimerContext ctx) {
+    public ResetTimer visitResetTimer(ScratchBlocksParser.ResetTimerContext ctx) {
         return new ResetTimer(new NoBlockMetadata());
     }
 
@@ -677,7 +677,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //begin subregion: variable blocks
 
     @Override
-    public SetVariableTo visitSetVar(ScratchBlocksGrammarParser.SetVarContext ctx) {
+    public SetVariableTo visitSetVar(ScratchBlocksParser.SetVarContext ctx) {
         return new SetVariableTo(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
@@ -686,7 +686,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ChangeVariableBy visitChangeVar(ScratchBlocksGrammarParser.ChangeVarContext ctx) {
+    public ChangeVariableBy visitChangeVar(ScratchBlocksParser.ChangeVarContext ctx) {
         return new ChangeVariableBy(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
@@ -695,17 +695,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ShowVariable visitShowVar(ScratchBlocksGrammarParser.ShowVarContext ctx) {
+    public ShowVariable visitShowVar(ScratchBlocksParser.ShowVarContext ctx) {
         return new ShowVariable(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
 
     @Override
-    public HideVariable visitHideVar(ScratchBlocksGrammarParser.HideVarContext ctx) {
+    public HideVariable visitHideVar(ScratchBlocksParser.HideVarContext ctx) {
         return new HideVariable(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
 
     @Override
-    public AddTo visitAddToList(ScratchBlocksGrammarParser.AddToListContext ctx) {
+    public AddTo visitAddToList(ScratchBlocksParser.AddToListContext ctx) {
         return new AddTo(
                 makeStringExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
@@ -714,7 +714,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public DeleteOf visitDeleteFromList(ScratchBlocksGrammarParser.DeleteFromListContext ctx) {
+    public DeleteOf visitDeleteFromList(ScratchBlocksParser.DeleteFromListContext ctx) {
         return new DeleteOf(
                 makeNumExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
@@ -723,12 +723,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public DeleteAllOf visitDeleteAllOfList(ScratchBlocksGrammarParser.DeleteAllOfListContext ctx) {
+    public DeleteAllOf visitDeleteAllOfList(ScratchBlocksParser.DeleteAllOfListContext ctx) {
         return new DeleteAllOf(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
 
     @Override
-    public InsertAt visitInsertToList(ScratchBlocksGrammarParser.InsertToListContext ctx) {
+    public InsertAt visitInsertToList(ScratchBlocksParser.InsertToListContext ctx) {
         return new InsertAt(
                 makeStringExpr(ctx.insertion),
                 makeNumExpr(ctx.location),
@@ -738,7 +738,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ReplaceItem visitReplaceItemInList(ScratchBlocksGrammarParser.ReplaceItemInListContext ctx) {
+    public ReplaceItem visitReplaceItemInList(ScratchBlocksParser.ReplaceItemInListContext ctx) {
         return new ReplaceItem(
                 makeStringExpr(ctx.newItem),
                 makeNumExpr(ctx.oldItem),
@@ -748,12 +748,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ShowList visitShowList(ScratchBlocksGrammarParser.ShowListContext ctx) {
+    public ShowList visitShowList(ScratchBlocksParser.ShowListContext ctx) {
         return new ShowList(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
 
     @Override
-    public HideList visitHideList(ScratchBlocksGrammarParser.HideListContext ctx) {
+    public HideList visitHideList(ScratchBlocksParser.HideListContext ctx) {
         return new HideList(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
     //end subregion: variable blocks
@@ -765,7 +765,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     // subregion: bool expressions
 
     @Override
-    public Expression visitExprOrLiteral(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+    public Expression visitExprOrLiteral(ScratchBlocksParser.ExprOrLiteralContext ctx) {
         if (ctx.numLiteral() != null) {
             return visitNumLiteral(ctx.numLiteral());
         } else if (ctx.stringLiteral() != null) {
@@ -776,13 +776,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Touching visitTouching(ScratchBlocksGrammarParser.TouchingContext ctx) {
+    public Touching visitTouching(ScratchBlocksParser.TouchingContext ctx) {
         Touchable touchable = visitTouchingChoice(ctx.touchingChoice());
         return new Touching(touchable, new NoBlockMetadata());
     }
 
     @Override
-    public Touchable visitTouchingChoice(ScratchBlocksGrammarParser.TouchingChoiceContext ctx) {
+    public Touchable visitTouchingChoice(ScratchBlocksParser.TouchingChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else if (ctx.stringArgument() != null) {
@@ -794,7 +794,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Touchable visitFixedTouching(ScratchBlocksGrammarParser.FixedTouchingContext ctx) {
+    public Touchable visitFixedTouching(ScratchBlocksParser.FixedTouchingContext ctx) {
         if (ctx.getText().equals("mouse-pointer")) {
             return new MousePointer(new NoBlockMetadata());
         } else {
@@ -803,13 +803,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public SpriteTouchingColor visitTouchingColor(ScratchBlocksGrammarParser.TouchingColorContext ctx) {
+    public SpriteTouchingColor visitTouchingColor(ScratchBlocksParser.TouchingColorContext ctx) {
         Touchable color = visitTouchingColorChoice(ctx.touchingColorChoice());
         return new SpriteTouchingColor(color, new NoBlockMetadata());
     }
 
     @Override
-    public ColorTouchingColor visitColorTouchingColor(ScratchBlocksGrammarParser.ColorTouchingColorContext ctx) {
+    public ColorTouchingColor visitColorTouchingColor(ScratchBlocksParser.ColorTouchingColorContext ctx) {
         return new ColorTouchingColor(
                 (Color) visitTouchingColorChoice(ctx.firstColor),
                 (Color) visitTouchingColorChoice(ctx.secondColor),
@@ -818,7 +818,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Touchable visitTouchingColorChoice(ScratchBlocksGrammarParser.TouchingColorChoiceContext ctx) {
+    public Touchable visitTouchingColorChoice(ScratchBlocksParser.TouchingColorChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else {
@@ -828,12 +828,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public IsKeyPressed visitKeyPressed(ScratchBlocksGrammarParser.KeyPressedContext ctx) {
+    public IsKeyPressed visitKeyPressed(ScratchBlocksParser.KeyPressedContext ctx) {
         return new IsKeyPressed(visitKeySelect(ctx.keySelect()), new NoBlockMetadata());
     }
 
     @Override
-    public Key visitKeySelect(ScratchBlocksGrammarParser.KeySelectContext ctx) {
+    public Key visitKeySelect(ScratchBlocksParser.KeySelectContext ctx) {
         if (ctx.key() != null) {
             return visitKey(ctx.key());
         } else {
@@ -842,7 +842,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Key visitKey(ScratchBlocksGrammarParser.KeyContext ctx) {
+    public Key visitKey(ScratchBlocksParser.KeyContext ctx) {
         return switch (ctx.getText()) {
             case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), new NoBlockMetadata());
             case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), new NoBlockMetadata());
@@ -855,12 +855,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public IsMouseDown visitMouseDown(ScratchBlocksGrammarParser.MouseDownContext ctx) {
+    public IsMouseDown visitMouseDown(ScratchBlocksParser.MouseDownContext ctx) {
         return new IsMouseDown(new NoBlockMetadata());
     }
 
     @Override
-    public BiggerThan visitGreaterThan(ScratchBlocksGrammarParser.GreaterThanContext ctx) {
+    public BiggerThan visitGreaterThan(ScratchBlocksParser.GreaterThanContext ctx) {
         return new BiggerThan(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
                 (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
@@ -869,7 +869,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public LessThan visitLessThan(ScratchBlocksGrammarParser.LessThanContext ctx) {
+    public LessThan visitLessThan(ScratchBlocksParser.LessThanContext ctx) {
         return new LessThan(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
                 (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
@@ -878,7 +878,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Equals visitEqual(ScratchBlocksGrammarParser.EqualContext ctx) {
+    public Equals visitEqual(ScratchBlocksParser.EqualContext ctx) {
         return new Equals(
                 (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
                 (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
@@ -887,27 +887,27 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Not visitNot(ScratchBlocksGrammarParser.NotContext ctx) {
+    public Not visitNot(ScratchBlocksParser.NotContext ctx) {
         return new Not(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public And visitAnd(ScratchBlocksGrammarParser.AndContext ctx) {
+    public And visitAnd(ScratchBlocksParser.AndContext ctx) {
         return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Or visitOr(ScratchBlocksGrammarParser.OrContext ctx) {
+    public Or visitOr(ScratchBlocksParser.OrContext ctx) {
         return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public StringContains visitContains(ScratchBlocksGrammarParser.ContainsContext ctx) {
+    public StringContains visitContains(ScratchBlocksParser.ContainsContext ctx) {
         return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public ListContains visitListContains(ScratchBlocksGrammarParser.ListContainsContext ctx) {
+    public ListContains visitListContains(ScratchBlocksParser.ListContainsContext ctx) {
         return new ListContains(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
@@ -920,52 +920,52 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     //subregion num expression
 
     @Override
-    public PositionX visitXPosition(ScratchBlocksGrammarParser.XPositionContext ctx) {
+    public PositionX visitXPosition(ScratchBlocksParser.XPositionContext ctx) {
         return new PositionX(new NoBlockMetadata());
     }
 
     @Override
-    public PositionY visitYPosition(ScratchBlocksGrammarParser.YPositionContext ctx) {
+    public PositionY visitYPosition(ScratchBlocksParser.YPositionContext ctx) {
         return new PositionY(new NoBlockMetadata());
     }
 
     @Override
-    public Direction visitDirection(ScratchBlocksGrammarParser.DirectionContext ctx) {
+    public Direction visitDirection(ScratchBlocksParser.DirectionContext ctx) {
         return new Direction(new NoBlockMetadata());
     }
 
     @Override
-    public Costume visitNumCostume(ScratchBlocksGrammarParser.NumCostumeContext ctx) {
+    public Costume visitNumCostume(ScratchBlocksParser.NumCostumeContext ctx) {
         return new Costume(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
     }
 
     @Override
-    public NameNum visitNameNum(ScratchBlocksGrammarParser.NameNumContext ctx) {
+    public NameNum visitNameNum(ScratchBlocksParser.NameNumContext ctx) {
         return new NameNum(ctx.getText());
     }
 
     @Override
-    public Backdrop visitNumBackdrop(ScratchBlocksGrammarParser.NumBackdropContext ctx) {
+    public Backdrop visitNumBackdrop(ScratchBlocksParser.NumBackdropContext ctx) {
         return new Backdrop(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
     }
 
     @Override
-    public Size visitSize(ScratchBlocksGrammarParser.SizeContext ctx) {
+    public Size visitSize(ScratchBlocksParser.SizeContext ctx) {
         return new Size(new NoBlockMetadata());
     }
 
     @Override
-    public Volume visitVolume(ScratchBlocksGrammarParser.VolumeContext ctx) {
+    public Volume visitVolume(ScratchBlocksParser.VolumeContext ctx) {
         return new Volume(new NoBlockMetadata());
     }
 
     @Override
-    public DistanceTo visitDistanceTo(ScratchBlocksGrammarParser.DistanceToContext ctx) {
+    public DistanceTo visitDistanceTo(ScratchBlocksParser.DistanceToContext ctx) {
         return new DistanceTo(visitDistanceChoice(ctx.distanceChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public Position visitDistanceChoice(ScratchBlocksGrammarParser.DistanceChoiceContext ctx) {
+    public Position visitDistanceChoice(ScratchBlocksParser.DistanceChoiceContext ctx) {
         if (ctx.mousePointer() != null) {
             return new MousePos(new NoBlockMetadata());
         } else if (ctx.stringArgument() != null) {
@@ -976,32 +976,32 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Answer visitAnswer(ScratchBlocksGrammarParser.AnswerContext ctx) {
+    public Answer visitAnswer(ScratchBlocksParser.AnswerContext ctx) {
         return new Answer(new NoBlockMetadata());
     }
 
     @Override
-    public MouseX visitMouseX(ScratchBlocksGrammarParser.MouseXContext ctx) {
+    public MouseX visitMouseX(ScratchBlocksParser.MouseXContext ctx) {
         return new MouseX(new NoBlockMetadata());
     }
 
     @Override
-    public MouseY visitMouseY(ScratchBlocksGrammarParser.MouseYContext ctx) {
+    public MouseY visitMouseY(ScratchBlocksParser.MouseYContext ctx) {
         return new MouseY(new NoBlockMetadata());
     }
 
     @Override
-    public Loudness visitLoudness(ScratchBlocksGrammarParser.LoudnessContext ctx) {
+    public Loudness visitLoudness(ScratchBlocksParser.LoudnessContext ctx) {
         return new Loudness(new NoBlockMetadata());
     }
 
     @Override
-    public Timer visitTimer(ScratchBlocksGrammarParser.TimerContext ctx) {
+    public Timer visitTimer(ScratchBlocksParser.TimerContext ctx) {
         return new Timer(new NoBlockMetadata());
     }
 
     @Override
-    public AttributeOf visitActorAttribute(ScratchBlocksGrammarParser.ActorAttributeContext ctx) {
+    public AttributeOf visitActorAttribute(ScratchBlocksParser.ActorAttributeContext ctx) {
         return new AttributeOf(
                 visitAttributeChoice(ctx.attributeChoice()),
                 visitElement(ctx.element()),
@@ -1010,7 +1010,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public ElementChoice visitElement(ScratchBlocksGrammarParser.ElementContext ctx) {
+    public ElementChoice visitElement(ScratchBlocksParser.ElementContext ctx) {
         if (ctx.stringArgument() != null) {
             return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
         } else {
@@ -1019,7 +1019,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public Attribute visitAttributeChoice(ScratchBlocksGrammarParser.AttributeChoiceContext ctx) {
+    public Attribute visitAttributeChoice(ScratchBlocksParser.AttributeChoiceContext ctx) {
         if (ctx.fixedAttribute() != null) {
             return new AttributeFromFixed(visitFixedAttribute(ctx.fixedAttribute()));
         } else {
@@ -1028,17 +1028,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public FixedAttribute visitFixedAttribute(ScratchBlocksGrammarParser.FixedAttributeContext ctx) {
+    public FixedAttribute visitFixedAttribute(ScratchBlocksParser.FixedAttributeContext ctx) {
         return new FixedAttribute(ctx.getText());
     }
 
     @Override
-    public Current visitCurrentTime(ScratchBlocksGrammarParser.CurrentTimeContext ctx) {
+    public Current visitCurrentTime(ScratchBlocksParser.CurrentTimeContext ctx) {
         return new Current(visitCurrentChoice(ctx.currentChoice()), new NoBlockMetadata());
     }
 
     @Override
-    public TimeComp visitCurrentChoice(ScratchBlocksGrammarParser.CurrentChoiceContext ctx) {
+    public TimeComp visitCurrentChoice(ScratchBlocksParser.CurrentChoiceContext ctx) {
         if (ctx.getText().equals("day of the week")) {
             return new TimeComp("dayofweek");
         }
@@ -1046,79 +1046,79 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public DaysSince2000 visitDaysSince(ScratchBlocksGrammarParser.DaysSinceContext ctx) {
+    public DaysSince2000 visitDaysSince(ScratchBlocksParser.DaysSinceContext ctx) {
         return new DaysSince2000(new NoBlockMetadata());
     }
 
     @Override
-    public Username visitUserName(ScratchBlocksGrammarParser.UserNameContext ctx) {
+    public Username visitUserName(ScratchBlocksParser.UserNameContext ctx) {
         return new Username(new NoBlockMetadata());
     }
 
     @Override
-    public Add visitAddition(ScratchBlocksGrammarParser.AdditionContext ctx) {
+    public Add visitAddition(ScratchBlocksParser.AdditionContext ctx) {
         return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Minus visitSubtraction(ScratchBlocksGrammarParser.SubtractionContext ctx) {
+    public Minus visitSubtraction(ScratchBlocksParser.SubtractionContext ctx) {
         return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Mult visitMultiplication(ScratchBlocksGrammarParser.MultiplicationContext ctx) {
+    public Mult visitMultiplication(ScratchBlocksParser.MultiplicationContext ctx) {
         return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Div visitDivision(ScratchBlocksGrammarParser.DivisionContext ctx) {
+    public Div visitDivision(ScratchBlocksParser.DivisionContext ctx) {
         return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public PickRandom visitPickRandom(ScratchBlocksGrammarParser.PickRandomContext ctx) {
+    public PickRandom visitPickRandom(ScratchBlocksParser.PickRandomContext ctx) {
         return new PickRandom(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Join visitJoin(ScratchBlocksGrammarParser.JoinContext ctx) {
+    public Join visitJoin(ScratchBlocksParser.JoinContext ctx) {
         return new Join(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public LetterOf visitGetLetterAtIndex(ScratchBlocksGrammarParser.GetLetterAtIndexContext ctx) {
+    public LetterOf visitGetLetterAtIndex(ScratchBlocksParser.GetLetterAtIndexContext ctx) {
         return new LetterOf(makeNumExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public LengthOfString visitLengthOf(ScratchBlocksGrammarParser.LengthOfContext ctx) {
+    public LengthOfString visitLengthOf(ScratchBlocksParser.LengthOfContext ctx) {
         return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public Mod visitModulo(ScratchBlocksGrammarParser.ModuloContext ctx) {
+    public Mod visitModulo(ScratchBlocksParser.ModuloContext ctx) {
         return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
-    public Round visitRound(ScratchBlocksGrammarParser.RoundContext ctx) {
+    public Round visitRound(ScratchBlocksParser.RoundContext ctx) {
         return new Round(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
-    public NumFunctOf visitMathFunction(ScratchBlocksGrammarParser.MathFunctionContext ctx) {
+    public NumFunctOf visitMathFunction(ScratchBlocksParser.MathFunctionContext ctx) {
         return new NumFunctOf(
                 visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
         );
     }
 
     @Override
-    public NumFunct visitMathChoice(ScratchBlocksGrammarParser.MathChoiceContext ctx) {
+    public NumFunct visitMathChoice(ScratchBlocksParser.MathChoiceContext ctx) {
         return new NumFunct(ctx.getText());
     }
 
     @Override
-    public ItemOfVariable visitItemAtIndex(ScratchBlocksGrammarParser.ItemAtIndexContext ctx) {
+    public ItemOfVariable visitItemAtIndex(ScratchBlocksParser.ItemAtIndexContext ctx) {
         return new ItemOfVariable(
                 makeNumExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
@@ -1127,7 +1127,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public IndexOf visitIndexOfItem(ScratchBlocksGrammarParser.IndexOfItemContext ctx) {
+    public IndexOf visitIndexOfItem(ScratchBlocksParser.IndexOfItemContext ctx) {
         return new IndexOf(
                 visitExprOrLiteral(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
@@ -1136,14 +1136,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public LengthOfVar visitLengthOfList(ScratchBlocksGrammarParser.LengthOfListContext ctx) {
+    public LengthOfVar visitLengthOfList(ScratchBlocksParser.LengthOfListContext ctx) {
         return new LengthOfVar(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
     }
 
     //end subregion: num expressions
 
     @Override
-    public NumberLiteral visitNumLiteral(ScratchBlocksGrammarParser.NumLiteralContext ctx) {
+    public NumberLiteral visitNumLiteral(ScratchBlocksParser.NumLiteralContext ctx) {
         final String value;
         if (ctx.DIGIT() != null) {
             value = ctx.DIGIT().getText();
@@ -1155,12 +1155,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public StringLiteral visitStringLiteral(ScratchBlocksGrammarParser.StringLiteralContext ctx) {
+    public StringLiteral visitStringLiteral(ScratchBlocksParser.StringLiteralContext ctx) {
         return visitStringArgument(ctx.stringArgument());
     }
 
     @Override
-    public Expression visitExpression(ScratchBlocksGrammarParser.ExpressionContext ctx) {
+    public Expression visitExpression(ScratchBlocksParser.ExpressionContext ctx) {
         if (ctx.stringArgument() != null) {
             final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
             return new Qualified(currentActor, variable);
@@ -1174,7 +1174,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
     }
 
     @Override
-    public StringLiteral visitStringArgument(ScratchBlocksGrammarParser.StringArgumentContext ctx) {
+    public StringLiteral visitStringArgument(ScratchBlocksParser.StringArgumentContext ctx) {
         return new StringLiteral(unescape(ctx.getText()));
     }
 
@@ -1184,7 +1184,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
                 .replace("\\\\", "\\"); // Handle double backslash
     }
 
-    private NumExpr makeNumExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+    private NumExpr makeNumExpr(ScratchBlocksParser.ExprOrLiteralContext ctx) {
         Expression expr = visitExprOrLiteral(ctx);
         NumExpr numExpr;
 
@@ -1196,7 +1196,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         return numExpr;
     }
 
-    private StringExpr makeStringExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+    private StringExpr makeStringExpr(ScratchBlocksParser.ExprOrLiteralContext ctx) {
         Expression expr = visitExprOrLiteral(ctx);
         StringExpr stringExpr;
 
@@ -1208,7 +1208,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
         return stringExpr;
     }
 
-    private BoolExpr makeBoolExpr(ScratchBlocksGrammarParser.ExprOrLiteralContext ctx) {
+    private BoolExpr makeBoolExpr(ScratchBlocksParser.ExprOrLiteralContext ctx) {
         Expression expr = visitExprOrLiteral(ctx);
         BoolExpr boolExpr;
 
@@ -1222,7 +1222,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     // endregion: expressions
 
-    private StmtList makeInnerStmtList(ScratchBlocksGrammarParser.StmtListContext ctx) {
+    private StmtList makeInnerStmtList(ScratchBlocksParser.StmtListContext ctx) {
         StmtList stmt;
 
         if (ctx != null) {
