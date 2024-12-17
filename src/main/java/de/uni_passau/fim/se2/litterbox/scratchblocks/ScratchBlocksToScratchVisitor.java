@@ -411,9 +411,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public ChangeGraphicEffectBy visitChangeColorEffect(ScratchBlocksGrammarParser.ChangeColorEffectContext ctx) {
-        return new ChangeGraphicEffectBy(
-                visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
-        );
+        if (ctx.colorEffect() != null) {
+            return new ChangeGraphicEffectBy(
+                    visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+            );
+        } else {
+            return new ChangeGraphicEffectBy(new GraphicEffect("color"), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+            );
+        }
     }
 
     @Override
@@ -423,9 +428,15 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksGrammarBaseVisitor<ASTN
 
     @Override
     public SetGraphicEffectTo visitSetColorEffect(ScratchBlocksGrammarParser.SetColorEffectContext ctx) {
-        return new SetGraphicEffectTo(
-                visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
-        );
+        if (ctx.colorEffect() != null) {
+            return new SetGraphicEffectTo(
+                    visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+            );
+        } else {
+            return new SetGraphicEffectTo(
+                    new GraphicEffect("color"), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+            );
+        }
     }
 
     @Override

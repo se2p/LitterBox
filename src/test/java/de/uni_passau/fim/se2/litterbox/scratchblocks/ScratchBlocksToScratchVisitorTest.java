@@ -41,6 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
@@ -482,5 +483,27 @@ class ScratchBlocksToScratchVisitorTest {
     private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
         assertInstanceOf(exprType, expr);
         return exprType.cast(expr);
+    }
+
+    @Test
+    void testChangeColorEffect() {
+        StmtList stmtList = getStmtList("change [color v] effect by (25)\nchange [fisheye v] effect by (25)\n");
+        final Stmt stmt1= stmtList.getStatement(0);
+        assertInstanceOf(ChangeGraphicEffectBy.class, stmt1);
+        assertEquals("color",((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
+        final Stmt stmt2= stmtList.getStatement(1);
+        assertInstanceOf(ChangeGraphicEffectBy.class, stmt2);
+        assertEquals("fisheye",((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
+    }
+
+    @Test
+    void testSetColorEffect() {
+        StmtList stmtList = getStmtList("set [color v] effect to (25)\nset [fisheye v] effect to (25)\n");
+        final Stmt stmt1= stmtList.getStatement(0);
+        assertInstanceOf(SetGraphicEffectTo.class, stmt1);
+        assertEquals("color",((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
+        final Stmt stmt2= stmtList.getStatement(1);
+        assertInstanceOf(SetGraphicEffectTo.class, stmt2);
+        assertEquals("fisheye",((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
     }
 }

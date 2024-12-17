@@ -151,14 +151,24 @@ switchBackdrop          : 'switch backdrop to 'backdropSelect;
 nextBackdrop            : 'next backdrop';
 changeSize              : 'change size by 'exprOrLiteral;
 setSize                 : 'set size to 'exprOrLiteral' %';
-changeColorEffect       : 'change ['colorEffect' v] effect by 'exprOrLiteral;
-setColorEffect          : 'set ['colorEffect' v] effect to 'exprOrLiteral;
+changeColorEffect       : 'change [color v] effect by 'exprOrLiteral
+                        | 'change ['colorEffect' v] effect by 'exprOrLiteral;
+setColorEffect          : 'set [color v] effect to 'exprOrLiteral
+                        | 'set ['colorEffect' v] effect to 'exprOrLiteral;
 clearColorEffect        : 'clear graphic effects';
 show                    : 'show';
 hide                    : 'hide';
 goToLayer               : 'go to ['layerChoice' v] layer';
 goForwardBackwardLayer  : 'go ['forwardBackwardChoice' v] 'exprOrLiteral' layers';
 switchBackdropWait      : 'switch backdrop to 'backdropSelect' and wait';
+
+colorEffect             : 'fisheye'
+                        | 'whirl'
+                        | 'pixelate'
+                        | 'mosaic'
+                        | 'brightness'
+                        | 'ghost'
+                        ;
 
 soundStmt               : playSoundDone
                         | playSound
@@ -272,15 +282,6 @@ backdropSelect          : '('fixedBackdrop' v)'
 fixedBackdrop           : 'next backdrop'
                         | 'previous backdrop'
                         | 'random backdrop'
-                        ;
-
-colorEffect             : 'color'
-                        | 'fisheye'
-                        | 'whirl'
-                        | 'pixelate'
-                        | 'mosaic'
-                        | 'brightness'
-                        | 'ghost'
                         ;
 
 forwardBackwardChoice   : 'forward'
