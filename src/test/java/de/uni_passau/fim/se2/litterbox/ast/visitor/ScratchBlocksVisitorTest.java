@@ -213,7 +213,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "set [my variable v] to (round (my variable))" + System.lineSeparator() +
                 "set [my variable v] to (pick random (1) to (10))" + System.lineSeparator() +
                 "set [my variable v] to ([my variable v] of (Stage v)?)" + System.lineSeparator() +
-                "set [my variable v] to ((10)+(my variable))" + System.lineSeparator() +
+                "set [my variable v] to ((10) + (my variable))" + System.lineSeparator() +
                 "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
                 "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
                 "set [my variable v] to (username)" + System.lineSeparator() +
@@ -255,7 +255,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "change [my variable v] by (round (my variable))" + System.lineSeparator() +
                 "change [my variable v] by (pick random (1) to (10))" + System.lineSeparator() +
                 "change [my variable v] by ([my variable v] of (Stage v)?)" + System.lineSeparator() +
-                "change [my variable v] by ((10)+(my variable))" + System.lineSeparator() +
+                "change [my variable v] by ((10) + (my variable))" + System.lineSeparator() +
                 "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
                 "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
                 "change [my variable v] by (username)" + System.lineSeparator() +
@@ -286,7 +286,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "move (costume [number v]) steps" + System.lineSeparator() +
                 "move (backdrop [number v]) steps" + System.lineSeparator() +
                 "move (size) steps" + System.lineSeparator() +
-                "move ([]+[]) steps" + System.lineSeparator() +
+                "move ([] + []) steps" + System.lineSeparator() +
                 "move (join [apple ][banana]) steps" + System.lineSeparator() +
                 "move ([backdrop # v] of (letter (1) of [apple])?) steps" + System.lineSeparator() +
                 "move (loudness) steps" + System.lineSeparator() +
@@ -617,13 +617,13 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "when green flag clicked" + System.lineSeparator() +
                 "set [x v] to (0)" + System.lineSeparator() +
                 "set [y v] to (0)" + System.lineSeparator() +
-                "set [z v] to ((x)+(y))" + System.lineSeparator() +
+                "set [z v] to ((x) + (y))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
-                "set [z v] to ((x)-(y))" + System.lineSeparator() +
+                "set [z v] to ((x) - (y))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
-                "set [z v] to ((x)*(y))" + System.lineSeparator() +
+                "set [z v] to ((x) * (y))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
-                "set [z v] to ((x)/(y))" + System.lineSeparator() +
+                "set [z v] to ((x) / (y))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
                 "set [z v] to (round (x))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
@@ -633,7 +633,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "say (z)" + System.lineSeparator() +
                 "set [z v] to ([abs v] of (x))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
-                "set [z v] to (((x)-(z))+([abs v] of (x)))" + System.lineSeparator() +
+                "set [z v] to (((x) - (z)) + ([abs v] of (x)))" + System.lineSeparator() +
                 "say (z)" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
@@ -672,7 +672,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "wait until <touching (current (year v)) ?>" + System.lineSeparator() +
                 "wait until <touching (days since 2000) ?>" + System.lineSeparator() +
                 "wait until <touching (username) ?>" + System.lineSeparator() +
-                "wait until <touching ([]+[]) ?>" + System.lineSeparator() +
+                "wait until <touching ([] + []) ?>" + System.lineSeparator() +
                 "wait until <touching (pick random (1) to (10)) ?>" + System.lineSeparator() +
                 "wait until <touching <[] > (50)> ?>" + System.lineSeparator() +
                 "wait until <touching <<> and <>> ?>" + System.lineSeparator() +
@@ -724,7 +724,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "ask (current (year v)) and wait" + System.lineSeparator() +
                 "ask (days since 2000) and wait" + System.lineSeparator() +
                 "ask (username) and wait" + System.lineSeparator() +
-                "ask ([]+[]) and wait" + System.lineSeparator() +
+                "ask ([] + []) and wait" + System.lineSeparator() +
                 "ask (pick random (1) to (10)) and wait" + System.lineSeparator() +
                 "ask <[] > (50)> and wait" + System.lineSeparator() +
                 "ask <<> and <>> and wait" + System.lineSeparator() +

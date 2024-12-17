@@ -1644,7 +1644,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(Add node) {
         emitNoSpace("(");
         node.getOperand1().accept(this);
-        emitNoSpace("+");
+        emitSpaced("+");
         node.getOperand2().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(")");
@@ -1654,7 +1654,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(Minus node) {
         emitNoSpace("(");
         node.getOperand1().accept(this);
-        emitNoSpace("-");
+        emitSpaced("-");
         node.getOperand2().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(")");
@@ -1664,7 +1664,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(Mult node) {
         emitNoSpace("(");
         node.getOperand1().accept(this);
-        emitNoSpace("*");
+        emitSpaced("*");
         node.getOperand2().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(")");
@@ -1674,7 +1674,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(Div node) {
         emitNoSpace("(");
         node.getOperand1().accept(this);
-        emitNoSpace("/");
+        emitSpaced("/");
         node.getOperand2().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(")");
@@ -1728,7 +1728,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(BiggerThan node) {
         emitNoSpace("<");
         visitAndEscapeQualified(node.getOperand1());
-        emitNoSpace(" > ");
+        emitSpaced(">");
         visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
@@ -1738,7 +1738,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(LessThan node) {
         emitNoSpace("<");
         visitAndEscapeQualified(node.getOperand1());
-        emitNoSpace(" < ");
+        emitSpaced("<");
         visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
@@ -1748,7 +1748,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public void visit(Equals node) {
         emitNoSpace("<");
         visitAndEscapeQualified(node.getOperand1());
-        emitNoSpace(" = ");
+        emitSpaced("=");
         visitAndEscapeQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
@@ -1976,6 +1976,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     protected void emitNoSpace(String string) {
         printStream.append(string);
+        lineWrapped = false;
+    }
+
+    private void emitSpaced(String string) {
+        printStream.append(' ').append(string).append(' ');
         lineWrapped = false;
     }
 
