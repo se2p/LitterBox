@@ -33,7 +33,7 @@ actorList               : (actor)+;
 actor                   : BEGIN_ACTOR scriptList NEWLINE*;
 
 
-scriptList              : (script (NEWLINE+)?)*;
+scriptList              : (script ((COMMENT? NEWLINE)+)?)*;
 
 script                  : expressionStmt NEWLINE
                         | customBlock NEWLINE
@@ -554,7 +554,7 @@ WS                      : [ \t]+;
 
 BEGIN_ACTOR             : '//Sprite: ' ~[\r\n]+ NEWLINE;
 
-COMMENT                 : '//' ~[\r\n]* NEWLINE;
+COMMENT                 : WS* '//' ~[\r\n]*;
 
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;

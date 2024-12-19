@@ -54,6 +54,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -498,6 +499,19 @@ class ScratchBlocksToScratchVisitorTest {
 
         assertEquals(1, repeatTimesStmt.getStmtList().getStmts().size());
         assertInstanceOf(StopAll.class, repeatTimesStmt.getStmtList().getStatement(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "",
+            "//abc",
+            " // abc",
+            "    //abc",
+            "    // abc"
+    })
+    void testComments(final String commentSuffix) {
+        final ExpressionStmt stmt = assertStatementType("((3) * (4))" + commentSuffix, ExpressionStmt.class);
+        assertInstanceOf(Mult.class, stmt.getExpression());
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
