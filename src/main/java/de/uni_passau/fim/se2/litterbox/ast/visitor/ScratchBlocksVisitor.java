@@ -1371,6 +1371,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             }
         }
         storeNotesForIssue(node);
+        newLine();
     }
 
     @Override
