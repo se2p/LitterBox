@@ -552,7 +552,7 @@ NEWLINE                 : '\r\n' | '\n' ;
 
 WS                      : [ \t]+;
 
-BEGIN_ACTOR             : '//;Act ' ~[\r\n]+ NEWLINE;
+BEGIN_ACTOR             : '//Sprite: ' ~[\r\n]+ NEWLINE;
 
 COMMENT                 : '//' ~[\r\n]* NEWLINE;
 
