@@ -216,6 +216,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                 newLine();
             }
             emitNoSpace("//Sprite: " + node.getIdent().getName());
+            newLine();
             hasContent = true;
         }
         super.visit(node);

@@ -34,7 +34,12 @@ public class ProgramScratchBlocksAnalyzerTest implements JsonTest {
         Program empty = getAST("./src/test/fixtures/emptyProject.json");
         ProgramScratchBlocksAnalyzer scratchBlocksAnalyzer = new ProgramScratchBlocksAnalyzer();
         String scratchBlocks = scratchBlocksAnalyzer.analyze(empty);
-        Assertions.assertEquals("//Sprite: Stage" + System.lineSeparator() + "//Sprite: Sprite1", scratchBlocks);
+        Assertions.assertEquals(
+                "//Sprite: Stage" + System.lineSeparator()
+                        + System.lineSeparator()
+                        + "//Sprite: Sprite1" + System.lineSeparator(),
+                scratchBlocks
+        );
     }
 
     @Test
