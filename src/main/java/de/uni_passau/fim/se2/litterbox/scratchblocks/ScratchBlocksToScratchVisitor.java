@@ -416,7 +416,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
                     visitColorEffect(ctx.colorEffect()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
             );
         } else {
-            return new ChangeGraphicEffectBy(new GraphicEffect("color"), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+            return new ChangeGraphicEffectBy(
+                    new GraphicEffect("color"), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
             );
         }
     }
@@ -862,8 +863,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public BiggerThan visitGreaterThan(ScratchBlocksParser.GreaterThanContext ctx) {
         return new BiggerThan(
-                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
+                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
                 new NoBlockMetadata()
         );
     }
@@ -871,8 +872,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public LessThan visitLessThan(ScratchBlocksParser.LessThanContext ctx) {
         return new LessThan(
-                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
+                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
                 new NoBlockMetadata()
         );
     }
@@ -880,8 +881,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Equals visitEqual(ScratchBlocksParser.EqualContext ctx) {
         return new Equals(
-                (ComparableExpr) visitExprOrLiteral(ctx.firstExpr),
-                (ComparableExpr) visitExprOrLiteral(ctx.secondExpr),
+                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
                 new NoBlockMetadata()
         );
     }
@@ -1206,6 +1207,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             stringExpr = new AsString(expr);
         }
         return stringExpr;
+    }
+
+    /**
+     * Boolean expressions can be dragged into the round fields of {@code <},
+     * {@code >}, and {@code =}. They have to be wrapped to be comparable in
+     * such instances.
+     *
+     * @param expression Some expression appearing inside a comparison.
+     * @return The same expression, or wrapped to make it comparable.
+     */
+    private ComparableExpr ensureComparable(final Expression expression) {
+        if (expression instanceof ComparableExpr c) {
+            return c;
+        } else {
+            return new AsString(expression);
+        }
     }
 
     private BoolExpr makeBoolExpr(ScratchBlocksParser.ExprOrLiteralContext ctx) {

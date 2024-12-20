@@ -21,9 +21,11 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -219,6 +221,27 @@ class ScratchBlocksToScratchVisitorTest {
             // fixme: this should probably not be parsed at all
             assertStatementType(expr, CallStmt.class);
         }
+    }
+
+    /*
+     * Boolean expressions can be dragged into the round elements of comparison operators.
+     */
+    @ParameterizedTest
+    @MethodSource("binaryComparisonOperators")
+    <T extends Expression> void testComparisonAsStringConversion(final String operator, final Class<T> expressionType) {
+        final String expr = String.format("<(level) %s <(level) < (20)>>", operator);
+        final T op = assertHasExprStmt(getStmtList(expr), expressionType);
+
+        assertInstanceOf(BinaryExpression.class, op);
+        assertInstanceOf(AsString.class, ((BinaryExpression<?, ?>) op).getOperand2());
+    }
+
+    @Test
+    void testAndExprLhsOfEquals() {
+        final String expr = "<<<(time) > (1.1)> and <(time) < (1.9)>> = <(backdrop [number v]) = (1)>>";
+        final Equals eq = assertHasExprStmt(getStmtList(expr), Equals.class);
+
+        assertInstanceOf(AsString.class, eq.getOperand1());
     }
 
     static Stream<Arguments> binaryNumberOperators() {
