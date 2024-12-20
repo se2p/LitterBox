@@ -32,10 +32,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -52,6 +56,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -64,6 +70,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 class ScratchBlocksToScratchVisitorTest {
 
@@ -550,6 +557,47 @@ class ScratchBlocksToScratchVisitorTest {
     void testComments(final String commentSuffix) {
         final ExpressionStmt stmt = assertStatementType("((3) * (4))" + commentSuffix, ExpressionStmt.class);
         assertInstanceOf(Mult.class, stmt.getExpression());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "define abc\n",
+            "define abc (sP)\n",
+            "define abc (sP) def (bP)\n",
+            "define abc (sP) def (bP) ghi\n",
+            "define (sP)\n",
+            "define <bP> abc\n"
+    })
+    void emptyCustomProcedureDefinition(final String definition) {
+        final ScriptEntity script = getScript(definition);
+        assertInstanceOf(ProcedureDefinition.class, script);
+        final ProcedureDefinition procDef = (ProcedureDefinition) script;
+
+        assertEquals(definition.replace("define ", "").trim(), procDef.getIdent().getName());
+    }
+
+    /**
+     * not yet implemented:
+     * {@link ScratchBlocksToScratchVisitor#visitCustomBlock(de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser.CustomBlockContext)}
+     */
+    @Test
+    @Disabled("not yet implemented: procedure definition parsing")
+    void customProcedureDefinitionParameters() {
+        final ScriptEntity script = getScript("""
+                define abc (sp) bcd <bp>
+                stop [all v]
+                """);
+
+        assertInstanceOf(ProcedureDefinition.class, script);
+        final ProcedureDefinition procDef = (ProcedureDefinition) script;
+
+        assertIterableEquals(
+                List.of(
+                        new ParameterDefinition(new StrId("sp"), new StringType(), new NoBlockMetadata()),
+                        new ParameterDefinition(new StrId("bp"), new BooleanType(), new NoBlockMetadata())
+                ),
+                procDef.getParameterDefinitionList().getParameterDefinitions()
+        );
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {

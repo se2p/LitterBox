@@ -36,12 +36,14 @@ actor                   : BEGIN_ACTOR scriptList NEWLINE*;
 scriptList              : (script ((COMMENT? NEWLINE)+)?)*;
 
 script                  : expressionStmt NEWLINE
-                        | customBlock NEWLINE
+                        | customBlock
                         | event NEWLINE (stmtList)?
                         | stmtList
                         ;
 
-customBlock             : 'define 'stringArgument (parameter)* (COMMENT)?;
+customBlock             : 'define ' customBlockParameter* suffix=stringArgument? COMMENT? NEWLINE stmtList?;
+
+customBlockParameter    : stringArgument? parameter;
 
 parameter               : boolParam
                         | stringParam

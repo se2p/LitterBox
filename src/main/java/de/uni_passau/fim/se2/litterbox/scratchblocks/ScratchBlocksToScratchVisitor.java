@@ -37,11 +37,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -64,6 +67,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser;
 
+import java.util.Collections;
 import java.util.List;
 
 class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
@@ -95,10 +99,35 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         } else if (ctx.event() != null) {
             return new Script((Event) visitEvent(ctx.event()), new StmtList());
         } else if (ctx.customBlock() != null) {
-            return (ScriptEntity) visit(ctx.customBlock());
+            return visitCustomBlock(ctx.customBlock());
         } else {
             return (ScriptEntity) super.visitScript(ctx);
         }
+    }
+
+    @Override
+    public ProcedureDefinition visitCustomBlock(ScratchBlocksParser.CustomBlockContext ctx) {
+        final LocalIdentifier name = buildCustomBlockDefName(ctx);
+        // todo: actual implementation
+        final ParameterDefinitionList parameters = new ParameterDefinitionList(Collections.emptyList());
+        final StmtList stmtList = makeInnerStmtList(ctx.stmtList());
+        final ProcedureMetadata metadata = new ProcedureMetadata(new NoBlockMetadata(), new NoBlockMetadata());
+
+        return new ProcedureDefinition(name, parameters, stmtList, metadata);
+    }
+
+    private LocalIdentifier buildCustomBlockDefName(final ScratchBlocksParser.CustomBlockContext ctx) {
+        final StringBuilder sb = new StringBuilder();
+
+        for (final var param : ctx.customBlockParameter()) {
+            sb.append(param.getText());
+        }
+
+        if (ctx.suffix != null) {
+            sb.append(ctx.suffix.getText());
+        }
+
+        return new StrId(unescape(sb.toString()));
     }
 
     @Override
