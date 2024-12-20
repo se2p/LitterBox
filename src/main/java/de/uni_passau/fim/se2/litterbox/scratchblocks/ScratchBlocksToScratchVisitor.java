@@ -58,6 +58,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
@@ -805,23 +806,24 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public SpriteTouchingColor visitTouchingColor(ScratchBlocksParser.TouchingColorContext ctx) {
-        Touchable color = visitTouchingColorChoice(ctx.touchingColorChoice());
+        Color color = visitTouchingColorChoice(ctx.touchingColorChoice());
         return new SpriteTouchingColor(color, new NoBlockMetadata());
     }
 
     @Override
     public ColorTouchingColor visitColorTouchingColor(ScratchBlocksParser.ColorTouchingColorContext ctx) {
         return new ColorTouchingColor(
-                (Color) visitTouchingColorChoice(ctx.firstColor),
-                (Color) visitTouchingColorChoice(ctx.secondColor),
+                visitTouchingColorChoice(ctx.firstColor),
+                visitTouchingColorChoice(ctx.secondColor),
                 new NoBlockMetadata()
         );
     }
 
     @Override
-    public Touchable visitTouchingColorChoice(ScratchBlocksParser.TouchingColorChoiceContext ctx) {
+    public Color visitTouchingColorChoice(ScratchBlocksParser.TouchingColorChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
-            return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
+            // any expression can be put into the colour fields
+            return new FromNumber(new AsNumber(visitExprOrLiteral(ctx.exprOrLiteral())));
         } else {
             String rgbCode = ctx.HEX().getText();
             return ColorLiteral.tryFromRgbHexString(rgbCode);

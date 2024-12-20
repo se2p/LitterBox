@@ -51,6 +51,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -267,6 +268,20 @@ class ScratchBlocksToScratchVisitorTest {
                 Arguments.of("<", LessThan.class),
                 Arguments.of("=", Equals.class)
         );
+    }
+
+    @Test
+    void testTouchingCastColor() {
+        final String expr = "<color [#000000] is touching <(123) = (50)> ?>";
+        final ColorTouchingColor ctc = assertHasExprStmt(getStmtList(expr), ColorTouchingColor.class);
+
+        assertInstanceOf(ColorLiteral.class, ctc.getOperand1());
+
+        assertInstanceOf(FromNumber.class, ctc.getOperand2());
+        final FromNumber rhs = (FromNumber) ctc.getOperand2();
+        assertInstanceOf(AsNumber.class, rhs.getValue());
+        final AsNumber numExpr = (AsNumber) rhs.getValue();
+        assertInstanceOf(Equals.class, numExpr.getOperand1());
     }
 
     @Test
