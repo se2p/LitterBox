@@ -441,6 +441,14 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testUnspecifiedBoolExpr() {
+        final StmtList stmtList = getStmtList("<<> and <>>");
+        final And and = assertHasExprStmt(stmtList, And.class);
+
+        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(), new NoBlockMetadata()), and);
+    }
+
+    @Test
     void testParseScript() {
         final String stmt = "<(Lives) = (0)>";
         final StmtList stmtList = getStmtList(stmt);

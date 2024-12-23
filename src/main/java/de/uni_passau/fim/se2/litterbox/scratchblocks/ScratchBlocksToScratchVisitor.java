@@ -1299,6 +1299,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
         if (expr instanceof BoolExpr bool) {
             boolExpr = bool;
+        } else if (expr == null) {
+            boolExpr = new UnspecifiedBoolExpr();
         } else {
             boolExpr = new AsBool(expr);
         }

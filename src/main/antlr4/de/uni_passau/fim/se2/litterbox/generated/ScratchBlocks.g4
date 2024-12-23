@@ -374,7 +374,8 @@ expression              : '('numExpr')'
                         | '('stringArgument')'//variable
                         ;
 
-boolExpr                : touching
+boolExpr                : empty=WS*
+                        | touching
                         | touchingColor
                         | colorTouchingColor
                         | keyPressed
