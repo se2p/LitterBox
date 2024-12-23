@@ -71,6 +71,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ScratchBlocksToScratchVisitorTest {
 
@@ -593,6 +594,14 @@ class ScratchBlocksToScratchVisitorTest {
                 ),
                 procDef.getParameterDefinitionList().getParameterDefinitions()
         );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"abc", "123", "ab3", "with spaces"})
+    void testCustomBlockCallNoParameters(final String blockName) {
+        final CallStmt stmt = assertStatementType(blockName, CallStmt.class);
+        assertEquals(blockName, stmt.getIdent().getName());
+        assertTrue(stmt.getExpressions().getExpressions().isEmpty());
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {

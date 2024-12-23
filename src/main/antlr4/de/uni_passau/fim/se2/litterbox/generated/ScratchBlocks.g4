@@ -67,7 +67,7 @@ customBlockCallStmt     : stringArgument exprOrLiteral (WS exprOrLiteral)* (COMM
                         | customBlockCallPrefix (WS? | (WS exprOrLiteral)*) (COMMENT)?
                         ;
 
-customBlockCallPrefix   : (ESC|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|~(NEWLINE|DELIM))+?;
+customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
 
 stmtList                : (stmt NEWLINE)+;
 
