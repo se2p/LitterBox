@@ -604,6 +604,21 @@ class ScratchBlocksToScratchVisitorTest {
         assertTrue(stmt.getExpressions().getExpressions().isEmpty());
     }
 
+    @Test
+    void testCustomBlockCallMixedNameAndParameter() {
+        final String input = "custom (123) block <(1) > (3)> suffix";
+        final CallStmt callStmt = assertStatementType(input, CallStmt.class);
+
+        assertEquals("custom %s block %b suffix", callStmt.getIdent().getName());
+        assertIterableEquals(
+                List.of(
+                        new NumberLiteral(123),
+                        new BiggerThan(new NumberLiteral(1), new NumberLiteral(3), new NoBlockMetadata())
+                ),
+                callStmt.getExpressions().getExpressions()
+        );
+    }
+
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
         final StmtList stmtList = getStmtList(stmt);
         assertInstanceOf(stmtType, stmtList.getStatement(0));

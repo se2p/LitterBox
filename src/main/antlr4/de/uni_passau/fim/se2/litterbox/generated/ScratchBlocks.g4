@@ -41,9 +41,9 @@ script                  : expressionStmt NEWLINE
                         | stmtList
                         ;
 
-customBlock             : 'define ' customBlockParameter* suffix=stringArgument? COMMENT? NEWLINE stmtList?;
+customBlock             : 'define ' customBlockParameter* suffix=stringArgument COMMENT? NEWLINE stmtList?;
 
-customBlockParameter    : stringArgument? parameter;
+customBlockParameter    : stringArgument parameter;
 
 parameter               : boolParam
                         | stringParam
@@ -63,9 +63,9 @@ stmt                    : motionStmt (COMMENT)?
                         | customBlockCallStmt
                         ;
 
-customBlockCallStmt     : stringArgument exprOrLiteral (WS exprOrLiteral)* (COMMENT)?
-                        | customBlockCallPrefix (WS? | (WS exprOrLiteral)*) (COMMENT)?
-                        ;
+customBlockCallStmt     : customBlockCallPrefix customBlockCallParam* WS* (COMMENT)?;
+
+customBlockCallParam    : exprOrLiteral stringArgument;
 
 customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
 

@@ -70,6 +70,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -256,32 +257,27 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public CallStmt visitCustomBlockCallStmt(ScratchBlocksParser.CustomBlockCallStmtContext ctx) {
-        StringBuilder name = new StringBuilder(customBlockCallStmtName(ctx));
-        final ExpressionList arguments = new ExpressionList(
-                ctx.exprOrLiteral().stream().map(this::visitExprOrLiteral).toList()
-        );
+        final List<Expression> arguments = new ArrayList<>();
 
-        for (final Expression expr : arguments.getExpressions()) {
-            if (expr instanceof BoolExpr) {
-                name.append(" %b");
+        final StringBuilder name = new StringBuilder();
+        if (ctx.customBlockCallPrefix() != null) {
+            name.append(unescape(ctx.customBlockCallPrefix().getText()));
+        }
+
+        for (final var paramCtx : ctx.customBlockCallParam()) {
+            final Expression argument = visitExprOrLiteral(paramCtx.exprOrLiteral());
+            arguments.add(argument);
+
+            if (argument instanceof BoolExpr) {
+                name.append("%b");
             } else {
-                name.append(" %s");
+                name.append("%s");
             }
+
+            name.append(unescape(paramCtx.stringArgument().getText()));
         }
 
-        return new CallStmt(new StrId(name.toString()), arguments, new NoBlockMetadata());
-    }
-
-    private String customBlockCallStmtName(final ScratchBlocksParser.CustomBlockCallStmtContext ctx) {
-        final String name;
-
-        if (ctx.stringArgument() != null) {
-            name = visitStringArgument(ctx.stringArgument()).getText();
-        } else {
-            name = unescape(ctx.customBlockCallPrefix().getText());
-        }
-
-        return name.trim();
+        return new CallStmt(new StrId(name.toString()), new ExpressionList(arguments), new NoBlockMetadata());
     }
 
     @Override
