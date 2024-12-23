@@ -43,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -62,6 +63,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
@@ -108,8 +111,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ProcedureDefinition visitCustomBlock(ScratchBlocksParser.CustomBlockContext ctx) {
         final LocalIdentifier name = buildCustomBlockDefName(ctx);
-        // todo: actual implementation
-        final ParameterDefinitionList parameters = new ParameterDefinitionList(Collections.emptyList());
+        final ParameterDefinitionList parameters = buildParameters(ctx);
         final StmtList stmtList = makeInnerStmtList(ctx.stmtList());
         final ProcedureMetadata metadata = new ProcedureMetadata(new NoBlockMetadata(), new NoBlockMetadata());
 
@@ -128,6 +130,45 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         }
 
         return new StrId(unescape(sb.toString()));
+    }
+
+    private ParameterDefinitionList buildParameters(final ScratchBlocksParser.CustomBlockContext ctx) {
+        if (ctx.customBlockParameter() == null) {
+            return new ParameterDefinitionList(Collections.emptyList());
+        }
+
+        final List<ParameterDefinition> parameters = ctx.customBlockParameter().stream()
+                .map(this::visitCustomBlockParameter)
+                .toList();
+
+        return new ParameterDefinitionList(parameters);
+    }
+
+    @Override
+    public ParameterDefinition visitCustomBlockParameter(ScratchBlocksParser.CustomBlockParameterContext ctx) {
+        return visitParameter(ctx.parameter());
+    }
+
+    @Override
+    public ParameterDefinition visitParameter(ScratchBlocksParser.ParameterContext ctx) {
+        if (ctx.boolParam() != null) {
+            return visitBoolParam(ctx.boolParam());
+        } else {
+            assert ctx.stringParam() != null;
+            return visitStringParam(ctx.stringParam());
+        }
+    }
+
+    @Override
+    public ParameterDefinition visitStringParam(ScratchBlocksParser.StringParamContext ctx) {
+        final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
+        return new ParameterDefinition(name, new StringType(), new NoBlockMetadata());
+    }
+
+    @Override
+    public ParameterDefinition visitBoolParam(ScratchBlocksParser.BoolParamContext ctx) {
+        final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
+        return new ParameterDefinition(name, new BooleanType(), new NoBlockMetadata());
     }
 
     @Override

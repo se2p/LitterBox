@@ -576,12 +576,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertEquals(definition.replace("define ", "").trim(), procDef.getIdent().getName());
     }
 
-    /**
-     * not yet implemented:
-     * {@link ScratchBlocksToScratchVisitor#visitCustomBlock(de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser.CustomBlockContext)}
-     */
     @Test
-    @Disabled("not yet implemented: procedure definition parsing")
     void customProcedureDefinitionParameters() {
         final ScriptEntity script = getScript("""
                 define abc (sp) bcd <bp>
