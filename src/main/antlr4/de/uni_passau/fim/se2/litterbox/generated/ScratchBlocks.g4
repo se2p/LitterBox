@@ -370,6 +370,7 @@ numLiteral              : '('(NUMBER|DIGIT)')';
 stringLiteral           : '['stringArgument']';
 
 expression              : '('numExpr')'
+                        | emptyBool='<>'
                         | '<'boolExpr'>'
                         | '('stringArgument')'//variable
                         ;

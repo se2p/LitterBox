@@ -631,6 +631,17 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testEmptyBoolExpr() {
+        final String scratchBlocks = """
+                if <> then
+                stop all sounds
+                end""".stripIndent();
+        final IfThenStmt stmt = assertStatementType(scratchBlocks, IfThenStmt.class);
+
+        assertInstanceOf(UnspecifiedBoolExpr.class, stmt.getBoolExpr());
+    }
+
+    @Test
     void testMultipleCBlocksInScript() {
         final String scratchBlocks = """
                 if <  > then
