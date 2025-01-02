@@ -89,7 +89,7 @@ spriteClicked           : 'when this sprite clicked';
 stageClicked            : 'when stage clicked';
 startAsClone            : 'when I start as a clone';
 receptionMessage        : 'when I receive ['stringArgument' v]';
-biggerEvent             : 'when 'eventChoice' > 'exprOrLiteral;
+biggerEvent             : 'when [' eventChoice ' v] > 'exprOrLiteral;
 backDropSwitchEvent     : 'when backdrop switches to ['stringArgument' v]';
 
 motionStmt              : moveSteps

@@ -19,8 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -676,7 +675,6 @@ class ScratchBlocksToScratchVisitorTest {
         );
     }
 
-
     @Test
     void testForeverInsideIfElse() {
         final String scratchBlocks = """
@@ -691,6 +689,20 @@ class ScratchBlocksToScratchVisitorTest {
 
         assertInstanceOf(RepeatForeverStmt.class, ifElse.getThenStmts().getStatement(0));
         assertInstanceOf(StopAll.class, ifElse.getElseStmts().getStatement(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"loudness", "timer"})
+    void testBiggerThanEvent(final String choice) {
+        final String scratchBlocks = String.format("when [%s v] > (10)", choice);
+        final Script script = (Script) getScript(scratchBlocks);
+
+        final Event event = script.getEvent();
+        assertInstanceOf(AttributeAboveValue.class, event);
+
+        final AttributeAboveValue aboveValue = (AttributeAboveValue) event;
+
+        assertEquals(new EventAttribute(choice), aboveValue.getAttribute());
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
