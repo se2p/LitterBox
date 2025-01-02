@@ -194,8 +194,8 @@ setVolume               : 'set volume to 'exprOrLiteral' %';
 controlStmt             : waitSeconds
                         | repeat
                         | forever
-                        | if
                         | ifElse
+                        | if
                         | waitUntil
                         | repeatUntil
                         | stop
