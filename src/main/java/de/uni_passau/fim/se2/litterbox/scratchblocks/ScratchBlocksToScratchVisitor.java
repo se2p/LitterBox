@@ -94,12 +94,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ScriptEntity visitScript(ScratchBlocksParser.ScriptContext ctx) {
         if (ctx.expressionStmt() != null) {
             return new Script(new Never(), new StmtList(visitExpressionStmt(ctx.expressionStmt())));
+        } else if (ctx.nonEmptyStmtList() != null) {
+            return new Script(new Never(), visitNonEmptyStmtList(ctx.nonEmptyStmtList()));
         } else if (ctx.stmtList() != null) {
-            if (ctx.event() != null) {
-                return new Script((Event) visitEvent(ctx.event()), visitStmtList(ctx.stmtList()));
-            } else {
-                return new Script(new Never(), visitStmtList(ctx.stmtList()));
-            }
+            Event event = (Event) visitEvent(ctx.event());
+            return new Script(event, visitStmtList(ctx.stmtList()));
         } else if (ctx.event() != null) {
             return new Script((Event) visitEvent(ctx.event()), new StmtList());
         } else if (ctx.customBlock() != null) {
@@ -113,7 +112,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ProcedureDefinition visitCustomBlock(ScratchBlocksParser.CustomBlockContext ctx) {
         final LocalIdentifier name = buildCustomBlockDefName(ctx);
         final ParameterDefinitionList parameters = buildParameters(ctx);
-        final StmtList stmtList = makeInnerStmtList(ctx.stmtList());
+        final StmtList stmtList = visitStmtList(ctx.stmtList());
         final ProcedureMetadata metadata = new ProcedureMetadata(new NoBlockMetadata(), new NoBlockMetadata());
 
         return new ProcedureDefinition(name, parameters, stmtList, metadata);
@@ -170,6 +169,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ParameterDefinition visitBoolParam(ScratchBlocksParser.BoolParamContext ctx) {
         final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
         return new ParameterDefinition(name, new BooleanType(), new NoBlockMetadata());
+    }
+
+    @Override
+    public StmtList visitNonEmptyStmtList(ScratchBlocksParser.NonEmptyStmtListContext ctx) {
+        final List<Stmt> stmts = ctx.stmt().stream().map(this::visitStmt).toList();
+        return new StmtList(stmts);
     }
 
     @Override
@@ -646,19 +651,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public RepeatTimesStmt visitRepeat(ScratchBlocksParser.RepeatContext ctx) {
         return new RepeatTimesStmt(
-                makeNumExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+                makeNumExpr(ctx.exprOrLiteral()), visitStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
     @Override
     public RepeatForeverStmt visitForever(ScratchBlocksParser.ForeverContext ctx) {
-        return new RepeatForeverStmt(makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata());
+        return new RepeatForeverStmt(visitStmtList(ctx.stmtList()), new NoBlockMetadata());
     }
 
     @Override
     public IfThenStmt visitIf(ScratchBlocksParser.IfContext ctx) {
         return new IfThenStmt(
-                makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+                makeBoolExpr(ctx.exprOrLiteral()), visitStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
@@ -666,8 +671,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public IfElseStmt visitIfElse(ScratchBlocksParser.IfElseContext ctx) {
         return new IfElseStmt(
                 makeBoolExpr(ctx.exprOrLiteral()),
-                makeInnerStmtList(ctx.then),
-                makeInnerStmtList(ctx.else_),
+                visitStmtList(ctx.then),
+                visitStmtList(ctx.else_),
                 new NoBlockMetadata()
         );
     }
@@ -680,7 +685,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public UntilStmt visitRepeatUntil(ScratchBlocksParser.RepeatUntilContext ctx) {
         return new UntilStmt(
-                makeBoolExpr(ctx.exprOrLiteral()), makeInnerStmtList(ctx.stmtList()), new NoBlockMetadata()
+                makeBoolExpr(ctx.exprOrLiteral()), visitStmtList(ctx.stmtList()), new NoBlockMetadata()
         );
     }
 
@@ -1310,15 +1315,4 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     // endregion: expressions
-
-    private StmtList makeInnerStmtList(ScratchBlocksParser.StmtListContext ctx) {
-        StmtList stmt;
-
-        if (ctx != null) {
-            stmt = visitStmtList(ctx);
-        } else {
-            stmt = new StmtList();
-        }
-        return stmt;
-    }
 }

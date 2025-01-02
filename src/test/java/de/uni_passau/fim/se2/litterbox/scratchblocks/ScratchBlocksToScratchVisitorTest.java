@@ -659,6 +659,25 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testMultipleCBlocksInScriptWithStatements() {
+        final String scratchBlocks = """
+                if <> then
+                stop all sounds
+                end
+                if <> then
+                end
+                """.stripIndent();
+        final ScriptEntity script = getScript(scratchBlocks);
+
+        assertEquals(2, script.getStmtList().getStmts().size());
+        assertAll(
+                script.getStmtList().getStmts().stream()
+                        .map(stmt -> () -> assertInstanceOf(IfThenStmt.class, stmt))
+        );
+    }
+
+
+    @Test
     void testForeverInsideIfElse() {
         final String scratchBlocks = """
                 if <  > then
