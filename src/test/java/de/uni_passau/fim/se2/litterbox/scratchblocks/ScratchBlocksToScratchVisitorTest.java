@@ -50,6 +50,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicE
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
@@ -68,6 +70,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -625,6 +628,39 @@ class ScratchBlocksToScratchVisitorTest {
                 ),
                 callStmt.getExpressions().getExpressions()
         );
+    }
+
+    @Test
+    void testMultipleCBlocksInScript() {
+        final String scratchBlocks = """
+                if <  > then
+                end
+                if <  > then
+                end
+                """.stripIndent();
+        final ScriptEntity script = getScript(scratchBlocks);
+
+        assertEquals(2, script.getStmtList().getStmts().size());
+        assertAll(
+                script.getStmtList().getStmts().stream()
+                        .map(stmt -> () -> assertInstanceOf(IfThenStmt.class, stmt))
+        );
+    }
+
+    @Test
+    void testForeverInsideIfElse() {
+        final String scratchBlocks = """
+                if <  > then
+                forever
+                end
+                else
+                stop [all v]
+                end
+                """.stripIndent();
+        final IfElseStmt ifElse = assertStatementType(scratchBlocks, IfElseStmt.class);
+
+        assertInstanceOf(RepeatForeverStmt.class, ifElse.getThenStmts().getStatement(0));
+        assertInstanceOf(StopAll.class, ifElse.getElseStmts().getStatement(0));
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
