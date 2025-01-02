@@ -22,6 +22,18 @@ grammar ScratchBlocks;
  * Parser Rules
  */
 
+/*
+ * IMPORTANT: Do not use string literals that end with (,, ), [, ], <, or > as part of the parser rules.
+ *
+ * Such strings are implicitly converted into lexemes for the lexer. Since Antlr tries to find the longest possible
+ * matches for these, then the lexer rules for LPAREN, LBRACK, … break in case a longer string can be matched.
+ *
+ * This is for example problematic for custom block call statements since they can contain arbitrary labels. E.g. in
+ * case an implicit ` of [` lexer rule exists, the custom block call `Left (123) of [abc]` is no longer parsed as a
+ * call of the block `Left %s of %s` with one number and one string literal as argument, but instead as the block
+ * `Left %s of [abc]` with only one number argument.
+ */
+
 // Define the entry point for the parser
 program                 : actorList EOF
                         | scriptList EOF
@@ -84,13 +96,13 @@ event                   : greenFlag (COMMENT)?
                         ;
 
 greenFlag               : 'when green flag clicked';
-keyEvent                : 'when ['key' v] key pressed';
+keyEvent                : 'when' WS '[' key' v] key pressed';
 spriteClicked           : 'when this sprite clicked';
 stageClicked            : 'when stage clicked';
 startAsClone            : 'when I start as a clone';
-receptionMessage        : 'when I receive ['stringArgument' v]';
-biggerEvent             : 'when [' eventChoice ' v] > 'exprOrLiteral;
-backDropSwitchEvent     : 'when backdrop switches to ['stringArgument' v]';
+receptionMessage        : 'when I receive' WS '['stringArgument' v]';
+biggerEvent             : 'when' WS '[' eventChoice ' v] > 'exprOrLiteral;
+backDropSwitchEvent     : 'when backdrop switches to' WS '[' stringArgument' v]';
 
 motionStmt              : moveSteps
                         | turnRight
@@ -112,7 +124,7 @@ motionStmt              : moveSteps
 moveSteps               : 'move 'exprOrLiteral' steps';
 turnRight               : 'turn right 'exprOrLiteral' degrees';
 turnLeft                : 'turn left 'exprOrLiteral' degrees';
-goToPos                 : 'go to 'position;
+goToPos                 : 'go to' WS position;
 goToPosXY               : 'go to x: 'x=exprOrLiteral' y: 'y=exprOrLiteral;
 glideToPos              : 'glide 'time=exprOrLiteral' secs to 'position;
 glideToPosXY            : 'glide 'time=exprOrLiteral' secs to x: 'x=exprOrLiteral' y: 'y=exprOrLiteral;
@@ -123,7 +135,7 @@ setX                    : 'set x to 'exprOrLiteral;
 changeY                 : 'change y by 'exprOrLiteral;
 setY                    : 'set y to 'exprOrLiteral;
 onEdge                  : 'if on edge, bounce';
-setRotation             : 'set rotation style ['rotation' v]';
+setRotation             : 'set rotation style' WS '[' rotation' v]';
 
 looksStmt               : saySeconds
                         | say
@@ -156,14 +168,14 @@ nextBackdrop            : 'next backdrop';
 changeSize              : 'change size by 'exprOrLiteral;
 setSize                 : 'set size to 'exprOrLiteral' %';
 changeColorEffect       : 'change [color v] effect by 'exprOrLiteral
-                        | 'change ['colorEffect' v] effect by 'exprOrLiteral;
+                        | 'change' WS '['colorEffect' v] effect by 'exprOrLiteral;
 setColorEffect          : 'set [color v] effect to 'exprOrLiteral
-                        | 'set ['colorEffect' v] effect to 'exprOrLiteral;
+                        | 'set' WS '['colorEffect' v] effect to 'exprOrLiteral;
 clearColorEffect        : 'clear graphic effects';
 show                    : 'show';
 hide                    : 'hide';
-goToLayer               : 'go to ['layerChoice' v] layer';
-goForwardBackwardLayer  : 'go ['forwardBackwardChoice' v] 'exprOrLiteral' layers';
+goToLayer               : 'go to' WS '['layerChoice' v] layer';
+goForwardBackwardLayer  : 'go' WS '['forwardBackwardChoice' v] 'exprOrLiteral' layers';
 switchBackdropWait      : 'switch backdrop to 'backdropSelect' and wait';
 
 colorEffect             : 'fisheye'
@@ -187,8 +199,8 @@ soundStmt               : playSoundDone
 playSoundDone           : 'play sound 'soundChoice' until done';
 playSound               : 'start sound 'soundChoice;
 stopSound               : 'stop all sounds';
-changeSoundEffect       : 'change ['soundEffect' v] effect by 'exprOrLiteral;
-setSoundEffect          : 'set ['soundEffect' v] effect to 'exprOrLiteral;
+changeSoundEffect       : 'change' WS '['soundEffect' v] effect by 'exprOrLiteral;
+setSoundEffect          : 'set' WS '['soundEffect' v] effect to 'exprOrLiteral;
 clearSoundEffect        : 'clear sound effects';
 changeVolume            : 'change volume by 'exprOrLiteral;
 setVolume               : 'set volume to 'exprOrLiteral' %';
@@ -212,7 +224,7 @@ if                      : 'if 'exprOrLiteral' then' NEWLINE stmtList 'end';
 ifElse                  : 'if 'exprOrLiteral' then' NEWLINE then=stmtList 'else' NEWLINE else=stmtList 'end';
 waitUntil               : 'wait until 'exprOrLiteral;
 repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE stmtList 'end';
-stop                    : 'stop ['stopChoice' v]';
+stop                    : 'stop' WS '['stopChoice' v]';
 createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
 
@@ -229,7 +241,7 @@ sensingStmt             : ask
                         ;
 
 ask                     : 'ask 'exprOrLiteral' and wait';
-setDragMode             : 'set drag mode ['dragmode' v]';
+setDragMode             : 'set drag mode' WS '['dragmode' v]';
 resetTimer              : 'reset timer';
 
 expressionStmt          : expression (COMMENT)?;
@@ -247,17 +259,17 @@ variableStmt            : setVar
                         | hideList
                         ;
 
-setVar                  : 'set ['stringArgument' v] to 'exprOrLiteral;
-changeVar               : 'change ['stringArgument' v] by 'exprOrLiteral;
-showVar                 : 'show variable ['stringArgument' v]';
-hideVar                 : 'hide variable ['stringArgument' v]';
-addToList               : 'add 'exprOrLiteral' to ['stringArgument' v]';
-deleteFromList          : 'delete 'exprOrLiteral' of ['stringArgument' v]';
-deleteAllOfList         : 'delete all of ['stringArgument' v]';
-insertToList            : 'insert 'insertion=exprOrLiteral' at 'location=exprOrLiteral' of ['stringArgument' v]';
-replaceItemInList       : 'replace item 'oldItem=exprOrLiteral' of ['stringArgument' v] with 'newItem= exprOrLiteral;
-showList                : 'show list ['stringArgument' v]';
-hideList                : 'hide list ['stringArgument' v]';
+setVar                  : 'set' WS '['stringArgument' v] to 'exprOrLiteral;
+changeVar               : 'change' WS '['stringArgument' v] by 'exprOrLiteral;
+showVar                 : 'show variable' WS '['stringArgument' v]';
+hideVar                 : 'hide variable' WS '['stringArgument' v]';
+addToList               : 'add' WS exprOrLiteral WS 'to' WS '['stringArgument' v]';
+deleteFromList          : 'delete 'exprOrLiteral WS 'of' WS '['stringArgument' v]';
+deleteAllOfList         : 'delete all of' WS '['stringArgument' v]';
+insertToList            : 'insert 'insertion=exprOrLiteral' at 'location=exprOrLiteral WS 'of' WS '['stringArgument' v]';
+replaceItemInList       : 'replace item 'oldItem=exprOrLiteral WS 'of' WS '['stringArgument' v] with 'newItem= exprOrLiteral;
+showList                : 'show list' WS '['stringArgument' v]';
+hideList                : 'hide list' WS '['stringArgument' v]';
 
 position                : '('fixedPosition' v)'
                         | exprOrLiteral
@@ -444,8 +456,8 @@ numExpr                 : xPosition
 xPosition               : 'x position';
 yPosition               : 'y position';
 direction               : 'direction';
-numCostume              : 'costume ['nameNum' v]';
-numBackdrop             : 'backdrop ['nameNum' v]';
+numCostume              : 'costume' WS '['nameNum' v]';
+numBackdrop             : 'backdrop' WS '['nameNum' v]';
 size                    : 'size';
 volume                  : 'volume';
 distanceTo              : 'distance to 'distanceChoice;
@@ -455,23 +467,23 @@ mouseY                  : 'mouse y';
 loudness                : 'loudness';
 timer                   : 'timer';
 actorAttribute          : '['attributeChoice' v] of 'element;
-currentTime             : 'current ['currentChoice' v]';
+currentTime             : 'current' WS '['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
 addition                : firstExpr=exprOrLiteral WS? '+' WS? secondExpr=exprOrLiteral;
 subtraction             : firstExpr=exprOrLiteral WS? '-' WS? secondExpr=exprOrLiteral;
 multiplication          : firstExpr=exprOrLiteral WS? '*' WS? secondExpr=exprOrLiteral;
 division                : firstExpr=exprOrLiteral WS? '/' WS? secondExpr=exprOrLiteral;
-pickRandom              : 'pick random 'firstExpr=exprOrLiteral' to 'secondExpr=exprOrLiteral;
+pickRandom              : 'pick random 'firstExpr=exprOrLiteral WS 'to' WS secondExpr=exprOrLiteral;
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
-getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral' of 'secondExpr=exprOrLiteral;
+getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral WS 'of' WS secondExpr=exprOrLiteral;
 lengthOf                : 'length of 'exprOrLiteral;
 modulo                  : firstExpr=exprOrLiteral WS? 'mod' WS? secondExpr=exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
 mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
-itemAtIndex             : 'item 'exprOrLiteral' of ['stringArgument' v]';
-indexOfItem             : 'item # of 'exprOrLiteral' in ['stringArgument' v]';
-lengthOfList            : 'length of ['stringArgument' v]';
+itemAtIndex             : 'item 'exprOrLiteral WS 'of' WS '['stringArgument' v]';
+indexOfItem             : 'item # of 'exprOrLiteral WS 'in' WS '[' stringArgument' v]';
+lengthOfList            : 'length of' WS '[' stringArgument' v]';
 
 element                 : '('stringArgument' v)'
                         | exprOrLiteral;
@@ -566,6 +578,7 @@ HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
 ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>';
+CHOICE_END              : ' v]';
 LPAREN                  : '(';
 RPAREN                  : ')';
 LBRACK                  : '[';

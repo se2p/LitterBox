@@ -53,13 +53,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -504,9 +506,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(StringLiteral.class, arguments.get(1));
     }
 
-    // todo: implement in parser
     @Test
-    @Disabled("not yet implemented: callStmt with text between/after parameters")
     void testScriptWithCustomBlockCallAndInterleavedName() {
         final String scriptCode = """
                 when green flag clicked
@@ -711,6 +711,28 @@ class ScratchBlocksToScratchVisitorTest {
         final ListContains containsExpr = assertHasExprStmt(stmtList, ListContains.class);
 
         assertEquals(new StringLiteral("thing"), containsExpr.getElement());
+    }
+
+    @Test
+    void testGoToLayerStmt() {
+        final String scratchBlocks = "go to [front v] layer";
+        final GoToLayer goToLayer = assertStatementType(scratchBlocks, GoToLayer.class);
+
+        assertEquals(new LayerChoice("front"), goToLayer.getLayerChoice());
+    }
+
+    @Test
+    void testGoToPositionStmt() {
+        final String scratchBlocks = "go to (random position v)";
+        final GoToPos goToPos = assertStatementType(scratchBlocks, GoToPos.class);
+
+        assertEquals(new RandomPos(new NoBlockMetadata()), goToPos.getPosition());
+    }
+
+    @Test
+    void testAddToListStmt() {
+        final String scratchBlocks = "add [thing] to [TestList v]";
+        assertStatementType(scratchBlocks, AddTo.class);
     }
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
