@@ -405,8 +405,8 @@ lessThan                : firstExpr=exprOrLiteral ' < ' secondExpr=exprOrLiteral
 and                     : firstExpr=exprOrLiteral WS? 'and' WS? secondExpr=exprOrLiteral;
 or                      : firstExpr=exprOrLiteral WS? 'or' WS? secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
-contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral'?';
-listContains            : '['stringArgument' v] contains 'exprOrLiteral'?';
+contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral WS? '?';
+listContains            : '['stringArgument' v] contains 'exprOrLiteral WS? '?';
 
 numExpr                 : xPosition
                         | yPosition

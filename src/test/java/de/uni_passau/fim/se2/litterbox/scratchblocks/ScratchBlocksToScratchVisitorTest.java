@@ -705,6 +705,14 @@ class ScratchBlocksToScratchVisitorTest {
         assertEquals(new EventAttribute(choice), aboveValue.getAttribute());
     }
 
+    @Test
+    void testListContainsExpr() {
+        final StmtList stmtList = getStmtList("<[Test v] contains [thing] ?>");
+        final ListContains containsExpr = assertHasExprStmt(stmtList, ListContains.class);
+
+        assertEquals(new StringLiteral("thing"), containsExpr.getElement());
+    }
+
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
         final StmtList stmtList = getStmtList(stmt);
         assertInstanceOf(stmtType, stmtList.getStatement(0));
