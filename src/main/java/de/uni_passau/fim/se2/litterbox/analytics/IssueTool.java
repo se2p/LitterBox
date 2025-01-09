@@ -250,11 +250,11 @@ public class IssueTool {
 
         if (LOAD_GENERAL) {
             registerQuestionFinder(new BlockControllingLoop(), questionFinders);
-//            registerQuestionFinder(new DefinitionOfProcedure(), questionFinders);
+            registerQuestionFinder(new DefinitionOfProcedure(), questionFinders);
             registerQuestionFinder(new ElementInLoopBody(), questionFinders);
             registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
             registerQuestionFinder(new IfBlockCondition(), questionFinders);
-//            registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
+            registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
             registerQuestionFinder(new IfThenStatementExecution(), questionFinders);
             registerQuestionFinder(new PurposeOfBroadcast(), questionFinders);
             registerQuestionFinder(new PurposeOfForeverLoop(), questionFinders);
@@ -270,10 +270,10 @@ public class IssueTool {
             registerQuestionFinder(new ScriptsForActor(), questionFinders);
             registerQuestionFinder(new ScriptsInProgram(), questionFinders);
             registerQuestionFinder(new ScriptsTriggeredByEvent(), questionFinders);
-//            registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
+           registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
             registerQuestionFinder(new ScriptExecutionOrderDifferentActors(), questionFinders);
             registerQuestionFinder(new ScriptExecutionOrderSameActor(), questionFinders);
-//            registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
+           registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
             registerQuestionFinder(new SetVariable(), questionFinders);
             registerQuestionFinder(new StatementsInIfStatement(), questionFinders);
             registerQuestionFinder(new StatementTriggersEvent(), questionFinders);
