@@ -19,7 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
@@ -58,6 +61,10 @@ public class ScratchBlocksParser {
      * @return The parsed script or custom procedure definition.
      */
     public ScriptEntity parseScript(final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
+        if (scratchBlocksCode.isBlank()) {
+            return new Script(new Never(), new StmtList());
+        }
+
         final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
                 cancelMarker, scratchBlocksCode
         );
