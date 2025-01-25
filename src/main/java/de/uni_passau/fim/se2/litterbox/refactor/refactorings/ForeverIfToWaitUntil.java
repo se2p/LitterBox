@@ -80,8 +80,12 @@ public class ForeverIfToWaitUntil extends OnlyCodeCloneVisitor implements Refact
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ForeverIfToWaitUntil that = (ForeverIfToWaitUntil) o;
         return Objects.equals(loop, that.loop) && Objects.equals(replacementLoop, that.replacementLoop);
     }

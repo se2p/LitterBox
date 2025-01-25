@@ -52,7 +52,10 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
         for (Stmt stmt : this.loop.getStmtList().getStmts()) {
             IfThenStmt ifThenStmt = (IfThenStmt) stmt;
             BoolExpr expr = ifThenStmt.getBoolExpr();
-            Event keyPressedEvent = new KeyPressed(apply(((IsKeyPressed) expr).getKey()), apply(script.getEvent().getMetadata()));
+            Event keyPressedEvent = new KeyPressed(
+                    apply(((IsKeyPressed) expr).getKey()),
+                    apply(script.getEvent().getMetadata())
+            );
             Script eventScript = new Script(keyPressedEvent, apply(ifThenStmt.getThenStmts()));
             eventScripts.add(eventScript);
         }
@@ -89,8 +92,12 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ExtractEventsFromForever that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ExtractEventsFromForever that)) {
+            return false;
+        }
         return Objects.equals(loop, that.loop)
                 && Objects.equals(scriptList, that.scriptList)
                 && Objects.equals(script, that.script)

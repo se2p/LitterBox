@@ -103,8 +103,12 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MergeEventsIntoForever that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MergeEventsIntoForever that)) {
+            return false;
+        }
         boolean equals = true;
 
         if (this.scriptList.size() != that.scriptList.size()) {

@@ -78,8 +78,12 @@ public class DisjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DisjunctionToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DisjunctionToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifStatement, that.ifStatement) && Objects.equals(replacementIf, that.replacementIf);
     }
 

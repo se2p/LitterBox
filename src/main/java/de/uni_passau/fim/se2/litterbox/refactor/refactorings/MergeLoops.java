@@ -56,7 +56,9 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
         mergedStatements.addAll(apply(loop1.getStmtList()).getStmts());
         mergedStatements.addAll(apply(loop2.getStmtList()).getStmts());
 
-        replacementScript = new Script(apply(script1.getEvent()), new StmtList(getLoop(loop1, new StmtList(mergedStatements))));
+        replacementScript = new Script(
+                apply(script1.getEvent()), new StmtList(getLoop(loop1, new StmtList(mergedStatements)))
+        );
     }
 
     public Script getMergedScript() {

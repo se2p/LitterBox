@@ -65,7 +65,7 @@ public class DeleteControlBlock extends CloneVisitor implements Refactoring {
         if (!(other instanceof DeleteControlBlock)) {
             return false;
         }
-        return controlStmt.equals(((DeleteControlBlock) other).controlStmt) ;
+        return controlStmt.equals(((DeleteControlBlock) other).controlStmt);
     }
 
     @Override

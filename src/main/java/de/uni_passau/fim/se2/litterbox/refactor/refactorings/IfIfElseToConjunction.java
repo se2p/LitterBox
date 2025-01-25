@@ -103,8 +103,12 @@ public class IfIfElseToConjunction extends OnlyCodeCloneVisitor implements Refac
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IfIfElseToConjunction that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof IfIfElseToConjunction that)) {
+            return false;
+        }
         return Objects.equals(if1, that.if1)
                 && Objects.equals(if2, that.if2)
                 && Objects.equals(replacementIf1, that.replacementIf1)

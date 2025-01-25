@@ -59,8 +59,12 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
         this.ifStatement2 = Preconditions.checkNotNull(ifStatement2);
 
         And conjunction = (And) ifStatement1.getBoolExpr();
-        BoolExpr commonExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand1() : conjunction.getOperand2();
-        BoolExpr distinctExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand2() : conjunction.getOperand1();
+        BoolExpr commonExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr())
+                ? conjunction.getOperand1()
+                : conjunction.getOperand2();
+        BoolExpr distinctExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr())
+                ? conjunction.getOperand2()
+                : conjunction.getOperand1();
 
         IfElseStmt innerIf = new IfElseStmt(apply(distinctExpression),
                 apply(ifStatement1.getThenStmts()),
@@ -73,7 +77,9 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(ifStatement1, Arrays.asList(ifStatement2), Arrays.asList(replacementIf)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(ifStatement1, Arrays.asList(ifStatement2), Arrays.asList(replacementIf))
+        );
     }
 
     @Override
@@ -101,8 +107,12 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConjunctionToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConjunctionToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifStatement1, that.ifStatement1)
                 && Objects.equals(ifStatement2, that.ifStatement2)
                 && Objects.equals(replacementIf, that.replacementIf);

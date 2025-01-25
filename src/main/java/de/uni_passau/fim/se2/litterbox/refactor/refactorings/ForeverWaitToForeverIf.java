@@ -48,7 +48,11 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
         List<Stmt> statements = apply(loop.getStmtList()).getStmts();
         statements.remove(0);
 
-        IfThenStmt ifThenStmt = new IfThenStmt(apply(waitUntil.getUntil()), new StmtList(statements), apply(waitUntil.getMetadata()));
+        IfThenStmt ifThenStmt = new IfThenStmt(
+                apply(waitUntil.getUntil()),
+                new StmtList(statements),
+                apply(waitUntil.getMetadata())
+        );
         replacementLoop = new RepeatForeverStmt(new StmtList(Arrays.asList(ifThenStmt)), apply(loop.getMetadata()));
     }
 
@@ -79,8 +83,12 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ForeverWaitToForeverIf that = (ForeverWaitToForeverIf) o;
         return Objects.equals(loop, that.loop) && Objects.equals(replacementLoop, that.replacementLoop);
     }

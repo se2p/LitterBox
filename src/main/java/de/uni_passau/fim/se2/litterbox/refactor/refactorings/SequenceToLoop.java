@@ -58,13 +58,17 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
         }
 
         StmtList loopBody = new StmtList(repeatedStatements);
-        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata) ? apply(targetStatement.getMetadata()) : NonDataBlockMetadata.emptyNonBlockMetadata();
+        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata)
+                ? apply(targetStatement.getMetadata())
+                : NonDataBlockMetadata.emptyNonBlockMetadata();
         replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, metadata);
     }
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(targetStatement, allRepeatedStatements, Arrays.asList(replacementLoop)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(targetStatement, allRepeatedStatements, Arrays.asList(replacementLoop))
+        );
     }
 
     @Override

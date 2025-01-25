@@ -62,7 +62,9 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf))
+        );
     }
 
     @Override
@@ -90,8 +92,12 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IfIfNotToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof IfIfNotToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifThen1, that.ifThen1)
                 && Objects.equals(ifThen2, that.ifThen2)
                 && Objects.equals(replacementIf, that.replacementIf);

@@ -50,7 +50,11 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
 
         List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).toList();
 
-        UntilStmt replacementLoop = new UntilStmt(apply(ifThenStmt.getBoolExpr()), new StmtList(applyList(remainingStmts)), apply(foreverLoop.getMetadata()));
+        UntilStmt replacementLoop = new UntilStmt(
+                apply(ifThenStmt.getBoolExpr()),
+                new StmtList(applyList(remainingStmts)),
+                apply(foreverLoop.getMetadata())
+        );
         replacement.add(replacementLoop);
         if (!(stopStmt instanceof StopThisScript)) {
             replacement.add(apply(stopStmt));
@@ -84,10 +88,16 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ExtractLoopCondition that = (ExtractLoopCondition) o;
-        return Objects.equals(foreverLoop, that.foreverLoop) && Objects.equals(ifThenStmt, that.ifThenStmt) && Objects.equals(replacement, that.replacement);
+        return Objects.equals(foreverLoop, that.foreverLoop)
+                && Objects.equals(ifThenStmt, that.ifThenStmt)
+                && Objects.equals(replacement, that.replacement);
     }
 
     @Override

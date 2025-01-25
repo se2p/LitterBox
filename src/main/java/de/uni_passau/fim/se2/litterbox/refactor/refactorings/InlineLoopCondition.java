@@ -52,13 +52,19 @@ public class InlineLoopCondition extends OnlyCodeCloneVisitor implements Refacto
         this.untilLoop = Preconditions.checkNotNull(untilLoop);
         if (terminationStmt == null) {
             // TODO: Find a way to do this without all the metadata handling
-            BlockMetadata blockMetadata = new NonDataBlockMetadata(null, CloneVisitor.generateUID(), false, new NoMutationMetadata());
+            BlockMetadata blockMetadata = new NonDataBlockMetadata(
+                    null, CloneVisitor.generateUID(), false, new NoMutationMetadata()
+            );
             this.terminationStmt = new StopThisScript(blockMetadata);
         } else {
             this.terminationStmt = apply(terminationStmt);
         }
 
-        IfThenStmt ifThenStmt = new IfThenStmt(apply(untilLoop.getBoolExpr()), new StmtList(this.terminationStmt), apply(untilLoop.getMetadata()));
+        IfThenStmt ifThenStmt = new IfThenStmt(
+                apply(untilLoop.getBoolExpr()),
+                new StmtList(this.terminationStmt),
+                apply(untilLoop.getMetadata())
+        );
         List<Stmt> loopBody = apply(untilLoop.getStmtList()).getStmts();
         loopBody.add(ifThenStmt);
 
@@ -92,10 +98,16 @@ public class InlineLoopCondition extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         InlineLoopCondition that = (InlineLoopCondition) o;
-        return Objects.equals(untilLoop, that.untilLoop) && Objects.equals(terminationStmt, that.terminationStmt) && Objects.equals(replacementLoop, that.replacementLoop);
+        return Objects.equals(untilLoop, that.untilLoop)
+                && Objects.equals(terminationStmt, that.terminationStmt)
+                && Objects.equals(replacementLoop, that.replacementLoop);
     }
 
     @Override

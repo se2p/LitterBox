@@ -72,7 +72,9 @@ public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
         if (mergedElseStmt.isEmpty()) {
             replacement = new IfThenStmt(apply(if1.getBoolExpr()), mergedThenStmts, apply(if1.getMetadata()));
         } else {
-            replacement = new IfElseStmt(apply(if1.getBoolExpr()), mergedThenStmts, mergedElseStmts, apply(if1.getMetadata()));
+            replacement = new IfElseStmt(
+                    apply(if1.getBoolExpr()), mergedThenStmts, mergedElseStmts, apply(if1.getMetadata())
+            );
         }
     }
 

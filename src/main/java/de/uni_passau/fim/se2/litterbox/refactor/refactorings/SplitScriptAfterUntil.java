@@ -117,10 +117,17 @@ public class SplitScriptAfterUntil extends OnlyCodeCloneVisitor implements Refac
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SplitScriptAfterUntil that = (SplitScriptAfterUntil) o;
-        return Objects.equals(script, that.script) && Objects.equals(untilStmt, that.untilStmt) && Objects.equals(replacementScript1, that.replacementScript1) && Objects.equals(replacementScript2, that.replacementScript2);
+        return Objects.equals(script, that.script)
+                && Objects.equals(untilStmt, that.untilStmt)
+                && Objects.equals(replacementScript1, that.replacementScript1)
+                && Objects.equals(replacementScript2, that.replacementScript2);
     }
 
     @Override

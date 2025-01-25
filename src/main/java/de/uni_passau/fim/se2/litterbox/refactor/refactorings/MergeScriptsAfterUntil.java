@@ -97,10 +97,17 @@ public class MergeScriptsAfterUntil extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MergeScriptsAfterUntil that = (MergeScriptsAfterUntil) o;
-        return Objects.equals(script1, that.script1) && Objects.equals(script2, that.script2) && Objects.equals(untilStmt, that.untilStmt) && Objects.equals(replacementScript, that.replacementScript);
+        return Objects.equals(script1, that.script1)
+                && Objects.equals(script2, that.script2)
+                && Objects.equals(untilStmt, that.untilStmt)
+                && Objects.equals(replacementScript, that.replacementScript);
     }
 
     @Override
