@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -62,9 +63,18 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced forever loop with wait:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
-                + "with forever loop with if:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced forever loop with wait:
+                %s
+                with forever loop with if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                ScratchBlocksVisitor.of(replacementLoop)
+        );
     }
 
     @Override

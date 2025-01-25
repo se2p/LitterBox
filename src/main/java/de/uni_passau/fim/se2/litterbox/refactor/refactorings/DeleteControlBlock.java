@@ -53,7 +53,7 @@ public class DeleteControlBlock extends CloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
+    public String getDescription() {
         return NAME + "(" + controlStmt.getUniqueName() + ")";
     }
 

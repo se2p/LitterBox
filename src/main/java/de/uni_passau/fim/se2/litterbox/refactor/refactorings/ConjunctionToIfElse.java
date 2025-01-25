@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -81,10 +82,21 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + ifStatement1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + ifStatement2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifStatement1),
+                ScratchBlocksVisitor.of(ifStatement2),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override

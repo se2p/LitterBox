@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -95,10 +96,21 @@ public class SplitIf extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Split if:" + System.lineSeparator() + ifThenStmt.getScratchBlocks() + System.lineSeparator()
-                + "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Split if:
+                %s
+                Replacement if 1:
+                %s
+                Replacement if 2:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifThenStmt),
+                ScratchBlocksVisitor.of(replacementIf1),
+                ScratchBlocksVisitor.of(replacementIf2)
+        );
     }
 
     @Override

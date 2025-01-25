@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -75,9 +76,18 @@ public class InlineLoopCondition extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced until loop:" + System.lineSeparator() + untilLoop.getScratchBlocks() + System.lineSeparator()
-                + "with forever loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced until loop:
+                %s
+                with forever loop:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(untilLoop),
+                ScratchBlocksVisitor.of(replacementLoop)
+        );
     }
 
     @Override

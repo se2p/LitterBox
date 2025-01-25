@@ -196,6 +196,12 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         this.requireScript = requireScript;
     }
 
+    public static String of(final ASTNode node) {
+        final ScratchBlocksVisitor v = new ScratchBlocksVisitor(false);
+        node.accept(v);
+        return v.getScratchBlocks();
+    }
+
     public boolean isIgnoredBlock() {
         return !inScript && requireScript;
     }

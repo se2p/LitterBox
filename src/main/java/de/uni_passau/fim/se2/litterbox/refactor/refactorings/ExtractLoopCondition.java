@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -67,9 +68,18 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced loop:" + System.lineSeparator() + foreverLoop.getScratchBlocks() + System.lineSeparator()
-                + "with until loop:" + System.lineSeparator() + replacement.get(0).getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced loop:
+                %s
+                with until loop:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(foreverLoop),
+                ScratchBlocksVisitor.of(replacement.get(0))
+        );
     }
 
     @Override

@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -86,11 +87,21 @@ public class MergeDoubleIf extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        String if1ScratchBlocks = if1.getScratchBlocks();
-        String if2ScratchBlocks = if2.getScratchBlocks();
-        String replacementScratchBlocks = replacement.getScratchBlocks();
-        return NAME + System.lineSeparator() + "Replaced ifs:" + System.lineSeparator() + System.lineSeparator() + if1ScratchBlocks + System.lineSeparator() + if2ScratchBlocks + System.lineSeparator() + "Replacement:" + System.lineSeparator() + System.lineSeparator() + replacementScratchBlocks;
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(if1),
+                ScratchBlocksVisitor.of(if2),
+                ScratchBlocksVisitor.of(replacement)
+        );
     }
 
     @Override

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -77,10 +78,21 @@ public class MergeScriptsAfterUntil extends OnlyCodeCloneVisitor implements Refa
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Merging script1:" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
-                + "with script 2:" + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement script:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Merging script 1:
+                %s
+                with script 2:
+                %s
+                Replacement script:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(script1),
+                ScratchBlocksVisitor.of(script2),
+                ScratchBlocksVisitor.of(replacementScript)
+        );
     }
 
     @Override

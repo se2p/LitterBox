@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -117,9 +118,20 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
-                + " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
-                + " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Mergins
+                %s
+                and
+                %s
+                to:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(script1),
+                ScratchBlocksVisitor.of(script2),
+                ScratchBlocksVisitor.of(replacementScript)
+        );
     }
 }

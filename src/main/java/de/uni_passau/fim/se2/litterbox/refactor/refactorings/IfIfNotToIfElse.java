@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -70,10 +71,21 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if1:" + System.lineSeparator() + ifThen1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + ifThen2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifThen1),
+                ScratchBlocksVisitor.of(ifThen2),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override

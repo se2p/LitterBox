@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -102,16 +103,24 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     }
 
     @Override
-    public String toString() {
+    public String getDescription() {
         StringBuilder sb = new StringBuilder();
-        for (Script script : eventScripts) {
+        for (Script sc : eventScripts) {
             sb.append(System.lineSeparator());
-            sb.append(script.getScratchBlocks());
+            sb.append(ScratchBlocksVisitor.of(sc));
             sb.append(" and ");
         }
         sb.delete(sb.length() - 6, sb.length() - 1);
-        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator()
-                + " to:" + System.lineSeparator() + sb +  System.lineSeparator();
-    }
 
+        return String.format("""
+                %s
+                Extracting%s
+                to:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                sb
+        );
+    }
 }

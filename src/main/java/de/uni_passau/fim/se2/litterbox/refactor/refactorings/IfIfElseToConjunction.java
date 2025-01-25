@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -80,11 +81,24 @@ public class IfIfElseToConjunction extends OnlyCodeCloneVisitor implements Refac
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement if 1:
+                %s
+                Replacement if 2:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(if1),
+                ScratchBlocksVisitor.of(if2),
+                ScratchBlocksVisitor.of(replacementIf1),
+                ScratchBlocksVisitor.of(replacementIf2)
+        );
     }
 
     @Override
