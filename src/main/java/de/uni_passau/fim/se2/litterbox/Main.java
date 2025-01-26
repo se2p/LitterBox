@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -38,6 +39,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
+                Main.LLMQuerySubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
                 Main.LeilaSubcommand.class,
@@ -246,6 +248,58 @@ public class Main implements Callable<Integer> {
             }
 
             return analyzer;
+        }
+    }
+
+    @CommandLine.Command(
+            name = "llm",
+            description = "Query an LLM for a given Scratch project."
+    )
+    static class LLMQuerySubcommand extends LitterBoxSubcommand {
+
+        @CommandLine.Option(
+                names = {"-q", "--query"},
+                description = "Query for the LLM."
+        )
+        String query;
+
+        @CommandLine.Option(
+                names = {"-f", "--fix"},
+                description = "Ask LLM to fix bugs or smells."
+        )
+        boolean fix;
+
+        @CommandLine.Option(
+                names = {"-t", "--target"},
+                description = "Target sprite name."
+        )
+        String spriteName;
+
+        @CommandLine.Option(
+                names = {"-d", "--detectors"},
+                description = "All detectors you want to run, separated by commas.",
+                split = ",",
+                defaultValue = "flaws",
+                paramLabel = "<detector>"
+        )
+        List<String> detectors;
+
+        @CommandLine.Option(
+                names = {"-i", "--ignore-loose"},
+                description = "Ignore loose blocks when checking bug patterns."
+        )
+        boolean ignoreLooseBlocks;
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            // requireOutputPath(); TODO: Do we want to write to a file or also stdout? Depends on whether we query or fix programs
+        }
+
+        @Override
+        protected LLMAnalyzer getAnalyzer() {
+            final String detector = String.join(",", detectors);
+            return new LLMAnalyzer(outputPath, deleteProject, query, spriteName, detector, ignoreLooseBlocks, fix);
         }
     }
 
