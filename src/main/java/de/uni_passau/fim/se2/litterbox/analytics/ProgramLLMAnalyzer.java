@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 
 import java.util.logging.Logger;
 
@@ -38,7 +40,9 @@ public class ProgramLLMAnalyzer implements ProgramAnalyzer<String> {
     // TODO: Probably should use two different analyzers rather than a flag
     private boolean fix;
 
-    public ProgramLLMAnalyzer(String query, String targetSprite, String detectors, boolean ignoreLooseBlocks, boolean fix) {
+    public ProgramLLMAnalyzer(
+            String query, String targetSprite, String detectors, boolean ignoreLooseBlocks, boolean fix
+    ) {
         this.query = query;
         this.targetSprite = targetSprite;
         this.detectors = detectors;
@@ -48,7 +52,8 @@ public class ProgramLLMAnalyzer implements ProgramAnalyzer<String> {
 
     @Override
     public String analyze(Program program) {
-        ScratchLLM scratchLLM = new ScratchLLM();
+        // TODO: bubble up options for LlmApi and prompts
+        ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM = new ScratchLLM<>(new OpenAiApi(), new DefaultPrompts());
         log.fine("Target sprite: " + targetSprite);
         String response;
         // TODO: Handle this properly once we know what APIs we actually want to offer

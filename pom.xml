@@ -225,21 +225,21 @@
     </build>
 
     <properties>
-        <!-- Use the latest version whenever possible. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <langchain.version>1.0.0-alpha1</langchain.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
-            <version>1.0.0-alpha1</version>
+            <version>${langchain.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
-            <version>1.0.0-alpha1</version>
+            <version>${langchain.version}</version>
         </dependency>
         <dependency>
             <groupId>info.picocli</groupId>

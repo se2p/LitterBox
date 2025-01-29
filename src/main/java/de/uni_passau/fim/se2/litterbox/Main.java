@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -293,11 +292,14 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            // requireOutputPath(); TODO: Do we want to write to a file or also stdout? Depends on whether we query or fix programs
+            // TODO: Do we want to write to a file or also stdout? Depends on whether we query or fix programs
+            // requireOutputPath();
         }
 
         @Override
         protected LLMAnalyzer getAnalyzer() {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+
             final String detector = String.join(",", detectors);
             return new LLMAnalyzer(outputPath, deleteProject, query, spriteName, detector, ignoreLooseBlocks, fix);
         }
