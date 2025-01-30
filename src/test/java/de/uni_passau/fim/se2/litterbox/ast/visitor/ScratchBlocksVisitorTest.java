@@ -1809,13 +1809,11 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     @Test
     public void testEscapingDefinitionCalls() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/escapingCalls.json");
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8);
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         visitor.begin();
         program.accept(visitor);
         visitor.end();
-        String result = os.toString(StandardCharsets.UTF_8);
+        String result = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define +test" + System.lineSeparator() +
                 System.lineSeparator() +
