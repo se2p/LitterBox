@@ -1805,6 +1805,27 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "([direction v] of (Andie v))" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
+
+    @Test
+    public void testEscapingDefinitionCalls() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/escapingCalls.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString(StandardCharsets.UTF_8);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define +test" + System.lineSeparator() +
+                System.lineSeparator() +
+                "define -test" + System.lineSeparator() +
+                System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "\\-test" + System.lineSeparator() +
+                "\\+test" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
