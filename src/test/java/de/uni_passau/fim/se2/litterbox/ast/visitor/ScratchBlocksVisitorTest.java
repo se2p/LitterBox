@@ -212,7 +212,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "set [my variable v] to ((my variable) mod (other variable))" + System.lineSeparator() +
                 "set [my variable v] to (round (my variable))" + System.lineSeparator() +
                 "set [my variable v] to (pick random (1) to (10))" + System.lineSeparator() +
-                "set [my variable v] to ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "set [my variable v] to ([my variable v] of (Stage v))" + System.lineSeparator() +
                 "set [my variable v] to ((10) + (my variable))" + System.lineSeparator() +
                 "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
                 "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
@@ -254,7 +254,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "change [my variable v] by ((my variable) mod (other variable))" + System.lineSeparator() +
                 "change [my variable v] by (round (my variable))" + System.lineSeparator() +
                 "change [my variable v] by (pick random (1) to (10))" + System.lineSeparator() +
-                "change [my variable v] by ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "change [my variable v] by ([my variable v] of (Stage v))" + System.lineSeparator() +
                 "change [my variable v] by ((10) + (my variable))" + System.lineSeparator() +
                 "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
                 "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
@@ -288,7 +288,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "move (size) steps" + System.lineSeparator() +
                 "move ([] + []) steps" + System.lineSeparator() +
                 "move (join [apple ][banana]) steps" + System.lineSeparator() +
-                "move ([backdrop # v] of (letter (1) of [apple])?) steps" + System.lineSeparator() +
+                "move ([backdrop # v] of (letter (1) of [apple])) steps" + System.lineSeparator() +
                 "move (loudness) steps" + System.lineSeparator() +
                 "move <touching (mouse-pointer v) ?> steps" + System.lineSeparator() +
                 "move <[] > (50)> steps" + System.lineSeparator() +
@@ -538,8 +538,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "switch backdrop to (next backdrop v)" + System.lineSeparator() +
                 "switch backdrop to (previous backdrop v)" + System.lineSeparator() +
                 "switch backdrop to (random backdrop v)" + System.lineSeparator() +
-                "say ([backdrop # v] of (Stage v)?)" + System.lineSeparator() +
-                "say ([backdrop name v] of (Stage v)?)" + System.lineSeparator() +
+                "say ([backdrop # v] of (Stage v))" + System.lineSeparator() +
+                "say ([backdrop name v] of (Stage v))" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
@@ -668,7 +668,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "wait until <touching (mouse y) ?>" + System.lineSeparator() +
                 "wait until <touching (loudness) ?>" + System.lineSeparator() +
                 "wait until <touching (timer) ?>" + System.lineSeparator() +
-                "wait until <touching ([backdrop # v] of (Stage v)?) ?>" + System.lineSeparator() +
+                "wait until <touching ([backdrop # v] of (Stage v)) ?>" + System.lineSeparator() +
                 "wait until <touching (current (year v)) ?>" + System.lineSeparator() +
                 "wait until <touching (days since 2000) ?>" + System.lineSeparator() +
                 "wait until <touching (username) ?>" + System.lineSeparator() +
@@ -720,7 +720,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "ask (mouse x) and wait" + System.lineSeparator() +
                 "ask (loudness) and wait" + System.lineSeparator() +
                 "ask (timer) and wait" + System.lineSeparator() +
-                "ask ([backdrop # v] of (Stage v)?) and wait" + System.lineSeparator() +
+                "ask ([backdrop # v] of (Stage v)) and wait" + System.lineSeparator() +
                 "ask (current (year v)) and wait" + System.lineSeparator() +
                 "ask (days since 2000) and wait" + System.lineSeparator() +
                 "ask (username) and wait" + System.lineSeparator() +
@@ -823,8 +823,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "say (mouse x)" + System.lineSeparator() +
                 "say (mouse y)" + System.lineSeparator() +
                 "say (days since 2000)" + System.lineSeparator() +
-                "say ([volume v] of (Stage v)?)" + System.lineSeparator() +
-                "say ([x position v] of (Prince v)?)" + System.lineSeparator() +
+                "say ([volume v] of (Stage v))" + System.lineSeparator() +
+                "say ([x position v] of (Prince v))" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
@@ -1077,7 +1077,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "create clone of (my variable)" + System.lineSeparator() +
                 "wait until <key (my variable) pressed?>" + System.lineSeparator() +
                 "wait until <touching (my variable) ?>" + System.lineSeparator() +
-                "say ([backdrop # v] of (my variable)?)" + System.lineSeparator() +
+                "say ([backdrop # v] of (my variable))" + System.lineSeparator() +
                 "say (distance to (my variable))" + System.lineSeparator() +
                 "wait until <touching color (my variable) ?>" + System.lineSeparator() +
                 "wait until <color [#ffd824] is touching (my variable) ?>" + System.lineSeparator() +
@@ -1789,6 +1789,21 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "say [Hello!]" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+    @Test
+    public void testAttributeOf() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/attributeOf.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString(StandardCharsets.UTF_8);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "([direction v] of (Andie v))" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
