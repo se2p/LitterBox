@@ -1959,8 +1959,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);
         }
-        if(procedureName.startsWith("+") || procedureName.startsWith("-")){
-            procedureName = "\\"+procedureName;
+        if (procedureName.startsWith("+") || procedureName.startsWith("-")) {
+            procedureName = "\\" + procedureName;
         }
         emitNoSpace(procedureName);
         storeNotesForIssue(node);
