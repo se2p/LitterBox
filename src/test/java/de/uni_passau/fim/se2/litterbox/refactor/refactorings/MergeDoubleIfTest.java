@@ -122,7 +122,8 @@ class MergeDoubleIfTest implements JsonTest {
 
     @Test
     void toStringTest() {
-        assertThat(refactoring.getDescription()).isEqualTo("""
+        String s = refactoring.getDescription().replace(System.lineSeparator(), "\n");
+        assertThat(s).isEqualTo("""
                 merge_double_if
                 Replaced if 1:
                 if <touching (edge v) ?> then
