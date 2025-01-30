@@ -36,4 +36,6 @@ public interface Refactoring {
     <T extends ASTNode> T apply(T node);
 
     String getName();
+
+    String getDescription();
 }

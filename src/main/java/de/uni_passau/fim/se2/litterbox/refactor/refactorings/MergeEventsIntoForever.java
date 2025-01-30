@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -102,8 +103,12 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MergeEventsIntoForever that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MergeEventsIntoForever that)) {
+            return false;
+        }
         boolean equals = true;
 
         if (this.scriptList.size() != that.scriptList.size()) {
@@ -125,16 +130,25 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
     }
 
     @Override
-    public String toString() {
+    public String getDescription() {
         StringBuilder sb = new StringBuilder();
         for (Script script : scriptList) {
             sb.append(System.lineSeparator());
-            sb.append(script.getScratchBlocks());
+            sb.append(ScratchBlocksVisitor.of(script));
             sb.append(" and ");
         }
         sb.delete(sb.length() - 6, sb.length() - 1);
-        return NAME + System.lineSeparator() + "Merging" + sb +  System.lineSeparator()
-                + " to:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+
+        return String.format("""
+                %s
+                Merging %s
+                to:
+                %s
+                """,
+                NAME,
+                sb,
+                ScratchBlocksVisitor.of(replacement)
+        );
     }
 
 }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -69,15 +70,28 @@ public class ConjunctionToIfs extends OnlyCodeCloneVisitor implements Refactorin
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifStatement.getScratchBlocks() + System.lineSeparator()
-                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if:
+                %s
+                Replacement if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifStatement),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConjunctionToIfs that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConjunctionToIfs that)) {
+            return false;
+        }
         return Objects.equals(ifStatement, that.ifStatement) && Objects.equals(replacementIf, that.replacementIf);
     }
 

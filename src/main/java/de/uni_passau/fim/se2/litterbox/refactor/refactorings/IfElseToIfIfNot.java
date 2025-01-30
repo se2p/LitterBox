@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -65,7 +66,9 @@ public class IfElseToIfIfNot extends OnlyCodeCloneVisitor implements Refactoring
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(ifElseStmt, Arrays.asList(replacementIf1, replacementIf2)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(ifElseStmt, Arrays.asList(replacementIf1, replacementIf2))
+        );
     }
 
     @Override
@@ -74,16 +77,31 @@ public class IfElseToIfIfNot extends OnlyCodeCloneVisitor implements Refactoring
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifElseStmt.getScratchBlocks() + System.lineSeparator()
-                + "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if:
+                %s
+                Replacemenet if 1:
+                %s
+                Replacement if 2:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifElseStmt),
+                ScratchBlocksVisitor.of(replacementIf1),
+                ScratchBlocksVisitor.of(replacementIf2)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IfElseToIfIfNot that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof IfElseToIfIfNot that)) {
+            return false;
+        }
         return Objects.equals(ifElseStmt, that.ifElseStmt)
                 && Objects.equals(replacementIf1, that.replacementIf1)
                 && Objects.equals(replacementIf2, that.replacementIf2);

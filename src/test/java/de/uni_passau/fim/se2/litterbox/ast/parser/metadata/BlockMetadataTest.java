@@ -18,66 +18,82 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
-import org.junit.jupiter.api.Assertions;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BlockMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
+class BlockMetadataTest {
+    private static Program prog;
+    private static ActorDefinition sprite;
 
     @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/blockMeta.json");
-        prog = mapper.readTree(f);
+    static void setUp() throws IOException, ParsingException {
+        prog = JsonTest.parseProgram("src/test/fixtures/metadata/blockMeta.json");
+        sprite = prog.getActorDefinitionList().getDefinitions().stream()
+                .filter(actor -> "Sprite1".equals(actor.getIdent().getName()))
+                .findFirst()
+                .orElseThrow();
     }
 
-//    @Test
-//    public void testDataBlock() throws ParsingException {
-//        BlockMetadata blockMetadata = BlockMetadataParser.parse("GKr#[hOQWwm(reaPtK%R",
-//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-//                        "GKr#[hOQWwm(reaPtK%R"));
-//        Assertions.assertTrue(blockMetadata instanceof DataBlockMetadata);
-//        DataBlockMetadata dataBlock = (DataBlockMetadata) blockMetadata;
-//        Assertions.assertEquals(471, dataBlock.getX());
-//        Assertions.assertEquals(383, dataBlock.getY());
-//    }
-//
-//    @Test
-//    public void testNoMetadataTopBlock() throws ParsingException {
-//        BlockMetadata blockMetadata = BlockMetadataParser.parse("X)N~xB@[E,i0S}Vwwtjm",
-//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-//                        "X)N~xB@[E,i0S}Vwwtjm"));
-//        Assertions.assertTrue(blockMetadata instanceof TopNonDataBlockMetadata);
-//        TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) blockMetadata;
-//        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
-//        Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
-//        Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
-//        Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
-//        Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
-//        Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
-//        Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
-//    }
-//
-//    @Test
-//    public void testMetadataBlock() throws ParsingException {
-//        BlockMetadata blockMetadata = BlockMetadataParser.parse("Vr$zTl8mo1W,U?+q6,T{",
-//                prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-//                        "Vr$zTl8mo1W,U?+q6,T{"));
-//        Assertions.assertTrue(blockMetadata instanceof NonDataBlockMetadata);
-//        NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) blockMetadata;
-//        Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
-//        Assertions.assertNull(nonDataBlockMetadata.getCommentId());
-//        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ProcedureMutationMetadata);
-//        Assertions.assertTrue(nonDataBlockMetadata.isShadow());
-//    }
+    @Test
+    void testDataBlock() {
+        final Variable myVariable = NodeFilteringVisitor.getBlock(sprite.getScripts(), Variable.class).orElseThrow();
+        assertInstanceOf(DataBlockMetadata.class, myVariable.getMetadata());
+
+        final DataBlockMetadata dataBlock = (DataBlockMetadata) myVariable.getMetadata();
+        assertEquals(471, dataBlock.getX());
+        assertEquals(383, dataBlock.getY());
+    }
+
+    @Test
+    void testNoMetadataTopBlock() {
+        final ASTNode block = BlockByIdFinder.findBlock(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
+        assertInstanceOf(ProcedureDefinition.class, block);
+
+        final ProcedureDefinition procDef = (ProcedureDefinition) block;
+        assertInstanceOf(TopNonDataBlockMetadata.class, procDef.getMetadata().getDefinition());
+
+        final TopNonDataBlockMetadata metadata = (TopNonDataBlockMetadata) procDef.getMetadata().getDefinition();
+        assertEquals("X)N~xB@[E,i0S}Vwwtjm", metadata.getBlockId());
+        assertNull(metadata.getCommentId());
+        assertEquals(56, metadata.getXPos());
+        assertEquals(184, metadata.getYPos());
+        assertInstanceOf(NoMutationMetadata.class, metadata.getMutation());
+        assertFalse(metadata.isShadow());
+        assertInstanceOf(ProcedureMetadata.class, metadata.getParentNode());
+    }
+
+    @Test
+    void testMetadataBlock() {
+        final ASTNode block = BlockByIdFinder.findBlock(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
+        assertInstanceOf(ProcedureDefinition.class, block);
+
+        final ProcedureDefinition procDef = (ProcedureDefinition) block;
+        final BlockMetadata prototypeMetadata = procDef.getMetadata().getPrototype();
+        assertInstanceOf(NonDataBlockMetadata.class, prototypeMetadata);
+
+        final NonDataBlockMetadata nonDataBlockMetadata = (NonDataBlockMetadata) prototypeMetadata;
+        assertEquals("Vr$zTl8mo1W,U?+q6,T{", nonDataBlockMetadata.getBlockId());
+        assertNull(nonDataBlockMetadata.getCommentId());
+        assertInstanceOf(ProcedureMutationMetadata.class, nonDataBlockMetadata.getMutation());
+        assertTrue(nonDataBlockMetadata.isShadow());
+    }
 }

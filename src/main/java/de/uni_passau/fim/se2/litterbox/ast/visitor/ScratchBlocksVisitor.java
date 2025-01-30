@@ -127,7 +127,8 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements
+        PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -186,6 +187,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     /**
+     * Builds a new visitor that can optionally handle standalone blocks which are not part of a script.
+     *
      * @param requireScript Set this to {@code false} if you want to use this visitor on the level of single blocks,
      *                      i.e., without their context in a script.
      *                      This prevents certain blocks from not being printed as they have to be ignored if they
@@ -194,6 +197,12 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public ScratchBlocksVisitor(boolean requireScript) {
         this();
         this.requireScript = requireScript;
+    }
+
+    public static String of(final ASTNode node) {
+        final ScratchBlocksVisitor v = new ScratchBlocksVisitor(false);
+        node.accept(v);
+        return v.getScratchBlocks();
     }
 
     public boolean isIgnoredBlock() {
@@ -268,7 +277,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         inScript = true;
         emitNoSpace("define ");
         String actorName = currentActor.getIdent().getName();
-        String procedureName = program.getProcedureMapping().getProcedures().get(actorName).get(node.getIdent()).getName();
+        String procedureName = program.getProcedureMapping().getProcedures()
+                .get(actorName).get(node.getIdent()).getName();
 
         List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition param : parameters) {
@@ -1283,8 +1293,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         node.getAttribute().accept(this);
         emitNoSpace(" v] of ");
         node.getElementChoice().accept(this);
-
-        emitNoSpace("?");
         storeNotesForIssue(node);
         emitNoSpace(")");
     }
