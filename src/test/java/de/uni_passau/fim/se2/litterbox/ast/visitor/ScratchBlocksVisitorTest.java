@@ -1824,6 +1824,20 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "\\+test" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
+
+    @Test
+    public void testEscapingParanthesesInStrings() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/paranthesesEscapeCall.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "play sound (Corn Theft \\(1\\) v) until done" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
