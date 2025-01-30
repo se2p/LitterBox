@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -47,7 +48,11 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
         List<Stmt> statements = apply(loop.getStmtList()).getStmts();
         statements.remove(0);
 
-        IfThenStmt ifThenStmt = new IfThenStmt(apply(waitUntil.getUntil()), new StmtList(statements), apply(waitUntil.getMetadata()));
+        IfThenStmt ifThenStmt = new IfThenStmt(
+                apply(waitUntil.getUntil()),
+                new StmtList(statements),
+                apply(waitUntil.getMetadata())
+        );
         replacementLoop = new RepeatForeverStmt(new StmtList(Arrays.asList(ifThenStmt)), apply(loop.getMetadata()));
     }
 
@@ -62,15 +67,28 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced forever loop with wait:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
-                + "with forever loop with if:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced forever loop with wait:
+                %s
+                with forever loop with if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                ScratchBlocksVisitor.of(replacementLoop)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ForeverWaitToForeverIf that = (ForeverWaitToForeverIf) o;
         return Objects.equals(loop, that.loop) && Objects.equals(replacementLoop, that.replacementLoop);
     }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -100,10 +101,21 @@ public class IfElseToDisjunction extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(if1),
+                ScratchBlocksVisitor.of(if2),
+                ScratchBlocksVisitor.of(replacement)
+        );
     }
 
     @Override

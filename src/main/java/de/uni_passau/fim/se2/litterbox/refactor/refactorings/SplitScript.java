@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -117,9 +118,23 @@ public class SplitScript extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Splitting" + System.lineSeparator() + script.getScratchBlocks() + " at " + splitPoint.getScratchBlocks() + System.lineSeparator()
-                + "Script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator()
-                + "Script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Splitting
+                %s
+                at
+                %s
+                Script 1:
+                %s
+                Script 2:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(script),
+                ScratchBlocksVisitor.of(splitPoint),
+                ScratchBlocksVisitor.of(replacementScript1),
+                ScratchBlocksVisitor.of(replacementScript2)
+        );
     }
 }

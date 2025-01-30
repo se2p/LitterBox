@@ -75,6 +75,6 @@ class DeleteControlBlockTest {
         ControlStmt controlStmt = mock(IfThenStmt.class);
         when(controlStmt.getUniqueName()).thenReturn("ControlStatement");
         DeleteControlBlock refactoring = new DeleteControlBlock(controlStmt);
-        assertEquals("delete_control_block(ControlStatement)", refactoring.toString());
+        assertEquals("delete_control_block(ControlStatement)", refactoring.getDescription());
     }
 }

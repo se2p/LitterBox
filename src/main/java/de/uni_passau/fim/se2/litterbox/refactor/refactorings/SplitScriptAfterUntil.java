@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -97,18 +98,36 @@ public class SplitScriptAfterUntil extends OnlyCodeCloneVisitor implements Refac
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Split script:" + System.lineSeparator() + script.getScratchBlocks() + System.lineSeparator()
-                + "Replacement script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Split script:
+                %s
+                Replacement script 1:
+                %s
+                Replacement script 2:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(script),
+                ScratchBlocksVisitor.of(replacementScript1),
+                ScratchBlocksVisitor.of(replacementScript2)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SplitScriptAfterUntil that = (SplitScriptAfterUntil) o;
-        return Objects.equals(script, that.script) && Objects.equals(untilStmt, that.untilStmt) && Objects.equals(replacementScript1, that.replacementScript1) && Objects.equals(replacementScript2, that.replacementScript2);
+        return Objects.equals(script, that.script)
+                && Objects.equals(untilStmt, that.untilStmt)
+                && Objects.equals(replacementScript1, that.replacementScript1)
+                && Objects.equals(replacementScript2, that.replacementScript2);
     }
 
     @Override
