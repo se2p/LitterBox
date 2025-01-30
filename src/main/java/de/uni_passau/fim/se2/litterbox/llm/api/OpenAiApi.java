@@ -72,12 +72,8 @@ public class OpenAiApi implements LlmApi {
     @Override
     public Conversation query(final Conversation conversation) {
         final Response<AiMessage> response = model.generate(LlmApiUtils.conversationToChatMessages(conversation));
+        final LlmMessage msg = new LlmMessage.GenericLlmMessage(response.content().text(), LlmMessageSender.MODEL);
 
-        final List<LlmMessage> messages = new ArrayList<>(conversation.messages());
-        messages.add(
-                new LlmMessage.GenericLlmMessage(response.content().text(), LlmMessageSender.MODEL)
-        );
-
-        return new Conversation(conversation.systemPrompt(), messages);
+        return conversation.add(msg);
     }
 }

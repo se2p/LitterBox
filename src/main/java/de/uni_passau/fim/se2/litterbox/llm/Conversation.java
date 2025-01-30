@@ -20,14 +20,29 @@ package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public record Conversation(String systemPrompt, List<LlmMessage> messages) {
-    LlmMessage getLast() {
+
+    public Conversation {
+        messages = Collections.unmodifiableList(messages);
+    }
+
+    public LlmMessage getLast() {
         // should hold for all conversations constructed via a proper LLM interaction, since it contains at
         // least the initial user prompt
         Preconditions.checkArgument(!messages.isEmpty());
 
         return messages.get(messages.size() - 1);
+    }
+
+    public Conversation add(LlmMessage... messages) {
+        final List<LlmMessage> msgs = new ArrayList<>(messages());
+        msgs.addAll(Arrays.asList(messages));
+
+        return new Conversation(this.systemPrompt(), msgs);
     }
 }
