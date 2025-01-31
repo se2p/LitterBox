@@ -278,7 +278,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         String actorName = currentActor.getIdent().getName();
         String procedureName = program.getProcedureMapping().getProcedures()
                 .get(actorName).get(node.getIdent()).getName();
-
+        procedureName = escapeBrackets(procedureName);
         List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition param : parameters) {
             int nextIndex = procedureName.indexOf('%');
@@ -286,7 +286,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);
         }
-
         emitNoSpace(procedureName);
         storeNotesForIssue(node);
         newLine();
@@ -342,7 +341,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         Message message = receptionOfMessage.getMsg();
         assert (message.getMessage() instanceof StringLiteral);
         StringLiteral literal = (StringLiteral) message.getMessage();
-        emitNoSpace(literal.getText());
+        emitNoSpace(escapeBrackets(literal.getText()));
         storeNotesForIssue(message);
         emitNoSpace(" v]");
         storeNotesForIssue(receptionOfMessage);
@@ -1362,14 +1361,19 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (node.getExpression() instanceof Qualified qualified) {
+        handlePossibleDataExpression(node.getExpression());
+        storeNotesForIssue(node);
+    }
+
+    private void handlePossibleDataExpression(Expression expr) {
+        if (expr instanceof Qualified qualified) {
             DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
-        node.getExpression().accept(this);
-        if (node.getExpression() instanceof Qualified qualified) {
+        expr.accept(this);
+        if (expr instanceof Qualified qualified) {
             DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
@@ -1378,7 +1382,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 emitNoSpace(")");
             }
         }
-        storeNotesForIssue(node);
     }
 
     @Override
@@ -1418,7 +1421,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(StringLiteral stringLiteral) {
         if (!isIgnoredBlock()) {
             emitNoSpace("[");
-            emitNoSpace(stringLiteral.getText());
+            emitNoSpace(escapeBrackets(stringLiteral.getText()));
             emitNoSpace("]");
             storeNotesForIssue(stringLiteral);
         }
@@ -1469,7 +1472,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         StringExpr message = node.getMessage();
         if (message instanceof StringLiteral literal) {
             emitNoSpace("(");
-            emitNoSpace(literal.getText());
+            emitNoSpace(escapeBrackets(literal.getText()));
             emitNoSpace(" v)");
             storeNotesForIssue(node);
         } else {
@@ -1637,7 +1640,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             if (spriteName.equals("_myself_")) {
                 emitNoSpace("myself");
             } else {
-                emitNoSpace(spriteName);
+                emitNoSpace(escapeBrackets(spriteName));
             }
             emitNoSpace(" v)");
         } else {
@@ -1834,7 +1837,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(SpriteTouchable node) {
         if (node.getStringExpr() instanceof StringLiteral literal) {
             emitNoSpace("(");
-            emitNoSpace(literal.getText());
+            emitNoSpace(escapeBrackets(literal.getText()));
             emitNoSpace(" v)");
         } else {
             node.getStringExpr().accept(this);
@@ -1945,13 +1948,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         if (isIgnoredBlock()) {
             return;
         }
-        emitNoSpace(strId.getName());
+        emitNoSpace(escapeBrackets(strId.getName()));
         storeNotesForIssue(strId);
     }
 
     @Override
     public void visit(CallStmt node) {
         String procedureName = node.getIdent().getName();
+        procedureName = escapeBrackets(procedureName);
         List<Expression> parameters = node.getExpressions().getExpressions();
         for (Expression param : parameters) {
             int nextIndex = procedureName.indexOf('%');
@@ -2084,7 +2088,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
-        node.accept(this);
+        handlePossibleDataExpression(node);
         String name = os.toString();
         printStream = origStream;
         return name;
@@ -3317,6 +3321,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace("(");
         emitNoSpace(node.getType().getName());
         emitNoSpace(" v)");
+    }
+
+    private String escapeBrackets(String name) {
+        name = name.replace("(", "\\(");
+        name = name.replace(")", "\\)");
+        name = name.replace("[", "\\[");
+        name = name.replace("]", "\\]");
+        return name;
     }
 
     public void setAddActorNames(boolean addActorNames) {
