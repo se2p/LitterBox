@@ -217,7 +217,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
                 "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
                 "set [my variable v] to (username)" + System.lineSeparator() +
-                "set [my variable v] to (thelist)" + System.lineSeparator() +
+                "set [my variable v] to (thelist :: list)" + System.lineSeparator() +
                 "set [my variable v] to (mouse x)" + System.lineSeparator() +
                 "set [my variable v] to (loudness)" + System.lineSeparator() +
                 "set [my variable v] to (days since 2000)" + System.lineSeparator() +
@@ -259,7 +259,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
                 "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
                 "change [my variable v] by (username)" + System.lineSeparator() +
-                "change [my variable v] by (thelist)" + System.lineSeparator() +
+                "change [my variable v] by (thelist :: list)" + System.lineSeparator() +
                 "change [my variable v] by (mouse x)" + System.lineSeparator() +
                 "change [my variable v] by (loudness)" + System.lineSeparator() +
                 "change [my variable v] by (days since 2000)" + System.lineSeparator() +
@@ -681,7 +681,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "wait until <touching ([] mod []) ?>" + System.lineSeparator() +
                 "wait until <touching ([abs v] of []) ?>" + System.lineSeparator() +
                 "wait until <touching (my variable) ?>" + System.lineSeparator() +
-                "wait until <touching (listy) ?>" + System.lineSeparator() +
+                "wait until <touching (listy :: list) ?>" + System.lineSeparator() +
                 "wait until <touching (item (1) of [listy v]) ?>" + System.lineSeparator() +
                 "wait until <touching (item # of [thing] in [listy v]) ?>" + System.lineSeparator() +
                 "wait until <touching (length of [listy v]) ?>" + System.lineSeparator() +
@@ -1865,7 +1865,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "te\\(s\\]t (distance to (Arr\\(ow1\\) v))" + System.lineSeparator() +
                 "te\\(s\\]t (lis\\(\\)\\[\\] :: list)" + System.lineSeparator() +
                 "te\\(s\\]t (te\\(st\\))" + System.lineSeparator() +
-                "move (lis\\(\\)\\[\\]) steps" + System.lineSeparator() +
+                "move (lis\\(\\)\\[\\] :: list) steps" + System.lineSeparator() +
                 "delete all of [lis\\(\\)\\[\\] v]" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
@@ -1884,6 +1884,43 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "when green flag clicked" + System.lineSeparator() +
                 "prod (test var)" + System.lineSeparator() +
                 "prod (list :: list)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testListInMove() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/listInMove.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "move (list :: list) steps" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetChangeVariable() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setChangeVariable.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (list :: list)" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "set [my variable v] to (direction)" + System.lineSeparator() +
+                "set [my variable v] to (username)" + System.lineSeparator() +
+                "set [my variable v] to <(50) = (50)>" + System.lineSeparator() +
+                "set [my variable v] to (test var)" + System.lineSeparator() +
+                "change [my variable v] by (list :: list)" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "change [my variable v] by (direction)" + System.lineSeparator() +
+                "change [my variable v] by (username)" + System.lineSeparator() +
+                "change [my variable v] by <(50) = (50)>" + System.lineSeparator() +
+                "change [my variable v] by (test var)" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
     // TODO: No working scripts?

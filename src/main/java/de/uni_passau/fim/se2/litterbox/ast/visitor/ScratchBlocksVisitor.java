@@ -94,7 +94,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -1100,13 +1099,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace("set [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] to ");
-        if (node.getExpr() instanceof Qualified) {
-            emitNoSpace("(");
-        }
-        node.getExpr().accept(this);
-        if (node.getExpr() instanceof Qualified) {
-            emitNoSpace(")");
-        }
+        handlePossibleQualified(node.getExpr());
         storeNotesForIssue(node);
         newLine();
     }
@@ -1116,12 +1109,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber asNumber && !(asNumber.getOperand1() instanceof Qualified)) {
-            asNumber.getOperand1().accept(this);
-        } else {
-            //
-            node.getExpr().accept(this);
-        }
+        handlePossibleQualified(node.getExpr());
         storeNotesForIssue(node);
         newLine();
     }
@@ -1305,10 +1293,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 node.getExpression().accept(this);
             }
             emitNoSpace(" v)");
-        } else if (node.getExpression() instanceof Qualified) {
-            emitNoSpace("(");
-            node.getExpression().accept(this);
-            emitNoSpace(")");
+        } else if (node.getExpression() instanceof Qualified qualified) {
+            handlePossibleQualified(qualified);
         } else {
             node.getExpression().accept(this);
         }
@@ -1361,27 +1347,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(ExpressionStmt node) {
-        handlePossibleDataExpression(node.getExpression());
+        handlePossibleQualified(node.getExpression());
         storeNotesForIssue(node);
-    }
-
-    private void handlePossibleDataExpression(Expression expr) {
-        if (expr instanceof Qualified qualified) {
-            DataExpr dataExpr = qualified.getSecond();
-            if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
-                emitNoSpace("(");
-            }
-        }
-        expr.accept(this);
-        if (expr instanceof Qualified qualified) {
-            DataExpr dataExpr = qualified.getSecond();
-            if (dataExpr instanceof Variable) {
-                emitNoSpace(")");
-            } else if (dataExpr instanceof ScratchList) {
-                emitNoSpace(" :: list");
-                emitNoSpace(")");
-            }
-        }
     }
 
     @Override
@@ -1590,38 +1557,20 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(AsNumber node) {
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace("(");
-        }
-        node.getOperand1().accept(this);
+        handlePossibleQualified(node.getOperand1());
         storeNotesForIssue(node);
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace(")");
-        }
     }
 
     @Override
     public void visit(AsTouchable node) {
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace("(");
-        }
-        node.getOperand1().accept(this);
+        handlePossibleQualified(node.getOperand1());
         storeNotesForIssue(node);
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace(")");
-        }
     }
 
     @Override
     public void visit(AsBool node) {
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace("(");
-        }
-        node.getOperand1().accept(this);
+        handlePossibleQualified(node.getOperand1());
         storeNotesForIssue(node);
-        if (node.getOperand1() instanceof Qualified) {
-            emitNoSpace(")");
-        }
     }
 
     @Override
@@ -1738,9 +1687,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(BiggerThan node) {
         emitNoSpace("<");
-        visitAndEscapeQualified(node.getOperand1());
+        handlePossibleQualified(node.getOperand1());
         emitSpaced(">");
-        visitAndEscapeQualified(node.getOperand2());
+        handlePossibleQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1748,9 +1697,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(LessThan node) {
         emitNoSpace("<");
-        visitAndEscapeQualified(node.getOperand1());
+        handlePossibleQualified(node.getOperand1());
         emitSpaced("<");
-        visitAndEscapeQualified(node.getOperand2());
+        handlePossibleQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -1758,9 +1707,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(Equals node) {
         emitNoSpace("<");
-        visitAndEscapeQualified(node.getOperand1());
+        handlePossibleQualified(node.getOperand1());
         emitSpaced("=");
-        visitAndEscapeQualified(node.getOperand2());
+        handlePossibleQualified(node.getOperand2());
         storeNotesForIssue(node);
         emitNoSpace(">");
     }
@@ -2088,17 +2037,19 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
-        handlePossibleDataExpression(node);
+        handlePossibleQualified(node);
         String name = os.toString();
         printStream = origStream;
         return name;
     }
 
-    private void visitAndEscapeQualified(ASTNode node) {
-        if (node instanceof Qualified) {
+    private void handlePossibleQualified(ASTNode node) {
+        if (node instanceof Qualified qualified) {
             emitNoSpace("(");
-            node.accept(this);
-            storeNotesForIssue(node);
+            qualified.accept(this);
+            if (qualified.getSecond() instanceof ScratchList) {
+                emitNoSpace(" :: list");
+            }
             emitNoSpace(")");
         } else {
             node.accept(this);
