@@ -1838,6 +1838,54 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "play sound (Corn Theft \\(1\\) v) until done" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
+
+    @Test
+    public void testEscapingBracketsVariousBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/variousBlocksWithEscapedBrackets.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define te\\(s\\]t [num\\(\\)\\[\\]]" + System.lineSeparator() +
+                "say [Hel\\(lo!\\)] for (2) seconds" + System.lineSeparator() +
+                "set [te\\(st\\) v] to (0)" + System.lineSeparator() +
+                "start sound (te\\(st\\))" + System.lineSeparator() +
+                System.lineSeparator() +
+                "when backdrop switches to [back\\[dr\\]op1 v]" + System.lineSeparator() +
+                "broadcast (mes\\(\\)\\[\\] v)" + System.lineSeparator() +
+                "set volume to ([te\\(st\\) v] of (Stage v)) %" + System.lineSeparator() +
+                "move ([size v] of (Arr\\(ow1\\) v)) steps" + System.lineSeparator() +
+                "create clone of (Arr\\(ow1\\) v)" + System.lineSeparator() +
+                System.lineSeparator() +
+                "when I receive [mes\\(\\)\\[\\] v]" + System.lineSeparator() +
+                "switch backdrop to (back\\[dr\\]op1 v)" + System.lineSeparator() +
+                "wait until <touching (Arr\\(ow1\\) v) ?>" + System.lineSeparator() +
+                "te\\(s\\]t (distance to (Arr\\(ow1\\) v))" + System.lineSeparator() +
+                "te\\(s\\]t (lis\\(\\)\\[\\] :: list)" + System.lineSeparator() +
+                "te\\(s\\]t (te\\(st\\))" + System.lineSeparator() +
+                "move (lis\\(\\)\\[\\]) steps" + System.lineSeparator() +
+                "delete all of [lis\\(\\)\\[\\] v]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testCallWithListVar() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/callwithListVar.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define prod [num]" + System.lineSeparator() +
+                System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "prod (test var)" + System.lineSeparator() +
+                "prod (list :: list)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }

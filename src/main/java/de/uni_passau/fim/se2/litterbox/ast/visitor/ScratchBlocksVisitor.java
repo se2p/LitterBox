@@ -341,7 +341,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         Message message = receptionOfMessage.getMsg();
         assert (message.getMessage() instanceof StringLiteral);
         StringLiteral literal = (StringLiteral) message.getMessage();
-        emitNoSpace(literal.getText());
+        emitNoSpace(escapeBrackets(literal.getText()));
         storeNotesForIssue(message);
         emitNoSpace(" v]");
         storeNotesForIssue(receptionOfMessage);
@@ -1361,14 +1361,19 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (node.getExpression() instanceof Qualified qualified) {
+        handlePossibleDataExpression(node.getExpression());
+        storeNotesForIssue(node);
+    }
+
+    private void handlePossibleDataExpression(Expression expr) {
+        if (expr instanceof Qualified qualified) {
             DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
-        node.getExpression().accept(this);
-        if (node.getExpression() instanceof Qualified qualified) {
+        expr.accept(this);
+        if (expr instanceof Qualified qualified) {
             DataExpr dataExpr = qualified.getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
@@ -1377,7 +1382,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 emitNoSpace(")");
             }
         }
-        storeNotesForIssue(node);
     }
 
     @Override
@@ -2084,7 +2088,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
-        node.accept(this);
+        handlePossibleDataExpression(node);
         String name = os.toString();
         printStream = origStream;
         return name;
