@@ -1109,12 +1109,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber asNumber && !(asNumber.getOperand1() instanceof Qualified)) {
-            asNumber.getOperand1().accept(this);
-        } else {
-            //
-            node.getExpr().accept(this);
-        }
+        handlePossibleQualified(node.getExpr());
         storeNotesForIssue(node);
         newLine();
     }

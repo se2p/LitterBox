@@ -1899,6 +1899,30 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "move (list :: list) steps" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
+
+    @Test
+    public void testSetChangeVariable() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setChangeVariable.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (list :: list)" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "set [my variable v] to (direction)" + System.lineSeparator() +
+                "set [my variable v] to (username)" + System.lineSeparator() +
+                "set [my variable v] to <(50) = (50)>" + System.lineSeparator() +
+                "set [my variable v] to (test var)" + System.lineSeparator() +
+                "change [my variable v] by (list :: list)" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "change [my variable v] by (direction)" + System.lineSeparator() +
+                "change [my variable v] by (username)" + System.lineSeparator() +
+                "change [my variable v] by <(50) = (50)>" + System.lineSeparator() +
+                "change [my variable v] by (test var)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
