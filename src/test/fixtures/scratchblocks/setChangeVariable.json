@@ -1,0 +1,523 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "IBc=YAzS=le86/Dc8J;3": [
+                    "test var",
+                    0
+                ]
+            },
+            "lists": {
+                "R|lrNyUKa;Gc+!RSyj6q": [
+                    "list",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "back[dr]op1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "8aXI-4,W}:]YOG_Liy4p": {
+                    "opcode": "data_changevariableby",
+                    "next": "oOro!ik82OGM0;,pmYUG",
+                    "parent": "2J[:FX`+J@i^}(%tK7F;",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                13,
+                                "list",
+                                "R|lrNyUKa;Gc+!RSyj6q"
+                            ],
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oOro!ik82OGM0;,pmYUG": {
+                    "opcode": "data_changevariableby",
+                    "next": "/*:67lM!vEs(W?Btqpt%",
+                    "parent": "8aXI-4,W}:]YOG_Liy4p",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "/*:67lM!vEs(W?Btqpt%": {
+                    "opcode": "data_changevariableby",
+                    "next": "qk``N[^cQqQ[R?#cPf}:",
+                    "parent": "oOro!ik82OGM0;,pmYUG",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "1K^4L9x#a-kN/pT?3}|@",
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1K^4L9x#a-kN/pT?3}|@": {
+                    "opcode": "motion_direction",
+                    "next": null,
+                    "parent": "/*:67lM!vEs(W?Btqpt%",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+KDOC~)Th8e4,|~Pif0A": {
+                    "opcode": "sensing_username",
+                    "next": null,
+                    "parent": "qk``N[^cQqQ[R?#cPf}:",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "qk``N[^cQqQ[R?#cPf}:": {
+                    "opcode": "data_changevariableby",
+                    "next": "UJ})Q7)T~Kz*b5yJv$1m",
+                    "parent": "/*:67lM!vEs(W?Btqpt%",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "+KDOC~)Th8e4,|~Pif0A",
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "UJ})Q7)T~Kz*b5yJv$1m": {
+                    "opcode": "data_changevariableby",
+                    "next": "PqM^{%i0@ewra7jq-{F/",
+                    "parent": "qk``N[^cQqQ[R?#cPf}:",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            ".R_6knaR*osI`020(e.+",
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".R_6knaR*osI`020(e.+": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "UJ})Q7)T~Kz*b5yJv$1m",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "PqM^{%i0@ewra7jq-{F/": {
+                    "opcode": "data_changevariableby",
+                    "next": null,
+                    "parent": "UJ})Q7)T~Kz*b5yJv$1m",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "test var",
+                                "IBc=YAzS=le86/Dc8J;3"
+                            ],
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "2J[:FX`+J@i^}(%tK7F;": {
+                    "opcode": "data_setvariableto",
+                    "next": "8aXI-4,W}:]YOG_Liy4p",
+                    "parent": "7c@wBlDgu@]%u%P.dt0/",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                12,
+                                "test var",
+                                "IBc=YAzS=le86/Dc8J;3"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7c@wBlDgu@]%u%P.dt0/": {
+                    "opcode": "data_setvariableto",
+                    "next": "2J[:FX`+J@i^}(%tK7F;",
+                    "parent": "nwQn?^]uP_Z{GCDnMBr`",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "l}^+gdhu6gSP+H]v4]w`",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nwQn?^]uP_Z{GCDnMBr`": {
+                    "opcode": "data_setvariableto",
+                    "next": "7c@wBlDgu@]%u%P.dt0/",
+                    "parent": "F%@}+SCd1%vGD2s3(Qz~",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "fEIO!og$I[[7:J#)$yyy",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "F%@}+SCd1%vGD2s3(Qz~": {
+                    "opcode": "data_setvariableto",
+                    "next": "nwQn?^]uP_Z{GCDnMBr`",
+                    "parent": "8AiEz5U5Y7]$k4OUcuMx",
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            "xXv`eLNl0D}y@oQ!kf).",
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "8AiEz5U5Y7]$k4OUcuMx": {
+                    "opcode": "data_setvariableto",
+                    "next": "F%@}+SCd1%vGD2s3(Qz~",
+                    "parent": "XN*x-hx8=Ob)Y7g7]D](",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "XN*x-hx8=Ob)Y7g7]D](": {
+                    "opcode": "data_setvariableto",
+                    "next": "8AiEz5U5Y7]$k4OUcuMx",
+                    "parent": null,
+                    "inputs": {
+                        "VALUE": [
+                            3,
+                            [
+                                13,
+                                "list",
+                                "R|lrNyUKa;Gc+!RSyj6q"
+                            ],
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 301,
+                    "y": 129
+                },
+                "xXv`eLNl0D}y@oQ!kf).": {
+                    "opcode": "motion_direction",
+                    "next": null,
+                    "parent": "F%@}+SCd1%vGD2s3(Qz~",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "fEIO!og$I[[7:J#)$yyy": {
+                    "opcode": "sensing_username",
+                    "next": null,
+                    "parent": "nwQn?^]uP_Z{GCDnMBr`",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "l}^+gdhu6gSP+H]v4]w`": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "7c@wBlDgu@]%u%P.dt0/",
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "IBc=YAzS=le86/Dc8J;3",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "test var"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "R|lrNyUKa;Gc+!RSyj6q",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "list"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "5.0.40",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0"
+    }
+}
