@@ -62,6 +62,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -752,5 +753,20 @@ class ScratchBlocksToScratchVisitorTest {
     private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
         assertInstanceOf(exprType, expr);
         return exprType.cast(expr);
+    }
+
+    @Test
+    void testListExpression() {
+        StmtList statements = getStmtList("move (list :: list) steps\n");
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+
+        MoveSteps move = (MoveSteps) statements.getStatement(0);
+        assertInstanceOf(AsNumber.class, move.getSteps());
+        AsNumber asNumber = (AsNumber) move.getSteps();
+        assertInstanceOf(Qualified.class, asNumber.getOperand1());
+        Qualified qualified = (Qualified) asNumber.getOperand1();
+        assertInstanceOf(ScratchList.class, qualified.getSecond());
+        ScratchList scratchList = (ScratchList) qualified.getSecond();
+        assertEquals("list", scratchList.getName().getName());
     }
 }

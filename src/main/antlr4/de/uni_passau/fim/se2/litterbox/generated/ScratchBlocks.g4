@@ -386,8 +386,12 @@ stringLiteral           : '['stringArgument']';
 expression              : '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
-                        | '('stringArgument')'//variable
+                        | list
+                        | variable
                         ;
+
+list                    : '('stringArgument' :: list)';//list
+variable                : '('stringArgument')';//variable
 
 boolExpr                : empty=WS*
                         | touching

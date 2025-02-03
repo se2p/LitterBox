@@ -65,6 +65,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksBaseVisitor;
@@ -1235,9 +1236,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public Expression visitExpression(ScratchBlocksParser.ExpressionContext ctx) {
-        if (ctx.stringArgument() != null) {
-            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
+        if (ctx.variable() != null) {
+            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.variable().stringArgument())));
             return new Qualified(currentActor, variable);
+        } else if (ctx.list() != null) {
+            final ScratchList list = new ScratchList(new StrId(visitStringArgument(ctx.list().stringArgument())));
+            return new Qualified(currentActor, list);
         } else if (ctx.emptyBool != null) {
             return new UnspecifiedBoolExpr();
         } else if (ctx.boolExpr() != null) {
