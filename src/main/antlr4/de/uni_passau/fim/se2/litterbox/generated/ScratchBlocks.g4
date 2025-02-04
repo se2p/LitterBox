@@ -386,7 +386,7 @@ stringLiteral           : '['stringArgument']';
 expression              : '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
-                        | '(' stringArgument list=' :: list'? ')'
+                        | '(' stringArgument list=LIST_MARKER? WS* ')'
                         ;
 
 boolExpr                : empty=WS*
@@ -577,10 +577,10 @@ COMMENT                 : WS* '//' ~[\r\n]*;
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
-ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:list';
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | WS* ':\\:' WS* 'list';
 CHOICE_END              : ' v]';
 ROUND_CHOICE_END        : ' v)';
-LIST_MARKER             : ' ::list';
+LIST_MARKER             : WS* '::' WS? 'list';
 LPAREN                  : '(';
 RPAREN                  : ')';
 LBRACK                  : '[';
