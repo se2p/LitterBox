@@ -386,12 +386,8 @@ stringLiteral           : '['stringArgument']';
 expression              : '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
-                        | list='('stringArgument' :: list'')'
-                        | '('stringArgument')'
+                        | '(' stringArgument list=' :: list'? ')'
                         ;
-
-//list                    : '('stringArgument' :: list)';//list
-//variable                : '('stringArgument')';//variable
 
 boolExpr                : empty=WS*
                         | touching
@@ -558,7 +554,7 @@ touchingColorChoice     : LBRACK HEX RBRACK
                         ;
 
 // escape sequences, or anything else that is not a newline or an unescaped special character
-stringArgument          : (ESC | ~(NEWLINE|DELIM))*?;
+stringArgument          : (ESC | ~(NEWLINE|DELIM|LIST_MARKER))*?;
 
 /*
  * Lexer Rules
@@ -581,7 +577,7 @@ COMMENT                 : WS* '//' ~[\r\n]*;
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
-ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>';
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:list';
 CHOICE_END              : ' v]';
 ROUND_CHOICE_END        : ' v)';
 LIST_MARKER             : ' ::list';
