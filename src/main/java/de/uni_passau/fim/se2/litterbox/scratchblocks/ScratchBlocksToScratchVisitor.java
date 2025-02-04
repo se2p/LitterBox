@@ -1236,12 +1236,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public Expression visitExpression(ScratchBlocksParser.ExpressionContext ctx) {
-        if (ctx.variable() != null) {
-            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.variable().stringArgument())));
-            return new Qualified(currentActor, variable);
-        } else if (ctx.list() != null) {
-            final ScratchList list = new ScratchList(new StrId(visitStringArgument(ctx.list().stringArgument())));
+        if (ctx.list != null) {
+            final ScratchList list = new ScratchList(new StrId(ctx.stringArgument().getText()));
             return new Qualified(currentActor, list);
+        } else if (ctx.stringArgument() != null) {
+            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
+            return new Qualified(currentActor, variable);
         } else if (ctx.emptyBool != null) {
             return new UnspecifiedBoolExpr();
         } else if (ctx.boolExpr() != null) {

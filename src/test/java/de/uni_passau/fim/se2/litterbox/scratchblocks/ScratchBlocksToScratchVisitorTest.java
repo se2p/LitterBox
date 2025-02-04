@@ -63,6 +63,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -460,6 +461,7 @@ class ScratchBlocksToScratchVisitorTest {
         final Equals equals = assertHasExprStmt(stmtList, Equals.class);
 
         assertInstanceOf(Qualified.class, equals.getOperand1());
+        assertInstanceOf(Variable.class, ((Qualified) equals.getOperand1()).getSecond());
     }
 
     @Test

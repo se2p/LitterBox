@@ -386,12 +386,12 @@ stringLiteral           : '['stringArgument']';
 expression              : '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
-                        | list
-                        | variable
+                        | list='('stringArgument' :: list'')'
+                        | '('stringArgument')'
                         ;
 
-list                    : '('stringArgument' :: list)';//list
-variable                : '('stringArgument')';//variable
+//list                    : '('stringArgument' :: list)';//list
+//variable                : '('stringArgument')';//variable
 
 boolExpr                : empty=WS*
                         | touching
@@ -583,6 +583,8 @@ HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
 
 ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>';
 CHOICE_END              : ' v]';
+ROUND_CHOICE_END        : ' v)';
+LIST_MARKER             : ' ::list';
 LPAREN                  : '(';
 RPAREN                  : ')';
 LBRACK                  : '[';
