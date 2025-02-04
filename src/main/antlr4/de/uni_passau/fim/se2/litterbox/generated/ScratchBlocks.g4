@@ -577,7 +577,7 @@ COMMENT                 : WS* '//' ~[\r\n]*;
 HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
                         | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
 
-ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | WS* ':\\:' WS* 'list';
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:';
 CHOICE_END              : ' v]';
 ROUND_CHOICE_END        : ' v)';
 LIST_MARKER             : WS* '::' WS? 'list';
