@@ -39,12 +39,15 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
 
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
 
+    private final String actor;
+
     private final ProgramFeatureAnalyzer analyzer;
     private CSVPrinter printer;
 
-    public FeatureAnalyzer(Path output, boolean delete) {
+    public FeatureAnalyzer(Path output, boolean delete, String actor) {
         super(new ProgramFeatureAnalyzer(), output, delete);
         this.analyzer = (ProgramFeatureAnalyzer) super.analyzer;
+        this.actor = actor;
     }
 
     @Override
@@ -98,6 +101,11 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
         int actorCount = 0;
         List<ActorDefinition> actorDefinitions = AstNodeUtil.getActors(program, true).toList();
         for (ActorDefinition actorDefinition : actorDefinitions) {
+            String actorName = actorDefinition.getIdent().getName();
+            if (actor != null && !actor.isBlank() && !actor.equals(actorName)) {
+                continue;
+            }
+
             int scriptCount = 0;
             int procedureDefCount = 0;
             actorCount = actorCount + 1;

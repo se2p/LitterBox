@@ -50,15 +50,16 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             new NestedBlockCount<>(),
             new OperatorsBlockCount<>(),
             new SensingBlockCount<>(),
-            new SliceCoverage<>(),
-            new SliceOverlap<>(),
-            new SliceTightness<>(),
+//            new SliceCoverage<>(),
+//            new SliceOverlap<>(),
+//            new SliceTightness<>(),
             new SoundBlockCount<>(),
             new StackedStatementCount<>(),
             new StatementCount<>(),
             new TokenEntropy<>(),
             new VariableCount<>(),
             new VariablesBlockCount<>(),
+            new HatCount<>(),
             new WeightedMethodCount<>()
     );
 

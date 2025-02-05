@@ -348,6 +348,12 @@ public class Main implements Callable<Integer> {
             description = "Extract scripts features from Scratch projects. See also 'stats' subcommand."
     )
     static class FeatureSubcommand extends LitterBoxSubcommand {
+        @CommandLine.Option(
+                names = {"-a", "--actor"},
+                description = "Extract features from this actor name only."
+        )
+        String actor;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -355,7 +361,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor);
         }
     }
 
