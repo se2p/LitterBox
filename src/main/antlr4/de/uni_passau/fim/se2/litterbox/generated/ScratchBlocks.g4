@@ -395,27 +395,19 @@ boolExpr                : empty=WS*
                         | colorTouchingColor
                         | keyPressed
                         | mouseDown
-                        | greaterThan
-                        | equal
-                        | lessThan
-                        | and
-                        | or
+                        | binaryBoolExpr
                         | not
                         | contains
                         | listContains
                         ;
 
+binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or='or') WS?) | (lt=' < ' | gt=' > ')) secondExpr=exprOrLiteral;
 
 touching                : 'touching 'touchingChoice WS? '?';
 touchingColor           : 'touching color 'touchingColorChoice WS? '?';
 colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
 keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
-greaterThan             : firstExpr=exprOrLiteral ' > ' secondExpr=exprOrLiteral;
-equal                   : firstExpr=exprOrLiteral WS? '=' WS? secondExpr=exprOrLiteral;
-lessThan                : firstExpr=exprOrLiteral ' < ' secondExpr=exprOrLiteral;
-and                     : firstExpr=exprOrLiteral WS? 'and' WS? secondExpr=exprOrLiteral;
-or                      : firstExpr=exprOrLiteral WS? 'or' WS? secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral WS? '?';
 listContains            : '['stringArgument' v] contains 'exprOrLiteral WS? '?';
@@ -437,21 +429,19 @@ numExpr                 : xPosition
                         | currentTime
                         | daysSince
                         | userName
-                        | addition
-                        | subtraction
-                        | multiplication
-                        | division
+                        | binaryNumExpr
                         | pickRandom
                         | join
                         | getLetterAtIndex
                         | lengthOf
-                        | modulo
                         | round
                         | mathFunction
                         | itemAtIndex
                         | indexOfItem
                         | lengthOfList
                         ;
+
+binaryNumExpr           : firstExpr=exprOrLiteral WS? (add='+' | sub='-' | mult='*' | div='/' | mod='mod') WS? secondExpr=exprOrLiteral;
 
 xPosition               : 'x position';
 yPosition               : 'y position';
@@ -470,15 +460,10 @@ actorAttribute          : '['attributeChoice' v] of 'element;
 currentTime             : 'current' WS '['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
-addition                : firstExpr=exprOrLiteral WS? '+' WS? secondExpr=exprOrLiteral;
-subtraction             : firstExpr=exprOrLiteral WS? '-' WS? secondExpr=exprOrLiteral;
-multiplication          : firstExpr=exprOrLiteral WS? '*' WS? secondExpr=exprOrLiteral;
-division                : firstExpr=exprOrLiteral WS? '/' WS? secondExpr=exprOrLiteral;
 pickRandom              : 'pick random 'firstExpr=exprOrLiteral WS 'to' WS secondExpr=exprOrLiteral;
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral WS 'of' WS secondExpr=exprOrLiteral;
 lengthOf                : 'length of 'exprOrLiteral;
-modulo                  : firstExpr=exprOrLiteral WS? 'mod' WS? secondExpr=exprOrLiteral;
 round                   : 'round 'exprOrLiteral;
 mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral WS 'of' WS '['stringArgument' v]';
@@ -574,8 +559,7 @@ BEGIN_ACTOR             : '//Sprite: ' ~[\r\n]+ NEWLINE;
 
 COMMENT                 : WS* '//' ~[\r\n]*;
 
-HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-                        | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
+HEX                     : '#' HEX_DIGIT HEX_DIGIT HEX_DIGIT (HEX_DIGIT HEX_DIGIT HEX_DIGIT)?;
 
 ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:';
 CHOICE_END              : ' v]';

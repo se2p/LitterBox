@@ -440,6 +440,18 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testDeeplyNestedExpression2() {
+        String stmt = """
+                if <<<<<<<<<<<<<<<<touching (Soccer Ball v) ?> or <touching (Soccer Ball2 v) ?>> or <touching (Soccer Ball3 v) ?>> or <touching (Soccer Ball4 v) ?>> or <touching (Soccer Ball5 v) ?>> or <touching (Soccer Ball6 v) ?>> or <touching (Soccer Ball7 v) ?>> or <touching (Soccer Ball8 v) ?>> or <touching (Soccer Ball9 v) ?>> or <touching (Soccer Ball10 v) ?>> or <touching (Soccer Ball11 v) ?>> or <touching (Soccer Ball12 v) ?>> or <<touching (Soccer Ball14 v) ?> and <<<not <key (right arrow v) pressed?>> and <not <key (up arrow v) pressed?>>> and <<not <key (right arrow v) pressed?>> and <not <key (down arrow v) pressed?>>>>>> or <<<not <([costume # v] of (Soccer Ball15 v)?) = (2)>> and <touching (Soccer Ball15 v) ?>> or <<<not <([costume # v] of (Soccer Ball16 v)?) = (2)>> and <touching (Soccer Ball16 v) ?>> or <<not <([costume # v] of (Soccer Ball17 v)?) = (2)>> and <touching (Soccer Ball17 v) ?>>>>> or <<touching (Soccer Ball13 v) ?> and <<key (up arrow v) pressed?> or <<key (right arrow v) pressed?> or <<key (left arrow v) pressed?> or <key (down arrow v) pressed?>>>>>> or <touching (ガスターブラスター v) ?>> then
+                start sound (hurt noise v)
+                change [☁ 世界総ダメージ v] by (2)
+                change [hp v] by (-2)
+                end
+                """;
+        assertStatementType(stmt, IfThenStmt.class);
+    }
+
+    @Test
     void testNestedBoolExpr() {
         StmtList stmtList = getStmtList("wait until <<<(mouse x) < (-113)> and <(mouse x) > (-123)>> and <<(mouse y) < (-93)> and <(mouse y) > (-101)>>>\n");
         WaitUntil waitUntil = (WaitUntil) stmtList.getStatement(0);

@@ -935,45 +935,37 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
-    public BiggerThan visitGreaterThan(ScratchBlocksParser.GreaterThanContext ctx) {
-        return new BiggerThan(
-                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
-                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                new NoBlockMetadata()
-        );
-    }
-
-    @Override
-    public LessThan visitLessThan(ScratchBlocksParser.LessThanContext ctx) {
-        return new LessThan(
-                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
-                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                new NoBlockMetadata()
-        );
-    }
-
-    @Override
-    public Equals visitEqual(ScratchBlocksParser.EqualContext ctx) {
-        return new Equals(
-                ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
-                ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                new NoBlockMetadata()
-        );
+    public Expression visitBinaryBoolExpr(ScratchBlocksParser.BinaryBoolExprContext ctx) {
+        if (ctx.gt != null) {
+            return new BiggerThan(
+                    ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                    ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
+                    new NoBlockMetadata()
+            );
+        } else if (ctx.lt != null) {
+            return new LessThan(
+                    ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                    ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
+                    new NoBlockMetadata()
+            );
+        } else if (ctx.eq != null) {
+            return new Equals(
+                    ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
+                    ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
+                    new NoBlockMetadata()
+            );
+        } else if (ctx.and != null) {
+            return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else if (ctx.or != null) {
+            return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else {
+            throw new IllegalArgumentException("Bug: grammar does not match implementation.");
+        }
     }
 
     @Override
     public Not visitNot(ScratchBlocksParser.NotContext ctx) {
         return new Not(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
-    }
-
-    @Override
-    public And visitAnd(ScratchBlocksParser.AndContext ctx) {
-        return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
-    }
-
-    @Override
-    public Or visitOr(ScratchBlocksParser.OrContext ctx) {
-        return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
@@ -1131,23 +1123,20 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
-    public Add visitAddition(ScratchBlocksParser.AdditionContext ctx) {
-        return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
-    }
-
-    @Override
-    public Minus visitSubtraction(ScratchBlocksParser.SubtractionContext ctx) {
-        return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
-    }
-
-    @Override
-    public Mult visitMultiplication(ScratchBlocksParser.MultiplicationContext ctx) {
-        return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
-    }
-
-    @Override
-    public Div visitDivision(ScratchBlocksParser.DivisionContext ctx) {
-        return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+    public ASTNode visitBinaryNumExpr(ScratchBlocksParser.BinaryNumExprContext ctx) {
+        if (ctx.add != null) {
+            return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else if (ctx.sub != null) {
+            return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else if (ctx.mult != null) {
+            return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else if (ctx.div != null) {
+            return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else if (ctx.mod != null) {
+            return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        } else {
+            throw new IllegalArgumentException("Bug: grammar does not match implementation.");
+        }
     }
 
     @Override
@@ -1168,11 +1157,6 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public LengthOfString visitLengthOf(ScratchBlocksParser.LengthOfContext ctx) {
         return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
-    }
-
-    @Override
-    public Mod visitModulo(ScratchBlocksParser.ModuloContext ctx) {
-        return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
     }
 
     @Override
