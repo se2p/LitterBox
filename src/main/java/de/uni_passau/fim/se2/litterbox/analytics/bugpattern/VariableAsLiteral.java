@@ -35,9 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -160,7 +158,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
 
         variablesInScope = varMap.values().stream()
                 .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
@@ -170,14 +167,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
                 .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
                 .map(ExpressionListInfo::variableName)
                 .collect(Collectors.toSet()));
-
-        if (procMap != null) {
-            for (ProcedureInfo procInfo : procMap.values()) {
-                for (ArgumentInfo ai : procInfo.getArguments()) {
-                    variablesInScope.add(ai.name());
-                }
-            }
-        }
 
         actor.getScripts().accept(this);
         actor.getProcedureDefinitionList().accept(this);
