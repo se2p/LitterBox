@@ -65,12 +65,6 @@ public class VariableAsLiteralTest implements JsonTest {
     }
 
     @Test
-    public void testParameterAsLiteral() throws IOException, ParsingException {
-        // 2 usages inside custom block, and 2 outside custom block
-        assertThatFinderReports(4, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterAsLiteral.json");
-    }
-
-    @Test
     public void testActorsAsLiterals() throws IOException, ParsingException {
         assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/actorsAsLiterals.json");
     }
@@ -142,5 +136,10 @@ public class VariableAsLiteralTest implements JsonTest {
     @Test
     public void testSoundNameNoBug() throws IOException, ParsingException {
         assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/variableNameInDropDowns.json");
+    }
+
+    @Test
+    public void testParameterNameOutsideProcedure() throws IOException, ParsingException {
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterNameAsALiteralOutsideProcedure.json");
     }
 }
