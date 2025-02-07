@@ -104,6 +104,11 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(StrId node) {
+        //no-op
+    }
+
+    @Override
     public void visit(Variable node) {
         // No-op
     }

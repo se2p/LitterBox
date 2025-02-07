@@ -138,4 +138,9 @@ public class VariableAsLiteralTest implements JsonTest {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }
     }
+
+    @Test
+    public void testSoundNameNoBug() throws IOException, ParsingException {
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/variableNameInDropDowns.json");
+    }
 }
