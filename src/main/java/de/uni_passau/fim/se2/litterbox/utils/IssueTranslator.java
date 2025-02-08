@@ -114,7 +114,16 @@ public final class IssueTranslator {
 
     private ResourceBundle loadResourceBundle(final String name, final Locale locale) {
         try {
-            return  ResourceBundle.getBundle(name, locale);
+            final ResourceBundle bundle = ResourceBundle.getBundle(name, locale);
+            // getBundle has a built-in fallback functionality that uses the system locale instead and would use the
+            // German resource bundle instead if the system uses a de_DE locale.
+            // The MissingResourceException below might still happen in case the system locale is one for which we do
+            // not have a resource bundle (e.g. Finnish).
+            if (bundle.getLocale().equals(locale)) {
+                return bundle;
+            } else {
+                return ResourceBundle.getBundle(name, Locale.ENGLISH);
+            }
         } catch (MissingResourceException e) {
             log.warning("Could not load resource bundle for language "
                     + locale.toLanguageTag()
