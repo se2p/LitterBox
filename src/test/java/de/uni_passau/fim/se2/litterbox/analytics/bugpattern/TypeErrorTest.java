@@ -82,4 +82,15 @@ public class TypeErrorTest implements JsonTest {
     public void testNoTypeErrorVariable() throws IOException, ParsingException {
         assertThatFinderReports(0, new TypeError(), "./src/test/fixtures/bugpattern/noTypeError.json");
     }
+
+    @Test
+    public void testComparingTouching() throws IOException, ParsingException {
+        Program booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/comparingTouching.json");
+        TypeError parameterName = new TypeError();
+        Set<Issue> issues = parameterName.check(booleanEquals);
+        Assertions.assertEquals(1, issues.size());
+        for (Issue issue : issues) {
+            Assertions.assertNotNull(issue.getCodeLocation());
+        }
+    }
 }
