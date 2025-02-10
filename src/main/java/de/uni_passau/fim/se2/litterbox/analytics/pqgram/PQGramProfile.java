@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.pqgram;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public class PQGramProfile {
 
     private int q = 3;
 
-
-    private Multiset<LabelTuple> tuples = HashMultiset.create();
+    private final Multiset<LabelTuple> tuples = HashMultiset.create();
 
     public PQGramProfile(ASTNode node) {
         if (node != null) {
@@ -67,8 +67,7 @@ public class PQGramProfile {
         if (tuples.isEmpty() && other.size() == 0) {
             return 0;
         }
-        Multiset<LabelTuple> intersection = HashMultiset.create(tuples);
-        intersection.retainAll(other.getTuples());
+        Multiset<LabelTuple> intersection = Multisets.intersection(tuples, other.getTuples());
         double division = (double) intersection.size() / (size() + other.size());
         return 1 - (2 * division);
     }
