@@ -82,6 +82,17 @@ public class PQGramProfileTest implements JsonTest {
     }
 
     @Test
+    void testDistanceSymmetric() throws IOException, ParsingException {
+        Program program1 = getAST("./src/test/fixtures/allBlocks.json");
+        Program program2 = getAST("./src/test/fixtures/colorBlocks.json");
+
+        PQGramProfile profile1 = new PQGramProfile(program1);
+        PQGramProfile profile2 = new PQGramProfile(program2);
+
+        Assertions.assertEquals(profile1.calculateDistanceTo(profile2), profile2.calculateDistanceTo(profile1));
+    }
+
+    @Test
     public void testDifferentScripts() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/metrics/allMotionBlocks.json");
         List<Script> scripts = empty.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();

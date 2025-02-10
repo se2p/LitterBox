@@ -34,8 +34,7 @@ public class PQGramProfile {
 
     private int q = 3;
 
-
-    private Multiset<LabelTuple> tuples = HashMultiset.create();
+    private final Multiset<LabelTuple> tuples = HashMultiset.create();
 
     public PQGramProfile(ASTNode node) {
         if (node != null) {
