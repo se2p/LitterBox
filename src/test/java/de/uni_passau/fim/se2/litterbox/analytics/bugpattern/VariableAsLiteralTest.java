@@ -142,4 +142,15 @@ public class VariableAsLiteralTest implements JsonTest {
     public void testParameterNameOutsideProcedure() throws IOException, ParsingException {
         assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterNameAsALiteralOutsideProcedure.json");
     }
+
+    @Test
+    public void testCallParameter() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/variableInLiteralCallParameter.json");
+        VariableAsLiteral lit = new VariableAsLiteral();
+        Set<Issue> reports = lit.check(program);
+        Assertions.assertEquals(2, reports.size());
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getCodeLocation()).isNotNull();
+        }
+    }
 }
