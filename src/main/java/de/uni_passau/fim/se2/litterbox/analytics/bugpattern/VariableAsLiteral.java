@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -30,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -52,7 +50,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     private Set<String> variablesInScope = new LinkedHashSet<>();
     private Stmt currentStatement;
     private Expression currentExpression;
-    private Metadata currentMetadata;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -60,7 +57,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         this.program = program;
         issues = new LinkedHashSet<>();
         variablesInScope = new LinkedHashSet<>();
-        currentMetadata = null;
         currentStatement = null;
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
@@ -76,7 +72,7 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(currentMetadata);
+            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_VARIABLE, node.getText());
             if (currentExpression != null) {
@@ -98,6 +94,17 @@ public class VariableAsLiteral extends AbstractIssueFinder {
             // TODO: Check for NumberExpr?
 
             addIssue(builder.withHint(hint));
+        }
+    }
+
+    private Metadata getMetadata(ASTNode node) {
+        if (node instanceof Program) {
+            throw new IllegalArgumentException("should have found Metadata before Program node");
+        }
+        if (node.getMetadata() != null && !(node.getMetadata() instanceof NoBlockMetadata)) {
+            return node.getMetadata();
+        } else {
+            return getMetadata(node.getParentNode());
         }
     }
 
@@ -137,11 +144,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         currentExpression = node;
         super.visit(node);
         currentExpression = null;
-    }
-
-    @Override
-    public void visit(Metadata node) {
-        currentMetadata = node;
     }
 
     @Override
