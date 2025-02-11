@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -29,12 +28,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -48,8 +47,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
     private Set<String> variablesInScope = new LinkedHashSet<>();
-    private Stmt currentStatement;
-    private Expression currentExpression;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -57,7 +54,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         this.program = program;
         issues = new LinkedHashSet<>();
         variablesInScope = new LinkedHashSet<>();
-        currentStatement = null;
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         program.accept(this);
@@ -75,11 +71,7 @@ public class VariableAsLiteral extends AbstractIssueFinder {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_VARIABLE, node.getText());
-            if (currentExpression != null) {
-                builder = builder.withCurrentNode(currentExpression);
-            } else {
-                builder = builder.withCurrentNode(currentStatement);
-            }
+            builder = builder.withCurrentNode(getCurrentReferencableNode(node));
 
             Qualified qualified = new Qualified(currentActor.getIdent(), new Variable(new StrId(literal)));
             if (node.getParentNode() instanceof BoolExpr) {
@@ -94,6 +86,17 @@ public class VariableAsLiteral extends AbstractIssueFinder {
             // TODO: Check for NumberExpr?
 
             addIssue(builder.withHint(hint));
+        }
+    }
+
+    private ASTNode getCurrentReferencableNode(ASTNode node) {
+        if (node instanceof Program) {
+            throw new IllegalArgumentException("should have found referencable node before Program node");
+        }
+        if (AstNodeUtil.getBlockId(node) != null) {
+            return node;
+        } else {
+            return getCurrentReferencableNode(node.getParentNode());
         }
     }
 
@@ -131,19 +134,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     @Override
     public void visit(Message node) {
         // No-op
-    }
-
-    @Override
-    public void visit(Stmt node) {
-        currentStatement = node;
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(Expression node) {
-        currentExpression = node;
-        super.visit(node);
-        currentExpression = null;
     }
 
     @Override

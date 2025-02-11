@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
@@ -150,7 +151,7 @@ public class VariableAsLiteralTest implements JsonTest {
         Set<Issue> reports = lit.check(program);
         Assertions.assertEquals(2, reports.size());
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getCodeLocation()).isNotNull();
+            Truth.assertThat(AstNodeUtil.getBlockId(issue.getCodeLocation())).isNotNull();
         }
     }
 }
