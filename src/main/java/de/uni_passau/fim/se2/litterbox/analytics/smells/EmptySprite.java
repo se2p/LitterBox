@@ -24,14 +24,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 public class EmptySprite extends AbstractIssueFinder {
     public static final String NAME = "empty_sprite";
 
     @Override
     public void visit(ActorDefinition actor) {
+        currentActor = actor;
         if (actor.getProcedureDefinitionList().getList().isEmpty() && actor.getScripts().getScriptList().isEmpty()
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
@@ -48,17 +46,6 @@ public class EmptySprite extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
-    }
-
-    @Override
-    public void setIgnoreLooseBlocks(boolean value) {
-        // Irrelevant for this finder
-    }
-
-    @Override
-    public Collection<String> getHintKeys() {
-        // Default: Only one key with the name of the finder
-        return Arrays.asList(getName());
     }
 
     @Override
