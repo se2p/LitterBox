@@ -36,6 +36,16 @@ import java.util.stream.Collectors;
 
 public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
     private static final Logger log = Logger.getLogger(ProgramBugAnalyzer.class.getName());
+
+    private static final Set<String> FINDERS_WITHOUT_LOCATION = Set.of(
+            DuplicateSprite.NAME,
+            EmptyProject.NAME,
+            EmptySprite.NAME,
+            NoWorkingScripts.NAME,
+            SameVariableDifferentSprite.NAME,
+            SpriteNaming.NAME
+    );
+
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
     private final Path priorResultsPath;
@@ -68,7 +78,9 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return issues;
     }
 
-    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults) {
+    private Set<Issue> checkIfPriorIssuesFixed(
+            Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults
+    ) {
         Map<String, List<Issue>> resultsByFinder = sortResults(result);
         Set<Issue> fixedIssues = new HashSet<>();
 
@@ -86,13 +98,12 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return fixedIssues;
     }
 
-    private Set<Issue> compareLocations(String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program) {
+    private Set<Issue> compareLocations(
+            String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program
+    ) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueDTO issueRecord : issueRecords) {
-            if (!(issueRecord.finder().equals(NoWorkingScripts.NAME)) && !(issueRecord.finder().equals(DuplicateSprite.NAME))
-                    && !(issueRecord.finder().equals(SpriteNaming.NAME)) && !(issueRecord.finder().equals(EmptyProject.NAME))
-                    && !(issueRecord.finder().equals(SameVariableDifferentSprite.NAME)) && !(issueRecord.finder().equals(EmptySprite.NAME))
-                    && !issueRecord.issueLocationBlockId().isEmpty()) {
+            if (hasLocation(issueRecord)) {
                 boolean found = false;
                 for (Issue currentIssue : result) {
                     String issueBlockId = AstNodeUtil.getBlockId(currentIssue.getCodeLocation());
@@ -107,6 +118,12 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
             }
         }
         return fixes;
+    }
+
+    private boolean hasLocation(final IssueDTO issueRecord) {
+        return issueRecord.issueLocationBlockId() != null
+                && !issueRecord.issueLocationBlockId().isEmpty()
+                && !FINDERS_WITHOUT_LOCATION.contains(issueRecord.finder());
     }
 
     private Set<Issue> checkOldFixed(String finder, List<IssueDTO> issueRecords, Program program) {
@@ -139,7 +156,8 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
                 issues.addAll(messageNeverSentFix.check(program));
             }
             case MissingCloneInitialization.NAME -> {
-                MissingCloneInitializationFix missingCloneInitializationFix = new MissingCloneInitializationFix(location);
+                MissingCloneInitializationFix missingCloneInitializationFix
+                        = new MissingCloneInitializationFix(location);
                 issues.addAll(missingCloneInitializationFix.check(program));
             }
             case MissingLoopSensing.NAME -> {
