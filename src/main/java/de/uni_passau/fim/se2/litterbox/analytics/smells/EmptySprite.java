@@ -18,29 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class EmptySprite extends AbstractIssueFinder {
     public static final String NAME = "empty_sprite";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private Program program = null;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        issues = new LinkedHashSet<>();
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -48,7 +36,7 @@ public class EmptySprite extends AbstractIssueFinder {
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
-            issues.add(new Issue(this, IssueSeverity.LOW, program, actor, null, null, null, hint));
+            addIssueWithLooseComment(hint);
         }
     }
 

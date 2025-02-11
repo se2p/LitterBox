@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -68,9 +68,7 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return issues;
     }
 
-    private Set<Issue> checkIfPriorIssuesFixed(
-            Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults
-    ) {
+    private Set<Issue> checkIfPriorIssuesFixed(Program program, Set<Issue> result, Map<String, List<IssueDTO>> oldResults) {
         Map<String, List<Issue>> resultsByFinder = sortResults(result);
         Set<Issue> fixedIssues = new HashSet<>();
 
@@ -88,12 +86,13 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
         return fixedIssues;
     }
 
-    private Set<Issue> compareLocations(
-            String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program
-    ) {
+    private Set<Issue> compareLocations(String finder, List<IssueDTO> issueRecords, List<Issue> result, Program program) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueDTO issueRecord : issueRecords) {
-            if (!issueRecord.issueLocationBlockId().isEmpty()) {
+            if (!(issueRecord.finder().equals(NoWorkingScripts.NAME)) && !(issueRecord.finder().equals(DuplicateSprite.NAME))
+                    && !(issueRecord.finder().equals(SpriteNaming.NAME)) && !(issueRecord.finder().equals(EmptyProject.NAME))
+                    && !(issueRecord.finder().equals(SameVariableDifferentSprite.NAME)) && !(issueRecord.finder().equals(EmptySprite.NAME))
+                    && !issueRecord.issueLocationBlockId().isEmpty()) {
                 boolean found = false;
                 for (Issue currentIssue : result) {
                     String issueBlockId = AstNodeUtil.getBlockId(currentIssue.getCodeLocation());
@@ -140,8 +139,7 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
                 issues.addAll(messageNeverSentFix.check(program));
             }
             case MissingCloneInitialization.NAME -> {
-                MissingCloneInitializationFix missingCloneInitializationFix
-                        = new MissingCloneInitializationFix(location);
+                MissingCloneInitializationFix missingCloneInitializationFix = new MissingCloneInitializationFix(location);
                 issues.addAll(missingCloneInitializationFix.check(program));
             }
             case MissingLoopSensing.NAME -> {
