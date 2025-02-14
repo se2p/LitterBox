@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
+import de.uni_passau.fim.se2.litterbox.utils.Either;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -83,7 +85,9 @@ public class Main implements Callable<Integer> {
         PropertyLoader.setDefaultSystemProperties("litterbox.properties");
         PropertyLoader.setGlobalLoggingLevelFromEnvironment();
 
-        int exitCode = new CommandLine(new Main()).execute(args);
+        int exitCode = new CommandLine(new Main())
+                .setCaseInsensitiveEnumValuesAllowed(true)
+                .execute(args);
         System.exit(exitCode);
     }
 
@@ -256,11 +260,22 @@ public class Main implements Callable<Integer> {
     )
     static class LLMQuerySubcommand extends LitterBoxSubcommand {
 
-        @CommandLine.Option(
-                names = {"-q", "--query"},
-                description = "Query for the LLM."
-        )
-        String query;
+        static class QueryChoice {
+            @CommandLine.Option(
+                    names = {"-q", "--query"},
+                    description = "Custom query for the LLM."
+            )
+            String query;
+
+            @CommandLine.Option(
+                    names = {"--predefined-query"},
+                    description = "Choose a predefined query for the LLM. Possible choices: ${COMPLETION-CANDIDATES}"
+            )
+            CommonQuery commonQuery;
+        }
+
+        @CommandLine.ArgGroup(multiplicity = "1")
+        QueryChoice query;
 
         @CommandLine.Option(
                 names = {"-f", "--fix"},
@@ -300,8 +315,9 @@ public class Main implements Callable<Integer> {
         protected LLMAnalyzer getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
 
+            final Either<String, CommonQuery> q = new Either<>(query.query, query.commonQuery);
             final String detector = String.join(",", detectors);
-            return new LLMAnalyzer(outputPath, deleteProject, query, spriteName, detector, ignoreLooseBlocks, fix);
+            return new LLMAnalyzer(outputPath, deleteProject, q, spriteName, detector, ignoreLooseBlocks, fix);
         }
     }
 

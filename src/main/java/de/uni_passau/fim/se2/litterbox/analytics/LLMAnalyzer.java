@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
+import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,7 +30,15 @@ import java.nio.file.Path;
 
 public class LLMAnalyzer extends FileAnalyzer<String> {
 
-    public LLMAnalyzer(Path output, boolean delete, String query, String spriteName, String detectors, boolean ignoreLooseBlocks, boolean fix) {
+    public LLMAnalyzer(
+            Path output,
+            boolean delete,
+            Either<String, CommonQuery> query,
+            String spriteName,
+            String detectors,
+            boolean ignoreLooseBlocks,
+            boolean fix
+    ) {
         super(new ProgramLLMAnalyzer(query, spriteName, detectors, ignoreLooseBlocks, fix), output, delete);
     }
 

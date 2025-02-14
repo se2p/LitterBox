@@ -21,7 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
 import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.util.logging.Logger;
 
@@ -41,9 +43,13 @@ public class ProgramLLMAnalyzer implements ProgramAnalyzer<String> {
     private boolean fix;
 
     public ProgramLLMAnalyzer(
-            String query, String targetSprite, String detectors, boolean ignoreLooseBlocks, boolean fix
+            Either<String, CommonQuery> query,
+            String targetSprite,
+            String detectors,
+            boolean ignoreLooseBlocks,
+            boolean fix
     ) {
-        this.query = query;
+        this.query = query.asLeft(); // todo: handle CommonQuery case
         this.targetSprite = targetSprite;
         this.detectors = detectors;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
