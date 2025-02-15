@@ -20,53 +20,73 @@
 package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public record QueryTarget(String sprite, String script) {
+public sealed interface QueryTarget {
 
+    String getTargetDescription();
 
-    public ASTNode getTargetNode(Program program) {
-        if (script != null) {
-            return getScript(program);
-        } else if (sprite != null) {
-            return getSprite(program);
-        } else {
+    ASTNode getTargetNode(Program program);
+
+    record ProgramTarget() implements QueryTarget {
+        @Override
+        public String getTargetDescription() {
+            return "program";
+        }
+
+        @Override
+        public ASTNode getTargetNode(final Program program) {
             return program;
         }
     }
 
-    public String getTargetDescription () {
-        if (script != null) {
-            return "script";
-        } else if (sprite != null) {
+    record SpriteTarget(String spriteName) implements QueryTarget {
+
+        public SpriteTarget {
+            Preconditions.checkNotNull(spriteName);
+        }
+
+        @Override
+        public String getTargetDescription() {
             return "sprite";
-        } else {
-            return "program";
+        }
+
+        @Override
+        public ASTNode getTargetNode(Program program) {
+            return AstNodeUtil.getActors(program, false)
+                    .filter(actor -> actor.getIdent().getName().equals(spriteName))
+                    .findFirst()
+                    .orElseThrow(
+                            () -> new IllegalArgumentException(
+                                    "Could not find sprite '" + spriteName + "' in the program."
+                            )
+                    );
         }
     }
 
-    public ActorDefinition getSprite(Program program) {
-        Preconditions.checkNotNull(sprite);
-        return AstNodeUtil.getActors(program, false)
-                .filter(actor -> actor.getIdent().getName().equals(sprite))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Could not find sprite '" + sprite + "' in the program.")
-                );
-    }
+    record ScriptTarget(String headBlockId) implements QueryTarget {
 
-    public Script getScript(Program program) {
-        Preconditions.checkNotNull(script);
-        return AstNodeUtil.getScripts(program)
-                .filter(script -> AstNodeUtil.getBlockId(script.getEvent()).equals(script))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Could not find script with ID '" + script + "' in the program.")
-                );
-    }
+        public ScriptTarget {
+            Preconditions.checkNotNull(headBlockId);
+        }
 
+        @Override
+        public String getTargetDescription() {
+            return "script";
+        }
+
+        @Override
+        public ASTNode getTargetNode(Program program) {
+            return AstNodeUtil.getScripts(program)
+                    .filter(script -> headBlockId.equals(AstNodeUtil.getBlockId(script.getEvent())))
+                    .findFirst()
+                    .orElseThrow(
+                            () -> new IllegalArgumentException(
+                                    "Could not find script with ID '" + headBlockId + "' in the program."
+                            )
+                    );
+        }
+    }
 }
