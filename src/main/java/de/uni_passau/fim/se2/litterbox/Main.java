@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
-import de.uni_passau.fim.se2.litterbox.utils.Either;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -315,9 +315,17 @@ public class Main implements Callable<Integer> {
         protected LLMAnalyzer getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
 
-            final Either<String, CommonQuery> q = new Either<>(query.query, query.commonQuery);
+            final LlmQuery q = buildQuery();
             final String detector = String.join(",", detectors);
             return new LLMAnalyzer(outputPath, deleteProject, q, spriteName, detector, ignoreLooseBlocks, fix);
+        }
+
+        private LlmQuery buildQuery() {
+            if (query.query != null) {
+                return new LlmQuery.CustomQuery(query.query);
+            } else {
+                return new LlmQuery.PredefinedQuery(query.commonQuery);
+            }
         }
     }
 
