@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -32,11 +33,17 @@ import java.util.stream.Collectors;
 public class DefaultPrompts extends PromptBuilder {
 
     @Override
-    public String askQuestion(final Program program, final QueryTarget target, final String question) {
+    public String askQuestion(final Program program, final QueryTarget target, final Either<String, CommonQuery> question) {
+        String questionText;
+        if (question.hasRight()) {
+            questionText = createPromptForCommonQuery(question.asRight());
+        } else {
+            questionText = question.asLeft();
+        }
         return describeTarget(program, target) + """
                 Answer the following question:
                 %s
-                """.formatted(question);
+                """.formatted(questionText);
     }
 
     @Override
@@ -57,6 +64,36 @@ public class DefaultPrompts extends PromptBuilder {
         return describeTarget(program, target) + """
                 Auto-complete the code.
                 """;
+    }
+
+    @Override
+    public String createPromptForCommonQuery(CommonQuery query) {
+        return switch (query) {
+            case SUMMARISE:
+                yield """
+                      Summarise what this code does.
+                      """;
+            case EXPLAIN:
+                yield """
+                      Explain how this code works.
+                      """;
+            case SUGGEST_EXTENSION:
+                yield """
+                      Suggest how to extend this code with new functionality.
+                      """;
+            case PROVIDE_FEEDBACK:
+                yield """
+                      This code was written by a student. Provide feedback to the student about the code as well as the creativity).
+                      """;
+            case PROVIDE_PRAISE:
+                yield """
+                      This code was written by a student. Provide praise to the student who wrote it.
+                      """;
+            case FIND_BUGS:
+                yield """
+                      Find and describe any bugs in this code.
+                      """;
+        };
     }
 
     @Override

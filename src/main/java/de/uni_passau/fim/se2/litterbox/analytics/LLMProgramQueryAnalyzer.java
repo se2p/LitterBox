@@ -32,7 +32,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
     private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
 
-    private String query;
+    private Either<String, CommonQuery> query;
 
     private QueryTarget target;
 
@@ -44,7 +44,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
-        this.query = query.asLeft(); // todo: handle CommonQuery case
+        this.query = query;
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }

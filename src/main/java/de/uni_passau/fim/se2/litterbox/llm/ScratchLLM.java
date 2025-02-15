@@ -21,8 +21,10 @@ package de.uni_passau.fim.se2.litterbox.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.util.Set;
 
@@ -37,7 +39,7 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
         this.promptBuilder = promptBuilder;
     }
 
-    public String askAbout(Program program, QueryTarget target, String question) {
+    public String askAbout(Program program, QueryTarget target, Either<String, CommonQuery> question) {
         final String prompt = promptBuilder.askQuestion(program, target, question);
         return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
     }

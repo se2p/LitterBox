@@ -62,4 +62,12 @@ public record Either<A, B>(A left, B right) {
         }
         return right;
     }
+
+    public boolean hasLeft() {
+        return left != null;
+    }
+
+    public boolean hasRight() {
+        return right != null;
+    }
 }
