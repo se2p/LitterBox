@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +35,7 @@ public abstract class PromptBuilder {
         return null;
     }
 
-    public abstract String askQuestion(Program program, QueryTarget target, Either<String, CommonQuery> question);
+    public abstract String askQuestion(Program program, QueryTarget target, LlmQuery question);
 
     public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
 

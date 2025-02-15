@@ -20,12 +20,8 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -33,12 +29,12 @@ import java.util.stream.Collectors;
 public class DefaultPrompts extends PromptBuilder {
 
     @Override
-    public String askQuestion(final Program program, final QueryTarget target, final Either<String, CommonQuery> question) {
+    public String askQuestion(final Program program, final QueryTarget target, final LlmQuery question) {
         String questionText;
-        if (question.hasRight()) {
-            questionText = createPromptForCommonQuery(question.asRight());
+        if (question instanceof LlmQuery.PredefinedQuery predefinedQuery) {
+            questionText = createPromptForCommonQuery(predefinedQuery.query());
         } else {
-            questionText = question.asLeft();
+            questionText = ((LlmQuery.CustomQuery) question).query();
         }
         return describeTarget(program, target) + """
                 Answer the following question:

@@ -19,9 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
-import de.uni_passau.fim.se2.litterbox.utils.Either;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +33,7 @@ public class LLMQueryAnalyzer extends FileAnalyzer<String> {
     public LLMQueryAnalyzer(
             Path output,
             boolean delete,
-            Either<String, CommonQuery> query,
+            LlmQuery query,
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {

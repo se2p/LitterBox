@@ -21,10 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
 import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
-import de.uni_passau.fim.se2.litterbox.utils.Either;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 
 import java.util.logging.Logger;
 
@@ -32,7 +31,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
     private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
 
-    private Either<String, CommonQuery> query;
+    private LlmQuery query;
 
     private QueryTarget target;
 
@@ -40,7 +39,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
     private boolean ignoreLooseBlocks;
 
     public LLMProgramQueryAnalyzer(
-            Either<String, CommonQuery> query,
+            LlmQuery query,
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
