@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.util;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -111,6 +108,17 @@ public class AstNodeUtil {
                 .getDefinitions()
                 .stream()
                 .filter(actor -> includeStage || actor.isSprite());
+    }
+
+    /**
+     * Gets all scripts in the program.
+     *
+     * @param program Some program.
+     * @return The scripts in the given program.
+     */
+    public static Stream<Script> getScripts(final Program program) {
+        return program.getActorDefinitionList().getDefinitions().stream()
+                .flatMap(actor -> actor.getScripts().getScriptList().stream());
     }
 
     /**

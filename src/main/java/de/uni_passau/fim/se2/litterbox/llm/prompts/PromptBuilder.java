@@ -36,11 +36,13 @@ public abstract class PromptBuilder {
         return null;
     }
 
-    public abstract String askQuestion(Program program, String question);
+    public abstract String askQuestion(Program program, QueryTarget target, String question);
 
-    public abstract String askQuestion(Program program, String sprite, String question);
+    public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
 
-    public abstract String improveCode(ASTNode program, Collection<Issue> issues);
+    public abstract String completeCode(Program program, QueryTarget target);
+
+    protected abstract String describeTarget(final Program program, QueryTarget target);
 
     protected List<String> issueTypes(final Collection<Issue> issues) {
         return issues.stream().map(Issue::getFinderName).sorted().toList();

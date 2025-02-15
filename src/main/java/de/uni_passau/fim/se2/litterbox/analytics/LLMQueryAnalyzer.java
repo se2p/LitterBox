@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.utils.Either;
 
 import java.io.BufferedWriter;
@@ -28,29 +29,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class LLMAnalyzer extends FileAnalyzer<String> {
+public class LLMQueryAnalyzer extends FileAnalyzer<String> {
 
-    public LLMAnalyzer(
+    public LLMQueryAnalyzer(
             Path output,
             boolean delete,
             Either<String, CommonQuery> query,
-            String spriteName,
-            String detectors,
-            boolean ignoreLooseBlocks,
-            boolean fix
+            QueryTarget target,
+            boolean ignoreLooseBlocks
     ) {
-        super(new ProgramLLMAnalyzer(query, spriteName, detectors, ignoreLooseBlocks, fix), output, delete);
+        super(new LLMProgramQueryAnalyzer(query, target, ignoreLooseBlocks), output, delete);
     }
 
     @Override
     protected void checkAndWrite(File file) throws IOException {
         final Program program = extractProgram(file);
         if (program == null) {
-            // TODO Error handling
-            return;
+            throw new IllegalArgumentException("Could not extract program from file: " + file);
         }
 
-        // TODO: Result may not be a string if we aim to fix a program, may need to refactor in two different analyzers?
         final String result = analyzer.analyze(program);
         if (output == null) {
             System.out.println(result);

@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.util.Set;
 
@@ -36,31 +37,26 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
         this.promptBuilder = promptBuilder;
     }
 
-    public String askAbout(Program program, String question) {
-        final String prompt = promptBuilder.askQuestion(program, question);
+    public String askAbout(Program program, QueryTarget target, String question) {
+        final String prompt = promptBuilder.askQuestion(program, target, question);
         return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
     }
 
-    public String askAbout(Program program, String spriteName, String question) {
-        final String prompt = promptBuilder.askQuestion(program, spriteName, question);
-        return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-    }
-
-    public String improve(Program program, String detectors, boolean ignoreLooseBlocks) {
+    public String improve(Program program, QueryTarget target, String detectors, boolean ignoreLooseBlocks) {
         final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
         final Set<Issue> issues = bugAnalyzer.analyze(program);
 
-        final String prompt = promptBuilder.improveCode(program, issues);
+        final String prompt = promptBuilder.improveCode(program, target, issues);
         final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
-
-        // TODO: Parse stuff back to program and return actual Program rather than text
-        // TODO: Ask LLM to fix the ScratchBlocks output if it cannot be parsed?
-        // TODO: Check how many of the issues are actually fixed
 
         return response.getLast().text();
     }
 
+    public String autoComplete(Program program, QueryTarget target) {
+        final String prompt = promptBuilder.completeCode(program, target);
+        return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+    }
+
     // TODO: methods to continue a conversation
 
-    // TODO: autoComplete(Program program, ScriptEntity script) ?
 }

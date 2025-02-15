@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.utils.Either;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -284,10 +285,22 @@ public class Main implements Callable<Integer> {
         boolean fix;
 
         @CommandLine.Option(
+                names = {"-c", "--complete"},
+                description = "Ask LLM to autocomplete code."
+        )
+        boolean complete;
+
+        @CommandLine.Option(
                 names = {"-t", "--target"},
                 description = "Target sprite name."
         )
         String spriteName;
+
+        @CommandLine.Option(
+                names = {"-s", "--script"},
+                description = "Target script ID."
+        )
+        String scriptID;
 
         @CommandLine.Option(
                 names = {"-d", "--detectors"},
@@ -307,17 +320,28 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            // TODO: Do we want to write to a file or also stdout? Depends on whether we query or fix programs
-            // requireOutputPath();
+
+            // Output path required if we produce an SB3 file as output
+            if (fix || complete) {
+                requireOutputPath();
+            }
         }
 
         @Override
-        protected LLMAnalyzer getAnalyzer() {
+        protected FileAnalyzer<?> getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
 
             final Either<String, CommonQuery> q = new Either<>(query.query, query.commonQuery);
-            final String detector = String.join(",", detectors);
-            return new LLMAnalyzer(outputPath, deleteProject, q, spriteName, detector, ignoreLooseBlocks, fix);
+            final QueryTarget target = new QueryTarget(spriteName, scriptID);
+
+            // TODO: Make nicer
+            if (fix) {
+                return new LLMCodeAnalyzer(new LLMProgramImprovementAnalyzer(target, String.join(",", detectors), ignoreLooseBlocks), outputPath, deleteProject);
+            } else if(complete) {
+                return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
+            } else {
+                return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);
+            }
         }
     }
 

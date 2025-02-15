@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
@@ -31,49 +32,42 @@ import java.util.stream.Collectors;
 public class DefaultPrompts extends PromptBuilder {
 
     @Override
-    public String askQuestion(final Program program, final String question) {
-        return """
-                You are given the following Scratch program:
-                %s
-
-                Please answer the following question:
-                %s
-                """.formatted(ScratchBlocksVisitor.of(program), question);
-    }
-
-    @Override
-    public String askQuestion(final Program program, final String sprite, final String question) {
-        final ActorDefinition spriteNode = AstNodeUtil.getActors(program, false)
-                .filter(actor -> actor.getIdent().getName().equals(sprite))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Could not find sprite '" + sprite + "' in the program.")
-                );
-        final String scratchBlocks = ScratchBlocksVisitor.of(spriteNode);
-
-        return """
-                You are given the following Scratch sprite:
-                %s
-
+    public String askQuestion(final Program program, final QueryTarget target, final String question) {
+        return describeTarget(program, target) + """
                 Answer the following question:
                 %s
-                """.formatted(scratchBlocks, question);
+                """.formatted(question);
     }
 
     @Override
-    public String improveCode(final ASTNode code, final Collection<Issue> issues) {
-        final String scratchBlocks = ScratchBlocksVisitor.of(code);
+    public String improveCode(final Program program, final QueryTarget target, final Collection<Issue> issues) {
         final String issueDescription = issues.stream().map(Issue::getHint).collect(Collectors.joining("\n\n"));
 
+        return describeTarget(program, target) + """
+               The code contains the following bugs and code smells:
+               %s
+
+               Create a version of the program where these issues are fixed.
+               Only output the ScratchBlocks code and nothing else.
+               """.formatted(issueDescription);
+    }
+
+    @Override
+    public String completeCode(final Program program, final QueryTarget target) {
+        return describeTarget(program, target) + """
+                Auto-complete the code.
+                """;
+    }
+
+    @Override
+    protected String describeTarget(final Program program, final QueryTarget target) {
+        final ASTNode targetNode = target.getTargetNode(program);
+        final String label = target.getTargetDescription();
+        final String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+
         return """
-                You are given the following Scratch program:
-                %s
-
-                The program contains the following bugs and code smells:
-                %s
-
-                Create a version of the program where this bug is fixed.
-                Only output the ScratchBlocks code and nothing else.
-                """.formatted(scratchBlocks, issueDescription);
+               You are given the following %s:
+               %s
+                """.formatted(label, scratchBlocks);
     }
 }
