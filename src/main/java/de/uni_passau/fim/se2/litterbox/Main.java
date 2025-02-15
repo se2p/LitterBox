@@ -332,7 +332,7 @@ public class Main implements Callable<Integer> {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
 
             final Either<String, CommonQuery> q = new Either<>(query.query, query.commonQuery);
-            final QueryTarget target = new QueryTarget(spriteName, scriptID);
+            final QueryTarget target = buildQueryTarget();
 
             // TODO: Make nicer
             if (fix) {
@@ -341,6 +341,16 @@ public class Main implements Callable<Integer> {
                 return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
             } else {
                 return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);
+            }
+        }
+
+        private QueryTarget buildQueryTarget() {
+            if (spriteName != null) {
+                return new QueryTarget.SpriteTarget(spriteName);
+            } else if (scriptID != null) {
+                return new QueryTarget.ScriptTarget(scriptID);
+            } else {
+                return new QueryTarget.ProgramTarget();
             }
         }
     }
