@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.Collection;
@@ -36,11 +35,15 @@ public abstract class PromptBuilder {
         return null;
     }
 
-    public abstract String askQuestion(Program program, String question);
+    public abstract String askQuestion(Program program, QueryTarget target, LlmQuery question);
 
-    public abstract String askQuestion(Program program, String sprite, String question);
+    public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
 
-    public abstract String improveCode(ASTNode program, Collection<Issue> issues);
+    public abstract String completeCode(Program program, QueryTarget target);
+
+    public abstract String createPromptForCommonQuery(CommonQuery query);
+
+    protected abstract String describeTarget(final Program program, QueryTarget target);
 
     protected List<String> issueTypes(final Collection<Issue> issues) {
         return issues.stream().map(Issue::getFinderName).sorted().toList();

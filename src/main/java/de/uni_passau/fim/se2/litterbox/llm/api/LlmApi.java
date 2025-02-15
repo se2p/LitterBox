@@ -30,7 +30,7 @@ public interface LlmApi {
     Conversation query(String message);
 
     /**
-     * Initiates a new conversion by sending a message to the large language model.
+     * Initiates a new conversation by sending a message to the large language model.
      *
      * @param systemPrompt A system prompt to be sent to the LLM before the user message.
      * @param message Some message by the user.

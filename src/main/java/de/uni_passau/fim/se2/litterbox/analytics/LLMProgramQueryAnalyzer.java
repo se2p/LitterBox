@@ -22,55 +22,36 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
 import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 
 import java.util.logging.Logger;
 
-public class ProgramLLMAnalyzer implements ProgramAnalyzer<String> {
+public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
-    private static final Logger log = Logger.getLogger(ProgramLLMAnalyzer.class.getName());
+    private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
 
-    private String query;
+    private LlmQuery query;
 
-    private String targetSprite;
+    private QueryTarget target;
 
-    private String detectors;
-
+    // TODO: Handle this option
     private boolean ignoreLooseBlocks;
 
-    // TODO: Probably should use two different analyzers rather than a flag
-    private boolean fix;
-
-    public ProgramLLMAnalyzer(
+    public LLMProgramQueryAnalyzer(
             LlmQuery query,
-            String targetSprite,
-            String detectors,
-            boolean ignoreLooseBlocks,
-            boolean fix
+            QueryTarget target,
+            boolean ignoreLooseBlocks
     ) {
-        this.query = ((LlmQuery.CustomQuery) query).query(); // todo: handle CommonQuery case
-        this.targetSprite = targetSprite;
-        this.detectors = detectors;
+        this.query = query;
+        this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
-        this.fix = fix;
     }
 
     @Override
     public String analyze(Program program) {
         // TODO: bubble up options for LlmApi and prompts
         ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM = new ScratchLLM<>(new OpenAiApi(), new DefaultPrompts());
-        log.fine("Target sprite: " + targetSprite);
-        String response;
-        // TODO: Handle this properly once we know what APIs we actually want to offer
-        if (fix) {
-            response = scratchLLM.improve(program, detectors, ignoreLooseBlocks);
-        } else {
-            if (targetSprite != null) {
-                response = scratchLLM.askAbout(program, targetSprite, query);
-            } else {
-                response = scratchLLM.askAbout(program, query);
-            }
-        }
-        return response;
+        return scratchLLM.askAbout(program, target, query);
     }
 }

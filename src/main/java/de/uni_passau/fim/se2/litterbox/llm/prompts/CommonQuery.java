@@ -19,10 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 public enum CommonQuery {
-    SUMMARISE_PROJECT,
-    SUMMARISE_SPRITE,
-    EXPLAIN_PROJECT,
-    EXPLAIN_SCRIPT,
+    SUMMARISE,
+    EXPLAIN,
     SUGGEST_EXTENSION,
-    PROVIDE_FEEDBACK
+    PROVIDE_FEEDBACK,
+    PROVIDE_PRAISE,
+    FIND_BUGS
 }

@@ -20,9 +20,7 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.Collection;
@@ -31,49 +29,78 @@ import java.util.stream.Collectors;
 public class DefaultPrompts extends PromptBuilder {
 
     @Override
-    public String askQuestion(final Program program, final String question) {
-        return """
-                You are given the following Scratch program:
-                %s
-
-                Please answer the following question:
-                %s
-                """.formatted(ScratchBlocksVisitor.of(program), question);
-    }
-
-    @Override
-    public String askQuestion(final Program program, final String sprite, final String question) {
-        final ActorDefinition spriteNode = AstNodeUtil.getActors(program, false)
-                .filter(actor -> actor.getIdent().getName().equals(sprite))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Could not find sprite '" + sprite + "' in the program.")
-                );
-        final String scratchBlocks = ScratchBlocksVisitor.of(spriteNode);
-
-        return """
-                You are given the following Scratch sprite:
-                %s
-
+    public String askQuestion(final Program program, final QueryTarget target, final LlmQuery question) {
+        String questionText;
+        if (question instanceof LlmQuery.PredefinedQuery predefinedQuery) {
+            questionText = createPromptForCommonQuery(predefinedQuery.query());
+        } else {
+            questionText = ((LlmQuery.CustomQuery) question).query();
+        }
+        return describeTarget(program, target) + """
                 Answer the following question:
                 %s
-                """.formatted(scratchBlocks, question);
+                """.formatted(questionText);
     }
 
     @Override
-    public String improveCode(final ASTNode code, final Collection<Issue> issues) {
-        final String scratchBlocks = ScratchBlocksVisitor.of(code);
+    public String improveCode(final Program program, final QueryTarget target, final Collection<Issue> issues) {
         final String issueDescription = issues.stream().map(Issue::getHint).collect(Collectors.joining("\n\n"));
 
+        return describeTarget(program, target) + """
+               The code contains the following bugs and code smells:
+               %s
+
+               Create a version of the program where these issues are fixed.
+               Only output the ScratchBlocks code and nothing else.
+               """.formatted(issueDescription);
+    }
+
+    @Override
+    public String completeCode(final Program program, final QueryTarget target) {
+        return describeTarget(program, target) + """
+                Auto-complete the code.
+                """;
+    }
+
+    @Override
+    public String createPromptForCommonQuery(CommonQuery query) {
+        return switch (query) {
+            case SUMMARISE:
+                yield """
+                      Summarise what this code does.
+                      """;
+            case EXPLAIN:
+                yield """
+                      Explain how this code works.
+                      """;
+            case SUGGEST_EXTENSION:
+                yield """
+                      Suggest how to extend this code with new functionality.
+                      """;
+            case PROVIDE_FEEDBACK:
+                yield """
+                      This code was written by a student. Provide feedback to the student about the code as well as the creativity).
+                      """;
+            case PROVIDE_PRAISE:
+                yield """
+                      This code was written by a student. Provide praise to the student who wrote it.
+                      """;
+            case FIND_BUGS:
+                yield """
+                      Find and describe any bugs in this code.
+                      """;
+        };
+    }
+
+    @Override
+    protected String describeTarget(final Program program, final QueryTarget target) {
+        final ASTNode targetNode = target.getTargetNode(program);
+        final String label = target.getTargetDescription();
+        final String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+
         return """
-                You are given the following Scratch program:
-                %s
-
-                The program contains the following bugs and code smells:
-                %s
-
-                Create a version of the program where this bug is fixed.
-                Only output the ScratchBlocks code and nothing else.
-                """.formatted(scratchBlocks, issueDescription);
+               You are given the following %s:
+               %s
+                """.formatted(label, scratchBlocks);
     }
 }
