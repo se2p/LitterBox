@@ -13,7 +13,7 @@ in
 
     src = ./.;
 
-    mvnHash = "sha256-RPn+xpZdNpEeU0MCZI+4Syuq2ufdkFQFaJ1MuubBleI=";
+    mvnHash = "sha256-CWU44zaKIjk+tchEZ29IIaGdwlVbLZ2FOEXkAYpUa4s=";
 
     nativeBuildInputs = [makeWrapper];
 
