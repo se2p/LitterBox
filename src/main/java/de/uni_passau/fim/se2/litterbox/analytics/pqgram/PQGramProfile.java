@@ -42,6 +42,14 @@ public class PQGramProfile {
         }
     }
 
+    public PQGramProfile(ASTNode node, int p, int q) {
+        this.p = p;
+        this.q = q;
+        if (node != null) {
+            populatePQGram(node);
+        }
+    }
+
     private void populatePQGram(ASTNode node) {
         List<Label> anc = new ArrayList<>();
         for (int i = 0; i < p; i++) {
@@ -103,14 +111,6 @@ public class PQGramProfile {
 
     private String getBlockName(ASTNode node) {
         return node.getClass().getSimpleName();
-    }
-
-    public void setP(int p) {
-        this.p = p;
-    }
-
-    public void setQ(int q) {
-        this.q = q;
     }
 
     public int getP() {
