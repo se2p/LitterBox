@@ -273,22 +273,22 @@ public class Main implements Callable<Integer> {
                     description = "Choose a predefined query for the LLM. Possible choices: ${COMPLETION-CANDIDATES}"
             )
             CommonQuery commonQuery;
+
+            @CommandLine.Option(
+                    names = {"-f", "--fix"},
+                    description = "Ask LLM to fix bugs or smells."
+            )
+            boolean fix;
+
+            @CommandLine.Option(
+                    names = {"-c", "--complete"},
+                    description = "Ask LLM to autocomplete code."
+            )
+            boolean complete;
         }
 
         @CommandLine.ArgGroup(multiplicity = "1")
         QueryChoice query;
-
-        @CommandLine.Option(
-                names = {"-f", "--fix"},
-                description = "Ask LLM to fix bugs or smells."
-        )
-        boolean fix;
-
-        @CommandLine.Option(
-                names = {"-c", "--complete"},
-                description = "Ask LLM to autocomplete code."
-        )
-        boolean complete;
 
         @CommandLine.Option(
                 names = {"-t", "--target"},
@@ -322,7 +322,7 @@ public class Main implements Callable<Integer> {
             requireProjectPath();
 
             // Output path required if we produce an SB3 file as output
-            if (fix || complete) {
+            if (query.fix || query.complete) {
                 requireOutputPath();
             }
         }
@@ -335,9 +335,9 @@ public class Main implements Callable<Integer> {
             final QueryTarget target = buildQueryTarget();
 
             // TODO: Make nicer
-            if (fix) {
+            if (query.fix) {
                 return new LLMCodeAnalyzer(new LLMProgramImprovementAnalyzer(target, String.join(",", detectors), ignoreLooseBlocks), outputPath, deleteProject);
-            } else if(complete) {
+            } else if (query.complete) {
                 return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
             } else {
                 return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);
