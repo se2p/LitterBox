@@ -81,9 +81,9 @@ customBlockCallParam    : exprOrLiteral stringArgument;
 
 customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
 
-nonEmptyStmtList        : (stmt NEWLINE)+;
+nonEmptyStmtList        : (WS* stmt NEWLINE)+;
 
-stmtList                : (stmt NEWLINE)*?;
+stmtList                : (WS* stmt NEWLINE)*?;
 
 event                   : greenFlag (COMMENT)?
                         | keyEvent (COMMENT)?
@@ -218,12 +218,12 @@ controlStmt             : waitSeconds
                         ;
 
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
-repeat                  : 'repeat 'exprOrLiteral NEWLINE stmtList 'end';
-forever                 : 'forever' NEWLINE stmtList 'end';
-if                      : 'if 'exprOrLiteral' then' NEWLINE stmtList 'end';
-ifElse                  : 'if 'exprOrLiteral' then' NEWLINE then=stmtList 'else' NEWLINE else=stmtList 'end';
+repeat                  : 'repeat 'exprOrLiteral NEWLINE stmtList WS* 'end';
+forever                 : 'forever' NEWLINE stmtList WS* 'end';
+if                      : 'if 'exprOrLiteral' then' NEWLINE stmtList WS* 'end';
+ifElse                  : 'if 'exprOrLiteral' then' NEWLINE then=stmtList 'else' NEWLINE else=stmtList WS* 'end';
 waitUntil               : 'wait until 'exprOrLiteral;
-repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE stmtList 'end';
+repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE stmtList WS* 'end';
 stop                    : 'stop' WS '['stopChoice' v]';
 createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
