@@ -106,6 +106,10 @@ public final class IssueTranslator {
         }
     }
 
+    public String getLanguage() {
+        return locale.getLanguage();
+    }
+
     private void loadResourceBundles() {
         names = loadResourceBundle("IssueNames", locale);
         hints = loadResourceBundle("IssueHints", locale);
