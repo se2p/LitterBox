@@ -57,7 +57,13 @@ public class LLMCodeAnalyzer extends FileAnalyzer<Program> {
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Program modifiedProgram) throws IOException {
-        // TODO create json or sb3 depending on input
-        JSONFileCreator.writeJsonFromProgram(modifiedProgram, output, "_llm");
+        // TODO: This needs checking
+        if (projectFile.toString().endsWith(".json")) {
+            JSONFileCreator.writeJsonFromProgram(modifiedProgram, output, "_llm");
+        } else if (projectFile.toString().endsWith(".sb3")) {
+            JSONFileCreator.writeSb3FromProgram(modifiedProgram, output, projectFile.toFile(), "_llm");
+        } else {
+            throw new IllegalArgumentException("Unsupported file type: " + projectFile);
+        }
     }
 }
