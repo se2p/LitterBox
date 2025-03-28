@@ -26,8 +26,11 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
+
+    private static final Logger log = Logger.getLogger(ScratchLLM.class.getName());
 
     private final A llmApi;
 
@@ -40,7 +43,10 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
 
     public String askAbout(Program program, QueryTarget target, LlmQuery question) {
         final String prompt = promptBuilder.askQuestion(program, target, question);
-        return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.fine("Prompt: " + prompt);
+        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.fine("Response: " + response);
+        return response;
     }
 
     public String improve(Program program, QueryTarget target, String detectors, boolean ignoreLooseBlocks) {
@@ -48,15 +54,28 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
         final Set<Issue> issues = bugAnalyzer.analyze(program);
 
         final String prompt = promptBuilder.improveCode(program, target, issues);
+        log.fine("Prompt: " + prompt);
         final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
+        log.fine("Response: " + fixCommonScratchBlocksIssues(response.getLast().text()));
 
-        return response.getLast().text();
+        return fixCommonScratchBlocksIssues(response.getLast().text());
     }
 
     public String autoComplete(Program program, QueryTarget target) {
         final String prompt = promptBuilder.completeCode(program, target);
-        return llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.fine("Prompt: " + prompt);
+        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.fine("Response: " + response);
+        return fixCommonScratchBlocksIssues(response);
     }
+
+    /*
+     * Try to fix common obvious errors in scratchblocks syntax produced by LLMs...
+     */
+    public String fixCommonScratchBlocksIssues(String scratchBlocks) {
+        return scratchBlocks.replace("set rotation to", "point in direction");
+    }
+
 
     // TODO: methods to continue a conversation
 

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ActorDefinitionList extends AbstractNode {
 
@@ -35,6 +36,10 @@ public class ActorDefinitionList extends AbstractNode {
 
     public List<ActorDefinition> getDefinitions() {
         return actorDefinitions;
+    }
+
+    public Optional<ActorDefinition> getActorDefinition(String id) {
+        return actorDefinitions.stream().filter(actor -> actor.getIdent().getName().equals(id)).findFirst();
     }
 
     @Override

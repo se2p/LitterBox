@@ -19,14 +19,25 @@
 
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
-import java.util.logging.Logger;
+import java.util.*;
 
 public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
 
-    protected static final Logger log = Logger.getLogger(LLMProgramModificationAnalyzer.class.getName());
+    private final static String SPRITE_HEADER = "//Sprite: ";
+
+    private final static String SCRIPT_HEADER = "//Script: ";
 
     protected QueryTarget target;
 
@@ -46,9 +57,100 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     public Program analyze(Program program) {
         String response = callLLM(program);
 
-        // TODO: Parse response to program
-        Program modifiedProject = null;
+        Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
+        ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
+        NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(program.getActorDefinitionList(), newActors);
 
-        return modifiedProject;
+        return (Program) program.accept(replacementVisitor);
+    }
+
+    private ActorDefinitionList getActorDefinitionList(ActorDefinitionList originalActorDefinitionList,
+                                                       Map<String, Map<String, ScriptEntity>> actorMap) {
+        List<ActorDefinition> actors = new ArrayList<>();
+        // TODO: This just replaces existing actors, might need to merge scriptlists in the future
+        for (ActorDefinition actor : originalActorDefinitionList.getDefinitions()) {
+            if (!actorMap.containsKey(actor.getIdent().getName())) {
+                actors.add(actor);
+            }
+        }
+
+        for (String actorName : actorMap.keySet()) {
+            ActorDefinition actor = getBlankActorDefinition(actorName);
+            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(actor.getScripts(), getScriptList(actorMap.get(actorName)));
+            actors.add((ActorDefinition) actor.accept(replacementVisitor));
+        }
+
+        return new ActorDefinitionList(Collections.unmodifiableList(actors));
+    }
+
+    private ActorDefinition getBlankActorDefinition(String actorName) {
+        return new ActorDefinition(ActorType.getSprite(),
+                new StrId(actorName),
+                new DeclarationStmtList(Collections.emptyList()),
+                new SetStmtList(Collections.emptyList()),
+                new ProcedureDefinitionList(Collections.emptyList()),
+                new ScriptList(Collections.emptyList()),
+                new ActorMetadata(
+                        new CommentMetadataList(Collections.emptyList()),
+                        0,
+                        new ImageMetadataList(Collections.emptyList()),
+                        new SoundMetadataList(Collections.emptyList())
+                )
+        );
+    }
+
+    private ScriptList getScriptList(Map<String, ScriptEntity> scriptMap) {
+        List<Script> scripts = new ArrayList<>();
+        for (ScriptEntity scriptEntry : scriptMap.values()) {
+            // TODO: Need to handle custom blocks as well, this assumes it can only be a script
+            scripts.add((Script) scriptEntry);
+        }
+        return new ScriptList(Collections.unmodifiableList(scripts));
+    }
+
+    /**
+     * Parses an LLM response in scratchblocks format.
+     *
+     * @param response The LLM response.
+     * @return A map from sprite name to its scripts, represented as a map from script ID to the scratchblocks code as a string.
+     */
+    public Map<String, Map<String, ScriptEntity>> parseLLMResponse(String response) {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+
+        Map<String, Map<String, ScriptEntity>> spriteScripts = new HashMap<>();
+        String[] lines = response.split("\n");
+        String currentSprite = null;
+        String currentScriptId = null;
+        StringBuilder currentScriptCode = new StringBuilder();
+
+        for (String line : lines) {
+            if (line.startsWith("scratch")) {
+                // skip -- GPT likes to start markdown blocks with language tags
+            } else if (line.startsWith(SPRITE_HEADER)) {
+                if (currentSprite != null && currentScriptId != null) {
+                    spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
+                            .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+                }
+                currentSprite = line.substring(SPRITE_HEADER.length()).trim();
+                currentScriptId = null;
+                currentScriptCode.setLength(0);
+            } else if (line.startsWith(SCRIPT_HEADER)) {
+                if (currentScriptId != null) {
+                    spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
+                            .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+                }
+                currentScriptId = line.substring(SCRIPT_HEADER.length()).trim();
+                currentScriptCode.setLength(0);
+            } else {
+                currentScriptCode.append(line.trim()).append("\n");
+            }
+        }
+
+        if (currentSprite != null && currentScriptId != null) {
+            spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
+                    .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+        }
+
+        return spriteScripts;
     }
 }
