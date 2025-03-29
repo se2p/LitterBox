@@ -20,11 +20,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
+import java.util.logging.Logger;
 
 public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer {
+
+    private static final Logger log = Logger.getLogger(LLMProgramCompletionAnalyzer.class.getName());
 
     public LLMProgramCompletionAnalyzer(
             QueryTarget target,
@@ -34,15 +39,20 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
     }
 
     public LLMProgramCompletionAnalyzer(
+            LlmApi llmApi,
+            PromptBuilder promptBuilder,
             QueryTarget target,
-            boolean ignoreLooseBlocks,
-            ScratchLLM scratchLLM
+            boolean ignoreLooseBlocks
     ) {
-        super(target, ignoreLooseBlocks, scratchLLM);
+        super(llmApi, promptBuilder, target, ignoreLooseBlocks);
     }
 
     @Override
     public String callLLM(Program program) {
-        return scratchLLM.autoComplete(program, target);
+        final String prompt = promptBuilder.completeCode(program, target);
+        log.info("Prompt: " + prompt);
+        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.info("Response: " + response);
+        return LlmApiUtils.fixCommonScratchBlocksIssues(response);
     }
 }

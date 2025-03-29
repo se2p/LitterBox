@@ -18,16 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.llm;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
-import java.util.Set;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 public class ScratchLLM {
@@ -43,46 +41,29 @@ public class ScratchLLM {
         this.promptBuilder = promptBuilder;
     }
 
-    public String askAbout(Program program, QueryTarget target, LlmQuery question) {
-        final String prompt = promptBuilder.askQuestion(program, target, question);
-        log.fine("Prompt: " + prompt);
-        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-        log.fine("Response: " + response);
-        return response;
+    public ScratchLLM() {
+        this(LlmApiProvider.get(), LlmPromptProvider.get());
     }
 
-    public String improve(Program program, QueryTarget target, String detectors, boolean ignoreLooseBlocks) {
-        final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
-        final Set<Issue> issues = bugAnalyzer.analyze(program);
-
-        final String prompt = promptBuilder.improveCode(program, target, issues);
-        log.info("Prompt: " + prompt);
-        final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
-        log.info("Response: " + fixCommonScratchBlocksIssues(response.getLast().text()));
-
-        return fixCommonScratchBlocksIssues(response.getLast().text());
-    }
-
-    public String autoComplete(Program program, QueryTarget target) {
-        final String prompt = promptBuilder.completeCode(program, target);
-        log.info("Prompt: " + prompt);
-        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-        log.info("Response: " + response);
-        return fixCommonScratchBlocksIssues(response);
-    }
-
-    /*
-     * Try to fix common obvious errors in scratchblocks syntax produced by LLMs...
-     */
-    public String fixCommonScratchBlocksIssues(String scratchBlocks) {
-        return scratchBlocks.replace("set rotation to", "point in direction");
-    }
-
-
-    public static ScratchLLM buildScratchLLM() {
-        return new ScratchLLM(new OpenAiApi(), new DefaultPrompts());
+    public Conversation startConversation() {
+        return new Conversation(promptBuilder.systemPrompt(), Collections.emptyList());
     }
 
     // TODO: methods to continue a conversation
+
+    public Conversation askAbout(Conversation conversation, QueryTarget target, LlmQuery question) {
+        // we already have the program as part of the conversation and continue
+        // the conversation with a follow-up question
+        //
+        // use the LLMProgramQueryAnalyzer to ask a question and append the
+        // output as message to the conversation
+        // ...
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    public Conversation improve(Conversation conversation, QueryTarget target, String detectors, boolean ignoreLooseBlocks) {
+        // ...
+        throw new UnsupportedOperationException("not implemented");
+    }
 
 }

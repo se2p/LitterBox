@@ -28,7 +28,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
@@ -40,27 +43,31 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
 
     private static final String SCRIPT_HEADER = "//Script: ";
 
-    protected ScratchLLM scratchLLM;
+    protected LlmApi llmApi;
+
+    protected PromptBuilder promptBuilder;
 
     protected QueryTarget target;
 
     protected boolean ignoreLooseBlocks;
 
     protected LLMProgramModificationAnalyzer(
+            LlmApi llmApi,
+            PromptBuilder promptBuilder,
             QueryTarget target,
-            boolean ignoreLooseBlocks,
-            ScratchLLM scratchLLM
+            boolean ignoreLooseBlocks
     ) {
+        this.llmApi = llmApi;
+        this.promptBuilder = promptBuilder;
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
-        this.scratchLLM = scratchLLM;
     }
 
     protected LLMProgramModificationAnalyzer(
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
-        this(target, ignoreLooseBlocks, ScratchLLM.buildScratchLLM());
+        this(LlmApiProvider.get(), LlmPromptProvider.get(), target, ignoreLooseBlocks);
     }
 
     public abstract String callLLM(Program program);
