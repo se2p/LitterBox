@@ -203,7 +203,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
      * @return The ScratchBlocks representation of this node.
      */
     public static String of(final ASTNode node) {
-        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
         visitor.setProgram(AstNodeUtil.findParent(node, Program.class));
         visitor.setCurrentActor(AstNodeUtil.findParent(node, ActorDefinition.class));
         visitor.setAddActorNames(true);
