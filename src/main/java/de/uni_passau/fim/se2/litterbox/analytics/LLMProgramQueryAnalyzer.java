@@ -51,7 +51,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
     @Override
     public String analyze(Program program) {
         // TODO: bubble up options for LlmApi and prompts
-        ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM = new ScratchLLM<>(new OpenAiApi(), new DefaultPrompts());
+        ScratchLLM scratchLLM = new ScratchLLM(new OpenAiApi(), new DefaultPrompts());
         return scratchLLM.askAbout(program, target, query);
     }
 }

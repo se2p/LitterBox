@@ -29,8 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
@@ -38,11 +36,11 @@ import java.util.*;
 
 public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
 
-    private final static String SPRITE_HEADER = "//Sprite: ";
+    private static final String SPRITE_HEADER = "//Sprite: ";
 
-    private final static String SCRIPT_HEADER = "//Script: ";
+    private static final String SCRIPT_HEADER = "//Script: ";
 
-    protected ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM;
+    protected ScratchLLM scratchLLM;
 
     protected QueryTarget target;
 
@@ -51,7 +49,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     protected LLMProgramModificationAnalyzer(
             QueryTarget target,
             boolean ignoreLooseBlocks,
-            ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM
+            ScratchLLM scratchLLM
     ) {
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;

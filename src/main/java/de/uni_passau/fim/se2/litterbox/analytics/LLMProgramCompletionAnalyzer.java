@@ -21,8 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 
@@ -38,7 +36,7 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
     public LLMProgramCompletionAnalyzer(
             QueryTarget target,
             boolean ignoreLooseBlocks,
-            ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM
+            ScratchLLM scratchLLM
     ) {
         super(target, ignoreLooseBlocks, scratchLLM);
     }

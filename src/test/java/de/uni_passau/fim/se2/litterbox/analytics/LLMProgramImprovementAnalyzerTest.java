@@ -25,8 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +36,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LLMProgramImprovementAnalyzerTest implements JsonTest {
+class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
     @Test
     void testFixBugInTargetScript() throws ParsingException, IOException {
@@ -60,7 +58,7 @@ public class LLMProgramImprovementAnalyzerTest implements JsonTest {
         String scriptID = AstNodeUtil.getBlockId(script.getEvent());
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
 
         LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
@@ -105,7 +103,7 @@ public class LLMProgramImprovementAnalyzerTest implements JsonTest {
         String scriptID = AstNodeUtil.getBlockId(script.getEvent());
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
 
         LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
@@ -151,7 +149,7 @@ public class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
 
         LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
@@ -196,7 +194,7 @@ public class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.ProgramTarget();
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
 
         LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);

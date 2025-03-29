@@ -25,8 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +63,7 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.autoComplete(any(), any())).thenReturn(response);
 
         LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
@@ -99,7 +97,7 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.autoComplete(any(), any())).thenReturn(response);
 
         LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
@@ -136,7 +134,7 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.autoComplete(any(), any())).thenReturn(response);
 
         LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
@@ -174,7 +172,7 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.ProgramTarget();
 
-        ScratchLLM<OpenAiApi, DefaultPrompts> llm = mock(ScratchLLM.class);
+        ScratchLLM llm = mock(ScratchLLM.class);
         when(llm.autoComplete(any(), any())).thenReturn(response);
 
         LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);

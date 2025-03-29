@@ -30,15 +30,15 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
+public class ScratchLLM {
 
     private static final Logger log = Logger.getLogger(ScratchLLM.class.getName());
 
-    private final A llmApi;
+    private final LlmApi llmApi;
 
-    private final P promptBuilder;
+    private final PromptBuilder promptBuilder;
 
-    public ScratchLLM(final A llmApi, final P promptBuilder) {
+    public ScratchLLM(final LlmApi llmApi, final PromptBuilder promptBuilder) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
     }
@@ -79,8 +79,8 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
     }
 
 
-    public static <A extends LlmApi, P extends PromptBuilder> ScratchLLM<A,P> buildScratchLLM() {
-        return new ScratchLLM<>((A) new OpenAiApi(), (P) new DefaultPrompts());
+    public static ScratchLLM buildScratchLLM() {
+        return new ScratchLLM(new OpenAiApi(), new DefaultPrompts());
     }
 
     // TODO: methods to continue a conversation
