@@ -331,7 +331,6 @@ public class Main implements Callable<Integer> {
         protected FileAnalyzer<?> getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
 
-            final LlmQuery q = buildQuery();
             final QueryTarget target = buildQueryTarget();
 
             // TODO: Make nicer
@@ -340,6 +339,7 @@ public class Main implements Callable<Integer> {
             } else if (query.complete) {
                 return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
             } else {
+                final LlmQuery q = buildQuery();
                 return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);
             }
         }
