@@ -27,7 +27,7 @@ import dev.langchain4j.data.message.UserMessage;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class LlmApiUtils {
+public final class LlmApiUtils {
     private LlmApiUtils() {
         // utility class constructor, intentionally empty
     }
@@ -53,5 +53,12 @@ final class LlmApiUtils {
                 });
 
         return Stream.concat(prefix, messages).toList();
+    }
+
+    /*
+     * Try to fix common obvious errors in ScratchBlocks syntax produced by LLMs.
+     */
+    public static String fixCommonScratchBlocksIssues(String scratchBlocks) {
+        return scratchBlocks.replace("set rotation to", "point in direction");
     }
 }

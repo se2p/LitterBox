@@ -20,10 +20,18 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.Conversation;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
+import java.util.Set;
+import java.util.logging.Logger;
+
 public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyzer {
+
+    private static final Logger log = Logger.getLogger(LLMProgramImprovementAnalyzer.class.getName());
 
     private String detectors;
 
@@ -37,17 +45,26 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
     }
 
     public LLMProgramImprovementAnalyzer(
+            LlmApi llmApi,
+            PromptBuilder promptBuilder,
             QueryTarget target,
             String detectors,
-            boolean ignoreLooseBlocks,
-            ScratchLLM scratchLLM
+            boolean ignoreLooseBlocks
     ) {
-        super(target, ignoreLooseBlocks, scratchLLM);
+        super(llmApi, promptBuilder, target, ignoreLooseBlocks);
         this.detectors = detectors;
     }
 
     @Override
     public String callLLM(Program program) {
-        return scratchLLM.improve(program, target, detectors, ignoreLooseBlocks);
+        final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
+        final Set<Issue> issues = bugAnalyzer.analyze(program);
+
+        final String prompt = promptBuilder.improveCode(program, target, issues);
+        log.info("Prompt: " + prompt);
+        final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
+        log.info("Response: " + LlmApiUtils.fixCommonScratchBlocksIssues(response.getLast().text()));
+
+        return LlmApiUtils.fixCommonScratchBlocksIssues(response.getLast().text());
     }
 }

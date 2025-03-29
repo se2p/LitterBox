@@ -19,9 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
-import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 
@@ -31,6 +32,10 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
     private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
 
+    private LlmApi llmApi;
+
+    private PromptBuilder promptBuilder;
+
     private LlmQuery query;
 
     private QueryTarget target;
@@ -39,19 +44,33 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
     private boolean ignoreLooseBlocks;
 
     public LLMProgramQueryAnalyzer(
+            LlmApi llmApi,
+            PromptBuilder promptBuilder,
             LlmQuery query,
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
+        this.llmApi = llmApi;
+        this.promptBuilder = promptBuilder;
         this.query = query;
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
+    public LLMProgramQueryAnalyzer(
+            LlmQuery query,
+            QueryTarget target,
+            boolean ignoreLooseBlocks
+    ) {
+        this(LlmApiProvider.get(), LlmPromptProvider.get(), query, target, ignoreLooseBlocks);
+    }
+
     @Override
     public String analyze(Program program) {
-        // TODO: bubble up options for LlmApi and prompts
-        ScratchLLM scratchLLM = new ScratchLLM(new OpenAiApi(), new DefaultPrompts());
-        return scratchLLM.askAbout(program, target, query);
+        final String prompt = promptBuilder.askQuestion(program, target, query);
+        log.fine("Prompt: " + prompt);
+        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.fine("Response: " + response);
+        return response;
     }
 }

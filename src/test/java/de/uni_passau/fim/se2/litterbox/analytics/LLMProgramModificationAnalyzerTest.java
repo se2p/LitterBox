@@ -21,13 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class LLMProgramModificationAnalyzerTest implements JsonTest  {
+class LLMProgramModificationAnalyzerTest implements JsonTest  {
 
     @Test
     void testAddSprite() throws ParsingException, IOException {
@@ -49,7 +50,7 @@ public class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
 
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true, null) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), null, null, true) {
             @Override
             public String callLLM(Program program) {
                 return response;
@@ -83,7 +84,7 @@ public class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true, null) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), null, null, true) {
             @Override
             public String callLLM(Program program) {
                 return response;

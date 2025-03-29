@@ -24,7 +24,10 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import org.junit.jupiter.api.Test;
 
@@ -32,11 +35,10 @@ import java.io.IOException;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class LLMProgramImprovementAnalyzerTest implements JsonTest {
+
+    private final PromptBuilder promptBuilder = new DefaultPrompts();
 
     @Test
     void testFixBugInTargetScript() throws ParsingException, IOException {
@@ -58,10 +60,9 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
         String scriptID = AstNodeUtil.getBlockId(script.getEvent());
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
+        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
@@ -103,10 +104,9 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
         String scriptID = AstNodeUtil.getBlockId(script.getEvent());
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
+        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
@@ -124,7 +124,6 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
     @Test
     void testFixBugInSpriteWithMultipleScripts() throws ParsingException, IOException {
-
         String response = """
                 scratch
                 //Sprite: Sprite1
@@ -149,10 +148,9 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
+        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
@@ -194,10 +192,9 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.ProgramTarget();
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.improve(any(), any(), anyString(), anyBoolean())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(target, "missing_loop_sensing", true, llm);
+        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);

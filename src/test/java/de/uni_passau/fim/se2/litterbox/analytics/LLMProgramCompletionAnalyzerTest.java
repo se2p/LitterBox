@@ -24,18 +24,20 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.*;
+import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class LLMProgramCompletionAnalyzerTest implements JsonTest {
+class LLMProgramCompletionAnalyzerTest implements JsonTest {
+
+    private final PromptBuilder promptBuilder = new DefaultPrompts();
 
     private int countBlocks(Script script) {
         BlockCount<Script> countBlocks = new BlockCount<>();
@@ -63,10 +65,9 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
 
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.autoComplete(any(), any())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
@@ -97,10 +98,9 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.autoComplete(any(), any())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
@@ -134,10 +134,9 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.autoComplete(any(), any())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
@@ -172,10 +171,9 @@ public class LLMProgramCompletionAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.ProgramTarget();
 
-        ScratchLLM llm = mock(ScratchLLM.class);
-        when(llm.autoComplete(any(), any())).thenReturn(response);
+        LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(target, true, llm);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
