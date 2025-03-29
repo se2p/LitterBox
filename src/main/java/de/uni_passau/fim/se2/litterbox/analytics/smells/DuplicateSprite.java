@@ -26,11 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class DuplicateSprite extends AbstractIssueFinder {
 
-    private static final String NAME = "duplicate_sprite";
+    public static final String NAME = "duplicate_sprite";
 
     @Override
     public void visit(Program node) {

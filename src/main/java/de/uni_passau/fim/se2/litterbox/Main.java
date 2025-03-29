@@ -86,17 +86,7 @@ public class Main implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    @CommandLine.Command(mixinStandardHelpOptions = true)
-    abstract static class LitterBoxSubcommand implements Callable<Integer> {
-        @CommandLine.Spec
-        CommandLine.Model.CommandSpec spec;
-
-        @CommandLine.Option(
-                names = {"-l", "--lang"},
-                description = "Language of the hints in the output."
-        )
-        String language = "en";
-
+    static class ProjectInputOptions {
         @CommandLine.Option(
                 names = {"-p", "--path"},
                 description = "Path to the folder or file that should be analysed, "
@@ -116,6 +106,18 @@ public class Main implements Callable<Integer> {
         )
         Path projectList;
 
+        static ProjectInputOptions getDefault() {
+            return new ProjectInputOptions();
+        }
+    }
+
+    static class CommonOptions {
+        @CommandLine.Option(
+                names = {"-l", "--lang"},
+                description = "Language of the hints in the output."
+        )
+        String language = "en";
+
         @CommandLine.Option(
                 names = {"-o", "--output"},
                 description = "Path to the file or folder for the analyser results. "
@@ -128,6 +130,22 @@ public class Main implements Callable<Integer> {
                 description = "Delete the project files after analysing them."
         )
         boolean deleteProject;
+
+        static CommonOptions getDefault() {
+            return new CommonOptions();
+        }
+    }
+
+    @CommandLine.Command(mixinStandardHelpOptions = true)
+    abstract static class LitterBoxSubcommand implements Callable<Integer> {
+        @CommandLine.Spec
+        CommandLine.Model.CommandSpec spec;
+
+        @CommandLine.ArgGroup(exclusive = false)
+        CommonOptions commonOptions = CommonOptions.getDefault();
+
+        @CommandLine.ArgGroup(exclusive = false)
+        ProjectInputOptions projectInput = ProjectInputOptions.getDefault();
 
         protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
@@ -142,7 +160,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-            IssueTranslator.getInstance().setLanguage(language);
+            IssueTranslator.getInstance().setLanguage(commonOptions.language);
 
             validateParams();
 
@@ -151,27 +169,31 @@ public class Main implements Callable<Integer> {
         }
 
         private int runAnalysis(final FileAnalyzer<?> analyzer) throws IOException {
-            if (projectId != null) {
-                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
-                projectIdAnalyzer.analyzeSingle(projectId);
-            } else if (projectList != null) {
-                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(analyzer, projectPath, deleteProject);
-                projectIdAnalyzer.analyzeMultiple(projectList);
+            if (projectInput.projectId != null) {
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(
+                        analyzer, projectInput.projectPath, commonOptions.deleteProject
+                );
+                projectIdAnalyzer.analyzeSingle(projectInput.projectId);
+            } else if (projectInput.projectList != null) {
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(
+                        analyzer, projectInput.projectPath, commonOptions.deleteProject
+                );
+                projectIdAnalyzer.analyzeMultiple(projectInput.projectList);
             } else {
-                analyzer.analyzeFile(projectPath);
+                analyzer.analyzeFile(projectInput.projectPath);
             }
 
             return 0;
         }
 
         protected void requireProjectPath() throws CommandLine.ParameterException {
-            if (projectPath == null) {
+            if (projectInput.projectPath == null) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "Input path option '--path' required.");
             }
         }
 
         protected void requireOutputPath() throws CommandLine.ParameterException {
-            if (outputPath == null) {
+            if (commonOptions.outputPath == null) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "Output path option '--output' required.");
             }
         }
@@ -217,26 +239,26 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
-            if (projectPath == null) {
-                projectPath = Files.createTempDirectory("litterbox-bug");
+            if (projectInput.projectPath == null) {
+                projectInput.projectPath = Files.createTempDirectory("litterbox-bug");
             }
 
             final String detector = String.join(",", detectors);
             final BugAnalyzer analyzer;
             if (priorResultPath == null) {
                 analyzer = new BugAnalyzer(
-                        outputPath,
+                        commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
-                        deleteProject,
+                        commonOptions.deleteProject,
                         outputPerScript
                 );
             } else {
                 analyzer = new BugAnalyzer(
-                        outputPath,
+                        commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
-                        deleteProject,
+                        commonOptions.deleteProject,
                         outputPerScript,
                         priorResultPath
                 );
@@ -312,7 +334,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(outputPath, deleteProject);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -335,7 +357,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected LeilaAnalyzer getAnalyzer() {
-            return new LeilaAnalyzer(outputPath, nonDeterministic, false, deleteProject);
+            return new LeilaAnalyzer(commonOptions.outputPath, nonDeterministic, false, commonOptions.deleteProject);
         }
     }
 
@@ -358,7 +380,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected RefactoringAnalyzer getAnalyzer() {
-            return new RefactoringAnalyzer(outputPath, refactoredPath, deleteProject);
+            return new RefactoringAnalyzer(commonOptions.outputPath, refactoredPath, commonOptions.deleteProject);
         }
     }
 
@@ -376,7 +398,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected MetricAnalyzer getAnalyzer() {
-            return new MetricAnalyzer(outputPath, deleteProject);
+            return new MetricAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -394,7 +416,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected ExtractionAnalyzer getAnalyzer() {
-            return new ExtractionAnalyzer(outputPath, deleteProject);
+            return new ExtractionAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -412,7 +434,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected DotAnalyzer getAnalyzer() {
-            return new DotAnalyzer(outputPath, deleteProject);
+            return new DotAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -430,7 +452,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected ScratchBlocksAnalyzer getAnalyzer() {
-            return new ScratchBlocksAnalyzer(outputPath, deleteProject);
+            return new ScratchBlocksAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 }

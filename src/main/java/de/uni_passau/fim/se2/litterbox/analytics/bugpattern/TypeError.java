@@ -25,9 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -59,6 +57,7 @@ public class TypeError extends AbstractIssueFinder {
 
     private Type type = null;
     private boolean isInsideQualified = false;
+    private IssueSeverity issueSeverity;
 
     private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
 
@@ -192,7 +191,7 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(Direction node) {
         if (!isValid(Type.DIRECTION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), issueSeverity);
         }
     }
 
@@ -200,16 +199,14 @@ public class TypeError extends AbstractIssueFinder {
     public void visit(AsString node) {
         if (isInsideComparison) {
             if (!isRightSide) {
-                if (node.getOperand1().getUniqueName().equals("Touching")) {
-                    type = Type.BOOLEAN;
-                } else if (node.getOperand1().getUniqueName().equals("Not")) {
+                if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
                     type = Type.BOOLEAN;
                 } else {
                     type = null;
                 }
             } else {
-                if (node.getOperand1().getUniqueName().equals("Touching") || node.getOperand1().getUniqueName().equals("Not")) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
+                    addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -222,7 +219,7 @@ public class TypeError extends AbstractIssueFinder {
                 type = null;
             } else {
                 if (this.type == Type.BOOLEAN) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                    addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
