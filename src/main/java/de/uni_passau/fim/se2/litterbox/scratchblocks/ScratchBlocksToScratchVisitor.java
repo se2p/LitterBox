@@ -194,22 +194,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public SpriteClicked visitSpriteClicked(ScratchBlocksParser.SpriteClickedContext ctx) {
-        return new SpriteClicked(new NoBlockMetadata());
+        return new SpriteClicked(TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
     }
 
     @Override
     public StageClicked visitStageClicked(ScratchBlocksParser.StageClickedContext ctx) {
-        return new StageClicked(new NoBlockMetadata());
+        return new StageClicked(TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
     }
 
     @Override
     public StartedAsClone visitStartAsClone(ScratchBlocksParser.StartAsCloneContext ctx) {
-        return new StartedAsClone(new NoBlockMetadata());
+        return new StartedAsClone(TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
     }
 
     @Override
     public KeyPressed visitKeyEvent(ScratchBlocksParser.KeyEventContext ctx) {
-        return new KeyPressed(visitKey(ctx.key()), new NoBlockMetadata());
+        return new KeyPressed(visitKey(ctx.key()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
     }
 
     @Override
