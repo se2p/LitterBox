@@ -50,4 +50,9 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    public static TopNonDataBlockMetadata emptyTopNonBlockMetadata() {
+        return new TopNonDataBlockMetadata("", CloneVisitor.generateUID(),
+                false,  new NoMutationMetadata(), 0.0, 0.0); // TODO position block
+    }
 }

@@ -198,10 +198,21 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         this.requireScript = requireScript;
     }
 
+    /**
+     * Converts the given node of the AST into the ScratchBlocks format.
+     *
+     * @param node Some node of the AST.
+     * @return The ScratchBlocks representation of this node.
+     */
     public static String of(final ASTNode node) {
-        final ScratchBlocksVisitor v = new ScratchBlocksVisitor(false);
-        node.accept(v);
-        return v.getScratchBlocks();
+        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
+        visitor.setProgram(AstNodeUtil.findParent(node, Program.class));
+        visitor.setCurrentActor(AstNodeUtil.findParent(node, ActorDefinition.class));
+        visitor.setAddActorNames(true);
+
+        node.accept(visitor);
+
+        return visitor.getScratchBlocks();
     }
 
     public boolean isIgnoredBlock() {
