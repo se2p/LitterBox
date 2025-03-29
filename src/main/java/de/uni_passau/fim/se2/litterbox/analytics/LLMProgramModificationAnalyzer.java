@@ -28,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLLM;
+import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
@@ -39,16 +42,27 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
 
     private final static String SCRIPT_HEADER = "//Script: ";
 
+    protected ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM;
+
     protected QueryTarget target;
 
     protected boolean ignoreLooseBlocks;
 
     protected LLMProgramModificationAnalyzer(
             QueryTarget target,
-            boolean ignoreLooseBlocks
+            boolean ignoreLooseBlocks,
+            ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM
     ) {
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
+        this.scratchLLM = scratchLLM;
+    }
+
+    protected LLMProgramModificationAnalyzer(
+            QueryTarget target,
+            boolean ignoreLooseBlocks
+    ) {
+        this(target, ignoreLooseBlocks, ScratchLLM.buildScratchLLM());
     }
 
     public abstract String callLLM(Program program);
@@ -126,6 +140,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
         for (String line : lines) {
             if (line.startsWith("scratch")) {
                 // skip -- GPT likes to start markdown blocks with language tags
+                // Matches "scratch" and "scratchblocks"
             } else if (line.startsWith(SPRITE_HEADER)) {
                 if (currentSprite != null && currentScriptId != null) {
                     spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())

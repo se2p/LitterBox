@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.api.OpenAiApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
@@ -54,18 +56,18 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
         final Set<Issue> issues = bugAnalyzer.analyze(program);
 
         final String prompt = promptBuilder.improveCode(program, target, issues);
-        log.fine("Prompt: " + prompt);
+        log.info("Prompt: " + prompt);
         final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
-        log.fine("Response: " + fixCommonScratchBlocksIssues(response.getLast().text()));
+        log.info("Response: " + fixCommonScratchBlocksIssues(response.getLast().text()));
 
         return fixCommonScratchBlocksIssues(response.getLast().text());
     }
 
     public String autoComplete(Program program, QueryTarget target) {
         final String prompt = promptBuilder.completeCode(program, target);
-        log.fine("Prompt: " + prompt);
+        log.info("Prompt: " + prompt);
         String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-        log.fine("Response: " + response);
+        log.info("Response: " + response);
         return fixCommonScratchBlocksIssues(response);
     }
 
@@ -76,6 +78,10 @@ public class ScratchLLM<A extends LlmApi, P extends PromptBuilder> {
         return scratchBlocks.replace("set rotation to", "point in direction");
     }
 
+
+    public static <A extends LlmApi, P extends PromptBuilder> ScratchLLM<A,P> buildScratchLLM() {
+        return new ScratchLLM<>((A) new OpenAiApi(), (P) new DefaultPrompts());
+    }
 
     // TODO: methods to continue a conversation
 

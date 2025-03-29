@@ -38,9 +38,18 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
         this.detectors = detectors;
     }
 
+    public LLMProgramImprovementAnalyzer(
+            QueryTarget target,
+            String detectors,
+            boolean ignoreLooseBlocks,
+            ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM
+    ) {
+        super(target, ignoreLooseBlocks, scratchLLM);
+        this.detectors = detectors;
+    }
+
     @Override
     public String callLLM(Program program) {
-        ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM = new ScratchLLM<>(new OpenAiApi(), new DefaultPrompts());
         return scratchLLM.improve(program, target, detectors, ignoreLooseBlocks);
     }
 }

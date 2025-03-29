@@ -48,7 +48,8 @@ public class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true) {
+
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true, null) {
             @Override
             public String callLLM(Program program) {
                 return response;
@@ -82,7 +83,7 @@ public class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(null, true, null) {
             @Override
             public String callLLM(Program program) {
                 return response;
@@ -95,6 +96,5 @@ public class LLMProgramModificationAnalyzerTest implements JsonTest  {
         assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
     }
-
 
 }

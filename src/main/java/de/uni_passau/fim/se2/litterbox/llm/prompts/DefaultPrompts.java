@@ -20,11 +20,15 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DefaultPrompts extends PromptBuilder {
@@ -68,9 +72,36 @@ public class DefaultPrompts extends PromptBuilder {
 
     @Override
     public String completeCode(final Program program, final QueryTarget target) {
-        return describeTarget(program, target) + """
-                Auto-complete the code.
+        String result = describeTarget(program, target) +
+        """
+        Auto-complete the code.
+        """;
+        if (target.getTargetDescription().equals("sprite")) {
+            result += """
+                        The improved code should either extend an existing script with new blocks,
+                        or add a new script to the sprite. The new code should enhance existing
+                        functionality, or provide new functionality. It should not duplicate or clone
+                        existing code.
+                        """;
+        } else if (target.getTargetDescription().equals("script")) {
+            result += """
+                        The improved code should extend the existing script with new blocks.
+                        """;
+        } else {
+            result += """
+                        The improved code should either extend an existing script with new blocks,
+                        or add a new script to an existing sprite. The new code should enhance existing
+                        functionality, or provide new functionality. It should not duplicate or clone
+                        existing code.
+                        """;
+        }
+
+        result += """
+                Only output the ScratchBlocks code and nothing else.
+                Include sprite and script ids in the ScratchBlocks code.
+                Do not delete existing blocks.
                 """;
+        return result;
     }
 
     @Override
@@ -107,7 +138,18 @@ public class DefaultPrompts extends PromptBuilder {
     protected String describeTarget(final Program program, final QueryTarget target) {
         final ASTNode targetNode = target.getTargetNode(program);
         final String label = target.getTargetDescription();
-        final String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+        String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+
+        // Parsing expects sprite names and script ids
+        if (target.getTargetDescription().equals("script")) {
+            Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
+            if (actor.isPresent()) {
+                scratchBlocks = """
+                        //Sprite: %s
+                        //Script: %s
+                        """.formatted(actor.get().getIdent().getName(), AstNodeUtil.getBlockId(((Script)targetNode).getEvent())) + scratchBlocks;
+            }
+        }
 
         return """
                You are given the following %s:

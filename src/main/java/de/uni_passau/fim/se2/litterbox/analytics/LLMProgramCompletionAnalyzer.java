@@ -35,9 +35,16 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
         super(target, ignoreLooseBlocks);
     }
 
+    public LLMProgramCompletionAnalyzer(
+            QueryTarget target,
+            boolean ignoreLooseBlocks,
+            ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM
+    ) {
+        super(target, ignoreLooseBlocks, scratchLLM);
+    }
+
     @Override
     public String callLLM(Program program) {
-        ScratchLLM<OpenAiApi, DefaultPrompts> scratchLLM = new ScratchLLM<>(new OpenAiApi(), new DefaultPrompts());
         return scratchLLM.autoComplete(program, target);
     }
 }
