@@ -16,61 +16,53 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+package de.uni_passau.fim.se2.litterbox.analytics.llm;
+
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 
-import java.util.logging.Logger;
+public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
 
-public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
+    protected LlmApi llmApi;
 
-    private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
+    protected PromptBuilder promptBuilder;
 
-    private LlmApi llmApi;
+    protected QueryTarget target;
 
-    private PromptBuilder promptBuilder;
+    protected boolean ignoreLooseBlocks;
 
-    private LlmQuery query;
-
-    private QueryTarget target;
-
-    // TODO: Handle this option
-    private boolean ignoreLooseBlocks;
-
-    public LLMProgramQueryAnalyzer(
+    protected LLMProgramModificationAnalyzer(
             LlmApi llmApi,
             PromptBuilder promptBuilder,
-            LlmQuery query,
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
-        this.query = query;
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
-    public LLMProgramQueryAnalyzer(
-            LlmQuery query,
+    protected LLMProgramModificationAnalyzer(
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), query, target, ignoreLooseBlocks);
+        this(LlmApiProvider.get(), LlmPromptProvider.get(), target, ignoreLooseBlocks);
     }
 
+    public abstract String callLLM(Program program);
+
     @Override
-    public String analyze(Program program) {
-        final String prompt = promptBuilder.askQuestion(program, target, query);
-        log.fine("Prompt: " + prompt);
-        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-        log.fine("Response: " + response);
-        return response;
+    public Program analyze(Program program) {
+        String response = callLLM(program);
+
+        LLMResponseParser responseParser = new LLMResponseParser();
+        return responseParser.parseResultAndUpdateProgram(program, response);
     }
 }

@@ -160,7 +160,11 @@ public class Issue {
         return IssueTranslator.getInstance().getName(this.finder.getName());
     }
 
-    public String getHint() {
+    public Hint getHint() {
+        return hint;
+    }
+
+    public String getHintText() {
         return hint.getHintText();
     }
 

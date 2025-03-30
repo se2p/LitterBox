@@ -54,7 +54,7 @@ public class ImmediateStopAfterSayTest implements JsonTest {
 
         Hint expectedHint = new Hint(ImmediateStopAfterSay.HINT_MULTIPLE);
         expectedHint.setParameter(Hint.HINT_SAY_THINK, "say");
-        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

@@ -53,9 +53,9 @@ class ComparingLiteralsTest implements JsonTest {
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
-                Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(trueHint.getHintText());
             } else {
-                Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(falseHint.getHintText());
             }
             i++;
         }
@@ -71,7 +71,7 @@ class ComparingLiteralsTest implements JsonTest {
         trueHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo("always"));
         trueHint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(trueHint.getHintText());
         }
     }
 
@@ -85,7 +85,7 @@ class ComparingLiteralsTest implements JsonTest {
         trueHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
         trueHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT, IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.ADD_INFO_DICT_RESOURCE));
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(trueHint.getHintText());
         }
     }
 
@@ -102,7 +102,7 @@ class ComparingLiteralsTest implements JsonTest {
         falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
         falseHint.setParameter(ComparingLiteralsHintFactory.ADD_INFO_DICT, "");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(falseHint.getHintText());
         }
     }
 

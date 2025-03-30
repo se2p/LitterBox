@@ -51,7 +51,7 @@ public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
         Hint expectedHint = new Hint(issueFinder.getName());
         expectedHint.setParameter(Hint.HINT_SPRITE, "Sprite1");
         expectedHint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
-        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

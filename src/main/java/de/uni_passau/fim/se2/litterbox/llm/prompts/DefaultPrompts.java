@@ -59,7 +59,7 @@ public class DefaultPrompts extends PromptBuilder {
 
     @Override
     public String improveCode(final Program program, final QueryTarget target, final Collection<Issue> issues) {
-        final String issueDescription = issues.stream().map(Issue::getHint).collect(Collectors.joining("\n\n"));
+        final String issueDescription = issues.stream().map(Issue::getHintText).collect(Collectors.joining("\n\n"));
 
         return describeTarget(program, target) + """
                The code contains the following bugs and code smells:
@@ -67,6 +67,7 @@ public class DefaultPrompts extends PromptBuilder {
 
                Create a version of the program where these issues are fixed.
                Only output the ScratchBlocks code and nothing else.
+               Include sprite and script ids in the ScratchBlocks code.
                """.formatted(issueDescription);
     }
 
@@ -143,17 +144,34 @@ public class DefaultPrompts extends PromptBuilder {
         // Parsing expects sprite names and script ids
         if (target.getTargetDescription().equals("script")) {
             Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
+            String scriptID   = AstNodeUtil.getBlockId(((Script)targetNode).getEvent());
             if (actor.isPresent()) {
-                scratchBlocks = """
+                String spriteName = actor.get().getIdent().getName();
+                return  """
+                        You are given the script with id %s in sprite %s:
                         //Sprite: %s
                         //Script: %s
-                        """.formatted(actor.get().getIdent().getName(), AstNodeUtil.getBlockId(((Script)targetNode).getEvent())) + scratchBlocks;
+                        %s
+                        """.formatted(scriptID, spriteName, spriteName, scriptID, scratchBlocks);
+            } else {
+                throw new IllegalArgumentException("No sprite found for script " + scriptID);
             }
+        } else if (target.getTargetDescription().equals("sprite")) {
+            Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
+            if (actor.isPresent()) {
+                String spriteName = actor.get().getIdent().getName();
+                return  """
+                        You are given the sprite with name %s:
+                        %s
+                        """.formatted(spriteName, scratchBlocks);
+            } else {
+                throw new IllegalArgumentException("Sprite not found for");
+            }
+        } else {
+            return """
+                    You are given the following program:
+                    %s
+                    """.formatted(scratchBlocks);
         }
-
-        return """
-               You are given the following %s:
-               %s
-                """.formatted(label, scratchBlocks);
     }
 }

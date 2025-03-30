@@ -50,6 +50,6 @@ public abstract class PromptBuilder {
     }
 
     protected List<String> issueHints(final Collection<Issue> issues) {
-        return issues.stream().map(Issue::getHint).toList();
+        return issues.stream().map(Issue::getHintText).toList();
     }
 }

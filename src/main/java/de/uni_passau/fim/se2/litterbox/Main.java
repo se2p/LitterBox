@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.llm.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
@@ -285,6 +286,12 @@ public class Main implements Callable<Integer> {
                     description = "Ask LLM to autocomplete code."
             )
             boolean complete;
+
+            @CommandLine.Option(
+                    names = {"-a", "--analyze"},
+                    description = "Use LLM to improve LitterBox analysis."
+            )
+            boolean analyze;
         }
 
         @CommandLine.ArgGroup(multiplicity = "1")
@@ -338,6 +345,13 @@ public class Main implements Callable<Integer> {
                 return new LLMCodeAnalyzer(new LLMProgramImprovementAnalyzer(target, String.join(",", detectors), ignoreLooseBlocks), outputPath, deleteProject);
             } else if (query.complete) {
                 return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
+            } else if(query.analyze) {
+                return new LLMAnalysisEnhancer(
+                        target,
+                        outputPath,
+                        String.join(",", detectors),
+                        ignoreLooseBlocks
+                    );
             } else {
                 final LlmQuery q = buildQuery();
                 return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);

@@ -17,7 +17,7 @@
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;

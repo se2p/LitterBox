@@ -59,7 +59,7 @@ class MessageNeverSentTest implements JsonTest {
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_MESSAGE, "test");
             hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
-            Assertions.assertEquals(hint.getHintText(), issue.getHint());
+            Assertions.assertEquals(hint.getHintText(), issue.getHintText());
         }
         assertThatFinderReports(1, new MessageNeverSent(), "src/test/fixtures/bugpattern/messageRec.json");
     }
@@ -75,7 +75,7 @@ class MessageNeverSentTest implements JsonTest {
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_SPRITE, "Bat");
             hint.setParameter(Hint.HINT_MESSAGE, "Bat berührt");
-            Assertions.assertEquals(hint.getHintText(), issue.getHint());
+            Assertions.assertEquals(hint.getHintText(), issue.getHintText());
         }
     }
 

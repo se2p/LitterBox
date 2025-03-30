@@ -51,7 +51,7 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
 
         Issue theIssue = reports.iterator().next();
         Hint expectedHint = new Hint(finder.getName());
-        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

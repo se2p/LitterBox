@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.*;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
@@ -32,181 +32,157 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramImprovementAnalyzerTest implements JsonTest {
+class LLMProgramCompletionAnalyzerTest implements JsonTest {
 
     private final PromptBuilder promptBuilder = new DefaultPrompts();
 
+    private int countBlocks(Script script) {
+        BlockCount<Script> countBlocks = new BlockCount<>();
+        return (int) countBlocks.calculateMetric(script);
+    }
+
     @Test
-    void testFixBugInTargetScript() throws ParsingException, IOException {
+    void testExtendScript() throws ParsingException, IOException {
 
         String response = """
                 scratch
                 //Sprite: Sprite1
                 //Script: V/6:G4i[HL#.bvM4XA|8
                 when green flag clicked
-                set rotation to (0)
-                forever
-                    if <key (space v) pressed?> then
-                        turn right (15) degrees
-                    end
+                if <key (space v) pressed?> then
+                    turn right (15) degrees
                 end
+                set rotation to (0)
+                set rotation to (0)
+                set rotation to (0)
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
         String scriptID = AstNodeUtil.getBlockId(script.getEvent());
+
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
-        MissingLoopSensing loopSensing = new MissingLoopSensing();
-        Set<Issue> originalIssues = loopSensing.check(program);
-        assertThat(originalIssues).hasSize(1);
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
 
         Program modifiedProgram = analyzer.analyze(program);
         assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
-        Set<Issue> modifiedIssues = loopSensing.check(modifiedProgram);
-        assertThat(modifiedIssues).isEmpty();
-    }
-
-    @Test
-    void testFixBugInTargetScriptWithMultipleScripts() throws ParsingException, IOException {
-
-        String response = """
-                scratch
-                //Sprite: Sprite1
-
-                //Script: V/6:G4i[HL#.bvM4XA|8
-                when green flag clicked
-                forever
-                  if <key (space v) pressed?> then
-                    turn right (15) degrees
-                  end
-                end
-
-                //Script: ^zj@X}R4N`_I{(7*vN63
-                when green flag clicked
-                if <key (up arrow v) pressed?> then
-                turn left (15) degrees
-                end
-                """;
-        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoopTwice.json");
-
-        Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
-        String scriptID = AstNodeUtil.getBlockId(script.getEvent());
-        QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
-
-        LlmApi llm = new DummyLlmApi(response);
-
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
-
-        assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
-        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        MissingLoopSensing loopSensing = new MissingLoopSensing();
-        Set<Issue> originalIssues = loopSensing.check(program);
-        assertThat(originalIssues).hasSize(2);
-
-        Program modifiedProgram = analyzer.analyze(program);
-        assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
-        assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        Set<Issue> modifiedIssues = loopSensing.check(modifiedProgram);
-        assertThat(modifiedIssues).hasSize(1);
+        assertThat(countBlocks(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(8);
     }
 
 
     @Test
-    void testFixBugInSpriteWithMultipleScripts() throws ParsingException, IOException {
+    void testExtendScriptInSprite() throws ParsingException, IOException {
+
         String response = """
                 scratch
                 //Sprite: Sprite1
-
                 //Script: V/6:G4i[HL#.bvM4XA|8
                 when green flag clicked
-                forever
-                  if <key (space v) pressed?> then
+                if <key (space v) pressed?> then
                     turn right (15) degrees
-                  end
                 end
-
-                //Script: ^zj@X}R4N`_I{(7*vN63
-                when green flag clicked
-                forever
-                  if <key (up arrow v) pressed?> then
-                    turn left (15) degrees
-                  end
-                end
+                set rotation to (0)
+                set rotation to (0)
+                set rotation to (0)
                 """;
-        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoopTwice.json");
-
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
-        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        MissingLoopSensing loopSensing = new MissingLoopSensing();
-        Set<Issue> originalIssues = loopSensing.check(program);
-        assertThat(originalIssues).hasSize(2);
+        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
 
         Program modifiedProgram = analyzer.analyze(program);
         assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
-        assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        Set<Issue> modifiedIssues = loopSensing.check(modifiedProgram);
-        assertThat(modifiedIssues).isEmpty();
+        assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
+        assertThat(countBlocks(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(8);
     }
 
     @Test
-    void testFixBugInProgram() throws ParsingException, IOException {
+    void testExtendSpriteWithNewScript() throws ParsingException, IOException {
 
         String response = """
                 scratch
                 //Sprite: Sprite1
-
                 //Script: V/6:G4i[HL#.bvM4XA|8
                 when green flag clicked
-                forever
-                  if <key (space v) pressed?> then
-                    turn right (15) degrees
-                  end
+                if <key (space v) pressed?> then
+                turn right (15) degrees
                 end
-
-                //Script: ^zj@X}R4N`_I{(7*vN63
+                //Script: V/6:G4i[HL#.bvM4XA|9
                 when green flag clicked
                 forever
-                  if <key (up arrow v) pressed?> then
-                    turn left (15) degrees
-                  end
+                if <key (up arrow v) pressed?> then
+                move (10) steps
+                end
                 end
                 """;
-        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoopTwice.json");
-
-        QueryTarget target = new QueryTarget.ProgramTarget();
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
-        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        MissingLoopSensing loopSensing = new MissingLoopSensing();
-        Set<Issue> originalIssues = loopSensing.check(program);
-        assertThat(originalIssues).hasSize(2);
+        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
 
         Program modifiedProgram = analyzer.analyze(program);
         assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
-        Set<Issue> modifiedIssues = loopSensing.check(modifiedProgram);
-        assertThat(modifiedIssues).isEmpty();
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
+        assertThat(countBlocks(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(1))).isEqualTo(6);
     }
 
+    @Test
+    void testExtendProgram() throws ParsingException, IOException {
+
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8
+                when green flag clicked
+                if <key (space v) pressed?> then
+                turn right (15) degrees
+                end
+                //Script: V/6:G4i[HL#.bvM4XA|9
+                when green flag clicked
+                forever
+                if <key (up arrow v) pressed?> then
+                move (10) steps
+                end
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        QueryTarget target = new QueryTarget.ProgramTarget();
+
+        LlmApi llm = new DummyLlmApi(response);
+
+        LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(llm, promptBuilder, target, true);
+
+        assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
+        assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
+
+        Program modifiedProgram = analyzer.analyze(program);
+        assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
+        assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
+        assertThat(countBlocks(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(5);
+        assertThat(countBlocks(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(1))).isEqualTo(6);
+    }
 }

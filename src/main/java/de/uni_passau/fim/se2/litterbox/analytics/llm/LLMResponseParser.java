@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -27,61 +26,37 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
 import java.util.*;
 
-public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
+public class LLMResponseParser {
 
     private static final String SPRITE_HEADER = "//Sprite: ";
 
     private static final String SCRIPT_HEADER = "//Script: ";
 
-    protected LlmApi llmApi;
-
-    protected PromptBuilder promptBuilder;
-
-    protected QueryTarget target;
-
-    protected boolean ignoreLooseBlocks;
-
-    protected LLMProgramModificationAnalyzer(
-            LlmApi llmApi,
-            PromptBuilder promptBuilder,
-            QueryTarget target,
-            boolean ignoreLooseBlocks
-    ) {
-        this.llmApi = llmApi;
-        this.promptBuilder = promptBuilder;
-        this.target = target;
-        this.ignoreLooseBlocks = ignoreLooseBlocks;
-    }
-
-    protected LLMProgramModificationAnalyzer(
-            QueryTarget target,
-            boolean ignoreLooseBlocks
-    ) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target, ignoreLooseBlocks);
-    }
-
-    public abstract String callLLM(Program program);
-
-    @Override
-    public Program analyze(Program program) {
-        String response = callLLM(program);
-
+    public Program parseResultAndUpdateProgram(Program program, String response) {
         Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
         ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
         NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(program.getActorDefinitionList(), newActors);
 
         return (Program) program.accept(replacementVisitor);
     }
+
+    public Script parseResultAndUpdateScript(Program program, Script script, String response) {
+        Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
+        Optional<ActorDefinition> actor = AstNodeUtil.findActor(script);
+
+        if (actor.isEmpty()) {
+            throw new IllegalArgumentException("Script is not part of an actor");
+        }
+
+        return (Script) spriteScripts.get(actor.get().getIdent().getName()).get(AstNodeUtil.getBlockId(script.getEvent()));
+    }
+
 
     private ActorDefinitionList getActorDefinitionList(ActorDefinitionList originalActorDefinitionList,
                                                        Map<String, Map<String, ScriptEntity>> actorMap) {
