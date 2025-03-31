@@ -236,7 +236,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
             newLine();
             hasContent = true;
         }
-        super.visit(node);
+        node.getProcedureDefinitionList().accept(this);
+        node.getScripts().accept(this);
         currentActor = null;
     }
 
@@ -269,7 +270,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     @Override
     public void visit(Program program) {
         this.program = program;
-        super.visit(program);
+        program.getActorDefinitionList().accept(this);
     }
 
     @Override

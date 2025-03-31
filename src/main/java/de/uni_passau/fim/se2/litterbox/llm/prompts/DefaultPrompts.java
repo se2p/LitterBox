@@ -138,7 +138,7 @@ public class DefaultPrompts extends PromptBuilder {
     @Override
     protected String describeTarget(final Program program, final QueryTarget target) {
         final ASTNode targetNode = target.getTargetNode(program);
-        final String label = target.getTargetDescription();
+        // TODO: If ignoreLooseBlocks is true, should loose blocks be ignored in the scratchblocks text?
         String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
 
         // Parsing expects sprite names and script ids
