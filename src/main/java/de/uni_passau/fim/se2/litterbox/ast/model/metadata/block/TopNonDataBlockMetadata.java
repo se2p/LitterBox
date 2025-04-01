@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import java.util.Random;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     private double xPos;
@@ -53,8 +53,9 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     }
 
     public static TopNonDataBlockMetadata emptyTopNonBlockMetadata() {
-        Random rand = new Random();
+        double x = Randomness.nextDouble(0, 101);
+        double y = Randomness.nextDouble(0, 101);
         return new TopNonDataBlockMetadata("", CloneVisitor.generateUID(),
-                false,  new NoMutationMetadata(), rand.nextDouble(101), rand.nextDouble(101));
+                false,  new NoMutationMetadata(), x, y);
     }
 }
