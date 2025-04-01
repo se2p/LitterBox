@@ -22,20 +22,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.Conversation;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyzer {
 
-    private static final Logger log = Logger.getLogger(LLMProgramImprovementAnalyzer.class.getName());
-
-    private String detectors;
+    private final String detectors;
 
     public LLMProgramImprovementAnalyzer(
             QueryTarget target,
@@ -63,10 +58,6 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
         final Set<Issue> issues = bugAnalyzer.analyze(program);
 
         final String prompt = promptBuilder.improveCode(program, target, issues);
-        log.info("Prompt: " + prompt);
-        final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
-        log.info("Response: " + LLMResponseParser.fixCommonScratchBlocksIssues(response.getLast().text()));
-
-        return LLMResponseParser.fixCommonScratchBlocksIssues(response.getLast().text());
+        return scratchLlm.singleQueryWithTextResponse(prompt);
     }
 }

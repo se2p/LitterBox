@@ -43,6 +43,10 @@ public abstract class PromptBuilder {
 
     public abstract String createPromptForCommonQuery(CommonQuery query);
 
+    public abstract String findNewBugs(String existingBugsDescription);
+
+    public abstract String explainIssue(Issue issue);
+
     protected abstract String describeTarget(final Program program, QueryTarget target);
 
     protected List<String> issueTypes(final Collection<Issue> issues) {

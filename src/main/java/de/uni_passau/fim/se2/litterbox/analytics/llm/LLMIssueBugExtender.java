@@ -45,28 +45,17 @@ public class LLMIssueBugExtender extends LLMIssueExtender {
     public Set<Issue> apply(Program program, Set<Issue> issues) {
         StringBuilder issueList = new StringBuilder();
         int numIssue = 0;
-        List<Issue> bugsOrSmells = issues.stream().filter(i -> i.getIssueType() == IssueType.BUG || i.getIssueType() == IssueType.SMELL).toList();
+        List<Issue> bugsOrSmells = issues.stream()
+                .filter(i -> i.getIssueType() == IssueType.BUG || i.getIssueType() == IssueType.SMELL)
+                .toList();
+
         for (Issue issue : bugsOrSmells) {
-            issueList.append("Issue #" + numIssue++ + "\n");
+            issueList.append("Issue #").append(numIssue++).append("\n");
             issueList.append(issue.getHintText());
             issueList.append("\n");
         }
 
-        LlmQuery issueQuery = new LlmQuery.CustomQuery("""
-                    A static code analysis tool identified the following list of issues in the given code:
-                    %s
-
-                    List any further bugs in the code not already included in this list.
-                    Do not suggest new program features.
-                    Do not list generic issues such as "lack of comments in the code".
-                    New issues must describe problems related to specific existing statements in the code.
-                    Do not list bugs that are already contained in the list of issues above.
-                    Report each issue using the following structure:
-
-                    New Finding <number>:
-                    - Finding Description: <textual issue description>
-                    - Finding Location: <ID of the script containing the issue>
-                    """.formatted(issueList.toString()));
+        LlmQuery issueQuery = new LlmQuery.CustomQuery(promptBuilder.findNewBugs(issueList.toString()));
 
         return apply(program, issues, issueQuery, new LLMIssueFinder(IssueType.BUG));
     }

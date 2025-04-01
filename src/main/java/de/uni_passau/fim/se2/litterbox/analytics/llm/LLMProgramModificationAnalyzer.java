@@ -21,7 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.LlmResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
@@ -29,6 +30,8 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
+
+    protected ScratchLlm scratchLlm;
 
     protected LlmApi llmApi;
 
@@ -46,6 +49,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     ) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
+        this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
@@ -63,7 +67,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     public Program analyze(Program program) {
         String response = callLLM(program);
 
-        LLMResponseParser responseParser = new LLMResponseParser();
+        LlmResponseParser responseParser = new LlmResponseParser();
         return responseParser.parseResultAndUpdateProgram(program, response);
     }
 }

@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class LLMResponseParser {
+public class LlmResponseParser {
 
     private static final String SPRITE_HEADER = "//Sprite: ";
 
@@ -47,6 +47,10 @@ public class LLMResponseParser {
         return scratchBlocks.replace("set rotation to", "point in direction");
     }
 
+    // todo: Use ScratchLlm.singleQueryWithCodeOnlyResponse instead in call locations
+    //  this way we can split parsing and program merging
+    //  -> makes it easier to do iterative prompting to ask llm to fix invalid ScratchBlocks later-on
+    //  same for parseResultAndUpdateScript below
     public Program parseResultAndUpdateProgram(Program program, String response) {
         ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
         ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
@@ -128,6 +132,8 @@ public class LLMResponseParser {
      * @return A map from sprite name to its scripts, represented as a map from script ID to the scratchblocks code as a string.
      */
     public ParsedLlmResponseCode parseLLMResponse(String response) {
+        response = fixCommonScratchBlocksIssues(response);
+
         ScratchBlocksParser parser = new ScratchBlocksParser();
 
         Map<String, Map<String, ScriptEntity>> spriteScripts = new HashMap<>();

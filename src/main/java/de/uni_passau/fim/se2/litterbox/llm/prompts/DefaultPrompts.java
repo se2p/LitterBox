@@ -73,10 +73,10 @@ public class DefaultPrompts extends PromptBuilder {
 
     @Override
     public String completeCode(final Program program, final QueryTarget target) {
-        String result = describeTarget(program, target) +
-        """
-        Auto-complete the code.
-        """;
+        String result = describeTarget(program, target)
+                + """
+                    Auto-complete the code.
+                    """;
         if (target.getTargetDescription().equals("sprite")) {
             result += """
                         The improved code should either extend an existing script with new blocks,
@@ -122,7 +122,7 @@ public class DefaultPrompts extends PromptBuilder {
                       """;
             case PROVIDE_FEEDBACK:
                 yield """
-                      This code was written by a student. Provide feedback to the student about the code as well as the creativity).
+                      This code was written by a student. Provide feedback to the student about the code as well as the creativity.
                       """;
             case PROVIDE_PRAISE:
                 yield """
@@ -136,6 +136,39 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
+    public String findNewBugs(String existingBugsDescription) {
+        return """
+                A static code analysis tool identified the following list of issues in the given code:
+                %s
+
+                List any further bugs in the code not already included in this list.
+                Do not suggest new program features.
+                Do not list generic issues such as "lack of comments in the code".
+                New issues must describe problems related to specific existing statements in the code.
+                Do not list bugs that are already contained in the list of issues above.
+                Report each issue using the following structure:
+
+                New Finding <number>:
+                - Finding Description: <textual issue description>
+                - Finding Location: <ID of the script containing the issue>
+                """.formatted(existingBugsDescription);
+    }
+
+    @Override
+    public String explainIssue(Issue issue) {
+        return """
+                A static code analysis tool identified an issue and provides the following explanation:
+                %s
+
+                Describe an example user interaction with the program and
+                how it might be affected by the issue.
+
+                Only provide a list of steps to reproduce the issue, but no other text,
+                except for a title "Here is how you might observe effects of this issue:".
+                """.formatted(issue.getHintText());
+    }
+
+    @Override
     protected String describeTarget(final Program program, final QueryTarget target) {
         final ASTNode targetNode = target.getTargetNode(program);
         // TODO: If ignoreLooseBlocks is true, should loose blocks be ignored in the scratchblocks text?
@@ -144,7 +177,7 @@ public class DefaultPrompts extends PromptBuilder {
         // Parsing expects sprite names and script ids
         if (target.getTargetDescription().equals("script")) {
             Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
-            String scriptID   = AstNodeUtil.getBlockId(((Script)targetNode).getEvent());
+            String scriptId = AstNodeUtil.getBlockId(((Script)targetNode).getEvent());
             if (actor.isPresent()) {
                 String spriteName = actor.get().getIdent().getName();
                 return  """
@@ -152,9 +185,9 @@ public class DefaultPrompts extends PromptBuilder {
                         //Sprite: %s
                         //Script: %s
                         %s
-                        """.formatted(scriptID, spriteName, spriteName, scriptID, scratchBlocks);
+                        """.formatted(scriptId, spriteName, spriteName, scriptId, scratchBlocks);
             } else {
-                throw new IllegalArgumentException("No sprite found for script " + scriptID);
+                throw new IllegalArgumentException("No sprite found for script " + scriptId);
             }
         } else if (target.getTargetDescription().equals("sprite")) {
             Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);

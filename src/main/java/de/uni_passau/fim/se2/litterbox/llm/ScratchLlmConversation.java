@@ -19,30 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.util.Collections;
-import java.util.logging.Logger;
 
-public class ScratchLLM {
-
-    private static final Logger log = Logger.getLogger(ScratchLLM.class.getName());
+public class ScratchLlmConversation {
 
     private final LlmApi llmApi;
-
     private final PromptBuilder promptBuilder;
 
-    public ScratchLLM(final LlmApi llmApi, final PromptBuilder promptBuilder) {
+    public ScratchLlmConversation(final LlmApi llmApi, final PromptBuilder promptBuilder) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
-    }
-
-    public ScratchLLM() {
-        this(LlmApiProvider.get(), LlmPromptProvider.get());
     }
 
     public Conversation startConversation() {
@@ -65,5 +55,4 @@ public class ScratchLLM {
         // ...
         throw new UnsupportedOperationException("not implemented");
     }
-
 }

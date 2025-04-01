@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
@@ -38,6 +38,8 @@ import java.util.logging.Logger;
 abstract class LLMIssueExtender implements LLMIssueProcessor {
     private static final Logger log = Logger.getLogger(LLMIssueExtender.class.getName());
 
+    protected ScratchLlm scratchLlm;
+
     protected LlmApi llmApi;
 
     protected PromptBuilder promptBuilder;
@@ -49,6 +51,7 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
                                        QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
+        this.scratchLlm = new ScratchLlm();
         this.target = target;
     }
 
@@ -56,12 +59,10 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
         this(LlmApiProvider.get(), LlmPromptProvider.get(), target);
     }
 
-    public abstract Set<Issue> apply(Program program, Set<Issue> issues);
-
     protected Set<Issue> apply(Program program, Set<Issue> issues, LlmQuery llmQuery, LLMIssueFinder issueFinder) {
         final String prompt = promptBuilder.askQuestion(program, target, llmQuery);
         log.info("Prompt: " + prompt);
-        String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+        String response = scratchLlm.singleQueryWithTextResponse(prompt);
         log.info("Response: " + response);
 
         Set<Issue> expandedIssues = new LinkedHashSet<>(issues);
@@ -70,46 +71,53 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
         return expandedIssues;
     }
 
-    private Set<Issue> getIssuesFromResponse(String response, Program program, LLMIssueFinder llmDummyFinder) {
+    private Set<Issue> getIssuesFromResponse(String response, Program program, LLMIssueFinder issueFinder) {
         Set<Issue> issues = new LinkedHashSet<>();
         String[] issueEntries = response.split("New Finding \\d+:");
         for (String entry : issueEntries) {
-            if (entry.trim().isEmpty()) continue;
-
-            IssueSeverity severity = IssueSeverity.LOW; // TODO?
-            String description = extractValue(entry, "Finding Description:");
-            String location = extractValue(entry, "Finding Location:");
-
-            Optional<ASTNode> node = BlockByIdFinder.findBlock(program, location);
-            if (!node.isPresent()) {
-                log.warning("Could not find block with ID: " + location);
-                continue;
-            }
-            Script script = AstNodeUtil.findParent(node.get(), Script.class);
-            if (script == null) {
-                log.warning("Could not find script for block with ID: " + location);
-                continue;
-            }
-            Optional<ActorDefinition> actor = AstNodeUtil.findActor(node.get());
-            if (!actor.isPresent()) {
-                log.warning("Could not find actor for block with ID: " + location);
+            if (entry.trim().isEmpty()) {
                 continue;
             }
 
-            Issue issue = new IssueBuilder()
-                    .withFinder(llmDummyFinder)
-                    .withSeverity(severity)
-                    .withHint(Hint.fromText(description))
-                    .withActor(actor.get())
-                    .withScriptOrProcedure(script)
-                    .withCurrentNode(script.getEvent()) // TODO: This is likely not the actual node
-                    .withProgram(program)
-                    .build();
-
-            issues.add(issue);
+            tryParseIssue(program, issueFinder, entry).ifPresent(issues::add);
         }
 
         return issues;
+    }
+
+    private Optional<Issue> tryParseIssue(
+            final Program program, final LLMIssueFinder issueFinder, final String issueText
+    ) {
+        IssueSeverity severity = IssueSeverity.LOW; // TODO?
+        String description = extractValue(issueText, "Finding Description:");
+        String location = extractValue(issueText, "Finding Location:");
+
+        Optional<ASTNode> node = BlockByIdFinder.findBlock(program, location);
+        if (node.isEmpty()) {
+            log.warning("Could not find block with ID: " + location);
+            return Optional.empty();
+        }
+        Script script = AstNodeUtil.findParent(node.get(), Script.class);
+        if (script == null) {
+            log.warning("Could not find script for block with ID: " + location);
+            return Optional.empty();
+        }
+        Optional<ActorDefinition> actor = AstNodeUtil.findActor(node.get());
+        if (actor.isEmpty()) {
+            log.warning("Could not find actor for block with ID: " + location);
+            return Optional.empty();
+        }
+
+        Issue issue = new IssueBuilder()
+                .withFinder(issueFinder)
+                .withSeverity(severity)
+                .withHint(Hint.fromText(description))
+                .withActor(actor.get())
+                .withScriptOrProcedure(script)
+                .withCurrentNode(script.getEvent()) // TODO: This is likely not the actual node
+                .withProgram(program)
+                .build();
+        return Optional.of(issue);
     }
 
     private String extractValue(String entry, String key) {

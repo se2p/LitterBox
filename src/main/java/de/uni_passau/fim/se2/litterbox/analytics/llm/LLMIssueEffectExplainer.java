@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 public class LLMIssueEffectExplainer implements LLMIssueProcessor {
     private static final Logger log = Logger.getLogger(LLMIssueEffectExplainer.class.getName());
 
+    protected ScratchLlm scratchLLM;
+
     protected LlmApi llmApi;
 
     protected PromptBuilder promptBuilder;
@@ -48,6 +50,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
                                  QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
+        this.scratchLLM = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
@@ -62,19 +65,10 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
         for (Issue issue : issues) {
             log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
 
-            LlmQuery issueQuery = new LlmQuery.CustomQuery("""
-                    A static code analysis tool identified an issue and provides the following explanation:
-                    %s
-
-                    Describe an example user interaction with the program and
-                    how it might be affected by the issue.
-
-                    Only provide a list of steps to reproduce the issue, but no other text,
-                    except for a title "Here is how you might observe effects of this issue:".
-                    """.formatted(issue.getHintText()));
+            LlmQuery issueQuery = new LlmQuery.CustomQuery(promptBuilder.explainIssue(issue));
             final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
             log.info("Prompt: " + prompt);
-            String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+            String response = scratchLLM.singleQueryWithTextResponse(prompt);
             log.info("Response: " + response);
 
             // TODO: Appending the explanation to the existing hint would be undone

@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.LlmResponseParser;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
@@ -51,7 +51,7 @@ public class ScratchBlocksToJSONTest implements JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMResponseParser responseParser = new LLMResponseParser();
+        LlmResponseParser responseParser = new LlmResponseParser();
         Program updatedProgram = responseParser.parseResultAndUpdateProgram(program, response);
         String updatedJson = JSONStringCreator.createProgramJSONString(updatedProgram);
 

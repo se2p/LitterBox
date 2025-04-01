@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 public class LLMIssueHintProcessor implements LLMIssueProcessor {
     private static final Logger log = Logger.getLogger(LLMIssueHintProcessor.class.getName());
 
+    protected ScratchLlm scratchLlm;
+
     protected LlmApi llmApi;
 
     protected PromptBuilder promptBuilder;
@@ -48,6 +50,7 @@ public class LLMIssueHintProcessor implements LLMIssueProcessor {
                                  QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
+        this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
@@ -72,7 +75,7 @@ public class LLMIssueHintProcessor implements LLMIssueProcessor {
                     """.formatted(issue.getHintText()));
             final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
             log.info("Prompt: " + prompt);
-            String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+            String response = scratchLlm.singleQueryWithTextResponse(prompt);
             log.info("Response: " + response);
 
             Hint improvedHint = Hint.fromText(response);

@@ -20,20 +20,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
-
-import java.util.logging.Logger;
 
 public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
-    private static final Logger log = Logger.getLogger(LLMProgramQueryAnalyzer.class.getName());
-
-    private LlmApi llmApi;
+    private ScratchLlm scratchLlm;
 
     private PromptBuilder promptBuilder;
 
@@ -51,8 +48,8 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
-        this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
+        this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.query = query;
         this.target = target;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
@@ -69,9 +66,6 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
     @Override
     public String analyze(Program program) {
         final String prompt = promptBuilder.askQuestion(program, target, query);
-        log.fine("Prompt: " + prompt);
-        String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
-        log.fine("Response: " + response);
-        return response;
+        return scratchLlm.singleQueryWithTextResponse(prompt);
     }
 }
