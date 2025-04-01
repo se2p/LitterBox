@@ -51,7 +51,7 @@ public class UnnecessaryIf extends AbstractIssueFinder {
                     ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
 
                     MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor,
-                            getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                            getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), Hint.fromKey(getName()));
                     issue.setRefactoredScriptOrProcedureDefinition(refactored);
                     addIssue(issue);
                 }

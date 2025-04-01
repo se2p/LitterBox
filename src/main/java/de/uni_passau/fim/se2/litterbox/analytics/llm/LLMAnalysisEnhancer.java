@@ -20,19 +20,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -45,6 +43,8 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
     protected PromptBuilder promptBuilder;
 
     protected QueryTarget target;
+
+    private List<LLMIssueProcessor> issueProcessors = new LinkedList<>();
 
     public LLMAnalysisEnhancer(
             LlmApi llmApi,
@@ -70,52 +70,24 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
         this.target = target;
     }
 
+    public void addIssueProcessor(LLMIssueProcessor processor) {
+        issueProcessors.add(processor);
+    }
+
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
         Set<Issue> enhancedResult = enhanceIssues(program, result);
         super.writeResultToFile(projectFile, program, enhancedResult);
     }
 
-    private Set<Issue> enhanceIssues(Program program, Set<Issue> result) {
+    private Set<Issue> enhanceIssues(Program program, Set<Issue> issues) {
         Set<Issue> enhancedResult = new LinkedHashSet<>();
-        for (Issue issue : result) {
-            log.info("Current issue: " + issue.getFinderName() +" in sprite "+issue.getActorName());
 
-            if (issue.getScript() == null) {
-                // Issue does not refer to individual script, not fixing it for now
-                log.info("Cannot fix issue not related to individual script.");
-                enhancedResult.add(issue);
-                continue;
-
-                // TODO: sprite_naming could be treated by suggesting a new name, but how to integrate this?
-            } else if (issue.getIssueType() == IssueType.PERFUME) {
-                // No need to produce fixes for perfumes
-                enhancedResult.add(issue);
-                continue;
-            }
-
-            final String prompt = promptBuilder.improveCode(program, target, Set.of(issue));
-            log.info("Prompt: " + prompt);
-            String response = LlmApiUtils.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
-            log.info("Response: " + response);
-
-            LLMResponseParser responseParser = new LLMResponseParser();
-            Script fixedScript = responseParser.parseResultAndUpdateScript(program, issue.getScript(), response);
-            log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
-
-            Issue enhancedIssue = new Issue(
-                    issue.getFinder(),
-                    issue.getSeverity(),
-                    program,
-                    issue.getActor(),
-                    issue.getScript(),
-                    issue.getCodeLocation(),
-                    issue.getCodeMetadata(),
-                    issue.getHint()
-            );
-            enhancedIssue.setRefactoredScriptOrProcedureDefinition(fixedScript);
-            enhancedResult.add(enhancedIssue);
+        for (LLMIssueProcessor processor : issueProcessors) {
+            Set<Issue> newIssues = processor.apply(program, issues);
+            enhancedResult.addAll(newIssues);
         }
+
         return enhancedResult;
     }
 }

@@ -1114,7 +1114,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata(), new Hint(stuttMovement.getName()));
+        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata(), Hint.fromKey(stuttMovement.getName()));
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();

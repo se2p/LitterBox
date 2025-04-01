@@ -46,10 +46,10 @@ public class InterruptedLoopSensingTest implements JsonTest {
         Set<Issue> reports = parameterName.check(illegalParameter);
         Assertions.assertEquals(2, reports.size());
         List<Issue> issues = new ArrayList<>(reports);
-        Hint hint1 = new Hint(parameterName.getName());
+        Hint hint1 = Hint.fromKey(parameterName.getName());
         hint1.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
         hint1.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
-        Hint hint2 = new Hint(parameterName.getName());
+        Hint hint2 = Hint.fromKey(parameterName.getName());
         hint2.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
         hint2.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
         Assertions.assertEquals(hint1.getHintText(), issues.get(0).getHintText());

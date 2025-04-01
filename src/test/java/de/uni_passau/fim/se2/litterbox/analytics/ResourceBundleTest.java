@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.llm.LLMIssueFinder;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -169,6 +170,7 @@ public class ResourceBundleTest {
         Collection<String> finders = new HashSet<>(IssueTool.getAllFinderNames());
         finders.addAll(new ProgramMetricAnalyzer().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
         finders.addAll(new ProgramExtractionAnalyzer().getExtractorNames());
+        finders.add(new LLMIssueFinder(IssueType.BUG).getName());
         for (String key : Collections.list(names.getKeys())) {
             if (!key.contains("fix")) {
                 assertWithMessage("Language " + locale + ", key " + key + " does not match a finder").that(finders).contains(key);

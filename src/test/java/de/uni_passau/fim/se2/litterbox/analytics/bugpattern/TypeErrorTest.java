@@ -74,7 +74,7 @@ public class TypeErrorTest implements JsonTest {
         Set<Issue> issues = parameterName.check(booleanEquals);
         Assertions.assertEquals(1, issues.size());
         for (Issue issue : issues) {
-            Assertions.assertEquals((new Hint(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHintText());
+            Assertions.assertEquals((Hint.fromKey(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHintText());
         }
     }
 

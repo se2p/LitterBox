@@ -69,9 +69,9 @@ public class WaitingCheckToStop extends AbstractIssueFinder {
             foundIssue.add(stmts.get(stmts.size() - 1));
             MultiBlockIssue issue;
             if (currentProcedure == null) {
-                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentScript, foundIssue, wait.getMetadata(), new Hint(NAME));
+                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentScript, foundIssue, wait.getMetadata(), Hint.fromKey(NAME));
             } else {
-                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentProcedure, foundIssue, wait.getMetadata(), new Hint(NAME));
+                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentProcedure, foundIssue, wait.getMetadata(), Hint.fromKey(NAME));
             }
             addIssue(issue);
         }

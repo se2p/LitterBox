@@ -72,9 +72,6 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
-        // Check that hints have actually been declared, otherwise
-        // we might be missing translations
-        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public Issue(IssueBuilder builder) {
@@ -90,9 +87,6 @@ public class Issue {
         this.metaData = builder.getMetaData();
         this.hint = builder.getHint();
         this.id = globalIssueCount++;
-        // Check that hints have actually been declared, otherwise
-        // we might be missing translations
-        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public IssueFinder getFinder() {

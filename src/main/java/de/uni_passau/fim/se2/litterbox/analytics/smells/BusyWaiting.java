@@ -84,7 +84,7 @@ public class BusyWaiting extends AbstractIssueFinder {
     public void visit(StopAll node) {
         if (insideForeverAndIf) {
             hasStop = true;
-            hint = new Hint(ALL_HINT);
+            hint = Hint.fromKey(ALL_HINT);
         }
     }
 
@@ -92,7 +92,7 @@ public class BusyWaiting extends AbstractIssueFinder {
     public void visit(StopThisScript node) {
         if (insideForeverAndIf) {
             hasStop = true;
-            hint = new Hint(SCRIPT_HINT);
+            hint = Hint.fromKey(SCRIPT_HINT);
         }
     }
 
@@ -100,7 +100,7 @@ public class BusyWaiting extends AbstractIssueFinder {
     public void visit(DeleteClone node) {
         if (insideForeverAndIf) {
             hasStop = true;
-            hint = new Hint(CLONE_HINT);
+            hint = Hint.fromKey(CLONE_HINT);
         }
     }
 

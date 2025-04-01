@@ -67,7 +67,7 @@ public class CallWithoutDefinitionTest implements JsonTest {
         CallWithoutDefinition finder = new CallWithoutDefinition();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint hint = new Hint(finder.getName());
+        Hint hint = Hint.fromKey(finder.getName());
         hint.setParameter(Hint.BLOCK_NAME,"block name ()");
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
@@ -80,7 +80,7 @@ public class CallWithoutDefinitionTest implements JsonTest {
         CallWithoutDefinition finder = new CallWithoutDefinition();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint hint = new Hint(finder.getName());
+        Hint hint = Hint.fromKey(finder.getName());
         hint.setParameter(Hint.BLOCK_NAME,"block name () <>");
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());

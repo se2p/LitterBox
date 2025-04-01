@@ -55,7 +55,7 @@ class MessageNeverSentTest implements JsonTest {
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);
         for (Issue issue : reports) {
-            Hint hint = new Hint(MessageNeverSentHintFactory.MESSAGE_IN_SAY_OR_THINK);
+            Hint hint = Hint.fromKey(MessageNeverSentHintFactory.MESSAGE_IN_SAY_OR_THINK);
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_MESSAGE, "test");
             hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
@@ -71,7 +71,7 @@ class MessageNeverSentTest implements JsonTest {
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);
         for (Issue issue : reports) {
-            Hint hint = new Hint(MessageNeverSentHintFactory.TOUCHING_USED);
+            Hint hint = Hint.fromKey(MessageNeverSentHintFactory.TOUCHING_USED);
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_SPRITE, "Bat");
             hint.setParameter(Hint.HINT_MESSAGE, "Bat berührt");

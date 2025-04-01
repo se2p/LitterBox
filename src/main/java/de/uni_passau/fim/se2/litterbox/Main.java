@@ -297,6 +297,61 @@ public class Main implements Callable<Integer> {
         @CommandLine.ArgGroup(multiplicity = "1")
         QueryChoice query;
 
+        // TODO at least one needs to be selected, but only if using llm -a
+        static class AnalysisOptions {
+            @CommandLine.Option(
+                    names = {"--fixes"},
+                    negatable = true,
+                    defaultValue = "true", fallbackValue = "true",
+                    description = "Produce suggested fixes/refactorings."
+            )
+            boolean fix;
+
+            @CommandLine.Option(
+                    names = {"--no-filter"},
+                    negatable = true,
+                    defaultValue = "false", fallbackValue = "false",
+                    description = "Filter false positives."
+            )
+            boolean filter;
+
+            @CommandLine.Option(
+                    names = {"--no-hint"},
+                    negatable = true,
+                    defaultValue = "false", fallbackValue = "false",
+                    description = "Produce textual explanations."
+            )
+            boolean hint;
+
+            @CommandLine.Option(
+                    names = {"--no-effect"},
+                    negatable = true,
+                    defaultValue = "false", fallbackValue = "false",
+                    description = "Describe possible effects."
+            )
+            boolean effects;
+
+            @CommandLine.Option(
+                    names = {"--no-new-issues"},
+                    negatable = true,
+                    defaultValue = "false", fallbackValue = "false",
+                    description = "Add further issues."
+            )
+            boolean addIssues;
+
+            @CommandLine.Option(
+                    names = {"--no-new-perfumes"},
+                    negatable = true,
+                    defaultValue = "false", fallbackValue = "false",
+                    description = "Add further code perfumes."
+            )
+            boolean addPerfumes;
+        }
+
+        @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1")
+        AnalysisOptions analysisOptions = new AnalysisOptions();
+
+
         @CommandLine.Option(
                 names = {"-t", "--target"},
                 description = "Target sprite name."
@@ -345,13 +400,8 @@ public class Main implements Callable<Integer> {
                 return new LLMCodeAnalyzer(new LLMProgramImprovementAnalyzer(target, String.join(",", detectors), ignoreLooseBlocks), outputPath, deleteProject);
             } else if (query.complete) {
                 return new LLMCodeAnalyzer(new LLMProgramCompletionAnalyzer(target, ignoreLooseBlocks), outputPath, deleteProject);
-            } else if(query.analyze) {
-                return new LLMAnalysisEnhancer(
-                        target,
-                        outputPath,
-                        String.join(",", detectors),
-                        ignoreLooseBlocks
-                    );
+            } else if (query.analyze) {
+                return buildEnhancer(target);
             } else {
                 final LlmQuery q = buildQuery();
                 return new LLMQueryAnalyzer(outputPath, deleteProject, q, target, ignoreLooseBlocks);
@@ -374,6 +424,35 @@ public class Main implements Callable<Integer> {
             } else {
                 return new LlmQuery.PredefinedQuery(query.commonQuery);
             }
+        }
+
+        // TODO: The construction of all the processors should probably not be here
+        private LLMAnalysisEnhancer buildEnhancer(QueryTarget target) {
+            LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
+                    buildQueryTarget(),
+                    outputPath,
+                    String.join(",", detectors),
+                    ignoreLooseBlocks
+                    );
+            if (analysisOptions.addIssues) {
+                enhancer.addIssueProcessor(new LLMIssueBugExtender(target));
+            }
+            if (analysisOptions.addPerfumes) {
+                enhancer.addIssueProcessor(new LLMIssuePerfumeExtender(target));
+            }
+            if (analysisOptions.filter) {
+                enhancer.addIssueProcessor(new LLMIssueFalsePositiveFilter(target));
+            }
+            if (analysisOptions.fix) {
+                enhancer.addIssueProcessor(new LLMIssueFixProcessor(target));
+            }
+            if (analysisOptions.hint) {
+                enhancer.addIssueProcessor(new LLMIssueHintProcessor(target));
+            }
+            if (analysisOptions.effects) {
+                enhancer.addIssueProcessor(new LLMIssueEffectExplainer(target));
+            }
+            return enhancer;
         }
     }
 

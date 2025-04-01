@@ -35,12 +35,12 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
@@ -50,7 +50,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
@@ -60,7 +60,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("until") + " < > ");
             addIssue(node, node.getMetadata(), severity, hint);
         }
@@ -70,7 +70,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
@@ -80,7 +80,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            Hint hint = new Hint(NAME);
+            Hint hint = Hint.fromKey(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
             addIssue(node, node.getMetadata(), severity, hint);
         }

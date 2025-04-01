@@ -42,12 +42,10 @@ public class Hint {
     public static final String HINT_BLOCKNAME_MIDDLE = "BLOCKNAME_MIDDLE";
     public static final String HINT_BLOCKNAME_FINAL = "BLOCKNAME_FINAL";
 
-    private String hintKey;
-    private String hintText;
+    protected String hintText;
 
-    public Hint(String key) {
-        this.hintKey = key;
-        this.hintText = IssueTranslator.getInstance().getHint(hintKey);
+    private Hint(String hintText) {
+        this.hintText = hintText;
     }
 
     public void setParameter(String key, String value) {
@@ -62,11 +60,16 @@ public class Hint {
         return hintText.indexOf(ESCAPE_CHARACTER) >= 0;
     }
 
-    public String getHintKey() {
-        return hintKey;
-    }
-
     public String getHintText() {
         return hintText;
+    }
+
+    public static Hint fromKey(String hintKey) {
+        String hintText = IssueTranslator.getInstance().getHint(hintKey);
+        return new Hint(hintText);
+    }
+
+    public static Hint fromText(String hintText) {
+        return new Hint(hintText);
     }
 }

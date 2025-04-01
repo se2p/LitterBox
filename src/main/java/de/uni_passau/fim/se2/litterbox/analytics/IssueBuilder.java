@@ -85,7 +85,7 @@ public class IssueBuilder {
     }
 
     public IssueBuilder withHint(String hintKey) {
-        this.hint = new Hint(hintKey);
+        this.hint = Hint.fromKey(hintKey);
         return this;
     }
 
@@ -99,15 +99,25 @@ public class IssueBuilder {
         return this;
     }
 
+    public IssueBuilder fromIssue(Issue issue) {
+        this.finder = issue.getFinder();
+        this.severity = issue.getSeverity();
+        this.program = issue.getProgram();
+        this.actor = issue.getActor();
+        this.script = issue.getScript();
+        this.currentNode = issue.getCodeLocation();
+        this.metaData = issue.getCodeMetadata();
+        this.hint = issue.getHint();
+        this.refactoring = issue.getRefactoredScriptOrProcedureDefinition();
+        return this;
+    }
+
     private void validate() {
         if (finder == null) {
             throw new IllegalArgumentException("Finder not set.");
         }
         if (hint == null) {
             throw new IllegalArgumentException("Hint not set.");
-        }
-        if (!finder.getHintKeys().contains(hint.getHintKey())) {
-            throw new IllegalArgumentException("Hint key " + hint.getHintKey() + " is not valid.");
         }
         if ((currentNode == null) != (script == null)) {
             throw new IllegalArgumentException("Either both or none of the currentNode and script must be set.");

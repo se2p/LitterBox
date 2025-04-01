@@ -76,7 +76,7 @@ public class CodeyUploadStopTimed extends AbstractRobotFinder {
             }
             for (StopAll issue : issueList) {
                 if (uploadPossible) {
-                    addIssue(issue, MEDIUM, new Hint(POSSIBLE));
+                    addIssue(issue, MEDIUM, Hint.fromKey(POSSIBLE));
                 } else {
                     addIssue(issue, MEDIUM);
                 }
