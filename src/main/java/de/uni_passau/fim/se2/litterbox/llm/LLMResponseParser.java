@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.llm;
+package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -30,6 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class LLMResponseParser {
@@ -46,38 +48,48 @@ public class LLMResponseParser {
     }
 
     public Program parseResultAndUpdateProgram(Program program, String response) {
-        Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
+        ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
         ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
         NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(program.getActorDefinitionList(), newActors);
 
         return (Program) program.accept(replacementVisitor);
     }
 
+    // todo: updateScript? which script gets updated? should this be getUpdatedScriptFromResponse?
     public Script parseResultAndUpdateScript(Program program, Script script, String response) {
-        Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
+        ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
         Optional<ActorDefinition> actor = AstNodeUtil.findActor(script);
 
         if (actor.isEmpty()) {
             throw new IllegalArgumentException("Script is not part of an actor");
         }
 
-        return (Script) spriteScripts.get(actor.get().getIdent().getName()).get(AstNodeUtil.getBlockId(script.getEvent()));
+        return (Script) spriteScripts.script(actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script.getEvent()));
     }
 
-
+    /**
+     * Merges the original sprites with the scripts received from the LLM.
+     *
+     * @param originalActorDefinitionList The sprites of the original program.
+     * @param llmCode The new code as received by the LLM.
+     * @return The updated sprite list.
+     */
     private ActorDefinitionList getActorDefinitionList(ActorDefinitionList originalActorDefinitionList,
-                                                       Map<String, Map<String, ScriptEntity>> actorMap) {
+                                                       ParsedLlmResponseCode llmCode) {
         List<ActorDefinition> actors = new ArrayList<>();
         // TODO: This just replaces existing actors, might need to merge scriptlists in the future
         for (ActorDefinition actor : originalActorDefinitionList.getDefinitions()) {
-            if (!actorMap.containsKey(actor.getIdent().getName())) {
+            if (!llmCode.scripts().containsKey(actor.getIdent().getName())) {
                 actors.add(actor);
             }
         }
 
-        for (String actorName : actorMap.keySet()) {
+        for (final var entry : llmCode.scripts().entrySet()) {
+            final String actorName = entry.getKey();
+            final Map<String, ScriptEntity> scripts = entry.getValue();
+
             ActorDefinition actor = getBlankActorDefinition(actorName);
-            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(actor.getScripts(), getScriptList(actorMap.get(actorName)));
+            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(actor.getScripts(), getScriptList(scripts));
             actors.add((ActorDefinition) actor.accept(replacementVisitor));
         }
 
@@ -115,7 +127,7 @@ public class LLMResponseParser {
      * @param response The LLM response.
      * @return A map from sprite name to its scripts, represented as a map from script ID to the scratchblocks code as a string.
      */
-    public Map<String, Map<String, ScriptEntity>> parseLLMResponse(String response) {
+    public ParsedLlmResponseCode parseLLMResponse(String response) {
         ScratchBlocksParser parser = new ScratchBlocksParser();
 
         Map<String, Map<String, ScriptEntity>> spriteScripts = new HashMap<>();
@@ -153,6 +165,31 @@ public class LLMResponseParser {
                     .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
         }
 
-        return spriteScripts;
+        return new ParsedLlmResponseCode(spriteScripts);
+    }
+
+    public record ParsedLlmResponseCode(Map<String, Map<String, ScriptEntity>> scripts) {
+        /**
+         * Returns all scripts for the given actor.
+         *
+         * @param actor The name of the sprite/actor.
+         * @return All scripts of this actor.
+         */
+        @Nonnull
+        public Map<String, ScriptEntity> actor(final String actor) {
+            return Objects.requireNonNullElse(scripts.get(actor), Collections.emptyMap());
+        }
+
+        /**
+         * Finds a script in the set of parsed scripts.
+         *
+         * @param actor The name of the sprite/actor the script is in.
+         * @param scriptId The block ID of the head block of the script.
+         * @return The script if it could be found, {@code null} otherwise.
+         */
+        @Nullable
+        public ScriptEntity script(final String actor, final String scriptId) {
+            return actor(actor).get(scriptId);
+        }
     }
 }

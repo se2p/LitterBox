@@ -24,15 +24,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.llm.LLMResponseParser;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class LLMIssueFixProcessor implements LLMIssueProcessor {
 
@@ -58,35 +59,32 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
 
     @Override
     public Set<Issue> apply(Program program, Set<Issue> issues) {
-        Set<Issue> enhancedIssues = new LinkedHashSet<>();
+        return issues.stream().map(issue -> extracted(program, issue)).collect(Collectors.toSet());
+    }
 
-        for (Issue issue : issues) {
-            log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
+    private Issue extracted(Program program, Issue issue) {
+        log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
 
-            if (issue.getScript() == null) {
-                // Issue does not refer to individual script, not fixing it for now
-                log.info("Cannot fix issue not related to individual script.");
-                enhancedIssues.add(issue);
-                continue;
-            } else if (issue.getIssueType() == IssueType.PERFUME) {
-                // No need to produce fixes for perfumes
-                enhancedIssues.add(issue);
-                continue;
-            }
-
-            final String prompt = promptBuilder.improveCode(program, target, Set.of(issue));
-            log.info("Prompt: " + prompt);
-            String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
-            log.info("Response: " + response);
-
-            LLMResponseParser responseParser = new LLMResponseParser();
-            Script fixedScript = responseParser.parseResultAndUpdateScript(program, issue.getScript(), response);
-            log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
-
-            IssueBuilder issueBuilder = new IssueBuilder();
-            issueBuilder.fromIssue(issue).withProgram(program).withRefactoring(fixedScript);
-            enhancedIssues.add(issueBuilder.build());
+        if (issue.getScript() == null) {
+            // Issue does not refer to individual script, not fixing it for now
+            log.info("Cannot fix issue not related to individual script.");
+            return issue;
+        } else if (issue.getIssueType() == IssueType.PERFUME) {
+            // No need to produce fixes for perfumes
+            return issue;
         }
-        return enhancedIssues;
+
+        final String prompt = promptBuilder.improveCode(program, target, Set.of(issue));
+        log.info("Prompt: " + prompt);
+        String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+        log.info("Response: " + response);
+
+        LLMResponseParser responseParser = new LLMResponseParser();
+        Script fixedScript = responseParser.parseResultAndUpdateScript(program, issue.getScript(), response);
+        log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
+
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issueBuilder.fromIssue(issue).withProgram(program).withRefactoring(fixedScript);
+        return issueBuilder.build();
     }
 }
