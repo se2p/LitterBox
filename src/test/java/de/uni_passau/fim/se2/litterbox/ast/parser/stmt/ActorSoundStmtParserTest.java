@@ -58,19 +58,19 @@ public class ActorSoundStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
         PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-        Truth.assertThat(playSoundUntilDone.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(playSoundUntilDone.getElementChoice().getClass()).isEqualTo(WithExpr.class);
+        Truth.assertThat(playSoundUntilDone.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(playSoundUntilDone.getElementChoice()).isInstanceOf(WithExpr.class);
         WithExpr expr = (WithExpr) playSoundUntilDone.getElementChoice();
-        Truth.assertThat(expr.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
-        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
-        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
-        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
-        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
+        Truth.assertThat(expr.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(1)).isInstanceOf(StartSound.class);
+        Truth.assertThat(listOfStmt.get(2)).isInstanceOf(ClearSoundEffects.class);
+        Truth.assertThat(listOfStmt.get(3)).isInstanceOf(StopAllSounds.class);
+        Truth.assertThat(listOfStmt.get(4)).isInstanceOf(StopAll.class);
         StopAll stop = (StopAll) listOfStmt.get(4);
-        Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(stop.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
         Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation()).isInstanceOf(ProcedureMutationMetadata.class);
     }
 
@@ -83,7 +83,7 @@ public class ActorSoundStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
 
         PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
         WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
@@ -100,7 +100,7 @@ public class ActorSoundStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
 
         StartSound startSound = (StartSound) listOfStmt.get(1);
         WithExpr elementChoice = (WithExpr) startSound.getElementChoice();

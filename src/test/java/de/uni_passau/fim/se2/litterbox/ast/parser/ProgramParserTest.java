@@ -88,14 +88,14 @@ public class ProgramParserTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
         List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmts();
-        Assertions.assertTrue(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent() instanceof Variable);
+        Assertions.assertInstanceOf(Variable.class, ((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent());
         Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
                 .getName().getName()).isEqualTo("my variable");
 
         SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
                 .filter(t -> t instanceof SetVariableTo)
                 .findFirst().get();
-        Assertions.assertTrue(((Qualified) setStmt.getIdentifier()).getSecond() instanceof Variable);
+        Assertions.assertInstanceOf(Variable.class, ((Qualified) setStmt.getIdentifier()).getSecond());
         Truth.assertThat(((Qualified) setStmt.getIdentifier()).getSecond().getName().getName()).isEqualTo("my " +
                 "variable");
         Truth.assertThat(((NumberLiteral) setStmt.getExpr()).getValue()).isEqualTo(0);
@@ -107,7 +107,7 @@ public class ProgramParserTest implements JsonTest {
 
         SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
         Qualified variable = (Qualified) setList.getIdentifier();
-        Assertions.assertTrue(variable.getSecond() instanceof ScratchList);
+        Assertions.assertInstanceOf(ScratchList.class, variable.getSecond());
         Truth.assertThat(variable.getSecond().getName().getName()).isEqualTo("SpriteLocalList");
         ExpressionList exprListPlain = (ExpressionList) setList.getExpr();
         Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(0)).getText()).isEqualTo("Elem1");
