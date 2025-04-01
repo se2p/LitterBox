@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -87,6 +88,10 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
                 continue;
 
                 // TODO: sprite_naming could be treated by suggesting a new name, but how to integrate this?
+            } else if (issue.getIssueType() == IssueType.PERFUME) {
+                // No need to produce fixes for perfumes
+                enhancedResult.add(issue);
+                continue;
             }
 
             final String prompt = promptBuilder.improveCode(program, target, Set.of(issue));
