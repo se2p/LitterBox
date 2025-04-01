@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
@@ -77,7 +76,7 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
 
             final String prompt = promptBuilder.improveCode(program, target, Set.of(issue));
             log.info("Prompt: " + prompt);
-            String response = LlmApiUtils.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+            String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
             log.info("Response: " + response);
 
             LLMResponseParser responseParser = new LLMResponseParser();

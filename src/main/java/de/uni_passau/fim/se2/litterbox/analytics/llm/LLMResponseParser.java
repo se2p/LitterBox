@@ -38,6 +38,13 @@ public class LLMResponseParser {
 
     private static final String SCRIPT_HEADER = "//Script: ";
 
+    /*
+     * Try to fix common obvious errors in ScratchBlocks syntax produced by LLMs.
+     */
+    public static String fixCommonScratchBlocksIssues(String scratchBlocks) {
+        return scratchBlocks.replace("set rotation to", "point in direction");
+    }
+
     public Program parseResultAndUpdateProgram(Program program, String response) {
         Map<String, Map<String, ScriptEntity>> spriteScripts = parseLLMResponse(response);
         ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);

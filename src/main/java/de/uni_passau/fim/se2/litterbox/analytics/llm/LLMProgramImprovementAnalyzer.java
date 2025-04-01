@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.Conversation;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
@@ -65,8 +64,8 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
         final String prompt = promptBuilder.improveCode(program, target, issues);
         log.info("Prompt: " + prompt);
         final Conversation response = llmApi.query(promptBuilder.systemPrompt(), prompt);
-        log.info("Response: " + LlmApiUtils.fixCommonScratchBlocksIssues(response.getLast().text()));
+        log.info("Response: " + LLMResponseParser.fixCommonScratchBlocksIssues(response.getLast().text()));
 
-        return LlmApiUtils.fixCommonScratchBlocksIssues(response.getLast().text());
+        return LLMResponseParser.fixCommonScratchBlocksIssues(response.getLast().text());
     }
 }

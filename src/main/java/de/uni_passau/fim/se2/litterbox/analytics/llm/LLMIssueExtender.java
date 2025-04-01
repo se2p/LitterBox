@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
@@ -61,7 +60,7 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
     protected Set<Issue> apply(Program program, Set<Issue> issues, LlmQuery llmQuery, LLMIssueFinder issueFinder) {
         final String prompt = promptBuilder.askQuestion(program, target, llmQuery);
         log.info("Prompt: " + prompt);
-        String response = LlmApiUtils.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+        String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
         log.info("Response: " + response);
 
         Set<Issue> expandedIssues = new LinkedHashSet<>(issues);

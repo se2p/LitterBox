@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
@@ -53,6 +52,6 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
         log.info("Prompt: " + prompt);
         String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
         log.info("Response: " + response);
-        return LlmApiUtils.fixCommonScratchBlocksIssues(response);
+        return LLMResponseParser.fixCommonScratchBlocksIssues(response);
     }
 }

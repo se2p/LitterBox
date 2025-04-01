@@ -54,11 +54,4 @@ public final class LlmApiUtils {
 
         return Stream.concat(prefix, messages).toList();
     }
-
-    /*
-     * Try to fix common obvious errors in ScratchBlocks syntax produced by LLMs.
-     */
-    public static String fixCommonScratchBlocksIssues(String scratchBlocks) {
-        return scratchBlocks.replace("set rotation to", "point in direction");
-    }
 }

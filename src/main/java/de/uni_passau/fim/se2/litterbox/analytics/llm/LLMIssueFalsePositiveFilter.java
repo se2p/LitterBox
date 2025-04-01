@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
-import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiUtils;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
@@ -85,7 +84,7 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
                     issue.getHintText()));
             final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
             log.info("Prompt: " + prompt);
-            String response = LlmApiUtils.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
+            String response = LLMResponseParser.fixCommonScratchBlocksIssues(llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text());
             log.info("Response: " + response);
             if (response.equalsIgnoreCase("yes")) {
                 filteredIssues.add(issue);
