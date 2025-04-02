@@ -25,8 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.List;
-
 public class Myself extends AbstractNode implements CloneChoice, ASTLeaf {
     private final BlockMetadata metadata;
 

@@ -115,11 +115,12 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
         ) {
             return convertCreateCloneOfWithMenu(blockId, block, menuRef.id());
         } else {
+            final WithCloneExpr cloneExpr = new WithCloneExpr(
+                    ExprConverter.convertExpr(state, block, cloneOptionInput), new NoBlockMetadata()
+            );
+            final BlockMetadata blockMeta = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
 
-            final WithCloneExpr cloneExpr = new WithCloneExpr(ExprConverter.convertExpr(state, block, cloneOptionInput), new NoBlockMetadata());
-            final BlockMetadata blockMetadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
-
-            return new CreateCloneOf(cloneExpr, blockMetadata);
+            return new CreateCloneOf(cloneExpr, blockMeta);
         }
     }
 
