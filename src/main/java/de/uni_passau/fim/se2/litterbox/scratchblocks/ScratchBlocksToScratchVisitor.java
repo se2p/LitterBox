@@ -526,7 +526,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ClearGraphicEffects visitClearColorEffect(ScratchBlocksParser.ClearColorEffectContext ctx) {
-        return new ClearGraphicEffects(handleNormalBlockMetadata());//todo is this ok?
+        return new ClearGraphicEffects(handleNormalBlockMetadata());
     }
 
     @Override
@@ -712,7 +712,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public CreateCloneOf visitCreateClone(ScratchBlocksParser.CreateCloneContext ctx) {
-        return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), NonDataBlockMetadata.emptyNonBlockMetadata());//todo this cas special metadata with menu
+        return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), NonDataBlockMetadata.emptyNonBlockMetadata());//todo this has special metadata with menu
     }
 
     @Override
@@ -737,12 +737,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public AskAndWait visitAsk(ScratchBlocksParser.AskContext ctx) {
-        return new AskAndWait(makeStringExpr(ctx.exprOrLiteral()), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new AskAndWait(makeStringExpr(ctx.exprOrLiteral()), handleNormalBlockMetadata());
     }
 
     @Override
     public SetDragMode visitSetDragMode(ScratchBlocksParser.SetDragModeContext ctx) {
-        return new SetDragMode(visitDragmode(ctx.dragmode()), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new SetDragMode(visitDragmode(ctx.dragmode()), handleNormalBlockMetadata());
     }
 
     @Override
@@ -752,7 +752,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ResetTimer visitResetTimer(ScratchBlocksParser.ResetTimerContext ctx) {
-        return new ResetTimer(NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new ResetTimer(handleNormalBlockMetadata());
     }
 
     //end subregion: sensing blocks
@@ -764,7 +764,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new SetVariableTo(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -773,18 +773,18 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new ChangeVariableBy(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
     @Override
     public ShowVariable visitShowVar(ScratchBlocksParser.ShowVarContext ctx) {
-        return new ShowVariable(new StrId(visitStringArgument(ctx.stringArgument())), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new ShowVariable(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
 
     @Override
     public HideVariable visitHideVar(ScratchBlocksParser.HideVarContext ctx) {
-        return new HideVariable(new StrId(visitStringArgument(ctx.stringArgument())), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new HideVariable(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
 
     @Override
@@ -792,7 +792,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new AddTo(
                 makeStringExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -801,13 +801,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new DeleteOf(
                 makeNumExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
     @Override
     public DeleteAllOf visitDeleteAllOfList(ScratchBlocksParser.DeleteAllOfListContext ctx) {
-        return new DeleteAllOf(new StrId(visitStringArgument(ctx.stringArgument())), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new DeleteAllOf(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
 
     @Override
@@ -816,7 +816,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
                 makeStringExpr(ctx.insertion),
                 makeNumExpr(ctx.location),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -826,18 +826,18 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
                 makeStringExpr(ctx.newItem),
                 makeNumExpr(ctx.oldItem),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                NonDataBlockMetadata.emptyNonBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
     @Override
     public ShowList visitShowList(ScratchBlocksParser.ShowListContext ctx) {
-        return new ShowList(new StrId(visitStringArgument(ctx.stringArgument())), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new ShowList(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
 
     @Override
     public HideList visitHideList(ScratchBlocksParser.HideListContext ctx) {
-        return new HideList(new StrId(visitStringArgument(ctx.stringArgument())), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new HideList(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
     //end subregion: variable blocks
 
@@ -861,7 +861,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Touching visitTouching(ScratchBlocksParser.TouchingContext ctx) {
         Touchable touchable = visitTouchingChoice(ctx.touchingChoice());
-        return new Touching(touchable, new NoBlockMetadata());
+        return new Touching(touchable, handleNormalBlockMetadata());
     }
 
     @Override
@@ -869,7 +869,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.exprOrLiteral() != null) {
             return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else if (ctx.stringArgument() != null) {
-            return new SpriteTouchable(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            return new SpriteTouchable(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata()); //todo do we need metadata here?
         } else if (ctx.fixedTouching() != null) {
             return visitFixedTouching(ctx.fixedTouching());
         }
@@ -879,16 +879,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Touchable visitFixedTouching(ScratchBlocksParser.FixedTouchingContext ctx) {
         if (ctx.getText().equals("mouse-pointer")) {
-            return new MousePointer(new NoBlockMetadata());
+            return new MousePointer(new NoBlockMetadata()); //todo do we need metadata here?
         } else {
-            return new Edge(new NoBlockMetadata());
+            return new Edge(new NoBlockMetadata()); //todo do we need metadata here?
         }
     }
 
     @Override
     public SpriteTouchingColor visitTouchingColor(ScratchBlocksParser.TouchingColorContext ctx) {
         Color color = visitTouchingColorChoice(ctx.touchingColorChoice());
-        return new SpriteTouchingColor(color, new NoBlockMetadata());
+        return new SpriteTouchingColor(color, handleNormalBlockMetadata());
     }
 
     @Override
@@ -896,7 +896,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new ColorTouchingColor(
                 visitTouchingColorChoice(ctx.firstColor),
                 visitTouchingColorChoice(ctx.secondColor),
-                new NoBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -913,7 +913,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public IsKeyPressed visitKeyPressed(ScratchBlocksParser.KeyPressedContext ctx) {
-        return new IsKeyPressed(visitKeySelect(ctx.keySelect()), NonDataBlockMetadata.emptyNonBlockMetadata());
+        return new IsKeyPressed(visitKeySelect(ctx.keySelect()), handleNormalBlockMetadata());
     }
 
     @Override
@@ -921,12 +921,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.key() != null) {
             return visitKey(ctx.key());
         } else {
-            return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+            return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //todo do we need metadata here?
         }
     }
 
     @Override
     public Key visitKey(ScratchBlocksParser.KeyContext ctx) {
+
+        //todo do we need metadata in any
         return switch (ctx.getText()) {
             case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), new NoBlockMetadata());
             case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), new NoBlockMetadata());
@@ -940,7 +942,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public IsMouseDown visitMouseDown(ScratchBlocksParser.MouseDownContext ctx) {
-        return new IsMouseDown(new NoBlockMetadata());
+        return new IsMouseDown(handleNormalBlockMetadata());
     }
 
     @Override
@@ -949,24 +951,24 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             return new BiggerThan(
                     ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
                     ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                    new NoBlockMetadata()
+                    handleNormalBlockMetadata()
             );
         } else if (ctx.lt != null) {
             return new LessThan(
                     ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
                     ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                    new NoBlockMetadata()
+                    handleNormalBlockMetadata()
             );
         } else if (ctx.eq != null) {
             return new Equals(
                     ensureComparable(visitExprOrLiteral(ctx.firstExpr)),
                     ensureComparable(visitExprOrLiteral(ctx.secondExpr)),
-                    new NoBlockMetadata()
+                    handleNormalBlockMetadata()
             );
         } else if (ctx.and != null) {
-            return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new And(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else if (ctx.or != null) {
-            return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Or(makeBoolExpr(ctx.firstExpr), makeBoolExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else {
             throw new IllegalArgumentException("Bug: grammar does not match implementation.");
         }
@@ -974,12 +976,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public Not visitNot(ScratchBlocksParser.NotContext ctx) {
-        return new Not(makeBoolExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new Not(makeBoolExpr(ctx.exprOrLiteral()), handleNormalBlockMetadata());
     }
 
     @Override
     public StringContains visitContains(ScratchBlocksParser.ContainsContext ctx) {
-        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
+        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), handleNormalBlockMetadata());
     }
 
     @Override
@@ -987,7 +989,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new ListContains(
                 new StrId(visitStringArgument(ctx.stringArgument())),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
-                new NoBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -997,22 +999,22 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public PositionX visitXPosition(ScratchBlocksParser.XPositionContext ctx) {
-        return new PositionX(new NoBlockMetadata());
+        return new PositionX(handleNormalBlockMetadata());
     }
 
     @Override
     public PositionY visitYPosition(ScratchBlocksParser.YPositionContext ctx) {
-        return new PositionY(new NoBlockMetadata());
+        return new PositionY(handleNormalBlockMetadata());
     }
 
     @Override
     public Direction visitDirection(ScratchBlocksParser.DirectionContext ctx) {
-        return new Direction(new NoBlockMetadata());
+        return new Direction(handleNormalBlockMetadata());
     }
 
     @Override
     public Costume visitNumCostume(ScratchBlocksParser.NumCostumeContext ctx) {
-        return new Costume(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
+        return new Costume(visitNameNum(ctx.nameNum()), handleNormalBlockMetadata());
     }
 
     @Override
@@ -1022,58 +1024,58 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public Backdrop visitNumBackdrop(ScratchBlocksParser.NumBackdropContext ctx) {
-        return new Backdrop(visitNameNum(ctx.nameNum()), new NoBlockMetadata());
+        return new Backdrop(visitNameNum(ctx.nameNum()), handleNormalBlockMetadata());
     }
 
     @Override
     public Size visitSize(ScratchBlocksParser.SizeContext ctx) {
-        return new Size(new NoBlockMetadata());
+        return new Size(handleNormalBlockMetadata());
     }
 
     @Override
     public Volume visitVolume(ScratchBlocksParser.VolumeContext ctx) {
-        return new Volume(new NoBlockMetadata());
+        return new Volume(handleNormalBlockMetadata());
     }
 
     @Override
     public DistanceTo visitDistanceTo(ScratchBlocksParser.DistanceToContext ctx) {
-        return new DistanceTo(visitDistanceChoice(ctx.distanceChoice()), new NoBlockMetadata());
+        return new DistanceTo(visitDistanceChoice(ctx.distanceChoice()), handleNormalBlockMetadata());
     }
 
     @Override
     public Position visitDistanceChoice(ScratchBlocksParser.DistanceChoiceContext ctx) {
         if (ctx.mousePointer() != null) {
-            return new MousePos(new NoBlockMetadata());
+            return new MousePos(new NoBlockMetadata());//todo do we need metadata here
         } else if (ctx.stringArgument() != null) {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());//todo do we need metadata here?
         } else {
-            return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+            return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //ok just wrapper
         }
     }
 
     @Override
     public Answer visitAnswer(ScratchBlocksParser.AnswerContext ctx) {
-        return new Answer(new NoBlockMetadata());
+        return new Answer(handleNormalBlockMetadata());
     }
 
     @Override
     public MouseX visitMouseX(ScratchBlocksParser.MouseXContext ctx) {
-        return new MouseX(new NoBlockMetadata());
+        return new MouseX(handleNormalBlockMetadata());
     }
 
     @Override
     public MouseY visitMouseY(ScratchBlocksParser.MouseYContext ctx) {
-        return new MouseY(new NoBlockMetadata());
+        return new MouseY(handleNormalBlockMetadata());
     }
 
     @Override
     public Loudness visitLoudness(ScratchBlocksParser.LoudnessContext ctx) {
-        return new Loudness(new NoBlockMetadata());
+        return new Loudness(handleNormalBlockMetadata());
     }
 
     @Override
     public Timer visitTimer(ScratchBlocksParser.TimerContext ctx) {
-        return new Timer(new NoBlockMetadata());
+        return new Timer(handleNormalBlockMetadata());
     }
 
     @Override
@@ -1081,16 +1083,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new AttributeOf(
                 visitAttributeChoice(ctx.attributeChoice()),
                 visitElement(ctx.element()),
-                new NoBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
     @Override
     public ElementChoice visitElement(ScratchBlocksParser.ElementContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());//todo do we need metadata
         } else {
-            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is a wrapper
         }
     }
 
@@ -1110,7 +1112,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public Current visitCurrentTime(ScratchBlocksParser.CurrentTimeContext ctx) {
-        return new Current(visitCurrentChoice(ctx.currentChoice()), new NoBlockMetadata());
+        return new Current(visitCurrentChoice(ctx.currentChoice()), handleNormalBlockMetadata());
     }
 
     @Override
@@ -1123,26 +1125,26 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public DaysSince2000 visitDaysSince(ScratchBlocksParser.DaysSinceContext ctx) {
-        return new DaysSince2000(new NoBlockMetadata());
+        return new DaysSince2000(handleNormalBlockMetadata());
     }
 
     @Override
     public Username visitUserName(ScratchBlocksParser.UserNameContext ctx) {
-        return new Username(new NoBlockMetadata());
+        return new Username(handleNormalBlockMetadata());
     }
 
     @Override
     public ASTNode visitBinaryNumExpr(ScratchBlocksParser.BinaryNumExprContext ctx) {
         if (ctx.add != null) {
-            return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Add(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else if (ctx.sub != null) {
-            return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Minus(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else if (ctx.mult != null) {
-            return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Mult(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else if (ctx.div != null) {
-            return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Div(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else if (ctx.mod != null) {
-            return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+            return new Mod(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
         } else {
             throw new IllegalArgumentException("Bug: grammar does not match implementation.");
         }
@@ -1150,33 +1152,33 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public PickRandom visitPickRandom(ScratchBlocksParser.PickRandomContext ctx) {
-        return new PickRandom(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), new NoBlockMetadata());
+        return new PickRandom(makeNumExpr(ctx.firstExpr), makeNumExpr(ctx.secondExpr), handleNormalBlockMetadata());
     }
 
     @Override
     public Join visitJoin(ScratchBlocksParser.JoinContext ctx) {
-        return new Join(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
+        return new Join(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), handleNormalBlockMetadata());
     }
 
     @Override
     public LetterOf visitGetLetterAtIndex(ScratchBlocksParser.GetLetterAtIndexContext ctx) {
-        return new LetterOf(makeNumExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), new NoBlockMetadata());
+        return new LetterOf(makeNumExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), handleNormalBlockMetadata());
     }
 
     @Override
     public LengthOfString visitLengthOf(ScratchBlocksParser.LengthOfContext ctx) {
-        return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), handleNormalBlockMetadata());
     }
 
     @Override
     public Round visitRound(ScratchBlocksParser.RoundContext ctx) {
-        return new Round(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
+        return new Round(makeNumExpr(ctx.exprOrLiteral()), handleNormalBlockMetadata());
     }
 
     @Override
     public NumFunctOf visitMathFunction(ScratchBlocksParser.MathFunctionContext ctx) {
         return new NumFunctOf(
-                visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()
+                visitMathChoice(ctx.mathChoice()), makeNumExpr(ctx.exprOrLiteral()), handleNormalBlockMetadata()
         );
     }
 
@@ -1190,7 +1192,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new ItemOfVariable(
                 makeNumExpr(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                new NoBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
@@ -1199,13 +1201,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new IndexOf(
                 visitExprOrLiteral(ctx.exprOrLiteral()),
                 new StrId(visitStringArgument(ctx.stringArgument())),
-                new NoBlockMetadata()
+                handleNormalBlockMetadata()
         );
     }
 
     @Override
     public LengthOfVar visitLengthOfList(ScratchBlocksParser.LengthOfListContext ctx) {
-        return new LengthOfVar(new StrId(visitStringArgument(ctx.stringArgument())), new NoBlockMetadata());
+        return new LengthOfVar(new StrId(visitStringArgument(ctx.stringArgument())), handleNormalBlockMetadata());
     }
 
     //end subregion: num expressions
