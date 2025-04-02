@@ -53,9 +53,13 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     }
 
     public static TopNonDataBlockMetadata emptyTopNonBlockMetadata() {
+        return createArtificialTopNonBlockMetadata(false);
+    }
+
+    public static TopNonDataBlockMetadata createArtificialTopNonBlockMetadata(boolean shadow) {
         double x = Randomness.nextDouble(0, 101);
         double y = Randomness.nextDouble(0, 101);
         return new TopNonDataBlockMetadata("", CloneVisitor.generateUID(),
-                false,  new NoMutationMetadata(), x, y);
+                shadow, new NoMutationMetadata(), x, y);
     }
 }
