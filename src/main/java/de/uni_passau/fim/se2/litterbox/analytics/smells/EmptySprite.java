@@ -32,7 +32,7 @@ public class EmptySprite extends AbstractIssueFinder {
         currentActor = actor;
         if (actor.getProcedureDefinitionList().getList().isEmpty() && actor.getScripts().getScriptList().isEmpty()
                 && !actor.isStage()) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
             addIssueWithLooseComment(hint);
         }

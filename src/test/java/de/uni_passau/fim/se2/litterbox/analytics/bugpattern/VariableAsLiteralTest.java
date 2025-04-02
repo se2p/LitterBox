@@ -127,10 +127,10 @@ public class VariableAsLiteralTest implements JsonTest {
         VariableAsLiteral lit = new VariableAsLiteral();
         Set<Issue> reports = lit.check(program);
         Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(lit.getName());
+        Hint hint = Hint.fromKey(lit.getName());
         hint.setParameter(Hint.HINT_VARIABLE, "aktuelles Jahr");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 

@@ -58,8 +58,8 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script,
-                 ASTNode currentNode, Metadata metaData, Hint hint) {
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
+                 ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
@@ -72,9 +72,6 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
-        // Check that hints have actually been declared, otherwise
-        // we might be missing translations
-        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public Issue(IssueBuilder builder) {
@@ -90,9 +87,6 @@ public class Issue {
         this.metaData = builder.getMetaData();
         this.hint = builder.getHint();
         this.id = globalIssueCount++;
-        // Check that hints have actually been declared, otherwise
-        // we might be missing translations
-        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public IssueFinder getFinder() {
@@ -129,8 +123,8 @@ public class Issue {
 
     /**
      * Returns the script or procedure definition that is set.
-     * <p>
-     * The issue contains either a script or a procedure definition.
+     *
+     * <p>The issue contains either a script or a procedure definition.
      * If a script is set, the script is returned, if no script is present a procedure definition is returned
      *
      * @return an astNode that represents a script or procedure-definition
@@ -160,7 +154,11 @@ public class Issue {
         return IssueTranslator.getInstance().getName(this.finder.getName());
     }
 
-    public String getHint() {
+    public Hint getHint() {
+        return hint;
+    }
+
+    public String getHintText() {
         return hint.getHintText();
     }
 

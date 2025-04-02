@@ -313,7 +313,7 @@ public class LoopSensingRobot extends AbstractRobotFinder {
         concernedNodes.add(loop);
         concernedNodes.add(parent);
         concernedNodes.add(node);
-        Hint hint = new Hint(NAME);
+        Hint hint = Hint.fromKey(NAME);
         MultiBlockIssue issue;
         if (currentScript != null) {
             issue = new MultiBlockIssue(

@@ -148,7 +148,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         }
         visitChildren(node);
         if (hasVariable) {
-            Hint hint = new Hint(VARIABLE_VERSION);
+            Hint hint = Hint.fromKey(VARIABLE_VERSION);
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             hasVariable = false;
         }

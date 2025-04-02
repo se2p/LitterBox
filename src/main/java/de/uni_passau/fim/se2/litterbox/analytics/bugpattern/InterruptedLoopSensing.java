@@ -233,13 +233,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsTo node) {
         if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -249,13 +249,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsToXY node) {
         if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -265,13 +265,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(WaitSeconds node) {
         if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -281,13 +281,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(ThinkForSecs node) {
         if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -297,13 +297,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(PlaySoundUntilDone node) {
         if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("play_sound_until_done"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("play_sound_until_done"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -313,13 +313,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(SayForSecs node) {
         if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
         if (visitOuter) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);

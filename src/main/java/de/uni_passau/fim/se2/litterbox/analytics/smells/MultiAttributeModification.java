@@ -102,13 +102,13 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     }
 
     public void generateMultiBlockIssue(ASTNode node, Defineable defineable) {
-        Hint hint = new Hint(HINT_PARAMETERISED);
+        Hint hint = Hint.fromKey(HINT_PARAMETERISED);
         hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(defineable));
         generateMultiBlockIssue(node, hint);
     }
 
     public void generateMultiBlockIssue(ASTNode node) {
-        generateMultiBlockIssue(node, new Hint(NAME));
+        generateMultiBlockIssue(node, Hint.fromKey(NAME));
     }
 
     @Override
@@ -334,7 +334,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(Say node) {
         if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
-            generateMultiBlockIssue(node, new Hint(HINT_SAYTHINK));
+            generateMultiBlockIssue(node, Hint.fromKey(HINT_SAYTHINK));
         }
 
         prevNode = node;
@@ -343,7 +343,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(Think node) {
         if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
-            generateMultiBlockIssue(node, new Hint(HINT_SAYTHINK));
+            generateMultiBlockIssue(node, Hint.fromKey(HINT_SAYTHINK));
         }
 
         prevNode = node;

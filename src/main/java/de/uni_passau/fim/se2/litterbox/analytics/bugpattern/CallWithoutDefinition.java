@@ -47,7 +47,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
                 String name = AstNodeUtil.replaceProcedureParams(
                         calledProcedure.getIdent().getName(), "()", "<>", "()");
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.BLOCK_NAME, name);
                 addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW, hint);
             }

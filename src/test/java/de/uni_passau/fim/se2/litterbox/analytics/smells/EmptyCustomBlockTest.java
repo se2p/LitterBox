@@ -58,8 +58,8 @@ public class EmptyCustomBlockTest implements JsonTest {
         EmptyCustomBlock parameterName = new EmptyCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(parameterName.getName());
+        Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter(Hint.BLOCK_NAME, "define Blockname () <>");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
     }
 }

@@ -105,9 +105,9 @@ public class TimedStatementInLiveLoop extends AbstractRobotFinder {
 
             if (stmtCount == 1 && issueNode != null) {
                 if (livePossible) {
-                    addIssue(issueNode, IssueSeverity.LOW, new Hint(POSSIBLE_HINT));
+                    addIssue(issueNode, IssueSeverity.LOW, Hint.fromKey(POSSIBLE_HINT));
                 } else {
-                    addIssue(issueNode, IssueSeverity.MEDIUM, new Hint(NAME));
+                    addIssue(issueNode, IssueSeverity.MEDIUM, Hint.fromKey(NAME));
                 }
             }
 
