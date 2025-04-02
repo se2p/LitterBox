@@ -99,9 +99,7 @@ deploy-gitlab:
   script:
     - 'mvn deploy -s ci_settings.xml'
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE != "schedule"
 
 nix-build:
   stage: deploy
