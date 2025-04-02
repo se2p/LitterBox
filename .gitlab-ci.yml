@@ -39,8 +39,9 @@ build:
 ################################################################################
 # test
 
-test:
+test: &test
     stage: test
+    needs: []
     coverage: '/Instruction Coverage: \d+.\d+ %/'
     script:
         - mvn clean test
@@ -58,13 +59,20 @@ test:
             junit:
                 - target/surefire-reports/TEST-*.xml
 
+nightly-test-latest-litterbox:
+    <<: *test
+    before_script:
+        - sed -E -i 's#<litterbox.version>.*</litterbox.version>#<litterbox.version>[1.0,)</litterbox.version#' pom.xml
+        - mvn dependency:resolve -U
+    rules:
+        - if: $SCHEDULED_NIGHTLY
+
 ################################################################################
 # lint
 
 .lint: &lint-template
     stage: lint
-    needs:
-        - build
+    needs: []
     rules:
         - if: '$CI_MERGE_REQUEST_TITLE =~ /^Draft:/'
           allow_failure: true
