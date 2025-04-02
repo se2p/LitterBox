@@ -335,11 +335,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Position visitFixedPosition(ScratchBlocksParser.FixedPositionContext ctx) {
         if (ctx.getText().equals("random position")) {
-            return new RandomPos(new NoBlockMetadata());
+            return new RandomPos(handleNormalBlockMetadata());
         } else if (ctx.mousePointer() != null) {
-            return new MousePos(new NoBlockMetadata());
+            return new MousePos(handleNormalBlockMetadata());
         } else {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata()); //todo: check if we need metadata if the expression is a sprite name
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), handleNormalBlockMetadata());
         }
     }
 
@@ -436,7 +436,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ElementChoice visitCostumeSelect(ScratchBlocksParser.CostumeSelectContext ctx) {
         if (ctx.stringArgument() != null) {
             StrId costumeId = new StrId(visitStringArgument(ctx.stringArgument()));
-            return new WithExpr(costumeId, new NoBlockMetadata()); //todo check if we need metadata for using a costume name
+            return new WithExpr(costumeId, handleNormalBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata()); // no metadata is ok as this is a wrapper
         }
@@ -463,7 +463,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             return visitFixedBackdrop(ctx.fixedBackdrop());
         } else if (ctx.stringArgument() != null) {
             StrId backdropId = new StrId(visitStringArgument(ctx.stringArgument()));
-            return new WithExpr(backdropId, new NoBlockMetadata());//todo check if this needs metadata
+            return new WithExpr(backdropId, handleNormalBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata()); //ok just wrapper
         }
@@ -472,9 +472,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ElementChoice visitFixedBackdrop(ScratchBlocksParser.FixedBackdropContext ctx) {
         return switch (ctx.getText()) {
-            case "next backdrop" -> new Next(new NoBlockMetadata()); //todo check of any of these needs metadata
-            case "previous backdrop" -> new Prev(new NoBlockMetadata());
-            default -> new Random(new NoBlockMetadata());
+            case "next backdrop" -> new Next(handleNormalBlockMetadata());
+            case "previous backdrop" -> new Prev(handleNormalBlockMetadata());
+            default -> new Random(handleNormalBlockMetadata());
         };
     }
 
@@ -576,7 +576,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ElementChoice visitSoundChoice(ScratchBlocksParser.SoundChoiceContext ctx) {
         if (ctx.stringArgument() != null) {
             StrId soundId = new StrId(visitStringArgument(ctx.stringArgument()));
-            return new WithExpr(soundId, new NoBlockMetadata());//todo check if we need metadata
+            return new WithExpr(soundId, handleNormalBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok this is a wrapper
         }
@@ -869,7 +869,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.exprOrLiteral() != null) {
             return new AsTouchable(visitExprOrLiteral(ctx.exprOrLiteral()));
         } else if (ctx.stringArgument() != null) {
-            return new SpriteTouchable(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata()); //todo do we need metadata here?
+            return new SpriteTouchable(visitStringArgument(ctx.stringArgument()), handleNormalBlockMetadata());
         } else if (ctx.fixedTouching() != null) {
             return visitFixedTouching(ctx.fixedTouching());
         }
@@ -879,9 +879,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Touchable visitFixedTouching(ScratchBlocksParser.FixedTouchingContext ctx) {
         if (ctx.getText().equals("mouse-pointer")) {
-            return new MousePointer(new NoBlockMetadata()); //todo do we need metadata here?
+            return new MousePointer(handleNormalBlockMetadata());
         } else {
-            return new Edge(new NoBlockMetadata()); //todo do we need metadata here?
+            return new Edge(handleNormalBlockMetadata());
         }
     }
 
@@ -921,22 +921,23 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.key() != null) {
             return visitKey(ctx.key());
         } else {
-            return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //todo do we need metadata here?
+            return new Key(makeNumExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); // should be ok, is a wrapper
         }
     }
 
     @Override
     public Key visitKey(ScratchBlocksParser.KeyContext ctx) {
-
-        //todo do we need metadata in any
         return switch (ctx.getText()) {
-            case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), new NoBlockMetadata());
-            case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), new NoBlockMetadata());
-            case "down arrow" -> new Key(new NumberLiteral(KeyCode.DOWN_ARROW.getKeycode()), new NoBlockMetadata());
-            case "left arrow" -> new Key(new NumberLiteral(KeyCode.LEFT_ARROW.getKeycode()), new NoBlockMetadata());
-            case "right arrow" -> new Key(new NumberLiteral(KeyCode.RIGHT_ARROW.getKeycode()), new NoBlockMetadata());
-            case "any" -> new Key(new NumberLiteral(KeyCode.ANY_KEY.getKeycode()), new NoBlockMetadata());
-            default -> new Key(new NumberLiteral(ctx.getText().charAt(0)), new NoBlockMetadata());
+            case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), handleNormalBlockMetadata());
+            case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), handleNormalBlockMetadata());
+            case "down arrow" ->
+                    new Key(new NumberLiteral(KeyCode.DOWN_ARROW.getKeycode()), handleNormalBlockMetadata());
+            case "left arrow" ->
+                    new Key(new NumberLiteral(KeyCode.LEFT_ARROW.getKeycode()), handleNormalBlockMetadata());
+            case "right arrow" ->
+                    new Key(new NumberLiteral(KeyCode.RIGHT_ARROW.getKeycode()), handleNormalBlockMetadata());
+            case "any" -> new Key(new NumberLiteral(KeyCode.ANY_KEY.getKeycode()), handleNormalBlockMetadata());
+            default -> new Key(new NumberLiteral(ctx.getText().charAt(0)), handleNormalBlockMetadata());
         };
     }
 
@@ -1045,9 +1046,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Position visitDistanceChoice(ScratchBlocksParser.DistanceChoiceContext ctx) {
         if (ctx.mousePointer() != null) {
-            return new MousePos(new NoBlockMetadata());//todo do we need metadata here
+            return new MousePos(handleNormalBlockMetadata());
         } else if (ctx.stringArgument() != null) {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());//todo do we need metadata here?
+            return new FromExpression(visitStringArgument(ctx.stringArgument()), handleNormalBlockMetadata());
         } else {
             return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //ok just wrapper
         }
@@ -1090,7 +1091,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ElementChoice visitElement(ScratchBlocksParser.ElementContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), new NoBlockMetadata());//todo do we need metadata
+            return new WithExpr(visitStringArgument(ctx.stringArgument()), handleNormalBlockMetadata());
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is a wrapper
         }
