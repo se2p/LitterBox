@@ -63,7 +63,7 @@ public class MissingCloneInitializationTest implements JsonTest {
         Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE);
         hint.setParameter(Hint.HINT_SPRITE, "Körper");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 
@@ -78,7 +78,7 @@ public class MissingCloneInitializationTest implements JsonTest {
         hint.setParameter(Hint.EVENT_HANDLER, IssueTranslator.getInstance().getInfo("greenflag"));
         hint.setParameter(Hint.HINT_SPRITE, "Sprite1");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 

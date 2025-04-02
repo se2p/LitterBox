@@ -63,6 +63,6 @@ public class KeySetPositionTest implements JsonTest {
         Hint hint = new Hint(parameterName.getName());
         hint.setParameter("XY","x");
         hint.setParameter(Hint.HINT_KEY,"right arrow");
-        Assertions.assertEquals(hint.getHintText(),reports.get(0).getHint());
+        Assertions.assertEquals(hint.getHintText(),reports.get(0).getHintText());
     }
 }

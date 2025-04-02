@@ -143,7 +143,7 @@ public class MissingInitializationTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = new Hint(MissingInitialization.NAME_CLONE);
         hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
     }
 
     @Test

@@ -47,13 +47,13 @@ public class EmptyControlBodyTest implements JsonTest {
         Assertions.assertEquals(6, reports.size());
         Hint repeat = new Hint(parameterName.getName());
         repeat.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
-        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHint());
+        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHintText());
         Hint forever = new Hint(parameterName.getName());
         forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
-        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHint());
+        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHintText());
         Hint ifThen = new Hint(parameterName.getName());
         ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
-        Assertions.assertEquals("[b]Problem:[/b] [newLine] Du hast einen [sbi]falls < > , dann[/sbi]-Baustein verwendet, der keine Bausteine enthält. Beim Aufruf dieses Bausteins passiert also nichts. Das macht dein Programm unübersichtlich. [newLine] [newLine] [b]Verbesserungsidee:[/b] [newLine] Entferne den Baustein oder füge passende Bausteine in die Definition ein.", reports.get(2).getHint());
+        Assertions.assertEquals("[b]Problem:[/b] [newLine] Du hast einen [sbi]falls < > , dann[/sbi]-Baustein verwendet, der keine Bausteine enthält. Beim Aufruf dieses Bausteins passiert also nichts. Das macht dein Programm unübersichtlich. [newLine] [newLine] [b]Verbesserungsidee:[/b] [newLine] Entferne den Baustein oder füge passende Bausteine in die Definition ein.", reports.get(2).getHintText());
         IssueTranslator.getInstance().setLanguage("en");
     }
 }

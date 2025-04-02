@@ -42,9 +42,9 @@ class BlockingIfElseTest implements JsonTest {
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
-                Truth.assertThat(issue.getHint()).isEqualTo(loopHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(loopHint.getHintText());
             } else {
-                Truth.assertThat(issue.getHint()).isEqualTo(normalHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(normalHint.getHintText());
             }
             i++;
         }
