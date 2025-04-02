@@ -4,7 +4,6 @@ include:
 image: maven:3-eclipse-temurin-17
 
 stages:
-    - build
     - test
     - lint
     - deploy
@@ -27,14 +26,6 @@ cache:
     paths:
         - .m2/repository/
         - target/
-
-################################################################################
-# build
-
-build:
-    stage: build
-    script:
-        - mvn compile
 
 ################################################################################
 # test
