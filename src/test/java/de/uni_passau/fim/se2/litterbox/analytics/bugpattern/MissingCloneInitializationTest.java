@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -45,7 +46,7 @@ public class MissingCloneInitializationTest implements JsonTest {
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
         for (Issue issue : reports) {
-            Truth.assertThat(((StrId) ((AsString) ((CreateCloneOf) issue.getCodeLocation()).getStringExpr()).getOperand1()).getName()).isEqualTo("Anina Dance");
+            Truth.assertThat(((StrId) ((WithCloneExpr) ((CreateCloneOf) issue.getCodeLocation()).getCloneChoice()).getExpression()).getName()).isEqualTo("Anina Dance");
         }
     }
 

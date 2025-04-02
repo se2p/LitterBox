@@ -16,37 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
+package de.uni_passau.fim.se2.litterbox.ast.model.clonechoice;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class CreateCloneOf extends AbstractNode implements CommonStmt {
-
-    private final CloneChoice cloneChoice;
+public class Myself extends AbstractNode implements CloneChoice, ASTLeaf {
     private final BlockMetadata metadata;
 
-    public CreateCloneOf(CloneChoice cloneChoice, BlockMetadata metadata) {
-        super(cloneChoice, metadata);
-        this.cloneChoice = Preconditions.checkNotNull(cloneChoice);
+    public Myself(BlockMetadata metadata) {
+        super(metadata);
         this.metadata = metadata;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return metadata;
-    }
-
-    public CloneChoice getCloneChoice() {
-        return cloneChoice;
     }
 
     @Override
@@ -57,14 +46,5 @@ public class CreateCloneOf extends AbstractNode implements CommonStmt {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public Opcode getOpcode() {
-        return CommonStmtOpcode.control_create_clone_of;
-    }
-
-    public Opcode getCloneMenuOpcode() {
-        return DependentBlockOpcode.control_create_clone_of_menu;
     }
 }
