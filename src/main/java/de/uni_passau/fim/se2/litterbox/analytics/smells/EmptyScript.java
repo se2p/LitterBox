@@ -50,7 +50,7 @@ public class EmptyScript extends AbstractIssueFinder {
     }
 
     private void createHint(ASTNode node, String eventName) {
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo(eventName));
         addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
     }

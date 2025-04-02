@@ -94,7 +94,7 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
     }
 
     public void generateMultiBlockIssue(ASTNode node, Defineable defineable) {
-        Hint hint = new Hint(HINT_PARAMETERISED);
+        Hint hint = Hint.fromKey(HINT_PARAMETERISED);
         hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(defineable));
         generateMultiBlockIssue(node, hint);
     }

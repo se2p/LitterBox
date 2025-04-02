@@ -90,11 +90,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
-        addIssue(node, metadata, severity, new Hint(getName()));
+        addIssue(node, metadata, severity, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata) {
-        addIssue(node, metadata, IssueSeverity.HIGH, new Hint(getName()));
+        addIssue(node, metadata, IssueSeverity.HIGH, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, Hint hint) {
@@ -106,7 +106,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, IssueSeverity severity) {
-        addIssue(node, node.getMetadata(), severity, new Hint(getName()));
+        addIssue(node, node.getMetadata(), severity, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, IssueSeverity severity, Hint hint) {
@@ -114,7 +114,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(getName()));
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
@@ -135,7 +135,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
-                new Hint(getName())));
+                Hint.fromKey(getName())));
     }
 
     protected void addIssueWithLooseComment(Hint hint) {

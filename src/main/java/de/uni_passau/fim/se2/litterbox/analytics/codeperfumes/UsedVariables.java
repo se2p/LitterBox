@@ -104,7 +104,7 @@ public class UsedVariables extends AbstractIssueFinder {
 
     private void addHintToFlagableIdentifier(ASTNode node, Identifier identifier, String hintName) {
         if ((insideProcedure || insideScript) && checkIdentifierForFlag(identifier)) {
-            Hint hint = new Hint(hintName);
+            Hint hint = Hint.fromKey(hintName);
             addIssue(node, node.getMetadata(), hint);
         }
     }
@@ -224,7 +224,7 @@ public class UsedVariables extends AbstractIssueFinder {
     public void visit(Variable node) {
         if (insideQualified && !flaggedVariables.contains(actorName + node.getName().getName())) {
             if (flagVariable(node)) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 addIssue(node, node.getMetadata(), hint);
             }
         }
@@ -234,7 +234,7 @@ public class UsedVariables extends AbstractIssueFinder {
     public void visit(ScratchList node) {
         if (insideQualified && !flaggedLists.contains(actorName + node.getName().getName())) {
             if (flagList(node)) {
-                Hint hint = new Hint(NAME_LIST);
+                Hint hint = Hint.fromKey(NAME_LIST);
                 addIssue(node, node.getMetadata(), hint);
             }
         }

@@ -93,7 +93,7 @@ public class UnusedVariable extends AbstractIssueFinder {
                     }
                 }
                 Qualified qualified = new Qualified(new StrId(actorName), new Variable(new StrId(name)));
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_VARIABLE, name);
                 addScriptWithIssueFor(qualified, hint);
             }
@@ -119,7 +119,7 @@ public class UnusedVariable extends AbstractIssueFinder {
                     }
                 }
                 Qualified qualified = new Qualified(new StrId(actorName), new ScratchList(new StrId(name)));
-                Hint hint = new Hint(NAME_LIST);
+                Hint hint = Hint.fromKey(NAME_LIST);
                 hint.setParameter(Hint.HINT_VARIABLE, name);
                 addScriptWithIssueFor(qualified, hint);
             }

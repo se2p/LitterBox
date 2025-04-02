@@ -186,7 +186,7 @@ public class ParallelResourceUse extends AbstractRobotFinder {
         nodeList.forEach(node -> metadataList.add(node.getMetadata()));
         if (nodeList.size() >= 2) {
             MultiBlockIssue issue = new MultiBlockIssue(this, MEDIUM, program, currentActor, scriptList, nodeList,
-                    nodeList.get(0).getMetadata(), new Hint(getName()));
+                    nodeList.get(0).getMetadata(), Hint.fromKey(getName()));
             addIssue(issue);
         }
     }

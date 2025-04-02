@@ -101,7 +101,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral stringLiteral
                 && loopIfCounter == 0) {
             if (stringLiteral.getText().equals(currentMessageName)) {
-                Hint hint = new Hint(BROADCAST_HINT);
+                Hint hint = Hint.fromKey(BROADCAST_HINT);
                 hint.setParameter(Hint.HINT_MESSAGE, currentMessageName);
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)
@@ -118,7 +118,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                Hint hint = new Hint(PROCEDURE_HINT);
+                Hint hint = Hint.fromKey(PROCEDURE_HINT);
                 hint.setParameter(Hint.BLOCK_NAME, call);
                 IssueBuilder builder = prepareIssueBuilder(node)
                         .withSeverity(IssueSeverity.HIGH)

@@ -88,7 +88,7 @@ public class KeySetPosition extends AbstractIssueFinder {
     private boolean checkStmt(Stmt stmt, int key) {
         if (key == KeyCode.DOWN_ARROW.getKeycode() || key == KeyCode.UP_ARROW.getKeycode()) {
             if (stmt instanceof SetYTo) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "y");
                 if (key == KeyCode.DOWN_ARROW.getKeycode()) {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("down_arrow"));
@@ -100,7 +100,7 @@ public class KeySetPosition extends AbstractIssueFinder {
             }
         } else if (key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()) {
             if (stmt instanceof SetXTo) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "x");
                 if (key == KeyCode.LEFT_ARROW.getKeycode()) {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("left_arrow"));

@@ -37,8 +37,8 @@ class BlockingIfElseTest implements JsonTest {
         BlockingIfElse finder = new BlockingIfElse();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(2);
-        Hint normalHint = new Hint(BlockingIfElse.NAME);
-        Hint loopHint = new Hint(BlockingIfElse.INSIDE_LOOP);
+        Hint normalHint = Hint.fromKey(BlockingIfElse.NAME);
+        Hint loopHint = Hint.fromKey(BlockingIfElse.INSIDE_LOOP);
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {

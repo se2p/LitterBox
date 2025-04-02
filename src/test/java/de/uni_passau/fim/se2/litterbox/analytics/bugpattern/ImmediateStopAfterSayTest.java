@@ -52,7 +52,7 @@ public class ImmediateStopAfterSayTest implements JsonTest {
         assertThat(reports).hasSize(1);
         Issue theIssue = reports.iterator().next();
 
-        Hint expectedHint = new Hint(ImmediateStopAfterSay.HINT_MULTIPLE);
+        Hint expectedHint = Hint.fromKey(ImmediateStopAfterSay.HINT_MULTIPLE);
         expectedHint.setParameter(Hint.HINT_SAY_THINK, "say");
         assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 

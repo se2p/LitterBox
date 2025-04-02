@@ -61,7 +61,7 @@ public class DoubleIf extends AbstractIssueFinder {
 
                             IssueBuilder builder = prepareIssueBuilder(s)
                                     .withSeverity(IssueSeverity.LOW)
-                                    .withHint(new Hint(getName()))
+                                    .withHint(Hint.fromKey(getName()))
                                     .withRefactoring(refactoring);
 
                             addIssue(builder);

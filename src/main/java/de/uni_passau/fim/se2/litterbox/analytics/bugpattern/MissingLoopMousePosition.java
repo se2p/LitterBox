@@ -101,7 +101,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
         if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
-                Hint hint = new Hint(DIRECTION);
+                Hint hint = Hint.fromKey(DIRECTION);
                 addIssue(node, node.getMetadata(), hint);
             }
         }
@@ -113,7 +113,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
         if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
-                Hint hint = new Hint(DIRECTION);
+                Hint hint = Hint.fromKey(DIRECTION);
                 addIssue(node, node.getMetadata(), hint);
             }
         }
@@ -125,7 +125,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
         if (!insideLoop) {
             Position pos = node.getPosition();
             if (pos instanceof MousePos) {
-                Hint hint = new Hint(DIRECTION);
+                Hint hint = Hint.fromKey(DIRECTION);
                 addIssue(node, node.getMetadata(), hint);
             }
         }
@@ -152,7 +152,7 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     private void checkMouse(SingularExpression node) {
         if (inMotionStmtWithoutLoop) {
-            Hint hint = new Hint(MOTION);
+            Hint hint = Hint.fromKey(MOTION);
             addIssue(node, node.getMetadata(), hint);
         }
     }

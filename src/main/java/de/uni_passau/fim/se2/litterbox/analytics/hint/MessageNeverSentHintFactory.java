@@ -33,7 +33,7 @@ public abstract class MessageNeverSentHintFactory {
 
         for (Map.Entry<String, Set<String>> entry : sayText.entrySet()) {
             if (entry.getKey().contains(messageText)) {
-                hint = new Hint(MESSAGE_IN_SAY_OR_THINK);
+                hint = Hint.fromKey(MESSAGE_IN_SAY_OR_THINK);
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
                 hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
@@ -43,7 +43,7 @@ public abstract class MessageNeverSentHintFactory {
 
         for (Map.Entry<String, Set<String>> entry : thinkText.entrySet()) {
             if (entry.getKey().contains(messageText)) {
-                hint = new Hint(MESSAGE_IN_SAY_OR_THINK);
+                hint = Hint.fromKey(MESSAGE_IN_SAY_OR_THINK);
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
                 hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
@@ -53,7 +53,7 @@ public abstract class MessageNeverSentHintFactory {
 
         for (Map.Entry<String, Set<String>> entry : touchingSprites.entrySet()) {
             if (messageText.contains(entry.getKey())) {
-                hint = new Hint(TOUCHING_USED);
+                hint = Hint.fromKey(TOUCHING_USED);
                 hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_SPRITE, entry.getKey());
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
@@ -61,7 +61,7 @@ public abstract class MessageNeverSentHintFactory {
             }
         }
 
-        hint = new Hint(MessageNeverSent.NAME);
+        hint = Hint.fromKey(MessageNeverSent.NAME);
         hint.setParameter(Hint.HINT_MESSAGE, messageText);
 
         return hint;
