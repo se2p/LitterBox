@@ -52,7 +52,7 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithTermination.contains(calledProcedure.getIdent().getName())) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 hint.setParameter(Hint.METHOD, calledProcedure.getIdent().getName());
                 addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW, hint);
             }

@@ -80,7 +80,7 @@ public class TypeError extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         Position position = node.getPosition();
         if (position instanceof FromExpression fromExpression) {
-            Hint hint = new Hint(WEIRD_DISTANCE);
+            Hint hint = Hint.fromKey(WEIRD_DISTANCE);
             if (!(fromExpression.getStringExpr() instanceof AsString asString)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             } else if (!((asString.getOperand1() instanceof StrId) || asString.getOperand1() instanceof Qualified)) {

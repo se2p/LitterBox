@@ -77,9 +77,9 @@ public class BlockingIfElse extends AbstractIssueFinder {
                     if (searchSubStmtsForStop(ifElse.getElseStmts().getStmts())) {
                         Hint hint;
                         if (i < stmts.size() - 1) {
-                            hint = new Hint(NAME);
+                            hint = Hint.fromKey(NAME);
                         } else {
-                            hint = new Hint(INSIDE_LOOP);
+                            hint = Hint.fromKey(INSIDE_LOOP);
                         }
                         addIssue(ifElse, ifElse.getMetadata(), IssueSeverity.MEDIUM, hint);
                     }

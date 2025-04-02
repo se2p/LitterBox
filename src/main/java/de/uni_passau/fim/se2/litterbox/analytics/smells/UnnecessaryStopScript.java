@@ -49,7 +49,7 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
                 StatementDeletionVisitor visitor = new StatementDeletionVisitor(last);
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
                 IssueBuilder builder = prepareIssueBuilder(last)
-                        .withSeverity(IssueSeverity.HIGH).withHint(new Hint(getName()))
+                        .withSeverity(IssueSeverity.HIGH).withHint(Hint.fromKey(getName()))
                         .withRefactoring(refactoring);
 
                 addIssue(builder);

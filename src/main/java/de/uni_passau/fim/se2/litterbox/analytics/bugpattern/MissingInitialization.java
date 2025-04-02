@@ -107,15 +107,15 @@ public class MissingInitialization extends AbstractIssueFinder {
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script script) {
                     if (script.getEvent() instanceof StartedAsClone) {
-                        hint = new Hint(NAME_CLONE);
+                        hint = Hint.fromKey(NAME_CLONE);
                     } else {
-                        hint = new Hint(getName());
+                        hint = Hint.fromKey(getName());
                     }
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new UseIssue(this, program,
                             (Script) containingScript, hint, use));
                 } else {
-                    hint = new Hint(getName());
+                    hint = Hint.fromKey(getName());
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new UseIssue(this, program,
                             (ProcedureDefinition) containingScript, hint, use));

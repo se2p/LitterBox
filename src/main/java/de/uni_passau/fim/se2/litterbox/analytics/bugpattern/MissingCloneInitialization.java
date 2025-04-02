@@ -157,18 +157,18 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                     }
                 }
                 if (events.size() > 1) {
-                    hint = new Hint(HAS_DELETE_CLONE_MESSAGE_MULTIPLE);
+                    hint = Hint.fromKey(HAS_DELETE_CLONE_MESSAGE_MULTIPLE);
                 } else {
-                    hint = new Hint(HAS_DELETE_CLONE_MESSAGE);
+                    hint = Hint.fromKey(HAS_DELETE_CLONE_MESSAGE);
                 }
                 hint.setParameter(Hint.EVENT_HANDLER, generateMessageString(events));
                 hint.setParameter(Hint.HINT_MESSAGE, generateMessageString(messages));
             } else {
-                hint = new Hint(HAS_DELETE_CLONE);
+                hint = Hint.fromKey(HAS_DELETE_CLONE);
             }
             hint.setParameter(Hint.HINT_SPRITE, actorName);
         } else {
-            hint = new Hint(NAME);
+            hint = Hint.fromKey(NAME);
         }
         return hint;
     }

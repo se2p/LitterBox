@@ -28,7 +28,7 @@ public class HintTest {
 
     @Test
     public void testParameterReplacement() {
-        Hint hint = new Hint(EmptySprite.NAME);
+        Hint hint = Hint.fromKey(EmptySprite.NAME);
         assertTrue(hint.hasParameters());
         assertEquals(1, hint.getNumParameters());
 

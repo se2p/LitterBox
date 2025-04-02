@@ -116,11 +116,11 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
         if (clone.getFirstScript() instanceof Script script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, script, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         } else {
             final ProcedureDefinition procedure = (ProcedureDefinition) clone.getFirstScript();
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, procedure, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         }
     }
 
@@ -129,11 +129,11 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
         if (clone.getSecondScript() instanceof Script script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, script, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         } else {
             final ProcedureDefinition procedure = (ProcedureDefinition) clone.getSecondScript();
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, procedure, statements,
-                    clone.getSecondNode().getMetadata(), new Hint(hintName));
+                    clone.getSecondNode().getMetadata(), Hint.fromKey(hintName));
         }
     }
 

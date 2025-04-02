@@ -63,7 +63,7 @@ public class UnnecessaryMessage extends AbstractIssueFinder {
                 if (!messagesInOtherPlace.contains(brd.getMessage())) {
                     currentScript = node;
                     currentProcedure = null;
-                    Hint hint = new Hint(getName());
+                    Hint hint = Hint.fromKey(getName());
                     if (brd.getMessage().getMessage() instanceof StringLiteral message) {
                         hint.setParameter(Hint.HINT_MESSAGE, message.getText());
                     } else {

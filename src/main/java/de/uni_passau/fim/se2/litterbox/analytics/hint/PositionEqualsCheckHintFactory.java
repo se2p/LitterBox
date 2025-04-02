@@ -47,7 +47,7 @@ public abstract class PositionEqualsCheckHintFactory {
         } else if (node.getOperand2() instanceof DistanceTo) {
             hint = generateHintForDistance(node.getOperand2(), node.getOperand1());
         } else {
-            hint = new Hint(DEFAULT);
+            hint = Hint.fromKey(DEFAULT);
             hint.setParameter(COORDINATE, getCoordinate(node));
         }
         return hint;
@@ -57,12 +57,12 @@ public abstract class PositionEqualsCheckHintFactory {
         Hint hint;
         if (operand2 instanceof NumberLiteral numberLiteral && numberLiteral.getValue() == 0) {
             if (isMousePosition(((DistanceTo) operand1).getPosition())) {
-                hint = new Hint(DISTANCE_ZERO_MOUSE);
+                hint = Hint.fromKey(DISTANCE_ZERO_MOUSE);
             } else {
-                hint = new Hint(DISTANCE_ZERO_SPRITES);
+                hint = Hint.fromKey(DISTANCE_ZERO_SPRITES);
             }
         } else {
-            hint = new Hint(DISTANCE);
+            hint = Hint.fromKey(DISTANCE);
         }
         return hint;
     }

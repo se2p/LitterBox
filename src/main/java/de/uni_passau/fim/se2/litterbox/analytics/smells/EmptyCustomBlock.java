@@ -38,7 +38,7 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
         if (node.getStmtList().getStmts().isEmpty()) {
             String name = AstNodeUtil.replaceProcedureParams(
                     procMap.get(node.getIdent()).getName(), "()", "<>", "()");
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.BLOCK_NAME, "define " + name);
             addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW, hint);
         }

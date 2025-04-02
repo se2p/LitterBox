@@ -131,7 +131,7 @@ public class JSONReportGenerator implements ReportGenerator {
                 INCLUDE_SUBSUMPTION ? getSubsumingIssueIds(issues, issue) : null,
                 INCLUDE_COUPLING ? getCoupledIssueIds(issues, issue) : null,
                 INCLUDE_SIMILARITY ? getSimilarIssues(issues, issue) : null,
-                issue.getHint(),
+                issue.getHintText(),
                 costumes,
                 issue.getActor().getActorMetadata().getCurrentCostume(),
                 scratchBlocksCode,
