@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -708,28 +711,33 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(CreateCloneOf node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
         List<String> inputs = new ArrayList<>();
-        StringExpr stringExpr = node.getStringExpr();
-        IdJsonStringTuple tuple;
-        BlockMetadata menuMetadata;
-        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
-            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
-            menuMetadata = metadataWithMenu.getMenuMetadata();
-        } else {
-            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
-            menuMetadata = metadataWithMenu.getMenuMetadata();
-        }
-        if (!(menuMetadata instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, node.getCloneMenuOpcode());
-            inputs.add(createReferenceInput(CLONE_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
-            finishedJSONStrings.add(tuple.getJsonString());
-        } else {
-            inputs.add(createExpr(metadata, CLONE_OPTION, stringExpr));
-        }
+        inputs.add(addCloneChoiceReference(metadata, node.getCloneChoice(), CLONE_OPTION, node.getCloneMenuOpcode()));
+
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
-
         previousBlockId = metadata.getBlockId();
+    }
+
+    private String addCloneChoiceReference(NonDataBlockMetadata metadata, CloneChoice elem,
+                                           String inputName, Opcode dependentOpcode) {
+        IdJsonStringTuple tuple;
+        if (elem instanceof Myself) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
+            finishedJSONStrings.add(tuple.getJsonString());
+            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+        } else {
+            WithCloneExpr withExpr = (WithCloneExpr) elem;
+            //if metadata are NoBlockMetadata the WithExpr is simply a wrapper of another block
+            if (withExpr.getMetadata() instanceof NoBlockMetadata) {
+                return createExpr(metadata, inputName, withExpr.getExpression());
+            } else {
+                tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
+                finishedJSONStrings.add(tuple.getJsonString());
+                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+            }
+        }
     }
 
     @Override

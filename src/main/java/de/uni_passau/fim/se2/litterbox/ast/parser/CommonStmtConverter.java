@@ -19,10 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -109,16 +111,15 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
 
         if (
                 ShadowType.SHADOW.equals(cloneOptionInput.shadowType())
-                && cloneOptionInput.input() instanceof BlockRef.IdRef menuRef
+                        && cloneOptionInput.input() instanceof BlockRef.IdRef menuRef
         ) {
             return convertCreateCloneOfWithMenu(blockId, block, menuRef.id());
         } else {
-            final StringExpr target = StringExprConverter.convertStringExpr(state, block, cloneOptionInput);
-            final BlockMetadata blockMetadata = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
-                    blockId, block, new NoBlockMetadata()
-            );
 
-            return new CreateCloneOf(target, blockMetadata);
+            final WithCloneExpr cloneExpr = new WithCloneExpr(ExprConverter.convertExpr(state, block, cloneOptionInput), new NoBlockMetadata());
+            final BlockMetadata blockMetadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
+
+            return new CreateCloneOf(cloneExpr, blockMetadata);
         }
     }
 
@@ -130,14 +131,18 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
             throw new InternalParsingException("Unknown menu representation.");
         }
 
-        final String targetName = menuBlock.getFieldValueAsString(KnownFields.CLONE_OPTION);
-        final StrId target = new StrId(targetName);
-
         final BlockMetadata menuMetadata = RawBlockMetadataConverter.convertBlockMetadata(menuRef, menuBlock);
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
-                blockId, block, menuMetadata
-        );
 
-        return new CreateCloneOf(new AsString(target), metadata);
+        final String targetName = menuBlock.getFieldValueAsString(KnownFields.CLONE_OPTION);
+        CloneChoice choice;
+        if (targetName.equals("_myself_")) {
+            choice = new Myself(menuMetadata);
+        } else {
+            final StrId target = new StrId(targetName);
+            choice = new WithCloneExpr(target, menuMetadata);
+        }
+
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, block);
+        return new CreateCloneOf(choice, metadata);
     }
 }

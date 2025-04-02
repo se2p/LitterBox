@@ -22,12 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 
 /**
@@ -66,17 +64,10 @@ public class RecursiveCloning extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
-        if (secondVisit) {
-            if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId) {
-                final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
-
-                if (spriteName.equals("_myself_") && !foundDelete) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-                }
-            }
+    public void visit(Myself node) {
+        if (secondVisit && !foundDelete) {
+            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW);
         }
-        visitChildren(node);
     }
 
     @Override

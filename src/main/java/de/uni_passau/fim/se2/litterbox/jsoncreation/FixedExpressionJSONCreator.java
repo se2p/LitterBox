@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -159,19 +161,16 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
-        StringExpr stringExpr = node.getStringExpr();
-        if (stringExpr instanceof AsString asString && asString.getOperand1() instanceof StrId) {
-            StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
-            NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            } else {
-                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            }
-            createFieldsExpression(menuMetadata, CLONE_OPTION,
-                    strid.getName());
+    public void visit(Myself node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), CLONE_OPTION, "_myself_");
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        if (node.getExpression() instanceof StrId strId) {
+            createFieldsExpression(metadata, CLONE_OPTION, strId.getName());
         }
     }
 

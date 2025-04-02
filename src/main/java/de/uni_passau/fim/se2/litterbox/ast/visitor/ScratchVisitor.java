@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -228,6 +231,45 @@ public interface ScratchVisitor {
      */
     default void visit(CreateCloneOf node) {
         visit((CommonStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CloneChoice}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CloneChoice  Node of which the children will be iterated
+     */
+    default void visit(CloneChoice node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link WithCloneExpr}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node WithCloneExpr  Node of which the children will be iterated
+     */
+    default void visit(WithCloneExpr node) {
+        visit((CloneChoice) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Myself}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Myself  Node of which the children will be iterated
+     */
+    default void visit(Myself node) {
+        visit((CloneChoice) node);
     }
 
     /**

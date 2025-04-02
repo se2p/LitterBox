@@ -322,7 +322,7 @@ public class AstNodeUtil {
 
         @Override
         public void visit(final CreateCloneOf node) {
-            inputs.put(CLONE_OPTION, node.getStringExpr());
+            inputs.put(CLONE_OPTION, node.getCloneChoice());
         }
 
         /*

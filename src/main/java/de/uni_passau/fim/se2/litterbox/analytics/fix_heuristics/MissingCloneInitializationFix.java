@@ -25,9 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -70,14 +71,19 @@ public class MissingCloneInitializationFix extends AbstractIssueFinder {
     @Override
     public void visit(CreateCloneOf node) {
         if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
-            if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
-                final String spriteName = strId.getName();
-                if (spriteName.equals("_myself_")) {
-                    clonedActor = currentActor.getIdent().getName();
-                } else {
-                    clonedActor = spriteName;
-                }
-            }
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(Myself node) {
+        clonedActor = currentActor.getIdent().getName();
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId strId) {
+            clonedActor = strId.getName();
         }
     }
 
