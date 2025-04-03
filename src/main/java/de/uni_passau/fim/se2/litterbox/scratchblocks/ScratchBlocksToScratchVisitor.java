@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -713,17 +716,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public CreateCloneOf visitCreateClone(ScratchBlocksParser.CreateCloneContext ctx) {
-        return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), NonDataBlockMetadata.emptyNonBlockMetadata());//todo this has special metadata with menu
+        return new CreateCloneOf(visitCloneChoice(ctx.cloneChoice()), handleStmtBlockMetadata());
     }
 
     @Override
-    public StringExpr visitCloneChoice(ScratchBlocksParser.CloneChoiceContext ctx) {
+    public CloneChoice visitCloneChoice(ScratchBlocksParser.CloneChoiceContext ctx) {
         if (ctx.exprOrLiteral() != null) {
-            return makeStringExpr(ctx.exprOrLiteral());
+            return new WithCloneExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is wrapper
         } else if (ctx.stringArgument() != null) {
-            return new AsString(new StrId(visitStringArgument(ctx.stringArgument())));
+            return new WithCloneExpr(new StrId(visitStringArgument(ctx.stringArgument())),handleExprBlockMetadata(true));
         } else {
-            return new AsString(new StrId(new StringLiteral("myself")));
+            return new Myself(handleExprBlockMetadata(true));
         }
     }
 
