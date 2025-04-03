@@ -28,8 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.*;
@@ -99,9 +98,21 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
 
     private CommonStmt convertStop(final RawBlock.RawRegularBlock block, final BlockMetadata metadata) {
         final String stopOptionValue = block.getFieldValueAsString(KnownFields.STOP_OPTION);
+        final BlockMetadata newMetadata;
+        if (metadata instanceof TopNonDataBlockMetadata top) {
+            newMetadata = new TopNonDataBlockMetadata(
+                    top.getCommentId(), top.getBlockId(), top.isShadow(),
+                    new NoMutationMetadata(), top.getXPos(), top.getYPos()
+            );
+        } else {
+            NonDataBlockMetadata normal = (NonDataBlockMetadata) metadata;
+            newMetadata = new NonDataBlockMetadata(
+                    normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata()
+            );
+        }
 
         return switch (stopOptionValue) {
-            case STOP_OTHER, STOP_OTHER_IN_STAGE -> new StopOtherScriptsInSprite(metadata);
+            case STOP_OTHER, STOP_OTHER_IN_STAGE -> new StopOtherScriptsInSprite(newMetadata);
             default -> throw new InternalParsingException("Unknown stop option: " + stopOptionValue);
         };
     }

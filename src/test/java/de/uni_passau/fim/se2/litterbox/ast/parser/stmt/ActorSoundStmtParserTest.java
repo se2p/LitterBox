@@ -27,8 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -71,7 +71,7 @@ public class ActorSoundStmtParserTest implements JsonTest {
         Truth.assertThat(listOfStmt.get(4)).isInstanceOf(StopAll.class);
         StopAll stop = (StopAll) listOfStmt.get(4);
         Truth.assertThat(stop.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
-        Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation()).isInstanceOf(ProcedureMutationMetadata.class);
+        Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation()).isInstanceOf(NoMutationMetadata.class);
     }
 
     @Test
