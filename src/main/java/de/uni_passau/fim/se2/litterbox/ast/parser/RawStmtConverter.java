@@ -20,6 +20,9 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
@@ -107,16 +110,23 @@ final class RawStmtConverter {
     private TerminationStmt convertTerminationStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmt) {
         final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(stmt.opcode());
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, stmt);
-
         return switch (opcode) {
             case control_delete_this_clone -> new DeleteClone(metadata);
             case control_stop -> {
                 final String stopOption = stmt.getFieldValueAsString(KnownFields.STOP_OPTION);
+                final BlockMetadata newMetadata;
+                if (metadata instanceof TopNonDataBlockMetadata top) {
+                    newMetadata = new TopNonDataBlockMetadata(top.getCommentId(), top.getBlockId(), top.isShadow(), new NoMutationMetadata(), top.getXPos(), top.getYPos());
+                } else {
+                    NonDataBlockMetadata normal = (NonDataBlockMetadata) metadata;
+                    newMetadata = new NonDataBlockMetadata(normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata());
+                }
+
                 yield switch (stopOption) {
-                        case "all" -> new StopAll(metadata);
-                        case "this script" -> new StopThisScript(metadata);
-                        default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
-                    };
+                    case "all" -> new StopAll(newMetadata);
+                    case "this script" -> new StopThisScript(newMetadata);
+                    default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
+                };
             }
         };
     }
