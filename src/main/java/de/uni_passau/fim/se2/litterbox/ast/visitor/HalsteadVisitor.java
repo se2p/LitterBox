@@ -20,7 +20,12 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
@@ -53,7 +58,7 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     private Multiset<Class<?>> operators = LinkedHashMultiset.create();
 
-    private Multiset<ASTNode> operands  = LinkedHashMultiset.create();
+    private Multiset<ASTNode> operands = LinkedHashMultiset.create();
 
     public int getTotalOperands() {
         return operands.size();
@@ -123,6 +128,16 @@ public class HalsteadVisitor implements ScratchVisitor {
     @Override
     public void visit(ElementChoice node) {
         operands.add(node);
+    }
+
+    @Override
+    public void visit(Myself node) {
+        operands.add(node);
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        visitChildren(node);
     }
 
     @Override

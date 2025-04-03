@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -440,9 +442,27 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(CreateCloneOf node) {
         emitNoSpace("create clone of ");
-        node.getStringExpr().accept(this);
+        node.getCloneChoice().accept(this);
         storeNotesForIssue(node);
         newLine();
+    }
+
+    @Override
+    public void visit(Myself node) {
+        emitNoSpace("(myself v)");
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId) {
+            emitNoSpace("(");
+            node.getExpression().accept(this);
+            emitNoSpace(" v)");
+        } else if (node.getExpression() instanceof Qualified qualified) {
+            handlePossibleQualified(qualified);
+        } else {
+            node.getExpression().accept(this);
+        }
     }
 
     @Override

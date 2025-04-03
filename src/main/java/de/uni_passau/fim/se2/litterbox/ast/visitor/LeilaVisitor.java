@@ -908,7 +908,7 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(CreateCloneOf createCloneOf) {
         emitNoSpace("createCloneOf(");
-        createCloneOf.getStringExpr().accept(this);
+        createCloneOf.getCloneChoice().accept(this);
         closeParentheses();
     }
 

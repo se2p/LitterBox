@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -326,6 +328,16 @@ public class BlockCount<T extends ASTNode>
 
     @Override
     public void visit(NumFunct node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Myself node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
         visitChildren(node);
     }
 
