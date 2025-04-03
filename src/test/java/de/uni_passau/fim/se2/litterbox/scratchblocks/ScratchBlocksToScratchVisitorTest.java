@@ -36,6 +36,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -463,7 +465,7 @@ class ScratchBlocksToScratchVisitorTest {
         final StmtList stmtList = getStmtList("<<> and <>>");
         final And and = assertHasExprStmt(stmtList, And.class);
 
-        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(), new NoBlockMetadata()), and);
+        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(),TopNonDataBlockMetadata.emptyTopNonBlockMetadata()), and);
     }
 
     @Test
@@ -638,7 +640,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertIterableEquals(
                 List.of(
                         new NumberLiteral(123),
-                        new BiggerThan(new NumberLiteral(1), new NumberLiteral(3), new NoBlockMetadata())
+                        new BiggerThan(new NumberLiteral(1), new NumberLiteral(3), NonDataBlockMetadata.emptyNonBlockMetadata())
                 ),
                 callStmt.getExpressions().getExpressions()
         );
@@ -741,7 +743,7 @@ class ScratchBlocksToScratchVisitorTest {
         final String scratchBlocks = "go to (random position v)";
         final GoToPos goToPos = assertStatementType(scratchBlocks, GoToPos.class);
 
-        assertEquals(new RandomPos(new NoBlockMetadata()), goToPos.getPosition());
+        assertEquals(new RandomPos(NonDataBlockMetadata.createArtificialNonBlockMetadata(true)), goToPos.getPosition());
     }
 
     @Test
