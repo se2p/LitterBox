@@ -100,10 +100,15 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
         final String stopOptionValue = block.getFieldValueAsString(KnownFields.STOP_OPTION);
         final BlockMetadata newMetadata;
         if (metadata instanceof TopNonDataBlockMetadata top) {
-            newMetadata = new TopNonDataBlockMetadata(top.getCommentId(), top.getBlockId(), top.isShadow(), new NoMutationMetadata(), top.getXPos(), top.getYPos());
+            newMetadata = new TopNonDataBlockMetadata(
+                    top.getCommentId(), top.getBlockId(), top.isShadow(),
+                    new NoMutationMetadata(), top.getXPos(), top.getYPos()
+            );
         } else {
             NonDataBlockMetadata normal = (NonDataBlockMetadata) metadata;
-            newMetadata = new NonDataBlockMetadata(normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata());
+            newMetadata = new NonDataBlockMetadata(
+                    normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata()
+            );
         }
 
         return switch (stopOptionValue) {

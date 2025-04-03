@@ -116,17 +116,22 @@ final class RawStmtConverter {
                 final String stopOption = stmt.getFieldValueAsString(KnownFields.STOP_OPTION);
                 final BlockMetadata newMetadata;
                 if (metadata instanceof TopNonDataBlockMetadata top) {
-                    newMetadata = new TopNonDataBlockMetadata(top.getCommentId(), top.getBlockId(), top.isShadow(), new NoMutationMetadata(), top.getXPos(), top.getYPos());
+                    newMetadata = new TopNonDataBlockMetadata(
+                            top.getCommentId(), top.getBlockId(), top.isShadow(),
+                            new NoMutationMetadata(), top.getXPos(), top.getYPos()
+                    );
                 } else {
                     NonDataBlockMetadata normal = (NonDataBlockMetadata) metadata;
-                    newMetadata = new NonDataBlockMetadata(normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata());
+                    newMetadata = new NonDataBlockMetadata(
+                            normal.getCommentId(), normal.getBlockId(), normal.isShadow(), new NoMutationMetadata()
+                    );
                 }
 
                 yield switch (stopOption) {
-                    case "all" -> new StopAll(newMetadata);
-                    case "this script" -> new StopThisScript(newMetadata);
-                    default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
-                };
+                        case "all" -> new StopAll(newMetadata);
+                        case "this script" -> new StopThisScript(newMetadata);
+                        default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
+                    };
             }
         };
     }
