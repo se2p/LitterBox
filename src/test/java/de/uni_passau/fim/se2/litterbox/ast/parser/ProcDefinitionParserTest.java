@@ -81,13 +81,13 @@ public class ProcDefinitionParserTest implements JsonTest {
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getIdent().getName());
         Assertions.assertEquals(procedureInfo.getArguments()[0].name(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getIdent().getName());
-        Assertions.assertEquals(NonDataBlockMetadata.class,
-                list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getMetadata().getClass());
+        Assertions.assertInstanceOf(NonDataBlockMetadata.class,
+                list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getMetadata());
         Assertions.assertEquals(procedureInfo.getArguments()[1].type(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getType());
         Assertions.assertEquals(procedureInfo.getArguments()[0].type(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getType());
-        Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
+        Assertions.assertInstanceOf(MoveSteps.class, list.get(1).getStmtList().getStmts().get(0));
         Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
         Assertions.assertEquals("NumInput",
                 ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName().getName());

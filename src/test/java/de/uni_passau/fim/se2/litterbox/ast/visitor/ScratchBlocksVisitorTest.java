@@ -1753,8 +1753,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     @Test
     public void testLoopSensingIssueAnnotation() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/loopSensingAnnotation.json");
-        LoopSensing LoopSensing = new LoopSensing();
-        Set<Issue> issues = LoopSensing.check(prog);
+        LoopSensing loopSensing = new LoopSensing();
+        Set<Issue> issues = loopSensing.check(prog);
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
         visitor.begin();
