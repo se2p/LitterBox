@@ -126,7 +126,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         final LocalIdentifier name = buildCustomBlockDefName(ctx);
         final ParameterDefinitionList parameters = buildParameters(ctx);
         final StmtList stmtList = visitStmtList(ctx.stmtList());
-        final ProcedureMetadata metadata = new ProcedureMetadata(new NoBlockMetadata(), new NoBlockMetadata()); //todo
+        final ProcedureMutationMetadata prototypeMutation = new ProcedureMutationMetadata(false);//todo do we need to change warp anytime?
+        final NonDataBlockMetadata prototypeMetadata = new NonDataBlockMetadata("", CloneVisitor.generateUID(),
+                true, prototypeMutation);
+        final ProcedureMetadata metadata = new ProcedureMetadata(TopNonDataBlockMetadata.emptyTopNonBlockMetadata(), prototypeMetadata);
 
         return new ProcedureDefinition(name, parameters, stmtList, metadata);
     }
@@ -175,13 +178,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ParameterDefinition visitStringParam(ScratchBlocksParser.StringParamContext ctx) {
         final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
-        return new ParameterDefinition(name, new StringType(), new NoBlockMetadata());
+        return new ParameterDefinition(name, new StringType(), handleExprBlockMetadata(true));
     }
 
     @Override
     public ParameterDefinition visitBoolParam(ScratchBlocksParser.BoolParamContext ctx) {
         final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
-        return new ParameterDefinition(name, new BooleanType(), new NoBlockMetadata());
+        return new ParameterDefinition(name, new BooleanType(), handleExprBlockMetadata(true));
     }
 
     @Override
@@ -296,7 +299,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         }
 
         NonDataBlockMetadata metaData = new NonDataBlockMetadata("", CloneVisitor.generateUID(),
-                false, new ProcedureMutationMetadata(false));//todo
+                false, new ProcedureMutationMetadata(false));
 
         return new CallStmt(new StrId(name.toString()), new ExpressionList(arguments), metaData);
     }
@@ -706,11 +709,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Stmt visitStop(ScratchBlocksParser.StopContext ctx) {
         if (ctx.stopChoice().getText().equals("all")) {
-            return new StopAll(NonDataBlockMetadata.emptyNonBlockMetadata());//todo what do we need here as this is supposed to have mutation
+            return new StopAll(handleStmtBlockMetadata());
         } else if (ctx.stopChoice().getText().equals("this script")) {
-            return new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
+            return new StopThisScript(handleStmtBlockMetadata());
         } else {
-            return new StopOtherScriptsInSprite(NonDataBlockMetadata.emptyNonBlockMetadata());
+            return new StopOtherScriptsInSprite(handleStmtBlockMetadata());
         }
     }
 
@@ -724,7 +727,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.exprOrLiteral() != null) {
             return new WithCloneExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is wrapper
         } else if (ctx.stringArgument() != null) {
-            return new WithCloneExpr(new StrId(visitStringArgument(ctx.stringArgument())),handleExprBlockMetadata(true));
+            return new WithCloneExpr(new StrId(visitStringArgument(ctx.stringArgument())), handleExprBlockMetadata(true));
         } else {
             return new Myself(handleExprBlockMetadata(true));
         }
@@ -933,8 +936,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public Key visitKey(ScratchBlocksParser.KeyContext ctx) {
         return switch (ctx.getText()) {
             case "space" -> new Key(new NumberLiteral(KeyCode.SPACE.getKeycode()), handleExprBlockMetadata(true));
-            case "up arrow" ->
-                    new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), handleExprBlockMetadata(true));
+            case "up arrow" -> new Key(new NumberLiteral(KeyCode.UP_ARROW.getKeycode()), handleExprBlockMetadata(true));
             case "down arrow" ->
                     new Key(new NumberLiteral(KeyCode.DOWN_ARROW.getKeycode()), handleExprBlockMetadata(true));
             case "left arrow" ->
@@ -1334,10 +1336,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     private NonDataBlockMetadata handleExprBlockMetadata(boolean shadow) {
-        if(topExprBlock){
+        if (topExprBlock) {
             topExprBlock = false;
             return TopNonDataBlockMetadata.createArtificialTopNonBlockMetadata(shadow);
-        }else{
+        } else {
             return NonDataBlockMetadata.createArtificialNonBlockMetadata(shadow);
         }
     }

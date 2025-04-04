@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -35,7 +38,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -75,11 +77,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ScratchBlocksToScratchVisitorTest {
 
@@ -465,7 +463,7 @@ class ScratchBlocksToScratchVisitorTest {
         final StmtList stmtList = getStmtList("<<> and <>>");
         final And and = assertHasExprStmt(stmtList, And.class);
 
-        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(),TopNonDataBlockMetadata.emptyTopNonBlockMetadata()), and);
+        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(), TopNonDataBlockMetadata.emptyTopNonBlockMetadata()), and);
     }
 
     @Test
@@ -541,12 +539,12 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testChangeColorEffect() {
         StmtList stmtList = getStmtList("change [color v] effect by (25)\nchange [fisheye v] effect by (25)\n");
-        final Stmt stmt1= stmtList.getStatement(0);
+        final Stmt stmt1 = stmtList.getStatement(0);
         assertInstanceOf(ChangeGraphicEffectBy.class, stmt1);
-        assertEquals("color",((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
+        assertEquals("color", ((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
+        final Stmt stmt2 = stmtList.getStatement(1);
         assertInstanceOf(ChangeGraphicEffectBy.class, stmt2);
-        assertEquals("fisheye",((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
+        assertEquals("fisheye", ((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
     }
 
     @Test
@@ -554,10 +552,10 @@ class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("set [color v] effect to (25)\nset [fisheye v] effect to (25)\n");
         final Stmt stmt1 = stmtList.getStatement(0);
         assertInstanceOf(SetGraphicEffectTo.class, stmt1);
-        assertEquals("color",((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
+        assertEquals("color", ((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
+        final Stmt stmt2 = stmtList.getStatement(1);
         assertInstanceOf(SetGraphicEffectTo.class, stmt2);
-        assertEquals("fisheye",((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
+        assertEquals("fisheye", ((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
     }
 
     @Test
@@ -616,8 +614,8 @@ class ScratchBlocksToScratchVisitorTest {
 
         assertIterableEquals(
                 List.of(
-                        new ParameterDefinition(new StrId("sp"), new StringType(), new NoBlockMetadata()),
-                        new ParameterDefinition(new StrId("bp"), new BooleanType(), new NoBlockMetadata())
+                        new ParameterDefinition(new StrId("sp"), new StringType(), NonDataBlockMetadata.createArtificialNonBlockMetadata(true)),
+                        new ParameterDefinition(new StrId("bp"), new BooleanType(), NonDataBlockMetadata.createArtificialNonBlockMetadata(true))
                 ),
                 procDef.getParameterDefinitionList().getParameterDefinitions()
         );
