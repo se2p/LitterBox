@@ -673,6 +673,29 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testIfAndIfElseInScript() {
+        final String scratchBlocks = """
+                if <> then
+                stop [this script v]
+                end
+                move (10) steps
+                if <> then
+                else
+                stop [all v]
+                end
+                """.stripIndent();
+        final ScriptEntity script = getScript(scratchBlocks);
+
+        // in case of matching the wrong end to the first if, we would get some custom block call stmts in between
+        assertEquals(3, script.getStmtList().getStmts().size());
+        assertAll(
+                () -> assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0)),
+                () -> assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(1)),
+                () -> assertInstanceOf(IfElseStmt.class, script.getStmtList().getStatement(2))
+        );
+    }
+
+    @Test
     void testMultipleCBlocksInScriptWithStatements() {
         final String scratchBlocks = """
                 if <> then

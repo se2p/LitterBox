@@ -678,20 +678,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
-    public IfThenStmt visitIf(ScratchBlocksParser.IfContext ctx) {
-        return new IfThenStmt(
-                makeBoolExpr(ctx.exprOrLiteral()), visitStmtList(ctx.stmtList()), handleStmtBlockMetadata()
-        );
-    }
+    public IfStmt visitIfStmt(ScratchBlocksParser.IfStmtContext ctx) {
+        final BoolExpr condition = makeBoolExpr(ctx.exprOrLiteral());
+        final StmtList thenBlock = visitStmtList(ctx.thenBlock);
 
-    @Override
-    public IfElseStmt visitIfElse(ScratchBlocksParser.IfElseContext ctx) {
-        return new IfElseStmt(
-                makeBoolExpr(ctx.exprOrLiteral()),
-                visitStmtList(ctx.then),
-                visitStmtList(ctx.else_),
-                handleStmtBlockMetadata()
-        );
+        if (ctx.elseBlock == null) {
+            return new IfThenStmt(condition, thenBlock, handleStmtBlockMetadata());
+        } else {
+            final StmtList elseBlock = visitStmtList(ctx.elseBlock);
+            return new IfElseStmt(condition, thenBlock, elseBlock, handleStmtBlockMetadata());
+        }
     }
 
     @Override
