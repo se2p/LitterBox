@@ -35,7 +35,7 @@ public class ScratchBlocksToJsonTest {
     }
 
     @Test
-    void testAllStmtsWithoutVariableList() throws FileNotFoundException {
+    void testAllStmtsWithoutBroadcastVariableList() throws FileNotFoundException {
         final String scriptCode = """
                 when green flag clicked
                 move (10) steps
@@ -82,7 +82,7 @@ public class ScratchBlocksToJsonTest {
                 go [forward v] (1) layers
                 go [backward v] (2) layers
                 play sound (Miau v) until done
-                play sound (Miau v)
+                start sound (Miau v)
                 stop all sounds
                 change [pitch v] effect by (10)
                 change [pan left/right v] effect by (10)
@@ -91,20 +91,21 @@ public class ScratchBlocksToJsonTest {
                 clear sound effects
                 change volume by (-10)
                 set volume to (100) %
-                broadcast (message1 v)
-                broadcast (message2 v) and wait
                 wait (1) seconds
                 repeat (10)
                 forever
                 end
                 end
-                if <> then
+                if < > then
+                stop [this script v]
                 end
-                if <> then
+                if < > then
                 else
                 end
-                wait until <>
-                repeat until <>
+                wait until < >
+                repeat until < >
+                stop [all v]
+                end
                 stop [other scripts in sprite v]
                 create clone of (myself v)
                 ask [question] and wait
