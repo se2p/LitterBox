@@ -19,7 +19,7 @@
         <java.version>17</java.version>
         <maven.compiler.release>17</maven.compiler.release>
 
-        <litterbox.version>1.10-20250217.082706-23</litterbox.version>
+        <litterbox.version>1.10-20250605.125822-37</litterbox.version>
         <checkstyle.version>10.25.0</checkstyle.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

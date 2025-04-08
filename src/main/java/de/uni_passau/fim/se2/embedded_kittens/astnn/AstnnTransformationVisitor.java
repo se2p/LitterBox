@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.embedded_kittens.util.AbstractToken;
 import de.uni_passau.fim.se2.embedded_kittens.util.ProcedureMapping;
 import de.uni_passau.fim.se2.embedded_kittens.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -710,8 +711,13 @@ class AstnnTransformationVisitor implements
 
     @Override
     public void visit(CreateCloneOf node) {
-        final AstnnNode of = transformNode(node.getStringExpr());
+        final AstnnNode of = transformNode(node.getCloneChoice());
         finishVisit(AstnnAstNodeFactory.build(StatementType.CONTROL_CREATE_CLONE_OF, of));
+    }
+
+    @Override
+    public void visit(Myself node) {
+        finishVisit(AstnnAstNodeFactory.build(getNormalisedToken(node)));
     }
 
     @Override
@@ -1278,6 +1284,11 @@ class AstnnTransformationVisitor implements
     public void visit(SetPenSizeTo node) {
         final AstnnNode to = transformNode(node.getValue());
         finishVisit(AstnnAstNodeFactory.build(StatementType.PEN_SETPENSIZETO, to));
+    }
+
+    @Override
+    public void visit(FixedColorParam node) {
+        visitFixedChoice(node);
     }
 
     // endregion pens

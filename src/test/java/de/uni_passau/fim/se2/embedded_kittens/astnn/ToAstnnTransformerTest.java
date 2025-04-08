@@ -25,7 +25,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -414,8 +413,9 @@ class ToAstnnTransformerTest implements JsonTest {
     }
 
     private void assertNoUnknownNode(final AstnnNode node) {
-        assertThat(node.label().toLowerCase(Locale.ROOT))
-            .isNotEqualTo(NodeType.UNKNOWN.name().toLowerCase(Locale.ROOT));
+        assertThat(node.label())
+            .ignoringCase()
+            .isNotEqualTo(NodeType.UNKNOWN.name());
 
         node.children().forEach(this::assertNoUnknownNode);
     }

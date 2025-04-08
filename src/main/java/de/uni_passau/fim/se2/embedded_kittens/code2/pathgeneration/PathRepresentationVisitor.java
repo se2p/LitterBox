@@ -22,6 +22,7 @@
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -38,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -1189,11 +1190,6 @@ class PathRepresentationVisitor implements ScratchVisitor {
         representation = 248;
     }
 
-    @Override
-    public void visit(TopNonDataBlockWithMenuMetadata node) {
-        representation = 249;
-    }
-
     // region: extension blocks
 
     @Override
@@ -1212,7 +1208,7 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(PenStmt node) {
+    public void visit(PenBlock node) {
         representation = 255;
     }
 
@@ -1227,4 +1223,13 @@ class PathRepresentationVisitor implements ScratchVisitor {
     }
 
     // endregion: extension blocks
+
+    // region: later additions in LitterBox
+
+    @Override
+    public void visit(Myself node) {
+        representation = 258;
+    }
+
+    // endregion: later additions in LitterBox
 }

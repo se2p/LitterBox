@@ -35,6 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.FixedColorParam;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
@@ -65,6 +66,8 @@ public abstract class AbstractTokenCheck implements JsonTest {
         allowedTokens.add("scripts");
         // stop statement targets
         allowedTokens.addAll(Set.of("all", "this_script", "other_scripts"));
+        // clone block choice
+        allowedTokens.add("_myself_");
         // procedures, parameters, and their types
         allowedTokens.addAll(Set.of("procedures", "parameters", "parameter", "string", "boolean", "list", "number"));
 
@@ -76,6 +79,8 @@ public abstract class AbstractTokenCheck implements JsonTest {
             .map(EventAttribute.EventAttributeType::toString).forEach(allowedTokens::add);
         Arrays.stream(FixedAttribute.FixedAttributeType.values())
             .map(FixedAttribute.FixedAttributeType::toString).forEach(allowedTokens::add);
+        Arrays.stream(FixedColorParam.FixedColorParamType.values())
+            .map(FixedColorParam.FixedColorParamType::toString).forEach(allowedTokens::add);
         Arrays.stream(FixedDrum.FixedDrumType.values())
             .map(FixedDrum.FixedDrumType::toString).forEach(allowedTokens::add);
         Arrays.stream(FixedInstrument.FixedInstrumentType.values())

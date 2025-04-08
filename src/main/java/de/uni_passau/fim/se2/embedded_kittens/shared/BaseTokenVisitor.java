@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
@@ -32,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.FixedColorParam;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
@@ -222,5 +224,15 @@ public abstract class BaseTokenVisitor implements
     @Override
     public void visit(FixedLanguage node) {
         finalToken = node.getType().toString();
+    }
+
+    @Override
+    public void visit(FixedColorParam node) {
+        finalToken = node.getType().toString();
+    }
+
+    @Override
+    public void visit(Myself node) {
+        finalToken = "_myself_";
     }
 }

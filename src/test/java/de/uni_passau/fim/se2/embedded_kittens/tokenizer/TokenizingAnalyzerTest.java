@@ -489,7 +489,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).hasSize(47);
+        assertThat(output.get(0).tokens().get(0)).hasSize(35);
         assertThat(output.get(0).tokens().get(0)).containsAtLeast(
             "pen_clear", "pen_stamp", "pen_pendown", "pen_penup", "pen_setpencolortocolor", "LITERAL_COLOR",
             "pen_changecolorby", "pen_setcolorto", "pen_changepensizeby", "pen_setpensizeto"
