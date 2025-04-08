@@ -880,7 +880,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         if (stringExpr instanceof StringLiteral stringLiteral) {
             String message = stringLiteral.getText();
             String messageId;
-            if (symbolTable.getMessage(message).isPresent()) {
+            if (symbolTable != null && symbolTable.getMessage(message).isPresent()) {
                 messageId = symbolTable.getMessage(message).get().identifier();
             } else {
                 messageId = "unspecified" + message;

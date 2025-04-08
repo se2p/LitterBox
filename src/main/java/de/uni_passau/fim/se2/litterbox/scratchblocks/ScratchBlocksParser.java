@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
@@ -57,12 +58,15 @@ public class ScratchBlocksParser {
      * described in {@link ScratchBlocksParser} apply.
      *
      * @param scratchBlocksCode Some ScratchBlocks code.
-     * @param cancelMarker Will try to interrupt the parsing when this marker gets set to {@code true}.
+     * @param cancelMarker      Will try to interrupt the parsing when this marker gets set to {@code true}.
      * @return The parsed script or custom procedure definition.
      */
     public ScriptEntity parseScript(final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
+        ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
-            return new Script(new Never(), new StmtList());
+            Script script = new Script(new Never(), new StmtList());
+            script.accept(visitor);
+            return script;
         }
 
         final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
@@ -74,6 +78,7 @@ public class ScratchBlocksParser {
         final ASTNode node = vis.visit(tree);
 
         if (node instanceof ScriptEntity script) {
+            script.accept(visitor);
             return script;
         } else if (node == null) {
             return null;
