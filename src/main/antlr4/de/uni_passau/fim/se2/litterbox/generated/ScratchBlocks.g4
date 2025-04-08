@@ -208,8 +208,7 @@ setVolume               : 'set volume to 'exprOrLiteral' %';
 controlStmt             : waitSeconds
                         | repeat
                         | forever
-                        | ifElse
-                        | if
+                        | ifStmt
                         | waitUntil
                         | repeatUntil
                         | stop
@@ -217,11 +216,11 @@ controlStmt             : waitSeconds
                         | deleteClone
                         ;
 
+ifStmt                  : 'if ' exprOrLiteral ' then' NEWLINE thenBlock=stmtList WS* ('else' NEWLINE elseBlock=stmtList WS*)? 'end';
+
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
 repeat                  : 'repeat 'exprOrLiteral NEWLINE stmtList WS* 'end';
 forever                 : 'forever' NEWLINE stmtList WS* 'end';
-if                      : 'if 'exprOrLiteral' then' NEWLINE stmtList WS* 'end';
-ifElse                  : 'if 'exprOrLiteral' then' NEWLINE then=stmtList 'else' NEWLINE else=stmtList WS* 'end';
 waitUntil               : 'wait until 'exprOrLiteral;
 repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE stmtList WS* 'end';
 stop                    : 'stop' WS '['stopChoice' v]';
