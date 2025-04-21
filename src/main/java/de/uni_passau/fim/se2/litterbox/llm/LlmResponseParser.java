@@ -40,6 +40,8 @@ public class LlmResponseParser {
 
     private static final String SCRIPT_HEADER = "//Script: ";
 
+    private final ScratchBlocksParser parser = new ScratchBlocksParser();
+
     /*
      * Try to fix common obvious errors in ScratchBlocks syntax produced by LLMs.
      */
@@ -54,7 +56,9 @@ public class LlmResponseParser {
     public Program parseResultAndUpdateProgram(Program program, String response) {
         ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
         ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
-        NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(program.getActorDefinitionList(), newActors);
+        NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
+                program.getActorDefinitionList(), newActors
+        );
 
         return (Program) program.accept(replacementVisitor);
     }
@@ -68,7 +72,9 @@ public class LlmResponseParser {
             throw new IllegalArgumentException("Script is not part of an actor");
         }
 
-        return (Script) spriteScripts.script(actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script.getEvent()));
+        return (Script) spriteScripts.script(
+                actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script.getEvent())
+        );
     }
 
     /**
@@ -93,7 +99,9 @@ public class LlmResponseParser {
             final Map<String, ScriptEntity> scripts = entry.getValue();
 
             ActorDefinition actor = getBlankActorDefinition(actorName);
-            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(actor.getScripts(), getScriptList(scripts));
+            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
+                    actor.getScripts(), getScriptList(scripts)
+            );
             actors.add((ActorDefinition) actor.accept(replacementVisitor));
         }
 
@@ -126,38 +134,40 @@ public class LlmResponseParser {
     }
 
     /**
-     * Parses an LLM response in scratchblocks format.
+     * Parses an LLM response in ScratchBlocks format.
      *
      * @param response The LLM response.
-     * @return A map from sprite name to its scripts, represented as a map from script ID to the scratchblocks code as a string.
+     * @return The parseable and not parseable scripts as found in the LLM message.
      */
     public ParsedLlmResponseCode parseLLMResponse(String response) {
         response = fixCommonScratchBlocksIssues(response);
 
-        ScratchBlocksParser parser = new ScratchBlocksParser();
-
         Map<String, Map<String, ScriptEntity>> spriteScripts = new HashMap<>();
-        String[] lines = response.split("\n");
+        Map<String, Map<String, String>> unparseableScripts = new HashMap<>();
         String currentSprite = null;
         String currentScriptId = null;
         StringBuilder currentScriptCode = new StringBuilder();
 
-        for (String line : lines) {
+        for (String line : response.lines().toList()) {
             if (line.startsWith("scratch")) {
                 // skip -- GPT likes to start markdown blocks with language tags
                 // Matches "scratch" and "scratchblocks"
             } else if (line.startsWith(SPRITE_HEADER)) {
                 if (currentSprite != null && currentScriptId != null) {
-                    spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
-                            .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+                    parseScript(
+                            spriteScripts, unparseableScripts, currentSprite, currentScriptId,
+                            currentScriptCode.toString()
+                    );
                 }
                 currentSprite = line.substring(SPRITE_HEADER.length()).trim();
                 currentScriptId = null;
                 currentScriptCode.setLength(0);
             } else if (line.startsWith(SCRIPT_HEADER)) {
                 if (currentScriptId != null) {
-                    spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
-                            .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+                    parseScript(
+                            spriteScripts, unparseableScripts, currentSprite, currentScriptId,
+                            currentScriptCode.toString()
+                    );
                 }
                 currentScriptId = line.substring(SCRIPT_HEADER.length()).trim();
                 currentScriptCode.setLength(0);
@@ -167,14 +177,45 @@ public class LlmResponseParser {
         }
 
         if (currentSprite != null && currentScriptId != null) {
-            spriteScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
-                    .put(currentScriptId, parser.parseScript(currentScriptCode.toString()));
+            parseScript(
+                    spriteScripts, unparseableScripts, currentSprite, currentScriptId, currentScriptCode.toString()
+            );
         }
 
-        return new ParsedLlmResponseCode(spriteScripts);
+        return new ParsedLlmResponseCode(spriteScripts, unparseableScripts);
     }
 
-    public record ParsedLlmResponseCode(Map<String, Map<String, ScriptEntity>> scripts) {
+    private void parseScript(
+            final Map<String, Map<String, ScriptEntity>> scripts,
+            final Map<String, Map<String, String>> parseFailedScripts,
+            final String currentSprite,
+            final String currentScriptId,
+            final String scratchBlocksScript
+    ) {
+        final Optional<ScriptEntity> parsedScript = tryParseScript(scratchBlocksScript);
+
+        if (parsedScript.isEmpty()) {
+            parseFailedScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
+                    .put(currentScriptId, scratchBlocksScript);
+        } else {
+            scripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
+                    .put(currentScriptId, parsedScript.get());
+        }
+    }
+
+    private Optional<ScriptEntity> tryParseScript(final String scriptScratchBlocksCode) {
+        try {
+            final ScriptEntity script = parser.parseScript(scriptScratchBlocksCode);
+            return Optional.ofNullable(script);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public record ParsedLlmResponseCode(
+            Map<String, Map<String, ScriptEntity>> scripts,
+            Map<String, Map<String, String>> parseFailedScripts
+    ) {
         /**
          * Returns all scripts for the given actor.
          *
