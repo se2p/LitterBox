@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -50,10 +51,10 @@ class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
 
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), null, null, true) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(), null, true) {
             @Override
-            public String callLLM(Program program) {
-                return response;
+            public String buildPrompt(Program program) {
+                return "";
             }
         };
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
@@ -84,10 +85,10 @@ class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), null, null, true) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(), null, true) {
             @Override
-            public String callLLM(Program program) {
-                return response;
+            public String buildPrompt(Program program) {
+                return "";
             }
         };
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);

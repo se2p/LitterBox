@@ -30,8 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class LlmResponseParser {
@@ -49,13 +47,15 @@ public class LlmResponseParser {
         return scratchBlocks.replace("set rotation to", "point in direction");
     }
 
-    // todo: Use ScratchLlm.singleQueryWithCodeOnlyResponse instead in call locations
-    //  this way we can split parsing and program merging
-    //  -> makes it easier to do iterative prompting to ask llm to fix invalid ScratchBlocks later-on
-    //  same for parseResultAndUpdateScript below
-    public Program parseResultAndUpdateProgram(Program program, String response) {
-        ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
-        ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), spriteScripts);
+    /**
+     * Integrates the parsed response into the given program.
+     *
+     * @param program The program the LLM was originally queried with.
+     * @param llmResponse The response snippets from the LLM.
+     * @return The updated program.
+     */
+    public Program updateProgram(final Program program, final ParsedLlmResponseCode llmResponse) {
+        ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), llmResponse);
         NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
                 program.getActorDefinitionList(), newActors
         );
@@ -209,34 +209,6 @@ public class LlmResponseParser {
             return Optional.ofNullable(script);
         } catch (Exception e) {
             return Optional.empty();
-        }
-    }
-
-    public record ParsedLlmResponseCode(
-            Map<String, Map<String, ScriptEntity>> scripts,
-            Map<String, Map<String, String>> parseFailedScripts
-    ) {
-        /**
-         * Returns all scripts for the given actor.
-         *
-         * @param actor The name of the sprite/actor.
-         * @return All scripts of this actor.
-         */
-        @Nonnull
-        public Map<String, ScriptEntity> actor(final String actor) {
-            return Objects.requireNonNullElse(scripts.get(actor), Collections.emptyMap());
-        }
-
-        /**
-         * Finds a script in the set of parsed scripts.
-         *
-         * @param actor The name of the sprite/actor the script is in.
-         * @param scriptId The block ID of the head block of the script.
-         * @return The script if it could be found, {@code null} otherwise.
-         */
-        @Nullable
-        public ScriptEntity script(final String actor, final String scriptId) {
-            return actor(actor).get(scriptId);
         }
     }
 }

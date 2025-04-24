@@ -43,8 +43,7 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
     }
 
     @Override
-    public String callLLM(Program program) {
-        final String prompt = promptBuilder.completeCode(program, target);
-        return scratchLlm.singleQueryWithTextResponse(prompt);
+    public String buildPrompt(Program program) {
+        return promptBuilder.completeCode(program, target);
     }
 }

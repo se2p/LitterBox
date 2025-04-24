@@ -33,11 +33,10 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class ScratchBlocksToJSONTest implements JsonTest {
+class ScratchBlocksToJSONTest implements JsonTest {
 
     @Test
     void testParseJSONParsedFromScratchBlocks() throws ParsingException, IOException {
-
         String response = """
                 scratch
                 //Sprite: Sprite1
@@ -52,7 +51,8 @@ public class ScratchBlocksToJSONTest implements JsonTest {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         LlmResponseParser responseParser = new LlmResponseParser();
-        Program updatedProgram = responseParser.parseResultAndUpdateProgram(program, response);
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         String updatedJson = JSONStringCreator.createProgramJSONString(updatedProgram);
 
         Scratch3Parser parser = new Scratch3Parser();

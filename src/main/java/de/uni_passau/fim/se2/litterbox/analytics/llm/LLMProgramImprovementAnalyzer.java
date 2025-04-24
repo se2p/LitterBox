@@ -53,11 +53,10 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
     }
 
     @Override
-    public String callLLM(Program program) {
+    public String buildPrompt(Program program) {
         final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
         final Set<Issue> issues = bugAnalyzer.analyze(program);
 
-        final String prompt = promptBuilder.improveCode(program, target, issues);
-        return scratchLlm.singleQueryWithTextResponse(prompt);
+        return promptBuilder.improveCode(program, target, issues);
     }
 }
