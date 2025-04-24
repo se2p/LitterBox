@@ -638,13 +638,15 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     //begin subregion: event statement blocks
 
     @Override
-    public Broadcast visitBroadcast(ScratchBlocksParser.BroadcastContext ctx) {
-        return new Broadcast(visitMessage(ctx.message()), handleStmtBlockMetadata());
-    }
+    public CommonStmt visitBroadcast(ScratchBlocksParser.BroadcastContext ctx) {
+        final Message message = visitMessage(ctx.message());
+        final NonDataBlockMetadata metadata = handleStmtBlockMetadata();
 
-    @Override
-    public ASTNode visitBroadcastWait(ScratchBlocksParser.BroadcastWaitContext ctx) {
-        return new BroadcastAndWait(visitMessage(ctx.message()), handleStmtBlockMetadata());
+        if (ctx.wait != null) {
+            return new BroadcastAndWait(message, metadata);
+        } else {
+            return new Broadcast(message, metadata);
+        }
     }
 
     @Override

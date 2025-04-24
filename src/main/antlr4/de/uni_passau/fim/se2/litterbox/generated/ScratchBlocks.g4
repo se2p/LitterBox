@@ -228,11 +228,9 @@ createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
 
 eventStmt               : broadcast
-                        | broadcastWait
                         ;
 
-broadcast               : 'broadcast 'message;
-broadcastWait           : 'broadcast 'message' and wait';
+broadcast               : 'broadcast 'message wait=' and wait'?;
 
 sensingStmt             : ask
                         | setDragMode
