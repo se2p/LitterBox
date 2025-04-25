@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -55,7 +56,7 @@ public class LlmResponseParser {
      * @return The updated program.
      */
     public Program updateProgram(final Program program, final ParsedLlmResponseCode llmResponse) {
-        ActorDefinitionList newActors = getActorDefinitionList(program.getActorDefinitionList(), llmResponse);
+        ActorDefinitionList newActors = mergeActors(program, llmResponse);
         NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
                 program.getActorDefinitionList(), newActors
         );
@@ -80,32 +81,80 @@ public class LlmResponseParser {
     /**
      * Merges the original sprites with the scripts received from the LLM.
      *
-     * @param originalActorDefinitionList The sprites of the original program.
+     * @param originalProgram The original program.
      * @param llmCode The new code as received by the LLM.
      * @return The updated sprite list.
      */
-    private ActorDefinitionList getActorDefinitionList(ActorDefinitionList originalActorDefinitionList,
-                                                       ParsedLlmResponseCode llmCode) {
+    private ActorDefinitionList mergeActors(final Program originalProgram, final ParsedLlmResponseCode llmCode) {
         List<ActorDefinition> actors = new ArrayList<>();
-        // TODO: This just replaces existing actors, might need to merge scriptlists in the future
-        for (ActorDefinition actor : originalActorDefinitionList.getDefinitions()) {
+
+        // copy over unchanged actors
+        for (ActorDefinition actor : originalProgram.getActorDefinitionList().getDefinitions()) {
             if (!llmCode.scripts().containsKey(actor.getIdent().getName())) {
                 actors.add(actor);
             }
         }
 
+        // merge changed actors from original program + new/changed scripts from LLM response
         for (final var entry : llmCode.scripts().entrySet()) {
             final String actorName = entry.getKey();
             final Map<String, ScriptEntity> scripts = entry.getValue();
 
-            ActorDefinition actor = getBlankActorDefinition(actorName);
-            NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
-                    actor.getScripts(), getScriptList(scripts)
-            );
-            actors.add((ActorDefinition) actor.accept(replacementVisitor));
+            final ActorDefinition actor = originalProgram.getActorDefinitionList().getActorDefinition(actorName)
+                    .orElseGet(() -> getBlankActorDefinition(actorName));
+            final ActorDefinition updatedActor = mergeActor(actor, scripts);
+
+            actors.add(updatedActor);
         }
 
         return new ActorDefinitionList(Collections.unmodifiableList(actors));
+    }
+
+    /**
+     * Adds new scripts and procedures from an LLM response into the original actor.
+     *
+     * <p>Overrides existing scripts/procedures based on the ID.
+     *
+     * @param originalActor The original actor from the project the LLM was queried for.
+     * @param llmResponseScripts The scripts and procedures contained in the LLM response.
+     * @return The updated actor.
+     */
+    private ActorDefinition mergeActor(
+            final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
+    ) {
+        // todo: we need to update a bit more metadata in the project when doing this here:
+        //  - Program.procedureMapping needs to be updated with new procedures
+        //  - Program.symbolTable needs to be updated with new variables/lists
+
+        final Map<String, Script> scripts = new HashMap<>();
+        final Map<String, ProcedureDefinition> procedures = new HashMap<>();
+
+        // copy over original scripts and procedures
+        originalActor.getScripts().getScriptList()
+                .forEach(script -> scripts.put(AstNodeUtil.getBlockId(script.getEvent()), script));
+        originalActor.getProcedureDefinitionList().getList()
+                .forEach(procedure -> procedures.put(procedure.getIdent().getName(), procedure));
+
+        // override scripts and procedures also contained in LLM response
+        for (final var entry : llmResponseScripts.entrySet()) {
+            if (entry.getValue() instanceof Script script) {
+                scripts.put(entry.getKey(), script);
+            } else if (entry.getValue() instanceof ProcedureDefinition procedureDefinition) {
+                procedures.put(procedureDefinition.getIdent().getName(), procedureDefinition);
+            } else {
+                throw new IllegalStateException("Unknown script type");
+            }
+        }
+
+        final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
+                originalActor.getScripts(), new ScriptList(List.copyOf(scripts.values()))
+        );
+        final NodeReplacementVisitor procedureReplacementVisitor = new NodeReplacementVisitor(
+                originalActor.getProcedureDefinitionList(),
+                new ProcedureDefinitionList(List.copyOf(procedures.values()))
+        );
+
+        return (ActorDefinition) originalActor.accept(scriptsReplacementVisitor).accept(procedureReplacementVisitor);
     }
 
     private ActorDefinition getBlankActorDefinition(String actorName) {
@@ -122,15 +171,6 @@ public class LlmResponseParser {
                         new SoundMetadataList(Collections.emptyList())
                 )
         );
-    }
-
-    private ScriptList getScriptList(Map<String, ScriptEntity> scriptMap) {
-        List<Script> scripts = new ArrayList<>();
-        for (ScriptEntity scriptEntry : scriptMap.values()) {
-            // TODO: Need to handle custom blocks as well, this assumes it can only be a script
-            scripts.add((Script) scriptEntry);
-        }
-        return new ScriptList(Collections.unmodifiableList(scripts));
     }
 
     /**
