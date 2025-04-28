@@ -114,14 +114,14 @@ public class ScratchBlocksToJsonTest {
                 forever
                 end
                 end
-                if < > then
+                if <> then
                 stop [this script v]
                 end
-                if < > then
+                if <> then
                 else
                 end
-                wait until < >
-                repeat until < >
+                wait until <>
+                repeat until <>
                 stop [all v]
                 end
                 stop [other scripts in sprite v]
