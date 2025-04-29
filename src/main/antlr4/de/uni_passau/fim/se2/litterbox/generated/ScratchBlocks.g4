@@ -423,6 +423,10 @@ numExpr                 : xPosition
                         | mouseY
                         | loudness
                         | timer
+                        // mathFunction and actorAttribute must not be swapped, otherwise math functions are parsed as
+                        // attributeOf expressions (They share a common expression syntax with only the options for
+                        // known choices in the left operand being different.)
+                        | mathFunction
                         | actorAttribute
                         | currentTime
                         | daysSince
@@ -433,7 +437,6 @@ numExpr                 : xPosition
                         | getLetterAtIndex
                         | lengthOf
                         | round
-                        | mathFunction
                         | itemAtIndex
                         | indexOfItem
                         | lengthOfList

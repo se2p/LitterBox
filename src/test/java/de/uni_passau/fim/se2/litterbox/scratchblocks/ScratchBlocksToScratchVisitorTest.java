@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -775,24 +776,6 @@ class ScratchBlocksToScratchVisitorTest {
         assertStatementType(scratchBlocks, AddTo.class);
     }
 
-    private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
-        final StmtList stmtList = getStmtList(stmt);
-        assertInstanceOf(stmtType, stmtList.getStatement(0));
-        return stmtType.cast(stmtList.getStatement(0));
-    }
-
-    private <T extends Expression> T assertHasExprStmt(final StmtList stmtList, final Class<T> expressionType) {
-        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
-        final Expression expr = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
-        assertInstanceOf(expressionType, expr);
-
-        return expressionType.cast(expr);
-    }
-
-    private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
-        assertInstanceOf(exprType, expr);
-        return exprType.cast(expr);
-    }
 
     @Test
     void testListExpression() {
@@ -828,4 +811,44 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(StringLiteral.class, asNumber.getOperand1());
         assertEquals("", ((StringLiteral) asNumber.getOperand1()).getText());
     }
+
+    @Test
+    void testMathFunctionExpr() {
+        StmtList statements = getStmtList("([abs v] of ())");
+        final NumFunctOf numFunct = assertHasExprStmt(statements, NumFunctOf.class);
+        assertEquals(NumFunct.NumFunctType.ABS, numFunct.getOperand1().getType());
+    }
+
+    @Test
+    void testAttributeOfExpr() {
+        StmtList statements = getStmtList("([size v] of ())");
+        final AttributeOf numFunct = assertHasExprStmt(statements, AttributeOf.class);
+        assertInstanceOf(AttributeFromFixed.class, numFunct.getAttribute());
+
+        final AttributeFromFixed attr = (AttributeFromFixed) numFunct.getAttribute();
+        assertEquals(FixedAttribute.FixedAttributeType.SIZE, attr.getAttribute().getType());
+    }
+
+    // region: common helper methods
+
+    private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
+        final StmtList stmtList = getStmtList(stmt);
+        assertInstanceOf(stmtType, stmtList.getStatement(0));
+        return stmtType.cast(stmtList.getStatement(0));
+    }
+
+    private <T extends Expression> T assertHasExprStmt(final StmtList stmtList, final Class<T> expressionType) {
+        assertInstanceOf(ExpressionStmt.class, stmtList.getStatement(0));
+        final Expression expr = ((ExpressionStmt) stmtList.getStatement(0)).getExpression();
+        assertInstanceOf(expressionType, expr);
+
+        return expressionType.cast(expr);
+    }
+
+    private <T extends Expression> T assertExpressionType(final Expression expr, Class<T> exprType) {
+        assertInstanceOf(exprType, expr);
+        return exprType.cast(expr);
+    }
+
+    // endregion
 }
