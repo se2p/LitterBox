@@ -118,16 +118,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.expressionStmt() != null) {
             topExprBlock = true;
             return new Script(new Never(), new StmtList(visitExpressionStmt(ctx.expressionStmt())));
+        } else if (ctx.customBlock() != null) {
+            return visitCustomBlock(ctx.customBlock());
+        } else if (ctx.event() != null) {
+            final StmtList stmtList;
+            if (ctx.nonEmptyStmtList() != null) {
+                stmtList = visitNonEmptyStmtList(ctx.nonEmptyStmtList());
+            } else {
+                stmtList = new StmtList();
+            }
+            return new Script((Event) visitEvent(ctx.event()), stmtList);
         } else if (ctx.nonEmptyStmtList() != null) {
             topStmtBlock = true;
             return new Script(new Never(), visitNonEmptyStmtList(ctx.nonEmptyStmtList()));
-        } else if (ctx.stmtList() != null) {
-            Event event = (Event) visitEvent(ctx.event());
-            return new Script(event, visitStmtList(ctx.stmtList()));
-        } else if (ctx.event() != null) {
-            return new Script((Event) visitEvent(ctx.event()), new StmtList());
-        } else if (ctx.customBlock() != null) {
-            return visitCustomBlock(ctx.customBlock());
         } else {
             return (ScriptEntity) super.visitScript(ctx);
         }

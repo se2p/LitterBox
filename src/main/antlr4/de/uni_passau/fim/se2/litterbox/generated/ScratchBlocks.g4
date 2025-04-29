@@ -49,7 +49,7 @@ scriptList              : (script ((COMMENT? NEWLINE)+)?)*;
 
 script                  : expressionStmt NEWLINE
                         | customBlock
-                        | event NEWLINE stmtList
+                        | event NEWLINE (nonEmptyStmtList | stmtList)
                         | nonEmptyStmtList
                         ;
 

@@ -794,7 +794,7 @@ class ScratchBlocksToScratchVisitorTest {
 
     @Test
     void testScriptList() {
-        ScriptList scriptList = getScriptList("when green flag clicked\n(username)\n");
+        ScriptList scriptList = getScriptList("when green flag clicked\n\n(username)\n");
         assertEquals(2, scriptList.getSize());
         assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
         assertInstanceOf(Never.class, scriptList.getScript(1).getEvent());
