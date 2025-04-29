@@ -1255,6 +1255,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         } else if (ctx.stringArgument() != null) {
             final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
             return new Qualified(currentActor, variable);
+        } else if (ctx.emptyNum != null) {
+            return new AsNumber(new StringLiteral(""));
         } else if (ctx.emptyBool != null) {
             return new UnspecifiedBoolExpr();
         } else if (ctx.boolExpr() != null) {

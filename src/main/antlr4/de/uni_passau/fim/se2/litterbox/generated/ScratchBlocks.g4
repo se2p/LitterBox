@@ -380,7 +380,8 @@ exprOrLiteral           : numLiteral
 numLiteral              : '('(NUMBER|DIGIT)')';
 stringLiteral           : '['stringArgument']';
 
-expression              : '('numExpr')'
+expression              : emptyNum='()'
+                        | '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
                         | '(' stringArgument list=LIST_MARKER? WS* ')'

@@ -817,4 +817,15 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(Never.class, scriptList.getScript(1).getEvent());
         assertInstanceOf(ExpressionStmt.class, scriptList.getScript(1).getStmtList().getStatement(0));
     }
+
+    @Test
+    void testEmptyNum() {
+        StmtList statements = getStmtList("move () steps\n");
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        MoveSteps move = (MoveSteps) statements.getStatement(0);
+        assertInstanceOf(AsNumber.class, move.getSteps());
+        AsNumber asNumber = (AsNumber) move.getSteps();
+        assertInstanceOf(StringLiteral.class, asNumber.getOperand1());
+        assertEquals("", ((StringLiteral) asNumber.getOperand1()).getText());
+    }
 }
