@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
 import org.antlr.v4.runtime.CharStreams;
@@ -57,13 +59,16 @@ public class ScratchBlocksParser {
         return parseScript(scratchBlocksCode, new AtomicBoolean(false));
     }
 
-    public Program extendProject(Program baseProject, String actorName, String additionalCode){
+    public Program extendProject(Program baseProject, String actorName, String additionalCode) {
         CloneVisitor cloneVisitor = new CloneVisitor();
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
         ScriptList additionalScripts = parseScriptList(additionalCode);
         List<Script> newScripts = new ArrayList<>(additionalScripts.getScriptList());
-        //newScripts.addAll(baseProject.getActorDefinitionList().)
-        return extendedProject;
+        newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
+        final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
+                AstNodeUtil.findActorByName(extendedProject, actorName).getScripts(), new ScriptList(List.copyOf(newScripts)));
+        //todo handle messages, variables, lists
+        return (Program) extendedProject.accept(scriptsReplacementVisitor);
     }
 
     public ScriptList parseScriptList(final String scratchBlocksCode) {
