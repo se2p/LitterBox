@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
 import org.antlr.v4.runtime.CharStreams;
@@ -54,6 +55,15 @@ public class ScratchBlocksParser {
     // todo: probably similar methods for whole actors and programs?
     public ScriptEntity parseScript(final String scratchBlocksCode) {
         return parseScript(scratchBlocksCode, new AtomicBoolean(false));
+    }
+
+    public Program extendProject(Program baseProject, String actorName, String additionalCode){
+        CloneVisitor cloneVisitor = new CloneVisitor();
+        Program extendedProject = (Program) baseProject.accept(cloneVisitor);
+        ScriptList additionalScripts = parseScriptList(additionalCode);
+        List<Script> newScripts = new ArrayList<>(additionalScripts.getScriptList());
+        //newScripts.addAll(baseProject.getActorDefinitionList().)
+        return extendedProject;
     }
 
     public ScriptList parseScriptList(final String scratchBlocksCode) {

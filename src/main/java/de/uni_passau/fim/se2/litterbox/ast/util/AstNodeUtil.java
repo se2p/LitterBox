@@ -51,10 +51,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -124,13 +121,29 @@ public class AstNodeUtil {
     }
 
     /**
+     * Finds the actor the given name belongs to.
+     *
+     * @param name name of the searched actor.
+     * @return The actor with the name, null if there is no actor with this name.
+     */
+    public static ActorDefinition findActorByName(Program program, final String name) {
+        List<ActorDefinition> actors = program.getActorDefinitionList().getDefinitions();
+        for (ActorDefinition actor : actors) {
+            if (actor.getIdent().getName().equals(name)) {
+                return actor;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Finds a transitive parent of node of the requested type.
      *
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     *         Might return {@code node} itself if it has matching type.
-     *         Returns {@code null} if no parent of the requested type could be found.
+     * Might return {@code node} itself if it has matching type.
+     * Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
