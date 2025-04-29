@@ -1108,7 +1108,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ElementChoice visitElement(ScratchBlocksParser.ElementContext ctx) {
         if (ctx.stringArgument() != null) {
-            return new WithExpr(visitStringArgument(ctx.stringArgument()), handleExprBlockMetadata(true));
+            return new WithExpr(new StrId(visitStringArgument(ctx.stringArgument())), handleExprBlockMetadata(true));
         } else {
             return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is a wrapper
         }
@@ -1348,7 +1348,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     private NonDataBlockMetadata handleExprBlockMetadata(boolean shadow) {
-        if (topExprBlock) {
+        if (topExprBlock && !shadow) {
             topExprBlock = false;
             return TopNonDataBlockMetadata.createArtificialTopNonBlockMetadata(shadow);
         } else {

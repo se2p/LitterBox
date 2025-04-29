@@ -148,11 +148,54 @@ public class ScratchBlocksToJsonTest {
     @Test
     void testAllExprWithoutVariableList() throws FileNotFoundException {
         final String scriptCode = """
-            """.stripIndent();
-            Script script = parseScript(scriptCode);
-            String json = ScriptJSONCreator.createScriptJSONString(script, null);
-            writeJsonFromString(json, "expr");
+                (x position)
+                (y position)
+                (direction)
+                (costume [number v])
+                (backdrop [number v])
+                (size)
+                (volume)
+                <touching (mouse pointer v)?>
+                <touching color [#ffffff]?>
+                <color [#ffffff] is touching [#ffff00]?>
+                (distance to (mouse-pointer v))
+                (answer)
+                <key (space v) pressed?>
+                <mouse down?>
+                (mouse x)
+                (mouse y)
+                (loudness)
+                (timer)
+                ([backdrop # v] of (Stage v))
+                (current [year v])
+                (days since 2000)
+                (username)
+                (() + ())
+                (() - ())
+                (() * ())
+                (() / ())
+                (pick random (1) to (10))
+                <<> > <>>
+                <<> < <>>
+                <<> = <>>
+                <not <>>
+                (join [apple][banana])
+                (letter (1) of [apple])
+                (length of [apple])
+                <[apple] contains [a]?>
+                (() mod ())
+                (round ())
+                """.stripIndent();
+        ScriptList scriptList = getScriptList(scriptCode);
+        StringBuilder jsonString = new StringBuilder();
+        for (int i = 0; i < scriptList.getSize() - 1; i++) {
+            jsonString.append(ScriptJSONCreator.createScriptJSONString(scriptList.getScript(i), null)).append(",");
         }
+        if (scriptList.getSize() != 0) {
+            jsonString.append(ScriptJSONCreator.createScriptJSONString(scriptList.getScript(scriptList.getSize() - 1), null));
+        }
+        writeJsonFromString(jsonString.toString(), "expr");
+    }
 
     private void writeJsonFromString(String jsonString, String name) throws FileNotFoundException {
         try (PrintWriter out = new PrintWriter(name + ".json")) {
