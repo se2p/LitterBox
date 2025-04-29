@@ -776,7 +776,6 @@ class ScratchBlocksToScratchVisitorTest {
         assertStatementType(scratchBlocks, AddTo.class);
     }
 
-
     @Test
     void testListExpression() {
         StmtList statements = getStmtList("move (list :: list) steps\n");
@@ -799,6 +798,14 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
         assertInstanceOf(Never.class, scriptList.getScript(1).getEvent());
         assertInstanceOf(ExpressionStmt.class, scriptList.getScript(1).getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testScriptListOneScript() {
+        ScriptList scriptList = getScriptList("when green flag clicked\nmove (10) steps\n");
+        assertEquals(1, scriptList.getSize());
+        assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
+        assertInstanceOf(MoveSteps.class, scriptList.getScript(0).getStmtList().getStatement(0));
     }
 
     @Test

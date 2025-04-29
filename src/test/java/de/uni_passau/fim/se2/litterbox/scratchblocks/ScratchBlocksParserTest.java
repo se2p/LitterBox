@@ -33,6 +33,6 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertEquals(0, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (10) steps\n");
-       // Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
     }
 }
