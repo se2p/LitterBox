@@ -102,6 +102,18 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
+    public ScriptList visitScriptList(ScratchBlocksParser.ScriptListContext ctx) {
+        List<Script> scripts = new ArrayList<>();
+        for (ScratchBlocksParser.ScriptContext context : ctx.script()) {
+            ScriptEntity scriptEntity = visitScript(context);
+            if (scriptEntity instanceof Script) {
+                scripts.add((Script) scriptEntity);
+            }
+        }
+        return new ScriptList(scripts);
+    }
+
+    @Override
     public ScriptEntity visitScript(ScratchBlocksParser.ScriptContext ctx) {
         if (ctx.expressionStmt() != null) {
             topExprBlock = true;

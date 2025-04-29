@@ -18,19 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksLexer;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContext;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -49,6 +54,37 @@ public class ScratchBlocksParser {
     // todo: probably similar methods for whole actors and programs?
     public ScriptEntity parseScript(final String scratchBlocksCode) {
         return parseScript(scratchBlocksCode, new AtomicBoolean(false));
+    }
+
+    public ScriptList parseScriptList(final String scratchBlocksCode) {
+        ParentVisitor visitor = new ParentVisitor();
+        if (scratchBlocksCode.isBlank()) {
+            Script script = new Script(new Never(), new StmtList());
+            script.accept(visitor);
+            List<Script> scripts = new ArrayList<>();
+            scripts.add(script);
+            ScriptList scriptList = new ScriptList(scripts);
+            return scriptList;
+        }
+
+        final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
+                new AtomicBoolean(false), scratchBlocksCode
+        );
+        final ParseTree tree = parser.scriptList();
+
+        final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
+        final ASTNode node = vis.visit(tree);
+
+        if (node instanceof ScriptList scriptList) {
+            scriptList.accept(visitor);
+            return scriptList;
+        } else if (node == null) {
+            return null;
+        } else {
+            throw new IllegalArgumentException(
+                    "Could not parse ScratchBlocks code as script. Got: " + node.getClass().getSimpleName()
+            );
+        }
     }
 
     /**

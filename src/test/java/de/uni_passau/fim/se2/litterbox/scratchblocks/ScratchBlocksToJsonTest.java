@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,14 @@ public class ScratchBlocksToJsonTest {
             scratchBlocksInput += "\n";
         }
         return parser.parseScript(scratchBlocksInput);
+    }
+
+    private ScriptList getScriptList(String scratchBlocksInput) {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
+        return parser.parseScriptList(scratchBlocksInput);
     }
 
     private Script parseScript(final String scratchBlocksInput) {
@@ -135,6 +144,15 @@ public class ScratchBlocksToJsonTest {
         String json = ScriptJSONCreator.createScriptJSONString(script, null);
         writeJsonFromString(json, "stmts");
     }
+
+    @Test
+    void testAllExprWithoutVariableList() throws FileNotFoundException {
+        final String scriptCode = """
+            """.stripIndent();
+            Script script = parseScript(scriptCode);
+            String json = ScriptJSONCreator.createScriptJSONString(script, null);
+            writeJsonFromString(json, "expr");
+        }
 
     private void writeJsonFromString(String jsonString, String name) throws FileNotFoundException {
         try (PrintWriter out = new PrintWriter(name + ".json")) {

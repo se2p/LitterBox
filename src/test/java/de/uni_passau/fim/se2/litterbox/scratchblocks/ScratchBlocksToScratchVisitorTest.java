@@ -18,19 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -87,6 +81,14 @@ class ScratchBlocksToScratchVisitorTest {
             scratchBlocksInput += "\n";
         }
         return parser.parseScript(scratchBlocksInput);
+    }
+
+    private ScriptList getScriptList(String scratchBlocksInput) {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
+        return parser.parseScriptList(scratchBlocksInput);
     }
 
     private StmtList getStmtList(String scratchBlocksInput) {
@@ -805,5 +807,14 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(ScratchList.class, qualified.getSecond());
         ScratchList scratchList = (ScratchList) qualified.getSecond();
         assertEquals("list", scratchList.getName().getName());
+    }
+
+    @Test
+    void testScriptList() {
+        ScriptList scriptList = getScriptList("when green flag clicked\n(username)\n");
+        assertEquals(2, scriptList.getSize());
+        assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
+        assertInstanceOf(Never.class, scriptList.getScript(1).getEvent());
+        assertInstanceOf(ExpressionStmt.class, scriptList.getScript(1).getStmtList().getStatement(0));
     }
 }
