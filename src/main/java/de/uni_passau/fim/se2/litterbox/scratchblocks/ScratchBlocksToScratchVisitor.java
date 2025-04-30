@@ -93,6 +93,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     private boolean topStmtBlock = false;
     private boolean topExprBlock = false;
 
+    public void setCurrentActor(String currentActor){
+        this.currentActor = new StrId(new StringLiteral(currentActor));
+    }
+
     @Override
     public ASTNode visitActor(ScratchBlocksParser.ActorContext ctx) {
         final String actorName = ctx.BEGIN_ACTOR().getText().replace(NEW_ACTOR_PREFIX, "").trim();

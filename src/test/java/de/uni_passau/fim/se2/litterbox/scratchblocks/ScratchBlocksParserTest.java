@@ -23,10 +23,11 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import org.junit.Assert;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,15 +46,45 @@ public class ScratchBlocksParserTest implements JsonTest {
     @Test
     void testAddNewScriptsToEmptyProject() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        Assertions.assertEquals(0, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Assertions.assertEquals(2, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (10) steps\n\nsay ([backdrop # v] of (Stage v))\n");
         Assertions.assertEquals(2, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
         Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(1);
         Assertions.assertInstanceOf(Never.class, script.getEvent());
-        Assertions.assertEquals(1,script.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Say.class,script.getStmtList().getStatement(0));
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Say.class, script.getStmtList().getStatement(0));
         Say say = (Say) script.getStmtList().getStatement(0);
         Assertions.assertInstanceOf(AttributeOf.class, say.getString());
+    }
+
+    @Test
+    void testAddExistingVariableToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(2, program.getSymbolTable().getVariables().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (SpriteLocalVariable) steps\n");
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0);
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
+        Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
+        Assertions.assertEquals(2, newProgram.getSymbolTable().getVariables().size());
+    }
+
+    @Test
+    void testAddNewVariableToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(2, program.getSymbolTable().getVariables().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteVariable) steps\n");
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0);
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
+        Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
+        Assertions.assertEquals(3, newProgram.getSymbolTable().getVariables().size());
     }
 }
