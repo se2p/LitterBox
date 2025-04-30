@@ -23,15 +23,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
@@ -76,7 +75,7 @@ public class ScratchBlocksParser {
         CloneVisitor cloneVisitor = new CloneVisitor();
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
         ScriptList additionalScripts = parseScriptList(additionalCode, actorName);
-        handleNewFields(additionalScripts, extendedProject);
+        addNewFields(additionalScripts, extendedProject);
         List<Script> newScripts = new ArrayList<>(additionalScripts.getScriptList());
         newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
@@ -85,7 +84,25 @@ public class ScratchBlocksParser {
         return (Program) extendedProject.accept(scriptsReplacementVisitor);
     }
 
-    private void handleNewFields(ScriptList additionalScripts, Program extendedProject) {
+    private void addNewFields(ScriptList additionalScripts, Program extendedProject) {
+        addQualifiedDataExpressions(additionalScripts, extendedProject);
+        addMessages(additionalScripts, extendedProject);
+    }
+
+    private void addMessages(ScriptList additionalScripts, Program extendedProject) {
+        List<Message> messages = NodeFilteringVisitor.getBlocks(additionalScripts, Message.class);
+        SymbolTable symbolTable = extendedProject.getSymbolTable();
+
+        for (Message message : messages) {
+            if (message.getMessage() instanceof StringLiteral text) {
+                if (symbolTable.getMessage(text.getText()).isEmpty()) {
+                    symbolTable.addMessage(text.getText(), message, true, "Stage", CloneVisitor.generateUID());
+                }
+            }
+        }
+    }
+
+    private void addQualifiedDataExpressions(ScriptList additionalScripts, Program extendedProject) {
         List<Qualified> qualifieds = NodeFilteringVisitor.getBlocks(additionalScripts, Qualified.class);
         SymbolTable symbolTable = extendedProject.getSymbolTable();
         for (Qualified qualified : qualifieds) {
@@ -95,7 +112,7 @@ public class ScratchBlocksParser {
                 String varName = variable.getName().getName();
                 if (symbolTable.getVariableIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getVariableIdentifierFromActorAndName("Stage", varName) == null) {
                     String uid = CloneVisitor.generateUID();
-                    symbolTable.getVariables().put(uid + varName + actorInQualified, new VariableInfo(false, actorInQualified, uid, new NumberType(), varName));
+                    symbolTable.addVariable(uid, varName, new NumberType(), false, actorInQualified);
                     ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
                     actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new NumberLiteral(0), new NoBlockMetadata()));
                 }
@@ -104,7 +121,7 @@ public class ScratchBlocksParser {
                 String varName = variable.getName().getName();
                 if (symbolTable.getListIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getListIdentifierFromActorAndName("Stage", varName) == null) {
                     String uid = CloneVisitor.generateUID();
-                    symbolTable.getLists().put(uid + varName + actorInQualified, new ExpressionListInfo(false, actorInQualified, uid, new ExpressionList(new ArrayList<>()), varName));
+                    symbolTable.addExpressionListInfo(uid, varName, new ExpressionList(new ArrayList<>()), false, actorInQualified);
                     ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
                     actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata()));
                 }

@@ -20,12 +20,15 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.Assertions;
@@ -101,5 +104,20 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
         Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
         Assertions.assertEquals(2, newProgram.getSymbolTable().getLists().size());
+    }
+
+    @Test
+    void testAddNewMessageToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (newMessage v)\n");
+        Assertions.assertEquals(1, newProgram.getSymbolTable().getMessages().size());
+        Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0);
+        Assertions.assertInstanceOf(Broadcast.class, script.getStmtList().getStatement(0));
+        Broadcast broadcast = (Broadcast) script.getStmtList().getStatement(0);
+        Message message = broadcast.getMessage();
+        Assertions.assertEquals("newMessage", ((StringLiteral) message.getMessage()).getText());
+        Assertions.assertTrue(newProgram.getSymbolTable().getMessage("newMessage").isPresent());
     }
 }

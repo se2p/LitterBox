@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -222,6 +221,14 @@ public class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteList :: list) steps\n");
+        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+    }
+
+    @Test
+    void testNewMessageInProject() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (newMessage v)\n");
         JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
     }
 }
