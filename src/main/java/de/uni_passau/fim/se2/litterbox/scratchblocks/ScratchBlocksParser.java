@@ -20,10 +20,16 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -70,7 +76,7 @@ public class ScratchBlocksParser {
         CloneVisitor cloneVisitor = new CloneVisitor();
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
         ScriptList additionalScripts = parseScriptList(additionalCode, actorName);
-        handleNewVariables(additionalScripts, extendedProject);
+        handleNewFields(additionalScripts, extendedProject);
         List<Script> newScripts = new ArrayList<>(additionalScripts.getScriptList());
         newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
@@ -79,7 +85,7 @@ public class ScratchBlocksParser {
         return (Program) extendedProject.accept(scriptsReplacementVisitor);
     }
 
-    private void handleNewVariables(ScriptList additionalScripts, Program extendedProject) {
+    private void handleNewFields(ScriptList additionalScripts, Program extendedProject) {
         List<Qualified> qualifieds = NodeFilteringVisitor.getBlocks(additionalScripts, Qualified.class);
         SymbolTable symbolTable = extendedProject.getSymbolTable();
         for (Qualified qualified : qualifieds) {
@@ -90,6 +96,17 @@ public class ScratchBlocksParser {
                 if (symbolTable.getVariableIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getVariableIdentifierFromActorAndName("Stage", varName) == null) {
                     String uid = CloneVisitor.generateUID();
                     symbolTable.getVariables().put(uid + varName + actorInQualified, new VariableInfo(false, actorInQualified, uid, new NumberType(), varName));
+                    ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
+                    actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new NumberLiteral(0), new NoBlockMetadata()));
+                }
+            }
+            if (data instanceof ScratchList variable) {
+                String varName = variable.getName().getName();
+                if (symbolTable.getListIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getListIdentifierFromActorAndName("Stage", varName) == null) {
+                    String uid = CloneVisitor.generateUID();
+                    symbolTable.getLists().put(uid + varName + actorInQualified, new ExpressionListInfo(false, actorInQualified, uid, new ExpressionList(new ArrayList<>()), varName));
+                    ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
+                    actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata()));
                 }
             }
         }

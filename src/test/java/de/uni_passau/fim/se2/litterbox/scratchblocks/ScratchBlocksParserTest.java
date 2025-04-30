@@ -46,7 +46,7 @@ public class ScratchBlocksParserTest implements JsonTest {
     @Test
     void testAddNewScriptsToEmptyProject() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        Assertions.assertEquals(2, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Assertions.assertEquals(0, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (10) steps\n\nsay ([backdrop # v] of (Stage v))\n");
         Assertions.assertEquals(2, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
@@ -86,5 +86,20 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
         Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
         Assertions.assertEquals(3, newProgram.getSymbolTable().getVariables().size());
+    }
+
+    @Test
+    void testAddNewListToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(1, program.getSymbolTable().getLists().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteList :: list) steps\n");
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0);
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(0));
+        MoveSteps moveSteps = (MoveSteps) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
+        Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
+        Assertions.assertEquals(2, newProgram.getSymbolTable().getLists().size());
     }
 }

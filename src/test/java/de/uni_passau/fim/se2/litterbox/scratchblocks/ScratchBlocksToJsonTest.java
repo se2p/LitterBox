@@ -18,18 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class ScratchBlocksToJsonTest {
+public class ScratchBlocksToJsonTest implements JsonTest {
 
     private ScriptEntity getScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
@@ -201,5 +207,21 @@ public class ScratchBlocksToJsonTest {
         try (PrintWriter out = new PrintWriter(name + ".json")) {
             out.println(jsonString);
         }
+    }
+
+    @Test
+    void testNewVariableInProject() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteVariable) steps\n");
+        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+    }
+
+    @Test
+    void testNewListInProject() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteList :: list) steps\n");
+        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
     }
 }
