@@ -21,6 +21,12 @@ package de.uni_passau.fim.se2.litterbox.scratchblocks;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +40,20 @@ public class ScratchBlocksParserTest implements JsonTest {
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (10) steps\n");
         Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+    }
+
+    @Test
+    void testAddNewScriptsToEmptyProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(0, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (10) steps\n\nsay ([backdrop # v] of (Stage v))\n");
+        Assertions.assertEquals(2, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
+        Script script = newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(1);
+        Assertions.assertInstanceOf(Never.class, script.getEvent());
+        Assertions.assertEquals(1,script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Say.class,script.getStmtList().getStatement(0));
+        Say say = (Say) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AttributeOf.class, say.getString());
     }
 }
