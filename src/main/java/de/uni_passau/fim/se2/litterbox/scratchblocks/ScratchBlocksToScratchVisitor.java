@@ -41,10 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -52,6 +49,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -93,7 +91,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     private boolean topStmtBlock = false;
     private boolean topExprBlock = false;
 
-    public void setCurrentActor(String currentActor){
+    public void setCurrentActor(String currentActor) {
         this.currentActor = new StrId(new StringLiteral(currentActor));
     }
 
@@ -106,24 +104,28 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
-    public ScriptList visitScriptList(ScratchBlocksParser.ScriptListContext ctx) {
+    public ActorContentHelperNode visitActorContent(ScratchBlocksParser.ActorContentContext ctx) {
         List<Script> scripts = new ArrayList<>();
+        List<ProcedureDefinition> procedures = new ArrayList<>();
+
         for (ScratchBlocksParser.ScriptContext context : ctx.script()) {
-            ScriptEntity scriptEntity = visitScript(context);
-            if (scriptEntity instanceof Script) {
-                scripts.add((Script) scriptEntity);
-            }
+            Script script = visitScript(context);
+            scripts.add(script);
         }
-        return new ScriptList(scripts);
+
+        for (ScratchBlocksParser.CustomBlockContext context : ctx.customBlock()) {
+            ProcedureDefinition procDef = visitCustomBlock(context);
+            procedures.add(procDef);
+        }
+
+        return new ActorContentHelperNode(new ScriptList(scripts), new ProcedureDefinitionList(procedures));
     }
 
     @Override
-    public ScriptEntity visitScript(ScratchBlocksParser.ScriptContext ctx) {
+    public Script visitScript(ScratchBlocksParser.ScriptContext ctx) {
         if (ctx.expressionStmt() != null) {
             topExprBlock = true;
             return new Script(new Never(), new StmtList(visitExpressionStmt(ctx.expressionStmt())));
-        } else if (ctx.customBlock() != null) {
-            return visitCustomBlock(ctx.customBlock());
         } else if (ctx.event() != null) {
             final StmtList stmtList;
             if (ctx.nonEmptyStmtList() != null) {
@@ -136,7 +138,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             topStmtBlock = true;
             return new Script(new Never(), visitNonEmptyStmtList(ctx.nonEmptyStmtList()));
         } else {
-            return (ScriptEntity) super.visitScript(ctx);
+            return (Script) super.visitScript(ctx);
         }
     }
 

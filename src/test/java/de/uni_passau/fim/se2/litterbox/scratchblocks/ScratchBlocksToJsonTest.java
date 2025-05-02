@@ -27,14 +27,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.CleanupMode;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class ScratchBlocksToJsonTest implements JsonTest {
+class ScratchBlocksToJsonTest implements JsonTest {
+
+    @TempDir(cleanup = CleanupMode.ON_SUCCESS)
+    Path tempDir;
 
     private ScriptEntity getScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
@@ -49,7 +55,7 @@ public class ScratchBlocksToJsonTest implements JsonTest {
         if (!scratchBlocksInput.endsWith("\n")) {
             scratchBlocksInput += "\n";
         }
-        return parser.parseScriptList(scratchBlocksInput);
+        return parser.parseActorContent(scratchBlocksInput).scripts();
     }
 
     private Script parseScript(final String scratchBlocksInput) {
@@ -60,14 +66,14 @@ public class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     @Test
-    void testSayWithLiteral() throws FileNotFoundException {
+    void testSayWithLiteral() throws IOException {
         Script script = parseScript("say [ja!]\n");
         String json = ScriptJSONCreator.createScriptJSONString(script, null);
         writeJsonFromString(json, "say");
     }
 
     @Test
-    void testAllStmtsWithoutBroadcastVariableList() throws FileNotFoundException {
+    void testAllStmtsWithoutBroadcastVariableList() throws IOException {
         final String scriptCode = """
                 when green flag clicked
                 move (10) steps
@@ -151,7 +157,7 @@ public class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     @Test
-    void testAllExprWithoutVariableList() throws FileNotFoundException {
+    void testAllExprWithoutVariableList() throws IOException {
         final String scriptCode = """
                 (x position)
                 (y position)
@@ -190,7 +196,9 @@ public class ScratchBlocksToJsonTest implements JsonTest {
                 <[apple] contains [a]?>
                 (() mod ())
                 (round ())
-                """.stripIndent();
+                """.stripIndent()
+                // add empty lines between ExprStmts so that they are properly parsed as separate scripts
+                .replace(System.lineSeparator(), System.lineSeparator() + System.lineSeparator());
         ScriptList scriptList = getScriptList(scriptCode);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < scriptList.getSize() - 1; i++) {
@@ -202,18 +210,12 @@ public class ScratchBlocksToJsonTest implements JsonTest {
         writeJsonFromString(jsonString.toString(), "expr");
     }
 
-    private void writeJsonFromString(String jsonString, String name) throws FileNotFoundException {
-        try (PrintWriter out = new PrintWriter(name + ".json")) {
-            out.println(jsonString);
-        }
-    }
-
     @Test
     void testNewVariableInProject() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteVariable) steps\n");
-        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+        writeJsonFromProgram(newProgram);
     }
 
     @Test
@@ -221,7 +223,7 @@ public class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteList :: list) steps\n");
-        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+        writeJsonFromProgram(newProgram);
     }
 
     @Test
@@ -229,6 +231,17 @@ public class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (newMessage v)\n");
-        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+        writeJsonFromProgram(newProgram);
+    }
+
+    private void writeJsonFromString(String jsonString, String name) throws IOException {
+        Path outputFile = tempDir.resolve(name + ".json");
+        try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(outputFile))) {
+            out.println(jsonString);
+        }
+    }
+
+    private void writeJsonFromProgram(Program program) throws IOException {
+        JSONFileCreator.writeJsonFromProgram(program, tempDir, "_extended");
     }
 }
