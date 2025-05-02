@@ -76,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ScratchBlocksToScratchVisitorTest {
 
-    private ScriptEntity getScript(String scratchBlocksInput) {
+    private Script parseScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
         if (!scratchBlocksInput.endsWith("\n")) {
             scratchBlocksInput += "\n";
@@ -84,23 +84,24 @@ class ScratchBlocksToScratchVisitorTest {
         return parser.parseScript(scratchBlocksInput);
     }
 
+    private ProcedureDefinition parseProcDef(String scratchBlocksInput) {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
+        return parser.parseActorContent(scratchBlocksInput).procedures().getList().get(0);
+    }
+
     private ScriptList getScriptList(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
         if (!scratchBlocksInput.endsWith("\n")) {
             scratchBlocksInput += "\n";
         }
-        return parser.parseScriptList(scratchBlocksInput);
+        return parser.parseActorContent(scratchBlocksInput).scripts();
     }
 
     private StmtList getStmtList(String scratchBlocksInput) {
-        return getScript(scratchBlocksInput).getStmtList();
-    }
-
-    private Script parseScript(final String scratchBlocksInput) {
-        ScriptEntity scriptEntity = getScript(scratchBlocksInput);
-        assertInstanceOf(Script.class, scriptEntity);
-
-        return (Script) scriptEntity;
+        return parseScript(scratchBlocksInput).getStmtList();
     }
 
     @Test
@@ -390,10 +391,7 @@ class ScratchBlocksToScratchVisitorTest {
 
     @Test
     void testGreenFlag() {
-        ScriptEntity scriptEntity = getScript("when green flag clicked\n");
-        assertInstanceOf(Script.class, scriptEntity);
-
-        Script script = (Script) scriptEntity;
+        Script script = parseScript("when green flag clicked\n");
         assertInstanceOf(GreenFlag.class, script.getEvent());
     }
 
@@ -598,22 +596,17 @@ class ScratchBlocksToScratchVisitorTest {
             "define <bP> abc\n"
     })
     void emptyCustomProcedureDefinition(final String definition) {
-        final ScriptEntity script = getScript(definition);
-        assertInstanceOf(ProcedureDefinition.class, script);
-        final ProcedureDefinition procDef = (ProcedureDefinition) script;
+        final ProcedureDefinition procDef = parseProcDef(definition);
 
         assertEquals(definition.replace("define ", "").trim(), procDef.getIdent().getName());
     }
 
     @Test
     void customProcedureDefinitionParameters() {
-        final ScriptEntity script = getScript("""
+        final ProcedureDefinition procDef = parseProcDef("""
                 define abc (sp) bcd <bp>
                 stop [all v]
                 """);
-
-        assertInstanceOf(ProcedureDefinition.class, script);
-        final ProcedureDefinition procDef = (ProcedureDefinition) script;
 
         assertIterableEquals(
                 List.of(
@@ -666,7 +659,7 @@ class ScratchBlocksToScratchVisitorTest {
                 if <  > then
                 end
                 """.stripIndent();
-        final ScriptEntity script = getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         assertEquals(2, script.getStmtList().getStmts().size());
         assertAll(
@@ -687,7 +680,7 @@ class ScratchBlocksToScratchVisitorTest {
                 stop [all v]
                 end
                 """.stripIndent();
-        final ScriptEntity script = getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         // in case of matching the wrong end to the first if, we would get some custom block call stmts in between
         assertEquals(3, script.getStmtList().getStmts().size());
@@ -707,7 +700,7 @@ class ScratchBlocksToScratchVisitorTest {
                 if <> then
                 end
                 """.stripIndent();
-        final ScriptEntity script = getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         assertEquals(2, script.getStmtList().getStmts().size());
         assertAll(
@@ -736,7 +729,7 @@ class ScratchBlocksToScratchVisitorTest {
     @ValueSource(strings = {"loudness", "timer"})
     void testBiggerThanEvent(final String choice) {
         final String scratchBlocks = String.format("when [%s v] > (10)", choice);
-        final Script script = (Script) getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         final Event event = script.getEvent();
         assertInstanceOf(AttributeAboveValue.class, event);

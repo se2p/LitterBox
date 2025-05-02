@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
@@ -50,6 +51,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,16 +69,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ScratchBlocksParser {
 
     // todo: probably similar methods for whole actors and programs?
-    public ScriptEntity parseScript(final String scratchBlocksCode) {
+    public Script parseScript(final String scratchBlocksCode) {
         return parseScript(scratchBlocksCode, new AtomicBoolean(false));
     }
 
     public Program extendProject(Program baseProject, String actorName, String additionalCode) {
         CloneVisitor cloneVisitor = new CloneVisitor();
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
-        ScriptList additionalScripts = parseScriptList(additionalCode, actorName);
-        addNewFields(additionalScripts, extendedProject);
-        List<Script> newScripts = new ArrayList<>(additionalScripts.getScriptList());
+        ActorContent additionalContent = parseActorContent(additionalCode, actorName);
+        addNewFields(additionalContent, extendedProject);
+        // todo: also handle procedures
+        List<Script> newScripts = new ArrayList<>(additionalContent.scripts().getScriptList());
         newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
                 AstNodeUtil.findActorByName(extendedProject, actorName).getScripts(), new ScriptList(List.copyOf(newScripts)));
@@ -84,26 +87,31 @@ public class ScratchBlocksParser {
         return (Program) extendedProject.accept(scriptsReplacementVisitor);
     }
 
-    private void addNewFields(ScriptList additionalScripts, Program extendedProject) {
-        addQualifiedDataExpressions(additionalScripts, extendedProject);
-        addMessages(additionalScripts, extendedProject);
+    private void addNewFields(ActorContent additionalContent, Program extendedProject) {
+        addQualifiedDataExpressions(additionalContent, extendedProject);
+        addMessages(additionalContent, extendedProject);
     }
 
-    private void addMessages(ScriptList additionalScripts, Program extendedProject) {
-        List<Message> messages = NodeFilteringVisitor.getBlocks(additionalScripts, Message.class);
+    private void addMessages(ActorContent additionalContent, Program extendedProject) {
+        List<Message> messages = new ArrayList<>();
+        messages.addAll(NodeFilteringVisitor.getBlocks(additionalContent.scripts(), Message.class));
+        messages.addAll(NodeFilteringVisitor.getBlocks(additionalContent.procedures(), Message.class));
+
         SymbolTable symbolTable = extendedProject.getSymbolTable();
 
         for (Message message : messages) {
-            if (message.getMessage() instanceof StringLiteral text) {
-                if (symbolTable.getMessage(text.getText()).isEmpty()) {
-                    symbolTable.addMessage(text.getText(), message, true, "Stage", CloneVisitor.generateUID());
-                }
+            if (message.getMessage() instanceof StringLiteral text
+                    && symbolTable.getMessage(text.getText()).isEmpty()) {
+                symbolTable.addMessage(text.getText(), message, true, "Stage", CloneVisitor.generateUID());
             }
         }
     }
 
-    private void addQualifiedDataExpressions(ScriptList additionalScripts, Program extendedProject) {
-        List<Qualified> qualifieds = NodeFilteringVisitor.getBlocks(additionalScripts, Qualified.class);
+    private void addQualifiedDataExpressions(ActorContent additionalContent, Program extendedProject) {
+        List<Qualified> qualifieds = new ArrayList<>();
+        qualifieds.addAll(NodeFilteringVisitor.getBlocks(additionalContent.scripts(), Qualified.class));
+        qualifieds.addAll(NodeFilteringVisitor.getBlocks(additionalContent.procedures(), Qualified.class));
+
         SymbolTable symbolTable = extendedProject.getSymbolTable();
         for (Qualified qualified : qualifieds) {
             String actorInQualified = qualified.getFirst().getName();
@@ -129,11 +137,13 @@ public class ScratchBlocksParser {
         }
     }
 
-    public ScriptList parseScriptList(final String scratchBlocksCode) {
-        return parseScriptList(scratchBlocksCode, "Stage");
+    public record ActorContent(ScriptList scripts, ProcedureDefinitionList procedures) {}
+
+    public ActorContent parseActorContent(final String scratchBlocksCode) {
+        return parseActorContent(scratchBlocksCode, "Stage");
     }
 
-    public ScriptList parseScriptList(final String scratchBlocksCode, String actorName) {
+    public ActorContent parseActorContent(final String scratchBlocksCode, String actorName) {
         ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
             Script script = new Script(new Never(), new StmtList());
@@ -141,21 +151,20 @@ public class ScratchBlocksParser {
             List<Script> scripts = new ArrayList<>();
             scripts.add(script);
             ScriptList scriptList = new ScriptList(scripts);
-            return scriptList;
+            return new ActorContent(scriptList, new ProcedureDefinitionList(Collections.emptyList()));
         }
 
         final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
                 new AtomicBoolean(false), scratchBlocksCode
         );
-        final ParseTree tree = parser.scriptList();
+        final ParseTree tree = parser.actorContent();
 
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
         vis.setCurrentActor(actorName);
         final ASTNode node = vis.visit(tree);
 
-        if (node instanceof ScriptList scriptList) {
-            scriptList.accept(visitor);
-            return scriptList;
+        if (node instanceof ActorContentHelperNode actorContentHelperNode) {
+            return new ActorContent(actorContentHelperNode.scripts(), actorContentHelperNode.procedures());
         } else if (node == null) {
             return null;
         } else {
@@ -175,7 +184,7 @@ public class ScratchBlocksParser {
      * @param cancelMarker      Will try to interrupt the parsing when this marker gets set to {@code true}.
      * @return The parsed script or custom procedure definition.
      */
-    public ScriptEntity parseScript(final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
+    public Script parseScript(final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
         ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
             Script script = new Script(new Never(), new StmtList());
@@ -191,7 +200,7 @@ public class ScratchBlocksParser {
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
         final ASTNode node = vis.visit(tree);
 
-        if (node instanceof ScriptEntity script) {
+        if (node instanceof Script script) {
             script.accept(visitor);
             return script;
         } else if (node == null) {

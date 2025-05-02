@@ -36,19 +36,17 @@ grammar ScratchBlocks;
 
 // Define the entry point for the parser
 program                 : actorList EOF
-                        | scriptList EOF
+                        | actorContent EOF
                         | EOF
                         ;
 
 actorList               : (actor)+;
 
-actor                   : BEGIN_ACTOR scriptList NEWLINE*;
+actor                   : BEGIN_ACTOR actorContent NEWLINE*;
 
-
-scriptList              : (script ((COMMENT? NEWLINE)+)?)*;
+actorContent            : ((customBlock | script) (((COMMENT? NEWLINE)+) | EOF))*?;
 
 script                  : expressionStmt NEWLINE
-                        | customBlock
                         | event NEWLINE (nonEmptyStmtList | stmtList)
                         | nonEmptyStmtList
                         ;
@@ -81,7 +79,7 @@ customBlockCallParam    : exprOrLiteral stringArgument;
 
 customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
 
-nonEmptyStmtList        : (WS* stmt NEWLINE)+;
+nonEmptyStmtList        : (WS* stmt NEWLINE)+?;
 
 stmtList                : (WS* stmt NEWLINE)*?;
 
