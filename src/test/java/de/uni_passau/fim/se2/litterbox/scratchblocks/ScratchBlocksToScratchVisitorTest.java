@@ -18,13 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -598,7 +604,8 @@ class ScratchBlocksToScratchVisitorTest {
     void emptyCustomProcedureDefinition(final String definition) {
         final ProcedureDefinition procDef = parseProcDef(definition);
 
-        assertEquals(definition.replace("define ", "").trim(), procDef.getIdent().getName());
+        assertEquals(definition.replace("define ", "").replace("(sP)", "%s")
+                .replace("(bP)", "%s").replace("<bP>", "%b").trim(), procDef.getIdent().getName());
     }
 
     @Test

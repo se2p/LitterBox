@@ -41,7 +41,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -159,7 +162,17 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         final StringBuilder sb = new StringBuilder();
 
         for (final var param : ctx.customBlockParameter()) {
-            sb.append(param.getText());
+            if (param.stringArgument() != null) {
+                sb.append(param.stringArgument().getText());
+            }
+            if (param.parameter() != null) {
+                if (param.parameter().boolParam() != null) {
+                    sb.append("%b");
+                }
+                if (param.parameter().stringParam() != null) {
+                    sb.append("%s");
+                }
+            }
         }
 
         if (ctx.suffix != null) {

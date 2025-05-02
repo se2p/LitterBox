@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -119,5 +120,27 @@ public class ScratchBlocksParserTest implements JsonTest {
         Message message = broadcast.getMessage();
         Assertions.assertEquals("newMessage", ((StringLiteral) message.getMessage()).getText());
         Assertions.assertTrue(newProgram.getSymbolTable().getMessage("newMessage").isPresent());
+    }
+
+    @Test
+    void testAddNewProcedureToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(0, program.getProcedureMapping().getProcedures().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "define test\n");
+        Assertions.assertEquals(1, newProgram.getProcedureMapping().getProcedures().size());
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().size());
+    }
+
+    @Test
+    void testAddNewProcedureWithParamToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(0, program.getProcedureMapping().getProcedures().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "define test (schritte) steps <evtl> do\n");
+        Assertions.assertEquals(1, newProgram.getProcedureMapping().getProcedures().size());
+        Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().size());
+        ProcedureDefinition procedureDefinition = newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
+        Assertions.assertEquals(2, procedureDefinition.getParameterDefinitionList().getParameterDefinitions().size());
     }
 }

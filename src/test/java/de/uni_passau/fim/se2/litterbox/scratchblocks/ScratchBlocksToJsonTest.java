@@ -24,8 +24,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
@@ -231,6 +233,22 @@ class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (newMessage v)\n");
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAddNewProcedureToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "define test\n");
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAddNewProcedureWithParamToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "define test (schritte) steps <evtl> do\n");
         writeJsonFromProgram(newProgram);
     }
 

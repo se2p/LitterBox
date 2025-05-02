@@ -25,12 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -78,13 +80,29 @@ public class ScratchBlocksParser {
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
         ActorContent additionalContent = parseActorContent(additionalCode, actorName);
         addNewFields(additionalContent, extendedProject);
-        // todo: also handle procedures
+        addNewProcedureInfo(additionalContent.procedures().getList(), extendedProject.getProcedureMapping(), actorName);
+
         List<Script> newScripts = new ArrayList<>(additionalContent.scripts().getScriptList());
         newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
+
+        List<ProcedureDefinition> newProcedures = new ArrayList<>(additionalContent.procedures().getList());
+        newProcedures.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getProcedureDefinitionList().getList());
+
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
                 AstNodeUtil.findActorByName(extendedProject, actorName).getScripts(), new ScriptList(List.copyOf(newScripts)));
-        //todo handle messages, variables, lists
-        return (Program) extendedProject.accept(scriptsReplacementVisitor);
+
+        Program newExtendedProject = (Program) extendedProject.accept(scriptsReplacementVisitor);
+
+        final NodeReplacementVisitor procedureReplacementVisitor = new NodeReplacementVisitor(
+                AstNodeUtil.findActorByName(newExtendedProject, actorName).getProcedureDefinitionList(), new ProcedureDefinitionList(List.copyOf(newProcedures)));
+
+        return (Program) newExtendedProject.accept(procedureReplacementVisitor);
+    }
+
+    private void addNewProcedureInfo(List<ProcedureDefinition> procedures, ProcedureDefinitionNameMapping procedureMapping, String actorName) {
+        for (ProcedureDefinition procedure : procedures) {
+            procedureMapping.addProcedure(procedure.getIdent(), actorName, procedure.getIdent().getName(), procedure.getParameterDefinitionList());
+        }
     }
 
     private void addNewFields(ActorContent additionalContent, Program extendedProject) {
@@ -137,7 +155,8 @@ public class ScratchBlocksParser {
         }
     }
 
-    public record ActorContent(ScriptList scripts, ProcedureDefinitionList procedures) {}
+    public record ActorContent(ScriptList scripts, ProcedureDefinitionList procedures) {
+    }
 
     public ActorContent parseActorContent(final String scratchBlocksCode) {
         return parseActorContent(scratchBlocksCode, "Stage");
