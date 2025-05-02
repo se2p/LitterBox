@@ -198,7 +198,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
                 (round ())
                 """.stripIndent()
                 // add empty lines between ExprStmts so that they are properly parsed as separate scripts
-                .replace(System.lineSeparator(), System.lineSeparator() + System.lineSeparator());
+                .replace("\n", "\n\n");
         ScriptList scriptList = getScriptList(scriptCode);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < scriptList.getSize() - 1; i++) {
