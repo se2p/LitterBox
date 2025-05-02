@@ -67,6 +67,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import org.junit.jupiter.api.Test;
@@ -243,8 +244,7 @@ class ScratchBlocksToScratchVisitorTest {
         if ("=".equals(operator)) {
             assertHasExprStmt(getStmtList(expr), expressionType);
         } else {
-            // fixme: this should probably not be parsed at all
-            assertStatementType(expr, CallStmt.class);
+            assertHasExprStmt(getStmtList(expr), Parameter.class);
         }
     }
 

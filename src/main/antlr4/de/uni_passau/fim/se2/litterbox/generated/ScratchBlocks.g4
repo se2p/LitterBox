@@ -395,6 +395,7 @@ boolExpr                : empty=WS*
                         | not
                         | contains
                         | listContains
+                        | procDefParam=stringArgument
                         ;
 
 binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or='or') WS?) | (lt=' < ' | gt=' > ')) secondExpr=exprOrLiteral;

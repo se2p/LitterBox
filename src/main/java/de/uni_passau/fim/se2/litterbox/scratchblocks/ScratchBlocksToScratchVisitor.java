@@ -72,6 +72,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
@@ -983,6 +984,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public IsMouseDown visitMouseDown(ScratchBlocksParser.MouseDownContext ctx) {
         return new IsMouseDown(handleExprBlockMetadata());
+    }
+
+    @Override
+    public ASTNode visitBoolExpr(ScratchBlocksParser.BoolExprContext ctx) {
+        if (ctx.procDefParam != null) {
+            final StringLiteral name = visitStringArgument(ctx.procDefParam);
+            return new Parameter(new StrId(name), new BooleanType(), handleExprBlockMetadata());
+        } else {
+            return super.visitBoolExpr(ctx);
+        }
     }
 
     @Override
