@@ -258,8 +258,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", scriptCode);
-        //writeJsonFromProgram(newProgram);
-        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+        writeJsonFromProgram(newProgram);
     }
 
     @Test
