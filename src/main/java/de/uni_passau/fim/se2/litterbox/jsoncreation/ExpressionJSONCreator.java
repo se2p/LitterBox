@@ -588,6 +588,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(listName).append("\",\"");
                 jsonString.append(listId)
+                        .append("\",\"")
+                        .append(dataBlockMetadata.getCommentId())
                         .append("\",")
                         .append(dataBlockMetadata.getX())
                         .append(",")
@@ -605,6 +607,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(variableName).append("\",\"");
                 jsonString.append(variableId)
+                        .append("\",\"")
+                        .append(dataBlockMetadata.getCommentId())
                         .append("\",")
                         .append(dataBlockMetadata.getX())
                         .append(",")

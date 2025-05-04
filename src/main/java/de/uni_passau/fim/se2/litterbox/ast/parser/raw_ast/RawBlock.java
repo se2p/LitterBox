@@ -131,7 +131,11 @@ public sealed interface RawBlock {
 
     record RawBroadcast(String name, RawBlockId id) implements ArrayBlock {}
 
-    record RawVariable(String name, RawBlockId id, Optional<Coordinates> coordinates) implements ArrayBlock {}
+    record RawVariable(String name, RawBlockId id, Optional<RawBlockId> comment,
+                       Optional<Coordinates> coordinates) implements ArrayBlock {
+    }
 
-    record RawList(String name, RawBlockId id, Optional<Coordinates> coordinates) implements ArrayBlock {}
+    record RawList(String name, RawBlockId id, Optional<RawBlockId> comment,
+                   Optional<Coordinates> coordinates) implements ArrayBlock {
+    }
 }

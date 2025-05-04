@@ -20,7 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
@@ -88,18 +91,29 @@ class RawBlockDeserializer extends JsonDeserializer<RawBlock> {
         final RawBlockId id = new RawBlockId(root.get(2).asText());
 
         final Optional<Coordinates> coordinates;
-        if (root.size() == 5) {
+        final Optional<RawBlockId> commentId;
+        if (root.size() == 6) {
+            commentId = Optional.of(new RawBlockId(root.get(3).asText()));
+            final double x = root.get(4).asDouble();
+            final double y = root.get(5).asDouble();
+            coordinates = Optional.of(new Coordinates(x, y));
+        } else if (root.size() == 5) {
             final double x = root.get(3).asDouble();
             final double y = root.get(4).asDouble();
             coordinates = Optional.of(new Coordinates(x, y));
+            commentId = Optional.empty();
+        } else if (root.size() == 4) {
+            commentId = Optional.of(new RawBlockId(root.get(3).asText()));
+            coordinates = Optional.empty();
         } else {
             coordinates = Optional.empty();
+            commentId = Optional.empty();
         }
 
         if (blockType == 12) {
-            return new RawBlock.RawVariable(name, id, coordinates);
+            return new RawBlock.RawVariable(name, id, commentId, coordinates);
         } else {
-            return new RawBlock.RawList(name, id, coordinates);
+            return new RawBlock.RawList(name, id, commentId, coordinates);
         }
     }
 }
