@@ -31,10 +31,10 @@ public class AttributeAboveValueTest implements JsonTest {
     @Test
     public void testEvent() throws IOException, ParsingException {
         Program project = getAST("src/test/fixtures/valueAbove.json");
-        Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent() instanceof AttributeAboveValue);
+        Assertions.assertInstanceOf(AttributeAboveValue.class, project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent());
         Assertions.assertEquals("loudness",
                 ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent()).getAttribute().getTypeName());
-        Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent() instanceof AttributeAboveValue);
+        Assertions.assertInstanceOf(AttributeAboveValue.class, project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent());
         Assertions.assertEquals("timer",
                 ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent()).getAttribute().getTypeName());
     }

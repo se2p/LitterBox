@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeDeletionVisitorTest implements JsonTest {
@@ -50,21 +51,21 @@ public class NodeDeletionVisitorTest implements JsonTest {
         Program programCopy = deletionVisitor.apply(program);
 
         MoveSteps statements2 = (MoveSteps) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(0);
-        assertTrue(statements2.getSteps() instanceof NumberLiteral);
+        assertInstanceOf(NumberLiteral.class, statements2.getSteps());
 
         LessThan lessThan = (LessThan) ((UntilStmt) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(1)).getBoolExpr();
         deletionVisitor = new NodeDeletionVisitor(lessThan);
         programCopy = deletionVisitor.apply(program);
 
         UntilStmt until = (UntilStmt) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(1);
-        assertTrue(until.getBoolExpr() instanceof UnspecifiedBoolExpr);
+        assertInstanceOf(UnspecifiedBoolExpr.class, until.getBoolExpr());
 
         Equals eq = (Equals) ((WaitUntil) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(2)).getUntil();
-        assertTrue(eq.getOperand1() instanceof Qualified);
+        assertInstanceOf(Qualified.class, eq.getOperand1());
         deletionVisitor = new NodeDeletionVisitor(eq.getOperand1());
         programCopy = deletionVisitor.apply(program);
 
         Equals equals = (Equals) ((WaitUntil) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(2)).getUntil();
-        assertTrue(equals.getOperand1() instanceof StringLiteral);
+        assertInstanceOf(StringLiteral.class, equals.getOperand1());
     }
 }

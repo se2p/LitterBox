@@ -32,6 +32,7 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MergeEventsIntoForeverTest implements JsonTest {
@@ -65,7 +66,7 @@ public class MergeEventsIntoForeverTest implements JsonTest {
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
         Stmt stmt = refactoredStmtList.get(0);
-        assertTrue(stmt instanceof RepeatForeverStmt);
+        assertInstanceOf(RepeatForeverStmt.class, stmt);
     }
 
 }

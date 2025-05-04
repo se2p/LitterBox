@@ -59,14 +59,14 @@ public class ActorLookStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(AskAndWait.class);
-        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(SwitchBackdrop.class);
-        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ShowVariable.class);
-        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(HideVariable.class);
-        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(ShowList.class);
-        Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(HideList.class);
-        Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ClearGraphicEffects.class);
-        Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(StopAll.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(AskAndWait.class);
+        Truth.assertThat(listOfStmt.get(1)).isInstanceOf(SwitchBackdrop.class);
+        Truth.assertThat(listOfStmt.get(2)).isInstanceOf(ShowVariable.class);
+        Truth.assertThat(listOfStmt.get(3)).isInstanceOf(HideVariable.class);
+        Truth.assertThat(listOfStmt.get(4)).isInstanceOf(ShowList.class);
+        Truth.assertThat(listOfStmt.get(5)).isInstanceOf(HideList.class);
+        Truth.assertThat(listOfStmt.get(6)).isInstanceOf(ClearGraphicEffects.class);
+        Truth.assertThat(listOfStmt.get(7)).isInstanceOf(StopAll.class);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt askAndWaitStmt = listOfStmt.get(0);
-        Truth.assertThat(askAndWaitStmt.getClass()).isEqualTo(AskAndWait.class);
+        Truth.assertThat(askAndWaitStmt).isInstanceOf(AskAndWait.class);
         Truth.assertThat(((StringLiteral) ((AskAndWait) askAndWaitStmt).getQuestion()).getText())
                 .isEqualTo("What's your name?");
     }
@@ -94,7 +94,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt switchBackropStmt = listOfStmt.get(1);
-        Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
+        Truth.assertThat(switchBackropStmt).isInstanceOf(SwitchBackdrop.class);
 
         ElementChoice elementChoice = ((SwitchBackdrop) switchBackropStmt).getElementChoice();
         Expression expression = ((WithExpr) elementChoice).getExpression();
@@ -113,7 +113,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt switchBackdrop = listOfStmt.get(1);
-        BlockMetadata metadata = ((SwitchBackdrop) switchBackdrop).getMetadata();
+        BlockMetadata metadata = switchBackdrop.getMetadata();
         Truth.assertThat(metadata).isInstanceOf(NonDataBlockMetadata.class);
     }
 
@@ -127,7 +127,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt showVariable = listOfStmt.get(2);
-        Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
+        Truth.assertThat(showVariable).isInstanceOf(ShowVariable.class);
         Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getFirst().getName())
                 .isEqualTo("Stage");
         Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getSecond().getName().getName())
@@ -150,7 +150,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt showVariable = listOfStmt.get(4);
-        Truth.assertThat(showVariable.getClass()).isEqualTo(ShowList.class);
+        Truth.assertThat(showVariable).isInstanceOf(ShowList.class);
         Truth.assertThat(((Qualified) ((ShowList) showVariable).getIdentifier()).getFirst().getName())
                 .isEqualTo("Stage");
         Truth.assertThat(((Qualified) ((ShowList) showVariable).getIdentifier()).getSecond().getName().getName())

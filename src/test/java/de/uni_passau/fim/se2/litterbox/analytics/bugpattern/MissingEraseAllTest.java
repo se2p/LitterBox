@@ -45,6 +45,6 @@ public class MissingEraseAllTest implements JsonTest {
     @Test
     public void testName() {
         MissingEraseAll parameterName = new MissingEraseAll();
-        Assertions.assertEquals(parameterName.getName(), MissingEraseAll.NAME);
+        Assertions.assertEquals(MissingEraseAll.NAME, parameterName.getName());
     }
 }

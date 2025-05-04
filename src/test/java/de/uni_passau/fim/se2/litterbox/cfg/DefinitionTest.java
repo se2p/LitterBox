@@ -99,10 +99,10 @@ public class DefinitionTest implements JsonTest {
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
         assertThat(getDefinitions(node)).hasSize(1);
-        Variable var = getDefinitions(node).iterator().next();
+        Variable variable = getDefinitions(node).iterator().next();
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
-        assertThat(getDefinitions(node)).containsExactly(var);
+        assertThat(getDefinitions(node)).containsExactly(variable);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
         assertThat(getDefinitions(node)).isEmpty();
@@ -121,10 +121,10 @@ public class DefinitionTest implements JsonTest {
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
         assertThat(getDefinitions(node).size()).isEqualTo(1);
-        Variable var = getDefinitions(node).iterator().next();
+        Variable variable = getDefinitions(node).iterator().next();
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
-        assertThat(getDefinitions(node)).containsExactly(var);
+        assertThat(getDefinitions(node)).containsExactly(variable);
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getDefinitions(node)).isEmpty();
 

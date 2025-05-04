@@ -55,7 +55,7 @@ class DataExprParserTest implements JsonTest {
                 Expression param = setVariableTo.getExpr();
                 assertInstanceOf(Parameter.class, param);
                 assertEquals("input", ((Parameter) param).getName().getName());
-                assertEquals(NonDataBlockMetadata.class, param.getMetadata().getClass());
+                assertInstanceOf(NonDataBlockMetadata.class, param.getMetadata());
             }
         }
     }

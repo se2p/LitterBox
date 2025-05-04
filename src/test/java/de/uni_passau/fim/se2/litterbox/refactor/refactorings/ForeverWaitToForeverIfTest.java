@@ -64,7 +64,7 @@ public class ForeverWaitToForeverIfTest implements JsonTest {
             assertThat(foreverStmt.getStmtList().getNumberOfStatements()).isEqualTo(1);
 
             IfThenStmt ifThenStmt = (IfThenStmt) foreverStmt.getStmtList().getStatement(0);
-            assertThat(ifThenStmt.getBoolExpr().equals(waitUntil.getUntil()));
+            assertThat(ifThenStmt.getBoolExpr()).isEqualTo(waitUntil.getUntil());
 
             assertThat(ifThenStmt.getThenStmts().getNumberOfStatements()).isEqualTo(loopStmt.getStmtList().getNumberOfStatements() - 1);
         }
