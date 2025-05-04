@@ -438,7 +438,6 @@ numExpr                 : xPosition
                         | round
                         | itemAtIndex
                         | indexOfItem
-                        | lengthOfList
                         ;
 
 binaryNumExpr           : firstExpr=exprOrLiteral WS? (add='+' | sub='-' | mult='*' | div='/' | mod='mod') WS? secondExpr=exprOrLiteral;
@@ -463,12 +462,11 @@ userName                : 'username';
 pickRandom              : 'pick random 'firstExpr=exprOrLiteral WS 'to' WS secondExpr=exprOrLiteral;
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral WS 'of' WS secondExpr=exprOrLiteral;
-lengthOf                : 'length of 'exprOrLiteral;
+lengthOf                : 'length of' WS (stringExpr=exprOrLiteral | '[' listVar=stringArgument ' v]');
 round                   : 'round 'exprOrLiteral;
 mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral WS 'of' WS '['stringArgument' v]';
 indexOfItem             : 'item # of 'exprOrLiteral WS 'in' WS '[' stringArgument' v]';
-lengthOfList            : 'length of' WS '[' stringArgument' v]';
 
 element                 : '('stringArgument' v)'
                         | exprOrLiteral;

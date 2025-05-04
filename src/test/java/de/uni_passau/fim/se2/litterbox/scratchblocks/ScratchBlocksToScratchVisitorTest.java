@@ -870,9 +870,23 @@ class ScratchBlocksToScratchVisitorTest {
         final Qualified qualified = assertHasExprStmt(statements, Qualified.class);
         assertInstanceOf(Variable.class, qualified.getSecond());
 
-        Variable var = (Variable) qualified.getSecond();
-        assertEquals("len", var.getName().getName());
-        Assertions.assertInstanceOf(DataBlockMetadata.class, var.getMetadata());
+        Variable variable = (Variable) qualified.getSecond();
+        assertEquals("len", variable.getName().getName());
+        assertInstanceOf(DataBlockMetadata.class, variable.getMetadata());
+    }
+
+    @Test
+    void testLengthOfListExpr() {
+        StmtList stmtList = getStmtList("(length of [list var v])");
+        final LengthOfVar lengthOfVar = assertHasExprStmt(stmtList, LengthOfVar.class);
+        assertInstanceOf(Qualified.class, lengthOfVar.getIdentifier());
+        final Qualified qualified = (Qualified) lengthOfVar.getIdentifier();
+        assertInstanceOf(ScratchList.class, qualified.getSecond());
+
+        ScratchList list = (ScratchList) qualified.getSecond();
+        assertEquals("list var", list.getName().getName());
+
+        assertInstanceOf(TopNonDataBlockMetadata.class, lengthOfVar.getMetadata());
     }
 
     // region: common helper methods

@@ -1221,8 +1221,16 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     }
 
     @Override
-    public LengthOfString visitLengthOf(ScratchBlocksParser.LengthOfContext ctx) {
-        return new LengthOfString(makeStringExpr(ctx.exprOrLiteral()), handleExprBlockMetadata());
+    public NumExpr visitLengthOf(ScratchBlocksParser.LengthOfContext ctx) {
+        if (ctx.stringExpr != null) {
+            return new LengthOfString(makeStringExpr(ctx.stringExpr), handleExprBlockMetadata());
+        } else {
+            final Qualified variable = new Qualified(
+                    currentActor,
+                    new ScratchList(new StrId(visitStringArgument(ctx.listVar)))
+            );
+            return new LengthOfVar(variable, handleExprBlockMetadata());
+        }
     }
 
     @Override
@@ -1258,11 +1266,6 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
                 new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleExprBlockMetadata()
         );
-    }
-
-    @Override
-    public LengthOfVar visitLengthOfList(ScratchBlocksParser.LengthOfListContext ctx) {
-        return new LengthOfVar(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleExprBlockMetadata());
     }
 
     //end subregion: num expressions
