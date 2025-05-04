@@ -70,6 +70,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -624,6 +625,32 @@ class ScratchBlocksToScratchVisitorTest {
         );
     }
 
+    @Test
+    void customProcedureDefinitionParametersInBody() {
+        final ProcedureDefinition procDef = parseProcDef("""
+                define abc (sp) bcd <bp>
+                say (sp)
+                wait until <bp>
+                """);
+
+        Assertions.assertInstanceOf(Say.class, procDef.getStmtList().getStatement(0));
+        Say say = (Say) procDef.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AsString.class, say.getString());
+        AsString asString = (AsString) say.getString();
+        Assertions.assertInstanceOf(Parameter.class, asString.getOperand1());
+        Parameter param = (Parameter) asString.getOperand1();
+        Assertions.assertInstanceOf(StringType.class, param.getType());
+        Assertions.assertEquals("sp", param.getName().getName());
+        Assertions.assertInstanceOf(WaitUntil.class, procDef.getStmtList().getStatement(1));
+        WaitUntil waitUntil = (WaitUntil) procDef.getStmtList().getStatement(1);
+        Assertions.assertInstanceOf(AsBool.class, waitUntil.getUntil());
+        AsBool asBool = (AsBool) waitUntil.getUntil();
+        Assertions.assertInstanceOf(Parameter.class, asBool.getOperand1());
+        param = (Parameter) asBool.getOperand1();
+        Assertions.assertInstanceOf(BooleanType.class, param.getType());
+        Assertions.assertEquals("bp", param.getName().getName());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"abc", "123", "ab3", "with spaces"})
     void testCustomBlockCallNoParameters(final String blockName) {
@@ -834,6 +861,16 @@ class ScratchBlocksToScratchVisitorTest {
 
         final AttributeFromFixed attr = (AttributeFromFixed) numFunct.getAttribute();
         assertEquals(FixedAttribute.FixedAttributeType.SIZE, attr.getAttribute().getType());
+    }
+
+    @Test
+    void testVariableExpr() {
+        StmtList statements = getStmtList("(len)");
+        final Qualified qualified = assertHasExprStmt(statements, Qualified.class);
+        assertInstanceOf(Variable.class, qualified.getSecond());
+
+        Variable var = (Variable) qualified.getSecond();
+        assertEquals("len", var.getName().getName());
     }
 
     // region: common helper methods

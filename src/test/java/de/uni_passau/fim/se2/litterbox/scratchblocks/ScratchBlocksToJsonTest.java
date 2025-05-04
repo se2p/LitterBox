@@ -24,10 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
@@ -221,6 +219,62 @@ class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     @Test
+    void testNewVariableStmtInProject() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nset [NewSpriteVariable v] to (10)\n");
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAllVariableStmtInProject() throws IOException, ParsingException {
+        final String scriptCode = """
+                set [newVar v] to (10)
+                change [newVar v] by (10)
+                show variable [newVar v]
+                hide variable [newVar v]
+                add [thing] to [newList v]
+                delete (1) of [newList v]
+                insert [thing] at (1) of [newList v]
+                replace item (1) of [newList v] with [thing]
+                show list [newList v]
+                hide list [newList v]
+                """.stripIndent();
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", scriptCode);
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAllVariableExprInProject() throws IOException, ParsingException {
+        /*
+        final String scriptCode = """
+                (item (1) of [newList v])
+                (item # of [thing] in [newList v])
+                (length of [newList v])
+                <[newList v] contains [thing]?>
+                """.stripIndent().replace("\n", "\n\n");
+
+         */
+
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "(length of [newList v])\n");
+        //writeJsonFromProgram(newProgram);
+        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+    }
+
+    @Test
+    void testAllVariable() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "(len)\n");
+        //writeJsonFromProgram(newProgram);
+        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+    }
+
+    @Test
     void testNewListInProject() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
@@ -249,6 +303,35 @@ class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "define test (schritte) steps <evtl> do\n");
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAddNewProcedureWithParamInBodyToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        final String additionalCode = """
+                define abc (sp) bcd <bp>
+                say (sp)
+                wait until <bp>
+                """;
+        Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAddNewProcedureWithParamInBodyAndCallToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        final String additionalCode = """
+                define abc (sp) bcd <bp>
+                say (sp)
+                wait until <bp>
+
+                when green flag clicked
+                abc (10) bcd <mouse down?>
+                """;
+        Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
         writeJsonFromProgram(newProgram);
     }
 

@@ -94,6 +94,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     private boolean topStmtBlock = false;
     private boolean topExprBlock = false;
+    private boolean insideProcedure = false;
+    private List<String> stringProcedureParameters = new ArrayList<>();
 
     public void setCurrentActor(String currentActor) {
         this.currentActor = new StrId(new StringLiteral(currentActor));
@@ -149,8 +151,11 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ProcedureDefinition visitCustomBlock(ScratchBlocksParser.CustomBlockContext ctx) {
         final LocalIdentifier name = buildCustomBlockDefName(ctx);
+        stringProcedureParameters = new ArrayList<>();
         final ParameterDefinitionList parameters = buildParameters(ctx);
+        insideProcedure = true;
         final StmtList stmtList = visitStmtList(ctx.stmtList());
+        insideProcedure = false;
         final ProcedureMutationMetadata prototypeMutation = new ProcedureMutationMetadata(false);//todo do we need to change warp anytime?
         final NonDataBlockMetadata prototypeMetadata = new NonDataBlockMetadata("", CloneVisitor.generateUID(),
                 true, prototypeMutation);
@@ -212,7 +217,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ParameterDefinition visitStringParam(ScratchBlocksParser.StringParamContext ctx) {
-        final LocalIdentifier name = new StrId(visitStringArgument(ctx.stringArgument()));
+        StringLiteral paramName = visitStringArgument(ctx.stringArgument());
+        stringProcedureParameters.add(paramName.getText());
+        final LocalIdentifier name = new StrId(paramName);
         return new ParameterDefinition(name, new StringType(), handleExprBlockMetadata(true));
     }
 
@@ -802,7 +809,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public SetVariableTo visitSetVar(ScratchBlocksParser.SetVarContext ctx) {
         return new SetVariableTo(
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
                 handleStmtBlockMetadata()
         );
@@ -811,7 +818,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ChangeVariableBy visitChangeVar(ScratchBlocksParser.ChangeVarContext ctx) {
         return new ChangeVariableBy(
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
                 handleStmtBlockMetadata()
         );
@@ -819,19 +826,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ShowVariable visitShowVar(ScratchBlocksParser.ShowVarContext ctx) {
-        return new ShowVariable(new StrId(visitStringArgument(ctx.stringArgument())), handleStmtBlockMetadata());
+        return new ShowVariable(new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
     }
 
     @Override
     public HideVariable visitHideVar(ScratchBlocksParser.HideVarContext ctx) {
-        return new HideVariable(new StrId(visitStringArgument(ctx.stringArgument())), handleStmtBlockMetadata());
+        return new HideVariable(new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
     }
 
     @Override
     public AddTo visitAddToList(ScratchBlocksParser.AddToListContext ctx) {
         return new AddTo(
                 makeStringExpr(ctx.exprOrLiteral()),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleStmtBlockMetadata()
         );
     }
@@ -840,14 +847,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public DeleteOf visitDeleteFromList(ScratchBlocksParser.DeleteFromListContext ctx) {
         return new DeleteOf(
                 makeNumExpr(ctx.exprOrLiteral()),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleStmtBlockMetadata()
         );
     }
 
     @Override
     public DeleteAllOf visitDeleteAllOfList(ScratchBlocksParser.DeleteAllOfListContext ctx) {
-        return new DeleteAllOf(new StrId(visitStringArgument(ctx.stringArgument())), handleStmtBlockMetadata());
+        return new DeleteAllOf(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
     }
 
     @Override
@@ -855,7 +862,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new InsertAt(
                 makeStringExpr(ctx.insertion),
                 makeNumExpr(ctx.location),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleStmtBlockMetadata()
         );
     }
@@ -865,19 +872,19 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         return new ReplaceItem(
                 makeStringExpr(ctx.newItem),
                 makeNumExpr(ctx.oldItem),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleStmtBlockMetadata()
         );
     }
 
     @Override
     public ShowList visitShowList(ScratchBlocksParser.ShowListContext ctx) {
-        return new ShowList(new StrId(visitStringArgument(ctx.stringArgument())), handleStmtBlockMetadata());
+        return new ShowList(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
     }
 
     @Override
     public HideList visitHideList(ScratchBlocksParser.HideListContext ctx) {
-        return new HideList(new StrId(visitStringArgument(ctx.stringArgument())), handleStmtBlockMetadata());
+        return new HideList(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
     }
     //end subregion: variable blocks
 
@@ -1038,7 +1045,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public ListContains visitListContains(ScratchBlocksParser.ListContainsContext ctx) {
         return new ListContains(
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 visitExprOrLiteral(ctx.exprOrLiteral()),
                 handleExprBlockMetadata()
         );
@@ -1242,7 +1249,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public ItemOfVariable visitItemAtIndex(ScratchBlocksParser.ItemAtIndexContext ctx) {
         return new ItemOfVariable(
                 makeNumExpr(ctx.exprOrLiteral()),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleExprBlockMetadata()
         );
     }
@@ -1251,14 +1258,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     public IndexOf visitIndexOfItem(ScratchBlocksParser.IndexOfItemContext ctx) {
         return new IndexOf(
                 visitExprOrLiteral(ctx.exprOrLiteral()),
-                new StrId(visitStringArgument(ctx.stringArgument())),
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
                 handleExprBlockMetadata()
         );
     }
 
     @Override
     public LengthOfVar visitLengthOfList(ScratchBlocksParser.LengthOfListContext ctx) {
-        return new LengthOfVar(new StrId(visitStringArgument(ctx.stringArgument())), handleExprBlockMetadata());
+        return new LengthOfVar(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleExprBlockMetadata());
     }
 
     //end subregion: num expressions
@@ -1286,8 +1293,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             final ScratchList list = new ScratchList(new StrId(ctx.stringArgument().getText()));
             return new Qualified(currentActor, list);
         } else if (ctx.stringArgument() != null) {
-            final Variable variable = new Variable(new StrId(visitStringArgument(ctx.stringArgument())));
-            return new Qualified(currentActor, variable);
+            StringLiteral name = visitStringArgument(ctx.stringArgument());
+            StrId id = new StrId(name);
+            if (insideProcedure && !stringProcedureParameters.isEmpty() && stringProcedureParameters.contains(name.getText())) {
+                return new Parameter(id, new StringType(), handleExprBlockMetadata());
+            } else {
+                final Variable variable = new Variable(id);
+                return new Qualified(currentActor, variable);
+            }
         } else if (ctx.emptyNum != null) {
             return new AsNumber(new StringLiteral(""));
         } else if (ctx.emptyBool != null) {
