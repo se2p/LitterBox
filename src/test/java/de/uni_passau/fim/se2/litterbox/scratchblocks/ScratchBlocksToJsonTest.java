@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ScratchBlocksToJsonTest implements JsonTest {
 
@@ -338,6 +341,19 @@ class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     private void writeJsonFromProgram(Program program) throws IOException {
-        JSONFileCreator.writeJsonFromProgram(program, tempDir, "_extended");
+       JSONFileCreator.writeJsonFromProgram(program, tempDir, "_extended");
+
+        final Path outputFile = tempDir.resolve(program.getIdent().getName() + "_extended.json");
+        checkCreatedProgramCanBeParsed(outputFile);
+    }
+
+    private void checkCreatedProgramCanBeParsed(final Path program) {
+        final Scratch3Parser parser = new Scratch3Parser();
+        try {
+            final Program parsedProgram = parser.parseFile(program.toFile());
+            assertNotNull(parsedProgram);
+        } catch (ParsingException e) {
+            fail(e);
+        }
     }
 }
