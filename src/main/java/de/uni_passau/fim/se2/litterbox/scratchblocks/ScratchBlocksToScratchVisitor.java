@@ -41,10 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -1290,7 +1287,13 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Expression visitExpression(ScratchBlocksParser.ExpressionContext ctx) {
         if (ctx.list != null) {
-            final ScratchList list = new ScratchList(new StrId(ctx.stringArgument().getText()));
+            final ScratchList list;
+            if (topExprBlock) {
+                list = new ScratchList(new StrId(ctx.stringArgument().getText()), new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                topExprBlock = false;
+            } else {
+                list = new ScratchList(new StrId(ctx.stringArgument().getText()));
+            }
             return new Qualified(currentActor, list);
         } else if (ctx.stringArgument() != null) {
             StringLiteral name = visitStringArgument(ctx.stringArgument());
@@ -1298,7 +1301,12 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             if (insideProcedure && !stringProcedureParameters.isEmpty() && stringProcedureParameters.contains(name.getText())) {
                 return new Parameter(id, new StringType(), handleExprBlockMetadata());
             } else {
-                final Variable variable = new Variable(id);
+                final Variable variable;
+                if (topExprBlock) {
+                    variable = new Variable(id, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                } else {
+                    variable = new Variable(id);
+                }
                 return new Qualified(currentActor, variable);
             }
         } else if (ctx.emptyNum != null) {

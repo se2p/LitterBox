@@ -248,7 +248,6 @@ class ScratchBlocksToJsonTest implements JsonTest {
 
     @Test
     void testAllVariableExprInProject() throws IOException, ParsingException {
-        /*
         final String scriptCode = """
                 (item (1) of [newList v])
                 (item # of [thing] in [newList v])
@@ -256,11 +255,9 @@ class ScratchBlocksToJsonTest implements JsonTest {
                 <[newList v] contains [thing]?>
                 """.stripIndent().replace("\n", "\n\n");
 
-         */
-
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
-        Program newProgram = parser.extendProject(program, "Sprite1", "(length of [newList v])\n");
+        Program newProgram = parser.extendProject(program, "Sprite1", scriptCode);
         //writeJsonFromProgram(newProgram);
         JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
     }
@@ -270,8 +267,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "(len)\n");
-        //writeJsonFromProgram(newProgram);
-        JSONFileCreator.writeJsonFromProgram(newProgram, "_extended");
+        writeJsonFromProgram(newProgram);
     }
 
     @Test

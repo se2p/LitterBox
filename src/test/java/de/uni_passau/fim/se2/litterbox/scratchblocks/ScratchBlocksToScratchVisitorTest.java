@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -871,6 +872,7 @@ class ScratchBlocksToScratchVisitorTest {
 
         Variable var = (Variable) qualified.getSecond();
         assertEquals("len", var.getName().getName());
+        Assertions.assertInstanceOf(DataBlockMetadata.class, var.getMetadata());
     }
 
     // region: common helper methods
