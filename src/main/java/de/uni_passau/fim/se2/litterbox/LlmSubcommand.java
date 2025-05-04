@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.llm.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
 
 import java.util.List;
@@ -256,6 +257,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LlmQuery q = new LlmQuery.CustomQuery(query);
             return new LLMQueryAnalyzer(outputPath, deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
