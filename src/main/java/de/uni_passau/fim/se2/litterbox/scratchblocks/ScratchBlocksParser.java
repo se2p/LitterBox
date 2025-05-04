@@ -86,22 +86,35 @@ public class ScratchBlocksParser {
         newScripts.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getScripts().getScriptList());
 
         List<ProcedureDefinition> newProcedures = new ArrayList<>(additionalContent.procedures().getList());
-        newProcedures.addAll(AstNodeUtil.findActorByName(baseProject, actorName).getProcedureDefinitionList().getList());
+        newProcedures.addAll(
+                AstNodeUtil.findActorByName(baseProject, actorName).getProcedureDefinitionList().getList()
+        );
 
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
-                AstNodeUtil.findActorByName(extendedProject, actorName).getScripts(), new ScriptList(List.copyOf(newScripts)));
+                AstNodeUtil.findActorByName(extendedProject, actorName).getScripts(),
+                new ScriptList(List.copyOf(newScripts))
+        );
 
         Program newExtendedProject = (Program) extendedProject.accept(scriptsReplacementVisitor);
 
         final NodeReplacementVisitor procedureReplacementVisitor = new NodeReplacementVisitor(
-                AstNodeUtil.findActorByName(newExtendedProject, actorName).getProcedureDefinitionList(), new ProcedureDefinitionList(List.copyOf(newProcedures)));
+                AstNodeUtil.findActorByName(newExtendedProject, actorName).getProcedureDefinitionList(),
+                new ProcedureDefinitionList(List.copyOf(newProcedures))
+        );
 
         return (Program) newExtendedProject.accept(procedureReplacementVisitor);
     }
 
-    private void addNewProcedureInfo(List<ProcedureDefinition> procedures, ProcedureDefinitionNameMapping procedureMapping, String actorName) {
+    private void addNewProcedureInfo(
+            List<ProcedureDefinition> procedures, ProcedureDefinitionNameMapping procedureMapping, String actorName
+    ) {
         for (ProcedureDefinition procedure : procedures) {
-            procedureMapping.addProcedure(procedure.getIdent(), actorName, procedure.getIdent().getName(), procedure.getParameterDefinitionList());
+            procedureMapping.addProcedure(
+                    procedure.getIdent(),
+                    actorName,
+                    procedure.getIdent().getName(),
+                    procedure.getParameterDefinitionList()
+            );
         }
     }
 
@@ -136,20 +149,30 @@ public class ScratchBlocksParser {
             DataExpr data = qualified.getSecond();
             if (data instanceof Variable variable) {
                 String varName = variable.getName().getName();
-                if (symbolTable.getVariableIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getVariableIdentifierFromActorAndName("Stage", varName) == null) {
+                if (symbolTable.getVariableIdentifierFromActorAndName(actorInQualified, varName) == null
+                        && symbolTable.getVariableIdentifierFromActorAndName("Stage", varName) == null
+                ) {
                     String uid = CloneVisitor.generateUID();
                     symbolTable.addVariable(uid, varName, new NumberType(), false, actorInQualified);
                     ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
-                    actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new NumberLiteral(0), new NoBlockMetadata()));
+                    actor.getSetStmtList().getStmts().add(
+                            new SetVariableTo(qualified, new NumberLiteral(0), new NoBlockMetadata())
+                    );
                 }
             }
             if (data instanceof ScratchList variable) {
                 String varName = variable.getName().getName();
-                if (symbolTable.getListIdentifierFromActorAndName(actorInQualified, varName) == null && symbolTable.getListIdentifierFromActorAndName("Stage", varName) == null) {
+                if (symbolTable.getListIdentifierFromActorAndName(actorInQualified, varName) == null
+                        && symbolTable.getListIdentifierFromActorAndName("Stage", varName) == null
+                ) {
                     String uid = CloneVisitor.generateUID();
-                    symbolTable.addExpressionListInfo(uid, varName, new ExpressionList(new ArrayList<>()), false, actorInQualified);
+                    symbolTable.addExpressionListInfo(
+                            uid, varName, new ExpressionList(new ArrayList<>()), false, actorInQualified
+                    );
                     ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
-                    actor.getSetStmtList().getStmts().add(new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata()));
+                    actor.getSetStmtList().getStmts().add(
+                            new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata())
+                    );
                 }
             }
         }

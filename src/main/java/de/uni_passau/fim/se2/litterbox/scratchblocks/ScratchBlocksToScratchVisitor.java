@@ -153,10 +153,14 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         insideProcedure = true;
         final StmtList stmtList = visitStmtList(ctx.stmtList());
         insideProcedure = false;
-        final ProcedureMutationMetadata prototypeMutation = new ProcedureMutationMetadata(false);//todo do we need to change warp anytime?
-        final NonDataBlockMetadata prototypeMetadata = new NonDataBlockMetadata("", CloneVisitor.generateUID(),
-                true, prototypeMutation);
-        final ProcedureMetadata metadata = new ProcedureMetadata(TopNonDataBlockMetadata.emptyTopNonBlockMetadata(), prototypeMetadata);
+        // todo do we need to change warp anytime?
+        final ProcedureMutationMetadata prototypeMutation = new ProcedureMutationMetadata(false);
+        final NonDataBlockMetadata prototypeMetadata = new NonDataBlockMetadata(
+                "", CloneVisitor.generateUID(), true, prototypeMutation
+        );
+        final ProcedureMetadata metadata = new ProcedureMetadata(
+                TopNonDataBlockMetadata.emptyTopNonBlockMetadata(), prototypeMetadata
+        );
 
         return new ProcedureDefinition(name, parameters, stmtList, metadata);
     }
@@ -375,7 +379,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.fixedPosition() != null) {
             return visitFixedPosition(ctx.fixedPosition());
         }
-        return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //no metadata should be fine as this is just a wrapper for the block inside
+        // no metadata should be fine as this is just a wrapper for the block inside
+        return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata());
     }
 
     @Override
@@ -402,7 +407,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public GlideSecsToXY visitGlideToPosXY(ScratchBlocksParser.GlideToPosXYContext ctx) {
-        return new GlideSecsToXY(makeNumExpr(ctx.time), makeNumExpr(ctx.x), makeNumExpr(ctx.y), handleStmtBlockMetadata());
+        return new GlideSecsToXY(
+                makeNumExpr(ctx.time), makeNumExpr(ctx.x), makeNumExpr(ctx.y), handleStmtBlockMetadata()
+        );
     }
 
     @Override
@@ -484,7 +491,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             StrId costumeId = new StrId(visitStringArgument(ctx.stringArgument()));
             return new WithExpr(costumeId, handleExprBlockMetadata(true));
         } else {
-            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata()); // no metadata is ok as this is a wrapper
+            // no metadata is ok as this is a wrapper
+            return new WithExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());
         }
     }
 
@@ -764,7 +772,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.exprOrLiteral() != null) {
             return new WithCloneExpr(visitExprOrLiteral(ctx.exprOrLiteral()), new NoBlockMetadata());//ok is wrapper
         } else if (ctx.stringArgument() != null) {
-            return new WithCloneExpr(new StrId(visitStringArgument(ctx.stringArgument())), handleExprBlockMetadata(true));
+            return new WithCloneExpr(
+                    new StrId(visitStringArgument(ctx.stringArgument())), handleExprBlockMetadata(true)
+            );
         } else {
             return new Myself(handleExprBlockMetadata(true));
         }
@@ -823,12 +833,18 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ShowVariable visitShowVar(ScratchBlocksParser.ShowVarContext ctx) {
-        return new ShowVariable(new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
+        return new ShowVariable(
+                new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))),
+                handleStmtBlockMetadata()
+        );
     }
 
     @Override
     public HideVariable visitHideVar(ScratchBlocksParser.HideVarContext ctx) {
-        return new HideVariable(new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
+        return new HideVariable(
+                new Qualified(currentActor, new Variable(new StrId(visitStringArgument(ctx.stringArgument())))),
+                handleStmtBlockMetadata()
+        );
     }
 
     @Override
@@ -851,7 +867,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public DeleteAllOf visitDeleteAllOfList(ScratchBlocksParser.DeleteAllOfListContext ctx) {
-        return new DeleteAllOf(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
+        return new DeleteAllOf(
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
+                handleStmtBlockMetadata()
+        );
     }
 
     @Override
@@ -876,12 +895,18 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public ShowList visitShowList(ScratchBlocksParser.ShowListContext ctx) {
-        return new ShowList(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
+        return new ShowList(
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
+                handleStmtBlockMetadata()
+        );
     }
 
     @Override
     public HideList visitHideList(ScratchBlocksParser.HideListContext ctx) {
-        return new HideList(new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))), handleStmtBlockMetadata());
+        return new HideList(
+                new Qualified(currentActor, new ScratchList(new StrId(visitStringArgument(ctx.stringArgument())))),
+                handleStmtBlockMetadata()
+        );
     }
     //end subregion: variable blocks
 
@@ -1036,7 +1061,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public StringContains visitContains(ScratchBlocksParser.ContainsContext ctx) {
-        return new StringContains(makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), handleExprBlockMetadata());
+        return new StringContains(
+                makeStringExpr(ctx.firstExpr), makeStringExpr(ctx.secondExpr), handleExprBlockMetadata()
+        );
     }
 
     @Override
@@ -1292,7 +1319,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.list != null) {
             final ScratchList list;
             if (topExprBlock) {
-                list = new ScratchList(new StrId(ctx.stringArgument().getText()), new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                list = new ScratchList(
+                        new StrId(ctx.stringArgument().getText()),
+                        new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                );
                 topExprBlock = false;
             } else {
                 list = new ScratchList(new StrId(ctx.stringArgument().getText()));
@@ -1301,7 +1331,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         } else if (ctx.stringArgument() != null) {
             StringLiteral name = visitStringArgument(ctx.stringArgument());
             StrId id = new StrId(name);
-            if (insideProcedure && !stringProcedureParameters.isEmpty() && stringProcedureParameters.contains(name.getText())) {
+            if (insideProcedure
+                    && !stringProcedureParameters.isEmpty()
+                    && stringProcedureParameters.contains(name.getText())
+            ) {
                 return new Parameter(id, new StringType(), handleExprBlockMetadata());
             } else {
                 final Variable variable;

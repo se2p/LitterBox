@@ -231,20 +231,37 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Costume node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), NUMBER_NAME_KEY, node.getType().getTypeName(), node.getOpcode());
+        createFieldsExpression(
+                (NonDataBlockMetadata) node.getMetadata(),
+                NUMBER_NAME_KEY,
+                node.getType().getTypeName(),
+                node.getOpcode()
+        );
     }
 
     @Override
     public void visit(Backdrop node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), NUMBER_NAME_KEY, node.getType().getTypeName(), node.getOpcode());
+        createFieldsExpression(
+                (NonDataBlockMetadata) node.getMetadata(),
+                NUMBER_NAME_KEY,
+                node.getType().getTypeName(),
+                node.getOpcode()
+        );
     }
 
     @Override
     public void visit(Current node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), CURRENT_YEAR_FIELD, node.getTimeComp().getTypeName(), node.getOpcode());
+        createFieldsExpression(
+                (NonDataBlockMetadata) node.getMetadata(),
+                CURRENT_YEAR_FIELD,
+                node.getTimeComp().getTypeName(),
+                node.getOpcode()
+        );
     }
 
-    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode) {
+    private void createFieldsExpression(
+            NonDataBlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode
+    ) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -360,12 +377,16 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Or node) {
-        boolOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode());
+        boolOperations(
+                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+        );
     }
 
     @Override
     public void visit(And node) {
-        boolOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode());
+        boolOperations(
+                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+        );
     }
 
     @Override
@@ -421,7 +442,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         List<String> inputs = new ArrayList<>();
         Touchable touchable = node.getTouchable();
         if (touchable instanceof SpriteTouchable || touchable instanceof Edge || touchable instanceof MousePointer) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), touchable, node.getTouchingObjectMenuOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), touchable, node.getTouchingObjectMenuOpcode()
+            );
             finishedJSONStrings.add(tuple.getJsonString());
             inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         } else {
@@ -442,7 +465,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         List<String> inputs = new ArrayList<>();
         Position pos = node.getPosition();
         if (pos instanceof MousePos) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos, node.getDistanceToMenuOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
+            );
             finishedJSONStrings.add(tuple.getJsonString());
             inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         } else {
@@ -452,7 +477,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             if (fromPos.getMetadata() instanceof NoBlockMetadata) {
                 inputs.add(createExpr(metadata, fromPos.getStringExpr(), DISTANCETOMENU_KEY, true));
             } else {
-                tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos, node.getDistanceToMenuOpcode());
+                tuple = fixedExprCreator.createFixedExpressionJSON(
+                        metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
+                );
                 finishedJSONStrings.add(tuple.getJsonString());
                 inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             }
@@ -475,7 +502,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         if (withExpr.getMetadata() instanceof NoBlockMetadata) {
             inputs.add(createExpr(metadata, withExpr.getExpression(), OBJECT_KEY, true));
         } else {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, node.getSensingOfObjectMenuOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), elem, node.getSensingOfObjectMenuOpcode()
+            );
             finishedJSONStrings.add(tuple.getJsonString());
             inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         }
@@ -521,7 +550,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         if (key.getMetadata() instanceof NoBlockMetadata) {
             inputs.add(createExpr(metadata, key.getKey(), KEY_OPTION, true));
         } else {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), key, node.getKeyOptionsOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), key, node.getKeyOptionsOpcode()
+            );
             finishedJSONStrings.add(tuple.getJsonString());
             inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         }
@@ -640,7 +671,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Parameter node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode());
+        createFieldsExpression(
+                (NonDataBlockMetadata) node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode()
+        );
     }
 
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,

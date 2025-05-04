@@ -142,8 +142,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     * Might return {@code node} itself if it has matching type.
-     * Returns {@code null} if no parent of the requested type could be found.
+     *         Might return {@code node} itself if it has matching type.
+     *         Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
