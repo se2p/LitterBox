@@ -155,6 +155,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             return buildEnhancer(buildQueryTarget());
         }
 
@@ -202,6 +203,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() throws Exception {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(
                     buildQueryTarget(), ignoreLooseBlocks
             );
@@ -233,6 +235,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(
                     buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
             );
@@ -282,6 +285,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LlmQuery q = new LlmQuery.PredefinedQuery(commonQuery);
             return new LLMQueryAnalyzer(outputPath, deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
