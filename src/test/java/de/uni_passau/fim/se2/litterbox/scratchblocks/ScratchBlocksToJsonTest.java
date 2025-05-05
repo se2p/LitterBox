@@ -36,9 +36,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ScratchBlocksToJsonTest implements JsonTest {
 
@@ -341,7 +339,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     private void writeJsonFromProgram(Program program) throws IOException {
-       JSONFileCreator.writeJsonFromProgram(program, tempDir, "_extended");
+        JSONFileCreator.writeJsonFromProgram(program, tempDir, "_extended");
 
         final Path outputFile = tempDir.resolve(program.getIdent().getName() + "_extended.json");
         checkCreatedProgramCanBeParsed(outputFile);
