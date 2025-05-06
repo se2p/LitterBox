@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -26,7 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.ScriptJSONCreator;
+import de.uni_passau.fim.se2.litterbox.llm.LlmResponseParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,10 +39,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ScratchBlocksToJsonTest implements JsonTest {
+class ScratchBlocksToJSONTest implements JsonTest {
 
     @TempDir(cleanup = CleanupMode.ON_SUCCESS)
     Path tempDir;
@@ -353,5 +359,34 @@ class ScratchBlocksToJsonTest implements JsonTest {
         } catch (ParsingException e) {
             fail(e);
         }
+    }
+
+    @Test
+    void testParseJSONParsedFromScratchBlocks() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8
+                when green flag clicked
+                set rotation to (0)
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        String updatedJson = JSONStringCreator.createProgramJSONString(updatedProgram);
+
+        Scratch3Parser parser = new Scratch3Parser();
+        Program parsedProgram = parser.parseString("example", updatedJson);
+
+        assertThat(parsedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
+        assertThat(parsedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
+        Set<Issue> modifiedIssues = new MissingLoopSensing().check(parsedProgram);
+        assertThat(modifiedIssues).isEmpty();
     }
 }

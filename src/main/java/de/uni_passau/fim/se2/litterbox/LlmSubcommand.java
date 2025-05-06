@@ -162,7 +162,7 @@ class LlmSubcommand implements Callable<Integer> {
         private LLMAnalysisEnhancer buildEnhancer(QueryTarget target) {
             final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
                     buildQueryTarget(),
-                    outputPath,
+                    commonOptions.outputPath,
                     String.join(",", detectors),
                     ignoreLooseBlocks
             );
@@ -207,7 +207,7 @@ class LlmSubcommand implements Callable<Integer> {
             final LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(
                     buildQueryTarget(), ignoreLooseBlocks
             );
-            return new LLMCodeAnalyzer(analyzer, outputPath, deleteProject);
+            return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -239,7 +239,7 @@ class LlmSubcommand implements Callable<Integer> {
             final LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(
                     buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
             );
-            return new LLMCodeAnalyzer(analyzer, outputPath, deleteProject);
+            return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -262,7 +262,7 @@ class LlmSubcommand implements Callable<Integer> {
         protected FileAnalyzer<?> getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LlmQuery q = new LlmQuery.CustomQuery(query);
-            return new LLMQueryAnalyzer(outputPath, deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
+            return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
     }
 
@@ -287,7 +287,7 @@ class LlmSubcommand implements Callable<Integer> {
         protected FileAnalyzer<?> getAnalyzer() {
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             final LlmQuery q = new LlmQuery.PredefinedQuery(commonQuery);
-            return new LLMQueryAnalyzer(outputPath, deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
+            return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
     }
 }
