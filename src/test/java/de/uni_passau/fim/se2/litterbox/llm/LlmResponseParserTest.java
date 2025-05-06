@@ -44,9 +44,11 @@ public class LlmResponseParserTest implements JsonTest {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         Assertions.assertEquals(1, program.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(9, program.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         Assertions.assertEquals(2, updatedProgram.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(10, updatedProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
     }
 }

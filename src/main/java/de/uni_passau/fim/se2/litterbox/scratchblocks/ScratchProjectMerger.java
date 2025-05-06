@@ -38,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.SetStmtListReplacementVisitor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +46,8 @@ import java.util.List;
 
 public class ScratchProjectMerger {
 
-    public static Program updateProject(Program baseProject, String actorName, ActorContent actorContent) {
-        addNewFields(actorContent, baseProject);
+    public Program updateProject(Program baseProject, String actorName, ActorContent actorContent) {
+        baseProject = addNewFields(actorContent, baseProject);
         addNewProcedureInfo(actorContent.procedures().getList(), baseProject.getProcedureMapping(), actorName);
 
         List<Script> newScripts = new ArrayList<>(actorContent.scripts().getScriptList());
@@ -72,14 +73,15 @@ public class ScratchProjectMerger {
         return (Program) newExtendedProject.accept(procedureReplacementVisitor);
     }
 
-    public static void updateProjectInfo(Program baseProject, String actorName, ScriptEntity newScript) {
-        addNewFields(newScript, baseProject);
+    public Program updateProjectInfo(Program baseProject, String actorName, ScriptEntity newScript) {
+        Program extended = addNewFields(newScript, baseProject);
         if (newScript instanceof ProcedureDefinition procedureDefinition) {
-            addNewProcedureInfo(procedureDefinition, baseProject.getProcedureMapping(), actorName);
+            addNewProcedureInfo(procedureDefinition, extended.getProcedureMapping(), actorName);
         }
+        return extended;
     }
 
-    static void addNewProcedureInfo(
+    void addNewProcedureInfo(
             List<ProcedureDefinition> procedures, ProcedureDefinitionNameMapping procedureMapping, String actorName
     ) {
         for (ProcedureDefinition procedure : procedures) {
@@ -87,7 +89,7 @@ public class ScratchProjectMerger {
         }
     }
 
-    static void addNewProcedureInfo(
+    void addNewProcedureInfo(
             ProcedureDefinition procedure, ProcedureDefinitionNameMapping procedureMapping, String actorName
     ) {
         procedureMapping.addProcedure(
@@ -95,21 +97,23 @@ public class ScratchProjectMerger {
         );
     }
 
-    static void addNewFields(ScriptEntity additionalContent, Program extendedProject) {
-        addQualifiedDataExpressions(additionalContent, extendedProject);
+    Program addNewFields(ScriptEntity additionalContent, Program extendedProject) {
+        extendedProject = addQualifiedDataExpressions(additionalContent, extendedProject);
         addMessages(additionalContent, extendedProject);
+        return extendedProject;
     }
 
-    static void addNewFields(ActorContent additionalContent, Program extendedProject) {
+    Program addNewFields(ActorContent additionalContent, Program extendedProject) {
         for (Script script : additionalContent.scripts().getScriptList()) {
-            addNewFields(script, extendedProject);
+            extendedProject = addNewFields(script, extendedProject);
         }
         for (ProcedureDefinition procedure : additionalContent.procedures().getList()) {
-            addNewFields(procedure, extendedProject);
+            extendedProject = addNewFields(procedure, extendedProject);
         }
+        return extendedProject;
     }
 
-    static void addMessages(ScriptEntity script, Program extendedProject) {
+    void addMessages(ScriptEntity script, Program extendedProject) {
         List<Message> messages = new ArrayList<>();
         messages.addAll(NodeFilteringVisitor.getBlocks(script, Message.class));
 
@@ -123,7 +127,7 @@ public class ScratchProjectMerger {
         }
     }
 
-    static void addQualifiedDataExpressions(ScriptEntity script, Program extendedProject) {
+    Program addQualifiedDataExpressions(ScriptEntity script, Program extendedProject) {
         List<Qualified> qualifieds = new ArrayList<>();
         qualifieds.addAll(NodeFilteringVisitor.getBlocks(script, Qualified.class));
 
@@ -142,7 +146,7 @@ public class ScratchProjectMerger {
                     List<SetStmt> setStmts = new ArrayList<>(actor.getSetStmtList().getStmts());
                     setStmts.add(new SetVariableTo(qualified, new NumberLiteral(0), new NoBlockMetadata()));
                     SetStmtList setStmtList = new SetStmtList(Collections.unmodifiableList(setStmts));
-                    final NodeReplacementVisitor setStmtRelacementVisitor = new NodeReplacementVisitor(
+                    final SetStmtListReplacementVisitor setStmtRelacementVisitor = new SetStmtListReplacementVisitor(
                             actor.getSetStmtList(),
                             setStmtList
                     );
@@ -162,7 +166,7 @@ public class ScratchProjectMerger {
                     List<SetStmt> setStmts = new ArrayList<>(actor.getSetStmtList().getStmts());
                     setStmts.add(new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata()));
                     SetStmtList setStmtList = new SetStmtList(Collections.unmodifiableList(setStmts));
-                    final NodeReplacementVisitor setStmtRelacementVisitor = new NodeReplacementVisitor(
+                    final SetStmtListReplacementVisitor setStmtRelacementVisitor = new SetStmtListReplacementVisitor(
                             actor.getSetStmtList(),
                             setStmtList
                     );
@@ -170,5 +174,6 @@ public class ScratchProjectMerger {
                 }
             }
         }
+        return extendedProject;
     }
 }

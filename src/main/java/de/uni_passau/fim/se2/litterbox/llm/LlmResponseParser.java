@@ -61,8 +61,22 @@ public class LlmResponseParser {
         NodeReplacementVisitor replacementVisitor = new NodeReplacementVisitor(
                 program.getActorDefinitionList(), newActors
         );
+        Program newProgram = (Program) program.accept(replacementVisitor);
 
-        return (Program) program.accept(replacementVisitor);
+        return updateProgramInfo(newProgram, llmResponse);
+    }
+
+    private Program updateProgramInfo(final Program program, final ParsedLlmResponseCode llmCode) {
+        ScratchProjectMerger merger = new ScratchProjectMerger();
+        Program newProgram = program;
+        for (final var entry : llmCode.scripts().entrySet()) {
+            final String actorName = entry.getKey();
+            final Map<String, ScriptEntity> scripts = entry.getValue();
+            for (ScriptEntity scriptEntity : scripts.values()) {
+                newProgram = merger.updateProjectInfo(program, actorName, scriptEntity);
+            }
+        }
+        return newProgram;
     }
 
     // todo: updateScript? which script gets updated? should this be getUpdatedScriptFromResponse?
@@ -103,7 +117,7 @@ public class LlmResponseParser {
 
             final ActorDefinition actor = originalProgram.getActorDefinitionList().getActorDefinition(actorName)
                     .orElseGet(() -> getBlankActorDefinition(actorName));
-            final ActorDefinition updatedActor = mergeActor(originalProgram, actor, scripts);
+            final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
             actors.add(updatedActor);
         }
@@ -120,8 +134,7 @@ public class LlmResponseParser {
      * @param llmResponseScripts The scripts and procedures contained in the LLM response.
      * @return The updated actor.
      */
-    private ActorDefinition mergeActor(Program originalProgram,
-                                       final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
+    private ActorDefinition mergeActor(final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
     ) {
         // todo: we need to update a bit more metadata in the project when doing this here:
         //  - Program.procedureMapping needs to be updated with new procedures
@@ -140,10 +153,8 @@ public class LlmResponseParser {
         for (final var entry : llmResponseScripts.entrySet()) {
             if (entry.getValue() instanceof Script script) {
                 scripts.put(entry.getKey(), script);
-                ScratchProjectMerger.updateProjectInfo(originalProgram, originalActor.getIdent().getName(), script);
             } else if (entry.getValue() instanceof ProcedureDefinition procedureDefinition) {
                 procedures.put(procedureDefinition.getIdent().getName(), procedureDefinition);
-                ScratchProjectMerger.updateProjectInfo(originalProgram, originalActor.getIdent().getName(), procedureDefinition);
             } else {
                 throw new IllegalStateException("Unknown script type");
             }
@@ -235,7 +246,7 @@ public class LlmResponseParser {
             final String currentScriptId,
             final String scratchBlocksScript
     ) {
-        final Optional<ScriptEntity> parsedScript = tryParseScript(scratchBlocksScript);
+        final Optional<ScriptEntity> parsedScript = tryParseScript(currentSprite, scratchBlocksScript);
 
         if (parsedScript.isEmpty()) {
             parseFailedScripts.computeIfAbsent(currentSprite, k -> new HashMap<>())
@@ -246,9 +257,9 @@ public class LlmResponseParser {
         }
     }
 
-    private Optional<ScriptEntity> tryParseScript(final String scriptScratchBlocksCode) {
+    private Optional<ScriptEntity> tryParseScript(final String currentSprite, final String scriptScratchBlocksCode) {
         try {
-            final ScriptEntity script = parser.parseScript(scriptScratchBlocksCode);
+            final ScriptEntity script = parser.parseScript(currentSprite, scriptScratchBlocksCode);
             return Optional.ofNullable(script);
         } catch (Exception e) {
             return Optional.empty();

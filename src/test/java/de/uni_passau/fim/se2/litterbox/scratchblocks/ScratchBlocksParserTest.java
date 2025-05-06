@@ -81,6 +81,7 @@ public class ScratchBlocksParserTest implements JsonTest {
     void testAddNewVariableToProject() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         Assertions.assertEquals(2, program.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(11, program.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Sprite1", "when green flag clicked\nmove (NewSpriteVariable) steps\n");
         Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
@@ -90,6 +91,18 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
         Assertions.assertInstanceOf(Qualified.class, ((AsNumber) moveSteps.getSteps()).getOperand1());
         Assertions.assertEquals(3, newProgram.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(12, newProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
+    }
+
+    @Test
+    void testAddNewVariableExprToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(2, program.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(11, program.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Sprite1", "(len)\n");
+        Assertions.assertEquals(3, newProgram.getSymbolTable().getVariables().size());
+        Assertions.assertEquals(12, newProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
     }
 
     @Test

@@ -55,11 +55,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ScratchBlocksParser {
 
-    private static final ScratchProjectMerger merger = new ScratchProjectMerger();
-
     // todo: probably similar methods for whole actors and programs?
     public Script parseScript(final String scratchBlocksCode) {
-        return parseScript(scratchBlocksCode, new AtomicBoolean(false));
+        return parseScript("Stage", scratchBlocksCode, new AtomicBoolean(false));
+    }
+
+    public Script parseScript(final String actorName, final String scratchBlocksCode) {
+        return parseScript(actorName, scratchBlocksCode, new AtomicBoolean(false));
     }
 
     public Program extendProject(Program baseProject, String actorName, String additionalCode) {
@@ -72,6 +74,7 @@ public class ScratchBlocksParser {
         CloneVisitor cloneVisitor = new CloneVisitor();
         Program extendedProject = (Program) baseProject.accept(cloneVisitor);
         ActorContent additionalContent = parseActorContent(additionalCode, actorName);
+        ScratchProjectMerger merger = new ScratchProjectMerger();
         return merger.updateProject(extendedProject, actorName, additionalContent);
     }
 
@@ -120,7 +123,7 @@ public class ScratchBlocksParser {
      * @param cancelMarker      Will try to interrupt the parsing when this marker gets set to {@code true}.
      * @return The parsed script or custom procedure definition.
      */
-    public Script parseScript(final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
+    public Script parseScript(final String actorName, final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
         ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
             Script script = new Script(new Never(), new StmtList());
@@ -134,6 +137,7 @@ public class ScratchBlocksParser {
         final ParseTree tree = parser.script();
 
         final ScratchBlocksToScratchVisitor vis = new ScratchBlocksToScratchVisitor();
+        vis.setCurrentActor(actorName);
         final ASTNode node = vis.visit(tree);
 
         if (node instanceof Script script) {
