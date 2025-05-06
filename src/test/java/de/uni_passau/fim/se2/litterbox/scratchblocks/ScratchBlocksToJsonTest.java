@@ -44,7 +44,7 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ScratchBlocksToJSONTest implements JsonTest {
+class ScratchBlocksToJsonTest implements JsonTest {
 
     @TempDir(cleanup = CleanupMode.ON_SUCCESS)
     Path tempDir;
