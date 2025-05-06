@@ -1317,34 +1317,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
     @Override
     public Expression visitExpression(ScratchBlocksParser.ExpressionContext ctx) {
         if (ctx.list != null) {
-            final ScratchList list;
-            if (topExprBlock) {
-                list = new ScratchList(
-                        new StrId(ctx.stringArgument().getText()),
-                        new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                );
-                topExprBlock = false;
-            } else {
-                list = new ScratchList(new StrId(ctx.stringArgument().getText()));
-            }
-            return new Qualified(currentActor, list);
+            return visitListVariable(ctx);
         } else if (ctx.stringArgument() != null) {
-            StringLiteral name = visitStringArgument(ctx.stringArgument());
-            StrId id = new StrId(name);
-            if (insideProcedure
-                    && !stringProcedureParameters.isEmpty()
-                    && stringProcedureParameters.contains(name.getText())
-            ) {
-                return new Parameter(id, new StringType(), handleExprBlockMetadata());
-            } else {
-                final Variable variable;
-                if (topExprBlock) {
-                    variable = new Variable(id, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
-                } else {
-                    variable = new Variable(id);
-                }
-                return new Qualified(currentActor, variable);
-            }
+            return visitVariableOrParameter(ctx);
         } else if (ctx.emptyNum != null) {
             return new AsNumber(new StringLiteral(""));
         } else if (ctx.emptyBool != null) {
@@ -1355,6 +1330,39 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             return (Expression) visitNumExpr(ctx.numExpr());
         } else {
             return (Expression) super.visitExpression(ctx);
+        }
+    }
+
+    private Qualified visitListVariable(final ScratchBlocksParser.ExpressionContext ctx) {
+        final ScratchList list;
+        if (topExprBlock) {
+            list = new ScratchList(
+                    new StrId(ctx.stringArgument().getText()),
+                    new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+            );
+            topExprBlock = false;
+        } else {
+            list = new ScratchList(new StrId(ctx.stringArgument().getText()));
+        }
+        return new Qualified(currentActor, list);
+    }
+
+    private Expression visitVariableOrParameter(final ScratchBlocksParser.ExpressionContext ctx) {
+        StringLiteral name = visitStringArgument(ctx.stringArgument());
+        StrId id = new StrId(name);
+        if (insideProcedure
+                && !stringProcedureParameters.isEmpty()
+                && stringProcedureParameters.contains(name.getText())
+        ) {
+            return new Parameter(id, new StringType(), handleExprBlockMetadata());
+        } else {
+            final Variable variable;
+            if (topExprBlock) {
+                variable = new Variable(id, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+            } else {
+                variable = new Variable(id);
+            }
+            return new Qualified(currentActor, variable);
         }
     }
 
