@@ -51,7 +51,7 @@ final class ConverterUtilities {
     static Qualified variableInfoToIdentifier(
             final VariableInfo variableInfo, final RawBlockId id, final String variableName
     ) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0, 0);
+        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), null, 0, 0);
         final Variable variable = new Variable(new StrId(variableName), metadata);
         return new Qualified(new StrId(variableInfo.actor()), variable);
     }
@@ -66,7 +66,7 @@ final class ConverterUtilities {
     static Qualified listInfoToIdentifier(
             final ExpressionListInfo listInfo, final RawBlockId id, final String listName
     ) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), 0.0, 0.0);
+        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), null, 0.0, 0.0);
         final ScratchList list = new ScratchList(new StrId(listName), metadata);
         return new Qualified(new StrId(listInfo.actor()), list);
     }
@@ -140,12 +140,10 @@ final class ConverterUtilities {
     ) {
         if (block.input() instanceof BlockRef.Block dataBlock
                 && dataBlock.block() instanceof RawBlock.RawColorLiteral color
-                && color.color().startsWith("#")) {
-            final long r = Long.parseLong(color.color().substring(1, 3), 16);
-            final long g = Long.parseLong(color.color().substring(3, 5), 16);
-            final long b = Long.parseLong(color.color().substring(5, 7), 16);
-
-            return new ColorLiteral(r, g, b);
+                && color.color().startsWith("#")
+                && color.color().length() == 7
+        ) {
+            return ColorLiteral.tryFromRgbHexString(color.color());
         } else {
             final NumExpr numExpr = NumExprConverter.convertNumExpr(state, containingBlock, block);
             return new FromNumber(numExpr);

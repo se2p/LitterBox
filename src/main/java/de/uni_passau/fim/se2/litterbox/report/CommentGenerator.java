@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -44,8 +45,13 @@ public class CommentGenerator implements ReportGenerator {
             Metadata metaData = issue.getCodeMetadata();
             if (metaData == null || metaData instanceof NoBlockMetadata) {
                 addLooseComment(currentActor, hintText, commentId);
+            } else if (metaData instanceof NonDataBlockMetadata nonDataBlockMetadata) {
+                addBlockComment(nonDataBlockMetadata,
+                        currentActor,
+                        hintText,
+                        commentId);
             } else {
-                addBlockComment((NonDataBlockMetadata) metaData,
+                addBlockComment((DataBlockMetadata) metaData,
                         currentActor,
                         hintText,
                         commentId);
@@ -79,6 +85,14 @@ public class CommentGenerator implements ReportGenerator {
     }
 
     private void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
+                                 String commentId) {
+        metadata.setCommentId(commentId);
+        CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 300, 300, false,
+                hintText);
+        currentActor.getActorMetadata().addComment(comment);
+    }
+
+    private void addBlockComment(DataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
                                  String commentId) {
         metadata.setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 300, 300, false,

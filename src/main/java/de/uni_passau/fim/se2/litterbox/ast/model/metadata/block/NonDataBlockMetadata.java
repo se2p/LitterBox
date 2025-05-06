@@ -69,7 +69,11 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     }
 
     public static NonDataBlockMetadata emptyNonBlockMetadata() {
+        return createArtificialNonBlockMetadata(false);
+    }
+
+    public static NonDataBlockMetadata createArtificialNonBlockMetadata(boolean shadow) {
         return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
-                false,  new NoMutationMetadata());
+                shadow, new NoMutationMetadata());
     }
 }

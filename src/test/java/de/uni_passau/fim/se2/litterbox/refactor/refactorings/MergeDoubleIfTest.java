@@ -104,7 +104,7 @@ class MergeDoubleIfTest implements JsonTest {
         String scratchBlocks = scratchBlocksVisitor.getScratchBlocks();
         assertThat(scratchBlocks).isEqualTo(
                 "when green flag clicked" + System.lineSeparator()
-                        + "forever " + System.lineSeparator()
+                        + "forever" + System.lineSeparator()
                         + "if <touching (mouse-pointer v) ?> then" + System.lineSeparator()
                         + "move (10) steps" + System.lineSeparator()
                         + "end" + System.lineSeparator()

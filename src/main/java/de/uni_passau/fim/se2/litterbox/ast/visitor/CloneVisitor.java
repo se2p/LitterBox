@@ -3158,7 +3158,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getCommentId(), node.getX(), node.getY());
     }
 
     /**

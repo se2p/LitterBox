@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Objects;
 
@@ -49,6 +50,34 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
 
     public long getGreen() {
         return green;
+    }
+
+    /**
+     * Parses an RGB color given in hexadecimal format.
+     *
+     * <p>Example input: {@code #12ff7c}.
+     *
+     * @param hex An RGB color in hexadecimal format.
+     * @return The parsed color.
+     * @throws IllegalArgumentException In case the color does not have the required format.
+     */
+    public static ColorLiteral tryFromRgbHexString(final String hex) throws IllegalArgumentException {
+        Preconditions.checkArgument(
+                hex.startsWith("#"), "Color in hexadecimal form should have the format '#xxxxxx'."
+        );
+        Preconditions.checkArgument(
+                hex.length() == 7, "Color in hexadecimal form should have the format '#xxxxxx'."
+        );
+
+        try {
+            final long r = Long.parseLong(hex.substring(1, 3), 16);
+            final long g = Long.parseLong(hex.substring(3, 5), 16);
+            final long b = Long.parseLong(hex.substring(5, 7), 16);
+
+            return new ColorLiteral(r, g, b);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid hexadecimal form.", e);
+        }
     }
 
     /**
