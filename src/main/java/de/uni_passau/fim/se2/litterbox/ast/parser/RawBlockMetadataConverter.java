@@ -59,11 +59,14 @@ final class RawBlockMetadataConverter {
 
     private static DataBlockMetadata convertArrayBlockMetadata(final RawBlockId id, final RawBlock.ArrayBlock block) {
         final Optional<Coordinates> coordinates;
+        final String commentId;
 
         if (block instanceof RawBlock.RawVariable variable) {
             coordinates = variable.coordinates();
+            commentId = variable.comment().map(RawBlockId::id).orElse(null);
         } else if (block instanceof RawBlock.RawList list) {
             coordinates = list.coordinates();
+            commentId = list.comment().map(RawBlockId::id).orElse(null);
         } else {
             throw new InternalParsingException(
                     "Did not expect to parse metadata for a literal block! Something is wrong."
@@ -76,7 +79,7 @@ final class RawBlockMetadataConverter {
         final double x = coordinates.map(Coordinates::x).orElse(0.0);
         final double y = coordinates.map(Coordinates::y).orElse(0.0);
 
-        return new DataBlockMetadata(id.id(), x, y);
+        return new DataBlockMetadata(id.id(), commentId, x, y);
     }
 
     public static BlockMetadata convertBlockWithMenuMetadata(

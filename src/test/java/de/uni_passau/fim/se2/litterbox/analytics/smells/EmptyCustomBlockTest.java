@@ -49,7 +49,7 @@ public class EmptyCustomBlockTest implements JsonTest {
         EmptyCustomBlock parameterName = new EmptyCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Assertions.assertTrue(reports.get(0).getScriptOrProcedureDefinition() instanceof ProcedureDefinition);
+        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.get(0).getScriptOrProcedureDefinition());
     }
 
     @Test

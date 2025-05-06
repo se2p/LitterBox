@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -63,15 +64,28 @@ public class ForeverIfToWaitUntil extends OnlyCodeCloneVisitor implements Refact
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced forever loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
-                + "with forever-wait loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced forever loop:
+                %s
+                with forever-wait loop:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                ScratchBlocksVisitor.of(replacementLoop)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ForeverIfToWaitUntil that = (ForeverIfToWaitUntil) o;
         return Objects.equals(loop, that.loop) && Objects.equals(replacementLoop, that.replacementLoop);
     }

@@ -36,20 +36,18 @@ grammar ScratchBlocks;
 
 // Define the entry point for the parser
 program                 : actorList EOF
-                        | scriptList EOF
+                        | actorContent EOF
                         | EOF
                         ;
 
 actorList               : (actor)+;
 
-actor                   : BEGIN_ACTOR scriptList NEWLINE*;
+actor                   : BEGIN_ACTOR actorContent NEWLINE*;
 
-
-scriptList              : (script ((COMMENT? NEWLINE)+)?)*;
+actorContent            : ((customBlock | script) (((COMMENT? NEWLINE)+) | EOF))*?;
 
 script                  : expressionStmt NEWLINE
-                        | customBlock
-                        | event NEWLINE stmtList
+                        | event NEWLINE (nonEmptyStmtList | stmtList)
                         | nonEmptyStmtList
                         ;
 
@@ -81,7 +79,7 @@ customBlockCallParam    : exprOrLiteral stringArgument;
 
 customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
 
-nonEmptyStmtList        : (WS* stmt NEWLINE)+;
+nonEmptyStmtList        : (WS* stmt NEWLINE)+?;
 
 stmtList                : (WS* stmt NEWLINE)*?;
 
@@ -208,8 +206,7 @@ setVolume               : 'set volume to 'exprOrLiteral' %';
 controlStmt             : waitSeconds
                         | repeat
                         | forever
-                        | ifElse
-                        | if
+                        | ifStmt
                         | waitUntil
                         | repeatUntil
                         | stop
@@ -217,11 +214,11 @@ controlStmt             : waitSeconds
                         | deleteClone
                         ;
 
+ifStmt                  : 'if ' exprOrLiteral ' then' NEWLINE thenBlock=stmtList WS* ('else' NEWLINE elseBlock=stmtList WS*)? 'end';
+
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
 repeat                  : 'repeat 'exprOrLiteral NEWLINE stmtList WS* 'end';
 forever                 : 'forever' NEWLINE stmtList WS* 'end';
-if                      : 'if 'exprOrLiteral' then' NEWLINE stmtList WS* 'end';
-ifElse                  : 'if 'exprOrLiteral' then' NEWLINE then=stmtList 'else' NEWLINE else=stmtList WS* 'end';
 waitUntil               : 'wait until 'exprOrLiteral;
 repeatUntil             : 'repeat until 'exprOrLiteral NEWLINE stmtList WS* 'end';
 stop                    : 'stop' WS '['stopChoice' v]';
@@ -229,11 +226,9 @@ createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
 
 eventStmt               : broadcast
-                        | broadcastWait
                         ;
 
-broadcast               : 'broadcast 'message;
-broadcastWait           : 'broadcast 'message' and wait';
+broadcast               : 'broadcast 'message wait=' and wait'?;
 
 sensingStmt             : ask
                         | setDragMode
@@ -383,10 +378,11 @@ exprOrLiteral           : numLiteral
 numLiteral              : '('(NUMBER|DIGIT)')';
 stringLiteral           : '['stringArgument']';
 
-expression              : '('numExpr')'
+expression              : emptyNum='()'
+                        | '('numExpr')'
                         | emptyBool='<>'
                         | '<'boolExpr'>'
-                        | '('stringArgument')'//variable
+                        | '(' stringArgument list=LIST_MARKER? WS* ')'
                         ;
 
 boolExpr                : empty=WS*
@@ -395,27 +391,20 @@ boolExpr                : empty=WS*
                         | colorTouchingColor
                         | keyPressed
                         | mouseDown
-                        | greaterThan
-                        | equal
-                        | lessThan
-                        | and
-                        | or
+                        | binaryBoolExpr
                         | not
                         | contains
                         | listContains
+                        | procDefParam=stringArgument
                         ;
 
+binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or='or') WS?) | (lt=' < ' | gt=' > ')) secondExpr=exprOrLiteral;
 
 touching                : 'touching 'touchingChoice WS? '?';
 touchingColor           : 'touching color 'touchingColorChoice WS? '?';
 colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
 keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
-greaterThan             : firstExpr=exprOrLiteral ' > ' secondExpr=exprOrLiteral;
-equal                   : firstExpr=exprOrLiteral WS? '=' WS? secondExpr=exprOrLiteral;
-lessThan                : firstExpr=exprOrLiteral ' < ' secondExpr=exprOrLiteral;
-and                     : firstExpr=exprOrLiteral WS? 'and' WS? secondExpr=exprOrLiteral;
-or                      : firstExpr=exprOrLiteral WS? 'or' WS? secondExpr=exprOrLiteral;
 not                     : 'not 'exprOrLiteral;
 contains                : firstExpr=exprOrLiteral' contains 'secondExpr=exprOrLiteral WS? '?';
 listContains            : '['stringArgument' v] contains 'exprOrLiteral WS? '?';
@@ -433,25 +422,25 @@ numExpr                 : xPosition
                         | mouseY
                         | loudness
                         | timer
+                        // mathFunction and actorAttribute must not be swapped, otherwise math functions are parsed as
+                        // attributeOf expressions (They share a common expression syntax with only the options for
+                        // known choices in the left operand being different.)
+                        | mathFunction
                         | actorAttribute
                         | currentTime
                         | daysSince
                         | userName
-                        | addition
-                        | subtraction
-                        | multiplication
-                        | division
+                        | binaryNumExpr
                         | pickRandom
                         | join
                         | getLetterAtIndex
                         | lengthOf
-                        | modulo
                         | round
-                        | mathFunction
                         | itemAtIndex
                         | indexOfItem
-                        | lengthOfList
                         ;
+
+binaryNumExpr           : firstExpr=exprOrLiteral WS? (add='+' | sub='-' | mult='*' | div='/' | mod='mod') WS? secondExpr=exprOrLiteral;
 
 xPosition               : 'x position';
 yPosition               : 'y position';
@@ -470,20 +459,14 @@ actorAttribute          : '['attributeChoice' v] of 'element;
 currentTime             : 'current' WS '['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
-addition                : firstExpr=exprOrLiteral WS? '+' WS? secondExpr=exprOrLiteral;
-subtraction             : firstExpr=exprOrLiteral WS? '-' WS? secondExpr=exprOrLiteral;
-multiplication          : firstExpr=exprOrLiteral WS? '*' WS? secondExpr=exprOrLiteral;
-division                : firstExpr=exprOrLiteral WS? '/' WS? secondExpr=exprOrLiteral;
 pickRandom              : 'pick random 'firstExpr=exprOrLiteral WS 'to' WS secondExpr=exprOrLiteral;
 join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral WS 'of' WS secondExpr=exprOrLiteral;
-lengthOf                : 'length of 'exprOrLiteral;
-modulo                  : firstExpr=exprOrLiteral WS? 'mod' WS? secondExpr=exprOrLiteral;
+lengthOf                : 'length of' WS (stringExpr=exprOrLiteral | '[' listVar=stringArgument ' v]');
 round                   : 'round 'exprOrLiteral;
 mathFunction            : '['mathChoice' v] of 'exprOrLiteral;
 itemAtIndex             : 'item 'exprOrLiteral WS 'of' WS '['stringArgument' v]';
 indexOfItem             : 'item # of 'exprOrLiteral WS 'in' WS '[' stringArgument' v]';
-lengthOfList            : 'length of' WS '[' stringArgument' v]';
 
 element                 : '('stringArgument' v)'
                         | exprOrLiteral;
@@ -554,7 +537,7 @@ touchingColorChoice     : LBRACK HEX RBRACK
                         ;
 
 // escape sequences, or anything else that is not a newline or an unescaped special character
-stringArgument          : (ESC | ~(NEWLINE|DELIM))*?;
+stringArgument          : (ESC | ~(NEWLINE|DELIM|LIST_MARKER))*?;
 
 /*
  * Lexer Rules
@@ -574,11 +557,12 @@ BEGIN_ACTOR             : '//Sprite: ' ~[\r\n]+ NEWLINE;
 
 COMMENT                 : WS* '//' ~[\r\n]*;
 
-HEX                     : '#' (HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-                        | HEX_DIGIT HEX_DIGIT HEX_DIGIT) ;
+HEX                     : '#' HEX_DIGIT HEX_DIGIT HEX_DIGIT (HEX_DIGIT HEX_DIGIT HEX_DIGIT)?;
 
-ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>';
+ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:';
 CHOICE_END              : ' v]';
+ROUND_CHOICE_END        : ' v)';
+LIST_MARKER             : WS* '::' WS? 'list';
 LPAREN                  : '(';
 RPAREN                  : ')';
 LBRACK                  : '[';

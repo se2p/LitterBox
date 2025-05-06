@@ -122,23 +122,26 @@ class MergeDoubleIfTest implements JsonTest {
 
     @Test
     void toStringTest() {
-        assertThat(refactoring.toString()).isEqualTo("merge_double_if" + System.lineSeparator()
-                + "Replaced ifs:" + System.lineSeparator()
-                + System.lineSeparator()
-                + "if <touching (edge v) ?> then" + System.lineSeparator()
-                + "move (5) steps" + System.lineSeparator()
-                + "end" + System.lineSeparator()
-                + System.lineSeparator()
-                + "if <touching (edge v) ?> then" + System.lineSeparator()
-                + "move (2) steps" + System.lineSeparator()
-                + "end" + System.lineSeparator()
-                + System.lineSeparator()
-                + "Replacement:" + System.lineSeparator()
-                + System.lineSeparator()
-                + "if <touching (edge v) ?> then" + System.lineSeparator()
-                + "move (5) steps" + System.lineSeparator()
-                + "move (2) steps" + System.lineSeparator()
-                + "end" + System.lineSeparator());
+        String s = refactoring.getDescription().replace(System.lineSeparator(), "\n");
+        assertThat(s).isEqualTo("""
+                merge_double_if
+                Replaced if 1:
+                if <touching (edge v) ?> then
+                move (5) steps
+                end
+
+                Replaced if 2:
+                if <touching (edge v) ?> then
+                move (2) steps
+                end
+
+                Replacement:
+                if <touching (edge v) ?> then
+                move (5) steps
+                move (2) steps
+                end
+
+                """);
     }
 
     @Test

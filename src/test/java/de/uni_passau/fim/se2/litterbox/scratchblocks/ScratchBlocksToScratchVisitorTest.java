@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -30,12 +33,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -62,6 +68,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -71,15 +81,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ScratchBlocksToScratchVisitorTest {
 
-    private ScriptEntity getScript(String scratchBlocksInput) {
+    private Script parseScript(String scratchBlocksInput) {
         final ScratchBlocksParser parser = new ScratchBlocksParser();
         if (!scratchBlocksInput.endsWith("\n")) {
             scratchBlocksInput += "\n";
@@ -87,15 +93,24 @@ class ScratchBlocksToScratchVisitorTest {
         return parser.parseScript(scratchBlocksInput);
     }
 
-    private StmtList getStmtList(String scratchBlocksInput) {
-        return getScript(scratchBlocksInput).getStmtList();
+    private ProcedureDefinition parseProcDef(String scratchBlocksInput) {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
+        return parser.parseActorContent(scratchBlocksInput).procedures().getList().get(0);
     }
 
-    private Script parseScript(final String scratchBlocksInput) {
-        ScriptEntity scriptEntity = getScript(scratchBlocksInput);
-        assertInstanceOf(Script.class, scriptEntity);
+    private ScriptList getScriptList(String scratchBlocksInput) {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        if (!scratchBlocksInput.endsWith("\n")) {
+            scratchBlocksInput += "\n";
+        }
+        return parser.parseActorContent(scratchBlocksInput).scripts();
+    }
 
-        return (Script) scriptEntity;
+    private StmtList getStmtList(String scratchBlocksInput) {
+        return parseScript(scratchBlocksInput).getStmtList();
     }
 
     @Test
@@ -231,8 +246,7 @@ class ScratchBlocksToScratchVisitorTest {
         if ("=".equals(operator)) {
             assertHasExprStmt(getStmtList(expr), expressionType);
         } else {
-            // fixme: this should probably not be parsed at all
-            assertStatementType(expr, CallStmt.class);
+            assertHasExprStmt(getStmtList(expr), Parameter.class);
         }
     }
 
@@ -385,10 +399,7 @@ class ScratchBlocksToScratchVisitorTest {
 
     @Test
     void testGreenFlag() {
-        ScriptEntity scriptEntity = getScript("when green flag clicked\n");
-        assertInstanceOf(Script.class, scriptEntity);
-
-        Script script = (Script) scriptEntity;
+        Script script = parseScript("when green flag clicked\n");
         assertInstanceOf(GreenFlag.class, script.getEvent());
     }
 
@@ -438,6 +449,18 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void testDeeplyNestedExpression2() {
+        String stmt = """
+                if <<<<<<<<<<<<<<<<touching (Soccer Ball v) ?> or <touching (Soccer Ball2 v) ?>> or <touching (Soccer Ball3 v) ?>> or <touching (Soccer Ball4 v) ?>> or <touching (Soccer Ball5 v) ?>> or <touching (Soccer Ball6 v) ?>> or <touching (Soccer Ball7 v) ?>> or <touching (Soccer Ball8 v) ?>> or <touching (Soccer Ball9 v) ?>> or <touching (Soccer Ball10 v) ?>> or <touching (Soccer Ball11 v) ?>> or <touching (Soccer Ball12 v) ?>> or <<touching (Soccer Ball14 v) ?> and <<<not <key (right arrow v) pressed?>> and <not <key (up arrow v) pressed?>>> and <<not <key (right arrow v) pressed?>> and <not <key (down arrow v) pressed?>>>>>> or <<<not <([costume # v] of (Soccer Ball15 v)?) = (2)>> and <touching (Soccer Ball15 v) ?>> or <<<not <([costume # v] of (Soccer Ball16 v)?) = (2)>> and <touching (Soccer Ball16 v) ?>> or <<not <([costume # v] of (Soccer Ball17 v)?) = (2)>> and <touching (Soccer Ball17 v) ?>>>>> or <<touching (Soccer Ball13 v) ?> and <<key (up arrow v) pressed?> or <<key (right arrow v) pressed?> or <<key (left arrow v) pressed?> or <key (down arrow v) pressed?>>>>>> or <touching (ガスターブラスター v) ?>> then
+                start sound (hurt noise v)
+                change [☁ 世界総ダメージ v] by (2)
+                change [hp v] by (-2)
+                end
+                """;
+        assertStatementType(stmt, IfThenStmt.class);
+    }
+
+    @Test
     void testNestedBoolExpr() {
         StmtList stmtList = getStmtList("wait until <<<(mouse x) < (-113)> and <(mouse x) > (-123)>> and <<(mouse y) < (-93)> and <(mouse y) > (-101)>>>\n");
         WaitUntil waitUntil = (WaitUntil) stmtList.getStatement(0);
@@ -449,7 +472,7 @@ class ScratchBlocksToScratchVisitorTest {
         final StmtList stmtList = getStmtList("<<> and <>>");
         final And and = assertHasExprStmt(stmtList, And.class);
 
-        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(), new NoBlockMetadata()), and);
+        assertEquals(new And(new UnspecifiedBoolExpr(), new UnspecifiedBoolExpr(), TopNonDataBlockMetadata.emptyTopNonBlockMetadata()), and);
     }
 
     @Test
@@ -459,6 +482,7 @@ class ScratchBlocksToScratchVisitorTest {
         final Equals equals = assertHasExprStmt(stmtList, Equals.class);
 
         assertInstanceOf(Qualified.class, equals.getOperand1());
+        assertInstanceOf(Variable.class, ((Qualified) equals.getOperand1()).getSecond());
     }
 
     @Test
@@ -524,12 +548,12 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testChangeColorEffect() {
         StmtList stmtList = getStmtList("change [color v] effect by (25)\nchange [fisheye v] effect by (25)\n");
-        final Stmt stmt1= stmtList.getStatement(0);
+        final Stmt stmt1 = stmtList.getStatement(0);
         assertInstanceOf(ChangeGraphicEffectBy.class, stmt1);
-        assertEquals("color",((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
+        assertEquals("color", ((ChangeGraphicEffectBy) stmt1).getEffect().getTypeName());
+        final Stmt stmt2 = stmtList.getStatement(1);
         assertInstanceOf(ChangeGraphicEffectBy.class, stmt2);
-        assertEquals("fisheye",((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
+        assertEquals("fisheye", ((ChangeGraphicEffectBy) stmt2).getEffect().getTypeName());
     }
 
     @Test
@@ -537,10 +561,10 @@ class ScratchBlocksToScratchVisitorTest {
         StmtList stmtList = getStmtList("set [color v] effect to (25)\nset [fisheye v] effect to (25)\n");
         final Stmt stmt1 = stmtList.getStatement(0);
         assertInstanceOf(SetGraphicEffectTo.class, stmt1);
-        assertEquals("color",((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
-        final Stmt stmt2= stmtList.getStatement(1);
+        assertEquals("color", ((SetGraphicEffectTo) stmt1).getEffect().getTypeName());
+        final Stmt stmt2 = stmtList.getStatement(1);
         assertInstanceOf(SetGraphicEffectTo.class, stmt2);
-        assertEquals("fisheye",((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
+        assertEquals("fisheye", ((SetGraphicEffectTo) stmt2).getEffect().getTypeName());
     }
 
     @Test
@@ -580,30 +604,52 @@ class ScratchBlocksToScratchVisitorTest {
             "define <bP> abc\n"
     })
     void emptyCustomProcedureDefinition(final String definition) {
-        final ScriptEntity script = getScript(definition);
-        assertInstanceOf(ProcedureDefinition.class, script);
-        final ProcedureDefinition procDef = (ProcedureDefinition) script;
+        final ProcedureDefinition procDef = parseProcDef(definition);
 
-        assertEquals(definition.replace("define ", "").trim(), procDef.getIdent().getName());
+        assertEquals(definition.replace("define ", "").replace("(sP)", "%s")
+                .replace("(bP)", "%s").replace("<bP>", "%b").trim(), procDef.getIdent().getName());
     }
 
     @Test
     void customProcedureDefinitionParameters() {
-        final ScriptEntity script = getScript("""
+        final ProcedureDefinition procDef = parseProcDef("""
                 define abc (sp) bcd <bp>
                 stop [all v]
                 """);
 
-        assertInstanceOf(ProcedureDefinition.class, script);
-        final ProcedureDefinition procDef = (ProcedureDefinition) script;
-
         assertIterableEquals(
                 List.of(
-                        new ParameterDefinition(new StrId("sp"), new StringType(), new NoBlockMetadata()),
-                        new ParameterDefinition(new StrId("bp"), new BooleanType(), new NoBlockMetadata())
+                        new ParameterDefinition(new StrId("sp"), new StringType(), NonDataBlockMetadata.createArtificialNonBlockMetadata(true)),
+                        new ParameterDefinition(new StrId("bp"), new BooleanType(), NonDataBlockMetadata.createArtificialNonBlockMetadata(true))
                 ),
                 procDef.getParameterDefinitionList().getParameterDefinitions()
         );
+    }
+
+    @Test
+    void customProcedureDefinitionParametersInBody() {
+        final ProcedureDefinition procDef = parseProcDef("""
+                define abc (sp) bcd <bp>
+                say (sp)
+                wait until <bp>
+                """);
+
+        Assertions.assertInstanceOf(Say.class, procDef.getStmtList().getStatement(0));
+        Say say = (Say) procDef.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(AsString.class, say.getString());
+        AsString asString = (AsString) say.getString();
+        Assertions.assertInstanceOf(Parameter.class, asString.getOperand1());
+        Parameter param = (Parameter) asString.getOperand1();
+        Assertions.assertInstanceOf(StringType.class, param.getType());
+        Assertions.assertEquals("sp", param.getName().getName());
+        Assertions.assertInstanceOf(WaitUntil.class, procDef.getStmtList().getStatement(1));
+        WaitUntil waitUntil = (WaitUntil) procDef.getStmtList().getStatement(1);
+        Assertions.assertInstanceOf(AsBool.class, waitUntil.getUntil());
+        AsBool asBool = (AsBool) waitUntil.getUntil();
+        Assertions.assertInstanceOf(Parameter.class, asBool.getOperand1());
+        param = (Parameter) asBool.getOperand1();
+        Assertions.assertInstanceOf(BooleanType.class, param.getType());
+        Assertions.assertEquals("bp", param.getName().getName());
     }
 
     @ParameterizedTest
@@ -623,7 +669,7 @@ class ScratchBlocksToScratchVisitorTest {
         assertIterableEquals(
                 List.of(
                         new NumberLiteral(123),
-                        new BiggerThan(new NumberLiteral(1), new NumberLiteral(3), new NoBlockMetadata())
+                        new BiggerThan(new NumberLiteral(1), new NumberLiteral(3), NonDataBlockMetadata.emptyNonBlockMetadata())
                 ),
                 callStmt.getExpressions().getExpressions()
         );
@@ -648,12 +694,35 @@ class ScratchBlocksToScratchVisitorTest {
                 if <  > then
                 end
                 """.stripIndent();
-        final ScriptEntity script = getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         assertEquals(2, script.getStmtList().getStmts().size());
         assertAll(
                 script.getStmtList().getStmts().stream()
                         .map(stmt -> () -> assertInstanceOf(IfThenStmt.class, stmt))
+        );
+    }
+
+    @Test
+    void testIfAndIfElseInScript() {
+        final String scratchBlocks = """
+                if <> then
+                stop [this script v]
+                end
+                move (10) steps
+                if <> then
+                else
+                stop [all v]
+                end
+                """.stripIndent();
+        final Script script = parseScript(scratchBlocks);
+
+        // in case of matching the wrong end to the first if, we would get some custom block call stmts in between
+        assertEquals(3, script.getStmtList().getStmts().size());
+        assertAll(
+                () -> assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0)),
+                () -> assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(1)),
+                () -> assertInstanceOf(IfElseStmt.class, script.getStmtList().getStatement(2))
         );
     }
 
@@ -666,7 +735,7 @@ class ScratchBlocksToScratchVisitorTest {
                 if <> then
                 end
                 """.stripIndent();
-        final ScriptEntity script = getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         assertEquals(2, script.getStmtList().getStmts().size());
         assertAll(
@@ -695,7 +764,7 @@ class ScratchBlocksToScratchVisitorTest {
     @ValueSource(strings = {"loudness", "timer"})
     void testBiggerThanEvent(final String choice) {
         final String scratchBlocks = String.format("when [%s v] > (10)", choice);
-        final Script script = (Script) getScript(scratchBlocks);
+        final Script script = parseScript(scratchBlocks);
 
         final Event event = script.getEvent();
         assertInstanceOf(AttributeAboveValue.class, event);
@@ -726,7 +795,7 @@ class ScratchBlocksToScratchVisitorTest {
         final String scratchBlocks = "go to (random position v)";
         final GoToPos goToPos = assertStatementType(scratchBlocks, GoToPos.class);
 
-        assertEquals(new RandomPos(new NoBlockMetadata()), goToPos.getPosition());
+        assertEquals(new RandomPos(NonDataBlockMetadata.createArtificialNonBlockMetadata(true)), goToPos.getPosition());
     }
 
     @Test
@@ -734,6 +803,93 @@ class ScratchBlocksToScratchVisitorTest {
         final String scratchBlocks = "add [thing] to [TestList v]";
         assertStatementType(scratchBlocks, AddTo.class);
     }
+
+    @Test
+    void testListExpression() {
+        StmtList statements = getStmtList("move (list :: list) steps\n");
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+
+        MoveSteps move = (MoveSteps) statements.getStatement(0);
+        assertInstanceOf(AsNumber.class, move.getSteps());
+        AsNumber asNumber = (AsNumber) move.getSteps();
+        assertInstanceOf(Qualified.class, asNumber.getOperand1());
+        Qualified qualified = (Qualified) asNumber.getOperand1();
+        assertInstanceOf(ScratchList.class, qualified.getSecond());
+        ScratchList scratchList = (ScratchList) qualified.getSecond();
+        assertEquals("list", scratchList.getName().getName());
+    }
+
+    @Test
+    void testScriptList() {
+        ScriptList scriptList = getScriptList("when green flag clicked\n\n(username)\n");
+        assertEquals(2, scriptList.getSize());
+        assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
+        assertInstanceOf(Never.class, scriptList.getScript(1).getEvent());
+        assertInstanceOf(ExpressionStmt.class, scriptList.getScript(1).getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testScriptListOneScript() {
+        ScriptList scriptList = getScriptList("when green flag clicked\nmove (10) steps\n");
+        assertEquals(1, scriptList.getSize());
+        assertInstanceOf(GreenFlag.class, scriptList.getScript(0).getEvent());
+        assertInstanceOf(MoveSteps.class, scriptList.getScript(0).getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testEmptyNum() {
+        StmtList statements = getStmtList("move () steps\n");
+        assertInstanceOf(MoveSteps.class, statements.getStatement(0));
+        MoveSteps move = (MoveSteps) statements.getStatement(0);
+        assertInstanceOf(AsNumber.class, move.getSteps());
+        AsNumber asNumber = (AsNumber) move.getSteps();
+        assertInstanceOf(StringLiteral.class, asNumber.getOperand1());
+        assertEquals("", ((StringLiteral) asNumber.getOperand1()).getText());
+    }
+
+    @Test
+    void testMathFunctionExpr() {
+        StmtList statements = getStmtList("([abs v] of ())");
+        final NumFunctOf numFunct = assertHasExprStmt(statements, NumFunctOf.class);
+        assertEquals(NumFunct.NumFunctType.ABS, numFunct.getOperand1().getType());
+    }
+
+    @Test
+    void testAttributeOfExpr() {
+        StmtList statements = getStmtList("([size v] of ())");
+        final AttributeOf numFunct = assertHasExprStmt(statements, AttributeOf.class);
+        assertInstanceOf(AttributeFromFixed.class, numFunct.getAttribute());
+
+        final AttributeFromFixed attr = (AttributeFromFixed) numFunct.getAttribute();
+        assertEquals(FixedAttribute.FixedAttributeType.SIZE, attr.getAttribute().getType());
+    }
+
+    @Test
+    void testVariableExpr() {
+        StmtList statements = getStmtList("(len)");
+        final Qualified qualified = assertHasExprStmt(statements, Qualified.class);
+        assertInstanceOf(Variable.class, qualified.getSecond());
+
+        Variable variable = (Variable) qualified.getSecond();
+        assertEquals("len", variable.getName().getName());
+        assertInstanceOf(DataBlockMetadata.class, variable.getMetadata());
+    }
+
+    @Test
+    void testLengthOfListExpr() {
+        StmtList stmtList = getStmtList("(length of [list var v])");
+        final LengthOfVar lengthOfVar = assertHasExprStmt(stmtList, LengthOfVar.class);
+        assertInstanceOf(Qualified.class, lengthOfVar.getIdentifier());
+        final Qualified qualified = (Qualified) lengthOfVar.getIdentifier();
+        assertInstanceOf(ScratchList.class, qualified.getSecond());
+
+        ScratchList list = (ScratchList) qualified.getSecond();
+        assertEquals("list var", list.getName().getName());
+
+        assertInstanceOf(TopNonDataBlockMetadata.class, lengthOfVar.getMetadata());
+    }
+
+    // region: common helper methods
 
     private <T extends Stmt> T assertStatementType(final String stmt, final Class<T> stmtType) {
         final StmtList stmtList = getStmtList(stmt);
@@ -753,4 +909,6 @@ class ScratchBlocksToScratchVisitorTest {
         assertInstanceOf(exprType, expr);
         return exprType.cast(expr);
     }
+
+    // endregion
 }

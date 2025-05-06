@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Objects;
@@ -61,15 +62,28 @@ public class DisjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifStatement.getScratchBlocks() + System.lineSeparator()
-                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if:
+                %s
+                Replacement if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifStatement),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DisjunctionToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DisjunctionToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifStatement, that.ifStatement) && Objects.equals(replacementIf, that.replacementIf);
     }
 

@@ -18,35 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ExtensionMetadata;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.EXTENSIONS_KEY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ExtensionMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
+class ExtensionMetadataTest implements JsonTest {
 
-//    @Test
-//    public void testEmptyProgram() throws IOException {
-//        File f = new File("./src/test/fixtures/emptyProject.json");
-//        JsonNode empty = mapper.readTree(f);
-//        ExtensionMetadata meta = ExtensionMetadataParser.parse(empty.get(EXTENSIONS_KEY));
-//        Assertions.assertEquals(0, meta.getExtensionNames().size());
-//    }
-//
-//    @Test
-//    public void testTwoExtensions() throws IOException {
-//        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
-//        JsonNode prog = mapper.readTree(f);
-//        ExtensionMetadata meta = ExtensionMetadataParser.parse(prog.get(EXTENSIONS_KEY));
-//        Assertions.assertEquals(2, meta.getExtensionNames().size());
-//        Assertions.assertEquals("pen", meta.getExtensionNames().get(0));
-//        Assertions.assertEquals("music", meta.getExtensionNames().get(1));
-//    }
+    @Test
+    void testEmptyProgram() throws Exception {
+        final Program program = getAST("src/test/fixtures/emptyProject.json");
+        assertTrue(program.getProgramMetadata().getExtension().getExtensionNames().isEmpty());
+    }
+
+    @Test
+    void testTwoExtensions() throws Exception {
+        final Program program = getAST("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
+        final ExtensionMetadata meta = program.getProgramMetadata().getExtension();
+
+        assertEquals(2, meta.getExtensionNames().size());
+        assertIterableEquals(List.of("pen", "music"), meta.getExtensionNames());
+    }
 }

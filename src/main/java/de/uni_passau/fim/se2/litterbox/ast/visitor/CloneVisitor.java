@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -309,7 +311,35 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(CreateCloneOf node) {
-        return new CreateCloneOf(apply(node.getStringExpr()), apply(node.getMetadata()));
+        return new CreateCloneOf(apply(node.getCloneChoice()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Myself}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Myself Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Myself node) {
+        return new Myself(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link WithCloneExpr}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node WithCloneExpr Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(WithCloneExpr node) {
+        return new WithCloneExpr(apply(node.getExpression()), apply(node.getMetadata()));
     }
 
     /**
@@ -3128,7 +3158,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getCommentId(), node.getX(), node.getY());
     }
 
     /**

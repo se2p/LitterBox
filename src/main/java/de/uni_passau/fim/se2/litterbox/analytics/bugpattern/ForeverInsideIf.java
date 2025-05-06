@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 public class ForeverInsideIf extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_if";
     private int ifFollowingCounter;
+    private boolean insideIf = false;
 
     @Override
     public void visit(Script node) {
@@ -58,15 +59,22 @@ public class ForeverInsideIf extends AbstractIssueFinder {
                 break;
             }
         }
-        super.visit(node);
+        visitChildren(node);
         if (hasIf) {
             ifFollowingCounter--;
         }
     }
 
     @Override
+    public void visit(IfStmt node) {
+        insideIf = true;
+        visitChildren(node);
+        insideIf = false;
+    }
+
+    @Override
     public void visit(RepeatForeverStmt node) {
-        if (ifFollowingCounter > 0) {
+        if (insideIf && ifFollowingCounter > 0) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);

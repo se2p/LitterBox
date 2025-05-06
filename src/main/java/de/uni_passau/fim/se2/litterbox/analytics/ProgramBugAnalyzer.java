@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -36,6 +36,16 @@ import java.util.stream.Collectors;
 
 public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
     private static final Logger log = Logger.getLogger(ProgramBugAnalyzer.class.getName());
+
+    private static final Set<String> FINDERS_WITHOUT_LOCATION = Set.of(
+            DuplicateSprite.NAME,
+            EmptyProject.NAME,
+            EmptySprite.NAME,
+            NoWorkingScripts.NAME,
+            SameVariableDifferentSprite.NAME,
+            SpriteNaming.NAME
+    );
+
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
     private final Path priorResultsPath;
@@ -93,7 +103,7 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
     ) {
         Set<Issue> fixes = new HashSet<>();
         for (IssueDTO issueRecord : issueRecords) {
-            if (!issueRecord.issueLocationBlockId().isEmpty()) {
+            if (hasLocation(issueRecord)) {
                 boolean found = false;
                 for (Issue currentIssue : result) {
                     String issueBlockId = AstNodeUtil.getBlockId(currentIssue.getCodeLocation());
@@ -108,6 +118,12 @@ public class ProgramBugAnalyzer implements ProgramAnalyzer<Set<Issue>> {
             }
         }
         return fixes;
+    }
+
+    private boolean hasLocation(final IssueDTO issueRecord) {
+        return issueRecord.issueLocationBlockId() != null
+                && !issueRecord.issueLocationBlockId().isEmpty()
+                && !FINDERS_WITHOUT_LOCATION.contains(issueRecord.finder());
     }
 
     private Set<Issue> checkOldFixed(String finder, List<IssueDTO> issueRecords, Program program) {

@@ -18,37 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class EmptySprite extends AbstractIssueFinder {
     public static final String NAME = "empty_sprite";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private Program program = null;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        issues = new LinkedHashSet<>();
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public void visit(ActorDefinition actor) {
+        currentActor = actor;
         if (actor.getProcedureDefinitionList().getList().isEmpty() && actor.getScripts().getScriptList().isEmpty()
                 && !actor.isStage()) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
-            issues.add(new Issue(this, IssueSeverity.LOW, program, actor, null, null, null, hint));
+            addIssueWithLooseComment(hint);
         }
     }
 
@@ -60,17 +46,6 @@ public class EmptySprite extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
-    }
-
-    @Override
-    public void setIgnoreLooseBlocks(boolean value) {
-        // Irrelevant for this finder
-    }
-
-    @Override
-    public Collection<String> getHintKeys() {
-        // Default: Only one key with the name of the finder
-        return Arrays.asList(getName());
     }
 
     @Override

@@ -76,9 +76,9 @@ public class MonitorMetadataTest implements JsonTest {
         MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
         MonitorSliderMetadata monitorSliderMetadata = (MonitorSliderMetadata) monitors.getList().get(0);
 
-        Assertions.assertEquals(monitorSliderMetadata.getSliderMin(), 0);
-        Assertions.assertEquals(monitorSliderMetadata.getSliderMax(), 100);
-        Assertions.assertEquals(monitorSliderMetadata.getValue(), "1000");
+        Assertions.assertEquals(0, monitorSliderMetadata.getSliderMin());
+        Assertions.assertEquals(100, monitorSliderMetadata.getSliderMax());
+        Assertions.assertEquals("1000", monitorSliderMetadata.getValue());
         Assertions.assertTrue(monitorSliderMetadata.isDiscrete());
     }
 }

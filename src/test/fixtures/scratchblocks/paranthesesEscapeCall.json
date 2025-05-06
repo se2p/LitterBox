@@ -1,0 +1,124 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "o:!r+(@R]E*jo@4^da8u": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "G?]M7223LFb!V?`7$KdT",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 1779,
+                    "y": 292
+                },
+                "G?]M7223LFb!V?`7$KdT": {
+                    "opcode": "sound_playuntildone",
+                    "next": null,
+                    "parent": "o:!r+(@R]E*jo@4^da8u",
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "S(_[-cU_ac60_{*^*F?y"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S(_[-cU_ac60_{*^*F?y": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "G?]M7223LFb!V?`7$KdT",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Corn Theft (1)",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume10",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "14e46ec3e2ba471c2adfe8f119052307",
+                    "md5ext": "14e46ec3e2ba471c2adfe8f119052307.svg",
+                    "rotationCenterX": 0,
+                    "rotationCenterY": 0
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Corn Theft (1)",
+                    "assetId": "b386a3fce46e2dff466c26e6b714645c",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 96000,
+                    "sampleCount": 13174061,
+                    "md5ext": "b386a3fce46e2dff466c26e6b714645c.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "4.8.75",
+        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"
+    }
+}

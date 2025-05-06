@@ -21,17 +21,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -103,21 +103,24 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
+    public void visit(Myself node) {
+        if (!addComment) {
+            clonedActors.add(currentActor.getIdent().getName());
+        } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
+            Hint hint = generateHint(currentActor.getIdent().getName());
+            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW, hint);
+        }
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId strId) {
             final String spriteName = strId.getName();
             if (!addComment) {
-                if (spriteName.equals("_myself_")) {
-                    clonedActors.add(currentActor.getIdent().getName());
-                } else {
-                    clonedActors.add(spriteName);
-                }
+                clonedActors.add(spriteName);
             } else if (notClonedActor.contains(spriteName)) {
                 Hint hint = generateHint(spriteName);
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
-                Hint hint = generateHint(currentActor.getIdent().getName());
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

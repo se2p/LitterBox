@@ -58,8 +58,8 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script,
-                 ASTNode currentNode, Metadata metaData, Hint hint) {
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
+                 ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
@@ -123,8 +123,8 @@ public class Issue {
 
     /**
      * Returns the script or procedure definition that is set.
-     * <p>
-     * The issue contains either a script or a procedure definition.
+     *
+     * <p>The issue contains either a script or a procedure definition.
      * If a script is set, the script is returned, if no script is present a procedure definition is returned
      *
      * @return an astNode that represents a script or procedure-definition
