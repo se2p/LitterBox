@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchProjectMerger;
 
 import java.util.*;
 
@@ -51,7 +52,7 @@ public class LlmResponseParser {
     /**
      * Integrates the parsed response into the given program.
      *
-     * @param program The program the LLM was originally queried with.
+     * @param program     The program the LLM was originally queried with.
      * @param llmResponse The response snippets from the LLM.
      * @return The updated program.
      */
@@ -82,7 +83,7 @@ public class LlmResponseParser {
      * Merges the original sprites with the scripts received from the LLM.
      *
      * @param originalProgram The original program.
-     * @param llmCode The new code as received by the LLM.
+     * @param llmCode         The new code as received by the LLM.
      * @return The updated sprite list.
      */
     private ActorDefinitionList mergeActors(final Program originalProgram, final ParsedLlmResponseCode llmCode) {
@@ -102,7 +103,7 @@ public class LlmResponseParser {
 
             final ActorDefinition actor = originalProgram.getActorDefinitionList().getActorDefinition(actorName)
                     .orElseGet(() -> getBlankActorDefinition(actorName));
-            final ActorDefinition updatedActor = mergeActor(actor, scripts);
+            final ActorDefinition updatedActor = mergeActor(originalProgram, actor, scripts);
 
             actors.add(updatedActor);
         }
@@ -115,12 +116,12 @@ public class LlmResponseParser {
      *
      * <p>Overrides existing scripts/procedures based on the ID.
      *
-     * @param originalActor The original actor from the project the LLM was queried for.
+     * @param originalActor      The original actor from the project the LLM was queried for.
      * @param llmResponseScripts The scripts and procedures contained in the LLM response.
      * @return The updated actor.
      */
-    private ActorDefinition mergeActor(
-            final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
+    private ActorDefinition mergeActor(Program originalProgram,
+                                       final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
     ) {
         // todo: we need to update a bit more metadata in the project when doing this here:
         //  - Program.procedureMapping needs to be updated with new procedures
@@ -139,8 +140,10 @@ public class LlmResponseParser {
         for (final var entry : llmResponseScripts.entrySet()) {
             if (entry.getValue() instanceof Script script) {
                 scripts.put(entry.getKey(), script);
+                ScratchProjectMerger.updateProjectInfo(originalProgram, originalActor.getIdent().getName(), script);
             } else if (entry.getValue() instanceof ProcedureDefinition procedureDefinition) {
                 procedures.put(procedureDefinition.getIdent().getName(), procedureDefinition);
+                ScratchProjectMerger.updateProjectInfo(originalProgram, originalActor.getIdent().getName(), procedureDefinition);
             } else {
                 throw new IllegalStateException("Unknown script type");
             }
