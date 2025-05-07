@@ -40,6 +40,8 @@ public class LlmResponseParser {
 
     private static final String SCRIPT_HEADER = "//Script: ";
 
+    private static final String MARKDOWN_CLOSING = "```";
+
     private final ScratchBlocksParser parser = new ScratchBlocksParser();
 
     /*
@@ -209,9 +211,9 @@ public class LlmResponseParser {
         StringBuilder currentScriptCode = new StringBuilder();
 
         for (String line : response.lines().toList()) {
-            if (line.startsWith("scratch")) {
-                // skip -- GPT likes to start markdown blocks with language tags
-                // Matches "scratch" and "scratchblocks"
+            if (line.startsWith("scratch") || line.startsWith(MARKDOWN_CLOSING)) {
+                // skip -- GPT likes to start markdown blocks with language tags; also skip markdown closing tags
+                // Matches "scratch" and "scratchblocks" and "```"
             } else if (line.startsWith(SPRITE_HEADER)) {
                 if (currentSprite != null && currentScriptId != null) {
                     parseScript(
