@@ -136,10 +136,6 @@ public class LlmResponseParser {
      */
     private ActorDefinition mergeActor(final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
     ) {
-        // todo: we need to update a bit more metadata in the project when doing this here:
-        //  - Program.procedureMapping needs to be updated with new procedures
-        //  - Program.symbolTable needs to be updated with new variables/lists
-
         final Map<String, Script> scripts = new HashMap<>();
         final Map<String, ProcedureDefinition> procedures = new HashMap<>();
 
