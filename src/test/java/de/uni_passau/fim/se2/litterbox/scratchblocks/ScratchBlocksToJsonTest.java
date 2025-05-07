@@ -293,7 +293,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     @Test
-    void testAddSayToProject() throws ParsingException, IOException {
+    void testAddThinkToStage() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program newProgram = parser.extendProject(program, "Stage", "when stage clicked\nthink (new)\n");
@@ -339,6 +339,18 @@ class ScratchBlocksToJsonTest implements JsonTest {
                 wait until <bp>
 
                 when green flag clicked
+                abc (10) bcd <mouse down?>
+                """;
+        Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testAddNewCallWithoutDefToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        final String additionalCode = """
+                when I receive [message v]
                 abc (10) bcd <mouse down?>
                 """;
         Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
