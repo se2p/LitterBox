@@ -53,7 +53,9 @@ public class ScratchLlm {
      * @return The parsed response.
      */
     public ParsedLlmResponseCode singleQueryWithCodeOnlyResponse(final String prompt) {
+        log.info("Prompt: " + prompt);
         final String response = llmApi.query(promptBuilder.systemPrompt(), prompt).getLast().text();
+        log.info("Response: " + response);
         // todo: iterate and ask LLM to fix syntax if not parseable here?
         return responseParser.parseLLMResponse(response);
     }
