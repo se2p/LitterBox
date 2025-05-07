@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -140,6 +139,5 @@ public class LlmResponseParserTest implements JsonTest {
         Assertions.assertInstanceOf(AsString.class, think.getThought());
         AsString asString = (AsString) think.getThought();
         Assertions.assertInstanceOf(Qualified.class, asString.getOperand1());
-        JSONFileCreator.writeJsonFromProgram(updatedProgram, "_extended");
     }
 }
