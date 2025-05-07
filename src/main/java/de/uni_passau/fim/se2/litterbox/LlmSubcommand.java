@@ -38,7 +38,7 @@ import java.util.concurrent.Callable;
                 LlmSubcommand.CompleteSubcommand.class,
                 LlmSubcommand.FixSubcommand.class,
                 LlmSubcommand.QuerySubcommand.class,
-                LlmSubcommand.CommonQuerySubcommand.class,
+                LlmSubcommand.PredefinedQuerySubcommand.class,
         }
 )
 class LlmSubcommand implements Callable<Integer> {
@@ -62,6 +62,19 @@ class LlmSubcommand implements Callable<Integer> {
                 description = "Ignore loose blocks when checking bug patterns."
         )
         boolean ignoreLooseBlocks;
+
+        @Override
+        protected void validateParams() {
+            requireProjectPath();
+        }
+
+        @Override
+        protected FileAnalyzer<?> getAnalyzer() throws Exception {
+            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+            return createAnalyzer();
+        }
+
+        protected abstract FileAnalyzer<?> createAnalyzer() throws Exception;
 
         protected QueryTarget buildQueryTarget() {
             if (spriteName != null) {
@@ -149,13 +162,7 @@ class LlmSubcommand implements Callable<Integer> {
         List<String> detectors;
 
         @Override
-        protected void validateParams() {
-            requireProjectPath();
-        }
-
-        @Override
-        protected FileAnalyzer<?> getAnalyzer() {
-            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+        protected FileAnalyzer<?> createAnalyzer() {
             return buildEnhancer(buildQueryTarget());
         }
 
@@ -197,13 +204,12 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected void validateParams() {
-            requireProjectPath();
+            super.validateParams();
             requireOutputPath();
         }
 
         @Override
-        protected FileAnalyzer<?> getAnalyzer() throws Exception {
-            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+        protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(
                     buildQueryTarget(), ignoreLooseBlocks
             );
@@ -229,13 +235,12 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected void validateParams() {
-            requireProjectPath();
+            super.validateParams();
             requireOutputPath();
         }
 
         @Override
-        protected FileAnalyzer<?> getAnalyzer() {
-            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+        protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(
                     buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
             );
@@ -250,17 +255,11 @@ class LlmSubcommand implements Callable<Integer> {
     )
     static class QuerySubcommand extends LlmSubcommandBase {
 
-        @Override
-        protected void validateParams() {
-            requireProjectPath();
-        }
-
         @CommandLine.Parameters(description = "Custom query for the LLM.")
         String query;
 
         @Override
-        protected FileAnalyzer<?> getAnalyzer() {
-            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+        protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.CustomQuery(query);
             return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
@@ -271,12 +270,7 @@ class LlmSubcommand implements Callable<Integer> {
             description = "Query an LLM for a given Scratch project.",
             mixinStandardHelpOptions = true
     )
-    static class CommonQuerySubcommand extends LlmSubcommandBase {
-
-        @Override
-        protected void validateParams() {
-            requireProjectPath();
-        }
+    static class PredefinedQuerySubcommand extends LlmSubcommandBase {
 
         @CommandLine.Parameters(
                 description = "Choose a predefined query for the LLM. Possible choices: ${COMPLETION-CANDIDATES}"
@@ -284,8 +278,7 @@ class LlmSubcommand implements Callable<Integer> {
         CommonQuery commonQuery;
 
         @Override
-        protected FileAnalyzer<?> getAnalyzer() {
-            PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
+        protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.PredefinedQuery(commonQuery);
             return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
         }
