@@ -151,14 +151,14 @@ public class LlmResponseParser {
         originalActor.getScripts().getScriptList()
                 .forEach(script -> scripts.put(AstNodeUtil.getBlockId(script.getEvent()), script));
         originalActor.getProcedureDefinitionList().getList()
-                .forEach(procedure -> procedures.put(procedure.getIdent().getName(), procedure));
+                .forEach(procedure -> procedures.put(AstNodeUtil.getBlockId(procedure), procedure));
 
         // override scripts and procedures also contained in LLM response
         for (final var entry : llmResponseScripts.entrySet()) {
             if (entry.getValue() instanceof Script script) {
                 scripts.put(entry.getKey(), script);
             } else if (entry.getValue() instanceof ProcedureDefinition procedureDefinition) {
-                procedures.put(procedureDefinition.getIdent().getName(), procedureDefinition);
+                procedures.put(entry.getKey(), procedureDefinition);
             } else {
                 throw new IllegalStateException("Unknown script type");
             }

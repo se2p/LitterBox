@@ -220,4 +220,36 @@ public class LlmResponseParserTest implements JsonTest {
         Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
         Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
     }
+
+
+    @Test
+    void testReplaceProcedure() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: M1JuO/3cOhiW+SGck?Vd
+                define testBlock
+                broadcast (message)
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/singleProcedure.json");
+        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(0, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+
+        Assertions.assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
+        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
+        ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
+        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+    }
 }
