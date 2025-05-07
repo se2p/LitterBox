@@ -293,6 +293,14 @@ class ScratchBlocksToJsonTest implements JsonTest {
     }
 
     @Test
+    void testAddSayToProject() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program newProgram = parser.extendProject(program, "Stage", "when stage clicked\nthink (new)\n");
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
     void testAddNewProcedureToProject() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();

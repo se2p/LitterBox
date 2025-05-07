@@ -22,7 +22,12 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -95,7 +100,46 @@ public class LlmResponseParserTest implements JsonTest {
         Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
-        Assertions.assertEquals(1,newScript.getStmtList().getStmts().size());
+        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
         Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+    }
+
+    @Test
+    void testAddNewScriptsMultipleActors() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Stage
+                //Script: newlyadded2
+                when stage clicked
+                think (new)
+
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                say [test]
+                """;
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(0);
+        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+
+        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
+        scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getScriptList();
+        newScript = scripts.get(0);
+        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(StageClicked.class, newScript.getEvent());
+        Assertions.assertInstanceOf(Think.class, newScript.getStmtList().getStmts().get(0));
+        Think think = (Think) newScript.getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(AsString.class, think.getThought());
+        AsString asString = (AsString) think.getThought();
+        Assertions.assertInstanceOf(Qualified.class, asString.getOperand1());
+        JSONFileCreator.writeJsonFromProgram(updatedProgram, "_extended");
     }
 }

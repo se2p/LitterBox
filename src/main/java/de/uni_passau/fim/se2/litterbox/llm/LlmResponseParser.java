@@ -106,7 +106,11 @@ public class LlmResponseParser {
         // copy over unchanged actors
         for (ActorDefinition actor : originalProgram.getActorDefinitionList().getDefinitions()) {
             if (!llmCode.scripts().containsKey(actor.getIdent().getName())) {
-                actors.add(actor);
+                if (actor.isStage()) {
+                    actors.add(0, actor);
+                } else {
+                    actors.add(actor);
+                }
             }
         }
 
@@ -119,7 +123,11 @@ public class LlmResponseParser {
                     .orElseGet(() -> getBlankActorDefinition(actorName));
             final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
-            actors.add(updatedActor);
+            if (updatedActor.isStage()) {
+                actors.add(0, updatedActor);
+            } else {
+                actors.add(updatedActor);
+            }
         }
 
         return new ActorDefinitionList(Collections.unmodifiableList(actors));
