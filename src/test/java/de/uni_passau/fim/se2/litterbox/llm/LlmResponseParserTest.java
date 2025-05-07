@@ -21,10 +21,13 @@ package de.uni_passau.fim.se2.litterbox.llm;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LlmResponseParserTest implements JsonTest {
 
@@ -73,5 +76,26 @@ public class LlmResponseParserTest implements JsonTest {
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         Assertions.assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
         Assertions.assertTrue(updatedProgram.getSymbolTable().getMessage("test").isPresent());
+    }
+
+    @Test
+    void testAddNewScript() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                say [test]
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(1);
+        Assertions.assertEquals(1,newScript.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
     }
 }
