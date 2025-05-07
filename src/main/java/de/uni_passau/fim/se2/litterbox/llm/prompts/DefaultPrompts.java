@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -62,39 +61,39 @@ public class DefaultPrompts extends PromptBuilder {
         final String issueDescription = issues.stream().map(Issue::getHintText).collect(Collectors.joining("\n\n"));
 
         return describeTarget(program, target) + """
-               The code contains the following bugs and code smells:
-               %s
+                The code contains the following bugs and code smells:
+                %s
 
-               Create a version of the program where these issues are fixed.
-               Only output the ScratchBlocks code and nothing else.
-               Include sprite and script ids in the ScratchBlocks code.
-               """.formatted(issueDescription);
+                Create a version of the program where these issues are fixed.
+                Only output the ScratchBlocks code and nothing else.
+                Include sprite and script ids in the ScratchBlocks code.
+                """.formatted(issueDescription);
     }
 
     @Override
     public String completeCode(final Program program, final QueryTarget target) {
         String result = describeTarget(program, target)
                 + """
-                    Auto-complete the code.
-                    """;
+                Auto-complete the code.
+                """;
         if (target.getTargetDescription().equals("sprite")) {
             result += """
-                        The improved code should either extend an existing script with new blocks,
-                        or add a new script to the sprite. The new code should enhance existing
-                        functionality, or provide new functionality. It should not duplicate or clone
-                        existing code.
-                        """;
+                    The improved code should either extend an existing script with new blocks,
+                    or add a new script to the sprite. The new code should enhance existing
+                    functionality, or provide new functionality. It should not duplicate or clone
+                    existing code.
+                    """;
         } else if (target.getTargetDescription().equals("script")) {
             result += """
-                        The improved code should extend the existing script with new blocks.
-                        """;
+                    The improved code should extend the existing script with new blocks.
+                    """;
         } else {
             result += """
-                        The improved code should either extend an existing script with new blocks,
-                        or add a new script to an existing sprite. The new code should enhance existing
-                        functionality, or provide new functionality. It should not duplicate or clone
-                        existing code.
-                        """;
+                    The improved code should either extend an existing script with new blocks,
+                    or add a new script to an existing sprite. The new code should enhance existing
+                    functionality, or provide new functionality. It should not duplicate or clone
+                    existing code.
+                    """;
         }
 
         result += """
@@ -110,28 +109,28 @@ public class DefaultPrompts extends PromptBuilder {
         return switch (query) {
             case SUMMARISE:
                 yield """
-                      Summarise what this code does.
-                      """;
+                        Summarise what this code does.
+                        """;
             case EXPLAIN:
                 yield """
-                      Explain how this code works.
-                      """;
+                        Explain how this code works.
+                        """;
             case SUGGEST_EXTENSION:
                 yield """
-                      Suggest how to extend this code with new functionality.
-                      """;
+                        Suggest how to extend this code with new functionality.
+                        """;
             case PROVIDE_FEEDBACK:
                 yield """
-                      This code was written by a student. Provide feedback to the student about the code as well as the creativity.
-                      """;
+                        This code was written by a student. Provide feedback to the student about the code as well as the creativity.
+                        """;
             case PROVIDE_PRAISE:
                 yield """
-                      This code was written by a student. Provide praise to the student who wrote it.
-                      """;
+                        This code was written by a student. Provide praise to the student who wrote it.
+                        """;
             case FIND_BUGS:
                 yield """
-                      Find and describe any bugs in this code.
-                      """;
+                        Find and describe any bugs in this code.
+                        """;
         };
     }
 
@@ -177,10 +176,10 @@ public class DefaultPrompts extends PromptBuilder {
         // Parsing expects sprite names and script ids
         if (target.getTargetDescription().equals("script")) {
             Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
-            String scriptId = AstNodeUtil.getBlockId(((Script)targetNode).getEvent());
+            String scriptId = AstNodeUtil.getBlockId(targetNode);
             if (actor.isPresent()) {
                 String spriteName = actor.get().getIdent().getName();
-                return  """
+                return """
                         You are given the script with id %s in sprite %s:
                         //Sprite: %s
                         //Script: %s
@@ -193,7 +192,7 @@ public class DefaultPrompts extends PromptBuilder {
             Optional<ActorDefinition> actor = AstNodeUtil.findActor(targetNode);
             if (actor.isPresent()) {
                 String spriteName = actor.get().getIdent().getName();
-                return  """
+                return """
                         You are given the sprite with name %s:
                         %s
                         """.formatted(spriteName, scratchBlocks);

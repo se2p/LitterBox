@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.llm.*;
+import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
@@ -61,7 +61,7 @@ class LLMProgramCompletionAnalyzerTest implements JsonTest {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
-        String scriptID = AstNodeUtil.getBlockId(script.getEvent());
+        String scriptID = AstNodeUtil.getBlockId(script);
 
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
@@ -78,7 +78,6 @@ class LLMProgramCompletionAnalyzerTest implements JsonTest {
         assertThat(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
         assertThat(countBlocks(modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0))).isEqualTo(8);
     }
-
 
     @Test
     void testExtendScriptInSprite() throws ParsingException, IOException {

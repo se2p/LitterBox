@@ -58,7 +58,7 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
         Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
-        String scriptID = AstNodeUtil.getBlockId(script.getEvent());
+        String scriptID = AstNodeUtil.getBlockId(script);
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
         LlmApi llm = new DummyLlmApi(response);
@@ -102,7 +102,7 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoopTwice.json");
 
         Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
-        String scriptID = AstNodeUtil.getBlockId(script.getEvent());
+        String scriptID = AstNodeUtil.getBlockId(script);
         QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
 
         LlmApi llm = new DummyLlmApi(response);

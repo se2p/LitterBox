@@ -89,7 +89,7 @@ public class LlmResponseParser {
         }
 
         return (Script) spriteScripts.script(
-                actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script.getEvent())
+                actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script)
         );
     }
 
@@ -149,7 +149,7 @@ public class LlmResponseParser {
 
         // copy over original scripts and procedures
         originalActor.getScripts().getScriptList()
-                .forEach(script -> scripts.put(AstNodeUtil.getBlockId(script.getEvent()), script));
+                .forEach(script -> scripts.put(AstNodeUtil.getBlockId(script), script));
         originalActor.getProcedureDefinitionList().getList()
                 .forEach(procedure -> procedures.put(AstNodeUtil.getBlockId(procedure), procedure));
 
@@ -173,7 +173,6 @@ public class LlmResponseParser {
                 updatedActor.getProcedureDefinitionList(),
                 new ProcedureDefinitionList(List.copyOf(procedures.values()))
         );
-
 
         return (ActorDefinition) updatedActor.accept(procedureReplacementVisitor);
     }

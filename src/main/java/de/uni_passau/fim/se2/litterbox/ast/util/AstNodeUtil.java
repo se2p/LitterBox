@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.util;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -36,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -72,6 +74,12 @@ public class AstNodeUtil {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof ProcedureMetadata procedure) {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
+         }else if (node instanceof Script script) {
+            if (script.getEvent() instanceof Never) {
+                return getBlockId(script.getStmtList().getStatement(0));
+            } else {
+                return getBlockId(script.getEvent());
+            }
         } else {
             return null;
         }
@@ -105,6 +113,21 @@ public class AstNodeUtil {
                 .getDefinitions()
                 .stream()
                 .filter(actor -> includeStage || actor.isSprite());
+    }
+
+    public static Stream<ScriptEntity> getScriptEntities(final Program program) {
+        return Stream.concat(getProcedures(program), getScripts(program));
+    }
+
+    /**
+     * Gets all procedures in the program.
+     *
+     * @param program Some program.
+     * @return The procedures in the given program.
+     */
+    public static Stream<ProcedureDefinition> getProcedures(final Program program) {
+        return program.getActorDefinitionList().getDefinitions().stream()
+                .flatMap(actor -> actor.getProcedureDefinitionList().getList().stream());
     }
 
     /**
@@ -150,8 +173,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     *         Might return {@code node} itself if it has matching type.
-     *         Returns {@code null} if no parent of the requested type could be found.
+     * Might return {@code node} itself if it has matching type.
+     * Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;

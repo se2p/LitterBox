@@ -79,8 +79,8 @@ public sealed interface QueryTarget {
 
         @Override
         public ASTNode getTargetNode(Program program) {
-            return AstNodeUtil.getScripts(program)
-                    .filter(script -> headBlockId.equals(AstNodeUtil.getBlockId(script.getEvent())))
+            return AstNodeUtil.getScriptEntities(program)
+                    .filter(script -> headBlockId.equals(AstNodeUtil.getBlockId(script)))
                     .findFirst()
                     .orElseThrow(
                             () -> new IllegalArgumentException(
