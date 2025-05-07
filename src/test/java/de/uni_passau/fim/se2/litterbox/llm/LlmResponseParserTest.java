@@ -25,6 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import org.junit.jupiter.api.Assertions;
@@ -139,5 +143,81 @@ public class LlmResponseParserTest implements JsonTest {
         Assertions.assertInstanceOf(AsString.class, think.getThought());
         AsString asString = (AsString) think.getThought();
         Assertions.assertInstanceOf(Qualified.class, asString.getOperand1());
+    }
+
+    @Test
+    void testChangeAndAddNewScript() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8
+                when green flag clicked
+                broadcast (test v)
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+
+                //Script: newlyadded
+                when green flag clicked
+                say [test]
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(1);
+        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+
+        Assertions.assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
+        Assertions.assertTrue(updatedProgram.getSymbolTable().getMessage("test").isPresent());
+        Script modified = scripts.get(0);
+        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+    }
+
+    @Test
+    void testAddProcedureAndCall() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newProcedure
+                define test (message)
+                broadcast (message)
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+
+                //Script: newlyadded
+                when green flag clicked
+                test (newMessage)
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(1);
+        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().get(0));
+
+        Assertions.assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
+        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
+        ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
+        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
     }
 }

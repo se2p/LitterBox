@@ -64,6 +64,23 @@ public class ScratchBlocksParser {
         return parseScript(actorName, scratchBlocksCode, new AtomicBoolean(false));
     }
 
+    public ScriptEntity parseScriptEntity(final String actorName, final String scratchBlocksCode) {
+        ActorContent content = parseActorContent(scratchBlocksCode, actorName);
+        if (content != null) {
+            if (content.scripts().getSize() > 0) {
+                return content.scripts().getScript(0);
+            } else if (!content.procedures().getList().isEmpty()) {
+                return content.procedures().getList().get(0);
+            }
+            throw new IllegalArgumentException(
+                    "ActorContent has no scripts to add."
+            );
+        }
+        throw new IllegalArgumentException(
+                "Unknown actor '" + actorName + "has no scripts to add."
+        );
+    }
+
     public Program extendProject(Program baseProject, String actorName, String additionalCode) {
         if (AstNodeUtil.findActorByName(baseProject, actorName) == null) {
             throw new IllegalArgumentException(

@@ -167,12 +167,15 @@ public class LlmResponseParser {
         final NodeReplacementVisitor scriptsReplacementVisitor = new NodeReplacementVisitor(
                 originalActor.getScripts(), new ScriptList(List.copyOf(scripts.values()))
         );
+        ActorDefinition updatedActor = (ActorDefinition) originalActor.accept(scriptsReplacementVisitor);
+
         final NodeReplacementVisitor procedureReplacementVisitor = new NodeReplacementVisitor(
-                originalActor.getProcedureDefinitionList(),
+                updatedActor.getProcedureDefinitionList(),
                 new ProcedureDefinitionList(List.copyOf(procedures.values()))
         );
 
-        return (ActorDefinition) originalActor.accept(scriptsReplacementVisitor).accept(procedureReplacementVisitor);
+
+        return (ActorDefinition) updatedActor.accept(procedureReplacementVisitor);
     }
 
     private ActorDefinition getBlankActorDefinition(String actorName) {
@@ -263,7 +266,7 @@ public class LlmResponseParser {
 
     private Optional<ScriptEntity> tryParseScript(final String currentSprite, final String scriptScratchBlocksCode) {
         try {
-            final ScriptEntity script = parser.parseScript(currentSprite, scriptScratchBlocksCode);
+            final ScriptEntity script = parser.parseScriptEntity(currentSprite, scriptScratchBlocksCode);
             return Optional.ofNullable(script);
         } catch (Exception e) {
             return Optional.empty();
