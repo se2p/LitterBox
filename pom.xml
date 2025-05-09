@@ -227,7 +227,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <langchain.version>1.0.0-alpha1</langchain.version>
+        <langchain.version>1.0.0-rc1</langchain.version>
     </properties>
 
     <dependencies>

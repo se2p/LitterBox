@@ -21,12 +21,11 @@ package de.uni_passau.fim.se2.litterbox.llm.api;
 import de.uni_passau.fim.se2.litterbox.llm.Conversation;
 import de.uni_passau.fim.se2.litterbox.llm.LlmMessage;
 import de.uni_passau.fim.se2.litterbox.llm.LlmMessageSender;
-import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.output.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,19 +59,19 @@ public class OpenAiApi implements LlmApi {
             queryMessages = List.of(systemMessage, userMessage);
         }
 
-        final Response<AiMessage> response = model.generate(queryMessages);
+        final ChatResponse response = model.chat(queryMessages);
 
         final List<LlmMessage> messages = new ArrayList<>();
         messages.add(new LlmMessage.GenericLlmMessage(message, LlmMessageSender.USER));
-        messages.add(new LlmMessage.GenericLlmMessage(response.content().text(), LlmMessageSender.MODEL));
+        messages.add(new LlmMessage.GenericLlmMessage(response.aiMessage().text(), LlmMessageSender.MODEL));
 
         return new Conversation(systemPrompt, messages);
     }
 
     @Override
     public Conversation query(final Conversation conversation) {
-        final Response<AiMessage> response = model.generate(LlmApiUtils.conversationToChatMessages(conversation));
-        final LlmMessage msg = new LlmMessage.GenericLlmMessage(response.content().text(), LlmMessageSender.MODEL);
+        final ChatResponse response = model.chat(LlmApiUtils.conversationToChatMessages(conversation));
+        final LlmMessage msg = new LlmMessage.GenericLlmMessage(response.aiMessage().text(), LlmMessageSender.MODEL);
 
         return conversation.add(msg);
     }
