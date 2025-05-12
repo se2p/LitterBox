@@ -36,7 +36,7 @@ public final class LlmApiUtils {
      * Converts our concept of chat messages into the format required by the LangChain library.
      *
      * @param conversation A conversation between the user and a large language model.
-     * @return The conversation as sequence of chat messages.
+     * @return The conversation as a sequence of chat messages.
      */
     static List<ChatMessage> conversationToChatMessages(final Conversation conversation) {
         final Stream<ChatMessage> prefix;
@@ -48,8 +48,8 @@ public final class LlmApiUtils {
 
         final Stream<ChatMessage> messages = conversation.messages().stream()
                 .map(message -> switch (message.sender()) {
-                    case MODEL -> new UserMessage(message.text());
-                    case USER -> new AiMessage(message.text());
+                    case MODEL -> new AiMessage(message.text());
+                    case USER -> new UserMessage(message.text());
                 });
 
         return Stream.concat(prefix, messages).toList();
