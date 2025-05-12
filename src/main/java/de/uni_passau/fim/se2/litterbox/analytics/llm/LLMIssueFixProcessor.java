@@ -83,12 +83,16 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
         String response = scratchLlm.singleQueryWithTextResponse(prompt);
         log.info("Response: " + response);
 
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issueBuilder.fromIssue(issue).withProgram(program);
+
         LlmResponseParser responseParser = new LlmResponseParser();
         Script fixedScript = responseParser.parseResultAndUpdateScript(program, issue.getScript(), response);
-        log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
+        if (fixedScript != null) {
+            log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
+            issueBuilder = issueBuilder.withRefactoring(fixedScript);
+        }
 
-        IssueBuilder issueBuilder = new IssueBuilder();
-        issueBuilder.fromIssue(issue).withProgram(program).withRefactoring(fixedScript);
         return issueBuilder.build();
     }
 }
