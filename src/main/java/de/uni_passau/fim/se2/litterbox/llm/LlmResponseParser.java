@@ -211,6 +211,8 @@ public class LlmResponseParser {
         StringBuilder currentScriptCode = new StringBuilder();
 
         for (String line : response.lines().toList()) {
+            line = fixSpriteScriptMarkerComments(line);
+
             if (line.startsWith("scratch") || line.startsWith(MARKDOWN_CLOSING)) {
                 // skip -- GPT likes to start markdown blocks with language tags; also skip markdown closing tags
                 // Matches "scratch" and "scratchblocks" and "```"
@@ -245,6 +247,30 @@ public class LlmResponseParser {
         }
 
         return new ParsedLlmResponseCode(spriteScripts, unparseableScripts);
+    }
+
+    /**
+     * The model sometimes changes capitalization for these comments and/or removes the leading comment marker.
+     *
+     * @param line A ScratchBlocks line.
+     * @return The fixed line, if we think it should have been a sprite or script marker, or the unchanged line
+     *         otherwise.
+     */
+    private String fixSpriteScriptMarkerComments(String line) {
+        final String lineLower = line.toLowerCase(Locale.ENGLISH);
+
+        System.out.println("LINE");
+        System.out.printf("before: %s\n", line);
+
+        if (lineLower.startsWith("sprite:") || lineLower.startsWith("script:")) {
+            line = line
+                    .replaceFirst("^[sS]prite:(\\s*)", "//Sprite: ")
+                    .replaceFirst("^[sS]cript:(\\s*)", "//Script: ");
+        }
+
+        System.out.printf("after:  %s\n", line);
+
+        return line;
     }
 
     private void parseScript(

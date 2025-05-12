@@ -31,11 +31,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LlmResponseParserTest implements JsonTest {
 
@@ -251,5 +254,27 @@ public class LlmResponseParserTest implements JsonTest {
         ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
         Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
         Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+    }
+
+    @Test
+    void testParseSingleScriptWithBrokenComments() throws ParsingException, IOException {
+        final String response = """
+                ```scratchblocks
+                sprite:Sprite1
+                Script: Z`w:F,*y_,WJPBw^$]b)
+                when green flag clicked
+                ask (What is your name?) and wait
+                say (answer) for (2) seconds
+                ```
+                """;
+        Program program = getAST("./src/test/fixtures/bugpattern/missingAsk.json");
+
+        final LlmResponseParser parser = new LlmResponseParser();
+        final Script script = (Script) BlockByIdFinder.findBlock(program, "Z`w:F,*y_,WJPBw^$]b)")
+                .orElseThrow()
+                .getParentNode();
+
+        final Script parsedScript = parser.parseResultAndUpdateScript(program, script, response);
+        assertNotNull(parsedScript);
     }
 }
