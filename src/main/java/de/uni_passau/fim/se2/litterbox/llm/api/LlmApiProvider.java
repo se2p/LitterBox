@@ -30,6 +30,7 @@ public final class LlmApiProvider {
         final String apiType = System.getProperty(LLM_API_PROPERTY, "openai");
         return switch (apiType) {
             case "openai" -> new OpenAiApi();
+            case "ollama" -> new OllamaApi();
             default -> new OpenAiApi();
         };
     }

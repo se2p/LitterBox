@@ -228,9 +228,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <langchain.version>1.0.0-rc1</langchain.version>
+        <!-- remove when same as langchain.version again in the future -->
+        <langchain.ollama.version>1.0.0-beta4</langchain.ollama.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>${langchain.version}</version>
+        </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
@@ -238,8 +245,8 @@
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
-            <version>${langchain.version}</version>
+            <artifactId>langchain4j-ollama</artifactId>
+            <version>${langchain.ollama.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
