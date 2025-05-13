@@ -122,7 +122,7 @@ public class LlmResponseParser {
             final Map<String, ScriptEntity> scripts = entry.getValue();
 
             final ActorDefinition actor = originalProgram.getActorDefinitionList().getActorDefinition(actorName)
-                    .orElseGet(() -> getBlankActorDefinition(actorName));
+                    .orElseGet(() -> getBlankActorDefinition(Objects.requireNonNullElse(actorName, "unidentifiedActor")));
             final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
             if (updatedActor.isStage()) {
@@ -217,7 +217,7 @@ public class LlmResponseParser {
                 // skip -- GPT likes to start markdown blocks with language tags; also skip markdown closing tags
                 // Matches "scratch" and "scratchblocks" and "```"
             } else if (line.startsWith(SPRITE_HEADER)) {
-                if (currentSprite != null && currentScriptId != null) {
+                if (currentScriptId != null) {
                     parseScript(
                             spriteScripts, unparseableScripts, currentSprite, currentScriptId,
                             currentScriptCode.toString()
@@ -254,7 +254,7 @@ public class LlmResponseParser {
      *
      * @param line A ScratchBlocks line.
      * @return The fixed line, if we think it should have been a sprite or script marker, or the unchanged line
-     *         otherwise.
+     * otherwise.
      */
     private String fixSpriteScriptMarkerComments(String line) {
         final String lineLower = line.toLowerCase(Locale.ENGLISH);
