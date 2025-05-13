@@ -492,7 +492,7 @@ currentTime             : 'current' WS '['currentChoice' v]';
 daysSince               : 'days since 2000';
 userName                : 'username';
 pickRandom              : 'pick random 'firstExpr=exprOrLiteral WS 'to' WS secondExpr=exprOrLiteral;
-join                    : 'join 'firstExpr=exprOrLiteral secondExpr=exprOrLiteral;
+join                    : 'join 'firstExpr=exprOrLiteral WS secondExpr=exprOrLiteral;
 getLetterAtIndex        : 'letter 'firstExpr=exprOrLiteral WS 'of' WS secondExpr=exprOrLiteral;
 lengthOf                : 'length of' WS (stringExpr=exprOrLiteral | '[' listVar=stringArgument ' v]');
 round                   : 'round 'exprOrLiteral;

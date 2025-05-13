@@ -191,7 +191,7 @@ class ScratchBlocksToJsonTest implements JsonTest {
                 <<> < <>>
                 <<> = <>>
                 <not <>>
-                (join [apple][banana])
+                (join [apple] [banana])
                 (letter (1) of [apple])
                 (length of [apple])
                 <[apple] contains [a]?>
