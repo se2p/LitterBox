@@ -23,16 +23,23 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -95,5 +102,28 @@ class BlockMetadataTest {
         assertNull(nonDataBlockMetadata.getCommentId());
         assertInstanceOf(ProcedureMutationMetadata.class, nonDataBlockMetadata.getMutation());
         assertTrue(nonDataBlockMetadata.isShadow());
+    }
+
+    @Test
+    void testMetadataVariableInsideAndOutsideBlock() throws ParsingException, IOException {
+        Program prog = JsonTest.parseProgram("src/test/fixtures/metadata/variableMetadata.json");
+        List<Script> scripts = prog.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
+        Assertions.assertEquals(2, scripts.size());
+        Assertions.assertInstanceOf(ExpressionStmt.class, scripts.get(0).getStmtList().getStmts().get(0));
+        ExpressionStmt expressionStmt = (ExpressionStmt) scripts.get(0).getStmtList().getStmts().get(0);
+        Qualified qualified = (Qualified) expressionStmt.getExpression();
+        Assertions.assertInstanceOf(Variable.class, qualified.getSecond());
+        Variable var = (Variable) qualified.getSecond();
+        Assertions.assertInstanceOf(DataBlockMetadata.class, var.getMetadata());
+
+        Assertions.assertInstanceOf(MoveSteps.class, scripts.get(1).getStmtList().getStmts().get(0));
+        MoveSteps moveSteps = (MoveSteps) scripts.get(1).getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
+        AsNumber asNumber = (AsNumber) moveSteps.getSteps();
+        Assertions.assertInstanceOf(Qualified.class, asNumber.getOperand1());
+        qualified = (Qualified) asNumber.getOperand1();
+        Assertions.assertInstanceOf(Variable.class, qualified.getSecond());
+        var = (Variable) qualified.getSecond();
+        Assertions.assertInstanceOf(NoBlockMetadata.class, var.getMetadata());
     }
 }
