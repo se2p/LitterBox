@@ -23,15 +23,23 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -363,5 +371,55 @@ public class LlmResponseParserTest implements JsonTest {
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         Assertions.assertEquals(7, updatedProgram.getActorDefinitionList().getDefinitions().size());
         Assertions.assertTrue(updatedProgram.getActorDefinitionList().getActorDefinition("unidentifiedActor").isPresent());
+    }
+
+    @Test
+    void testAddDistance() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                move (distance to (other v)) steps
+                move (distance to (mouse-pointer v)) steps
+                move (distance to (username)) steps
+                point towards (other v)
+                """;
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(0);
+        Assertions.assertEquals(4, newScript.getStmtList().getStmts().size());
+        for (int i = 0; i < 3; i++) {
+            Assertions.assertInstanceOf(MoveSteps.class, newScript.getStmtList().getStmts().get(i));
+        }
+        Assertions.assertInstanceOf(PointTowards.class, newScript.getStmtList().getStmts().get(3));
+
+        MoveSteps move = (MoveSteps) newScript.getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        DistanceTo distance = (DistanceTo) move.getSteps();
+        Assertions.assertInstanceOf(FromExpression.class, distance.getPosition());
+        FromExpression from = (FromExpression) distance.getPosition();
+        Assertions.assertInstanceOf(AsString.class, from.getStringExpr());
+
+        move = (MoveSteps) newScript.getStmtList().getStmts().get(1);
+        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        distance = (DistanceTo) move.getSteps();
+        Assertions.assertInstanceOf(MousePos.class, distance.getPosition());
+
+        move = (MoveSteps) newScript.getStmtList().getStmts().get(2);
+        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        distance = (DistanceTo) move.getSteps();
+        Assertions.assertInstanceOf(FromExpression.class, distance.getPosition());
+        from = (FromExpression) distance.getPosition();
+        Assertions.assertInstanceOf(Username.class, from.getStringExpr());
+
+        PointTowards pointTowards = (PointTowards) newScript.getStmtList().getStmts().get(3);
+        Assertions.assertInstanceOf(FromExpression.class, pointTowards.getPosition());
+        from = (FromExpression) pointTowards.getPosition();
+        Assertions.assertInstanceOf(AsString.class, from.getStringExpr());
     }
 }

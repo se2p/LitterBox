@@ -390,7 +390,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         } else if (ctx.mousePointer() != null) {
             return new MousePos(handleExprBlockMetadata(true));
         } else {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), handleExprBlockMetadata(true));
+            return new FromExpression(new AsString(new StrId(visitStringArgument(ctx.stringArgument()))), handleExprBlockMetadata(true));
         }
     }
 
@@ -1129,7 +1129,7 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (ctx.mousePointer() != null) {
             return new MousePos(handleExprBlockMetadata(true));
         } else if (ctx.stringArgument() != null) {
-            return new FromExpression(visitStringArgument(ctx.stringArgument()), handleExprBlockMetadata(true));
+            return new FromExpression(new AsString(new StrId(visitStringArgument(ctx.stringArgument()))), handleExprBlockMetadata(true));
         } else {
             return new FromExpression(makeStringExpr(ctx.exprOrLiteral()), new NoBlockMetadata()); //ok just wrapper
         }
