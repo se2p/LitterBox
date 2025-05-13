@@ -27,10 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -887,6 +884,14 @@ class ScratchBlocksToScratchVisitorTest {
         assertEquals("list var", list.getName().getName());
 
         assertInstanceOf(TopNonDataBlockMetadata.class, lengthOfVar.getMetadata());
+    }
+
+    @Test
+    void joinExpr() {
+        StmtList stmtList = getStmtList("(join [your score is] [123])");
+        Join join = assertHasExprStmt(stmtList, Join.class);
+        assertInstanceOf(StringLiteral.class, join.getOperand1());
+        assertInstanceOf(StringLiteral.class, join.getOperand2());
     }
 
     // region: common helper methods
