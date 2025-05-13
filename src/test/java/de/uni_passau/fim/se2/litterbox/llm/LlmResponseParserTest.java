@@ -277,4 +277,91 @@ public class LlmResponseParserTest implements JsonTest {
         final Script parsedScript = parser.parseResultAndUpdateScript(program, script, response);
         assertNotNull(parsedScript);
     }
+
+    @Test
+    void testParsingBrokenActor() throws ParsingException, IOException {
+        String response = """
+                when green flag clicked
+                set size to (70) %
+                go to x: (-140) y: (-68)
+                repeat (50)
+                change size by (-1)
+                wait (0.07) seconds
+                end
+
+                //Script: %jW.on0S!7T_N~uGzae%
+                when green flag clicked
+                say [Ich möchte dir eine Geschichte erzählen: Wir sind über das Meer zur Schatzinsel gefahren.]
+                glide (pick random (4) to (9)) secs to x: (110) y: (-70)
+                say [Wir sind vielen Gefahren begegnet.]
+                glide (3) secs to x: (90) y: (20)
+                say [Es gab viele aktive Vulkane auf der Insel.]
+                glide (2) secs to x: (10) y: (10)
+                glide (2) secs to x: (-20) y: (70)
+                say [Endlich hatten wir den Schatz erreicht. ] for (3) seconds
+                say [Doch den größten Schatz habe ich auf dem Heimweg kennengelernt.] for (3) seconds
+                say [Was für ein Happy End!] for (2) seconds
+                broadcast [Was für ein Happy End! v]
+
+                //Script: (N($V}4*2nGPPfl;|)3U
+                when I receive [Was für ein Happy End! v]
+                repeat (25)
+                change y by (-1)
+                change x by (-1)
+                change size by (3)
+                change y by (-1)
+                change x by (-1)
+                wait (0.1) seconds
+                end
+
+                //Sprite: Schatzkarte
+                //Script: {Ib.y`:[%-GbceURJSz8
+                when green flag clicked
+                go to x: (0) y: (-20)
+                go to [back v] layer
+
+                //Sprite: Vulkaninsel
+                //Script: y/ia3*ysX:*;A=0*R1*(
+                when green flag clicked
+                go to x: (-58) y: (10)
+                hide
+
+                //Script: YT$[^Byo/lJuc1G3U8Hv
+                when green flag clicked
+                wait until <(distance to (Pirat v)) < (70)>
+                show
+
+                //Sprite: Schatztruhe
+                //Script: LM~~l[OmZl0bmz)EEM7]
+                when green flag clicked
+                hide
+                go to x: (-80) y: (80)
+
+                //Script: k:yU9Y%G53w%z7U7fimM
+                when green flag clicked
+                wait until <(distance to (Pirat v)) < (65)>
+                show
+
+                //Sprite: Mädchen
+                //Script: 15j}eA1Kjp;6rE18sX1r
+                when green flag clicked
+                hide
+                set size to (20) %
+                go to x: (100) y: (-20)
+
+                //Script: $SI%l3E!sP=|]4#fF][o
+                when I receive [Was für ein Happy End! v]
+                show
+                repeat (25)
+                change size by (3)
+                wait (0.1) seconds
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/Treasure.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(7, updatedProgram.getActorDefinitionList().getDefinitions().size());
+        Assertions.assertTrue(updatedProgram.getActorDefinitionList().getActorDefinition("unidentifiedActor").isPresent());
+    }
 }
