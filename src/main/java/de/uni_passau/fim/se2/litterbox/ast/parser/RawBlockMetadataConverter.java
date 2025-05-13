@@ -31,11 +31,21 @@ final class RawBlockMetadataConverter {
     }
 
     static BlockMetadata convertBlockMetadata(final RawBlockId blockId, final RawBlock block) {
+        return convertBlockMetadata(blockId, block, false);
+    }
+
+    static BlockMetadata convertTopLevelBlockMetadata(final RawBlockId blockId, final RawBlock block) {
+        return convertBlockMetadata(blockId, block, true);
+    }
+
+    private static BlockMetadata convertBlockMetadata(
+            final RawBlockId blockId, final RawBlock block, final boolean isTopLevel
+    ) {
         // implementation note: can be switch-case pattern when upgrading to Java 21
         if (block instanceof RawBlock.RawRegularBlock regularBlock) {
             return convertRegularBlockMetadata(blockId, regularBlock);
         } else if (block instanceof RawBlock.ArrayBlock arrayBlock) {
-            return convertArrayBlockMetadata(blockId, arrayBlock);
+            return convertArrayBlockMetadata(blockId, arrayBlock, isTopLevel);
         } else {
             // cannot happen as long as RawBlock sealed interface does not get additional implementations
             throw new InternalParsingException("Unknown block type!");
@@ -57,7 +67,13 @@ final class RawBlockMetadataConverter {
         }
     }
 
-    private static DataBlockMetadata convertArrayBlockMetadata(final RawBlockId id, final RawBlock.ArrayBlock block) {
+    private static BlockMetadata convertArrayBlockMetadata(
+            final RawBlockId id, final RawBlock.ArrayBlock block, final boolean isTopLevel
+    ) {
+        if (!isTopLevel) {
+            return new NoBlockMetadata();
+        }
+
         final Optional<Coordinates> coordinates;
         final String commentId;
 
