@@ -121,8 +121,11 @@ public class LlmResponseParser {
             final String actorName = entry.getKey();
             final Map<String, ScriptEntity> scripts = entry.getValue();
 
-            final ActorDefinition actor = originalProgram.getActorDefinitionList().getActorDefinition(actorName)
-                    .orElseGet(() -> getBlankActorDefinition(Objects.requireNonNullElse(actorName, "unidentifiedActor")));
+            final ActorDefinition actor = originalProgram.getActorDefinitionList()
+                    .getActorDefinition(actorName)
+                    .orElseGet(
+                            () -> getBlankActorDefinition(Objects.requireNonNullElse(actorName, "unidentifiedActor"))
+                    );
             final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
             if (updatedActor.isStage()) {
@@ -144,7 +147,8 @@ public class LlmResponseParser {
      * @param llmResponseScripts The scripts and procedures contained in the LLM response.
      * @return The updated actor.
      */
-    private ActorDefinition mergeActor(final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
+    private ActorDefinition mergeActor(
+            final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
     ) {
         final Map<String, Script> scripts = new HashMap<>();
         final Map<String, ProcedureDefinition> procedures = new HashMap<>();
@@ -254,7 +258,7 @@ public class LlmResponseParser {
      *
      * @param line A ScratchBlocks line.
      * @return The fixed line, if we think it should have been a sprite or script marker, or the unchanged line
-     * otherwise.
+     *         otherwise.
      */
     private String fixSpriteScriptMarkerComments(String line) {
         final String lineLower = line.toLowerCase(Locale.ENGLISH);
