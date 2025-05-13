@@ -49,18 +49,11 @@ final class ConverterUtilities {
     }
 
     static Qualified variableInfoToIdentifier(
-            final VariableInfo variableInfo, final RawBlockId id, final String variableName
+            final VariableInfo variableInfo, final String variableName
     ) {
         final NoBlockMetadata metadata = new NoBlockMetadata();
         final Variable variable = new Variable(new StrId(variableName), metadata);
         return new Qualified(new StrId(variableInfo.actor()), variable);
-    }
-
-    static Qualified variableInfoToIdentifier(final VariableInfo variableInfo, final RawBlock.RawVariable variable) {
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(variable.id(), variable);
-        final Variable v = new Variable(new StrId(variable.name()), metadata);
-
-        return new Qualified(new StrId(variableInfo.actor()), v);
     }
 
     static Qualified topLevelVariableInfoToIdentifier(
@@ -73,15 +66,15 @@ final class ConverterUtilities {
     }
 
     static Qualified listInfoToIdentifier(
-            final ExpressionListInfo listInfo, final RawBlockId id, final String listName
+            final ExpressionListInfo listInfo, final String listName
     ) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), null, 0.0, 0.0);
+        final NoBlockMetadata metadata = new NoBlockMetadata();
         final ScratchList list = new ScratchList(new StrId(listName), metadata);
         return new Qualified(new StrId(listInfo.actor()), list);
     }
 
-    static Qualified listInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(list.id(), list);
+    static Qualified topLevelListInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(list.id(), list);
         final ScratchList l =  new ScratchList(new StrId(list.name()), metadata);
 
         return new Qualified(new StrId(listInfo.actor()), l);
@@ -98,7 +91,7 @@ final class ConverterUtilities {
                 () -> new ExpressionList(Collections.emptyList()), true, "Stage"
         );
 
-        return listInfoToIdentifier(listInfo, listId, listName);
+        return listInfoToIdentifier(listInfo, listName);
     }
 
     static MutationMetadata convertMutation(final RawMutation mutation) {
