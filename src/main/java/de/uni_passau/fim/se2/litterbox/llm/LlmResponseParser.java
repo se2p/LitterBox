@@ -263,16 +263,11 @@ public class LlmResponseParser {
     private String fixSpriteScriptMarkerComments(String line) {
         final String lineLower = line.toLowerCase(Locale.ENGLISH);
 
-        System.out.println("LINE");
-        System.out.printf("before: %s\n", line);
-
         if (lineLower.startsWith("sprite:") || lineLower.startsWith("script:")) {
             line = line
                     .replaceFirst("^[sS]prite:(\\s*)", "//Sprite: ")
                     .replaceFirst("^[sS]cript:(\\s*)", "//Script: ");
         }
-
-        System.out.printf("after:  %s\n", line);
 
         return line;
     }
