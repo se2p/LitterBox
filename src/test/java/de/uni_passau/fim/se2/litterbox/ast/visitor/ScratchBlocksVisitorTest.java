@@ -1925,4 +1925,22 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
+
+    @Test
+    public void testEmptyActor() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingAsk.json");
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        visitor.setAddActorNames(true);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "//Sprite: Sprite1" + System.lineSeparator() +
+                System.lineSeparator() +
+                "//Script: Z`w:F,*y_,WJPBw^$]b)" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say (answer) for (2) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
 }
