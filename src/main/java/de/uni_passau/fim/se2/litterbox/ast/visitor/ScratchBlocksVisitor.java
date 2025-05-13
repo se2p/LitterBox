@@ -234,12 +234,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(ActorDefinition node) {
         currentActor = node;
         if (addActorNames) {
-            if (hasContent) {
+            if (!node.getProcedureDefinitionList().getList().isEmpty() || node.getScripts().getSize() > 0) {
+                if (hasContent) {
+                    newLine();
+                }
+                emitNoSpace("//Sprite: " + node.getIdent().getName());
                 newLine();
+                hasContent = true;
             }
-            emitNoSpace("//Sprite: " + node.getIdent().getName());
-            newLine();
-            hasContent = true;
         }
         node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
