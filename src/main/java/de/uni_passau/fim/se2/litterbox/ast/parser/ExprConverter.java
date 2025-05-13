@@ -79,7 +79,7 @@ abstract class ExprConverter {
                     "Program contains unknown variable '" + variable.name() + "' in actor '"
                             + state.getCurrentActor().getName() + "'."
             ));
-            final Qualified varId = ConverterUtilities.variableInfoToIdentifier(varInfo, variable);
+            final Qualified varId = ConverterUtilities.topLevelVariableInfoToIdentifier(varInfo, variable);
 
             return new ExpressionStmt(varId);
         } else if (exprBlock instanceof RawBlock.RawList list) {

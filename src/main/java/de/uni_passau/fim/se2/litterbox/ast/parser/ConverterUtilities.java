@@ -63,6 +63,15 @@ final class ConverterUtilities {
         return new Qualified(new StrId(variableInfo.actor()), v);
     }
 
+    static Qualified topLevelVariableInfoToIdentifier(
+            final VariableInfo variableInfo, final RawBlock.RawVariable variable
+    ) {
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(variable.id(), variable);
+        final Variable v = new Variable(new StrId(variable.name()), metadata);
+
+        return new Qualified(new StrId(variableInfo.actor()), v);
+    }
+
     static Qualified listInfoToIdentifier(
             final ExpressionListInfo listInfo, final RawBlockId id, final String listName
     ) {
