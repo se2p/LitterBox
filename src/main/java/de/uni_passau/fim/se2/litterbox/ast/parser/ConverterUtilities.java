@@ -51,7 +51,7 @@ final class ConverterUtilities {
     static Qualified variableInfoToIdentifier(
             final VariableInfo variableInfo, final RawBlockId id, final String variableName
     ) {
-        final DataBlockMetadata metadata = new DataBlockMetadata(id.id(), null, 0, 0);
+        final NoBlockMetadata metadata = new NoBlockMetadata();
         final Variable variable = new Variable(new StrId(variableName), metadata);
         return new Qualified(new StrId(variableInfo.actor()), variable);
     }
