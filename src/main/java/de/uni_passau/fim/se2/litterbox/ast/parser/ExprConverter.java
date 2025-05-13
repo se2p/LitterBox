@@ -89,7 +89,7 @@ abstract class ExprConverter {
                     "Program contains unknown list '" + list.name() + "' in actor '"
                             + state.getCurrentActor().getName() + "'."
             ));
-            final Qualified listId = ConverterUtilities.listInfoToIdentifier(listInfo, list);
+            final Qualified listId = ConverterUtilities.topLevelListInfoToIdentifier(listInfo, list);
 
             return new ExpressionStmt(listId);
         } else {
