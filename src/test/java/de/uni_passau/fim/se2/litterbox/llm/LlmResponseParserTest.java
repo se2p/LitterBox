@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
@@ -421,5 +422,23 @@ public class LlmResponseParserTest implements JsonTest {
         Assertions.assertInstanceOf(FromExpression.class, pointTowards.getPosition());
         from = (FromExpression) pointTowards.getPosition();
         Assertions.assertInstanceOf(AsString.class, from.getStringExpr());
+    }
+
+    @Test
+    void testAddActor() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: CatNew
+                //Script: newlyadded
+                when green flag clicked
+                move (distance to (Sprite1 v)) steps
+                """;
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        Assertions.assertEquals(3, updatedProgram.getActorDefinitionList().getDefinitions().size());
+        ActorDefinition newActor = updatedProgram.getActorDefinitionList().getActorDefinition("CatNew").get();
+        Assertions.assertFalse(newActor.getSetStmtList().getStmts().isEmpty());
     }
 }

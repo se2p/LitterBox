@@ -20,12 +20,17 @@ package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
@@ -184,10 +189,18 @@ public class LlmResponseParser {
     }
 
     private ActorDefinition getBlankActorDefinition(String actorName) {
+        List<SetStmt> setStmtLists = new ArrayList<>();
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("Volume"), new NumberLiteral(100), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("layerOrder"), new NumberLiteral(1), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("x"), new NumberLiteral(0), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("y"), new NumberLiteral(0), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("size"), new NumberLiteral(50), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("direction"), new NumberLiteral(90), new NoBlockMetadata()));
+        setStmtLists.add(new SetAttributeTo(new StringLiteral("rotationStyle"), new StringLiteral("all around"), new NoBlockMetadata()));
         return new ActorDefinition(ActorType.getSprite(),
                 new StrId(actorName),
                 new DeclarationStmtList(Collections.emptyList()),
-                new SetStmtList(Collections.emptyList()),
+                new SetStmtList(setStmtLists),
                 new ProcedureDefinitionList(Collections.emptyList()),
                 new ScriptList(Collections.emptyList()),
                 new ActorMetadata(
@@ -258,7 +271,7 @@ public class LlmResponseParser {
      *
      * @param line A ScratchBlocks line.
      * @return The fixed line, if we think it should have been a sprite or script marker, or the unchanged line
-     *         otherwise.
+     * otherwise.
      */
     private String fixSpriteScriptMarkerComments(String line) {
         final String lineLower = line.toLowerCase(Locale.ENGLISH);
