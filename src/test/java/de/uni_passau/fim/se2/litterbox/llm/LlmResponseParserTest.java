@@ -441,4 +441,21 @@ public class LlmResponseParserTest implements JsonTest {
         ActorDefinition newActor = updatedProgram.getActorDefinitionList().getActorDefinition("CatNew").get();
         Assertions.assertFalse(newActor.getSetStmtList().getStmts().isEmpty());
     }
+
+    @Test
+    void testAddVaraibleStmt() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                set [my variable v] to (0)
+                move (my variable) steps
+                """;
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        JSONFileCreator.writeJsonFromProgram(updatedProgram, "_extended");
+    }
 }
