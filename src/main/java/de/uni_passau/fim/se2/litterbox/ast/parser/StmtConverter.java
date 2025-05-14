@@ -52,7 +52,7 @@ abstract class StmtConverter<T extends Stmt> {
                 StringType::new, true, "Stage"
         );
 
-        return ConverterUtilities.variableInfoToIdentifier(varInfo, varId, varName);
+        return ConverterUtilities.variableInfoToIdentifier(varInfo, varName);
     }
 
     protected Qualified getOrCreateReferencedList(final RawBlock.RawRegularBlock stmtBlock) {
@@ -66,6 +66,6 @@ abstract class StmtConverter<T extends Stmt> {
                 () -> new ExpressionList(Collections.emptyList()), true, "Stage"
         );
 
-        return ConverterUtilities.listInfoToIdentifier(listInfo, listId, listName);
+        return ConverterUtilities.listInfoToIdentifier(listInfo, listName);
     }
 }
