@@ -200,17 +200,6 @@ public class ActorJSONCreator {
             }
         }
 
-        //attributes that are only in stage
-        if (isStage) {
-            jsonString.append(",");
-            StageMetadata stageMetadata = (StageMetadata) meta;
-            if (stageMetadata.getTextToSpeechLanguage() == null) {
-                JSONStringCreator.createFieldValueNull(jsonString, TEXT_TO_SPEECH_KEY);
-            } else {
-                JSONStringCreator.createFieldValue(jsonString, TEXT_TO_SPEECH_KEY,
-                        stageMetadata.getTextToSpeechLanguage());
-            }
-        }
         jsonString.append("}");
         return jsonString.toString();
     }
