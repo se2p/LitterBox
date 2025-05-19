@@ -961,6 +961,34 @@ public class CloneVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link ColorParamFromExpr}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ColorParamFromExpr Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ColorParamFromExpr node) {
+        return new ColorParamFromExpr(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FixedColorParam}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FixedColorParam Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FixedColorParam node) {
+        return new FixedColorParam(node.getTypeName(), apply(node.getMetadata()));
+    }
+
+    /**
      * Default implementation of visit method for {@link SetAttributeTo}.
      *
      * <p>
@@ -3036,21 +3064,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link NonDataBlockWithMenuMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node PenWithParamMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(NonDataBlockWithMenuMetadata node) {
-        return new NonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), apply(node.getMenuMetadata()));
-    }
-
-    /**
      * Default implementation of visit method for {@link ProgramMetadata}.
      *
      * <p>
@@ -3393,21 +3406,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(ForwardBackwardChoice node) {
         return new ForwardBackwardChoice(node.getTypeName());
-    }
-
-    /**
-     * Default implementation of visit method for {@link TopNonDataBlockWithMenuMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node CloneOfMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(TopNonDataBlockWithMenuMetadata node) {
-        return new TopNonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), node.getXPos(), node.getYPos(), apply(node.getMenuMetadata()));
     }
 
     /*
