@@ -936,24 +936,30 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public SetPenColorToColorStmt visitSetPenColorToColor(ScratchBlocksParser.SetPenColorToColorContext ctx) {
-        return new SetPenColorToColorStmt(visitTouchingColorChoice(ctx.touchingColorChoice()), handleStmtBlockMetadata());
+        return new SetPenColorToColorStmt(
+                visitTouchingColorChoice(ctx.touchingColorChoice()), handleStmtBlockMetadata()
+        );
     }
 
     @Override
     public SetPenColorParamTo visitSetPenColorToValue(ScratchBlocksParser.SetPenColorToValueContext ctx) {
-        return new SetPenColorParamTo(makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata());
+        return new SetPenColorParamTo(
+                makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata()
+        );
     }
 
     @Override
     public ChangePenColorParamBy visitChangePenColor(ScratchBlocksParser.ChangePenColorContext ctx) {
-        return new ChangePenColorParamBy(makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata());
+        return new ChangePenColorParamBy(
+                makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata()
+        );
     }
 
     @Override
     public ColorParam visitPenEffect(ScratchBlocksParser.PenEffectContext ctx) {
         if (ctx.exprOrLiteral() != null) {
             return new ColorParamFromExpr(visitExprOrLiteral(ctx.exprOrLiteral()),new NoBlockMetadata());//wrapper
-        }else {
+        } else {
             return new FixedColorParam(ctx.fixedEffect().getText(),handleExprBlockMetadata(true));
         }
     }
