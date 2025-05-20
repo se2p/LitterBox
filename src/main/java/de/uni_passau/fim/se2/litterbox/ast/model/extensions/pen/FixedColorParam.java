@@ -20,38 +20,30 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
-    private final NumExpr value;
-    private final ColorParam param;
+public class FixedColorParam extends AbstractNode implements ColorParam, FixedNodeOption {
     private final BlockMetadata metadata;
+    private final FixedColorParamType type;
 
-    public ChangePenColorParamBy(NumExpr value, ColorParam param, BlockMetadata metadata) {
-        super(value, param, metadata);
-        this.value = value;
-        this.param = param;
+    public FixedColorParam(String typeName, BlockMetadata metadata) {
+        super(metadata);
+        this.type = FixedColorParamType.fromString(typeName);
         this.metadata = metadata;
+    }
+
+    public FixedColorParamType getType() {
+        return type;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return metadata;
-    }
-
-    public NumExpr getValue() {
-        return value;
-    }
-
-    public ColorParam getParam() {
-        return param;
     }
 
     @Override
@@ -64,21 +56,40 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
     }
 
     @Override
-    public ASTNode accept(CloneVisitor visitor) {
-        return visitor.visit(this);
-    }
-
-    @Override
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit(this);
     }
 
     @Override
-    public Opcode getOpcode() {
-        return PenOpcode.pen_setPenColorParamTo;
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 
-    public Opcode getMenuColorParamOpcode() {
-        return DependentBlockOpcode.pen_menu_colorParam;
+    @Override
+    public String getTypeName() {
+        return type.getType();
+    }
+
+    public enum FixedColorParamType {
+        COLOR("color"), SATURATION("saturation"), BRIGHTNESS("brightness"), TRANSPARENCY("transparency");
+
+        private final String type;
+
+        FixedColorParamType(String type) {
+            this.type = Preconditions.checkNotNull(type);
+        }
+
+        public static FixedColorParamType fromString(String type) {
+            for (FixedColorParam.FixedColorParamType f : values()) {
+                if (f.getType().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown FixedColorParam: " + type);
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 }
