@@ -331,6 +331,26 @@ class ScratchBlocksToJsonTest implements JsonTest {
         writeJsonFromProgram(newProgram);
     }
 
+    @Test
+    void testPenBlocks() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        final String additionalCode = """
+                erase all
+                stamp
+                pen up
+                pen down
+                set pen color to [#ff0000]
+                change pen (color v) by (10)
+                set pen (saturation v) to (10)
+                change pen size by (10)
+                set pen size to (10)
+                change pen (username) by (10)
+                """;
+        Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
+        writeJsonFromProgram(newProgram);
+    }
+
     private void writeJsonFromString(String jsonString, String name) throws IOException {
         Path outputFile = tempDir.resolve(name + ".json");
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(outputFile))) {

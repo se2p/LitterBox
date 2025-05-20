@@ -75,7 +75,7 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
 
     @Override
     public Opcode getOpcode() {
-        return PenOpcode.pen_setPenColorParamTo;
+        return PenOpcode.pen_changePenColorParamBy;
     }
 
     public Opcode getMenuColorParamOpcode() {
