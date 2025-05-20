@@ -941,8 +941,21 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
 
     @Override
     public SetPenColorParamTo visitSetPenColorToValue(ScratchBlocksParser.SetPenColorToValueContext ctx) {
-        throw new RuntimeException("not implemented");
-        //return new SetPenColorParamTo(makeNumExpr(ctx.exprOrLiteral()),,handleStmtBlockMetadata());
+        return new SetPenColorParamTo(makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata());
+    }
+
+    @Override
+    public ChangePenColorParamBy visitChangePenColor(ScratchBlocksParser.ChangePenColorContext ctx) {
+        return new ChangePenColorParamBy(makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata());
+    }
+
+    @Override
+    public ColorParam visitPenEffect(ScratchBlocksParser.PenEffectContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new ColorParamFromExpr(visitExprOrLiteral(ctx.exprOrLiteral()),new NoBlockMetadata());//wrapper
+        }else {
+            return new FixedColorParam(ctx.fixedEffect().getText(),handleExprBlockMetadata(true));
+        }
     }
 
     @Override
