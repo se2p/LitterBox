@@ -31,17 +31,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.FixedColorParam;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithMenuMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -218,37 +214,8 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     //pen
 
     @Override
-    public void visit(ChangePenColorParamBy node) {
-        StringExpr stringExpr = node.getParam();
-        if (stringExpr instanceof StringLiteral stringLiteral) {
-            String strid = stringLiteral.getText();
-            NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            } else {
-                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            }
-            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
-                    strid);
-        }
-    }
-
-    @Override
-    public void visit(SetPenColorParamTo node) {
-        StringExpr stringExpr = node.getParam();
-        if (stringExpr instanceof StringLiteral stringLiteral) {
-            String strid = stringLiteral.getText();
-            NonDataBlockMetadata menuMetadata;
-            if (node.getMetadata() instanceof TopNonDataBlockWithMenuMetadata metadata) {
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            } else {
-                NonDataBlockWithMenuMetadata metadata = (NonDataBlockWithMenuMetadata) node.getMetadata();
-                menuMetadata = (NonDataBlockMetadata) metadata.getMenuMetadata();
-            }
-            createFieldsExpression(menuMetadata, COLOR_PARAM_LITTLE_KEY,
-                    strid);
-        }
+    public void visit(FixedColorParam node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), COLOR_PARAM_LITTLE_KEY, node.getType().getType());
     }
 
     //Text to Speech

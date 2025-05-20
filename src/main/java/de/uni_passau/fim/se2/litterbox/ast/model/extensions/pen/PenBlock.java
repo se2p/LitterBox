@@ -18,10 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
-public interface PenStmt extends Stmt, PenBlock {
-
+public interface PenBlock extends ExtensionBlock {
     void accept(PenExtensionVisitor visitor);
 }

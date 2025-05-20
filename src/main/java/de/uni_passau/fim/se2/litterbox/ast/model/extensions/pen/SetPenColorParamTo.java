@@ -32,10 +32,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetPenColorParamTo extends AbstractNode implements PenStmt {
     private final NumExpr value;
-    private final StringExpr param;
+    private final ColorParam param;
     private final BlockMetadata metadata;
 
-    public SetPenColorParamTo(NumExpr value, StringExpr param, BlockMetadata metadata) {
+    public SetPenColorParamTo(NumExpr value, ColorParam param, BlockMetadata metadata) {
         super(value, param, metadata);
         this.value = value;
         this.param = param;
@@ -51,7 +51,7 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
         return value;
     }
 
-    public StringExpr getParam() {
+    public ColorParam getParam() {
         return param;
     }
 

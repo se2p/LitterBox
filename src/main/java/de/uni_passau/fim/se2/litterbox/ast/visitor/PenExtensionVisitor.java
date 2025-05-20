@@ -138,4 +138,20 @@ public interface PenExtensionVisitor extends ScratchVisitor {
     default void visit(ChangePenSizeBy node) {
         visit((PenStmt) node);
     }
+
+    default void visit(ColorParam node) {
+        visit((PenBlock) node);
+    }
+
+    default void visit(FixedColorParam node) {
+        visit((ColorParam) node);
+    }
+
+    default void visit(ColorParamFromExpr node) {
+        visit((ColorParam) node);
+    }
+
+    default void visit(PenStmt node) {
+        visit((PenBlock) node);
+    }
 }
