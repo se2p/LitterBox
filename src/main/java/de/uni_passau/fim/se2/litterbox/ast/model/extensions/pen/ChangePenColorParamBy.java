@@ -35,7 +35,7 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
     private final BlockMetadata metadata;
 
     public ChangePenColorParamBy(NumExpr value, ColorParam param, BlockMetadata metadata) {
-        super(value, param, metadata);
+        super(param, value, metadata);
         this.value = value;
         this.param = param;
         this.metadata = metadata;
