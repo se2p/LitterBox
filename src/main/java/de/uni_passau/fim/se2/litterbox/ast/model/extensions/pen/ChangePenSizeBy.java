@@ -53,7 +53,7 @@ public class ChangePenSizeBy extends AbstractNode implements PenStmt {
         if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
             penExtensionVisitor.visit(this);
         } else {
-            visitor.visit(this);
+            visitor.visit((PenBlock) this);
         }
     }
 
