@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
@@ -36,7 +35,7 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
     private final BlockMetadata metadata;
 
     public SetPenColorParamTo(NumExpr value, ColorParam param, BlockMetadata metadata) {
-        super(value, param, metadata);
+        super(param, value, metadata);
         this.value = value;
         this.param = param;
         this.metadata = metadata;
