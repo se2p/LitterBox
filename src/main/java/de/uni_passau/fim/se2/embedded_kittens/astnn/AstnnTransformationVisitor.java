@@ -1291,6 +1291,12 @@ class AstnnTransformationVisitor implements
         visitFixedChoice(node);
     }
 
+    @Override
+    public void visit(ColorParamFromExpr node) {
+        final AstnnNode color = transformNode(node.getExpr());
+        finishVisit(AstnnAstNodeFactory.build(NodeType.PEN_COLOR, color));
+    }
+
     // endregion pens
 
     // region text to speech

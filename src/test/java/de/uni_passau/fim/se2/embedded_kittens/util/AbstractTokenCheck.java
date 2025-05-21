@@ -105,6 +105,8 @@ public abstract class AbstractTokenCheck implements JsonTest {
             .map(SoundEffect.SoundEffectType::toString).forEach(allowedTokens::add);
         Arrays.stream(TimeComp.TimeCompType.values())
             .map(TimeComp.TimeCompType::toString).forEach(allowedTokens::add);
+        Arrays.stream(FixedColorParam.FixedColorParamType.values())
+            .map(FixedColorParam.FixedColorParamType::toString).forEach(allowedTokens::add);
 
         return allowedTokens.stream().map(String::toLowerCase).collect(Collectors.toUnmodifiableSet());
     }

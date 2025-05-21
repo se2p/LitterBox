@@ -172,6 +172,7 @@ public enum Token {
     PEN_CHANGECOLORBY("pen_changecolorby"),
     PEN_CHANGEPENSIZEBY("pen_changepensizeby"),
     PEN_CLEAR("pen_clear"),
+    PEN_PARAM("pen_param"),
     PEN_PENDOWN("pen_pendown"),
     PEN_PENUP("pen_penup"),
     PEN_SETCOLORTO("pen_setcolorto"),

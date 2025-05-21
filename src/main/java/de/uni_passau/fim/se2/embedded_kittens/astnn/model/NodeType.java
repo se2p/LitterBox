@@ -100,5 +100,7 @@ public enum NodeType {
 
     MUSIC_DRUM,
     MUSIC_INSTRUMENT,
-    MUSIC_TEMPO
+    MUSIC_TEMPO,
+
+    PEN_COLOR,
 }

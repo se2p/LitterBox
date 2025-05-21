@@ -44,6 +44,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.FixedColorParam;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.Language;
@@ -798,6 +799,15 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     // endregion expressions
+
+    // region pen
+
+    @Override
+    public void visit(FixedColorParam node) {
+        visitFixedNodeOption(node, Token.PEN_PARAM);
+    }
+
+    // endregion pen
 
     // region tts
 
