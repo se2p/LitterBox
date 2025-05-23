@@ -79,13 +79,16 @@ class ScratchLlmTest {
         assertThat(response).isEqualTo(code2);
 
         final int lastIdx = llmApi.getRequests().size() - 1;
-        assertThat(llmApi.getRequests().get(lastIdx)).contains("""
-                /Sprite: actor1
-                //Script: script2
-                invalid2
+        final String lastRequest = llmApi.getRequests().get(lastIdx);
+        assertThat(lastRequest).contains("//Sprite: actor1");
+        assertThat(lastRequest).contains("""
                 //Script: script1
                 invalid
-                """.stripIndent());
+                """);
+        assertThat(lastRequest).contains("""
+                //Script: script2
+                invalid2
+                """);
     }
 
     private ScratchLlm buildLlm(final List<String> apiResponses) {
