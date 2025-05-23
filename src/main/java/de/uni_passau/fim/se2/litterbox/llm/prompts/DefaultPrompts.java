@@ -121,7 +121,8 @@ public class DefaultPrompts extends PromptBuilder {
                         """;
             case PROVIDE_FEEDBACK:
                 yield """
-                        This code was written by a student. Provide feedback to the student about the code as well as the creativity.
+                        This code was written by a student.
+                        Provide feedback to the student about the code as well as the creativity.
                         """;
             case PROVIDE_PRAISE:
                 yield """
@@ -150,7 +151,7 @@ public class DefaultPrompts extends PromptBuilder {
                 New Finding <number>:
                 - Finding Description: <textual issue description>
                 - Finding Location: <ID of the script containing the issue>
-                """.formatted(existingBugsDescription);
+                """.formatted(existingBugsDescription).stripIndent();
     }
 
     @Override
@@ -164,7 +165,20 @@ public class DefaultPrompts extends PromptBuilder {
 
                 Only provide a list of steps to reproduce the issue, but no other text,
                 except for a title "Here is how you might observe effects of this issue:".
-                """.formatted(issue.getHintText());
+                """.formatted(issue.getHintText()).stripIndent();
+    }
+
+    @Override
+    public String fixSyntax(final String scratchBlocksScripts) {
+        return """
+                The following code block contains Scratch scripts in the ScratchBlocks syntax which you know from the
+                Scratch community forums. They contain invalid syntax. Fix the syntax.
+                Only return the fixed ScratchBlocks code. Do not change the comments starting with `//`.
+
+                ```
+                %s
+                ```
+                """.formatted(scratchBlocksScripts).stripIndent();
     }
 
     @Override

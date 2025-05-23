@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -51,5 +52,28 @@ public record ParsedLlmResponseCode(
     @Nullable
     public ScriptEntity script(final String actor, final String scriptId) {
         return actor(actor).get(scriptId);
+    }
+
+    public ParsedLlmResponseCode merge(final ParsedLlmResponseCode other) {
+        final Map<String, Map<String, ScriptEntity>> parsedScripts = new HashMap<>(scripts());
+        final Map<String, Map<String, String>> parseFailedScripts = new HashMap<>(parseFailedScripts());
+
+        for (final var entry : other.scripts().entrySet()) {
+            if (parsedScripts.containsKey(entry.getKey())) {
+                parsedScripts.get(entry.getKey()).putAll(entry.getValue());
+            } else {
+                parsedScripts.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        for (final var entry : other.parseFailedScripts().entrySet()) {
+            if (parseFailedScripts.containsKey(entry.getKey())) {
+                parseFailedScripts.get(entry.getKey()).putAll(entry.getValue());
+            } else {
+                parseFailedScripts.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return new ParsedLlmResponseCode(parsedScripts, parseFailedScripts);
     }
 }

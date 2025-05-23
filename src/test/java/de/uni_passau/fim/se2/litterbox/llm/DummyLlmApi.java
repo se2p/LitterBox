@@ -20,40 +20,62 @@ package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DummyLlmApi implements LlmApi {
 
-    private final String response;
+    private final List<String> requests = new ArrayList<>();
+
+    private final List<String> responses;
+
+    private int state = 0;
 
     public DummyLlmApi(final String response) {
-        this.response = response;
+        this.responses = List.of(response);
+    }
+
+    public DummyLlmApi(final List<String> response) {
+        this.responses = response;
     }
 
     @Override
     public Conversation query(String message) {
+        requests.add(message);
+
         return new Conversation(
                 "",
                 List.of(
                         new LlmMessage.GenericLlmMessage(message, LlmMessageSender.USER),
-                        new LlmMessage.GenericLlmMessage(response, LlmMessageSender.MODEL)
+                        new LlmMessage.GenericLlmMessage(nextResponse(), LlmMessageSender.MODEL)
                 )
         );
     }
 
     @Override
     public Conversation query(String systemPrompt, String message) {
+        requests.add(message);
+
         return new Conversation(
                 systemPrompt,
                 List.of(
                         new LlmMessage.GenericLlmMessage(message, LlmMessageSender.USER),
-                        new LlmMessage.GenericLlmMessage(response, LlmMessageSender.MODEL)
+                        new LlmMessage.GenericLlmMessage(nextResponse(), LlmMessageSender.MODEL)
                 )
         );
     }
 
     @Override
     public Conversation query(Conversation conversation) {
-        return conversation.add(new LlmMessage.GenericLlmMessage(response, LlmMessageSender.MODEL));
+        return conversation.add(new LlmMessage.GenericLlmMessage(nextResponse(), LlmMessageSender.MODEL));
+    }
+
+    public List<String> getRequests() {
+        return Collections.unmodifiableList(requests);
+    }
+
+    private String nextResponse() {
+        return responses.get(state++);
     }
 }

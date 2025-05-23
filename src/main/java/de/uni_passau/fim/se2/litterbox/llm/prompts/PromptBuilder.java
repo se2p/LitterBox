@@ -27,7 +27,7 @@ import java.util.List;
 public abstract class PromptBuilder {
 
     /**
-     * The system prompt used as starting point for each conversation with an LLM.
+     * The system prompt used as a starting point for each conversation with an LLM.
      *
      * @return The prompt, or {@code null} if is not needed.
      */
@@ -46,6 +46,14 @@ public abstract class PromptBuilder {
     public abstract String findNewBugs(String existingBugsDescription);
 
     public abstract String explainIssue(Issue issue);
+
+    /**
+     * Asks the LLM to fix the given scripts in ScratchBlocks syntax.
+     *
+     * @param scratchBlocksScripts The scripts in ScratchBlocks syntax.
+     * @return The prompt that asks for fixes for the given scripts.
+     */
+    public abstract String fixSyntax(String scratchBlocksScripts);
 
     protected abstract String describeTarget(final Program program, QueryTarget target);
 
