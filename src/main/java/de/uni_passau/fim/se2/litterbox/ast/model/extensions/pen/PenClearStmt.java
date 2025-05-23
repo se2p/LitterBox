@@ -46,7 +46,7 @@ public class PenClearStmt extends AbstractNode implements PenStmt, ASTLeaf {
         if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
             penExtensionVisitor.visit(this);
         } else {
-            visitor.visit(this);
+            visitor.visit((PenBlock) this);
         }
     }
 

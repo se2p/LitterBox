@@ -70,6 +70,7 @@ stmt                    : motionStmt (COMMENT)?
                         | controlStmt (COMMENT)?
                         | sensingStmt (COMMENT)?
                         | variableStmt (COMMENT)?
+                        | penStmt (COMMENT)?
                         | customBlockCallStmt
                         ;
 
@@ -266,6 +267,37 @@ replaceItemInList       : 'replace item 'oldItem=exprOrLiteral WS 'of' WS '['str
 showList                : 'show list' WS '['stringArgument' v]';
 hideList                : 'hide list' WS '['stringArgument' v]';
 
+penStmt                 : eraseAll
+                        | stamp
+                        | penDown
+                        | penUp
+                        | setPenColorToColor
+                        | changePenColor
+                        | setPenColorToValue
+                        | changePenSize
+                        | setPenSize
+                        ;
+
+eraseAll                : 'erase all';
+stamp                   : 'stamp';
+penDown                 : 'pen down';
+penUp                   : 'pen up';
+setPenColorToColor      : 'set pen color to' WS? touchingColorChoice;
+changePenColor          : 'change pen' WS? penEffect WS? 'by' WS? exprOrLiteral;
+setPenColorToValue      : 'set pen' WS? penEffect WS? 'to' WS? exprOrLiteral;
+changePenSize           : 'change pen size by' WS? exprOrLiteral;
+setPenSize              : 'set pen size to' WS? exprOrLiteral;
+
+penEffect               : '('fixedEffect' v)'
+                        | exprOrLiteral
+                        ;
+
+fixedEffect             : 'color'
+                        | 'saturation'
+                        | 'brightness'
+                        | 'transparency'
+                        ;
+
 position                : '('fixedPosition' v)'
                         | exprOrLiteral
                         ;
@@ -402,7 +434,7 @@ binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or
 
 touching                : 'touching 'touchingChoice WS? '?';
 touchingColor           : 'touching color 'touchingColorChoice WS? '?';
-colorTouchingColor      : 'color 'firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
+colorTouchingColor      : 'color' WS? firstColor=touchingColorChoice' is touching 'secondColor=touchingColorChoice WS? '?';
 keyPressed              : 'key 'keySelect' pressed?';
 mouseDown               : 'mouse down?';
 not                     : 'not 'exprOrLiteral;

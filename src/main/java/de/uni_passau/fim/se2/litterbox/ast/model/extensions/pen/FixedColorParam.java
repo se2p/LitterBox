@@ -20,23 +20,25 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.FixedNodeOption;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class SetPenSizeTo extends AbstractNode implements PenStmt {
-    private final NumExpr value;
+public class FixedColorParam extends AbstractNode implements ColorParam, FixedNodeOption {
     private final BlockMetadata metadata;
+    private final FixedColorParamType type;
 
-    public SetPenSizeTo(NumExpr value, BlockMetadata metadata) {
-        super(value, metadata);
-        this.value = Preconditions.checkNotNull(value);
+    public FixedColorParam(String typeName, BlockMetadata metadata) {
+        super(metadata);
+        this.type = FixedColorParamType.fromString(typeName);
         this.metadata = metadata;
+    }
+
+    public FixedColorParamType getType() {
+        return type;
     }
 
     @Override
@@ -44,22 +46,13 @@ public class SetPenSizeTo extends AbstractNode implements PenStmt {
         return metadata;
     }
 
-    public NumExpr getValue() {
-        return value;
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
             penExtensionVisitor.visit(this);
         } else {
-            visitor.visit((PenBlock) this);
+            visitor.visit(this);
         }
-    }
-
-    @Override
-    public ASTNode accept(CloneVisitor visitor) {
-        return visitor.visit(this);
     }
 
     @Override
@@ -68,7 +61,35 @@ public class SetPenSizeTo extends AbstractNode implements PenStmt {
     }
 
     @Override
-    public Opcode getOpcode() {
-        return PenOpcode.pen_setPenSizeTo;
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public String getTypeName() {
+        return type.getType();
+    }
+
+    public enum FixedColorParamType {
+        COLOR("color"), SATURATION("saturation"), BRIGHTNESS("brightness"), TRANSPARENCY("transparency");
+
+        private final String type;
+
+        FixedColorParamType(String type) {
+            this.type = Preconditions.checkNotNull(type);
+        }
+
+        public static FixedColorParamType fromString(String type) {
+            for (FixedColorParam.FixedColorParamType f : values()) {
+                if (f.getType().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown FixedColorParam: " + type);
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 }

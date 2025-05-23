@@ -999,14 +999,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(ChangePenColorParamBy node) {
         emitNoSpace("change pen ");
-
-        if (node.getParam() instanceof StringLiteral literal) {
-            emitNoSpace("(");
-            emitNoSpace(literal.getText());
-            emitNoSpace(" v)");
-        } else {
-            node.getParam().accept(this);
-        }
+        node.getParam().accept((PenExtensionVisitor) this);
         emitNoSpace(" by ");
         node.getValue().accept(this);
         storeNotesForIssue(node);
@@ -1016,17 +1009,23 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SetPenColorParamTo node) {
         emitNoSpace("set pen ");
-        if (node.getParam() instanceof StringLiteral literal) {
-            emitNoSpace("(");
-            emitNoSpace(literal.getText());
-            emitNoSpace(" v)");
-        } else {
-            node.getParam().accept(this);
-        }
+        node.getParam().accept((PenExtensionVisitor) this);
         emitNoSpace(" to ");
         node.getValue().accept(this);
         storeNotesForIssue(node);
         newLine();
+    }
+
+    @Override
+    public void visit(FixedColorParam node) {
+        emitNoSpace("(");
+        emitNoSpace(node.getType().getType());
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(ColorParamFromExpr node) {
+        node.getExpr().accept(this);
     }
 
     @Override

@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -311,6 +312,8 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
             return (Stmt) visitEventStmt(ctx.eventStmt());
         } else if (ctx.sensingStmt() != null) {
             return (Stmt) visitSensingStmt(ctx.sensingStmt());
+        } else if (ctx.penStmt() != null) {
+            return (Stmt) visitPenStmt(ctx.penStmt());
         } else if (ctx.customBlockCallStmt() != null) {
             return visitCustomBlockCallStmt(ctx.customBlockCallStmt());
         } else {
@@ -909,6 +912,69 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         );
     }
     //end subregion: variable blocks
+
+    //begin subregion: pen blocks
+    @Override
+    public PenClearStmt visitEraseAll(ScratchBlocksParser.EraseAllContext ctx) {
+        return new PenClearStmt(handleStmtBlockMetadata());
+    }
+
+    @Override
+    public PenStampStmt visitStamp(ScratchBlocksParser.StampContext ctx) {
+        return new PenStampStmt(handleStmtBlockMetadata());
+    }
+
+    @Override
+    public PenDownStmt visitPenDown(ScratchBlocksParser.PenDownContext ctx) {
+        return new PenDownStmt(handleStmtBlockMetadata());
+    }
+
+    @Override
+    public PenUpStmt visitPenUp(ScratchBlocksParser.PenUpContext ctx) {
+        return new PenUpStmt(handleStmtBlockMetadata());
+    }
+
+    @Override
+    public SetPenColorToColorStmt visitSetPenColorToColor(ScratchBlocksParser.SetPenColorToColorContext ctx) {
+        return new SetPenColorToColorStmt(
+                visitTouchingColorChoice(ctx.touchingColorChoice()), handleStmtBlockMetadata()
+        );
+    }
+
+    @Override
+    public SetPenColorParamTo visitSetPenColorToValue(ScratchBlocksParser.SetPenColorToValueContext ctx) {
+        return new SetPenColorParamTo(
+                makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata()
+        );
+    }
+
+    @Override
+    public ChangePenColorParamBy visitChangePenColor(ScratchBlocksParser.ChangePenColorContext ctx) {
+        return new ChangePenColorParamBy(
+                makeNumExpr(ctx.exprOrLiteral()),visitPenEffect(ctx.penEffect()),handleStmtBlockMetadata()
+        );
+    }
+
+    @Override
+    public ColorParam visitPenEffect(ScratchBlocksParser.PenEffectContext ctx) {
+        if (ctx.exprOrLiteral() != null) {
+            return new ColorParamFromExpr(visitExprOrLiteral(ctx.exprOrLiteral()),new NoBlockMetadata());//wrapper
+        } else {
+            return new FixedColorParam(ctx.fixedEffect().getText(),handleExprBlockMetadata(true));
+        }
+    }
+
+    @Override
+    public SetPenSizeTo visitSetPenSize(ScratchBlocksParser.SetPenSizeContext ctx) {
+        return new SetPenSizeTo(makeNumExpr(ctx.exprOrLiteral()), handleStmtBlockMetadata());
+    }
+
+    @Override
+    public ChangePenSizeBy visitChangePenSize(ScratchBlocksParser.ChangePenSizeContext ctx) {
+        return new ChangePenSizeBy(makeNumExpr(ctx.exprOrLiteral()), handleStmtBlockMetadata());
+    }
+
+    //end subregion: pen blocks
 
     // endregion: statements
 

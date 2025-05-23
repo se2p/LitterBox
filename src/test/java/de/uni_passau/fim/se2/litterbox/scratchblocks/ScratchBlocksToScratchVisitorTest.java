@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -892,6 +893,49 @@ class ScratchBlocksToScratchVisitorTest {
         Join join = assertHasExprStmt(stmtList, Join.class);
         assertInstanceOf(StringLiteral.class, join.getOperand1());
         assertInstanceOf(StringLiteral.class, join.getOperand2());
+    }
+
+    @Test
+    void testPenBlocks() {
+        final String scratchBlocks = """
+                erase all
+                stamp
+                pen up
+                pen down
+                set pen color to [#ff0000]
+                change pen (color v) by (10)
+                set pen (saturation v) to (10)
+                change pen size by (10)
+                set pen size to (10)
+                change pen (username) by (10)
+                """.stripIndent();
+        List<Stmt> statements = getStmtList(scratchBlocks).getStmts();
+        Assertions.assertEquals(10, statements.size());
+        Assertions.assertInstanceOf(PenClearStmt.class, statements.get(0));
+        Assertions.assertInstanceOf(PenStampStmt.class, statements.get(1));
+        Assertions.assertInstanceOf(PenUpStmt.class, statements.get(2));
+        Assertions.assertInstanceOf(PenDownStmt.class, statements.get(3));
+        Assertions.assertInstanceOf(SetPenColorToColorStmt.class, statements.get(4));
+        Assertions.assertInstanceOf(ChangePenColorParamBy.class, statements.get(5));
+        Assertions.assertInstanceOf(SetPenColorParamTo.class, statements.get(6));
+        Assertions.assertInstanceOf(ChangePenSizeBy.class, statements.get(7));
+        Assertions.assertInstanceOf(SetPenSizeTo.class, statements.get(8));
+        Assertions.assertInstanceOf(ChangePenColorParamBy.class, statements.get(9));
+
+        ChangePenColorParamBy changePenColorParamBy = (ChangePenColorParamBy) statements.get(5);
+        Assertions.assertInstanceOf(FixedColorParam.class, changePenColorParamBy.getParam());
+        FixedColorParam fixedColorParam = (FixedColorParam) changePenColorParamBy.getParam();
+        Assertions.assertEquals("color", fixedColorParam.getType().getType());
+
+        changePenColorParamBy = (ChangePenColorParamBy) statements.get(9);
+        Assertions.assertInstanceOf(ColorParamFromExpr.class, changePenColorParamBy.getParam());
+        ColorParamFromExpr colorParamFromExpr = (ColorParamFromExpr) changePenColorParamBy.getParam();
+        Assertions.assertInstanceOf(Username.class, colorParamFromExpr.getExpr());
+
+        SetPenColorParamTo setPenColorParamTo = (SetPenColorParamTo) statements.get(6);
+        Assertions.assertInstanceOf(FixedColorParam.class, setPenColorParamTo.getParam());
+        fixedColorParam = (FixedColorParam) setPenColorParamTo.getParam();
+        Assertions.assertEquals("saturation", fixedColorParam.getType().getType());
     }
 
     // region: common helper methods

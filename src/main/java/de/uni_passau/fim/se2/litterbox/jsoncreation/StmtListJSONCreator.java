@@ -41,7 +41,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -822,25 +824,18 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createPenWithParamStmt(NonDataBlockMetadata metadata, StringExpr stringExpr,
-                                        NumExpr numExpr, Stmt node, Opcode opcode, Opcode dependentOpcode) {
+    private void createPenWithParamStmt(NonDataBlockMetadata metadata, ColorParam colorParam,
+                                        NumExpr numExpr, Opcode opcode, Opcode dependentOpcode) {
 
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
-        BlockMetadata menuMetadata;
-        if (metadata instanceof TopNonDataBlockWithMenuMetadata) {
-            TopNonDataBlockWithMenuMetadata metadataWithMenu = (TopNonDataBlockWithMenuMetadata) node.getMetadata();
-            menuMetadata = metadataWithMenu.getMenuMetadata();
-        } else {
-            NonDataBlockWithMenuMetadata metadataWithMenu = (NonDataBlockWithMenuMetadata) node.getMetadata();
-            menuMetadata = metadataWithMenu.getMenuMetadata();
-        }
-        if (!(menuMetadata instanceof NoBlockMetadata)) {
-            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node, dependentOpcode);
+
+        if (colorParam instanceof FixedColorParam) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), colorParam, dependentOpcode);
             inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr(metadata, COLOR_PARAM_BIG_KEY, stringExpr));
+            inputs.add(createExpr(metadata, COLOR_PARAM_BIG_KEY, ((ColorParamFromExpr) colorParam).getExpr()));
         }
 
         inputs.add(createNumExpr(metadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
@@ -1097,13 +1092,13 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(ChangePenColorParamBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node, node.getOpcode(), node.getMenuColorParamOpcode());
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode());
     }
 
     @Override

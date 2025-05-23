@@ -352,6 +352,27 @@ class ScratchBlocksToJsonTest implements JsonTest {
         final String additionalCode = """
                 when I receive [message v]
                 abc (10) bcd <mouse down?>
+
+                """;
+        Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
+        writeJsonFromProgram(newProgram);
+    }
+
+    @Test
+    void testPenBlocks() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        final String additionalCode = """
+                erase all
+                stamp
+                pen up
+                pen down
+                set pen color to [#ff0000]
+                change pen (color v) by (10)
+                set pen (saturation v) to (10)
+                change pen size by (10)
+                set pen size to (10)
+                change pen (username) by (10)
                 """;
         Program newProgram = parser.extendProject(program, "Sprite1", additionalCode);
         writeJsonFromProgram(newProgram);

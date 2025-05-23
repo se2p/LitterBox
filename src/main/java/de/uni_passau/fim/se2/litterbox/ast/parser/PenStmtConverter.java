@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -51,21 +50,15 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
             }
             case pen_setPenColorParamTo -> {
                 final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
-                final ParamWithMetadata param = convertParam(block);
-                final BlockMetadata metadataWithParam = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
-                        blockId, block, param.metadata()
-                );
+                final ColorParam param = convertParam(block);
 
-                yield new SetPenColorParamTo(to, param.param(), metadataWithParam);
+                yield new SetPenColorParamTo(to, param, metadata);
             }
             case pen_changePenColorParamBy -> {
                 final NumExpr by = NumExprConverter.convertNumExpr(state, block, KnownInputs.VALUE);
-                final ParamWithMetadata param = convertParam(block);
-                final BlockMetadata metadataWithParam = RawBlockMetadataConverter.convertBlockWithMenuMetadata(
-                        blockId, block, param.metadata()
-                );
+                final ColorParam param = convertParam(block);
 
-                yield new ChangePenColorParamBy(by, param.param(), metadataWithParam);
+                yield new ChangePenColorParamBy(by, param, metadata);
             }
             case pen_setPenSizeTo -> {
                 final NumExpr to = NumExprConverter.convertNumExpr(state, block, KnownInputs.SIZE);
@@ -78,25 +71,24 @@ final class PenStmtConverter extends StmtConverter<PenStmt> {
         };
     }
 
-    private ParamWithMetadata convertParam(final RawBlock.RawRegularBlock block) {
+    private ColorParam convertParam(final RawBlock.RawRegularBlock block) {
         final RawInput colorParamInput = block.getInput(KnownInputs.COLOR_PARAM);
 
         if (
                 ShadowType.SHADOW.equals(colorParamInput.shadowType())
-                && colorParamInput.input() instanceof BlockRef.IdRef colorParamMenuRef
-                && state.getBlock(colorParamMenuRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
-                && DependentBlockOpcode.pen_menu_colorParam.getName().equals(menuBlock.opcode())
+                        && colorParamInput.input() instanceof BlockRef.IdRef colorParamMenuRef
+                        && state.getBlock(colorParamMenuRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                        && DependentBlockOpcode.pen_menu_colorParam.getName().equals(menuBlock.opcode())
         ) {
             final String colorField = menuBlock.getFieldValueAsString(KnownFields.COLOR_PARAM);
-            final StringExpr color = new StringLiteral(colorField);
             final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
                     colorParamMenuRef.id(), menuBlock
             );
 
-            return new ParamWithMetadata(color, metadata);
+            return new FixedColorParam(colorField, metadata);
         } else {
             final StringExpr param = StringExprConverter.convertStringExpr(state, block, colorParamInput);
-            return new ParamWithMetadata(param, new NoBlockMetadata());
+            return new ColorParamFromExpr(param, new NoBlockMetadata());
         }
     }
 

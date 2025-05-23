@@ -16,27 +16,46 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class TopNonDataBlockWithMenuMetadata extends TopNonDataBlockMetadata {
-    private final BlockMetadata menuMetadata;
+public class ColorParamFromExpr extends AbstractNode implements ColorParam {
+    private final Expression expr;
+    private final BlockMetadata metadata;
 
-    public TopNonDataBlockWithMenuMetadata(String commentId, String blockId, boolean shadow,
-                                           MutationMetadata mutation, double xPos, double yPos, BlockMetadata menuMetadata) {
-        super(commentId, blockId, shadow, mutation, xPos, yPos);
-        this.menuMetadata = menuMetadata;
+    public ColorParamFromExpr(Expression expr, BlockMetadata metadata) {
+        super(expr, metadata);
+        this.expr = expr;
+        this.metadata = metadata;
     }
 
-    public BlockMetadata getMenuMetadata() {
-        return menuMetadata;
+    public Expression getExpr() {
+        return expr;
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
+        if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
+            penExtensionVisitor.visit(this);
+        } else {
+            visitor.visit(this);
+        }
+    }
+
+    @Override
+    public void accept(PenExtensionVisitor visitor) {
         visitor.visit(this);
     }
 

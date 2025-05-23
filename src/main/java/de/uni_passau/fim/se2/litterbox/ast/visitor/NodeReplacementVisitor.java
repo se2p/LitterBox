@@ -1776,14 +1776,6 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
     }
 
     @Override
-    public ASTNode visit(NonDataBlockWithMenuMetadata node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
     public ASTNode visit(ProgramMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
@@ -1953,14 +1945,6 @@ public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
 
     @Override
     public ASTNode visit(ForwardBackwardChoice node) {
-        if (isTargetNode(node)) {
-            return replacement;
-        }
-        return super.visit(node);
-    }
-
-    @Override
-    public ASTNode visit(TopNonDataBlockWithMenuMetadata node) {
         if (isTargetNode(node)) {
             return replacement;
         }
