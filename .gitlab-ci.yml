@@ -1,95 +1,96 @@
+---
 include:
-    - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
 
 image: maven:3-eclipse-temurin-17
 
 stages:
-    - test
-    - lint
-    - deploy
+  - test
+  - lint
+  - deploy
 
 .my-rules: &my-rules
-    rules:
-        - if: $CI_COMMIT_TAG
-        - if: $CI_MERGE_REQUEST_ID  # Execute jobs in merge request context
-        - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-        - if: $CI_PIPELINE_SOURCE == "web"  # manual run via GitLab UI
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_MERGE_REQUEST_ID  # Execute jobs in merge request context
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "web"  # manual run via GitLab UI
 
 workflow:
-    <<: *my-rules
+  <<: *my-rules
 
 variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-    MAVEN_ARGS: "--no-transfer-progress -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  GIT_SUBMODULE_STRATEGY: recursive
+  MAVEN_ARGS: "--no-transfer-progress -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 cache:
-    paths:
-        - .m2/repository/
-        - target/
+  paths:
+    - .m2/repository/
+    - target/
 
 ################################################################################
 # test
 
 test: &test
-    stage: test
-    needs: []
-    coverage: '/Instruction Coverage: \d+.\d+ %/'
-    script:
-        - mvn clean test
-        - mvn jacoco:report
-        - sh ./scripts/coverage.sh $JACOCO_CSV_LOCATION
-        - sh ./scripts/coverage_metrics.sh $JACOCO_CSV_LOCATION >> metrics.txt
-    variables:
-        JACOCO_CSV_LOCATION: "$CI_PROJECT_DIR/target/site/jacoco/jacoco.csv"
-    artifacts:
-        reports:
-            metrics: metrics.txt
-            coverage_report:
-                coverage_format: jacoco
-                path: target/site/jacoco/jacoco.xml
-            junit:
-                - target/surefire-reports/TEST-*.xml
+  stage: test
+  needs: []
+  coverage: '/Instruction Coverage: \d+.\d+ %/'
+  script:
+    - mvn clean test
+    - mvn jacoco:report
+    - sh ./scripts/coverage.sh $JACOCO_CSV_LOCATION
+    - sh ./scripts/coverage_metrics.sh $JACOCO_CSV_LOCATION >> metrics.txt
+  variables:
+    JACOCO_CSV_LOCATION: "$CI_PROJECT_DIR/target/site/jacoco/jacoco.csv"
+  artifacts:
+    reports:
+      metrics: metrics.txt
+      coverage_report:
+        coverage_format: jacoco
+        path: target/site/jacoco/jacoco.xml
+      junit:
+        - target/surefire-reports/TEST-*.xml
 
 nightly-test-latest-litterbox:
-    <<: *test
-    before_script:
-        - sed -E -i 's#<litterbox.version>.*</litterbox.version>#<litterbox.version>[1.0,)</litterbox.version>#' pom.xml
-        - mvn dependency:resolve -U
-    rules:
-        - if: $SCHEDULED_NIGHTLY
+  <<: *test
+  before_script:
+    - sed -E -i 's#<litterbox.version>.*</litterbox.version>#<litterbox.version>[1.0,)</litterbox.version>#' pom.xml
+    - mvn dependency:resolve -U
+  rules:
+    - if: $SCHEDULED_NIGHTLY
 
 ################################################################################
 # lint
 
 .lint: &lint-template
-    stage: lint
-    needs: []
-    rules:
-        - if: '$CI_MERGE_REQUEST_TITLE =~ /^Draft:/'
-          allow_failure: true
-        - when: on_success
-          allow_failure: false
+  stage: lint
+  needs: []
+  rules:
+    - if: '$CI_MERGE_REQUEST_TITLE =~ /^Draft:/'
+      allow_failure: true
+    - when: on_success
+      allow_failure: false
 
 check-licence-headers:
-    <<: *lint-template
-    script:
-        - mvn license:check
+  <<: *lint-template
+  script:
+    - mvn license:check
 
 check-formatting:
-    <<: *lint-template
-    script:
-        - mvn spotless:check
+  <<: *lint-template
+  script:
+    - mvn spotless:check
 
 checkstyle:
-    <<: *lint-template
-    script:
-        - mvn checkstyle:checkstyle
-        - cat target/checkstyle-result.xml | ./scripts/checkstyle_report.sh > checkstyle-report.json
-    artifacts:
-        when: always
-        reports:
-            codequality:
-                - checkstyle-report.json
+  <<: *lint-template
+  script:
+    - mvn checkstyle:checkstyle
+    - cat target/checkstyle-result.xml | ./scripts/checkstyle_report.sh > checkstyle-report.json
+  artifacts:
+    when: always
+    reports:
+      codequality:
+        - checkstyle-report.json
 
 ################################################################################
 # deploy
@@ -112,3 +113,4 @@ nix-build:
         - flake.lock
         - flake.nix
         - pom.xml
+...
