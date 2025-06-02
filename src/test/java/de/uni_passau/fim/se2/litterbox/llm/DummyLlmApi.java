@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.llm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,8 +33,8 @@ public class DummyLlmApi implements LlmApi {
 
     private int state = 0;
 
-    public DummyLlmApi(final String response) {
-        this.responses = List.of(response);
+    public DummyLlmApi(final String... responses) {
+        this.responses = Arrays.asList(responses);
     }
 
     public DummyLlmApi(final List<String> response) {
