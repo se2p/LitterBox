@@ -86,18 +86,24 @@ public class LlmResponseParser {
         return newProgram;
     }
 
-    // todo: updateScript? which script gets updated? should this be getUpdatedScriptFromResponse?
-    public Script parseResultAndUpdateScript(Program program, Script script, String response) {
-        ParsedLlmResponseCode spriteScripts = parseLLMResponse(response);
-        Optional<ActorDefinition> actor = AstNodeUtil.findActor(script);
-
+    /**
+     * Tries to find the updated version of a script in the LLM response.
+     *
+     * @param originalScript The original script in the project.
+     * @param response The code response from a query to the LLM.
+     * @return The updated version of the script, or {@code null} if the LLM response did not include a new variant of
+     *         this script.
+     */
+    public ScriptEntity extractUpdatedScriptFromResponse(
+            final ScriptEntity originalScript, final ParsedLlmResponseCode response
+    ) {
+        Optional<ActorDefinition> actor = AstNodeUtil.findActor(originalScript);
         if (actor.isEmpty()) {
-            throw new IllegalArgumentException("Script is not part of an actor");
+            // this can only happen in case the ParentVisitor was not called after parsing or modifying a project
+            throw new IllegalStateException("Script is not part of an actor");
         }
 
-        return (Script) spriteScripts.script(
-                actor.get().getIdent().getName(), AstNodeUtil.getBlockId(script)
-        );
+        return response.script(actor.get().getIdent().getName(), AstNodeUtil.getBlockId(originalScript));
     }
 
     /**

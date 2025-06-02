@@ -22,9 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.LlmResponseParser;
+import de.uni_passau.fim.se2.litterbox.llm.ParsedLlmResponseCode;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
@@ -70,7 +71,7 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
         log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
 
         if (issue.getScript() == null) {
-            // Issue does not refer to individual script, not fixing it for now
+            // Issue does not refer to an individual script, not fixing it for now
             log.info("Cannot fix issue not related to individual script.");
             return issue;
         } else if (issue.getIssueType() == IssueType.PERFUME) {
@@ -87,7 +88,8 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
         issueBuilder.fromIssue(issue).withProgram(program);
 
         LlmResponseParser responseParser = new LlmResponseParser();
-        Script fixedScript = responseParser.parseResultAndUpdateScript(program, issue.getScript(), response);
+        ParsedLlmResponseCode parsedResponse = responseParser.parseLLMResponse(response);
+        ScriptEntity fixedScript = responseParser.extractUpdatedScriptFromResponse(issue.getScript(), parsedResponse);
         if (fixedScript != null) {
             log.info("Proposed refactoring: " + ScratchBlocksVisitor.of(fixedScript));
             issueBuilder = issueBuilder.withRefactoring(fixedScript);
