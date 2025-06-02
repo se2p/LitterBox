@@ -1,6 +1,7 @@
 ---
 include:
   - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
 
 image: maven:3-eclipse-temurin-17
 
@@ -20,6 +21,7 @@ workflow:
   <<: *my-rules
 
 variables:
+  AST_ENABLE_MR_PIPELINES: "true"
   GIT_SUBMODULE_STRATEGY: recursive
   MAVEN_ARGS: "--no-transfer-progress -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
