@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2024 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
@@ -17,7 +35,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
@@ -59,8 +80,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         if (choices.size() > MAX_CHOICES) {
             Collections.shuffle(list);
             return String.join("|", list.subList(0, MAX_CHOICES));
-        }
-        else {
+        } else {
             return String.join("|", list);
         }
     }
@@ -76,8 +96,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
         if (answers.size() > MAX_CHOICES) {
             Collections.shuffle(list);
             return String.join("|", list.subList(0, MAX_CHOICES));
-        }
-        else {
+        } else {
             return String.join("|", list);
         }
     }
@@ -113,14 +132,11 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     protected String wrappedScratchBlocks(StringLiteral node) {
         if (inLookStmt) {
             return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: looks ring>[/sbi]";
-        }
-        else if (inSoundStmt) {
+        } else if (inSoundStmt) {
             return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: sound ring>[/sbi]";
-        }
-        else if (inBroadcastStmt) {
+        } else if (inBroadcastStmt) {
             return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: control ring>[/sbi]";
-        }
-        else {
+        } else {
             return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: grey ring>[/sbi]";
         }
     }
