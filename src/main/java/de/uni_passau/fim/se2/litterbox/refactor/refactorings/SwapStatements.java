@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -72,9 +73,18 @@ public class SwapStatements extends OnlyCodeCloneVisitor implements Refactoring 
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Swapping statements:" + System.lineSeparator() + stmt1.getScratchBlocks() + System.lineSeparator()
-                + "and:" + System.lineSeparator() + stmt2.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Swapping statements:
+                %s
+                and:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(stmt1),
+                ScratchBlocksVisitor.of(stmt2)
+        );
     }
 
     @Override

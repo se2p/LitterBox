@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,10 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "token_entropy";
 
     @Override
     public double calculateMetric(T node) {
@@ -34,11 +34,11 @@ public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
             double tokenEntropy = p * (Math.log(p) / Math.log(2.0));
             entropyValue += tokenEntropy;
         }
-        return (-entropyValue);
+        return -entropyValue;
     }
 
     @Override
     public String getName() {
-        return "token_entropy";
+        return NAME;
     }
 }

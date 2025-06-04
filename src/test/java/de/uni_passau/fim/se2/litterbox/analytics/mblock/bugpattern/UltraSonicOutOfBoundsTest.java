@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.UltraSonicOutOfBounds;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 

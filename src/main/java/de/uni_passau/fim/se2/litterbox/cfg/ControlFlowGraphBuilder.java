@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -216,10 +217,15 @@ public class ControlFlowGraphBuilder {
         CFGNode node = addStatement(stmt);
 
         List<String> names = new LinkedList<>();
-        stmt.getStringExpr().accept(new ScratchVisitor() {
+        stmt.getCloneChoice().accept(new ScratchVisitor() {
             @Override
             public void visit(StringLiteral node) {
                 names.add(node.getText());
+            }
+
+            @Override
+            public void visit(Myself node) {
+                names.add("_myself_");
             }
         });
 

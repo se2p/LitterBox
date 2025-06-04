@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MultiBlockIssue extends Issue {
 
@@ -89,7 +88,7 @@ public class MultiBlockIssue extends Issue {
     public List<ASTNode> getNormalizedNodes() {
         if (normalizedNodes == null) {
             NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
-            normalizedNodes = nodes.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+            normalizedNodes = nodes.stream().map(normalizationVisitor::apply).toList();
         }
         return normalizedNodes;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,12 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class DataBlockMetadata extends AbstractNode implements BlockMetadata, ASTLeaf {
     private String blockId;
+    private String commentId;
     private double x;
     private double y;
 
-    public DataBlockMetadata(String blockId,  double x, double y) {
+    public DataBlockMetadata(String blockId, String commentId, double x, double y) {
         super();
         this.blockId = blockId;
+        this.commentId = commentId;
         this.x = x;
         this.y = y;
     }
@@ -46,6 +48,14 @@ public class DataBlockMetadata extends AbstractNode implements BlockMetadata, AS
 
     public String getBlockId() {
         return blockId;
+    }
+
+    public String getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
     }
 
     @Override

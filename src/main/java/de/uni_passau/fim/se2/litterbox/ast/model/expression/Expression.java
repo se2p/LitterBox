@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,21 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 public interface Expression extends ASTNode {
-    @Override
-    default String getScratchBlocks() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
-        this.accept(visitor);
-        return visitor.getScratchBlocks();
-    }
-
-    @Override
-    default String getScratchBlocksWithoutNewline() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
-        this.accept(visitor);
-        String textWithPossibleNewlines = visitor.getScratchBlocks();
-        return textWithPossibleNewlines.replaceAll(System.lineSeparator(), "");
-    }
 }

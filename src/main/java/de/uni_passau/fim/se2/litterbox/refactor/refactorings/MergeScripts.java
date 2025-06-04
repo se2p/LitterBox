@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -95,9 +96,20 @@ public class MergeScripts extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator()
-                + " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator()
-                + " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Mergins
+                %s
+                and
+                %s
+                to:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(script1),
+                ScratchBlocksVisitor.of(script2),
+                ScratchBlocksVisitor.of(replacementScript)
+        );
     }
 }

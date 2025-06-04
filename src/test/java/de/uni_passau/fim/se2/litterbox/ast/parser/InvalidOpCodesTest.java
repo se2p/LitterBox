@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InvalidOpCodesTest implements JsonTest {
@@ -40,7 +41,7 @@ public class InvalidOpCodesTest implements JsonTest {
         ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         for (Script s : sprite.getScripts().getScriptList()) {
             Stmt stmt = s.getStmtList().getStmts().get(0);
-            assertTrue(stmt instanceof UnspecifiedStmt, "Sprite may not contain any stmts except Unspecifiedstmt");
+            assertInstanceOf(UnspecifiedStmt.class, stmt, "Sprite may not contain any stmts except Unspecifiedstmt");
         }
     }
 }

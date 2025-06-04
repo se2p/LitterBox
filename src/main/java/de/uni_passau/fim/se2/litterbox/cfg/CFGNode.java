@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -70,7 +70,7 @@ public abstract class CFGNode {
         }
 
         Set<Definition> definitions = new LinkedHashSet<>();
-        List<DefinableCollector> collectors = new ArrayList<>(Arrays.asList(
+        List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
                 new VariableDefinitionVisitor(),
                 new ListDefinitionVisitor()
         ));
@@ -79,9 +79,9 @@ public abstract class CFGNode {
             collectors.add(new AttributeDefinitionVisitor(getActor()));
         }
 
-        for (DefinableCollector collector : collectors) {
+        for (final var collector : collectors) {
             getASTNode().accept(collector);
-            Set<Defineable> defineables = collector.getDefineables();
+            Set<? extends Defineable> defineables = collector.getDefineables();
             defineables.forEach(d -> definitions.add(new Definition(this, d)));
         }
 
@@ -94,7 +94,7 @@ public abstract class CFGNode {
         }
 
         Set<Use> uses = new LinkedHashSet<>();
-        List<DefinableCollector> collectors = new ArrayList<>(Arrays.asList(
+        List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
                 new VariableUseVisitor(),
                 new ListUseVisitor()
         ));
@@ -103,9 +103,9 @@ public abstract class CFGNode {
             collectors.add(new AttributeUseVisitor(getActor()));
         }
 
-        for (DefinableCollector collector : collectors) {
+        for (final var collector : collectors) {
             getASTNode().accept(collector);
-            Set<Defineable> defineables = collector.getDefineables();
+            Set<? extends Defineable> defineables = collector.getDefineables();
             defineables.forEach(d -> uses.add(new Use(this, d)));
         }
         return uses;

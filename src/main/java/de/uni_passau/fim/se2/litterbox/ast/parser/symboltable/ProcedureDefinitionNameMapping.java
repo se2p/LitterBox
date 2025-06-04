@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,12 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -48,21 +49,34 @@ public class ProcedureDefinitionNameMapping {
         malformedProcedures = new ArrayList<>(other.malformedProcedures);
     }
 
-    public void addProcedure(LocalIdentifier localIdentifier,
-                             String actorName,
-                             String procedureName,
-                             String[] argumentNames,
-                             Type[] types) throws ParsingException {
+    public void addProcedure(
+            final LocalIdentifier ident,
+            final String actorName,
+            final String procedureName,
+            final ParameterDefinitionList parameters
+    ) {
+        final ArgumentInfo[] arguments = parameters.getParameterDefinitions().stream()
+                .map(parameterDefinition -> new ArgumentInfo(
+                        parameterDefinition.getIdent().getName(), parameterDefinition.getType()
+                ))
+                .toArray(ArgumentInfo[]::new);
+        final ProcedureInfo info = new ProcedureInfo(procedureName, arguments, actorName);
 
-        Map<LocalIdentifier, ProcedureInfo> currentMap;
-        if (procedures.containsKey(actorName)) {
-            currentMap = procedures.get(actorName);
-        } else {
-            currentMap = new LinkedHashMap<>();
-            procedures.put(actorName, currentMap);
-        }
-        currentMap.put(localIdentifier,
-                new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
+        addProcedureForActor(actorName, ident, info);
+    }
+
+    private void addProcedureForActor(
+            final String actorName, final LocalIdentifier identifier, final ProcedureInfo procedure
+    ) {
+        procedures.compute(actorName, (actor, actorProcedureMap) -> {
+            if (actorProcedureMap == null) {
+                actorProcedureMap = new LinkedHashMap<>();
+            }
+
+            actorProcedureMap.put(identifier, procedure);
+
+            return actorProcedureMap;
+        });
     }
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) throws ParsingException {
@@ -123,12 +137,8 @@ public class ProcedureDefinitionNameMapping {
         return getProcedureForHash(actor.getIdent().getName(), hash);
     }
 
-    private Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
+    public Map<LocalIdentifier, ProcedureInfo> getProceduresForActor(final String actorName) {
         return getProcedures().getOrDefault(actorName, Collections.emptyMap());
-    }
-
-    public void addMalformed(String malformed) {
-        malformedProcedures.add(malformed);
     }
 
     public boolean checkIfMalformed(String toCheck) {

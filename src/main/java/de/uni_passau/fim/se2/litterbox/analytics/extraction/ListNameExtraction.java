@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -34,7 +34,7 @@ public class ListNameExtraction implements ScratchVisitor, NameExtraction {
         final List<String> names = new ArrayList<>();
         Collection<ExpressionListInfo> variables = program.getSymbolTable().getLists().values();
         for (ExpressionListInfo variable : variables) {
-            names.add(variable.getVariableName());
+            names.add(variable.variableName());
         }
         return names;
     }

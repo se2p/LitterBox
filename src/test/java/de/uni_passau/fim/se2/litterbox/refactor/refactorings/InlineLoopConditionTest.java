@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -62,7 +62,7 @@ public class InlineLoopConditionTest implements JsonTest {
         RepeatForeverStmt foreverStmt = (RepeatForeverStmt) refactoredScript.getStmtList().getStmts().stream().filter(s -> s instanceof RepeatForeverStmt).findFirst().get();
         assertThat(foreverStmt.getStmtList().getNumberOfStatements()).isEqualTo(2);
         IfThenStmt ifThenStmt = (IfThenStmt) foreverStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfThenStmt).findFirst().get();
-        assertThat(ifThenStmt.getBoolExpr().equals(loopStmt.getBoolExpr()));
+        assertThat(ifThenStmt.getBoolExpr()).isEqualTo(loopStmt.getBoolExpr());
         assertThat(ifThenStmt.getThenStmts().getNumberOfStatements()).isEqualTo(1);
         assertThat(ifThenStmt.getThenStmts().getStatement(0)).isInstanceOf(StopThisScript.class);
     }

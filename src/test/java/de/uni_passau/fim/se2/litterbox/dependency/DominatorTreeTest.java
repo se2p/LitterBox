@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -111,8 +110,8 @@ public class DominatorTreeTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).iterator().next();
         CFGNode ifelse = dt.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof IfElseStmt).findFirst().get();
-        CFGNode move1 = dt.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).collect(Collectors.toList()).get(0);
-        CFGNode move2 = dt.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).collect(Collectors.toList()).get(1);
+        CFGNode move1 = dt.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(0);
+        CFGNode move2 = dt.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(1);
         CFGNode exit = cfg.getExitNode();
 
         assertThat(dt.getEdges()).contains(EndpointPair.ordered(entry, greenFlag));
@@ -133,7 +132,7 @@ public class DominatorTreeTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = dt.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
         CFGNode move1 = dt.getSuccessors(greenFlag).iterator().next();
-        CFGNode keyPressed = dt.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).collect(Collectors.toList()).get(0);
+        CFGNode keyPressed = dt.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).toList().get(0);
         CFGNode move2 = dt.getSuccessors(keyPressed).iterator().next();
         CFGNode exit = cfg.getExitNode();
 

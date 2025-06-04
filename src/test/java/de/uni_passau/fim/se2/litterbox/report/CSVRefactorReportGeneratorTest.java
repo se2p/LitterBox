@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -39,16 +39,15 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CSVRefactorReportGeneratorTest implements JsonTest {
+class CSVRefactorReportGeneratorTest implements JsonTest {
 
     @Test
-    public void testSingleRefactoringSingleProjectNewCSV() throws IOException, ParsingException {
+    void testSingleRefactoringSingleProjectNewCSV() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
         int populationSize = 10;
         int maxGen = 10;
         int iterations = 9;
         double hyperVolume = 2.0;
-        long programExtractionTime = 23;
         long refactoringSearchTime = 42;
         Randomness.setSeed(132);
         FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
@@ -82,9 +81,14 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Path tmpFile = Files.createTempFile("foo", "bar");
         Path fileName = tmpFile.getFileName();
         Path pathName = tmpFile.getParent();
-        CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator.close();
+        try (CSVRefactorReportGenerator reportGenerator
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator.generateReport(
+                    0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    refactoringSearchTime
+            );
+        }
 
         List<String> lines = Files.readAllLines(tmpFile);
         Files.delete(tmpFile);
@@ -92,20 +96,19 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).contains(
                 "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
-                        + "program_extraction_time,refactoring_search_time");
+                        + "refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,42");
         assertThat(lines.get(1)).contains("2.11,3.11,4.11");
     }
 
     @Test
-    public void testSingleIssueTwoProjectsAppendCSV() throws IOException, ParsingException {
+    void testSingleIssueTwoProjectsAppendCSV() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
         int populationSize = 10;
         int maxGen = 10;
         int iterations = 9;
         double hyperVolume = 2.0;
-        long programExtractionTime = 23;
         long refactoringSearchTime = 42;
         Randomness.setSeed(132);
         FitnessFunction<RefactorSequence> f1 = new HalsteadDifficultyFitness();
@@ -140,13 +143,23 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         Path fileName = tmpFile.getFileName();
         Path pathName = tmpFile.getParent();
 
-        CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator.generateReport(0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator.close();
+        try (CSVRefactorReportGenerator reportGenerator
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator.generateReport(
+                    0, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    refactoringSearchTime
+            );
+        }
 
-        CSVRefactorReportGenerator reportGenerator2 = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions);
-        reportGenerator2.generateReport(1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations, programExtractionTime, refactoringSearchTime);
-        reportGenerator2.close();
+        try (CSVRefactorReportGenerator reportGenerator2
+                     = new CSVRefactorReportGenerator(fileName, pathName, fitnessFunctions)
+        ) {
+            reportGenerator2.generateReport(
+                    1, program, refactorSequence, populationSize, maxGen, hyperVolume, iterations,
+                    refactoringSearchTime
+            );
+        }
 
         List<String> lines = Files.readAllLines(tmpFile);
         Files.delete(tmpFile);
@@ -154,11 +167,11 @@ public class CSVRefactorReportGeneratorTest implements JsonTest {
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).contains(
                 "project,pareto_index,population_size,max_generations,executed_generations,seed,hypervolume,"
-                        + "program_extraction_time,refactoring_search_time");
+                        + "refactoring_search_time");
         assertThat(lines.get(0)).contains("halstead_difficulty_fitness,number_of_blocks_fitness,category_entropy_fitness");
-        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(1)).contains("helloBlockHelloBlockWithinControl,0,10,10,9,132,2.0,42");
         assertThat(lines.get(1)).contains("2.11,3.11,4.11");
-        assertThat(lines.get(2)).contains("helloBlockHelloBlockWithinControl,1,10,10,9,132,2.0,23,42");
+        assertThat(lines.get(2)).contains("helloBlockHelloBlockWithinControl,1,10,10,9,132,2.0,42");
         assertThat(lines.get(2)).contains("2.11,3.11,4.11");
     }
 }

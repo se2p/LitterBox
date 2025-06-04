@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,8 +50,8 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
         assertThat(reports).hasSize(1);
 
         Issue theIssue = reports.iterator().next();
-        Hint expectedHint = new Hint(finder.getName());
-        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+        Hint expectedHint = Hint.fromKey(finder.getName());
+        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

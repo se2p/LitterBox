@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,19 +30,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CallStmtParserTest implements JsonTest {
+class CallStmtParserTest implements JsonTest {
 
     @Test
-    public void testInputParsing() throws IOException, ParsingException {
+    void testInputParsing() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/stmtParser/procCallInputs.json");
         ActorDefinitionList actorDefinitionList = program.getActorDefinitionList();
         for (ActorDefinition definition : actorDefinitionList.getDefinitions()) {
@@ -50,22 +53,41 @@ public class CallStmtParserTest implements JsonTest {
                 List<Script> scriptList = definition.getScripts().getScriptList();
                 Script script = scriptList.get(0);
                 Stmt stmt = script.getStmtList().getStmts().get(0);
-                assertTrue(stmt instanceof CallStmt);
+                assertInstanceOf(CallStmt.class, stmt);
                 CallStmt callStmt = (CallStmt) stmt;
                 List<Expression> expressions = callStmt.getExpressions().getExpressions();
-                assertTrue(callStmt.getMetadata() instanceof TopNonDataBlockMetadata);
-                assertTrue(((TopNonDataBlockMetadata) callStmt.getMetadata()).getMutation() instanceof ProcedureMutationMetadata);
-                assertTrue(expressions.get(0) instanceof Volume);
-                assertTrue(((Volume) expressions.get(0)).getMetadata() instanceof NonDataBlockMetadata);
+                assertInstanceOf(TopNonDataBlockMetadata.class, callStmt.getMetadata());
+                assertInstanceOf(ProcedureMutationMetadata.class, ((TopNonDataBlockMetadata) callStmt.getMetadata()).getMutation());
+                assertInstanceOf(Volume.class, expressions.get(0));
+                assertInstanceOf(NonDataBlockMetadata.class, expressions.get(0).getMetadata());
                 Expression biggerThan = expressions.get(1);
-                assertTrue(biggerThan instanceof BiggerThan);
-                assertTrue(((BiggerThan) biggerThan).getMetadata() instanceof NonDataBlockMetadata);
+                assertInstanceOf(BiggerThan.class, biggerThan);
+                assertInstanceOf(NonDataBlockMetadata.class, biggerThan.getMetadata());
                 ComparableExpr operand1 = ((BiggerThan) biggerThan).getOperand1();
                 ComparableExpr operand2 = ((BiggerThan) biggerThan).getOperand2();
-                assertTrue(operand1 instanceof Join);
-                assertTrue(((Join) operand1).getMetadata() instanceof NonDataBlockMetadata);
-                assertTrue(operand2 instanceof NumberLiteral);
+                assertInstanceOf(Join.class, operand1);
+                assertInstanceOf(NonDataBlockMetadata.class, operand1.getMetadata());
+                assertInstanceOf(NumberLiteral.class, operand2);
             }
         }
+    }
+
+    @Test
+    void testPercentNParameterTypeReplacement() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/customBlockPercentNParameter.json");
+
+        final List<CallStmt> callStmts = NodeFilteringVisitor.getBlocks(program, CallStmt.class);
+        assertAll(
+                callStmts.stream()
+                        .filter(stmt -> stmt.getIdent().getName().startsWith("Add note"))
+                        .map(stmt -> () -> assertEquals("Add note %s at %s secs", stmt.getIdent().getName()))
+        );
+
+        final List<ProcedureDefinition> procDefs = NodeFilteringVisitor.getBlocks(program, ProcedureDefinition.class);
+        assertAll(
+                procDefs.stream()
+                        .flatMap(procedure -> procedure.getParameterDefinitionList().getParameterDefinitions().stream())
+                        .map(parameter -> () -> assertInstanceOf(StringType.class, parameter.getType()))
+        );
     }
 }

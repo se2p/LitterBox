@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -64,7 +64,7 @@ public class ForeverWaitToForeverIfTest implements JsonTest {
             assertThat(foreverStmt.getStmtList().getNumberOfStatements()).isEqualTo(1);
 
             IfThenStmt ifThenStmt = (IfThenStmt) foreverStmt.getStmtList().getStatement(0);
-            assertThat(ifThenStmt.getBoolExpr().equals(waitUntil.getUntil()));
+            assertThat(ifThenStmt.getBoolExpr()).isEqualTo(waitUntil.getUntil());
 
             assertThat(ifThenStmt.getThenStmts().getNumberOfStatements()).isEqualTo(loopStmt.getStmtList().getNumberOfStatements() - 1);
         }

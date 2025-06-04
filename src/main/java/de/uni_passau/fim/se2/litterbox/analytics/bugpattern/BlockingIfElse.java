@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -77,9 +77,9 @@ public class BlockingIfElse extends AbstractIssueFinder {
                     if (searchSubStmtsForStop(ifElse.getElseStmts().getStmts())) {
                         Hint hint;
                         if (i < stmts.size() - 1) {
-                            hint = new Hint(NAME);
+                            hint = Hint.fromKey(NAME);
                         } else {
-                            hint = new Hint(INSIDE_LOOP);
+                            hint = Hint.fromKey(INSIDE_LOOP);
                         }
                         addIssue(ifElse, ifElse.getMetadata(), IssueSeverity.MEDIUM, hint);
                     }

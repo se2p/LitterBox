@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,23 +21,22 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * When a sprite creates a
@@ -78,7 +77,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         final List<String> uninitializingActors
                 = clonedActors.stream()
                 .filter(s -> !whenStartsAsCloneActors.contains(s))
-                .collect(Collectors.toList());
+                .toList();
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         //in the first accept only the deletion blocks where searched, now issues are added
@@ -104,21 +103,24 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
+    public void visit(Myself node) {
+        if (!addComment) {
+            clonedActors.add(currentActor.getIdent().getName());
+        } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
+            Hint hint = generateHint(currentActor.getIdent().getName());
+            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW, hint);
+        }
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId strId) {
             final String spriteName = strId.getName();
             if (!addComment) {
-                if (spriteName.equals("_myself_")) {
-                    clonedActors.add(currentActor.getIdent().getName());
-                } else {
-                    clonedActors.add(spriteName);
-                }
+                clonedActors.add(spriteName);
             } else if (notClonedActor.contains(spriteName)) {
                 Hint hint = generateHint(spriteName);
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
-            } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
-                Hint hint = generateHint(currentActor.getIdent().getName());
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+                addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -158,18 +160,18 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                     }
                 }
                 if (events.size() > 1) {
-                    hint = new Hint(HAS_DELETE_CLONE_MESSAGE_MULTIPLE);
+                    hint = Hint.fromKey(HAS_DELETE_CLONE_MESSAGE_MULTIPLE);
                 } else {
-                    hint = new Hint(HAS_DELETE_CLONE_MESSAGE);
+                    hint = Hint.fromKey(HAS_DELETE_CLONE_MESSAGE);
                 }
                 hint.setParameter(Hint.EVENT_HANDLER, generateMessageString(events));
                 hint.setParameter(Hint.HINT_MESSAGE, generateMessageString(messages));
             } else {
-                hint = new Hint(HAS_DELETE_CLONE);
+                hint = Hint.fromKey(HAS_DELETE_CLONE);
             }
             hint.setParameter(Hint.HINT_SPRITE, actorName);
         } else {
-            hint = new Hint(NAME);
+            hint = Hint.fromKey(NAME);
         }
         return hint;
     }

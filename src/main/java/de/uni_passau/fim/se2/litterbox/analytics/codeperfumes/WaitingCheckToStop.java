@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -69,9 +69,9 @@ public class WaitingCheckToStop extends AbstractIssueFinder {
             foundIssue.add(stmts.get(stmts.size() - 1));
             MultiBlockIssue issue;
             if (currentProcedure == null) {
-                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentScript, foundIssue, wait.getMetadata(), new Hint(NAME));
+                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentScript, foundIssue, wait.getMetadata(), Hint.fromKey(NAME));
             } else {
-                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentProcedure, foundIssue, wait.getMetadata(), new Hint(NAME));
+                issue = new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, currentProcedure, foundIssue, wait.getMetadata(), Hint.fromKey(NAME));
             }
             addIssue(issue);
         }

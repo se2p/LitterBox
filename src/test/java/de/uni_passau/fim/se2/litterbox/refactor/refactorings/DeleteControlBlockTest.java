@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -75,6 +75,6 @@ class DeleteControlBlockTest {
         ControlStmt controlStmt = mock(IfThenStmt.class);
         when(controlStmt.getUniqueName()).thenReturn("ControlStatement");
         DeleteControlBlock refactoring = new DeleteControlBlock(controlStmt);
-        assertEquals("delete_control_block(ControlStatement)", refactoring.toString());
+        assertEquals("delete_control_block(ControlStatement)", refactoring.getDescription());
     }
 }

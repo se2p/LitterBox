@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -48,6 +48,6 @@ public class UnusedCustomBlockTest implements JsonTest {
         UnusedCustomBlock parameterName = new UnusedCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Assertions.assertTrue(reports.get(0).getScriptOrProcedureDefinition() instanceof ProcedureDefinition);
+        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.get(0).getScriptOrProcedureDefinition());
     }
 }

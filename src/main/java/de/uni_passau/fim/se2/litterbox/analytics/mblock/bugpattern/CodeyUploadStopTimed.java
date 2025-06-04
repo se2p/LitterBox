@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -76,7 +76,7 @@ public class CodeyUploadStopTimed extends AbstractRobotFinder {
             }
             for (StopAll issue : issueList) {
                 if (uploadPossible) {
-                    addIssue(issue, MEDIUM, new Hint(POSSIBLE));
+                    addIssue(issue, MEDIUM, Hint.fromKey(POSSIBLE));
                 } else {
                     addIssue(issue, MEDIUM);
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,7 +35,7 @@ public class OnlyEmptyCodeCloneVisitorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/visitors/foreverWithSay.json");
         OnlyEmptyCodeCloneVisitor vis = new OnlyEmptyCodeCloneVisitor();
         Script script = vis.apply(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0));
-        Assertions.assertTrue(script.getStmtList().getStmts().get(0) instanceof RepeatForeverStmt);
+        Assertions.assertInstanceOf(RepeatForeverStmt.class, script.getStmtList().getStmts().get(0));
         RepeatForeverStmt forever = (RepeatForeverStmt) script.getStmtList().getStmts().get(0);
         Assertions.assertTrue(forever.getStmtList().getStmts().isEmpty());
     }

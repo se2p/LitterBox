@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -68,7 +68,7 @@ public class ParallelBoardLaunchScriptMCore extends AbstractRobotFinder {
     protected void finishRobotVisit() {
         if (robot == MCORE) {
             if (launchCount >= 2) {
-                MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, scripts, nodes, nodes.get(0).getMetadata(), new Hint(getName()));
+                MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, scripts, nodes, nodes.get(0).getMetadata(), Hint.fromKey(getName()));
                 addIssue(issue);
             }
             actors.clear();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,13 +27,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refactoring {
 
@@ -48,9 +48,13 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
         this.ifThenStmt = Preconditions.checkNotNull(ifThenStmt);
         TerminationStmt stopStmt = (TerminationStmt) ifThenStmt.getThenStmts().getStatement(0);
 
-        List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).collect(Collectors.toList());
+        List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).toList();
 
-        UntilStmt replacementLoop = new UntilStmt(apply(ifThenStmt.getBoolExpr()), new StmtList(applyList(remainingStmts)), apply(foreverLoop.getMetadata()));
+        UntilStmt replacementLoop = new UntilStmt(
+                apply(ifThenStmt.getBoolExpr()),
+                new StmtList(applyList(remainingStmts)),
+                apply(foreverLoop.getMetadata())
+        );
         replacement.add(replacementLoop);
         if (!(stopStmt instanceof StopThisScript)) {
             replacement.add(apply(stopStmt));
@@ -68,17 +72,32 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced loop:" + System.lineSeparator() + foreverLoop.getScratchBlocks() + System.lineSeparator()
-                + "with until loop:" + System.lineSeparator() + replacement.get(0).getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced loop:
+                %s
+                with until loop:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(foreverLoop),
+                ScratchBlocksVisitor.of(replacement.get(0))
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ExtractLoopCondition that = (ExtractLoopCondition) o;
-        return Objects.equals(foreverLoop, that.foreverLoop) && Objects.equals(ifThenStmt, that.ifThenStmt) && Objects.equals(replacement, that.replacement);
+        return Objects.equals(foreverLoop, that.foreverLoop)
+                && Objects.equals(ifThenStmt, that.ifThenStmt)
+                && Objects.equals(replacement, that.replacement);
     }
 
     @Override

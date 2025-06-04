@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -40,17 +40,19 @@ public class Hint {
     public static final String STATEMENT = "STATEMENT";
     public static final String PROCEDURE = "PROCEDURE";
     public static final String METHOD = "METHOD";
+    public static final String HINT_MESSAGE_MIDDLE = "MESSAGE_MIDDLE";
+    public static final String HINT_MESSAGE_FINAL = "MESSAGE_FINAL";
+    public static final String HINT_BLOCKNAME_MIDDLE = "BLOCKNAME_MIDDLE";
+    public static final String HINT_BLOCKNAME_FINAL = "BLOCKNAME_FINAL";
     public static final String CONDITION = "CONDITION";
     public static final String ACTOR = "ACTOR";
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
-    private String hintKey;
     private String hintText;
 
-    public Hint(String key) {
-        this.hintKey = key;
-        this.hintText = IssueTranslator.getInstance().getHint(hintKey);
+    private Hint(String hintText) {
+        this.hintText = hintText;
     }
 
     public void setParameter(String key, String value) {
@@ -65,11 +67,16 @@ public class Hint {
         return hintText.indexOf(ESCAPE_CHARACTER) >= 0;
     }
 
-    public String getHintKey() {
-        return hintKey;
-    }
-
     public String getHintText() {
         return hintText;
+    }
+
+    public static Hint fromKey(String hintKey) {
+        String hintText = IssueTranslator.getInstance().getHint(hintKey);
+        return new Hint(hintText);
+    }
+
+    public static Hint fromText(String hintText) {
+        return new Hint(hintText);
     }
 }

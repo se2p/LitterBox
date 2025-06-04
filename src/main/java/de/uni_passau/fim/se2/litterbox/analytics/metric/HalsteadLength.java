@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadLength<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "halstead_length";
 
     @Override
     public double calculateMetric(T node) {
@@ -35,6 +35,6 @@ public class HalsteadLength<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public String getName() {
-        return "halstead_length";
+        return NAME;
     }
 }

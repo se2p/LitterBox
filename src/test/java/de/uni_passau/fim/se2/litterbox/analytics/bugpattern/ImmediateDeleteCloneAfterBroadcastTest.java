@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -48,10 +48,10 @@ public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
 
         Issue theIssue = reports.iterator().next();
 
-        Hint expectedHint = new Hint(issueFinder.getName());
+        Hint expectedHint = Hint.fromKey(issueFinder.getName());
         expectedHint.setParameter(Hint.HINT_SPRITE, "Sprite1");
         expectedHint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
-        assertThat(theIssue.getHint()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

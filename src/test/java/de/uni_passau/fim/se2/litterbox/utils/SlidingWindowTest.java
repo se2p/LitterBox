@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Spliterator;
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -168,7 +166,7 @@ class SlidingWindowTest {
                 (2.0 + 1.0 + 5.0) / windowSize);
         final List<Double> actualAverages = SlidingWindow.of(numbers, windowSize)
                 .map(window -> window.collect(averagingDouble(Double::doubleValue)))
-                .collect(Collectors.toList());
+                .toList();
         assertEquals(expectedAverages, actualAverages);
     }
 

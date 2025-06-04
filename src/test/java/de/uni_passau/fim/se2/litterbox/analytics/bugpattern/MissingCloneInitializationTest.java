@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -45,7 +46,7 @@ public class MissingCloneInitializationTest implements JsonTest {
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
         for (Issue issue : reports) {
-            Truth.assertThat(((StrId) ((AsString) ((CreateCloneOf) issue.getCodeLocation()).getStringExpr()).getOperand1()).getName()).isEqualTo("Anina Dance");
+            Truth.assertThat(((StrId) ((WithCloneExpr) ((CreateCloneOf) issue.getCodeLocation()).getCloneChoice()).getExpression()).getName()).isEqualTo("Anina Dance");
         }
     }
 
@@ -60,10 +61,10 @@ public class MissingCloneInitializationTest implements JsonTest {
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> reports = finder.check(clicked);
         Truth.assertThat(reports).hasSize(1);
-        Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE);
+        Hint hint = Hint.fromKey(MissingCloneInitialization.HAS_DELETE_CLONE);
         hint.setParameter(Hint.HINT_SPRITE, "Körper");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 
@@ -73,12 +74,12 @@ public class MissingCloneInitializationTest implements JsonTest {
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> reports = finder.check(clicked);
         Truth.assertThat(reports).hasSize(1);
-        Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE_MESSAGE);
+        Hint hint = Hint.fromKey(MissingCloneInitialization.HAS_DELETE_CLONE_MESSAGE);
         hint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
         hint.setParameter(Hint.EVENT_HANDLER, IssueTranslator.getInstance().getInfo("greenflag"));
         hint.setParameter(Hint.HINT_SPRITE, "Sprite1");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 

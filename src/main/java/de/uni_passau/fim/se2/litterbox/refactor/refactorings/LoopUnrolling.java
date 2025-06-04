@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -58,15 +59,27 @@ public class LoopUnrolling extends OnlyCodeCloneVisitor implements Refactoring {
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Unrolled loop:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator()
-                + this.value + " times" +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Unrolled loop:
+                %s
+                %d times
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                value
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LoopUnrolling that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LoopUnrolling that)) {
+            return false;
+        }
         return value == that.value
                 && Objects.equals(loop, that.loop)
                 && Objects.equals(unrolledStmts, that.unrolledStmts);

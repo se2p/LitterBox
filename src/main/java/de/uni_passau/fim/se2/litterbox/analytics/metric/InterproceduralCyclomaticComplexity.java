@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,23 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
 public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "interprocedural_cyclomatic_complexity";
 
     @Override
     public double calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg =  visitor.getControlFlowGraph();
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
         return cfg.getNumEdges() - cfg.getNumNodes() + 2;
     }
 
     @Override
     public String getName() {
-        return "interprocedural_cyclomatic_complexity";
+        return NAME;
     }
 }

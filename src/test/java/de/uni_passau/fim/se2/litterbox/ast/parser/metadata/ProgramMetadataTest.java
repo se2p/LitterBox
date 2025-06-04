@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,26 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
-
-public class ProgramMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-
+public class ProgramMetadataTest implements JsonTest {
     @Test
-    public void testMissingMonitors() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/missingMonitorsNode.json");
-        JsonNode prog = mapper.readTree(f);
-        Assertions.assertFalse(prog.has(MONITORS_KEY));
-        ProgramMetadata metadata = ProgramMetadataParser.parse(prog);
+    public void testMissingMonitors() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/missingMonitorsNode.json");
+        ProgramMetadata metadata = program.getProgramMetadata();
+
         Assertions.assertEquals(0, metadata.getMonitor().getList().size());
         Assertions.assertEquals(0, metadata.getExtension().getExtensionNames().size());
     }

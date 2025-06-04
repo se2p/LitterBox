@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -77,11 +77,12 @@ public class TFixedLanguage extends AbstractNode implements TLanguage, FixedNode
         DANISH("da"), DUTCH("nl"), ENGLISH("en"), ESPERANTO("eo"), ESTONIAN("et"), FINNISH("fi"),
         FRENCH("fr"), GALICIAN("gl"), GERMAN("de"), GREEK("el"), HAITIAN_CREOLE("ht"), HINDI("hi"), HUNGARIAN("hu"),
         ICELANDIC("is"), INDONESIAN("id"), IRISH("ga"), ITALIAN("it"), JAPANESE("ja"), KANNADA("kn"), KOREAN("ko"),
-        KURDISH_KURMANJI("ku"), LATIN("la"), LATVIAN("lv"), LITHUANIAN("lt"), MACEDONIAN("mk"), MALAY("ms"), MALAYALAM("ml"),
-        MALTESE("mt"), MAORI("mi"), MARATHI("mr"), MONGOLIAN("mn"), MYANMAR_BURMESE("my"), PERSIAN("fa"), POLISH("pl"),
-        PORTUGUESE("pt"), ROMANIAN("ro"), RUSSIAN("ru"), SCOTS_GAELIC("gd"), SERBIAN("sr"), SLOVAK("sk"), SLOVENIAN("sl"),
-        SPANISH("es"), SWEDISH("sv"), TELUGU("te"), THAI("th"), TURKISH("tr"), UKRAINIAN("uk"), UZBEK("uz"), VIETNAMESE("vi"),
-        WELSH("cy"), ZULU("zu"), HEBREW("he"), CHINESE_SIMPLIFIED("zh-cn");
+        KURDISH_KURMANJI("ku"), LATIN("la"), LATVIAN("lv"), LITHUANIAN("lt"), MACEDONIAN("mk"), MALAY("ms"),
+        MALAYALAM("ml"), MALTESE("mt"), MAORI("mi"), MARATHI("mr"), MONGOLIAN("mn"), MYANMAR_BURMESE("my"),
+        NORWEGIAN("nb"), PERSIAN("fa"), POLISH("pl"), PORTUGUESE("pt"), ROMANIAN("ro"), RUSSIAN("ru"),
+        SCOTS_GAELIC("gd"), SERBIAN("sr"), SLOVAK("sk"), SLOVENIAN("sl"), SPANISH("es"), SWEDISH("sv"), TELUGU("te"),
+        THAI("th"), TURKISH("tr"), UKRAINIAN("uk"), UZBEK("uz"), VIETNAMESE("vi"), WELSH("cy"), ZULU("zu"),
+        HEBREW("he"), CHINESE_SIMPLIFIED("zh-cn");
 
         private final String type;
 
@@ -144,6 +145,7 @@ public class TFixedLanguage extends AbstractNode implements TLanguage, FixedNode
                 case MARATHI -> "Marathi";
                 case MONGOLIAN -> "Mongolian";
                 case MYANMAR_BURMESE -> "Myanmar (Burmese)";
+                case NORWEGIAN -> "Norwegian";
                 case PERSIAN -> "Persian";
                 case POLISH -> "Polish";
                 case PORTUGUESE -> "Portuguese";

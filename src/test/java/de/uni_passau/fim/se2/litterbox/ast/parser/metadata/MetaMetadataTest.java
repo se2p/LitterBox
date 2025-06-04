@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,25 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.META_KEY;
-
-public class MetaMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class MetaMetadataTest implements JsonTest {
 
     @Test
-    public void testMeta() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
-        JsonNode prog = mapper.readTree(f);
-        MetaMetadata meta = MetaMetadataParser.parse(prog.get(META_KEY));
+    public void testMeta() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
+        MetaMetadata meta = program.getProgramMetadata().getMeta();
+
         Assertions.assertEquals("0.2.0-prerelease.20200402182733", meta.getVm());
         Assertions.assertEquals("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0",
                 meta.getAgent());

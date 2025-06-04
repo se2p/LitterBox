@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,26 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -52,9 +47,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
     private Set<String> variablesInScope = new LinkedHashSet<>();
-    private Stmt currentStatement;
-    private Expression currentExpression;
-    private Metadata currentMetadata;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -62,8 +54,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         this.program = program;
         issues = new LinkedHashSet<>();
         variablesInScope = new LinkedHashSet<>();
-        currentMetadata = null;
-        currentStatement = null;
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         program.accept(this);
@@ -78,14 +68,10 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(currentMetadata);
-            Hint hint = new Hint(getName());
+            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_VARIABLE, node.getText());
-            if (currentExpression != null) {
-                builder = builder.withCurrentNode(currentExpression);
-            } else {
-                builder = builder.withCurrentNode(currentStatement);
-            }
+            builder = builder.withCurrentNode(getCurrentReferencableNode(node));
 
             Qualified qualified = new Qualified(currentActor.getIdent(), new Variable(new StrId(literal)));
             if (node.getParentNode() instanceof BoolExpr) {
@@ -101,6 +87,33 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
             addIssue(builder.withHint(hint));
         }
+    }
+
+    private ASTNode getCurrentReferencableNode(ASTNode node) {
+        if (node instanceof Program) {
+            throw new IllegalArgumentException("should have found referencable node before Program node");
+        }
+        if (AstNodeUtil.getBlockId(node) != null) {
+            return node;
+        } else {
+            return getCurrentReferencableNode(node.getParentNode());
+        }
+    }
+
+    private Metadata getMetadata(ASTNode node) {
+        if (node instanceof Program) {
+            throw new IllegalArgumentException("should have found Metadata before Program node");
+        }
+        if (node.getMetadata() != null && !(node.getMetadata() instanceof NoBlockMetadata)) {
+            return node.getMetadata();
+        } else {
+            return getMetadata(node.getParentNode());
+        }
+    }
+
+    @Override
+    public void visit(StrId node) {
+        //no-op
     }
 
     @Override
@@ -124,24 +137,6 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(Stmt node) {
-        currentStatement = node;
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(Expression node) {
-        currentExpression = node;
-        super.visit(node);
-        currentExpression = null;
-    }
-
-    @Override
-    public void visit(Metadata node) {
-        currentMetadata = node;
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
         currentScript = null;
@@ -155,17 +150,16 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
 
-        variablesInScope = varMap.values().stream().filter(v -> v.isGlobal() || v.getActor().equals(currentActor.getIdent().getName())).map(VariableInfo::getVariableName).collect(Collectors.toSet());
-        variablesInScope.addAll(listMap.values().stream().filter(v -> v.isGlobal() || v.getActor().equals(currentActor.getIdent().getName())).map(ExpressionListInfo::getVariableName).collect(Collectors.toSet()));
-        if (procMap != null) {
-            for (ProcedureInfo procInfo : procMap.values()) {
-                for (ArgumentInfo ai : procInfo.getArguments()) {
-                    variablesInScope.add(ai.getName());
-                }
-            }
-        }
+        variablesInScope = varMap.values().stream()
+                .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
+                .map(VariableInfo::variableName)
+                .collect(Collectors.toSet());
+        variablesInScope.addAll(listMap.values().stream()
+                .filter(v -> v.global() || v.actor().equals(currentActor.getIdent().getName()))
+                .map(ExpressionListInfo::variableName)
+                .collect(Collectors.toSet()));
+
         actor.getScripts().accept(this);
         actor.getProcedureDefinitionList().accept(this);
     }

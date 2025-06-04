@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,14 +46,14 @@ public class InterruptedLoopSensingTest implements JsonTest {
         Set<Issue> reports = parameterName.check(illegalParameter);
         Assertions.assertEquals(2, reports.size());
         List<Issue> issues = new ArrayList<>(reports);
-        Hint hint1 = new Hint(parameterName.getName());
-        hint1.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then"));
+        Hint hint1 = Hint.fromKey(parameterName.getName());
+        hint1.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
         hint1.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
-        Hint hint2 = new Hint(parameterName.getName());
+        Hint hint2 = Hint.fromKey(parameterName.getName());
         hint2.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
         hint2.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-        Assertions.assertEquals(hint1.getHintText(), issues.get(0).getHint());
-        Assertions.assertEquals(hint2.getHintText(), issues.get(1).getHint());
+        Assertions.assertEquals(hint1.getHintText(), issues.get(0).getHintText());
+        Assertions.assertEquals(hint2.getHintText(), issues.get(1).getHintText());
     }
 
     @Test
@@ -79,5 +79,15 @@ public class InterruptedLoopSensingTest implements JsonTest {
     @Test
     public void testInterruptedLoopSensingWaitUntilNO() throws IOException, ParsingException {
         assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/interruptedLoopSensingWaitUntilNO.json");
+    }
+
+    @Test
+    public void testInterruptedLoopSensingWaitBeforeSensing() throws IOException, ParsingException {
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/waitingBeforeSensing.json");
+    }
+
+    @Test
+    public void testInterruptedLoopSensingNotAfterRepeatUntil() throws IOException, ParsingException {
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugpattern/interruptedLoopSensingNotAfterRepeatUntil.json");
     }
 }

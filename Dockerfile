@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2022 LitterBox contributors
+# Copyright (C) 2019-2024 LitterBox contributors
 #
 # This file is part of LitterBox.
 #
@@ -35,8 +35,7 @@ COPY src ./src
 # Lastly, make build-artifact naming version-independent
 RUN mvn -e -B package -DskipTests=${SKIP_TESTS} && \
     mkdir -p /build/bin && \
-    mv target/Litterbox-*-SNAPSHOT.jar bin/Litterbox.jar && \
-    mv target/original-Litterbox-*-SNAPSHOT.jar bin/original-Litterbox.jar
+    mv target/Litterbox-*.full.jar bin/Litterbox.jar
 
 # Slim container image for running LitterBox
 FROM docker.io/library/eclipse-temurin:17-jre
@@ -44,7 +43,7 @@ FROM docker.io/library/eclipse-temurin:17-jre
 WORKDIR /litterbox
 VOLUME /litterbox
 
-# Copy the evosuite jar from the builder to this container
+# Copy the LitterBox jar from the builder to this container
 COPY --from=build /build/bin /litterbox-bin
 
 # The executable is Litterbox

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -61,7 +62,9 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(ifThen1, Arrays.asList(ifThen2), Arrays.asList(replacementIf))
+        );
     }
 
     @Override
@@ -70,16 +73,31 @@ public class IfIfNotToIfElse extends OnlyCodeCloneVisitor implements Refactoring
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if1:" + System.lineSeparator() + ifThen1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + ifThen2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifThen1),
+                ScratchBlocksVisitor.of(ifThen2),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IfIfNotToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof IfIfNotToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifThen1, that.ifThen1)
                 && Objects.equals(ifThen2, that.ifThen2)
                 && Objects.equals(replacementIf, that.replacementIf);

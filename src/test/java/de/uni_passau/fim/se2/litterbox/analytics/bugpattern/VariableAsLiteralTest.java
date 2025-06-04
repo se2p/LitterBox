@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptReplacementVisitor;
 import org.junit.jupiter.api.Assertions;
@@ -65,12 +66,6 @@ public class VariableAsLiteralTest implements JsonTest {
     }
 
     @Test
-    public void testParameterAsLiteral() throws IOException, ParsingException {
-        // 2 usages inside custom block, and 2 outside custom block
-        assertThatFinderReports(4, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterAsLiteral.json");
-    }
-
-    @Test
     public void testActorsAsLiterals() throws IOException, ParsingException {
         assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/actorsAsLiterals.json");
     }
@@ -95,7 +90,7 @@ public class VariableAsLiteralTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "if <[thelist] > (50):: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <[thelist] > (50) :: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [thelist]" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
@@ -111,7 +106,7 @@ public class VariableAsLiteralTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "if <[thelist] > (50)> then" + System.lineSeparator() +
-                "say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [thelist] :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
@@ -132,10 +127,31 @@ public class VariableAsLiteralTest implements JsonTest {
         VariableAsLiteral lit = new VariableAsLiteral();
         Set<Issue> reports = lit.check(program);
         Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(lit.getName());
+        Hint hint = Hint.fromKey(lit.getName());
         hint.setParameter(Hint.HINT_VARIABLE, "aktuelles Jahr");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
+        }
+    }
+
+    @Test
+    public void testSoundNameNoBug() throws IOException, ParsingException {
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/variableNameInDropDowns.json");
+    }
+
+    @Test
+    public void testParameterNameOutsideProcedure() throws IOException, ParsingException {
+        assertThatFinderReports(0, new VariableAsLiteral(), "src/test/fixtures/bugpattern/parameterNameAsALiteralOutsideProcedure.json");
+    }
+
+    @Test
+    public void testCallParameter() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/variableInLiteralCallParameter.json");
+        VariableAsLiteral lit = new VariableAsLiteral();
+        Set<Issue> reports = lit.check(program);
+        Assertions.assertEquals(2, reports.size());
+        for (Issue issue : reports) {
+            Truth.assertThat(AstNodeUtil.getBlockId(issue.getCodeLocation())).isNotNull();
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -58,8 +59,12 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
         this.ifStatement2 = Preconditions.checkNotNull(ifStatement2);
 
         And conjunction = (And) ifStatement1.getBoolExpr();
-        BoolExpr commonExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand1() : conjunction.getOperand2();
-        BoolExpr distinctExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand2() : conjunction.getOperand1();
+        BoolExpr commonExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr())
+                ? conjunction.getOperand1()
+                : conjunction.getOperand2();
+        BoolExpr distinctExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr())
+                ? conjunction.getOperand2()
+                : conjunction.getOperand1();
 
         IfElseStmt innerIf = new IfElseStmt(apply(distinctExpression),
                 apply(ifStatement1.getThenStmts()),
@@ -72,7 +77,9 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(ifStatement1, Arrays.asList(ifStatement2), Arrays.asList(replacementIf)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(ifStatement1, Arrays.asList(ifStatement2), Arrays.asList(replacementIf))
+        );
     }
 
     @Override
@@ -81,16 +88,31 @@ public class ConjunctionToIfElse extends OnlyCodeCloneVisitor implements Refacto
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + ifStatement1.getScratchBlocks() + System.lineSeparator()
-                + "Replaced if 2:" + System.lineSeparator() + ifStatement2.getScratchBlocks() +  System.lineSeparator()
-                + "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Replaced if 1:
+                %s
+                Replaced if 2:
+                %s
+                Replacement if:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(ifStatement1),
+                ScratchBlocksVisitor.of(ifStatement2),
+                ScratchBlocksVisitor.of(replacementIf)
+        );
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ConjunctionToIfElse that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConjunctionToIfElse that)) {
+            return false;
+        }
         return Objects.equals(ifStatement1, that.ifStatement1)
                 && Objects.equals(ifStatement2, that.ifStatement2)
                 && Objects.equals(replacementIf, that.replacementIf);

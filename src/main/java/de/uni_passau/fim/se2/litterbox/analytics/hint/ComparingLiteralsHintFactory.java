@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -102,21 +102,21 @@ public abstract class ComparingLiteralsHintFactory {
             setBlock(parent, hint, top);
         } else {
             if (variable != null && variable2 != null && variableExits) {
-                hint = new Hint(DEFAULT_VARIABLE_EXISTS_TWO_WITHOUT_INFORMATION);
+                hint = Hint.fromKey(DEFAULT_VARIABLE_EXISTS_TWO_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE1, variable);
                 hint.setParameter(Hint.HINT_VARIABLE2, variable2);
             } else if (variable != null && variable2 != null) {
-                hint = new Hint(DEFAULT_VARIABLE_TWO_WITHOUT_INFORMATION);
+                hint = Hint.fromKey(DEFAULT_VARIABLE_TWO_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE1, variable);
                 hint.setParameter(Hint.HINT_VARIABLE2, variable2);
             } else if (variable != null && variableExits) {
-                hint = new Hint(DEFAULT_VARIABLE_EXISTS_WITHOUT_INFORMATION);
+                hint = Hint.fromKey(DEFAULT_VARIABLE_EXISTS_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE, variable);
             } else if (variable != null) {
-                hint = new Hint(DEFAULT_VARIABLE_WITHOUT_INFORMATION);
+                hint = Hint.fromKey(DEFAULT_VARIABLE_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE, variable);
             } else {
-                hint = new Hint(DEFAULT_WITHOUT_INFORMATION);
+                hint = Hint.fromKey(DEFAULT_WITHOUT_INFORMATION);
             }
             hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
             if (value) {
@@ -146,19 +146,19 @@ public abstract class ComparingLiteralsHintFactory {
     private static Hint getWaitHint(boolean value, String variable, String variable2, String waitVariable, String waitVariable2, String waitTrue, String waitFalse) {
         Hint hint;
         if (variable != null && variable2 != null) {
-            hint = new Hint(waitVariable2);
+            hint = Hint.fromKey(waitVariable2);
             hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
             hint.setParameter(Hint.HINT_VARIABLE1, variable);
             hint.setParameter(Hint.HINT_VARIABLE2, variable2);
         } else if (variable != null) {
-            hint = new Hint(waitVariable);
+            hint = Hint.fromKey(waitVariable);
             hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
             hint.setParameter(Hint.HINT_VARIABLE, variable);
         } else {
             if (value) {
-                hint = new Hint(waitTrue);
+                hint = Hint.fromKey(waitTrue);
             } else {
-                hint = new Hint(waitFalse);
+                hint = Hint.fromKey(waitFalse);
             }
         }
         if (value) {

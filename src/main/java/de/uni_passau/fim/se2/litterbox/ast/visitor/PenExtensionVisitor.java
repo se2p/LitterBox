@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -137,5 +137,21 @@ public interface PenExtensionVisitor extends ScratchVisitor {
      */
     default void visit(ChangePenSizeBy node) {
         visit((PenStmt) node);
+    }
+
+    default void visit(ColorParam node) {
+        visit((PenBlock) node);
+    }
+
+    default void visit(FixedColorParam node) {
+        visit((ColorParam) node);
+    }
+
+    default void visit(ColorParamFromExpr node) {
+        visit((ColorParam) node);
+    }
+
+    default void visit(PenStmt node) {
+        visit((PenBlock) node);
     }
 }

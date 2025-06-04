@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 
-    Copyright (C) 2019-2022 LitterBox contributors
+    Copyright (C) 2019-2024 LitterBox contributors
 
     This file is part of LitterBox.
 
@@ -77,6 +77,7 @@
             <property name="allowNonPrintableEscapes" value="true"/>
         </module>
         <!--module name="AvoidStarImport"/-->
+        <module name="UnusedImports"/>
         <module name="OneTopLevelClass"/>
         <module name="NoLineWrap"/>
         <module name="EmptyBlock">

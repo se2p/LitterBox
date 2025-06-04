@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,7 +46,7 @@ public class MessageNaming extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral
                 && checkName(stringLiteral.getText())) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
@@ -56,7 +56,7 @@ public class MessageNaming extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral
                 && checkName(stringLiteral.getText())) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
@@ -65,7 +65,7 @@ public class MessageNaming extends AbstractIssueFinder {
     @Override
     public void visit(ReceptionOfMessage node) {
         if (node.getMsg().getMessage() instanceof StringLiteral stringLiteral && checkName(stringLiteral.getText())) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMsg().getMessage()).getText());
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }

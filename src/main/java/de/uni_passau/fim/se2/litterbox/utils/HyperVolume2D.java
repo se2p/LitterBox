@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,8 +23,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 
 import java.util.*;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Class for computing the quality of a Pareto front in two-dimensional spaces using the
@@ -105,7 +103,7 @@ public final class HyperVolume2D<C extends Chromosome<C>> {
      */
     private double boundedRectangleArea(final Stream<C> p) {
         // TODO: kind of clumsy if you only have two elements...
-        final List<C> chromosomes = p.collect(toList());
+        final List<C> chromosomes = p.toList();
         final var previous = chromosomes.get(0);
         final var current = chromosomes.get(1);
 

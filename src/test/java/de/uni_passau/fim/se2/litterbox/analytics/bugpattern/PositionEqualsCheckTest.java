@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -76,9 +76,9 @@ public class PositionEqualsCheckTest implements JsonTest {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(PositionEqualsCheckHintFactory.DISTANCE_ZERO_SPRITES);
+        Hint hint = Hint.fromKey(PositionEqualsCheckHintFactory.DISTANCE_ZERO_SPRITES);
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
         }
     }
 

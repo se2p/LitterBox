@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -60,9 +60,9 @@ public class KeySetPositionTest implements JsonTest {
         KeySetPosition parameterName = new KeySetPosition();
         List<Issue> reports = new ArrayList<>(parameterName.check(illegalParameter));
         Assertions.assertEquals(8, reports.size());
-        Hint hint = new Hint(parameterName.getName());
+        Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter("XY","x");
         hint.setParameter(Hint.HINT_KEY,"right arrow");
-        Assertions.assertEquals(hint.getHintText(),reports.get(0).getHint());
+        Assertions.assertEquals(hint.getHintText(),reports.get(0).getHintText());
     }
 }

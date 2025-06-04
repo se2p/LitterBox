@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -232,8 +232,8 @@ public class LeilaVisitorTest implements JsonTest {
     public void testCheckFailsForFolder(@TempDir File tempFile) throws IOException {
         Path path = Path.of("./src/test/fixtures/emptyProject.json");
         Path outPath = tempFile.toPath().toAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath.resolve("foobar"), false, true,false);
-        analyzer.analyzeFile();
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(outPath.resolve("foobar"), false, true,false);
+        analyzer.analyzeFile(path);
         File output = outPath.resolve("foobar").resolve("emptyProject.sc").toFile();
         assertThat(output.exists()).isFalse();
     }

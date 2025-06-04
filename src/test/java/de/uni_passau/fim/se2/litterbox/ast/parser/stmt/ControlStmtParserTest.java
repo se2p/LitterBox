@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -49,24 +49,24 @@ public class ControlStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(IfThenStmt.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(IfThenStmt.class);
         IfThenStmt ifthen = (IfThenStmt) listOfStmt.get(0);
-        Truth.assertThat(ifthen.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(ifthen.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
 
-        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(IfElseStmt.class);
+        Truth.assertThat(listOfStmt.get(1)).isInstanceOf(IfElseStmt.class);
         IfElseStmt ifelse = (IfElseStmt) listOfStmt.get(1);
-        Truth.assertThat(ifelse.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(ifelse.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
 
-        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
+        Truth.assertThat(listOfStmt.get(2)).isInstanceOf(RepeatTimesStmt.class);
         RepeatTimesStmt times = (RepeatTimesStmt) listOfStmt.get(2);
-        Truth.assertThat(times.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(times.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
 
-        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
+        Truth.assertThat(listOfStmt.get(3)).isInstanceOf(UntilStmt.class);
         UntilStmt until = (UntilStmt) listOfStmt.get(3);
-        Truth.assertThat(until.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(until.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
 
-        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
+        Truth.assertThat(listOfStmt.get(4)).isInstanceOf(RepeatForeverStmt.class);
         RepeatForeverStmt forever = (RepeatForeverStmt) listOfStmt.get(4);
-        Truth.assertThat(forever.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(forever.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
     }
 }

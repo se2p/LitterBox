@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,17 +19,11 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLOutputPath;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.MLPreprocessorCommonOptions;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.Code2VecAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.code2vec.ProgramRelation;
-import de.uni_passau.fim.se2.litterbox.analytics.ml_preprocessing.ggnn.GgnnGraphAnalyzer;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +34,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "LitterBox",
         mixinStandardHelpOptions = true,
-        version = "LitterBox 1.9-SNAPSHOT",
+        version = "LitterBox 1.10-SNAPSHOT",
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
@@ -50,10 +44,8 @@ import java.util.concurrent.Callable;
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
+                Main.ScratchBlocksSubcommand.class,
                 Main.ExtractSubcommand.class,
-                // machine learning preprocessors
-                Main.Code2vecSubcommand.class,
-                Main.GgnnSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -73,12 +65,7 @@ import java.util.concurrent.Callable;
                 "%nExample for refactoring:%n"
                         + "java -jar Litterbox.jar refactor%n"
                         + "    --path ~/path/to/project%n"
-                        + "    -r ~/path/to/output/folder/for/refactored/project",
-                "%nExample for code2vec preprocessing:%n"
-                        + "java -jar Litterbox.jar code2vec%n"
-                        + "    --path ~/path/to/json/project/or/folder/with/projects%n"
-                        + "    -o ~/path/to/folder/or/file/for/the/output%n"
-                        + "    --max-path-length 8",
+                        + "    -r ~/path/to/output/folder/for/refactored/project"
         }
 )
 public class Main implements Callable<Integer> {
@@ -99,17 +86,7 @@ public class Main implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    @CommandLine.Command(mixinStandardHelpOptions = true)
-    abstract static class LitterBoxSubcommand implements Callable<Integer> {
-        @CommandLine.Spec
-        CommandLine.Model.CommandSpec spec;
-
-        @CommandLine.Option(
-                names = {"-l", "--lang"},
-                description = "Language of the hints in the output."
-        )
-        String language = "en";
-
+    static class ProjectInputOptions {
         @CommandLine.Option(
                 names = {"-p", "--path"},
                 description = "Path to the folder or file that should be analysed, "
@@ -129,6 +106,18 @@ public class Main implements Callable<Integer> {
         )
         Path projectList;
 
+        static ProjectInputOptions getDefault() {
+            return new ProjectInputOptions();
+        }
+    }
+
+    static class CommonOptions {
+        @CommandLine.Option(
+                names = {"-l", "--lang"},
+                description = "Language of the hints in the output."
+        )
+        String language = "en";
+
         @CommandLine.Option(
                 names = {"-o", "--output"},
                 description = "Path to the file or folder for the analyser results. "
@@ -142,7 +131,23 @@ public class Main implements Callable<Integer> {
         )
         boolean deleteProject;
 
-        protected abstract Analyzer getAnalyzer() throws Exception;
+        static CommonOptions getDefault() {
+            return new CommonOptions();
+        }
+    }
+
+    @CommandLine.Command(mixinStandardHelpOptions = true)
+    abstract static class LitterBoxSubcommand implements Callable<Integer> {
+        @CommandLine.Spec
+        CommandLine.Model.CommandSpec spec;
+
+        @CommandLine.ArgGroup(exclusive = false)
+        CommonOptions commonOptions = CommonOptions.getDefault();
+
+        @CommandLine.ArgGroup(exclusive = false)
+        ProjectInputOptions projectInput = ProjectInputOptions.getDefault();
+
+        protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
         /**
          * Override to implement custom parameter validation before the analyzer is run.
@@ -155,34 +160,40 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-            IssueTranslator.getInstance().setLanguage(language);
+            IssueTranslator.getInstance().setLanguage(commonOptions.language);
 
             validateParams();
 
-            final Analyzer analyzer = getAnalyzer();
+            final FileAnalyzer<?> analyzer = getAnalyzer();
             return runAnalysis(analyzer);
         }
 
-        private int runAnalysis(final Analyzer analyzer) throws IOException {
-            if (projectId != null) {
-                analyzer.analyzeSingle(projectId);
-            } else if (projectList != null) {
-                analyzer.analyzeMultiple(projectList);
+        private int runAnalysis(final FileAnalyzer<?> analyzer) throws IOException {
+            if (projectInput.projectId != null) {
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(
+                        analyzer, projectInput.projectPath, commonOptions.deleteProject
+                );
+                projectIdAnalyzer.analyzeSingle(projectInput.projectId);
+            } else if (projectInput.projectList != null) {
+                final var projectIdAnalyzer = new ProjectIdAnalyzer<>(
+                        analyzer, projectInput.projectPath, commonOptions.deleteProject
+                );
+                projectIdAnalyzer.analyzeMultiple(projectInput.projectList);
             } else {
-                analyzer.analyzeFile();
+                analyzer.analyzeFile(projectInput.projectPath);
             }
 
             return 0;
         }
 
         protected void requireProjectPath() throws CommandLine.ParameterException {
-            if (projectPath == null) {
+            if (projectInput.projectPath == null) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "Input path option '--path' required.");
             }
         }
 
         protected void requireOutputPath() throws CommandLine.ParameterException {
-            if (outputPath == null) {
+            if (commonOptions.outputPath == null) {
                 throw new CommandLine.ParameterException(spec.commandLine(), "Output path option '--output' required.");
             }
         }
@@ -214,21 +225,44 @@ public class Main implements Callable<Integer> {
         )
         Path annotationPath;
 
+        @CommandLine.Option(
+                names = {"-s", "--scripts"},
+                description = "Get the bug patterns per script."
+        )
+        boolean outputPerScript;
+
+        @CommandLine.Option(
+                names = {"-r", "--report_prior"},
+                description = "Path to prior analyser results, which should be compared to new analysis."
+        )
+        Path priorResultPath;
+
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
-            if (projectPath == null) {
-                projectPath = Files.createTempDirectory("litterbox-bug");
+            if (projectInput.projectPath == null) {
+                projectInput.projectPath = Files.createTempDirectory("litterbox-bug");
             }
 
             final String detector = String.join(",", detectors);
-
-            final BugAnalyzer analyzer = new BugAnalyzer(
-                    projectPath,
-                    outputPath,
-                    detector,
-                    ignoreLooseBlocks,
-                    deleteProject
-            );
+            final BugAnalyzer analyzer;
+            if (priorResultPath == null) {
+                analyzer = new BugAnalyzer(
+                        commonOptions.outputPath,
+                        detector,
+                        ignoreLooseBlocks,
+                        commonOptions.deleteProject,
+                        outputPerScript
+                );
+            } else {
+                analyzer = new BugAnalyzer(
+                        commonOptions.outputPath,
+                        detector,
+                        ignoreLooseBlocks,
+                        commonOptions.deleteProject,
+                        outputPerScript,
+                        priorResultPath
+                );
+            }
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }
@@ -268,6 +302,7 @@ public class Main implements Callable<Integer> {
             System.out.printf(detectorFormat, GroupConstants.SMELLS, messages.getInfo(GroupConstants.SMELLS));
             System.out.printf(detectorFormat, GroupConstants.PERFUMES, messages.getInfo(GroupConstants.PERFUMES));
             System.out.printf(detectorFormat, GroupConstants.QUESTIONS, messages.getInfo(GroupConstants.QUESTIONS));
+            System.out.printf(detectorFormat, FinderGroup.FLAWS, messages.getInfo(FinderGroup.FLAWS));
 
             System.out.println(System.lineSeparator());
             System.out.printf(detectorFormat, "Bugpatterns:", "");
@@ -282,7 +317,7 @@ public class Main implements Callable<Integer> {
             printDetectorGroup(IssueTool.getPerfumeFinderNames());
 
             System.out.println(System.lineSeparator());
-            System.out.printf(detectorFormat, "Questins:", "");
+            System.out.printf(detectorFormat, "Questions:", "");
             printDetectorGroup(IssueTool.getQuestionFinderNames());
         }
 
@@ -304,7 +339,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(projectPath, outputPath, deleteProject);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -327,7 +362,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected LeilaAnalyzer getAnalyzer() {
-            return new LeilaAnalyzer(projectPath, outputPath, nonDeterministic, false, deleteProject);
+            return new LeilaAnalyzer(commonOptions.outputPath, nonDeterministic, false, commonOptions.deleteProject);
         }
     }
 
@@ -350,12 +385,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected RefactoringAnalyzer getAnalyzer() {
-            return new RefactoringAnalyzer(
-                    projectPath,
-                    outputPath,
-                    refactoredPath,
-                    deleteProject
-            );
+            return new RefactoringAnalyzer(commonOptions.outputPath, refactoredPath, commonOptions.deleteProject);
         }
     }
 
@@ -373,7 +403,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected MetricAnalyzer getAnalyzer() {
-            return new MetricAnalyzer(projectPath, outputPath, deleteProject);
+            return new MetricAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -391,7 +421,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected ExtractionAnalyzer getAnalyzer() {
-            return new ExtractionAnalyzer(projectPath, outputPath, deleteProject);
+            return new ExtractionAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
@@ -409,111 +439,25 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected DotAnalyzer getAnalyzer() {
-            return new DotAnalyzer(projectPath, outputPath, deleteProject);
-        }
-    }
-
-    abstract static class MLPreprocessorSubcommand extends LitterBoxSubcommand {
-        @CommandLine.Option(
-                names = {"-s", "--include-stage"},
-                description = "Include the stage like a regular sprite into the analysis."
-        )
-        boolean includeStage;
-
-        @CommandLine.Option(
-                names = {"-w", "--whole-program"},
-                description = "Treat the program as a single big sprite."
-        )
-        boolean wholeProgram;
-
-        @CommandLine.Option(
-                names = {"--include-default-sprites"},
-                description = "Include sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
-        )
-        boolean includeDefaultSprites;
-
-        protected final MLOutputPath getOutputPath() throws CommandLine.ParameterException {
-            if (outputPath != null) {
-                final File outputDirectory = outputPath.toFile();
-                if (outputDirectory.exists() && !outputDirectory.isDirectory()) {
-                    throw new CommandLine.ParameterException(
-                            spec.commandLine(),
-                            "The output path for a machine learning preprocessor must be a directory."
-                    );
-                }
-                return MLOutputPath.directory(outputDirectory.toPath());
-            } else {
-                return MLOutputPath.console();
-            }
-        }
-
-        protected final MLPreprocessorCommonOptions getCommonOptions() {
-            requireProjectPath();
-
-            final MLOutputPath outputPath = getOutputPath();
-            return new MLPreprocessorCommonOptions(projectPath, outputPath, deleteProject, includeStage, wholeProgram,
-                    includeDefaultSprites);
+            return new DotAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 
     @CommandLine.Command(
-            name = "code2vec",
-            description = "Transform Scratch projects into the code2vec input format."
+            name = "scratchblocks",
+            description = "Convert the project into scratchblocks notation."
     )
-    static class Code2vecSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--nohash"},
-                description = "Do not hash paths."
-        )
-        boolean noHash;
-
-        @CommandLine.Option(
-                names = {"--max-path-length"},
-                description = "The maximum length for connecting two AST leafs. "
-                        + "Zero means there is no max path length. "
-                        + "Default: 8."
-        )
-        int maxPathLength = 8;
+    static class ScratchBlocksSubcommand extends LitterBoxSubcommand {
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
-            if (maxPathLength < 0) {
-                throw new CommandLine.ParameterException(spec.commandLine(), "The path length can’t be negative.");
-            }
+            requireProjectPath();
+            requireOutputPath();
         }
 
         @Override
-        protected Code2VecAnalyzer getAnalyzer() {
-            if (noHash) {
-                ProgramRelation.setNoHash();
-            }
-
-            return new Code2VecAnalyzer(getCommonOptions(), maxPathLength);
-        }
-    }
-
-    @CommandLine.Command(
-            name = "ggnn",
-            description = "Transform Scratch projects into the Gated Graph Neural Network input format."
-    )
-    static class GgnnSubcommand extends MLPreprocessorSubcommand {
-
-        @CommandLine.Option(
-                names = {"--label"},
-                description = "Use a specific label for the graph instead of the file name."
-        )
-        String label;
-
-        @CommandLine.Option(
-                names = {"--dotgraph"},
-                description = "Generate a dot-graph representation of the GGNN graph."
-        )
-        boolean dotGraph;
-
-        @Override
-        protected GgnnGraphAnalyzer getAnalyzer() {
-            return new GgnnGraphAnalyzer(getCommonOptions(), dotGraph, label);
+        protected ScratchBlocksAnalyzer getAnalyzer() {
+            return new ScratchBlocksAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 }

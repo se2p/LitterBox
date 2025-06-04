@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,8 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emo
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.MovingEmotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.movement.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +42,6 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
     private final List<RobotMoveStmt> lastRunningList = new LinkedList<>();
     private RunningState state = NEVER;
     private RobotMoveStmt lastRunning = null;
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -63,13 +60,11 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
             } else if (state == STOPPED) {
                 state = NEVER;
                 lastRunning = null;
-                forever = false;
                 lastRunningList.clear();
                 return;
             }
             state = NEVER;
             lastRunning = null;
-            forever = false;
         }
         for (RobotMoveStmt stmt : lastRunningList) {
             addIssue(stmt);
@@ -92,12 +87,6 @@ public class MotorStopScriptMissing extends AbstractRobotFinder {
         if (node instanceof MovingEmotion) {
             state = STOPPED;
         }
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
     }
 
     @Override

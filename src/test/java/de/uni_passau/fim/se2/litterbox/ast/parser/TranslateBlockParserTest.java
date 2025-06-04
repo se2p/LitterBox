@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import static com.google.common.truth.Truth.assertThat;
 public class TranslateBlockParserTest implements JsonTest {
     @Test
     void testParseTranslateBlocks() throws IOException, ParsingException {
-        final Program program = getAST("src/test/fixtures/ml_preprocessing/shared/translate_blocks.json");
+        final Program program = getAST("src/test/fixtures/translate_blocks.json");
         assertNoUnspecifiedBlocks(program);
 
         final var translateTo = NodeFilteringVisitor.getBlocks(program, TranslateTo.class);
@@ -46,5 +47,14 @@ public class TranslateBlockParserTest implements JsonTest {
 
         final var viewerLanguage = NodeFilteringVisitor.getBlocks(program, ViewerLanguage.class);
         assertThat(viewerLanguage).hasSize(1);
+    }
+
+    @Test
+    void testParseTranslateBlocksWithVariable() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/stmtParser/translateBlock.json");
+        assertNoUnspecifiedBlocks(program);
+
+        final var variable = NodeFilteringVisitor.getBlocks(program, TExprLanguage.class);
+        assertThat(variable).hasSize(1);
     }
 }

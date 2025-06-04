@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,43 +18,48 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
 public class MutationMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
+    private static Program prog;
 
     @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/blockMeta.json");
-        prog = mapper.readTree(f);
+    public static void setUp() throws IOException, ParsingException {
+        prog = JsonTest.parseProgram("./src/test/fixtures/metadata/blockMeta.json");
     }
 
     @Test
     public void testProtoMutation() {
-        MutationMetadata mutationMetadata = MutationMetadataParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-                "Vr$zTl8mo1W,U?+q6,T{").get(MUTATION_KEY));
-        Assertions.assertTrue(mutationMetadata instanceof ProcedureMutationMetadata);
+        NonDataBlockMetadata meta = NodeFilteringVisitor.getBlocks(prog, NonDataBlockMetadata.class).stream()
+                .filter(m -> "Vr$zTl8mo1W,U?+q6,T{".equals(m.getBlockId()))
+                .findFirst()
+                .orElseThrow();
+        MutationMetadata mutationMetadata = meta.getMutation();
+
+        Assertions.assertInstanceOf(ProcedureMutationMetadata.class, mutationMetadata);
         ProcedureMutationMetadata existing = (ProcedureMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
     }
 
     @Test
     public void testCallMutation() {
-        MutationMetadata mutationMetadata = MutationMetadataParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
-                "O3bG_[t(B3p}k0KF:.,|").get(MUTATION_KEY));
-        Assertions.assertTrue(mutationMetadata instanceof ProcedureMutationMetadata);
+        ASTNode block = JsonTest.getBlock(prog, "O3bG_[t(B3p}k0KF:.,|", ASTNode.class);
+        NonDataBlockMetadata meta = (NonDataBlockMetadata) block.getMetadata();
+        MutationMetadata mutationMetadata = meta.getMutation();
+
+        Assertions.assertInstanceOf(ProcedureMutationMetadata.class, mutationMetadata);
         ProcedureMutationMetadata existing = (ProcedureMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
     }

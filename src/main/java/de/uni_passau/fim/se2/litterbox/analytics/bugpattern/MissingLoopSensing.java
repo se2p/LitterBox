@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -147,7 +148,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         }
         visitChildren(node);
         if (hasVariable) {
-            Hint hint = new Hint(VARIABLE_VERSION);
+            Hint hint = Hint.fromKey(VARIABLE_VERSION);
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             hasVariable = false;
         }
@@ -211,7 +212,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public boolean isSubsumedBy(Issue first, Issue other) {
         if (first.getFinder() != this) {
-            return super.areCoupled(first, other);
+            return super.isSubsumedBy(first, other);
         }
 
         if (!(other.getFinder() instanceof ForeverInsideIf)) {
@@ -243,15 +244,13 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     }
 
     private IfStmt findIf(ASTNode codeLocation) {
-        ASTNode parent = codeLocation.getParentNode();
-        while (!(parent instanceof IfStmt)) {
-            if (parent != null) {
-                parent = parent.getParentNode();
-            } else {
-                throw new IllegalStateException("It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong.");
-            }
+        IfStmt parent = AstNodeUtil.findParent(codeLocation.getParentNode(), IfStmt.class);
+        if (parent == null) {
+            throw new IllegalStateException(
+                    "It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
+            );
         }
-        return (IfStmt) parent;
+        return parent;
     }
 
     @Override

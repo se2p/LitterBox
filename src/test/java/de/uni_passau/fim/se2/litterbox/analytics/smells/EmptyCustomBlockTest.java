@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -48,6 +49,17 @@ public class EmptyCustomBlockTest implements JsonTest {
         EmptyCustomBlock parameterName = new EmptyCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Assertions.assertTrue(reports.get(0).getScriptOrProcedureDefinition() instanceof ProcedureDefinition);
+        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.get(0).getScriptOrProcedureDefinition());
+    }
+
+    @Test
+    public void testHint() throws IOException, ParsingException {
+        Program unusedProc = getAST("./src/test/fixtures/smells/emptyCustomBlockHint.json");
+        EmptyCustomBlock parameterName = new EmptyCustomBlock();
+        List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = Hint.fromKey(parameterName.getName());
+        hint.setParameter(Hint.BLOCK_NAME, "define Blockname () <>");
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
     }
 }

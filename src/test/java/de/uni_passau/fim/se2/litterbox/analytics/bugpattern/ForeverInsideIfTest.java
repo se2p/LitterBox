@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,7 +32,12 @@ public class ForeverInsideIfTest implements JsonTest {
     }
 
     @Test
-    public void testForeverInLoop() throws IOException, ParsingException {
+    public void testForeverInIf() throws IOException, ParsingException {
         assertThatFinderReports(2, new ForeverInsideIf(), "./src/test/fixtures/bugpattern/foreverInsideIf.json");
+    }
+
+    @Test
+    public void testForeverAfterIfElse() throws IOException, ParsingException {
+        assertThatFinderReports(0, new ForeverInsideIf(), "./src/test/fixtures/bugpattern/foreverAfterIfElse.json");
     }
 }

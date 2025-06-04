@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -107,15 +107,15 @@ public class MissingInitialization extends AbstractIssueFinder {
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script script) {
                     if (script.getEvent() instanceof StartedAsClone) {
-                        hint = new Hint(NAME_CLONE);
+                        hint = Hint.fromKey(NAME_CLONE);
                     } else {
-                        hint = new Hint(getName());
+                        hint = Hint.fromKey(getName());
                     }
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new UseIssue(this, program,
                             (Script) containingScript, hint, use));
                 } else {
-                    hint = new Hint(getName());
+                    hint = Hint.fromKey(getName());
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                     issues.add(new UseIssue(this, program,
                             (ProcedureDefinition) containingScript, hint, use));

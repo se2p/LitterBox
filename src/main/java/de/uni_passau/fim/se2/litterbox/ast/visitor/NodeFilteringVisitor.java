@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
     private final Class<T> blockType;
@@ -45,6 +46,18 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
         return v.blocks;
     }
 
+    /**
+     * Finds a block of the given type in the AST.
+     *
+     * @param root The root of the searched AST.
+     * @param blockType The type of block to search for.
+     * @param <T> The type of block to search for.
+     * @return The first found block in the subtree of {@code root} of type {@code blockType}.
+     */
+    public static <T extends ASTNode> Optional<T> getBlock(final ASTNode root, final Class<T> blockType) {
+        return getBlocks(root, blockType).stream().findFirst();
+    }
+
     @Override
     public void visit(ASTNode node) {
         if (blockType.isAssignableFrom(node.getClass())) {
@@ -56,4 +69,3 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
         ScratchVisitor.super.visit(node);
     }
 }
-

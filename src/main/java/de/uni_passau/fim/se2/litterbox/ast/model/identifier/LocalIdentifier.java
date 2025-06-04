@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class LocalIdentifier extends AbstractNode implements Identifier, Expression {
     private final StringLiteral name;
 
-    public LocalIdentifier(StringLiteral name) {
+    protected LocalIdentifier(StringLiteral name) {
         super(name);
         this.name = name;
     }

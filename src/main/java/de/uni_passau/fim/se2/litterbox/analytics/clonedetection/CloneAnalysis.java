@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CloneAnalysis {
 
@@ -46,7 +45,7 @@ public class CloneAnalysis {
     }
 
     /**
-     * Check a fraction of the AST for internal clones, i.e., compare it against itself
+     * Check a fraction of the AST for internal clones, i.e., compare it against itself.
      *
      * @param root starting point in the AST for the clone analysis
      * @return all clones found
@@ -74,8 +73,8 @@ public class CloneAnalysis {
 
         // For comparison, we normalize literals and tokens
         NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
-        List<Stmt> normalizedStatements1 = statements1.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
-        List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+        List<Stmt> normalizedStatements1 = statements1.stream().map(normalizationVisitor::apply).toList();
+        List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).toList();
 
         // Comparison matrix on the normalized statements
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2, root1 == root2);

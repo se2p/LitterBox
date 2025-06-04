@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,14 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
@@ -38,17 +40,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class JSONReportGenerator extends JSONGenerator implements ReportGenerator {
+public class JSONReportGenerator implements ReportGenerator {
 
-    private OutputStream outputStream;
+    private final OutputStream outputStream;
 
-    private boolean closeStream = false;
+    private final boolean closeStream;
 
-    private JsonFactory jfactory = new JsonFactory();
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    private JsonGenerator jsonGenerator;
+    private final JsonGenerator jsonGenerator;
 
     private static final boolean INCLUDE_SIMILARITY = PropertyLoader.getSystemBoolProperty("json.similarity");
 
@@ -59,170 +63,140 @@ public class JSONReportGenerator extends JSONGenerator implements ReportGenerato
     private static final boolean INCLUDE_COUPLING = PropertyLoader.getSystemBoolProperty("json.coupling");
 
     public JSONReportGenerator(Path fileName) throws IOException {
-        outputStream = Files.newOutputStream(fileName);
-        jsonGenerator = jfactory.createGenerator(outputStream, JsonEncoding.UTF8);
-        jsonGenerator.useDefaultPrettyPrinter();
-        closeStream = true;
+        this(Files.newOutputStream(fileName), true);
     }
 
     public JSONReportGenerator(OutputStream stream) throws IOException {
+        this(stream, false);
+    }
+
+    private JSONReportGenerator(final OutputStream stream, final boolean closeStream) throws IOException {
         this.outputStream = stream;
-        jsonGenerator = jfactory.createGenerator(outputStream, JsonEncoding.UTF8);
+        jsonGenerator = mapper.createGenerator(outputStream, JsonEncoding.UTF8);
         jsonGenerator.useDefaultPrettyPrinter();
-    }
-
-    private void addDuplicateIDs(Issue theIssue, Collection<Issue> issues) {
-        issues.stream().filter(issue -> issue != theIssue)
-                .filter(theIssue::isDuplicateOf)
-                .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
-    }
-
-    private void addSubsumingIssueIDs(Issue theIssue, Collection<Issue> issues) {
-        issues.stream().filter(issue -> issue != theIssue)
-                .filter(theIssue::isSubsumedBy)
-                .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e); }});
-    }
-
-    private void addCoupledIssueIDs(Issue theIssue, Collection<Issue> issues) {
-        issues.stream().filter(issue -> issue != theIssue)
-                .filter(theIssue::areCoupled)
-                .map(Issue::getId)
-                .forEach(id -> {try { jsonGenerator.writeNumber(id); } catch (IOException e) { throw new RuntimeException(e);}});
-    }
-
-    private void addSimilarIssueIDs(Issue theIssue, Collection<Issue> issues) {
-        issues.stream().filter(issue -> issue != theIssue)
-                .filter(issue -> theIssue.getFinder() == issue.getFinder())
-                .collect(Collectors.toMap(issue -> issue, theIssue::getDistanceTo))
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .forEach(issue -> {
-                    try {
-                        jsonGenerator.writeStartObject();
-                        jsonGenerator.writeNumberField("id", issue.getId());
-                        jsonGenerator.writeNumberField("distance", theIssue.getDistanceTo(issue));
-                        jsonGenerator.writeEndObject();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        this.closeStream = closeStream;
     }
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
+        final ReportDTO report = buildReport(program, issues);
+        mapper.writeValue(jsonGenerator, report);
 
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeFieldName("metrics");
-        jsonGenerator.writeStartObject();
-        addMetrics(jsonGenerator, program);
-        jsonGenerator.writeEndObject();
-
-        jsonGenerator.writeFieldName("issues");
-        jsonGenerator.writeStartArray();
-
-        for (Issue issue : issues) {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeNumberField("id", issue.getId());
-            jsonGenerator.writeStringField("finder", issue.getFinderName());
-            jsonGenerator.writeStringField("name", issue.getTranslatedFinderName());
-            jsonGenerator.writeStringField("type", issue.getIssueType().toString());
-            jsonGenerator.writeNumberField("severity", issue.getSeverity().getSeverityLevel());
-            jsonGenerator.writeStringField("sprite", issue.getActorName());
-
-            if (INCLUDE_DUPLICATES) {
-                jsonGenerator.writeFieldName("duplicate-of");
-                jsonGenerator.writeStartArray();
-                addDuplicateIDs(issue, issues);
-                jsonGenerator.writeEndArray();
-            }
-
-            if (INCLUDE_SUBSUMPTION) {
-                jsonGenerator.writeFieldName("subsumed-by");
-                jsonGenerator.writeStartArray();
-                addSubsumingIssueIDs(issue, issues);
-                jsonGenerator.writeEndArray();
-            }
-
-            if (INCLUDE_COUPLING) {
-                jsonGenerator.writeFieldName("coupled-to");
-                jsonGenerator.writeStartArray();
-                addCoupledIssueIDs(issue, issues);
-                jsonGenerator.writeEndArray();
-            }
-
-            if (INCLUDE_SIMILARITY) {
-                jsonGenerator.writeFieldName("similar-to");
-                jsonGenerator.writeStartArray();
-                addSimilarIssueIDs(issue, issues);
-                jsonGenerator.writeEndArray();
-            }
-
-            jsonGenerator.writeStringField("hint", issue.getHint());
-
-            jsonGenerator.writeFieldName("costumes");
-            jsonGenerator.writeStartArray();
-
-            ActorMetadata actorMetadata = issue.getActor().getActorMetadata();
-            for (ImageMetadata image : actorMetadata.getCostumes().getList()) {
-                jsonGenerator.writeString(image.getAssetId());
-            }
-            jsonGenerator.writeEndArray();
-
-            jsonGenerator.writeNumberField("currentCostume", actorMetadata.getCurrentCostume());
-
-            if (issue instanceof MultiBlockIssue) {
-                addCodeEntry(((MultiBlockIssue) issue).getScriptsOrProcedureDefinitions(), issue, "code");
-            }
-            else {
-                addCodeEntry(issue.getScriptOrProcedureDefinition(), issue, "code");
-            }
-            addCodeEntry(issue.getRefactoredScriptOrProcedureDefinition(), issue, "refactoring");
-
-            jsonGenerator.writeEndObject();
-        }
-        jsonGenerator.writeEndArray();
-
-        jsonGenerator.writeEndObject();
-        jsonGenerator.close();
         if (closeStream) {
             outputStream.close();
         }
     }
 
-    private void addCodeEntry(ScriptEntity location, Issue issue, String title) throws IOException {
-        if (location == null) {
-            String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
-                    + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
-            jsonGenerator.writeStringField(title, emptyScript);
+    private ReportDTO buildReport(final Program program, final Collection<Issue> issues) {
+        final Map<String, Double> metrics = getMetrics(program);
+        final List<IssueDTO> issueDTOs = getIssues(issues);
+
+        return new ReportDTO(metrics, issueDTOs);
+    }
+
+    private Map<String, Double> getMetrics(final Program program) {
+        ProgramMetricAnalyzer tool = new ProgramMetricAnalyzer();
+
+        return tool
+                .getAnalyzers()
+                .stream()
+                .collect(
+                        Collectors.toUnmodifiableMap(
+                                MetricExtractor::getName,
+                                metric -> metric.calculateMetric(program)
+                        )
+                );
+    }
+
+    private List<IssueDTO> getIssues(final Collection<Issue> issues) {
+        return issues.stream().map(issue -> buildIssueDTO(issues, issue)).toList();
+    }
+
+    private IssueDTO buildIssueDTO(final Collection<Issue> issues, final Issue issue) {
+        final String issueLocation = getIssueLocation(issue);
+        final List<String> costumes = issue.getActor().getActorMetadata().getCostumes().getList()
+                .stream()
+                .map(ImageMetadata::getAssetId)
+                .toList();
+        final String scratchBlocksCode = getScratchBlocksCode(issue, issue.getScriptOrProcedureDefinition());
+        final String refactoringCode = getScratchBlocksCode(issue, issue.getRefactoredScriptOrProcedureDefinition());
+
+        return new IssueDTO(
+                issue.getId(),
+                issue.getFinderName(),
+                issue.getTranslatedFinderName(),
+                issue.getIssueType(),
+                issue.getSeverity().getSeverityLevel(),
+                issue.getActorName(),
+                issueLocation,
+                INCLUDE_DUPLICATES ? getDuplicateIds(issues, issue) : null,
+                INCLUDE_SUBSUMPTION ? getSubsumingIssueIds(issues, issue) : null,
+                INCLUDE_COUPLING ? getCoupledIssueIds(issues, issue) : null,
+                INCLUDE_SIMILARITY ? getSimilarIssues(issues, issue) : null,
+                issue.getHintText(),
+                costumes,
+                issue.getActor().getActorMetadata().getCurrentCostume(),
+                scratchBlocksCode,
+                refactoringCode
+        );
+    }
+
+    private String getIssueLocation(final Issue issue) {
+        if (issue.getCodeLocation() == null) {
+            return null;
         } else {
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
-            blockVisitor.begin();
-            location.accept(blockVisitor);
-            blockVisitor.end();
-            String scratchBlockCode = blockVisitor.getScratchBlocks();
-            jsonGenerator.writeStringField(title, scratchBlockCode);
+            return AstNodeUtil.getBlockId(issue.getCodeLocation());
         }
     }
 
-    private void addCodeEntry(List<ScriptEntity> locations, Issue issue, String title) throws IOException {
-        List<String> scripts = new ArrayList<>();
-        for (ScriptEntity location : locations) {
-            if (location == null) {
-                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
-                        + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
-                scripts.add(emptyScript);
-            } else {
-                ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
-                blockVisitor.begin();
-                location.accept(blockVisitor);
-                blockVisitor.end();
-                String scratchBlockCode = blockVisitor.getScratchBlocks();
-                scripts.add(scratchBlockCode);
-            }
-        }
-        jsonGenerator.writeStringField(title, String.join(" ", scripts));
+    private Set<Integer> getRelatedIds(
+            final Collection<Issue> issues, final Issue theIssue, final Predicate<Issue> isRelated
+    ) {
+        return issues.stream()
+                .filter(issue -> issue != theIssue)
+                .filter(isRelated)
+                .map(Issue::getId)
+                .collect(Collectors.toUnmodifiableSet());
     }
+
+    private Set<Integer> getDuplicateIds(final Collection<Issue> issues, final Issue theIssue) {
+        return getRelatedIds(issues, theIssue, theIssue::isDuplicateOf);
+    }
+
+    private Set<Integer> getSubsumingIssueIds(final Collection<Issue> issues, final Issue theIssue) {
+        return getRelatedIds(issues, theIssue, theIssue::isSubsumedBy);
+    }
+
+    private Set<Integer> getCoupledIssueIds(final Collection<Issue> issues, final Issue theIssue) {
+        return getRelatedIds(issues, theIssue, theIssue::areCoupled);
+    }
+
+    private List<SimilarIssueDTO> getSimilarIssues(final Collection<Issue> issues, final Issue theIssue) {
+        return issues.stream()
+                .filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.getFinder() == issue.getFinder())
+                .collect(Collectors.toMap(issue -> issue, theIssue::getDistanceTo))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .map(issue -> new SimilarIssueDTO(issue.getId(), theIssue.getDistanceTo(issue)))
+                .toList();
+    }
+
+    private String getScratchBlocksCode(final Issue issue, final ScriptEntity location) {
+        if (location == null) {
+            return ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
+                    + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+        } else {
+            final ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
+            blockVisitor.begin();
+            location.accept(blockVisitor);
+            blockVisitor.end();
+
+            return blockVisitor.getScratchBlocks();
+        }
+    }
+
+
 }

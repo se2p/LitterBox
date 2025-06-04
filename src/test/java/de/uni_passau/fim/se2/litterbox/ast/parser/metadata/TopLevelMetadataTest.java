@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,13 +50,14 @@ public class TopLevelMetadataTest implements JsonTest {
     public void testVariablesProgram() {
         List<Script> scripts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
         List<Stmt> stmtList = scripts.get(0).getStmtList().getStmts();
-        Assertions.assertEquals(ExpressionStmt.class, stmtList.get(0).getClass());
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.get(0));
         Expression expr = ((ExpressionStmt) stmtList.get(0)).getExpression();
-        Assertions.assertEquals(Qualified.class, expr.getClass());
+        Assertions.assertInstanceOf(Qualified.class, expr);
         DataExpr data = ((Qualified) expr).getSecond();
-        Assertions.assertEquals(Variable.class, data.getClass());
-        Assertions.assertEquals(DataBlockMetadata.class, data.getMetadata().getClass());
+        Assertions.assertInstanceOf(Variable.class, data);
+        Assertions.assertInstanceOf(DataBlockMetadata.class, data.getMetadata());
         DataBlockMetadata meta = (DataBlockMetadata) data.getMetadata();
+        Assertions.assertNotNull(meta.getBlockId());
         Assertions.assertEquals(471, meta.getX());
         Assertions.assertEquals(383, meta.getY());
     }
@@ -65,14 +66,14 @@ public class TopLevelMetadataTest implements JsonTest {
     public void testProcedureProgram() {
         ProcedureDefinition def =
                 program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
-        ProcedureMetadata meta = (ProcedureMetadata) def.getMetadata();
-        Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
+        ProcedureMetadata meta = def.getMetadata();
+        Assertions.assertInstanceOf(TopNonDataBlockMetadata.class, meta.getDefinition());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();
-        Assertions.assertEquals(NoMutationMetadata.class, defMet.getMutation().getClass());
+        Assertions.assertInstanceOf(NoMutationMetadata.class, defMet.getMutation());
         Assertions.assertEquals(56, defMet.getXPos());
         Assertions.assertEquals(184, defMet.getYPos());
-        Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
+        Assertions.assertInstanceOf(NonDataBlockMetadata.class, meta.getPrototype());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
-        Assertions.assertEquals(ProcedureMutationMetadata.class, protoMet.getMutation().getClass());
+        Assertions.assertInstanceOf(ProcedureMutationMetadata.class, protoMet.getMutation());
     }
 }

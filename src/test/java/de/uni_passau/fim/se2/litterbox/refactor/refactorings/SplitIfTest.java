@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -74,8 +74,8 @@ public class SplitIfTest implements JsonTest {
         IfThenStmt ifStatement2 = (IfThenStmt) refactoredStmtList.getStatement(0);
         IfThenStmt ifStatement3 = (IfThenStmt) refactoredStmtList.getStatement(1);
 
-        assertThat(ifStatement2.getBoolExpr().equals(ifStatement1.getBoolExpr()));
-        assertThat(ifStatement3.getBoolExpr().equals(ifStatement1.getBoolExpr()));
+        assertThat(ifStatement2.getBoolExpr()).isEqualTo(ifStatement1.getBoolExpr());
+        assertThat(ifStatement3.getBoolExpr()).isEqualTo(ifStatement1.getBoolExpr());
 
         assertThat(ifStatement2.getThenStmts().getStatement(0)).isEqualTo(ifStatement1.getThenStmts().getStatement(0));
         assertThat(ifStatement3.getThenStmts().getStatement(0)).isEqualTo(ifStatement1.getThenStmts().getStatement(1));
@@ -100,8 +100,8 @@ public class SplitIfTest implements JsonTest {
         IfThenStmt ifStatement2 = (IfThenStmt) refactoredStmtList.getStatement(0);
         IfThenStmt ifStatement3 = (IfThenStmt) refactoredStmtList.getStatement(1);
 
-        assertThat(ifStatement2.getBoolExpr().equals(ifStatement1.getBoolExpr()));
-        assertThat(ifStatement3.getBoolExpr().equals(ifStatement1.getBoolExpr()));
+        assertThat(ifStatement2.getBoolExpr()).isEqualTo(ifStatement1.getBoolExpr());
+        assertThat(ifStatement3.getBoolExpr()).isEqualTo(ifStatement1.getBoolExpr());
 
         assertThat(ifStatement2.getThenStmts().getNumberOfStatements()).isEqualTo(2);
         assertThat(ifStatement3.getThenStmts().getNumberOfStatements()).isEqualTo(2);

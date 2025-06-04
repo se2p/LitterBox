@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -68,9 +68,9 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
 
                 Hint hint;
                 if (hasMultipleActorsWithCode) {
-                    hint = new Hint(HINT_MULTIPLE);
+                    hint = Hint.fromKey(HINT_MULTIPLE);
                 } else {
-                    hint = new Hint(getName());
+                    hint = Hint.fromKey(getName());
                 }
                 if (questionableNode instanceof Say say) {
                     hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));

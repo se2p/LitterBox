@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,7 +37,7 @@ public class SequentialActions extends AbstractIssueFinder {
                 IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.get(0))
                                 .withMetadata(subsequence.get(0).getMetadata())
                                 .withSeverity(IssueSeverity.LOW)
-                                .withHint(new Hint(getName()));
+                                .withHint(Hint.fromKey(getName()));
                 SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences);
                 ScriptEntity refactoring = sequenceToLoop.apply(getCurrentScriptEntity());
                 addIssue(builder.withRefactoring(refactoring));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,40 +18,106 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.FeatureResult;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class FeatureAnalyzer extends Analyzer {
+public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
 
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
-    private FeatureTool featureTool;
 
-    public FeatureAnalyzer(Path input, Path output, boolean delete) {
-        super(input, output, delete);
-        this.featureTool = new FeatureTool();
+    private final ProgramFeatureAnalyzer analyzer;
+
+    public FeatureAnalyzer(Path output, boolean delete) {
+        super(new ProgramFeatureAnalyzer(), output, delete);
+        this.analyzer = (ProgramFeatureAnalyzer) super.analyzer;
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     */
     @Override
-    void check(File fileEntry, Path csv) {
-        Program program = extractProgram(fileEntry);
+    protected void checkAndWrite(File file) throws IOException {
+        final Program program = extractProgram(file);
         if (program == null) {
-            // Todo error message
             return;
         }
 
+        createCSVFile(program, output);
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, List<FeatureResult> checkResult)
+            throws IOException {
         try {
-            featureTool.createCSVFile(program, csv);
+            createCSVFile(program, output);
         } catch (IOException e) {
-            log.warning("Could not create CSV File: " + csv);
+            log.warning("Could not create CSV File: " + output);
+            throw e;
         }
+    }
+
+    private void createCSVFile(Program program, Path fileName) throws IOException {
+        List<String> headers = new ArrayList<>();
+        headers.add("project");
+        headers.add("id");
+        analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
+        headers.add("scratch_block_code");
+        CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers);
+        int actorCount = 0;
+        List<ActorDefinition> actorDefinitions = AstNodeUtil.getActors(program, true).toList();
+        for (ActorDefinition actorDefinition : actorDefinitions) {
+            int scriptCount = 0;
+            int procedureDefCount = 0;
+            actorCount = actorCount + 1;
+            List<ASTNode> targets = new ArrayList<>();
+            targets.addAll(actorDefinition.getScripts().getScriptList());
+            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
+
+            for (ASTNode target : targets) {
+                List<String> row = new ArrayList<>();
+                row.add(program.getIdent().getName());
+                String uniqueId = "";
+                if (target instanceof Script) {
+                    scriptCount = scriptCount + 1;
+                    uniqueId = "ACTOR" + actorCount + "_" + "SCRIPT" + scriptCount;
+                } else if (target instanceof ProcedureDefinition) {
+                    procedureDefCount = procedureDefCount + 1;
+                    uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                }
+
+                row.add(uniqueId);
+
+                for (MetricExtractor<ASTNode> extractor : analyzer.getMetrics()) {
+                    row.add(Double.toString(extractor.calculateMetric(target)));
+                }
+                String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
+                row.add(stringScratchCode);
+                printer.printRecord(row);
+            }
+        }
+        printer.flush();
+        printer.close();
+    }
+
+    private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        if (target instanceof ProcedureDefinition) {
+            visitor.setProgram(program);
+            visitor.setCurrentActor(actorDefinition);
+        }
+        visitor.begin();
+        target.accept(visitor);
+        visitor.end();
+        return visitor.getScratchBlocks();
     }
 }

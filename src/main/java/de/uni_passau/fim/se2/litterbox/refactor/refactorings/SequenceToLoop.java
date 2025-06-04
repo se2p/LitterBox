@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -57,13 +58,17 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
         }
 
         StmtList loopBody = new StmtList(repeatedStatements);
-        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata) ? apply(targetStatement.getMetadata()) : NonDataBlockMetadata.emptyNonBlockMetadata();
+        BlockMetadata metadata = (targetStatement.getMetadata() instanceof NonDataBlockMetadata)
+                ? apply(targetStatement.getMetadata())
+                : NonDataBlockMetadata.emptyNonBlockMetadata();
         replacementLoop = new RepeatTimesStmt(new NumberLiteral(times), loopBody, metadata);
     }
 
     @Override
     public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(new StatementReplacementVisitor(targetStatement, allRepeatedStatements, Arrays.asList(replacementLoop)));
+        return (T) node.accept(
+                new StatementReplacementVisitor(targetStatement, allRepeatedStatements, Arrays.asList(replacementLoop))
+        );
     }
 
     @Override
@@ -72,10 +77,16 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
     }
 
     @Override
-    public String toString() {
-        return NAME + System.lineSeparator()
-                + "Summarised " + times + " repetitions to:" + System.lineSeparator()
-                + replacementLoop.getScratchBlocks() + System.lineSeparator();
+    public String getDescription() {
+        return String.format("""
+                %s
+                Summarised %d repetitions to:
+                %s
+                """,
+                NAME,
+                times,
+                ScratchBlocksVisitor.of(replacementLoop)
+        );
     }
 
     @Override

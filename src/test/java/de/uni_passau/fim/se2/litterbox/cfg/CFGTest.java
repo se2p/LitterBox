@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -235,6 +235,37 @@ public class CFGTest implements JsonTest {
     }
 
     @Test
+    void testCallCustomBlockDifferentParameterCount() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customBlockOverloaded.json");
+        // 3x(event, call, procedure, return) + entry + exit
+        assertThat(cfg.getNumNodes()).isEqualTo(14);
+        // 3x: (entry->event->exit->call->procedure->return->exit)
+        assertThat(cfg.getNumEdges()).isEqualTo(18);
+    }
+
+    /*
+     * In this case the control flow looks like
+     *
+     * CallStmt1 -> CustomBlock -> TurnLeft -> Return1 -> CallStmt2 -(back to CallStmt1)
+     *                                    |--> Return2 -> Exit
+     *
+     * Even though the program has two identical custom blocks.
+     *
+     * The Scratch VM seems to use the one created last for both call statements, even after a project load. However,
+     * since the blocks are stored in the JSON as an object indexed by their blockID which essentially is a set of
+     * key->value mappings, we have no way of knowing which one was first.
+     * Therefore, the behaviour of having only one of the two overloaded custom procedures in the CFG and using it for
+     * both calls is at least somewhat consistent with what Scratch actually does and probably the best we can do here.
+     */
+    @Test
+    void testCallCustomBlockOverloadedIdentical() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customBlockOverloadedIdentical.json");
+        // entry, exit, green flag, turn left, turn right, 2xreturn, 2xcall stmt, but only one custom block
+        assertThat(cfg.getNumNodes()).isEqualTo(10);
+        assertThat(cfg.getNumEdges()).isEqualTo(11);
+    }
+
+    @Test
     public void testNextBackdrop() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
         assertThat(cfg.getNumNodes()).isEqualTo(4);
@@ -267,7 +298,7 @@ public class CFGTest implements JsonTest {
     public void testCloneMyself() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonemyself.json");
         Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
-        assertThat(createCloneNode.isPresent());
+        assertThat(createCloneNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
         assertThat(successors).hasSize(2);
         assertThat(successors).contains(cfg.getExitNode());
@@ -277,7 +308,7 @@ public class CFGTest implements JsonTest {
     public void testCloneOther() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneother.json");
         Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
-        assertThat(createCloneNode.isPresent());
+        assertThat(createCloneNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
         assertThat(successors).hasSize(2);
         assertThat(successors).contains(cfg.getExitNode());
@@ -287,7 +318,7 @@ public class CFGTest implements JsonTest {
     public void testCloneVariable() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonevariable.json");
         Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
-        assertThat(createCloneNode.isPresent());
+        assertThat(createCloneNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
         // Overapproximate by adding edges to all sprites except stage
         assertThat(successors).hasSize(3);
@@ -298,7 +329,7 @@ public class CFGTest implements JsonTest {
     public void testCloneExpression() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneexpression.json");
         Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
-        assertThat(createCloneNode.isPresent());
+        assertThat(createCloneNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
         // Overapproximate by adding edges to all sprites except stage
         assertThat(successors).hasSize(3);
@@ -309,7 +340,7 @@ public class CFGTest implements JsonTest {
     public void testBroadcastMessage() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastmessage.json");
         Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Broadcast).findFirst();
-        assertThat(broadcastNode.isPresent());
+        assertThat(broadcastNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
         assertThat(successors).hasSize(2);
         assertThat(successors).contains(cfg.getExitNode());
@@ -319,7 +350,7 @@ public class CFGTest implements JsonTest {
     public void testBroadcastAndWaitMessage() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastmessageandwait.json");
         Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BroadcastAndWait).findFirst();
-        assertThat(broadcastNode.isPresent());
+        assertThat(broadcastNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
         assertThat(successors).hasSize(2);
         assertThat(successors).contains(cfg.getExitNode());
@@ -329,7 +360,7 @@ public class CFGTest implements JsonTest {
     public void testBroadcastVariable() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastvariable.json");
         Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Broadcast).findFirst();
-        assertThat(broadcastNode.isPresent());
+        assertThat(broadcastNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
         // If the message is an expression (e.g. a variable) we need to overapproximate
         assertThat(successors).hasSize(3);
@@ -340,7 +371,7 @@ public class CFGTest implements JsonTest {
     public void testBroadcastAndWaitVariable() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastvariableandwait.json");
         Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BroadcastAndWait).findFirst();
-        assertThat(broadcastNode.isPresent());
+        assertThat(broadcastNode).isPresent();
         Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
         // If the message is an expression (e.g. a variable) we need to overapproximate
         assertThat(successors).hasSize(3);

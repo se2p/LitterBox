@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -309,7 +311,35 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(CreateCloneOf node) {
-        return new CreateCloneOf(apply(node.getStringExpr()), apply(node.getMetadata()));
+        return new CreateCloneOf(apply(node.getCloneChoice()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link Myself}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node Myself Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(Myself node) {
+        return new Myself(apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link WithCloneExpr}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node WithCloneExpr Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(WithCloneExpr node) {
+        return new WithCloneExpr(apply(node.getExpression()), apply(node.getMetadata()));
     }
 
     /**
@@ -928,6 +958,34 @@ public class CloneVisitor {
      */
     public ASTNode visit(SetPenColorParamTo node) {
         return new SetPenColorParamTo(apply(node.getValue()), apply(node.getParam()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ColorParamFromExpr}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ColorParamFromExpr Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(ColorParamFromExpr node) {
+        return new ColorParamFromExpr(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FixedColorParam}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FixedColorParam Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(FixedColorParam node) {
+        return new FixedColorParam(node.getTypeName(), apply(node.getMetadata()));
     }
 
     /**
@@ -3006,21 +3064,6 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link NonDataBlockWithMenuMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node PenWithParamMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(NonDataBlockWithMenuMetadata node) {
-        return new NonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), apply(node.getMenuMetadata()));
-    }
-
-    /**
      * Default implementation of visit method for {@link ProgramMetadata}.
      *
      * <p>
@@ -3128,7 +3171,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getCommentId(), node.getX(), node.getY());
     }
 
     /**
@@ -3365,21 +3408,6 @@ public class CloneVisitor {
         return new ForwardBackwardChoice(node.getTypeName());
     }
 
-    /**
-     * Default implementation of visit method for {@link TopNonDataBlockWithMenuMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node CloneOfMetadata Node of which the children will
-     *             be iterated
-     * @return the copy of the visited node
-     */
-    public ASTNode visit(TopNonDataBlockWithMenuMetadata node) {
-        return new TopNonDataBlockWithMenuMetadata(node.getCommentId(), node.getBlockId(), node.isShadow(), apply(node.getMutation()), node.getXPos(), node.getYPos(), apply(node.getMenuMetadata()));
-    }
-
     /*
      * UID generation based on https://github.com/LLK/scratch-blocks
      */
@@ -3401,8 +3429,6 @@ public class CloneVisitor {
         }
         return id.toString();
     }
-
-    ;
 
     /**
      * Default implementation of visit method for {@link Speak}.

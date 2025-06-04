@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -28,7 +28,7 @@ public class HintTest {
 
     @Test
     public void testParameterReplacement() {
-        Hint hint = new Hint(EmptySprite.NAME);
+        Hint hint = Hint.fromKey(EmptySprite.NAME);
         assertTrue(hint.hasParameters());
         assertEquals(1, hint.getNumParameters());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -55,7 +55,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public void visit(ActorDefinition actor) {
         Preconditions.checkNotNull(program);
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procMap = program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
         visitChildren(actor);
     }
 
@@ -90,11 +90,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
-        addIssue(node, metadata, severity, new Hint(getName()));
+        addIssue(node, metadata, severity, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata) {
-        addIssue(node, metadata, IssueSeverity.HIGH, new Hint(getName()));
+        addIssue(node, metadata, IssueSeverity.HIGH, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, Hint hint) {
@@ -106,7 +106,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, IssueSeverity severity) {
-        addIssue(node, node.getMetadata(), severity, new Hint(getName()));
+        addIssue(node, node.getMetadata(), severity, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, IssueSeverity severity, Hint hint) {
@@ -114,7 +114,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(getName()));
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH, Hint.fromKey(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
@@ -132,15 +132,15 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
-                new Hint(getName())));
+                Hint.fromKey(getName())));
     }
 
     protected void addIssueWithLooseComment(Hint hint) {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                (Script) null, // TODO: There is no script
+                null, // TODO: There is no script
                 null, // TODO: There is no node?
                 null,  // TODO: There is no metadata
                 hint));

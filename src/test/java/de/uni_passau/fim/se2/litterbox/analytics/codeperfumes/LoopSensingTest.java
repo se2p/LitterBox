@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -60,9 +60,9 @@ public class LoopSensingTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         MultiBlockIssue issue = (MultiBlockIssue) reports.get(0);
         List<ASTNode> nodes = issue.getNodes();
-        Assertions.assertTrue(nodes.get(0) instanceof UntilStmt);
-        Assertions.assertTrue(nodes.get(1) instanceof IfThenStmt);
-        Assertions.assertTrue(nodes.get(2) instanceof SpriteTouchingColor);
-        Assertions.assertTrue(((UntilStmt) nodes.get(0)).getBoolExpr() instanceof BiggerThan);
+        Assertions.assertInstanceOf(UntilStmt.class, nodes.get(0));
+        Assertions.assertInstanceOf(IfThenStmt.class, nodes.get(1));
+        Assertions.assertInstanceOf(SpriteTouchingColor.class, nodes.get(2));
+        Assertions.assertInstanceOf(BiggerThan.class, ((UntilStmt) nodes.get(0)).getBoolExpr());
     }
 }

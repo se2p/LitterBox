@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
@@ -37,7 +36,11 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW);
+            String name = AstNodeUtil.replaceProcedureParams(
+                    procMap.get(node.getIdent()).getName(), "()", "<>", "()");
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.BLOCK_NAME, "define " + name);
+            addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.LOW, hint);
         }
         visitChildren(node);
         currentProcedure = null;

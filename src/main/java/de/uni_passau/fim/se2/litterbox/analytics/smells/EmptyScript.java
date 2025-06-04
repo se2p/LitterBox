@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,11 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
  * Checks if all Sprites have a starting point.
@@ -42,8 +45,54 @@ public class EmptyScript extends AbstractIssueFinder {
         currentScript = node;
         currentProcedure = null;
         if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node.getEvent(), node.getEvent().getMetadata(), IssueSeverity.LOW);
+            node.getEvent().accept(this);
         }
+    }
+
+    private void createHint(ASTNode node, String eventName) {
+        Hint hint = Hint.fromKey(getName());
+        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo(eventName));
+        addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+    }
+
+    @Override
+    public void visit(GreenFlag node) {
+        createHint(node, "greenflag");
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        createHint(node, "keypressed");
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        createHint(node, "backdropswitchto");
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
+        createHint(node, "eventattribute");
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        createHint(node, "receptionofmessage");
+    }
+
+    @Override
+    public void visit(SpriteClicked node) {
+        createHint(node, "spriteclicked");
+    }
+
+    @Override
+    public void visit(StageClicked node) {
+        createHint(node, "stageclicked");
+    }
+
+    @Override
+    public void visit(StartedAsClone node) {
+        createHint(node, "startedasclone");
     }
 
     @Override

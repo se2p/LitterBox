@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+import static de.uni_passau.fim.se2.litterbox.utils.FinderGroup.ALL;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class GeneralTestMBlock implements JsonTest {

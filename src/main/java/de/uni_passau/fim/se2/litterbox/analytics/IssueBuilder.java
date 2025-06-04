@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -85,7 +85,7 @@ public class IssueBuilder {
     }
 
     public IssueBuilder withHint(String hintKey) {
-        this.hint = new Hint(hintKey);
+        this.hint = Hint.fromKey(hintKey);
         return this;
     }
 
@@ -106,9 +106,6 @@ public class IssueBuilder {
         if (hint == null) {
             throw new IllegalArgumentException("Hint not set.");
         }
-        if (!finder.getHintKeys().contains(hint.getHintKey())) {
-            throw new IllegalArgumentException("Hint key " + hint.getHintKey() + " is not valid.");
-        }
         if ((currentNode == null) != (script == null)) {
             throw new IllegalArgumentException("Either both or none of the currentNode and script must be set.");
         }
@@ -116,8 +113,7 @@ public class IssueBuilder {
 
     public Issue build() {
         validate();
-        Issue issue = new Issue(this);
-        return issue;
+        return new Issue(this);
     }
 
     public IssueFinder getFinder() {

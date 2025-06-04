@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -105,9 +105,9 @@ public class TimedStatementInLiveLoop extends AbstractRobotFinder {
 
             if (stmtCount == 1 && issueNode != null) {
                 if (livePossible) {
-                    addIssue(issueNode, IssueSeverity.LOW, new Hint(POSSIBLE_HINT));
+                    addIssue(issueNode, IssueSeverity.LOW, Hint.fromKey(POSSIBLE_HINT));
                 } else {
-                    addIssue(issueNode, IssueSeverity.MEDIUM, new Hint(NAME));
+                    addIssue(issueNode, IssueSeverity.MEDIUM, Hint.fromKey(NAME));
                 }
             }
 

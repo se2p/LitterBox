@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -51,7 +52,10 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
         for (Stmt stmt : this.loop.getStmtList().getStmts()) {
             IfThenStmt ifThenStmt = (IfThenStmt) stmt;
             BoolExpr expr = ifThenStmt.getBoolExpr();
-            Event keyPressedEvent = new KeyPressed(apply(((IsKeyPressed) expr).getKey()), apply(script.getEvent().getMetadata()));
+            Event keyPressedEvent = new KeyPressed(
+                    apply(((IsKeyPressed) expr).getKey()),
+                    apply(script.getEvent().getMetadata())
+            );
             Script eventScript = new Script(keyPressedEvent, apply(ifThenStmt.getThenStmts()));
             eventScripts.add(eventScript);
         }
@@ -88,8 +92,12 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ExtractEventsFromForever that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ExtractEventsFromForever that)) {
+            return false;
+        }
         return Objects.equals(loop, that.loop)
                 && Objects.equals(scriptList, that.scriptList)
                 && Objects.equals(script, that.script)
@@ -102,16 +110,24 @@ public class ExtractEventsFromForever extends OnlyCodeCloneVisitor implements Re
     }
 
     @Override
-    public String toString() {
+    public String getDescription() {
         StringBuilder sb = new StringBuilder();
-        for (Script script : eventScripts) {
+        for (Script sc : eventScripts) {
             sb.append(System.lineSeparator());
-            sb.append(script.getScratchBlocks());
+            sb.append(ScratchBlocksVisitor.of(sc));
             sb.append(" and ");
         }
         sb.delete(sb.length() - 6, sb.length() - 1);
-        return NAME + System.lineSeparator() + "Extracting" + loop.getScratchBlocks() +  System.lineSeparator()
-                + " to:" + System.lineSeparator() + sb +  System.lineSeparator();
-    }
 
+        return String.format("""
+                %s
+                Extracting%s
+                to:
+                %s
+                """,
+                NAME,
+                ScratchBlocksVisitor.of(loop),
+                sb
+        );
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -54,7 +54,7 @@ public class SpriteNaming extends AbstractIssueFinder {
 
         boolean isDefaultName = Constants.DEFAULT_SPRITE_NAMES.contains(trimmedName.toLowerCase(Locale.ROOT));
         if (isDefaultName) {
-            Hint hint = new Hint(HINT_DEFAULT);
+            Hint hint = Hint.fromKey(HINT_DEFAULT);
             hint.setParameter(Hint.HINT_SPRITE, name);
             addIssueWithLooseComment(hint);
             visitedNames.add(trimmedName);
@@ -63,7 +63,7 @@ public class SpriteNaming extends AbstractIssueFinder {
 
         for (String visitedName : visitedNames) {
             if (trimmedName.equals(visitedName)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_SPRITE, name);
                 addIssueWithLooseComment(hint);
                 visitedNames.add(trimmedName);

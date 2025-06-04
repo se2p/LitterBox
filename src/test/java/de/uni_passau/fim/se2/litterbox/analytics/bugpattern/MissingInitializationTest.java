@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -141,9 +141,9 @@ public class MissingInitializationTest implements JsonTest {
         MissingInitialization initialization = new MissingInitialization();
         List<Issue> reports = new ArrayList<>(initialization.check(program));
         Assertions.assertEquals(1, reports.size());
-        Hint hint = new Hint(MissingInitialization.NAME_CLONE);
+        Hint hint = Hint.fromKey(MissingInitialization.NAME_CLONE);
         hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHint());
+        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
     }
 
     @Test

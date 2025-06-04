@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -42,7 +42,7 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Broadcast broadcast) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_SPRITE, currentActor.getIdent().getName());
                 if (broadcast.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
                     hint.setParameter(Hint.HINT_MESSAGE, stringLiteral.getText());

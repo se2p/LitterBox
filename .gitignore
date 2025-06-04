@@ -1,4 +1,14 @@
+dependency-reduced-pom.xml
+
+# IntelliJ Files
 .idea/
 target/
 *.iml
-dependency-reduced-pom.xml
+
+# Eclipse files
+.classpath
+.project
+.settings/
+
+.vscode/
+.envrc

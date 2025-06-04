@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 abstract class ClonedCode extends AbstractIssueFinder {
 
@@ -47,7 +46,7 @@ abstract class ClonedCode extends AbstractIssueFinder {
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         List<Script> scripts;
         if (ignoreLooseBlocks) {
-            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).toList();
         } else {
             scripts = actor.getScripts().getScriptList();
         }
@@ -117,11 +116,11 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
         if (clone.getFirstScript() instanceof Script script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, script, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         } else {
             final ProcedureDefinition procedure = (ProcedureDefinition) clone.getFirstScript();
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, procedure, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         }
     }
 
@@ -130,11 +129,11 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
         if (clone.getSecondScript() instanceof Script script) {
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, script, statements,
-                    clone.getFirstNode().getMetadata(), new Hint(hintName));
+                    clone.getFirstNode().getMetadata(), Hint.fromKey(hintName));
         } else {
             final ProcedureDefinition procedure = (ProcedureDefinition) clone.getSecondScript();
             return new MultiBlockIssue(this, IssueSeverity.MEDIUM, program, currentActor, procedure, statements,
-                    clone.getSecondNode().getMetadata(), new Hint(hintName));
+                    clone.getSecondNode().getMetadata(), Hint.fromKey(hintName));
         }
     }
 

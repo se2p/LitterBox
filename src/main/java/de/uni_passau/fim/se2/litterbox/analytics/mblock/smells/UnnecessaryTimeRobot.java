@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -119,7 +119,7 @@ public class UnnecessaryTimeRobot extends AbstractRobotFinder {
             return num.getValue() == 0;
         } else if (node instanceof AsNumber num) {
             if (num.getOperand1() instanceof StringLiteral stringLiteral) {
-                return stringLiteral.getText().equals("");
+                return stringLiteral.getText().isEmpty();
             }
         }
         return false;

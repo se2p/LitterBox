@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,9 +22,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 
 /**
- * Visitor that creates a .dot output for a Program-AST
+ * Visitor that creates a .dot output for a Program-AST.
  */
 public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
     StringBuilder edgesString = new StringBuilder();
@@ -76,16 +80,40 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     public void recordLeaf(ASTLeaf node) {
         String name = String.valueOf(System.identityHashCode(node));
-        String label = name + " [label = \"" + node.getUniqueName() + "\"];";
+        String label = name + " [label = \"" + getLabel(node) + "\"];";
         addln(label);
         String[] simpleStrings = node.toSimpleStringArray();
         for (String simpleString : simpleStrings) {
             counter++;
-            String sLabel = counter + " [label = \"" + simpleString + "\"];";
-            addln(sLabel);
+            String simpleLabel = counter + " [label = \"" + withSafeEscapes(simpleString) + "\"];";
+            addln(simpleLabel);
             String edge = name + " -> " + counter;
             addln(edge);
         }
+    }
+
+    private String getLabel(final ASTLeaf node) {
+        final String label;
+
+        if (node instanceof StringLiteral stringLiteral) {
+            label = stringLiteral.getText();
+        } else if (node instanceof NumberLiteral numberLiteral) {
+            label = Double.toString(numberLiteral.getValue());
+        } else if (node instanceof ColorLiteral colorLiteral) {
+            label = colorLiteral.getRGB();
+        } else if (node instanceof BoolLiteral boolLiteral) {
+            label = Boolean.toString(boolLiteral.getValue());
+        } else {
+            label = node.getUniqueName();
+        }
+
+        return withSafeEscapes(label);
+    }
+
+    private static String withSafeEscapes(final String text) {
+        return text
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"");
     }
 
     @Override

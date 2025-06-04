@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,9 +24,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * If the When I start as a clone event handler is used to start a script, but the sprite is never cloned,
@@ -59,7 +59,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
-                = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).collect(Collectors.toList());
+                = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).toList();
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         program.accept(this);
@@ -72,14 +72,18 @@ public class MissingCloneCall extends AbstractIssueFinder {
         if (addComment) {
             return;
         }
+        visitChildren(node);
+    }
 
-        if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
-            final String spriteName = strId.getName();
-            if (spriteName.equals("_myself_")) {
-                clonedActors.add(currentActor.getIdent().getName());
-            } else {
-                clonedActors.add(spriteName);
-            }
+    @Override
+    public void visit(Myself node) {
+        clonedActors.add(currentActor.getIdent().getName());
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId strId) {
+            clonedActors.add(strId.getName());
         }
     }
 

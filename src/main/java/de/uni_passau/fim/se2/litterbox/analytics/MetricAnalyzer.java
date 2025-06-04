@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,40 +18,67 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class MetricAnalyzer extends Analyzer {
+public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
 
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
-    private MetricTool issueTool;
 
-    public MetricAnalyzer(Path input, Path output, boolean delete) {
-        super(input, output, delete);
-        this.issueTool = new MetricTool();
+    private final ProgramMetricAnalyzer analyzer;
+
+    public MetricAnalyzer(Path output, boolean delete) {
+        super(new ProgramMetricAnalyzer(), output, delete);
+        this.analyzer = (ProgramMetricAnalyzer) super.analyzer;
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     */
     @Override
-    void check(File fileEntry, Path csv) {
-        Program program = extractProgram(fileEntry);
+    protected void checkAndWrite(File file) throws IOException {
+        Program program = extractProgram(file);
         if (program == null) {
-            // Todo error message
             return;
         }
 
+        createCSVFile(program, output);
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, List<MetricResult> checkResult)
+            throws IOException {
         try {
-            issueTool.createCSVFile(program, csv);
+            createCSVFile(program, output);
         } catch (IOException e) {
-            log.warning("Could not create CSV File: " + csv);
+            log.warning("Could not create CSV file: " + output);
+            throw e;
+        }
+    }
+
+    private void createCSVFile(Program program, Path fileName) throws IOException {
+        final List<String> headers = new ArrayList<>();
+        headers.add("project");
+        analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
+
+        final List<String> row = new ArrayList<>();
+        row.add(program.getIdent().getName());
+
+        List<MetricResult> results = analyzer.analyze(program);
+        for (MetricResult result : results) {
+            row.add(Double.toString(result.value()));
+        }
+
+        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
+            printer.printRecord(row);
+            printer.flush();
         }
     }
 }

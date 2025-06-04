@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -49,7 +49,7 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
                 StatementDeletionVisitor visitor = new StatementDeletionVisitor(last);
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
                 IssueBuilder builder = prepareIssueBuilder(last)
-                        .withSeverity(IssueSeverity.HIGH).withHint(new Hint(getName()))
+                        .withSeverity(IssueSeverity.HIGH).withHint(Hint.fromKey(getName()))
                         .withRefactoring(refactoring);
 
                 addIssue(builder);

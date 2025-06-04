@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockWithMenuMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
@@ -56,29 +55,29 @@ public class CommonStmtParserTest implements JsonTest {
         Script script = sprite.getScripts().getScriptList().get(0);
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(WaitSeconds.class);
-        Truth.assertThat(((WaitSeconds) listOfStmt.get(0)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(WaitUntil.class);
-        Truth.assertThat(((WaitUntil) listOfStmt.get(1)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(StopOtherScriptsInSprite.class);
-        Truth.assertThat(((StopOtherScriptsInSprite) listOfStmt.get(2)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(CreateCloneOf.class);
-        Truth.assertThat(((CreateCloneOf) listOfStmt.get(3)).getMetadata().getClass()).isEqualTo(NonDataBlockWithMenuMetadata.class);
-        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(Broadcast.class);
-        Truth.assertThat(((Broadcast) listOfStmt.get(4)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(BroadcastAndWait.class);
-        Truth.assertThat(((BroadcastAndWait) listOfStmt.get(5)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ResetTimer.class);
-        Truth.assertThat(((ResetTimer) listOfStmt.get(6)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(ChangeVariableBy.class);
-        Truth.assertThat(((ChangeVariableBy) listOfStmt.get(7)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(8).getClass()).isEqualTo(ChangeSoundEffectBy.class);
-        Truth.assertThat(((ChangeSoundEffectBy) listOfStmt.get(8)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetSoundEffectTo.class);
-        Truth.assertThat(((SetSoundEffectTo) listOfStmt.get(9)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(10).getClass()).isEqualTo(ChangeGraphicEffectBy.class);
-        Truth.assertThat(((ChangeGraphicEffectBy) listOfStmt.get(10)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        Truth.assertThat(listOfStmt.get(11).getClass()).isEqualTo(DeleteClone.class);
-        Truth.assertThat(((DeleteClone) listOfStmt.get(11)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(WaitSeconds.class);
+        Truth.assertThat(listOfStmt.get(0).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(1)).isInstanceOf(WaitUntil.class);
+        Truth.assertThat(listOfStmt.get(1).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(2)).isInstanceOf(StopOtherScriptsInSprite.class);
+        Truth.assertThat(listOfStmt.get(2).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(3)).isInstanceOf(CreateCloneOf.class);
+        Truth.assertThat(listOfStmt.get(3).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(4)).isInstanceOf(Broadcast.class);
+        Truth.assertThat(listOfStmt.get(4).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(5)).isInstanceOf(BroadcastAndWait.class);
+        Truth.assertThat(listOfStmt.get(5).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(6)).isInstanceOf(ResetTimer.class);
+        Truth.assertThat(listOfStmt.get(6).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(7)).isInstanceOf(ChangeVariableBy.class);
+        Truth.assertThat(listOfStmt.get(7).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(8)).isInstanceOf(ChangeSoundEffectBy.class);
+        Truth.assertThat(listOfStmt.get(8).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(9)).isInstanceOf(SetSoundEffectTo.class);
+        Truth.assertThat(listOfStmt.get(9).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(10)).isInstanceOf(ChangeGraphicEffectBy.class);
+        Truth.assertThat(listOfStmt.get(10).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(11)).isInstanceOf(DeleteClone.class);
+        Truth.assertThat(listOfStmt.get(11).getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
     }
 }

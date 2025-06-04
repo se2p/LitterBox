@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExtractEventsFromForeverTest implements JsonTest {
@@ -61,8 +62,8 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         Program refactored = r.apply(program);
         Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
-        assertTrue(refactoredScriptEvent1.getEvent() instanceof KeyPressed);
-        assertTrue(refactoredScriptEvent2.getEvent() instanceof KeyPressed);
+        assertInstanceOf(KeyPressed.class, refactoredScriptEvent1.getEvent());
+        assertInstanceOf(KeyPressed.class, refactoredScriptEvent2.getEvent());
     }
 
     @Test

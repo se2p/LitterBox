@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -28,8 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLight;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightOff;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +40,6 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
     private final List<RockyLightStmt> lastStmtList = new LinkedList<>();
     private RunningState state = NEVER;
     private RockyLightStmt lastStmt = null;
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -61,13 +58,11 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
             } else if (state == STOPPED) {
                 state = NEVER;
                 lastStmt = null;
-                forever = false;
                 lastStmtList.clear();
                 return;
             }
             state = NEVER;
             lastStmt = null;
-            forever = false;
         }
         for (RockyLightStmt stmt : lastStmtList) {
             addIssue(stmt);
@@ -83,12 +78,6 @@ public class RockyLightOffScriptMissing extends AbstractRobotFinder {
         if (!(node.getEvent() instanceof Never)) {
             node.getStmtList().accept(this);
         }
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
     }
 
     @Override

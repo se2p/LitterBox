@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,29 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class CommandlineTest {
-
-    private PrintStream out = System.out;
-    private PrintStream err = System.err;
-    private final ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
-
-    private CommandLine commandLine;
+public class CommandlineTest extends CliTest {
 
     @Test
     public void testInvalidOptionPrintsAnError() {
@@ -51,7 +38,7 @@ public class CommandlineTest {
     @Test
     public void testPrintHelp() {
         commandLine.execute("--output", "foobar");
-        assertThatStdErrContains("Usage: LitterBox");
+        assertStdErrContains("Usage: LitterBox");
     }
 
     @Test
@@ -68,13 +55,13 @@ public class CommandlineTest {
     @Test
     public void testLeilaWithoutOutput() {
         commandLine.execute("leila", "--path", "foobar");
-        assertThatStdErrContains("Output path option '--output' required");
+        assertStdErrContains("Output path option '--output' required");
     }
 
     @Test
     public void testLeilaWithoutPath() {
         commandLine.execute("leila", "--output", "foobar");
-        assertThatStdErrContains("Input path option '--path' required");
+        assertStdErrContains("Input path option '--path' required");
     }
 
     @Test
@@ -85,32 +72,5 @@ public class CommandlineTest {
         commandLine.execute("leila", "--path", path.toString(), "-o", outFile.toString());
         String output = Files.readString(outFile.resolve("emptyProject.sc"));
         assertThat(output).contains("program emptyProject");
-    }
-
-    private void assertThatStdErrContains(String expected) {
-        assertThat(getErrorOutput()).contains(expected);
-    }
-
-    private String getErrorOutput() {
-        return mockErr.toString(StandardCharsets.UTF_8);
-    }
-
-    @AfterEach
-    public void restoreStreams() {
-        System.setOut(out);
-        System.setErr(err);
-    }
-
-    @BeforeEach
-    public void replaceStreams() {
-        out = System.out;
-        err = System.err;
-        mockErr.reset();
-        mockOut.reset();
-
-        System.setOut(new PrintStream(mockOut, true, StandardCharsets.UTF_8));
-        System.setErr(new PrintStream(mockErr, true, StandardCharsets.UTF_8));
-
-        commandLine = new CommandLine(new Main());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,21 +33,17 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class CSVRefactorReportGenerator {
+public class CSVRefactorReportGenerator implements AutoCloseable {
     private final List<String> headers = new ArrayList<>();
     private final List<String> refactorings;
     private final CSVPrinter printer;
@@ -61,10 +57,15 @@ public class CSVRefactorReportGenerator {
      * @param fitnessFunctions list of used FitnessFunctions.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVRefactorReportGenerator(Path fileName, Path refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
-        refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).collect(Collectors.toList());
-        List<String> fitnessFunctionsNamesWithoutRefactoring = fitnessFunctions.stream().map(fitnessFunction -> fitnessFunction.getName() + "_without_refactoring").collect(Collectors.toList());
-        List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).collect(Collectors.toList());
+    public CSVRefactorReportGenerator(
+            Path fileName, Path refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions
+    ) throws IOException {
+        refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).toList();
+        List<String> fitnessFunctionsNamesWithoutRefactoring = fitnessFunctions
+                .stream()
+                .map(fitnessFunction -> fitnessFunction.getName() + "_without_refactoring")
+                .toList();
+        List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).toList();
         headers.add("project");
         headers.add("pareto_index");
         headers.add("population_size");
@@ -72,7 +73,6 @@ public class CSVRefactorReportGenerator {
         headers.add("executed_generations");
         headers.add("seed");
         headers.add("hypervolume");
-        headers.add("program_extraction_time");
         headers.add("refactoring_search_time");
         headers.addAll(refactorings);
         headers.add("blocks_without_refactoring");
@@ -90,8 +90,8 @@ public class CSVRefactorReportGenerator {
         this.fitnessFunctions = fitnessFunctions;
     }
 
-    public void generateReport(int index, Program program, RefactorSequence refactorSequence, int populationSize, int maxGen,
-                               double hyperVolume, int iteration, long programExtractionTime,
+    public void generateReport(int index, Program program, RefactorSequence refactorSequence, int populationSize,
+                               int maxGen, double hyperVolume, int iteration,
                                long refactoringSearchTime) throws IOException {
 
         List<String> row = new ArrayList<>();
@@ -102,7 +102,6 @@ public class CSVRefactorReportGenerator {
         row.add(String.valueOf(iteration));
         row.add(String.valueOf(Randomness.getSeed()));
         row.add(String.valueOf(hyperVolume));
-        row.add(String.valueOf(programExtractionTime));
         row.add(String.valueOf(refactoringSearchTime));
         refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
                 .stream()
@@ -140,12 +139,13 @@ public class CSVRefactorReportGenerator {
         printer.flush();
     }
 
+    @Override
     public void close() throws IOException {
-        printer.close();
+        printer.close(true);
     }
 
     protected CSVPrinter getNewPrinter(Path name, Path refactoredPath) throws IOException {
-        Path filePath;
+        final Path filePath;
         if (name.isAbsolute()) {
             filePath = name;
         } else {
@@ -156,15 +156,7 @@ public class CSVRefactorReportGenerator {
             Files.createDirectories(filePath.getParent());
         }
 
-        if (filePath.toFile().length() > 0) {
-            BufferedWriter writer = Files.newBufferedWriter(
-                    filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            return new CSVPrinter(writer, CSVFormat.DEFAULT.withSkipHeaderRecord());
-        } else {
-            BufferedWriter writer = Files.newBufferedWriter(
-                    filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers.toArray(new String[0])));
-        }
+        return CSVPrinterFactory.getNewPrinter(filePath, headers);
     }
 
     private RefactorSequence createEmptyRefactorSequence(Program program) {

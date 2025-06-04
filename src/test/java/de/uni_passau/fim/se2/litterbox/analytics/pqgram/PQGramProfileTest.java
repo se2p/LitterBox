@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -79,6 +79,17 @@ public class PQGramProfileTest implements JsonTest {
         Program empty = getAST("./src/test/fixtures/metrics/allMotionBlocks.json");
         PQGramProfile profile = new PQGramProfile(empty);
         Assertions.assertEquals(0, profile.calculateDistanceTo(profile));
+    }
+
+    @Test
+    void testDistanceSymmetric() throws IOException, ParsingException {
+        Program program1 = getAST("./src/test/fixtures/allBlocks.json");
+        Program program2 = getAST("./src/test/fixtures/colorBlocks.json");
+
+        PQGramProfile profile1 = new PQGramProfile(program1);
+        PQGramProfile profile2 = new PQGramProfile(program2);
+
+        Assertions.assertEquals(profile1.calculateDistanceTo(profile2), profile2.calculateDistanceTo(profile1));
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -31,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBl
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.emotion.EmotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.ledmatrix.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -50,7 +48,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     private final Map<PortType, RunningState> states = new HashMap<>();
     private final Map<PortType, MBlockStmt> lastStmts = new HashMap<>();
     private final Map<PortType, List<MBlockStmt>> lastStmtMap = new HashMap<>();
-    private boolean forever = false;
 
     @Override
     public void visit(Program program) {
@@ -110,12 +107,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        forever = true;
-        visit((LoopStmt) node);
-    }
-
-    @Override
     public void visit(LEDMatrixStmt node) {
         boolean blank = isBlank(node);
         if (blank || node instanceof TimedStmt || node instanceof TurnOffFace || node instanceof TurnOffFacePort) {
@@ -146,7 +137,6 @@ public class MatrixOffScriptMissing extends AbstractRobotFinder {
     private void resetMaps() {
         states.clear();
         lastStmts.clear();
-        forever = false;
     }
 
     private boolean isBlank(LEDMatrixStmt node) {

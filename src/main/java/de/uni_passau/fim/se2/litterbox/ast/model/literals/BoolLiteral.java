@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -53,8 +53,7 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {"" + value};
-        return returnArray;
+        return new String[]{"" + value};
     }
 
     @Override

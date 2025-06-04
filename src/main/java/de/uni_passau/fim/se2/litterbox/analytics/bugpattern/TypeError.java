@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,9 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -54,10 +52,12 @@ import java.util.List;
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
-    private boolean insideComparison = false;
+    private boolean isInsideComparison = false;
     private boolean isRightSide = false;
 
     private Type type = null;
+    private boolean isInsideQualified = false;
+    private IssueSeverity issueSeverity;
 
     private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
 
@@ -80,7 +80,7 @@ public class TypeError extends AbstractIssueFinder {
     public void visit(DistanceTo node) {
         Position position = node.getPosition();
         if (position instanceof FromExpression fromExpression) {
-            Hint hint = new Hint(WEIRD_DISTANCE);
+            Hint hint = Hint.fromKey(WEIRD_DISTANCE);
             if (!(fromExpression.getStringExpr() instanceof AsString asString)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             } else if (!((asString.getOperand1() instanceof StrId) || asString.getOperand1() instanceof Qualified)) {
@@ -91,7 +91,7 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
-        insideComparison = true;
+        isInsideComparison = true;
         if (!node.getChildren().isEmpty()) {
             isRightSide = false;
             ASTNode leftChild = node.getChildren().get(0);
@@ -100,13 +100,13 @@ public class TypeError extends AbstractIssueFinder {
             isRightSide = true;
             rightChild.accept(this);
         }
-        insideComparison = false; // TODO: Can comparisons be nested?
+        isInsideComparison = false; // TODO: Can comparisons be nested?
         type = null;
     }
 
     @Override
     public void visit(StringExpr node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = null;
             }
@@ -122,7 +122,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(StringLiteral node) {
-        if (insideComparison) {
+        if (isInsideComparison && !isInsideQualified) {
             if (!isRightSide) {
                 this.type = Type.STRING;
             } else {
@@ -131,6 +131,13 @@ public class TypeError extends AbstractIssueFinder {
                 }
             }
         }
+    }
+
+    @Override
+    public void visit(Qualified node) {
+        isInsideQualified = true;
+        visitChildren(node);
+        isInsideQualified = false;
     }
 
     @Override
@@ -170,7 +177,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(NumExpr node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
@@ -184,24 +191,22 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(Direction node) {
         if (!isValid(Type.DIRECTION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), issueSeverity);
         }
     }
 
     @Override
     public void visit(AsString node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
-                if (node.getOperand1().getUniqueName().equals("Touching")) {
-                    type = Type.BOOLEAN;
-                } else if (node.getOperand1().getUniqueName().equals("Not")) {
+                if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
                     type = Type.BOOLEAN;
                 } else {
                     type = null;
                 }
             } else {
-                if (node.getOperand1().getUniqueName().equals("Touching") || node.getOperand1().getUniqueName().equals("Not")) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
+                    addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -209,12 +214,12 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(AsNumber node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = null;
             } else {
                 if (this.type == Type.BOOLEAN) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                    addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -222,7 +227,7 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(NumberLiteral node) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
@@ -234,7 +239,7 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private boolean isValid(Type type) {
-        if (insideComparison) {
+        if (isInsideComparison) {
             if (!isRightSide) {
                 this.type = type;
             } else {

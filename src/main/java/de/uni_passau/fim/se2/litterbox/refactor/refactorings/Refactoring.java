@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -36,4 +36,6 @@ public interface Refactoring {
     <T extends ASTNode> T apply(T node);
 
     String getName();
+
+    String getDescription();
 }

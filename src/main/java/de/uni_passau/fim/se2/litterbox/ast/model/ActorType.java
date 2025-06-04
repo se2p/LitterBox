@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,7 +29,7 @@ public class ActorType extends AbstractNode implements ASTLeaf {
 
     private enum Type {
         STAGE,
-        SPRITE;
+        SPRITE
     }
 
     private Type type;
@@ -84,8 +84,7 @@ public class ActorType extends AbstractNode implements ASTLeaf {
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {type.name()};
-        return returnArray;
+        return new String[]{type.name()};
     }
 
     @Override

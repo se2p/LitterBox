@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,7 +46,7 @@ public class PenUpStmt extends AbstractNode implements PenStmt, ASTLeaf {
         if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
             penExtensionVisitor.visit(this);
         } else {
-            visitor.visit(this);
+            visitor.visit((PenBlock) this);
         }
     }
 

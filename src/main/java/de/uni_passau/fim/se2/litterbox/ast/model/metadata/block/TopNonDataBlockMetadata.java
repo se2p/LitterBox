@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     private double xPos;
@@ -49,5 +50,16 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    public static TopNonDataBlockMetadata emptyTopNonBlockMetadata() {
+        return createArtificialTopNonBlockMetadata(false);
+    }
+
+    public static TopNonDataBlockMetadata createArtificialTopNonBlockMetadata(boolean shadow) {
+        double x = Randomness.nextDouble(0, 101);
+        double y = Randomness.nextDouble(0, 101);
+        return new TopNonDataBlockMetadata("", CloneVisitor.generateUID(),
+                shadow, new NoMutationMetadata(), x, y);
     }
 }

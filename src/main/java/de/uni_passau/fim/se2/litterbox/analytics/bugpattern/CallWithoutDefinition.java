@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,15 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -36,7 +37,7 @@ import java.util.List;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    private List<String> proceduresDef;
+    private Set<String> proceduresDef;
     private List<CallStmt> calledProcedures;
 
     private void checkCalls() {
@@ -44,8 +45,11 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName())
                     && !program.getProcedureMapping().checkIfMalformed(
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-
-                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
+                String name = AstNodeUtil.replaceProcedureParams(
+                        calledProcedure.getIdent().getName(), "()", "<>", "()");
+                Hint hint = Hint.fromKey(getName());
+                hint.setParameter(Hint.BLOCK_NAME, name);
+                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -53,7 +57,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
-        proceduresDef = new ArrayList<>();
+        proceduresDef = new HashSet<>();
         super.visit(actor);
         checkCalls();
     }

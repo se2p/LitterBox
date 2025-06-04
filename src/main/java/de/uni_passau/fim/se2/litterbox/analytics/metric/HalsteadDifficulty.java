@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
 public class HalsteadDifficulty<T extends ASTNode> implements MetricExtractor<T> {
+    public static final String NAME = "halstead_difficulty";
 
     @Override
     public double calculateMetric(T node) {
@@ -31,7 +31,7 @@ public class HalsteadDifficulty<T extends ASTNode> implements MetricExtractor<T>
 
         //  D = ( n1 / 2 ) * ( N2 / n2 )
         double n1 = halstead.getUniqueOperators();
-        double n2  = halstead.getUniqueOperands();
+        double n2 = halstead.getUniqueOperands();
 
         if (n2 == 0) {
             // If there are no operands, there's no difficulty
@@ -46,6 +46,6 @@ public class HalsteadDifficulty<T extends ASTNode> implements MetricExtractor<T>
 
     @Override
     public String getName() {
-        return "halstead_difficulty";
+        return NAME;
     }
 }

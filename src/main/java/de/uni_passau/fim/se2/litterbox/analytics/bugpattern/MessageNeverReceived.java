@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -89,7 +89,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (notReceivedMessages.contains(msgName)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
@@ -104,7 +104,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (notReceivedMessages.contains(msgName)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }

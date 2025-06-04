@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -45,15 +45,15 @@ public class EmptyControlBodyTest implements JsonTest {
         IssueTranslator.getInstance().setLanguage("de");
         List<Issue> reports = new ArrayList<>(parameterName.check(emptyBodies));
         Assertions.assertEquals(6, reports.size());
-        Hint repeat = new Hint(parameterName.getName());
+        Hint repeat = Hint.fromKey(parameterName.getName());
         repeat.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
-        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHint());
-        Hint forever = new Hint(parameterName.getName());
+        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHintText());
+        Hint forever = Hint.fromKey(parameterName.getName());
         forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
-        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHint());
-        Hint ifThen = new Hint(parameterName.getName());
+        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHintText());
+        Hint ifThen = Hint.fromKey(parameterName.getName());
         ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
-        Assertions.assertEquals("Du hast einen [sbi]falls < > , dann[/sbi] verwendet, der keine Bausteine enthält. Dies macht den Code schwieriger zu verstehen. Lösche den Baustein, falls er nicht weiter verwendet wird.", reports.get(2).getHint());
+        Assertions.assertEquals("[b]Problem:[/b] [newLine] Du hast einen [sbi]falls < > , dann[/sbi]-Baustein verwendet, der keine Bausteine enthält. Beim Aufruf dieses Bausteins passiert also nichts. Das macht dein Programm unübersichtlich. [newLine] [newLine] [b]Verbesserungsidee:[/b] [newLine] Entferne den Baustein oder füge passende Bausteine in die Definition ein.", reports.get(2).getHintText());
         IssueTranslator.getInstance().setLanguage("en");
     }
 }

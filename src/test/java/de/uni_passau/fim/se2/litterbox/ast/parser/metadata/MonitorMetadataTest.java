@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,70 +18,67 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
-
-public class MonitorMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class MonitorMetadataTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        JsonNode empty = mapper.readTree(f);
-        MonitorMetadataList monitors = MonitorMetadataListParser.parse(empty.get(MONITORS_KEY));
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
+
         Assertions.assertEquals(2, monitors.getList().size());
     }
 
     @Test
-    public void testMonitorsProgram() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/monitorMeta.json");
-        JsonNode prog = mapper.readTree(f);
-        MonitorMetadataList monitors = MonitorMetadataListParser.parse(prog.get(MONITORS_KEY));
+    public void testMonitorsProgram() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/monitorMeta.json");
+        MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
+
         Assertions.assertEquals(4, monitors.getList().size());
-        Assertions.assertTrue(monitors.getList().get(0) instanceof MonitorListMetadata);
-        Assertions.assertTrue(monitors.getList().get(1) instanceof MonitorSliderMetadata);
-        Assertions.assertTrue(monitors.getList().get(2) instanceof MonitorSliderMetadata);
-        Assertions.assertTrue(monitors.getList().get(3) instanceof MonitorSliderMetadata);
+        Assertions.assertInstanceOf(MonitorListMetadata.class, monitors.getList().get(0));
+        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().get(1));
+        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().get(2));
+        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().get(3));
     }
 
     @Test
-    public void testMonitorsAlternativeProgram() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/monitorMetaAlternative.json");
-        JsonNode monitorMetaAlternative = mapper.readTree(f);
-        MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaAlternative.get(MONITORS_KEY));
+    public void testMonitorsAlternativeProgram() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/monitorMetaAlternative.json");
+        MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
+
         Assertions.assertEquals(1, monitors.getList().size());
     }
 
     @Test
-    public void testMonitorsManipulatedProgram() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/monitorMetaManipulated.json");
-        JsonNode monitorMetaManipulated = mapper.readTree(f);
-        MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaManipulated.get(MONITORS_KEY));
+    public void testMonitorsManipulatedProgram() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/monitorMetaManipulated.json");
+        MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
+
         Assertions.assertEquals(1, monitors.getList().size());
-        Assertions.assertTrue(monitors.getList().get(0) instanceof MonitorSliderMetadata);
+        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().get(0));
         Assertions.assertFalse(monitors.getList().get(0).isVisible());
         Assertions.assertEquals(0, ((MonitorSliderMetadata) monitors.getList().get(0)).getSliderMin());
     }
 
     @Test
-    public void testSlider() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/sliderMetadata.json");
-        JsonNode sliderMetadata = mapper.readTree(f);
-        MonitorMetadataList monitors = MonitorMetadataListParser.parse(sliderMetadata.get(MONITORS_KEY));
+    public void testSlider() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metadata/sliderMetadata.json");
+        MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
         MonitorSliderMetadata monitorSliderMetadata = (MonitorSliderMetadata) monitors.getList().get(0);
-        Assertions.assertEquals(monitorSliderMetadata.getSliderMin(), 0);
-        Assertions.assertEquals(monitorSliderMetadata.getSliderMax(), 100);
-        Assertions.assertEquals(monitorSliderMetadata.getValue(), "1000");
+
+        Assertions.assertEquals(0, monitorSliderMetadata.getSliderMin());
+        Assertions.assertEquals(100, monitorSliderMetadata.getSliderMax());
+        Assertions.assertEquals("1000", monitorSliderMetadata.getValue());
         Assertions.assertTrue(monitorSliderMetadata.isDiscrete());
     }
 }

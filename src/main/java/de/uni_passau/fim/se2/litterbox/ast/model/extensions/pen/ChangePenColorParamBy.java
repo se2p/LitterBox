@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
@@ -32,11 +31,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
     private final NumExpr value;
-    private final StringExpr param;
+    private final ColorParam param;
     private final BlockMetadata metadata;
 
-    public ChangePenColorParamBy(NumExpr value, StringExpr param, BlockMetadata metadata) {
-        super(value, param, metadata);
+    public ChangePenColorParamBy(NumExpr value, ColorParam param, BlockMetadata metadata) {
+        super(param, value, metadata);
         this.value = value;
         this.param = param;
         this.metadata = metadata;
@@ -51,7 +50,7 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
         return value;
     }
 
-    public StringExpr getParam() {
+    public ColorParam getParam() {
         return param;
     }
 
@@ -60,7 +59,7 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
         if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
             penExtensionVisitor.visit(this);
         } else {
-            visitor.visit(this);
+            visitor.visit((PenBlock) this);
         }
     }
 
@@ -76,7 +75,7 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
 
     @Override
     public Opcode getOpcode() {
-        return PenOpcode.pen_setPenColorParamTo;
+        return PenOpcode.pen_changePenColorParamBy;
     }
 
     public Opcode getMenuColorParamOpcode() {

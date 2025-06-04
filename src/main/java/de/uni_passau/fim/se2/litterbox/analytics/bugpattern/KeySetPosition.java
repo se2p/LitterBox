@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
@@ -60,7 +60,12 @@ public class KeySetPosition extends AbstractIssueFinder {
             Key keyNode = keyPressed.getKey();
             NumberLiteral keyNum = (NumberLiteral) keyNode.getKey();
             int key = (int) keyNum.getValue();
-            if (key == KeyParser.DOWNARROW || key == KeyParser.UPARROW || key == KeyParser.LEFTARROW || key == KeyParser.RIGHTARROW) {
+            if (
+                    key == KeyCode.DOWN_ARROW.getKeycode()
+                            || key == KeyCode.UP_ARROW.getKeycode()
+                            || key == KeyCode.LEFT_ARROW.getKeycode()
+                            || key == KeyCode.RIGHT_ARROW.getKeycode()
+            ) {
                 if (node.getStmtList().getStmts().size() == 1) {
                     checkStmt(node.getStmtList().getStmts().get(0), key);
                 } else {
@@ -81,11 +86,11 @@ public class KeySetPosition extends AbstractIssueFinder {
     }
 
     private boolean checkStmt(Stmt stmt, int key) {
-        if (key == KeyParser.DOWNARROW || key == KeyParser.UPARROW) {
+        if (key == KeyCode.DOWN_ARROW.getKeycode() || key == KeyCode.UP_ARROW.getKeycode()) {
             if (stmt instanceof SetYTo) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "y");
-                if (key == KeyParser.DOWNARROW) {
+                if (key == KeyCode.DOWN_ARROW.getKeycode()) {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("down_arrow"));
                 } else {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("up_arrow"));
@@ -93,11 +98,11 @@ public class KeySetPosition extends AbstractIssueFinder {
                 addIssue(stmt, stmt.getMetadata(), hint);
                 return true;
             }
-        } else if (key == KeyParser.LEFTARROW || key == KeyParser.RIGHTARROW) {
+        } else if (key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()) {
             if (stmt instanceof SetXTo) {
-                Hint hint = new Hint(NAME);
+                Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "x");
-                if (key == KeyParser.LEFTARROW) {
+                if (key == KeyCode.LEFT_ARROW.getKeycode()) {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("left_arrow"));
                 } else {
                     hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("right_arrow"));
@@ -123,7 +128,8 @@ public class KeySetPosition extends AbstractIssueFinder {
             if (node.getThenStmts().getStmts().size() == 1) {
                 checkStmt(node.getThenStmts().getStmts().get(0), (int) lastKeyValue.getValue());
             } else {
-                checkNumberStmts(node.getThenStmts().getStmts(), (int) lastKeyValue.getValue(), 2); //used 2 as a placeholder
+                // used 2 as a placeholder
+                checkNumberStmts(node.getThenStmts().getStmts(), (int) lastKeyValue.getValue(), 2);
             }
         }
         lastKeyValue = null;

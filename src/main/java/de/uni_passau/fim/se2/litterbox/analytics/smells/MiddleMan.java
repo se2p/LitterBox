@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,11 +25,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,10 +49,25 @@ public class MiddleMan extends AbstractIssueFinder {
         currentProcedure = null;
         currentScript = script;
         Event event = script.getEvent();
-        if (event instanceof ReceptionOfMessage) {
+        if (event instanceof ReceptionOfMessage receptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
-                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
+                Hint hint = Hint.fromKey(BROADCAST_HINT);
+                String message = ((StringLiteral) (receptionOfMessage.getMsg()).getMessage()).getText();
+                hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, message);
+                Stmt broadcast = stmts.get(0);
+                StringExpr stringExpr;
+                if (broadcast instanceof Broadcast normalBroadcast) {
+                    stringExpr = normalBroadcast.getMessage().getMessage();
+                } else {
+                    stringExpr = ((BroadcastAndWait) broadcast).getMessage().getMessage();
+                }
+                if (stringExpr instanceof StringLiteral stringLiteral) {
+                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, stringLiteral.getText());
+                } else {
+                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, IssueTranslator.getInstance().getInfo("message"));
+                }
+                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
         }
     }
@@ -61,7 +79,10 @@ public class MiddleMan extends AbstractIssueFinder {
         List<Stmt> stmts = node.getStmtList().getStmts();
         if (stmts.size() == 1 && stmts.get(0) instanceof CallStmt callStmt) {
             if (!callStmt.getIdent().getName().equals(node.getIdent().getName())) {
-                addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM, new Hint(PROCEDURE_HINT));
+                Hint hint = Hint.fromKey(PROCEDURE_HINT);
+                hint.setParameter(Hint.HINT_BLOCKNAME_MIDDLE, node.getIdent().getName());
+                hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, callStmt.getIdent().getName());
+                addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM, hint);
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -33,6 +33,6 @@ public class ExtensionUsageTest implements JsonTest {
     public void testContains() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/testExtension.json");
         //check if the used extension that LitterBox can not parse is an UnspecifiedStmt
-        Assertions.assertTrue(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
+        Assertions.assertInstanceOf(UnspecifiedStmt.class, program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0));
     }
 }

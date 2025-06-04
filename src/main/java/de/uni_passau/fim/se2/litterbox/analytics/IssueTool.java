@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,8 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
@@ -28,13 +29,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MultiAttributeMod
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.UnnecessaryTimeRobot;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
+import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import java.util.stream.Stream;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -60,12 +61,12 @@ public class IssueTool {
             registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
             registerBugFinder(new ForeverInsideIf(), bugFinders);
             registerBugFinder(new ForeverInsideLoop(), bugFinders);
+            registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new IllegalParameterRefactor(), bugFinders);
             registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
             registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
-            registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
@@ -73,8 +74,8 @@ public class IssueTool {
             registerBugFinder(new MissingBackdropSwitch(), bugFinders);
             registerBugFinder(new MissingCloneCall(), bugFinders);
             registerBugFinder(new MissingCloneInitialization(), bugFinders);
-            registerBugFinder(new MissingInitialization(), bugFinders);
             registerBugFinder(new MissingEraseAll(), bugFinders);
+            registerBugFinder(new MissingInitialization(), bugFinders);
             registerBugFinder(new MissingLoopMousePosition(), bugFinders);
             registerBugFinder(new MissingLoopSensing(), bugFinders);
             registerBugFinder(new MissingPenDown(), bugFinders);
@@ -91,7 +92,7 @@ public class IssueTool {
             registerBugFinder(new TypeError(), bugFinders);
             registerBugFinder(new VariableAsLiteral(), bugFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock bugs
+        if (LOAD_MBLOCK) { // mBlock bugs
             registerBugFinder(new AmbientLightOutOfBounds(), bugFinders);
             registerBugFinder(new BatteryLevelOutOfBounds(), bugFinders);
             registerBugFinder(new CodeyUploadStopTimed(), bugFinders);
@@ -123,6 +124,43 @@ public class IssueTool {
         return bugFinders;
     }
 
+    /**
+     * Bug finders that can operate on single scripts, i.e. do not need other information from somewhere else in the
+     * program.
+     *
+     * @return Issue finders that work on single scripts.
+     */
+    private static Map<String, IssueFinder> generateScriptsBugFinders() {
+        Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+
+        registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
+        registerBugFinder(new BlockingIfElse(), bugFinders);
+        registerBugFinder(new ComparingLiterals(), bugFinders);
+        registerBugFinder(new EndlessRecursion(), bugFinders);
+        registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
+        registerBugFinder(new ForeverInsideIf(), bugFinders);
+        registerBugFinder(new ForeverInsideLoop(), bugFinders);
+        registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
+        registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+        registerBugFinder(new KeySetPosition(), bugFinders);
+        registerBugFinder(new MissingLoopMousePosition(), bugFinders);
+        registerBugFinder(new MissingLoopSensing(), bugFinders);
+        registerBugFinder(new MissingTerminationCondition(), bugFinders);
+        registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
+        registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterOutOfScope(), bugFinders);
+        registerBugFinder(new PositionEqualsCheck(), bugFinders);
+        registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
+        registerBugFinder(new TypeError(), bugFinders);
+        registerBugFinder(new VariableAsLiteral(), bugFinders);
+
+        return bugFinders;
+    }
+
     private static Map<String, IssueFinder> generateAllFinders() {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
@@ -138,22 +176,21 @@ public class IssueTool {
         // Smells
         if (LOAD_GENERAL) {
             registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
+            registerSmellFinder(new BusyWaiting(), smellFinders);
             registerSmellFinder(new ClonedCodeType1(), smellFinders);
             registerSmellFinder(new ClonedCodeType2(), smellFinders);
             registerSmellFinder(new ClonedCodeType3(), smellFinders);
-            registerSmellFinder(new BusyWaiting(), smellFinders);
             registerSmellFinder(new DeadCode(), smellFinders);
             registerSmellFinder(new DeleteCloneInLoop(), smellFinders);
+            registerSmellFinder(new DoubleIf(), smellFinders);
+            registerSmellFinder(new DuplicatedScript(), smellFinders);
+            registerSmellFinder(new DuplicatedScriptsCovering(), smellFinders);
+            registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new EmptyControlBody(), smellFinders);
             registerSmellFinder(new EmptyCustomBlock(), smellFinders);
             registerSmellFinder(new EmptyProject(), smellFinders);
             registerSmellFinder(new EmptyScript(), smellFinders);
             registerSmellFinder(new EmptySprite(), smellFinders);
-            registerSmellFinder(new DeadCode(), smellFinders);
-            registerSmellFinder(new DoubleIf(), smellFinders);
-            registerSmellFinder(new DuplicatedScript(), smellFinders);
-            registerSmellFinder(new DuplicatedScriptsCovering(), smellFinders);
-            registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new LongScript(), smellFinders);
             registerSmellFinder(new MessageNaming(), smellFinders);
             registerSmellFinder(new MiddleMan(), smellFinders);
@@ -164,9 +201,9 @@ public class IssueTool {
             registerSmellFinder(new SpriteNaming(), smellFinders);
             registerSmellFinder(new StutteringMovement(), smellFinders);
             registerSmellFinder(new UnnecessaryBoolean(), smellFinders);
-            registerSmellFinder(new UnnecessaryLoop(), smellFinders);
             registerSmellFinder(new UnnecessaryIf(), smellFinders);
             registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
+            registerSmellFinder(new UnnecessaryLoop(), smellFinders);
             registerSmellFinder(new UnnecessaryMessage(), smellFinders);
             registerSmellFinder(new UnnecessaryMove(), smellFinders);
             registerSmellFinder(new UnnecessaryRotation(), smellFinders);
@@ -180,7 +217,7 @@ public class IssueTool {
             registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
-        if (LOAD_MBLOCK) {// mBlock smells
+        if (LOAD_MBLOCK) { // mBlock smells
             registerSmellFinder(new MotorPowerMinus(), smellFinders);
             registerSmellFinder(new MultiAttributeModificationRobot(), smellFinders);
             registerSmellFinder(new UnnecessaryTimeRobot(), smellFinders);
@@ -210,15 +247,16 @@ public class IssueTool {
             registerPerfumeFinder(new MatchingParameter(), perfumeFinders);
             registerPerfumeFinder(new MouseFollower(), perfumeFinders);
             registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
-            registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
-            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
             registerPerfumeFinder(new NestedConditionalChecks(), perfumeFinders);
             registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
+            registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
+            registerPerfumeFinder(new UsedVariables(), perfumeFinders);
             registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
             registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
+            registerPerfumeFinder(new WaitingCheckToStop(), perfumeFinders);
         }
 
         if (LOAD_MBLOCK) {
@@ -270,10 +308,10 @@ public class IssueTool {
             registerQuestionFinder(new ScriptsForActor(), questionFinders);
             registerQuestionFinder(new ScriptsInProgram(), questionFinders);
             registerQuestionFinder(new ScriptsTriggeredByEvent(), questionFinders);
-           registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
+            registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
             registerQuestionFinder(new ScriptExecutionOrderDifferentActors(), questionFinders);
             registerQuestionFinder(new ScriptExecutionOrderSameActor(), questionFinders);
-           registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
+            registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
             registerQuestionFinder(new SetVariable(), questionFinders);
             registerQuestionFinder(new StatementsInIfStatement(), questionFinders);
             registerQuestionFinder(new StatementTriggersEvent(), questionFinders);
@@ -284,32 +322,54 @@ public class IssueTool {
         return questionFinders;
     }
 
+    public static List<IssueFinder> getFinders(final FinderGroup finderGroup) {
+        final Collection<IssueFinder> finders = switch (finderGroup) {
+            case ALL -> generateAllFinders().values();
+            case SMELLS -> generateSmellFinders().values();
+            case BUGS -> generateBugFinders().values();
+            case BUGS_SCRIPTS -> generateScriptsBugFinders().values();
+            case PERFUMES -> generatePerfumeFinders().values();
+            case QUESTIONS -> generateQuestionFinders().values();
+            case DEFAULT -> generateAllFinders().values().stream()
+                    .filter(f -> !f.getName().toLowerCase().endsWith("strict"))
+                    .toList();
+            case FLAWS -> {
+                final Collection<IssueFinder> bugFinders = generateBugFinders().values();
+                final Collection<IssueFinder> smellFinders = generateSmellFinders().values();
+                yield Stream.concat(bugFinders.stream(), smellFinders.stream()).toList();
+            }
+            case MOST_COMMON_BUGS -> List.of(
+                    new MessageNeverSent(),
+                    new MissingLoopSensing(),
+                    new ComparingLiterals(),
+                    new MissingCloneInitialization(),
+                    new MessageNeverReceived(),
+                    new ForeverInsideLoop(),
+                    new StutteringMovement()
+            );
+        };
+
+        return List.copyOf(finders);
+    }
+
     public static List<IssueFinder> getFinders(String commandString) {
+        final Optional<FinderGroup> issueType = FinderGroup.tryFromString(commandString);
+        if (issueType.isPresent()) {
+            return getFinders(issueType.get());
+        }
+
         List<IssueFinder> finders = new ArrayList<>();
 
-        switch (commandString) {
-            case ALL -> finders = new ArrayList<>(generateAllFinders().values());
-            case BUGS -> finders = new ArrayList<>(generateBugFinders().values());
-            case SMELLS -> finders = new ArrayList<>(generateSmellFinders().values());
-            case PERFUMES -> finders = new ArrayList<>(generatePerfumeFinders().values());
-            case QUESTIONS -> finders = new ArrayList<>(generateQuestionFinders().values());
-            case DEFAULT -> {
-                var strictFinders = generateAllFinders().values().stream()
-                        .filter(f -> !f.getName().toLowerCase().endsWith("strict")).toList();
-                finders.addAll(strictFinders);
+        for (String detectorName : commandString.split(",")) {
+            Map<String, IssueFinder> allFinders = generateAllFinders();
+            if (!allFinders.containsKey(detectorName)) {
+                // TODO: Hard crash might be more appropriate to notify user
+                log.log(Level.SEVERE, "Unknown finder: " + detectorName);
+                continue;
             }
-            default -> {
-                for (String detectorName : commandString.split(",")) {
-                    Map<String, IssueFinder> allFinders = generateAllFinders();
-                    if (!allFinders.containsKey(detectorName)) {
-                        // TODO: Hard crash might be more appropriate to notify user
-                        log.log(Level.SEVERE, "Unknown finder: " + detectorName);
-                        continue;
-                    }
-                    finders.add(allFinders.get(detectorName));
-                }
-            }
+            finders.add(allFinders.get(detectorName));
         }
+
         return Collections.unmodifiableList(finders);
     }
 
@@ -359,6 +419,19 @@ public class IssueTool {
                     + " as Solution IssueFinder");
         }
         perfumeFinders.put(finder.getName(), finder);
+    }
+
+    static List<String> generateFixHeuristicsNames() {
+        List<String> fixHeuristicsNames = new ArrayList<>();
+        fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
+        fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);
+        fixHeuristicsNames.add(MessageNeverReceivedFix.NAME);
+        fixHeuristicsNames.add(MessageNeverSentFix.NAME);
+        fixHeuristicsNames.add(MissingCloneInitializationFix.NAME);
+        fixHeuristicsNames.add(MissingLoopSensingLoopFix.NAME);
+        fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
+        fixHeuristicsNames.add(StutteringMovementFix.NAME);
+        return fixHeuristicsNames;
     }
 
     static void registerQuestionFinder(IssueFinder finder, Map<String, IssueFinder> questionFinders) {

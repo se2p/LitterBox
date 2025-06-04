@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,8 +50,10 @@ public class UnnecessaryIf extends AbstractIssueFinder {
                     );
                     ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
 
-                    MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor,
-                            getCurrentScriptEntity(), Arrays.asList(s, lastIf), s.getMetadata(), new Hint(getName()));
+                    MultiBlockIssue issue = new MultiBlockIssue(
+                            this, IssueSeverity.LOW, program, currentActor, getCurrentScriptEntity(),
+                            Arrays.asList(s, lastIf), s.getMetadata(), Hint.fromKey(getName())
+                    );
                     issue.setRefactoredScriptOrProcedureDefinition(refactored);
                     addIssue(issue);
                 }

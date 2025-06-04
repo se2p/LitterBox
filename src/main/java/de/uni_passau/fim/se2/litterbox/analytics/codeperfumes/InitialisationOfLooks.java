@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -136,9 +136,9 @@ public class InitialisationOfLooks extends AbstractIssueFinder {
         if (inGreenFlag || inCustomBlock) {
             Hint hint;
             if (currentActor.isStage() || node instanceof SwitchBackdrop) {
-                hint = new Hint(HINT_STAGE);
+                hint = Hint.fromKey(HINT_STAGE);
             } else {
-                hint = new Hint(HINT_SPRITE);
+                hint = Hint.fromKey(HINT_SPRITE);
             }
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
         }

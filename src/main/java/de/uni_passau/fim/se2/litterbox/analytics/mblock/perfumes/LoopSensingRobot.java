@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bo
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -306,20 +307,24 @@ public class LoopSensingRobot extends AbstractRobotFinder {
 
     public void generateMultiBlockIssue(ASTNode node) {
         ASTNode loop = loops.get(loops.size() - 1);
-        ASTNode parent = node.getParentNode();
-        while (!(parent instanceof IfStmt)) {
-            parent = parent.getParentNode();
-        }
+        IfStmt parent = AstNodeUtil.findParent(node, IfStmt.class);
+
         List<ASTNode> concernedNodes = new ArrayList<>();
         concernedNodes.add(loop);
         concernedNodes.add(parent);
         concernedNodes.add(node);
-        Hint hint = new Hint(NAME);
+        Hint hint = Hint.fromKey(NAME);
         MultiBlockIssue issue;
         if (currentScript != null) {
-            issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, currentScript, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.HIGH, program, currentActor, currentScript, concernedNodes,
+                    node.getMetadata(), hint
+            );
         } else {
-            issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, currentProcedure, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.HIGH, program, currentActor, currentProcedure, concernedNodes,
+                    node.getMetadata(), hint
+            );
         }
         addIssue(issue);
     }

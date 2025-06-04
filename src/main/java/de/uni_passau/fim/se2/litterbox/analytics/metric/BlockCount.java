@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,8 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -73,7 +74,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor {
+public class BlockCount<T extends ASTNode>
+        implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor,
+        TranslateExtensionVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -325,6 +328,16 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
 
     @Override
     public void visit(NumFunct node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Myself node) {
+        //do not count
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
         visitChildren(node);
     }
 

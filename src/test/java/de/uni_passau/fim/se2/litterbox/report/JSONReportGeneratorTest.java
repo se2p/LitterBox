@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -122,7 +122,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode rootNode = mapper.readTree(jsonText);
         String code = rootNode.get("issues").get(0).get("code").asText();
         assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
-                "repeat until <(x position) = (50):: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "repeat until <(x position) = (50) :: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator());
     }
@@ -160,7 +160,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/smells/emptySprite.json");
 
         EmptySprite emptySprite = new EmptySprite();
-        Assertions.assertEquals(emptySprite.NAME, emptySprite.getName());
+        Assertions.assertEquals(EmptySprite.NAME, emptySprite.getName());
         Set<Issue> issues = emptySprite.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();

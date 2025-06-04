@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ComputationalThinkingScore  implements MetricExtractor<Program> {
+public class ComputationalThinkingScore implements MetricExtractor<Program> {
+    public static final String NAME = "ct_score";
+
     @Override
     public double calculateMetric(Program program) {
         double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program);
@@ -38,6 +39,6 @@ public class ComputationalThinkingScore  implements MetricExtractor<Program> {
 
     @Override
     public String getName() {
-        return "ct_score";
+        return NAME;
     }
 }

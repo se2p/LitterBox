@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -29,12 +30,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingCo
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -61,7 +59,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(StageClicked node) {
         if (isCurrentSprite) {
-            Hint hint = new Hint(HINT_SPRITE);
+            Hint hint = Hint.fromKey(HINT_SPRITE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -70,7 +68,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SwitchBackdropAndWait node) {
         if (isCurrentSprite) {
-            Hint hint = new Hint(HINT_SPRITE);
+            Hint hint = Hint.fromKey(HINT_SPRITE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -79,7 +77,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SpriteMotionStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -88,7 +86,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(PositionX node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -97,7 +95,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(PositionY node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -106,7 +104,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(Direction node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -115,7 +113,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SpriteLookStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -124,7 +122,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(Costume node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -133,7 +131,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(Size node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -142,7 +140,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(StartedAsClone node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -151,30 +149,24 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(DeleteClone node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString asString) {
-            if (asString.getOperand1() instanceof StrId strId) {
-                String name = strId.getName();
-                if (isCurrentStage && name.equals("_myself_")) {
-                    Hint hint = new Hint(HINT_STAGE);
-                    addIssue(node, node.getMetadata(), hint);
-                }
-            }
+    public void visit(Myself node) {
+        if (isCurrentStage) {
+            Hint hint = Hint.fromKey(HINT_STAGE);
+            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), hint);
         }
-        visitChildren(node);
     }
 
     @Override
     public void visit(Touching node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -183,7 +175,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SpriteTouchingColor node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -192,7 +184,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(ColorTouchingColor node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -201,7 +193,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(DistanceTo node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -210,7 +202,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SpriteClicked node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -219,7 +211,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(PenDownStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -228,7 +220,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(PenUpStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -237,7 +229,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(PenStampStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -246,7 +238,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SetPenColorParamTo node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -255,7 +247,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -264,7 +256,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(SetPenSizeTo node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -273,7 +265,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(ChangePenColorParamBy node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
@@ -282,7 +274,7 @@ public class UselessBlocks extends AbstractIssueFinder implements PenExtensionVi
     @Override
     public void visit(ChangePenSizeBy node) {
         if (isCurrentStage) {
-            Hint hint = new Hint(HINT_STAGE);
+            Hint hint = Hint.fromKey(HINT_STAGE);
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);

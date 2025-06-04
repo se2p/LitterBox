@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,14 +37,14 @@ class BlockingIfElseTest implements JsonTest {
         BlockingIfElse finder = new BlockingIfElse();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(2);
-        Hint normalHint = new Hint(BlockingIfElse.NAME);
-        Hint loopHint = new Hint(BlockingIfElse.INSIDE_LOOP);
+        Hint normalHint = Hint.fromKey(BlockingIfElse.NAME);
+        Hint loopHint = Hint.fromKey(BlockingIfElse.INSIDE_LOOP);
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
-                Truth.assertThat(issue.getHint()).isEqualTo(loopHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(loopHint.getHintText());
             } else {
-                Truth.assertThat(issue.getHint()).isEqualTo(normalHint.getHintText());
+                Truth.assertThat(issue.getHintText()).isEqualTo(normalHint.getHintText());
             }
             i++;
         }

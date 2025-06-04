@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,12 +27,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class SymbolTable {
 
-    private Map<String, VariableInfo> variables;
-    private Map<String, MessageInfo> messages;
-    private Map<String, ExpressionListInfo> lists;
+    private final Map<String, VariableInfo> variables;
+    private final Map<String, MessageInfo> messages;
+    private final Map<String, ExpressionListInfo> lists;
 
     /**
      * The symbol table collects all information about variable, lists and messages.
@@ -75,10 +76,12 @@ public class SymbolTable {
      * @param type         of the variable
      * @param global       indicates whether this variable is global and accessible for all actors
      * @param actorName    name of the actor where the variable is defined
+     * @return The created variable.
      */
-    public void addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
+    public VariableInfo addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
         VariableInfo info = new VariableInfo(global, actorName, ident, type, variableName);
         variables.put(ident + variableName + actorName, info);
+        return info;
     }
 
     /**
@@ -92,10 +95,12 @@ public class SymbolTable {
      * @param global         indicates whether this variable is global and accessible for all actors
      * @param actorName      name of the actor where the variable is defined
      */
-    public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
-                                      String actorName) {
+    public ExpressionListInfo addExpressionListInfo(
+            String ident, String listName, ExpressionList expressionList, boolean global, String actorName
+    ) {
         ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
         lists.put(ident + listName + actorName, info);
+        return info;
     }
 
     public void addMessage(String name, Message message, boolean global, String actorName, String identifier) {
@@ -114,7 +119,7 @@ public class SymbolTable {
      *
      * @param ident     of the variable
      * @param actorName which defines the variable
-     * @return
+     * @return The variable, if one can be found.
      */
     public Optional<VariableInfo> getVariable(String ident, String variableName, String actorName) {
         String key = ident + variableName + actorName;
@@ -146,6 +151,44 @@ public class SymbolTable {
     }
 
     /**
+     * Tries to retrieve an existing variable, or creates a new one with the given information.
+     *
+     * @param ident The block ID of the variable.
+     * @param variableName The name of the variable.
+     * @param actorName The actor the variable belongs to.
+     * @param newVarType The type of the variable, if a new one gets created.
+     * @param global If the new variable should be in global scope.
+     * @param newVarActor The actor the new variable should be in.
+     * @return The existing or newly added variable.
+     */
+    public VariableInfo getOrAddVariable(
+            final String ident, final String variableName, final String actorName, final Supplier<Type> newVarType,
+            final boolean global, final String newVarActor
+    ) {
+        return getVariable(ident, variableName, actorName)
+                .orElseGet(() -> addVariable(ident, variableName, newVarType.get(), global, newVarActor));
+    }
+
+    /**
+     * Tries to retrieve an existing list, or creates a new one with the given information.
+     *
+     * @param ident The block ID of the list.
+     * @param listName The name of the list.
+     * @param actorName The actor the list belongs to.
+     * @param expressionList The content of the list, if a new one gets created.
+     * @param global If the new list should be in global scope.
+     * @param newVarActor The actor the new variable should be in.
+     * @return The existing or newly added list.
+     */
+    public ExpressionListInfo getOrAddList(
+            final String ident, final String listName, final String actorName,
+            final Supplier<ExpressionList> expressionList, final boolean global, final String newVarActor
+    ) {
+        return getList(ident, listName, actorName)
+                .orElseGet(() -> addExpressionListInfo(ident, listName, expressionList.get(), global, newVarActor));
+    }
+
+    /**
      * Retrieves a list based on the identifier and the actorName.
      *
      * <p>If the given actor does not define a given list</p>
@@ -156,7 +199,7 @@ public class SymbolTable {
      *
      * @param ident     of the list
      * @param actorName which defines the variable
-     * @return
+     * @return The info, if one can be found.
      */
     public Optional<ExpressionListInfo> getList(String ident, String listName, String actorName) {
         String key = ident + listName + actorName;
@@ -199,8 +242,8 @@ public class SymbolTable {
         Set<Entry<String, ExpressionListInfo>> entries = lists.entrySet();
         for (Entry<String, ExpressionListInfo> current : entries) {
             ExpressionListInfo info = current.getValue();
-            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                return current.getValue().getIdent();
+            if (info.variableName().equals(name) && info.actor().equals(actor)) {
+                return current.getValue().ident();
             }
         }
         return null;
@@ -210,8 +253,8 @@ public class SymbolTable {
         Set<Entry<String, VariableInfo>> entries = variables.entrySet();
         for (Entry<String, VariableInfo> current : entries) {
             VariableInfo info = current.getValue();
-            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                return current.getValue().getIdent();
+            if (info.variableName().equals(name) && info.actor().equals(actor)) {
+                return current.getValue().ident();
             }
         }
         return null;

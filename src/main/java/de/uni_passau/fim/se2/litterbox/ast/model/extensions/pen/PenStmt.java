@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
-public interface PenStmt extends Stmt, ExtensionBlock {
+public interface PenStmt extends Stmt, PenBlock {
 
     void accept(PenExtensionVisitor visitor);
 }

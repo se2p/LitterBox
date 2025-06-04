@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 LitterBox contributors
+ * Copyright (C) 2019-2024 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -107,7 +107,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
                 checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
                 insideControl = true;
-                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
                 insideControl = false;
@@ -138,7 +138,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             inCondition = false;
             checkForStop(node.getThenStmts());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
+            blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then");
             node.getThenStmts().accept(this);
             insideControl = false;
             sensingCollision = false;
@@ -233,7 +233,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(KeepBackwardTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -245,7 +245,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(KeepForwardTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -257,7 +257,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(MoveForwardTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -269,7 +269,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(MoveBackwardTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -281,7 +281,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(TurnLeftTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -293,7 +293,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(TurnRightTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -305,7 +305,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(FaceTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -317,7 +317,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(FaceTimedPort node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -329,7 +329,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(LEDColorTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -341,7 +341,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(LEDColorTimedPosition node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -353,7 +353,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(PlayFrequency node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
@@ -365,7 +365,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     public void visit(WaitSeconds node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
