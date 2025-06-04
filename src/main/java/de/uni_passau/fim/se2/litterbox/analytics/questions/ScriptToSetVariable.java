@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         if (!choices.isEmpty() && !answers.isEmpty()) {
             answers.forEach((variable, answer) -> {
                 IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_VARIABLE, variable);
                 hint.setParameter(Hint.ANSWER, answer);
                 hint.setParameter(Hint.CHOICES, getChoices());
@@ -57,7 +58,7 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
 
     @Override
     public void visit(SetVariableTo node) {
-        variable = node.getIdentifier().getScratchBlocks();
+        variable = ScratchBlocksVisitor.of(node.getIdentifier());
     }
 
     @Override

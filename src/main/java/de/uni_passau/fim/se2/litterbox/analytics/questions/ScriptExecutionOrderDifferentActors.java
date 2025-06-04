@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
             if (actorsWithEvent.size() > 1) {
                 List<ScriptEntity> scriptEntities = new ArrayList<>();
                 List<ASTNode> nodes = new ArrayList<>();
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 String actor1;
                 String actor2;
                 Script script1;
@@ -88,8 +89,8 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
     @Override
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
-            scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
-                    k -> new HashMap<>()).computeIfAbsent(currentActor.getIdent().getScratchBlocks(),
+            scriptsWithEvent.computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()),
+                    k -> new HashMap<>()).computeIfAbsent(ScratchBlocksVisitor.of(currentActor.getIdent()),
                     k -> new ArrayList<>()).add(node);
         }
     }

@@ -20,7 +20,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(2);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]0\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]0\\[/a-n]");
         }
     }
 
@@ -31,7 +31,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]1\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]1\\[/a-n]");
         }
     }
 
@@ -42,7 +42,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]2\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]2\\[/a-n]");
         }
     }
 
@@ -53,7 +53,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(2);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint();
+            String hint = issue.getHint().getHintText();
             if (hint.contains("Sprite1"))
                 assertThat(hint).containsMatch("\\[a-n]6\\[/a-n]");
             else

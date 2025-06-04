@@ -20,7 +20,7 @@ class ScriptsInProgramTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]0\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]0\\[/a-n]");
         }    }
 
     @Test
@@ -30,7 +30,7 @@ class ScriptsInProgramTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]1\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]1\\[/a-n]");
         }
     }
 
@@ -41,7 +41,7 @@ class ScriptsInProgramTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]2\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]2\\[/a-n]");
         }
     }
 
@@ -52,7 +52,7 @@ class ScriptsInProgramTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]8\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]8\\[/a-n]");
         }
     }
 }

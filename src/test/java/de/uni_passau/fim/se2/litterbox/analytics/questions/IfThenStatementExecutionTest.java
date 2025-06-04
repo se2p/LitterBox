@@ -58,7 +58,7 @@ class IfThenStatementExecutionTest implements JsonTest {
         Set<Issue> issues = runFinder(prog, new IfThenStatementExecution(), false);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint();
+            String hint = issue.getHint().getHintText();
             if (hint.contains("FALSE"))
                 assertThat(hint).containsMatch("\\[a-y]no\\[/a-y]");
             else

@@ -50,7 +50,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
                 topBlockCurrent = node.getStmtList().getStmts().get(0);
             }
             IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
             hint.setParameter(Hint.ANSWER, getAnswers());
             addIssue(builder.withHint(hint));

@@ -23,7 +23,7 @@ public class PurposeOfScript extends AbstractQuestionFinder {
             topBlockCurrent = node.getStmtList().getStmts().get(0);
         }
         IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withScript(node).withHint(hint));
     }
 

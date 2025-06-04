@@ -19,7 +19,7 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
         currentProcedure = null;
 
         IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withHint(hint));
     }
 

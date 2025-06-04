@@ -21,6 +21,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.*;
 
@@ -65,7 +66,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                     topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
                 }
                 IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
                 answers = eventStatements.get(event);
                 hint.setParameter(Hint.ANSWER, getAnswers());
@@ -104,7 +105,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(ReceptionOfMessage node) {
         if (searchingForEvents) {
-            foundEvent = node.getMsg().getScratchBlocks();
+            foundEvent = ScratchBlocksVisitor.of(node.getMsg());
             scriptsForEvent.putIfAbsent(foundEvent, new ArrayList<>());
             eventStatements.putIfAbsent(foundEvent, new LinkedHashSet<>());
         }
@@ -113,7 +114,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(BackdropSwitchTo node) {
         if (searchingForEvents) {
-            foundEvent = node.getBackdrop().getScratchBlocks();
+            foundEvent = ScratchBlocksVisitor.of(node.getBackdrop());
             scriptsForEvent.putIfAbsent(foundEvent, new ArrayList<>());
             eventStatements.putIfAbsent(foundEvent, new LinkedHashSet<>());
         }
@@ -122,7 +123,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(Broadcast node) {
         if (!searchingForEvents) {
-            String message = node.getMessage().getScratchBlocks();
+            String message = ScratchBlocksVisitor.of(node.getMessage());
             if (eventStatements.containsKey(message)) {
                 eventStatements.get(message).add(wrappedScratchBlocks(node));
             } else {
@@ -134,7 +135,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(BroadcastAndWait node) {
         if (!searchingForEvents) {
-            String message = node.getMessage().getScratchBlocks();
+            String message = ScratchBlocksVisitor.of(node.getMessage());
             if (eventStatements.containsKey(message)) {
                 eventStatements.get(message).add(wrappedScratchBlocks(node));
             } else {
@@ -147,7 +148,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     public void visit(SwitchBackdrop node) {
         if (!searchingForEvents) {
             if (node.getElementChoice() instanceof WithExpr) {
-                String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
+                String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
                 if (eventStatements.containsKey(backdrop)) {
                     eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
                 } else {
@@ -161,7 +162,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     public void visit(SwitchBackdropAndWait node) {
         if (!searchingForEvents) {
             if (node.getElementChoice() instanceof WithExpr) {
-                String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
+                String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
                 if (eventStatements.containsKey(backdrop)) {
                     eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
                 } else {

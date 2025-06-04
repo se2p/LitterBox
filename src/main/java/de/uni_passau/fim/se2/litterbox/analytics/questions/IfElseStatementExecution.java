@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.Random;
 
@@ -28,8 +29,8 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             String elseStmts = wrappedScratchBlocks(node.getElseStmts());
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.CONDITION, condition.getScratchBlocksWithoutNewline());
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
             hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
             hint.setParameter(Hint.ANSWER, conditionValue ? thenStmts : elseStmts);
             hint.setParameter(Hint.CHOICES, conditionValue ? elseStmts : thenStmts);

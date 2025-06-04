@@ -58,13 +58,6 @@ public class StmtList extends AbstractNode implements ASTNode {
     }
 
     @Override
-    public String getScratchBlocks() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
-        this.accept(visitor);
-        return visitor.getScratchBlocks();
-    }
-
-    @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }

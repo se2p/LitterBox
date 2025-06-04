@@ -16,6 +16,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
                 currentActor = actorForStmt.get(stmt);
 
                 IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
                 hint.setParameter(Hint.ANSWER, getAnswers());
                 addIssue(builder.withHint(hint));
@@ -70,11 +71,11 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     public void visit(Event node) {
         String event;
         if (node instanceof ReceptionOfMessage receptionOfMessage)
-            event = receptionOfMessage.getMsg().getScratchBlocks();
+            event = ScratchBlocksVisitor.of(receptionOfMessage.getMsg());
         else if (node instanceof BackdropSwitchTo backdropSwitchTo)
-            event = backdropSwitchTo.getBackdrop().getScratchBlocks();
+            event = ScratchBlocksVisitor.of(backdropSwitchTo.getBackdrop());
         else
-            event = node.getScratchBlocks();
+            event = ScratchBlocksVisitor.of(node);
 
         if (!(node instanceof Never))
             scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
@@ -83,7 +84,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public void visit(Broadcast node) {
         if (!isNull(currentScript)) {
-            String message = node.getMessage().getScratchBlocks();
+            String message = ScratchBlocksVisitor.of(node.getMessage());
             eventStatements.putIfAbsent(message, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);
@@ -93,7 +94,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public void visit(BroadcastAndWait node) {
         if (!isNull(currentScript)) {
-            String message = node.getMessage().getScratchBlocks();
+            String message = ScratchBlocksVisitor.of(node.getMessage());
             eventStatements.putIfAbsent(message, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);
@@ -103,7 +104,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public void visit(SwitchBackdrop node) {
         if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
-            String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
+            String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);
@@ -113,7 +114,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public void visit(SwitchBackdropAndWait node) {
         if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
-            String backdrop = ((WithExpr) node.getElementChoice()).getExpression().getScratchBlocks();
+            String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);

@@ -25,7 +25,7 @@ class SetVariableTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-s]0\\[/a-s]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-s]0\\[/a-s]");
         }
     }
 
@@ -36,7 +36,7 @@ class SetVariableTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-s]Hello\\[/a-s]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-s]Hello\\[/a-s]");
         }
     }
 

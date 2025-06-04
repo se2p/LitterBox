@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,7 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
 
         for (String variable: variables) {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_VARIABLE, variable);
             addIssue(builder.withHint(hint));
         }
@@ -45,7 +46,7 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
     @Override
     public void visit(Variable node) {
         if (inScript)
-            variables.add(node.getScratchBlocks());
+            variables.add(ScratchBlocksVisitor.of(node));
     }
 
     @Override

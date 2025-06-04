@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 /**
  * @QuestionType Strings
@@ -35,8 +36,8 @@ public class SetVariable extends AbstractQuestionFinder {
 
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
                 IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-                Hint hint = new Hint(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, identifier.getScratchBlocksWithoutNewline());
+                Hint hint = Hint.fromKey(getName());
+                hint.setParameter(Hint.HINT_VARIABLE, ScratchBlocksVisitor.of(identifier));
                 hint.setParameter(Hint.ANSWER, getExpressionValue(expression));
                 addIssue(builder.withHint(hint));
             }
@@ -49,7 +50,7 @@ public class SetVariable extends AbstractQuestionFinder {
      * @return expression value without parentheses
      */
     private String getExpressionValue(Expression node) {
-        String value = node.getScratchBlocks();
+        String value = ScratchBlocksVisitor.of(node);
         return value.substring(1, value.length() - 1);
     }
 

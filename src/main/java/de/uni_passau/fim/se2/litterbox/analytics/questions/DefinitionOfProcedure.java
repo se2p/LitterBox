@@ -56,7 +56,7 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                 currentActor = actorForCall.get(stmt);
 
                 IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.CHOICES, getChoices());
                 hint.setParameter(Hint.ANSWER, wrappedScratchBlocks(procedures.get(ident)));
                 addIssue(builder.withHint(hint));

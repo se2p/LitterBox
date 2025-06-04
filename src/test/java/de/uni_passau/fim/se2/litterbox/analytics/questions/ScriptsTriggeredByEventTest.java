@@ -30,7 +30,7 @@ class ScriptsTriggeredByEventTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint()).containsMatch("\\[a-n]2\\[/a-n]");
+            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]2\\[/a-n]");
         }
     }
 

@@ -15,7 +15,7 @@ public class PurposeOfIfCondition extends AbstractQuestionFinder {
     @Override
     public void visit(IfStmt node) {
         IssueBuilder builder = prepareIssueBuilder((node).getBoolExpr()).withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withHint(hint));
 
         super.visit(node);

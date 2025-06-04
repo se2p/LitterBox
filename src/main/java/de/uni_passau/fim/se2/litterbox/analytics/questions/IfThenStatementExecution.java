@@ -7,6 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.Random;
 
@@ -27,9 +28,9 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
             Stmt statement = getSingleStmt(thenStmts.getStatement(random.nextInt(thenStmts.getNumberOfStatements())));
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.STATEMENT, statement.getScratchBlocksWithoutNewline());
-            hint.setParameter(Hint.CONDITION, condition.getScratchBlocksWithoutNewline());
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(statement));
+            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
             hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
             hint.setParameter(Hint.ANSWER, conditionValue ? YES : NO);
             addIssue(builder.withHint(hint));

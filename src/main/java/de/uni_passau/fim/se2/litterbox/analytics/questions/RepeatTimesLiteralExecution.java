@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 /**
  * @QuestionType Number
@@ -39,8 +40,8 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                     ASTNode stmt = getSingleStmt(node.getStmtList().getStmts().get(0));
 
                     IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                    Hint hint = new Hint(getName());
-                    hint.setParameter(Hint.STATEMENT, stmt.getScratchBlocksWithoutNewline());
+                    Hint hint = Hint.fromKey(getName());
+                    hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(stmt));
                     hint.setParameter(Hint.ANSWER, String.valueOf(num.getValue()));
                     addIssue(builder.withHint(hint));
                 }

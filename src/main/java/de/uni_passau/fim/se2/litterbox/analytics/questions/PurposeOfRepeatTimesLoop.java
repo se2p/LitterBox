@@ -15,7 +15,7 @@ public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withHint(hint));
     }
 

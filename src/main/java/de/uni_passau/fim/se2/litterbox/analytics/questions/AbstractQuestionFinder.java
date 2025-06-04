@@ -14,6 +14,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.*;
@@ -82,7 +83,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected String wrappedScratchBlocks(Script node) {
-        return "[scratchblocks]\n" + node.getScratchBlocks() + "[/scratchblocks]";
+        return "[scratchblocks]\n" + ScratchBlocksVisitor.of(node) + "[/scratchblocks]";
     }
 
     protected String wrappedScratchBlocks(ProcedureDefinition node) {
@@ -90,42 +91,42 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected String wrappedScratchBlocks(StmtList node) {
-        return "[scratchblocks]\n" + node.getScratchBlocks() + "[/scratchblocks]";
+        return "[scratchblocks]\n" + ScratchBlocksVisitor.of(node) + "[/scratchblocks]";
     }
 
     protected String wrappedScratchBlocks(Stmt node) {
-        return "[sbi]" + node.getScratchBlocksWithoutNewline() + "[/sbi]";
+        return "[sbi]" + ScratchBlocksVisitor.of(node) + "[/sbi]";
     }
 
     protected String wrappedScratchBlocks(Expression node) {
-        return "[sbi]" + node.getScratchBlocksWithoutNewline() + "[/sbi]";
+        return "[sbi]" + ScratchBlocksVisitor.of(node) + "[/sbi]";
     }
 
     protected String wrappedScratchBlocks(Variable node) {
-        return "[var]" + node.getName().getScratchBlocks() + "[/var]";
+        return "[var]" + ScratchBlocksVisitor.of(node) + "[/var]";
     }
 
     protected String wrappedScratchBlocks(NumberLiteral node) {
-        return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
+        return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: grey ring>[/sbi]";
     }
 
     protected String wrappedScratchBlocks(StringLiteral node) {
         if (inLookStmt) {
-            return "[sbi]<" + node.getScratchBlocks() + " :: looks ring>[/sbi]";
+            return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: looks ring>[/sbi]";
         }
         else if (inSoundStmt) {
-            return "[sbi]<" + node.getScratchBlocks() + " :: sound ring>[/sbi]";
+            return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: sound ring>[/sbi]";
         }
         else if (inBroadcastStmt) {
-            return "[sbi]<" + node.getScratchBlocks() + " :: control ring>[/sbi]";
+            return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: control ring>[/sbi]";
         }
         else {
-            return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
+            return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: grey ring>[/sbi]";
         }
     }
 
     protected String wrappedScratchBlocks(ColorLiteral node) {
-        return "[sbi]<" + node.getScratchBlocks() + " :: grey ring>[/sbi]";
+        return "[sbi]<" + ScratchBlocksVisitor.of(node) + " :: grey ring>[/sbi]";
     }
 
     @Override

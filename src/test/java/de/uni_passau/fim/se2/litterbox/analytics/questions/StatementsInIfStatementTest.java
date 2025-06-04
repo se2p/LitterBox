@@ -33,8 +33,8 @@ class StatementsInIfStatementTest implements JsonTest {
          for (Issue issue : issues) {
              String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
              String answer = "\\[solutions](\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){2}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-             assertThat(issue.getHint()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-             assertThat(issue.getHint()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+             assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+             assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
          }
     }
 
@@ -47,8 +47,8 @@ class StatementsInIfStatementTest implements JsonTest {
         for (Issue issue : issues) {
             String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
             String answer = "\\[solutions](\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){2}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-            assertThat(issue.getHint()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-            assertThat(issue.getHint()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }
     }
 
@@ -77,8 +77,8 @@ class StatementsInIfStatementTest implements JsonTest {
         for (Issue issue : issues) {
             String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
             String answer = "\\[solutions]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-            assertThat(issue.getHint()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-            assertThat(issue.getHint()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }
     }
 

@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
                 nodes.add(script1.getEvent());
                 nodes.add(script2.getEvent());
 
-                Hint hint = new Hint(getName());
+                Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.EVENT, event);
                 hint.setParameter(Hint.ANSWER, NO);
 
@@ -66,7 +67,7 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
     @Override
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
-            scriptsWithEvent.computeIfAbsent(node.getEvent().getScratchBlocksWithoutNewline(),
+            scriptsWithEvent.computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()),
                     k -> new ArrayList<>()).add(node);
         }
     }

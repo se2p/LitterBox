@@ -15,7 +15,7 @@ public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
     @Override
     public void visit(UntilStmt node) {
         IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withHint(hint));
 
         super.visit(node);

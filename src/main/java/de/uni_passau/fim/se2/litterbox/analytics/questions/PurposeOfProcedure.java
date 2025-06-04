@@ -17,7 +17,7 @@ public class PurposeOfProcedure extends AbstractQuestionFinder {
         currentProcedure = node;
         IssueBuilder builder = prepareIssueBuilder(node).withMetadata(node.getMetadata().getDefinition()).withSeverity(IssueSeverity.LOW);
         builder.withProcedure(node);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         addIssue(builder.withHint(hint));
     }
 

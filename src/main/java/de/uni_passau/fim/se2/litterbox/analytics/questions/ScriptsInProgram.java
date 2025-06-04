@@ -21,7 +21,7 @@ public class ScriptsInProgram extends AbstractQuestionFinder {
         super.visit(node);
 
         IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = new Hint(getName());
+        Hint hint = Hint.fromKey(getName());
         hint.setParameter(Hint.ANSWER, Integer.toString(scriptsInProgram));
         addIssue(builder.withHint(hint));
     }

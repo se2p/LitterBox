@@ -55,7 +55,7 @@ public class VariableInScriptTest implements JsonTest {
         Set<Issue> issues = runFinder(prog, new VariableInScript(), false);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint();
+            String hint = issue.getHint().getHintText();
             assertThat(hint).contains("my variable");
             assertThat(hint).contains("new variable");
         }

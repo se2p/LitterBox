@@ -34,7 +34,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         super.visit(node);
 
         if (loopFound && choices.size() > 0) {
-            Hint hint = new Hint(getName());
+            Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
             hint.setParameter(Hint.ANSWER, getAnswers());
             addIssue(builder.withHint(hint));
