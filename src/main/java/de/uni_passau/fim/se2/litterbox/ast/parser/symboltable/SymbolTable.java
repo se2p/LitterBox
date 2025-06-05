@@ -131,7 +131,7 @@ public class SymbolTable {
             return Optional.of(variables.get(stageKey));
         }
 
-        String identFromMap = getVariableIdentifierFromActorAndName(variableName, actorName);
+        String identFromMap = getVariableIdentifierFromActorAndName(actorName, variableName);
         if (identFromMap != null) {
             key = identFromMap + variableName + actorName;
             if (variables.containsKey(key)) {
@@ -139,7 +139,7 @@ public class SymbolTable {
             }
         }
 
-        identFromMap = getVariableIdentifierFromActorAndName(variableName, "Stage");
+        identFromMap = getVariableIdentifierFromActorAndName("Stage", variableName);
         if (identFromMap != null) {
             key = identFromMap + variableName + "Stage";
             if (variables.containsKey(key)) {
@@ -153,12 +153,12 @@ public class SymbolTable {
     /**
      * Tries to retrieve an existing variable, or creates a new one with the given information.
      *
-     * @param ident The block ID of the variable.
+     * @param ident        The block ID of the variable.
      * @param variableName The name of the variable.
-     * @param actorName The actor the variable belongs to.
-     * @param newVarType The type of the variable, if a new one gets created.
-     * @param global If the new variable should be in global scope.
-     * @param newVarActor The actor the new variable should be in.
+     * @param actorName    The actor the variable belongs to.
+     * @param newVarType   The type of the variable, if a new one gets created.
+     * @param global       If the new variable should be in global scope.
+     * @param newVarActor  The actor the new variable should be in.
      * @return The existing or newly added variable.
      */
     public VariableInfo getOrAddVariable(
@@ -172,12 +172,12 @@ public class SymbolTable {
     /**
      * Tries to retrieve an existing list, or creates a new one with the given information.
      *
-     * @param ident The block ID of the list.
-     * @param listName The name of the list.
-     * @param actorName The actor the list belongs to.
+     * @param ident          The block ID of the list.
+     * @param listName       The name of the list.
+     * @param actorName      The actor the list belongs to.
      * @param expressionList The content of the list, if a new one gets created.
-     * @param global If the new list should be in global scope.
-     * @param newVarActor The actor the new variable should be in.
+     * @param global         If the new list should be in global scope.
+     * @param newVarActor    The actor the new variable should be in.
      * @return The existing or newly added list.
      */
     public ExpressionListInfo getOrAddList(
@@ -211,7 +211,7 @@ public class SymbolTable {
             return Optional.of(lists.get(stageKey));
         }
 
-        String identFromMap = getListIdentifierFromActorAndName(listName, actorName);
+        String identFromMap = getListIdentifierFromActorAndName(actorName, listName);
         if (identFromMap != null) {
             key = identFromMap + listName + actorName;
             if (lists.containsKey(key)) {
@@ -219,7 +219,7 @@ public class SymbolTable {
             }
         }
 
-        identFromMap = getListIdentifierFromActorAndName(listName, "Stage");
+        identFromMap = getListIdentifierFromActorAndName("Stage", listName);
         if (identFromMap != null) {
             stageKey = identFromMap + listName + "Stage";
             if (lists.containsKey(stageKey)) {
@@ -246,6 +246,9 @@ public class SymbolTable {
                 return current.getValue().ident();
             }
         }
+        if (!actor.equals("Stage")) {
+            return getListIdentifierFromActorAndName("Stage", name);
+        }
         return null;
     }
 
@@ -256,6 +259,9 @@ public class SymbolTable {
             if (info.variableName().equals(name) && info.actor().equals(actor)) {
                 return current.getValue().ident();
             }
+        }
+        if (!actor.equals("Stage")) {
+            return getVariableIdentifierFromActorAndName("Stage", name);
         }
         return null;
     }

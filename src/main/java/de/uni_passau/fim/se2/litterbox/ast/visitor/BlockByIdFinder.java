@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -49,5 +50,10 @@ public final class BlockByIdFinder implements ScratchVisitor {
         } else {
             ScratchVisitor.super.visit(node);
         }
+    }
+
+    @Override
+    public void visit(Script node) {
+        visitChildren(node);
     }
 }

@@ -234,12 +234,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(ActorDefinition node) {
         currentActor = node;
         if (addActorNames) {
-            if (hasContent) {
+            if (!node.getProcedureDefinitionList().getList().isEmpty() || node.getScripts().getSize() > 0) {
+                if (hasContent) {
+                    newLine();
+                }
+                emitNoSpace("//Sprite: " + node.getIdent().getName());
                 newLine();
+                hasContent = true;
             }
-            emitNoSpace("//Sprite: " + node.getIdent().getName());
-            newLine();
-            hasContent = true;
         }
         node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
@@ -250,6 +252,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(ProcedureDefinitionList node) {
         for (ProcedureDefinition procedureDefinition : node.getList()) {
             if (hasContent) {
+                newLine();
+            }
+            if (addActorNames) {
+                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(procedureDefinition));
                 newLine();
             }
             procedureDefinition.accept(this);
@@ -264,7 +270,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 newLine();
             }
             if (addActorNames) {
-                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script.getEvent()));
+                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script));
                 newLine();
             }
             script.accept(this);

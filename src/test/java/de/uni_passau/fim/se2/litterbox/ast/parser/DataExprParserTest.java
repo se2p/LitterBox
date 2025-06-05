@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -74,5 +75,13 @@ class DataExprParserTest implements JsonTest {
         final DataBlockMetadata varMetadata = (DataBlockMetadata) onlineModeVar.getMetadata();
         assertThat(varMetadata.getX()).isEqualTo(0);
         assertThat(varMetadata.getY()).isEqualTo(0);
+    }
+
+    @Test
+    void testParseVariableNullID() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/variablesWithNullId.json");
+        final List<Variable> variables = NodeFilteringVisitor.getBlocks(program.getActorDefinitionList().getDefinitions().get(1).getScripts(), Variable.class);
+        assertThat(variables).isNotEmpty();
+        Assertions.assertEquals(2, variables.size());
     }
 }

@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -200,17 +199,6 @@ public class ActorJSONCreator {
             }
         }
 
-        //attributes that are only in stage
-        if (isStage) {
-            jsonString.append(",");
-            StageMetadata stageMetadata = (StageMetadata) meta;
-            if (stageMetadata.getTextToSpeechLanguage() == null) {
-                JSONStringCreator.createFieldValueNull(jsonString, TEXT_TO_SPEECH_KEY);
-            } else {
-                JSONStringCreator.createFieldValue(jsonString, TEXT_TO_SPEECH_KEY,
-                        stageMetadata.getTextToSpeechLanguage());
-            }
-        }
         jsonString.append("}");
         return jsonString.toString();
     }
