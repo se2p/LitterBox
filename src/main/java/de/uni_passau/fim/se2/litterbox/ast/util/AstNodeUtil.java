@@ -18,12 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.util;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -75,6 +73,12 @@ public class AstNodeUtil {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof ProcedureMetadata procedure) {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
+        } else if (node instanceof Script script) {
+            if (script.getEvent() instanceof Never) {
+                return getBlockId(script.getStmtList().getStatement(0));
+            } else {
+                return getBlockId(script.getEvent());
+            }
         } else {
             return null;
         }

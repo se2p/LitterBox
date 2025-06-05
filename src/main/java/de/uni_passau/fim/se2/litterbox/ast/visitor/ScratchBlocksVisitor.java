@@ -266,7 +266,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 newLine();
             }
             if (addActorNames) {
-                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script.getEvent()));
+                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script));
                 newLine();
             }
             script.accept(this);
