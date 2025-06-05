@@ -18,13 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.procedure;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ProcedureDefinition extends AbstractNode implements ASTNode, ScriptEntity {
@@ -77,13 +79,5 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode, Script
 
     public Opcode getPrototypeOpcode() {
         return ProcedureOpcode.procedures_prototype;
-    }
-
-    public String getScratchBlocks(Program program, ActorDefinition currentActor) {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        visitor.setProgram(program);
-        visitor.setCurrentActor(currentActor);
-        this.accept(visitor);
-        return visitor.getScratchBlocks();
     }
 }

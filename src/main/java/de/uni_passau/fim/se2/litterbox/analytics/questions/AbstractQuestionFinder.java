@@ -106,7 +106,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected String wrappedScratchBlocks(ProcedureDefinition node) {
-        return "[scratchblocks]\n" + node.getScratchBlocks(program, currentActor) + "[/scratchblocks]";
+        return "[scratchblocks]\n" + ScratchBlocksVisitor.of(node) + "[/scratchblocks]";
     }
 
     protected String wrappedScratchBlocks(StmtList node) {
