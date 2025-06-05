@@ -107,9 +107,10 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
     @Override
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
-            scriptsWithEvent.computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()),
-                    k -> new HashMap<>()).computeIfAbsent(ScratchBlocksVisitor.of(currentActor.getIdent()),
-                    k -> new ArrayList<>()).add(node);
+            scriptsWithEvent
+                    .computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()), k -> new HashMap<>())
+                    .computeIfAbsent(ScratchBlocksVisitor.of(currentActor.getIdent()), k -> new ArrayList<>())
+                    .add(node);
         }
     }
 

@@ -63,7 +63,7 @@ public class SetVariable extends AbstractQuestionFinder {
     }
 
     /**
-     * Return expression value without open- and close-parentheses
+     * Returns expression value without open- and close-parentheses.
      *
      * @param node Expression node
      * @return expression value without parentheses

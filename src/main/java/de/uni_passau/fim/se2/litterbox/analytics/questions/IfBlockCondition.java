@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers 1
- * @NumChoices {@code MAX_CHOICES}
+ * @NumChoices {@link AbstractQuestionFinder#maxChoices}
  * @Highlighted If Statement
  * @Context Single script
  */

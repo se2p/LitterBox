@@ -34,7 +34,7 @@ import static java.util.Objects.isNull;
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers 1
- * @NumChoices {@code MAX_CHOICES}
+ * @NumChoices {@link AbstractQuestionFinder#maxChoices}
  * @Highlighted Nothing
  * @Context Whole program
  */

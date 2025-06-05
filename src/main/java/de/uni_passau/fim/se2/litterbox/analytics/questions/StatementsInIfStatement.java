@@ -33,8 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
  * If stmts are contained in if stmts.
  *
  * @QuestionType Multiple Choice
- * @NumAnswers {@code MAX_CHOICES}
- * @NumChoices {@code MAX_CHOICES}
+ * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
+ * @NumChoices {@link AbstractQuestionFinder#maxChoices}
  * @Highlighted Script
  * @Context Single script
  */

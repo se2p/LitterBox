@@ -42,9 +42,9 @@ import java.util.Set;
 
 public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
-    protected final int MAX_CHOICES;
-    protected final String YES = IssueTranslator.getInstance().getInfo("yes");
-    protected final String NO = IssueTranslator.getInstance().getInfo("no");
+    protected final int maxChoices;
+    protected static final String YES = IssueTranslator.getInstance().getInfo("yes");
+    protected static final String NO = IssueTranslator.getInstance().getInfo("no");
 
     protected Set<String> choices;
     protected Set<String> answers;
@@ -54,7 +54,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     protected boolean inBroadcastStmt;
 
     public AbstractQuestionFinder() {
-        MAX_CHOICES = 4;
+        maxChoices = 4;
     }
 
     @Override
@@ -70,32 +70,32 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     /**
-     * If there are more than {@code MAX_CHOICES} elements in {@code choices},
-     * choose {@code MAX_CHOICES} elements randomly. Otherwise, return all elements.
+     * If there are more than {@link #maxChoices} elements in {@code choices},
+     * choose {@link #maxChoices} elements randomly. Otherwise, return all elements.
      *
-     * @return a list of at most {@code MAX_CHOICES} elements from {@code choices}
+     * @return a list of at most {@link #maxChoices} elements from {@code choices}
      */
     protected String getChoices() {
         ArrayList<String> list = new ArrayList<>(choices);
-        if (choices.size() > MAX_CHOICES) {
+        if (choices.size() > maxChoices) {
             Collections.shuffle(list);
-            return String.join("|", list.subList(0, MAX_CHOICES));
+            return String.join("|", list.subList(0, maxChoices));
         } else {
             return String.join("|", list);
         }
     }
 
     /**
-     * If there are more than {@code MAX_CHOICES} elements in {@code answers},
-     * choose {@code MAX_CHOICES} elements randomly. Otherwise, return all elements.
+     * If there are more than {@link #maxChoices} elements in {@code answers},
+     * choose {@link #maxChoices} elements randomly. Otherwise, return all elements.
      *
-     * @return a list of at most {@code MAX_CHOICES} elements from {@code answers}
+     * @return a list of at most {@link #maxChoices} elements from {@code answers}
      */
     protected String getAnswers() {
         ArrayList<String> list = new ArrayList<>(answers);
-        if (answers.size() > MAX_CHOICES) {
+        if (answers.size() > maxChoices) {
             Collections.shuffle(list);
-            return String.join("|", list.subList(0, MAX_CHOICES));
+            return String.join("|", list.subList(0, maxChoices));
         } else {
             return String.join("|", list);
         }

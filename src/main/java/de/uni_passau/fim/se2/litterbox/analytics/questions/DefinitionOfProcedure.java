@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers 1
- * @NumChoices {@code MAX_CHOICES}
+ * @NumChoices {@link AbstractQuestionFinder#maxChoices}
  * @Highlighted Statement
  * @Context Single actor
  */
@@ -66,7 +66,7 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                     }
                 });
                 scripts.forEach(s -> {
-                    if (choices.size() < MAX_CHOICES) {
+                    if (choices.size() < maxChoices) {
                         choices.add(wrappedScratchBlocks(s));
                     }
                 });
@@ -92,8 +92,8 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        String procedureName =
-                program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName()).get(node.getIdent()).getName();
+        String procedureName = program.getProcedureMapping().getProcedures()
+                .get(currentActor.getIdent().getName()).get(node.getIdent()).getName();
         procedures.put(procedureName, node);
     }
 
