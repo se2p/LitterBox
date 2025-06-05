@@ -1,6 +1,5 @@
 {
   lib,
-  fetchFromGitHub,
   jre,
   makeWrapper,
   maven,
@@ -13,7 +12,7 @@ in
 
     src = ./.;
 
-    mvnHash = "sha256-CWU44zaKIjk+tchEZ29IIaGdwlVbLZ2FOEXkAYpUa4s=";
+    mvnHash = "sha256-+KmtD7s9AfHN155VT6wYs3vzyWATmeci4lwcXjsHpFo=";
 
     nativeBuildInputs = [makeWrapper];
 
