@@ -50,7 +50,8 @@ abstract class StmtConverter<T extends Stmt> {
         if (optVarId.isPresent()) {
             varId = optVarId.get();
         } else {
-            String id = state.getSymbolTable().getVariableIdentifierFromActorAndName(state.getCurrentActor().getName(), varName);
+            String id = state.getSymbolTable()
+                    .getVariableIdentifierFromActorAndName(state.getCurrentActor().getName(), varName);
             if (id != null) {
                 varId = new RawBlockId(id);
             } else {
@@ -75,7 +76,8 @@ abstract class StmtConverter<T extends Stmt> {
         if (optListId.isPresent()) {
             listId = optListId.get();
         } else {
-            String id = state.getSymbolTable().getListIdentifierFromActorAndName(state.getCurrentActor().getName(), listName);
+            String id = state.getSymbolTable()
+                    .getListIdentifierFromActorAndName(state.getCurrentActor().getName(), listName);
             if (id != null) {
                 listId = new RawBlockId(id);
             } else {
