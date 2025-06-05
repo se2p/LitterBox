@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MultiAttributeModificationRobot;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.UnnecessaryTimeRobot;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -164,6 +165,7 @@ public class IssueTool {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
         allFinders.putAll(generatePerfumeFinders());
+        allFinders.putAll(generateQuestionFinders());
 
         return allFinders;
     }
@@ -281,6 +283,45 @@ public class IssueTool {
         return perfumeFinders;
     }
 
+    public static Map<String, IssueFinder> generateQuestionFinders() {
+        Map<String, IssueFinder> questionFinders = new LinkedHashMap<>();
+
+        if (LOAD_GENERAL) {
+            registerQuestionFinder(new BlockControllingLoop(), questionFinders);
+            registerQuestionFinder(new DefinitionOfProcedure(), questionFinders);
+            registerQuestionFinder(new ElementInLoopBody(), questionFinders);
+            registerQuestionFinder(new ElementInLoopCondition(), questionFinders);
+            registerQuestionFinder(new IfBlockCondition(), questionFinders);
+            registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
+            registerQuestionFinder(new IfThenStatementExecution(), questionFinders);
+            registerQuestionFinder(new PurposeOfBroadcast(), questionFinders);
+            registerQuestionFinder(new PurposeOfForeverLoop(), questionFinders);
+            registerQuestionFinder(new PurposeOfIfCondition(), questionFinders);
+            registerQuestionFinder(new PurposeOfLoopCondition(), questionFinders);
+            registerQuestionFinder(new PurposeOfProcedure(), questionFinders);
+            registerQuestionFinder(new PurposeOfProgram(), questionFinders);
+            registerQuestionFinder(new PurposeOfRepeatTimesLoop(), questionFinders);
+            registerQuestionFinder(new PurposeOfRepeatUntilLoop(), questionFinders);
+            registerQuestionFinder(new PurposeOfScript(), questionFinders);
+            registerQuestionFinder(new PurposeOfVariable(), questionFinders);
+            registerQuestionFinder(new RepeatTimesLiteralExecution(), questionFinders);
+            registerQuestionFinder(new ScriptsForActor(), questionFinders);
+            registerQuestionFinder(new ScriptsInProgram(), questionFinders);
+            registerQuestionFinder(new ScriptsTriggeredByEvent(), questionFinders);
+            registerQuestionFinder(new ScriptsTriggeredByStatement(), questionFinders);
+            registerQuestionFinder(new ScriptExecutionOrderDifferentActors(), questionFinders);
+            registerQuestionFinder(new ScriptExecutionOrderSameActor(), questionFinders);
+            registerQuestionFinder(new ScriptToSetVariable(), questionFinders);
+            registerQuestionFinder(new SetVariable(), questionFinders);
+            registerQuestionFinder(new StatementsInIfStatement(), questionFinders);
+            registerQuestionFinder(new StatementTriggersEvent(), questionFinders);
+            registerQuestionFinder(new VariableForActor(), questionFinders);
+            registerQuestionFinder(new VariableInScript(), questionFinders);
+        }
+
+        return questionFinders;
+    }
+
     public static List<IssueFinder> getFinders(final FinderGroup finderGroup) {
         final Collection<IssueFinder> finders = switch (finderGroup) {
             case ALL -> generateAllFinders().values();
@@ -288,6 +329,7 @@ public class IssueTool {
             case BUGS -> generateBugFinders().values();
             case BUGS_SCRIPTS -> generateScriptsBugFinders().values();
             case PERFUMES -> generatePerfumeFinders().values();
+            case QUESTIONS -> generateQuestionFinders().values();
             case DEFAULT -> generateAllFinders().values().stream()
                     .filter(f -> !f.getName().toLowerCase().endsWith("strict"))
                     .toList();
@@ -347,6 +389,10 @@ public class IssueTool {
         return Collections.unmodifiableSet(generatePerfumeFinders().keySet());
     }
 
+    public static Collection<String> getQuestionFinderNames() {
+        return Collections.unmodifiableSet(generateQuestionFinders().keySet());
+    }
+
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
         if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
@@ -386,5 +432,14 @@ public class IssueTool {
         fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
         fixHeuristicsNames.add(StutteringMovementFix.NAME);
         return fixHeuristicsNames;
+    }
+
+    static void registerQuestionFinder(IssueFinder finder, Map<String, IssueFinder> questionFinders) {
+        if (finder.getIssueType() != IssueType.QUESTION) {
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Solution IssueFinder");
+        }
+        questionFinders.put(finder.getName(), finder);
     }
 }

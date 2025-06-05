@@ -74,7 +74,7 @@ public class AstNodeUtil {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof ProcedureMetadata procedure) {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
-         }else if (node instanceof Script script) {
+        } else if (node instanceof Script script) {
             if (script.getEvent() instanceof Never) {
                 return getBlockId(script.getStmtList().getStatement(0));
             } else {
@@ -173,8 +173,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     * Might return {@code node} itself if it has matching type.
-     * Returns {@code null} if no parent of the requested type could be found.
+     *         Might return {@code node} itself if it has matching type.
+     *         Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;

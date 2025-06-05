@@ -32,6 +32,7 @@ public enum FinderGroup {
     PERFUMES("perfumes"),
     DEFAULT("default"),
     FLAWS("flaws"),
+    QUESTIONS("questions"),
     MOST_COMMON_BUGS("most_common_bugs");
 
     private final String group;

@@ -62,7 +62,7 @@ class LLMIssueFixProcessorTest implements JsonTest {
     void ignoreNonScriptIssues() throws Exception {
         final Program program = getAST("./src/test/fixtures/goodPractice/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
-                .filter(issue -> !IssueType.PERFUME.equals(issue.getIssueType()))
+                .filter(issue -> !Set.of(IssueType.PERFUME, IssueType.QUESTION).contains(issue.getIssueType()))
                 .collect(Collectors.toSet());
         assertThat(issues).isNotEmpty();
         assertAll(issues.stream().map(issue -> () -> assertThat(issue.getScript()).isNull()));
