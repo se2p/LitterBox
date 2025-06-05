@@ -53,7 +53,7 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     protected boolean inSoundStmt;
     protected boolean inBroadcastStmt;
 
-    public AbstractQuestionFinder() {
+    protected AbstractQuestionFinder() {
         maxChoices = 4;
     }
 

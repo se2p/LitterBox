@@ -24,8 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-
-import java.util.Random;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 /**
  * @QuestionType Multiple Choice
@@ -39,8 +38,7 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (node.getThenStmts().hasStatements() && node.getElseStmts().hasStatements()) {
-            Random random = new Random();
-            boolean conditionValue = random.nextBoolean();
+            boolean conditionValue = Randomness.nextBoolean();
             BoolExpr condition = node.getBoolExpr();
 
             String thenStmts = wrappedScratchBlocks(node.getThenStmts());

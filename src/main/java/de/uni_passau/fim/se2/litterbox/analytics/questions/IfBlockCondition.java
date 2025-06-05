@@ -97,10 +97,12 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         }
     }
 
+    @Override
     public void visit(Stmt node) {
         choices.add(wrappedScratchBlocks(node));
     }
 
+    @Override
     public void visit(BoolExpr node) {
         choices.add(wrappedScratchBlocks(node));
     }

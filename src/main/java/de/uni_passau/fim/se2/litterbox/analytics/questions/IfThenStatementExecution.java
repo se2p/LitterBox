@@ -26,8 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-
-import java.util.Random;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 /**
  * @QuestionType Yes or No
@@ -39,11 +38,12 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().hasStatements()) {
-            Random random = new Random();
-            boolean conditionValue = random.nextBoolean();
+            boolean conditionValue = Randomness.nextBoolean();
             BoolExpr condition = node.getBoolExpr();
             StmtList thenStmts = node.getThenStmts();
-            Stmt statement = getSingleStmt(thenStmts.getStatement(random.nextInt(thenStmts.getNumberOfStatements())));
+            Stmt statement = getSingleStmt(
+                    thenStmts.getStatement(Randomness.nextInt(thenStmts.getNumberOfStatements()))
+            );
 
             IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
             Hint hint = Hint.fromKey(getName());

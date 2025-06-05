@@ -44,6 +44,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
     private boolean loopFound;
     private IssueBuilder builder;
 
+    @Override
     public void visit(Script node) {
         loopFound = false;
         builder = null;
@@ -51,7 +52,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         answers.clear();
         super.visit(node);
 
-        if (loopFound && choices.size() > 0) {
+        if (loopFound && !choices.isEmpty()) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.CHOICES, getChoices());
             hint.setParameter(Hint.ANSWER, getAnswers());
@@ -59,6 +60,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         }
     }
 
+    @Override
     public void visit(RepeatTimesStmt node) {
         NumExpr times = node.getTimes();
 
@@ -73,6 +75,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         visit(node.getStmtList());
     }
 
+    @Override
     public void visit(UntilStmt node) {
         if (!loopFound) {
             loopFound = true;
@@ -84,6 +87,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         visit(node.getStmtList());
     }
 
+    @Override
     public void visit(ControlStmt node) {
         for (ASTNode child : node.getChildren()) {
             if (child instanceof BoolExpr boolExpr) {
@@ -96,16 +100,19 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         }
     }
 
+    @Override
     public void visit(Stmt node) {
         choices.add(wrappedScratchBlocks(node));
         super.visit(node);
     }
 
+    @Override
     public void visit(BoolExpr node) {
         choices.add(wrappedScratchBlocks(node));
         super.visit(node);
     }
 
+    @Override
     public void visit(NumExpr node) {
         if (node instanceof NumberLiteral numberLiteral) {
             choices.add(wrappedScratchBlocks(numberLiteral));
@@ -114,6 +121,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         }
     }
 
+    @Override
     public void visit(TerminationStmt node) {
         // Don't include Termination statements as options
     }

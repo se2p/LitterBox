@@ -112,10 +112,10 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(Event node) {
         if (searchingForEvents) {
-            if (node instanceof ReceptionOfMessage) {
-                visit((ReceptionOfMessage) node);
-            } else if (node instanceof BackdropSwitchTo) {
-                visit((BackdropSwitchTo) node);
+            if (node instanceof ReceptionOfMessage receptionOfMessage) {
+                visit(receptionOfMessage);
+            } else if (node instanceof BackdropSwitchTo backdropSwitchTo) {
+                visit(backdropSwitchTo);
             }
         }
     }
@@ -164,28 +164,24 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if (!searchingForEvents) {
-            if (node.getElementChoice() instanceof WithExpr) {
-                String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
-                if (eventStatements.containsKey(backdrop)) {
-                    eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
-                } else {
-                    choices.add(wrappedScratchBlocks(node));
-                }
+        if (!searchingForEvents && node.getElementChoice() instanceof WithExpr withExpr) {
+            String backdrop = ScratchBlocksVisitor.of(withExpr.getExpression());
+            if (eventStatements.containsKey(backdrop)) {
+                eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
+            } else {
+                choices.add(wrappedScratchBlocks(node));
             }
         }
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if (!searchingForEvents) {
-            if (node.getElementChoice() instanceof WithExpr) {
-                String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
-                if (eventStatements.containsKey(backdrop)) {
-                    eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
-                } else {
-                    choices.add(wrappedScratchBlocks(node));
-                }
+        if (!searchingForEvents && node.getElementChoice() instanceof WithExpr withExpr) {
+            String backdrop = ScratchBlocksVisitor.of(withExpr.getExpression());
+            if (eventStatements.containsKey(backdrop)) {
+                eventStatements.get(backdrop).add(wrappedScratchBlocks(node));
+            } else {
+                choices.add(wrappedScratchBlocks(node));
             }
         }
     }
@@ -200,6 +196,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
         visit(node.getThenStmts());
     }
 
+    @Override
     public void visit(IfElseStmt node) {
         visit(node.getThenStmts());
         visit(node.getElseStmts());

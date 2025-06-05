@@ -122,8 +122,8 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
-            String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
+        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr withExpr) {
+            String backdrop = ScratchBlocksVisitor.of(withExpr.getExpression());
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);
@@ -132,8 +132,8 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr) {
-            String backdrop = ScratchBlocksVisitor.of(((WithExpr) node.getElementChoice()).getExpression());
+        if (!isNull(currentScript) && node.getElementChoice() instanceof WithExpr withExpr) {
+            String backdrop = ScratchBlocksVisitor.of(withExpr.getExpression());
             eventStatements.putIfAbsent(backdrop, node);
             scriptForStmt.putIfAbsent(node, currentScript);
             actorForStmt.putIfAbsent(node, currentActor);
