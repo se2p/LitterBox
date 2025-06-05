@@ -67,6 +67,16 @@ public class ResourceBundleTest {
         }
     }
 
+    @ParameterizedTest(name = "Testing existence of question names for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void checkQuestionResourceNames(String locale) {
+        ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
+        for (String questionFinder : IssueTool.getQuestionFinderNames()) {
+            assertWithMessage("Language " + locale + ", question finder " + questionFinder + " not found in name resources").that(names.keySet()).contains(questionFinder);
+            checkEncodingProblems(names.getString(questionFinder));
+        }
+    }
+
     private void checkEncodingProblems(String hint) {
         List<String> invalidChars = Arrays.asList("Ã¶", "ÃŸ", "Ã¤", "Ã¼", "Ã„", "Ã–", "Ãœ");
         for (String invalidChar : invalidChars) {

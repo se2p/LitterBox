@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -116,7 +117,12 @@ public class JSONReportGenerator implements ReportGenerator {
                 .stream()
                 .map(ImageMetadata::getAssetId)
                 .toList();
-        final String scratchBlocksCode = getScratchBlocksCode(issue, issue.getScriptOrProcedureDefinition());
+        final String scratchBlocksCode;
+        if (issue instanceof MultiBlockIssue multi) {
+            scratchBlocksCode = getScratchBlocksCode(multi, multi.getScriptEntities());
+        } else {
+            scratchBlocksCode = getScratchBlocksCode(issue, issue.getScriptOrProcedureDefinition());
+        }
         final String refactoringCode = getScratchBlocksCode(issue, issue.getRefactoredScriptOrProcedureDefinition());
 
         return new IssueDTO(
@@ -196,5 +202,23 @@ public class JSONReportGenerator implements ReportGenerator {
         }
     }
 
-
+    private String getScratchBlocksCode(final Issue issue, final List<ScriptEntity> locations) {
+        StringBuilder builder = new StringBuilder();
+        for (ScriptEntity location : locations) {
+            if (location == null) {
+                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
+                        + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+                builder.append(emptyScript);
+            } else {
+                ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
+                blockVisitor.begin();
+                location.accept(blockVisitor);
+                blockVisitor.end();
+                String scratchBlockCode = blockVisitor.getScratchBlocks();
+                builder.append(scratchBlockCode);
+            }
+            builder.append(" ");
+        }
+        return builder.toString();
+    }
 }

@@ -60,6 +60,44 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <tags>
+                        <tag>
+                            <name>QuestionType</name>
+                            <placement>t</placement>
+                            <head>Question type:</head>
+                        </tag>
+                        <tag>
+                            <!-- the target of a question -->
+                            <name>Highlighted</name>
+                            <placement>t</placement>
+                            <head>Question target:</head>
+                        </tag>
+                        <tag>
+                            <!-- the relevant context for the question -->
+                            <name>Context</name>
+                            <placement>t</placement>
+                            <head>Context:</head>
+                        </tag>
+                        <tag>
+                            <!-- number of choices for multiple choice questions -->
+                            <name>NumChoices</name>
+                            <placement>t</placement>
+                            <head>Number of choices:</head>
+                        </tag>
+                        <tag>
+                            <!-- maximum number of correct choices -->
+                            <name>NumAnswers</name>
+                            <placement>t</placement>
+                            <head>Maximum number of correct answers:</head>
+                        </tag>
+                    </tags>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>

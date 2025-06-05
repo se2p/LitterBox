@@ -301,6 +301,7 @@ public class Main implements Callable<Integer> {
             System.out.printf(detectorFormat, FinderGroup.BUGS, messages.getInfo(FinderGroup.BUGS));
             System.out.printf(detectorFormat, FinderGroup.SMELLS, messages.getInfo(FinderGroup.SMELLS));
             System.out.printf(detectorFormat, FinderGroup.PERFUMES, messages.getInfo(FinderGroup.PERFUMES));
+            System.out.printf(detectorFormat, FinderGroup.QUESTIONS, messages.getInfo(FinderGroup.QUESTIONS));
             System.out.printf(detectorFormat, FinderGroup.FLAWS, messages.getInfo(FinderGroup.FLAWS));
 
             System.out.println(System.lineSeparator());
@@ -314,6 +315,10 @@ public class Main implements Callable<Integer> {
             System.out.println(System.lineSeparator());
             System.out.printf(detectorFormat, "Perfumes:", "");
             printDetectorGroup(IssueTool.getPerfumeFinderNames());
+
+            System.out.println(System.lineSeparator());
+            System.out.printf(detectorFormat, "Questions:", "");
+            printDetectorGroup(IssueTool.getQuestionFinderNames());
         }
 
         private void printDetectorGroup(final Collection<String> detectors) {
