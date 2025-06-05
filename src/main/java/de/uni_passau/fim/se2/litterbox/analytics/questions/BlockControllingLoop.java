@@ -64,8 +64,8 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
 
         if (!loopFound) {
             loopFound = true;
-            answers.add((times instanceof NumberLiteral numberLiteral) ?
-                    wrappedScratchBlocks(numberLiteral) : wrappedScratchBlocks(times));
+            answers.add((times instanceof NumberLiteral numberLiteral)
+                    ? wrappedScratchBlocks(numberLiteral) : wrappedScratchBlocks(times));
             builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
         } else {
             visit(times);

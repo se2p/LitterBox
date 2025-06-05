@@ -63,8 +63,9 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
 
     @Override
     public void visit(Variable node) {
-        if (inScript)
+        if (inScript) {
             variables.add(ScratchBlocksVisitor.of(node));
+        }
     }
 
     @Override

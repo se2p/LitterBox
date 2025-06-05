@@ -22,9 +22,9 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +208,7 @@ public class JSONReportGenerator implements ReportGenerator {
             if (location == null) {
                 String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator()
                         + ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
-               builder.append(emptyScript);
+                builder.append(emptyScript);
             } else {
                 ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
                 blockVisitor.begin();

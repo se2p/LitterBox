@@ -66,8 +66,9 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                     }
                 });
                 scripts.forEach(s -> {
-                    if (choices.size() < MAX_CHOICES)
+                    if (choices.size() < MAX_CHOICES) {
                         choices.add(wrappedScratchBlocks(s));
+                    }
                 });
 
                 currentScript = scriptForCall.get(stmt);
@@ -91,7 +92,8 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        String procedureName = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName()).get(node.getIdent()).getName();
+        String procedureName =
+                program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName()).get(node.getIdent()).getName();
         procedures.put(procedureName, node);
     }
 

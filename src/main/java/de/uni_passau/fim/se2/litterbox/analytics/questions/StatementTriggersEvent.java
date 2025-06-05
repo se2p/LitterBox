@@ -112,10 +112,11 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public void visit(Event node) {
         if (searchingForEvents) {
-            if (node instanceof ReceptionOfMessage)
+            if (node instanceof ReceptionOfMessage) {
                 visit((ReceptionOfMessage) node);
-            else if (node instanceof BackdropSwitchTo)
+            } else if (node instanceof BackdropSwitchTo) {
                 visit((BackdropSwitchTo) node);
+            }
         }
     }
 
@@ -211,8 +212,9 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
 
     @Override
     public void visit(Stmt node) {
-        if (visitingStmts)
+        if (visitingStmts) {
             choices.add(wrappedScratchBlocks(node));
+        }
     }
 
     @Override

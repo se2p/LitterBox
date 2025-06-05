@@ -67,8 +67,8 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
         super.visit(node);
 
         eventStatements.forEach((event, stmt) -> {
-            if (scriptsForEvent.containsKey(event) &&
-                    !scriptsForEvent.get(event).isEmpty()) {
+            if (scriptsForEvent.containsKey(event)
+                    && !scriptsForEvent.get(event).isEmpty()) {
                 answers = scriptsForEvent.get(event);
                 scriptsForEvent.forEach((e, scripts) -> choices.addAll(scripts));
                 choices.removeAll(answers);
@@ -88,15 +88,16 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public void visit(Event node) {
         String event;
-        if (node instanceof ReceptionOfMessage receptionOfMessage)
+        if (node instanceof ReceptionOfMessage receptionOfMessage) {
             event = ScratchBlocksVisitor.of(receptionOfMessage.getMsg());
-        else if (node instanceof BackdropSwitchTo backdropSwitchTo)
+        } else if (node instanceof BackdropSwitchTo backdropSwitchTo) {
             event = ScratchBlocksVisitor.of(backdropSwitchTo.getBackdrop());
-        else
+        } else {
             event = ScratchBlocksVisitor.of(node);
-
-        if (!(node instanceof Never))
+        }
+        if (!(node instanceof Never)) {
             scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
+        }
     }
 
     @Override
