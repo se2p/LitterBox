@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.embedded_kittens.code2.Code2SeqPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.code2.Code2VecPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.ggnn.GgnnGraphPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.ggnn.GgnnOutputFormat;
+import de.uni_passau.fim.se2.embedded_kittens.llm.LlmPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.embedded_kittens.shared.WholeProgramFileProcessor;
 import de.uni_passau.fim.se2.embedded_kittens.shared.WholeProgramJsonProcessor;
@@ -49,6 +50,7 @@ import picocli.CommandLine;
         Main.Code2SeqSubcommand.class,
         Main.Code2vecSubcommand.class,
         Main.GgnnSubcommand.class,
+        Main.LlmSubcommand.class,
         Main.TokenizerSubcommand.class
     },
     footerHeading = "%nExamples:%n",
@@ -330,6 +332,18 @@ public class Main implements Callable<Integer> {
             }
 
             return new GgnnGraphPreprocessor(getCommonOptions(), format, label);
+        }
+    }
+
+    @CommandLine.Command(
+        name = "llm",
+        description = "Transforms each Scratch project into the ScratchBlocks format for an LLM."
+    )
+    static class LlmSubcommand extends MLPreprocessorSubcommand {
+
+        @Override
+        protected MLFilePreprocessor<?> getAnalyzer() {
+            return new LlmPreprocessor(getCommonOptions(), getOutputPath());
         }
     }
 
