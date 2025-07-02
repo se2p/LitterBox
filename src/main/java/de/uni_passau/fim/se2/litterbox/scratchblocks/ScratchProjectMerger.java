@@ -164,7 +164,9 @@ public class ScratchProjectMerger {
                     );
                     ActorDefinition actor = AstNodeUtil.findActorByName(extendedProject, actorInQualified);
                     List<SetStmt> setStmts = new ArrayList<>(actor.getSetStmtList().getStmts());
-                    setStmts.add(new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata()));
+                    setStmts.add(
+                            new SetVariableTo(qualified, new ExpressionList(new ArrayList<>()), new NoBlockMetadata())
+                    );
                     SetStmtList setStmtList = new SetStmtList(Collections.unmodifiableList(setStmts));
                     final SetStmtListReplacementVisitor setStmtRelacementVisitor = new SetStmtListReplacementVisitor(
                             actor.getSetStmtList(),

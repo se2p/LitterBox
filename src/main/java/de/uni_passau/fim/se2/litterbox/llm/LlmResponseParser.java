@@ -134,9 +134,9 @@ public class LlmResponseParser {
 
             final ActorDefinition actor = originalProgram.getActorDefinitionList()
                     .getActorDefinition(actorName)
-                    .orElseGet(
-                            () -> getBlankActorDefinition(Objects.requireNonNullElse(actorName, "unidentifiedActor"))
-                    );
+                    .orElseGet(() -> getBlankActorDefinition(
+                            Objects.requireNonNullElse(actorName, "unidentifiedActor")
+                    ));
             final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
             if (updatedActor.isStage()) {
@@ -196,13 +196,27 @@ public class LlmResponseParser {
 
     private ActorDefinition getBlankActorDefinition(String actorName) {
         List<SetStmt> setStmtLists = new ArrayList<>();
-        setStmtLists.add(new SetAttributeTo(new StringLiteral("Volume"), new NumberLiteral(100), new NoBlockMetadata()));
-        setStmtLists.add(new SetAttributeTo(new StringLiteral("layerOrder"), new NumberLiteral(1), new NoBlockMetadata()));
+        setStmtLists.add(
+                new SetAttributeTo(new StringLiteral("Volume"), new NumberLiteral(100), new NoBlockMetadata())
+        );
+        setStmtLists.add(
+                new SetAttributeTo(new StringLiteral("layerOrder"), new NumberLiteral(1), new NoBlockMetadata())
+        );
         setStmtLists.add(new SetAttributeTo(new StringLiteral("x"), new NumberLiteral(0), new NoBlockMetadata()));
         setStmtLists.add(new SetAttributeTo(new StringLiteral("y"), new NumberLiteral(0), new NoBlockMetadata()));
-        setStmtLists.add(new SetAttributeTo(new StringLiteral("size"), new NumberLiteral(50), new NoBlockMetadata()));
-        setStmtLists.add(new SetAttributeTo(new StringLiteral("direction"), new NumberLiteral(90), new NoBlockMetadata()));
-        setStmtLists.add(new SetAttributeTo(new StringLiteral("rotationStyle"), new StringLiteral("all around"), new NoBlockMetadata()));
+        setStmtLists.add(
+                new SetAttributeTo(new StringLiteral("size"), new NumberLiteral(50), new NoBlockMetadata())
+        );
+        setStmtLists.add(
+                new SetAttributeTo(new StringLiteral("direction"), new NumberLiteral(90), new NoBlockMetadata())
+        );
+        setStmtLists.add(
+                new SetAttributeTo(
+                        new StringLiteral("rotationStyle"), new StringLiteral("all around"),
+                        new NoBlockMetadata()
+                )
+        );
+
         return new ActorDefinition(ActorType.getSprite(),
                 new StrId(actorName),
                 new DeclarationStmtList(Collections.emptyList()),
@@ -277,7 +291,7 @@ public class LlmResponseParser {
      *
      * @param line A ScratchBlocks line.
      * @return The fixed line, if we think it should have been a sprite or script marker, or the unchanged line
-     * otherwise.
+     *         otherwise.
      */
     private String fixSpriteScriptMarkerComments(String line) {
         final String lineLower = line.toLowerCase(Locale.ENGLISH);

@@ -25,7 +25,10 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.util.Collections;
 
-public class ScratchLlmConversation {
+/**
+ * Only a stub for now to indicate the planned implementation.
+ */
+class ScratchLlmConversation {
 
     private final LlmApi llmApi;
     private final PromptBuilder promptBuilder;
@@ -51,7 +54,9 @@ public class ScratchLlmConversation {
         throw new UnsupportedOperationException("not implemented");
     }
 
-    public Conversation improve(Conversation conversation, QueryTarget target, String detectors, boolean ignoreLooseBlocks) {
+    public Conversation improve(
+            Conversation conversation, QueryTarget target, String detectors, boolean ignoreLooseBlocks
+    ) {
         // ...
         throw new UnsupportedOperationException("not implemented");
     }

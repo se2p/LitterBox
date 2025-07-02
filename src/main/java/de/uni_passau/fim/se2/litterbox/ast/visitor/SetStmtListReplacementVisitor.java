@@ -32,7 +32,15 @@ public class SetStmtListReplacementVisitor extends NodeReplacementVisitor {
         if (isTargetNode(node)) {
             return super.getReplacement();
         }
-        ActorDefinition actorDefinition = new ActorDefinition(node.getActorType(), node.getIdent(), node.getDecls(), apply(node.getSetStmtList()), apply(node.getProcedureDefinitionList()), apply(node.getScripts()), node.getActorMetadata());
+        ActorDefinition actorDefinition = new ActorDefinition(
+                node.getActorType(),
+                node.getIdent(),
+                node.getDecls(),
+                apply(node.getSetStmtList()),
+                apply(node.getProcedureDefinitionList()),
+                apply(node.getScripts()),
+                node.getActorMetadata()
+        );
         actorDefinition.getScripts().accept(new ParentVisitor());
         actorDefinition.getProcedureDefinitionList().accept(new ParentVisitor());
         return actorDefinition;

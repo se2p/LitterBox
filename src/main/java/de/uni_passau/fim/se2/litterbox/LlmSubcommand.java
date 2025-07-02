@@ -261,7 +261,9 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.CustomQuery(query);
-            return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
+            return new LLMQueryAnalyzer(
+                    commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks
+            );
         }
     }
 
@@ -280,7 +282,9 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.PredefinedQuery(commonQuery);
-            return new LLMQueryAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks);
+            return new LLMQueryAnalyzer(
+                    commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks
+            );
         }
     }
 }

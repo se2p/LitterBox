@@ -20,8 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
+import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 import java.io.BufferedWriter;
 import java.io.File;

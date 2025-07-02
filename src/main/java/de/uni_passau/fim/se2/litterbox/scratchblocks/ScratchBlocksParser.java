@@ -140,7 +140,9 @@ public class ScratchBlocksParser {
      * @param cancelMarker      Will try to interrupt the parsing when this marker gets set to {@code true}.
      * @return The parsed script or custom procedure definition.
      */
-    public Script parseScript(final String actorName, final String scratchBlocksCode, final AtomicBoolean cancelMarker) {
+    public Script parseScript(
+            final String actorName, final String scratchBlocksCode, final AtomicBoolean cancelMarker
+    ) {
         ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
             Script script = new Script(new Never(), new StmtList());
