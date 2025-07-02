@@ -155,6 +155,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     private boolean requireScript = true;
 
+    private boolean ignoreLooseBlocks = false;
+
     private boolean addActorNames = false;
 
     public ScratchBlocksVisitor() {
@@ -196,9 +198,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
      *                      This prevents certain blocks from not being printed as they have to be ignored if they
      *                      occur outside of scripts when printing whole programs.
      */
-    public ScratchBlocksVisitor(boolean requireScript) {
+    public ScratchBlocksVisitor(boolean requireScript, boolean ignoreLooseBlocks) {
         this();
         this.requireScript = requireScript;
+        this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
     /**
@@ -208,7 +211,23 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
      * @return The ScratchBlocks representation of this node.
      */
     public static String of(final ASTNode node) {
-        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false);
+        return of(node, false);
+    }
+
+    /**
+     * Converts the given node of the AST into the ScratchBlocks format.
+     *
+     * <p>Any loose blocks in the program (i.e., scripts without hat block) are ignored.
+     *
+     * @param node Some node of the AST.
+     * @return The ScratchBlocks representation of this node.
+     */
+    public static String ofIgnoringLooseBlocks(final ASTNode node) {
+        return of(node, true);
+    }
+
+    private static String of(final ASTNode node, final boolean ignoreLooseBlocks) {
+        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, ignoreLooseBlocks);
         visitor.setProgram(AstNodeUtil.findParent(node, Program.class));
         visitor.setCurrentActor(AstNodeUtil.findParent(node, ActorDefinition.class));
         visitor.setAddActorNames(true);
@@ -218,7 +237,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         return visitor.getScratchBlocks();
     }
 
-    public boolean isIgnoredBlock() {
+    private boolean isIgnoredBlock() {
         return !inScript && requireScript;
     }
 
@@ -286,6 +305,10 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(Script script) {
+        if (script.getEvent() instanceof Never && ignoreLooseBlocks) {
+            return;
+        }
+
         inScript = true;
         super.visit(script);
         storeNotesForIssue(script);

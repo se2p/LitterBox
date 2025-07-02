@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScratchBlocksVisitorTest implements JsonTest {
@@ -1942,5 +1943,23 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "when green flag clicked" + System.lineSeparator() +
                 "say (answer) for (2) seconds" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    void testDoNotIgnoreLooseBlocks() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/looseScript.json");
+        final String scratchBlocks = ScratchBlocksVisitor.of(program);
+
+        assertThat(scratchBlocks).contains("stop all sounds");
+        assertThat(scratchBlocks).contains("reset timer");
+    }
+
+    @Test
+    void testIgnoreLooseBlocks() throws IOException, ParsingException {
+        final Program program = getAST("src/test/fixtures/looseScript.json");
+        final String scratchBlocks = ScratchBlocksVisitor.ofIgnoringLooseBlocks(program);
+
+        assertThat(scratchBlocks).contains("stop all sounds");
+        assertThat(scratchBlocks).doesNotContain("reset timer");
     }
 }
