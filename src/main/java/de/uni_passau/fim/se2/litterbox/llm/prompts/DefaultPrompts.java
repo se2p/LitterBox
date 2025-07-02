@@ -169,6 +169,20 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
+    public String isIssueFalsePositive(final Issue issue) {
+        return """
+                A static code analysis tool identified an issue in sprite %s, script %s, and provides the following
+                explanation:
+                %s
+
+                A false positive occurs when a static analysis tool incorrectly reports that a static analysis rule was
+                violated. Determine whether the issue is a false positive or not. Respond only with "yes" or "no".
+                """.formatted(
+                        issue.getActorName(), AstNodeUtil.getBlockId(issue.getScript()), issue.getHintText()
+                ).stripIndent();
+    }
+
+    @Override
     public String fixSyntax(final String scratchBlocksScripts) {
         return """
                 You know the ScratchBlocks syntax from the Scratch community forums. Numbers, strings, and variables are

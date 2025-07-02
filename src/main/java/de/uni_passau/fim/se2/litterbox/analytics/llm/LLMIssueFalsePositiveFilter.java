@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
@@ -77,15 +76,7 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
                 continue;
             }
 
-            LlmQuery issueQuery = new LlmQuery.CustomQuery("""
-                    A static code analysis tool identified an issue in sprite %s, script %s, and provides the following explanation:
-                    %s
-
-                    A false positive occurs when a static analysis tool incorrectly reports that a static analysis rule was violated.
-                    Determine whether the issue is a false positive or not. Respond only with "yes" or "no".
-                    """.formatted(issue.getActorName(),
-                    AstNodeUtil.getBlockId(issue.getScript().getEvent()),
-                    issue.getHintText()));
+            LlmQuery issueQuery = new LlmQuery.CustomQuery(promptBuilder.isIssueFalsePositive(issue));
             final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
             log.info("Prompt: " + prompt);
             String response = scratchLlm.singleQueryWithTextResponse(prompt);
