@@ -35,7 +35,11 @@ public abstract class PromptBuilder {
         return null;
     }
 
-    public abstract String askQuestion(Program program, QueryTarget target, LlmQuery question);
+    public String askQuestion(final Program program, final QueryTarget target, final LlmQuery question) {
+        return askQuestion(program, target, question, false);
+    }
+
+    public abstract String askQuestion(Program program, QueryTarget target, LlmQuery query, boolean ignoreLooseBlocks);
 
     public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
 
@@ -57,7 +61,11 @@ public abstract class PromptBuilder {
      */
     public abstract String fixSyntax(String scratchBlocksScripts);
 
-    protected abstract String describeTarget(final Program program, QueryTarget target);
+    protected String describeTarget(final Program program, QueryTarget target) {
+        return describeTarget(program, target, false);
+    }
+
+    protected abstract String describeTarget(final Program program, QueryTarget target, boolean ignoreLooseBlocks);
 
     protected List<String> issueTypes(final Collection<Issue> issues) {
         return issues.stream().map(Issue::getFinderName).sorted().toList();

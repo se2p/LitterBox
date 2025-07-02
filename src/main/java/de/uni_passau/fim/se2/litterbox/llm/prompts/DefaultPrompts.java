@@ -43,14 +43,16 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    public String askQuestion(final Program program, final QueryTarget target, final LlmQuery question) {
+    public String askQuestion(
+            final Program program, final QueryTarget target, final LlmQuery question, final boolean ignoreLooseBlocks
+    ) {
         String questionText;
         if (question instanceof LlmQuery.PredefinedQuery predefinedQuery) {
             questionText = createPromptForCommonQuery(predefinedQuery.query());
         } else {
             questionText = ((LlmQuery.CustomQuery) question).query();
         }
-        return describeTarget(program, target) + """
+        return describeTarget(program, target, ignoreLooseBlocks) + """
                 Answer the following question:
                 %s
                 """.formatted(questionText);
@@ -199,10 +201,15 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    protected String describeTarget(final Program program, final QueryTarget target) {
+    protected String describeTarget(final Program program, final QueryTarget target, final boolean ignoreLooseBlocks) {
         final ASTNode targetNode = target.getTargetNode(program);
-        // TODO: If ignoreLooseBlocks is true, should loose blocks be ignored in the scratchblocks text?
-        String scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+
+        final String scratchBlocks;
+        if (ignoreLooseBlocks) {
+            scratchBlocks = ScratchBlocksVisitor.ofIgnoringLooseBlocks(targetNode);
+        } else {
+            scratchBlocks = ScratchBlocksVisitor.of(targetNode);
+        }
 
         // Parsing expects sprite names and script ids
         if (target.getTargetDescription().equals("script")) {

@@ -30,16 +30,15 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 
 public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
-    private ScratchLlm scratchLlm;
+    private final ScratchLlm scratchLlm;
 
-    private PromptBuilder promptBuilder;
+    private final PromptBuilder promptBuilder;
 
-    private LlmQuery query;
+    private final LlmQuery query;
 
-    private QueryTarget target;
+    private final QueryTarget target;
 
-    // TODO: Handle this option
-    private boolean ignoreLooseBlocks;
+    private final boolean ignoreLooseBlocks;
 
     public LLMProgramQueryAnalyzer(
             LlmApi llmApi,
@@ -65,7 +64,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
     @Override
     public String analyze(Program program) {
-        final String prompt = promptBuilder.askQuestion(program, target, query);
+        final String prompt = promptBuilder.askQuestion(program, target, query, ignoreLooseBlocks);
         return scratchLlm.singleQueryWithTextResponse(prompt);
     }
 }
