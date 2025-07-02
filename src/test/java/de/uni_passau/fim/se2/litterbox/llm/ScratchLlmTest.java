@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.llm;
 
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -25,7 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -38,6 +42,13 @@ import static org.mockito.Mockito.when;
 
 class ScratchLlmTest {
 
+    private static Program program;
+
+    @BeforeAll
+    static void setUp() throws Exception {
+        program = JsonTest.parseProgram("src/test/fixtures/customBlocks.json");
+    }
+
     @Test
     void basicRequestUnparsedResponse() {
         final String response = "keep this response unchanged";
@@ -48,7 +59,7 @@ class ScratchLlmTest {
     @Test
     void parseableScratchBlocksResponse() {
         final ScratchLlm llm = buildLlm(List.of(buildScript("actor1", "script1")));
-        final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse("");
+        final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse(program, "");
 
         assertThat(response.scripts()).containsKey("actor1");
         assertThat(response.scripts().get("actor1")).containsKey("script1");
@@ -67,7 +78,7 @@ class ScratchLlmTest {
         );
         when(responseParser.parseLLMResponse("response1")).thenReturn(code1);
         final ParsedLlmResponseCode code2 = new ParsedLlmResponseCode(
-                Map.of("actor1", Map.of("script1", dummyScript("script1"), "script2", dummyScript("script2"))),
+                Map.of("actor1", Map.of("script1", dummyScript(), "script2", dummyScript())),
                 Collections.emptyMap()
         );
         when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
@@ -75,7 +86,7 @@ class ScratchLlmTest {
         final DummyLlmApi llmApi =  new DummyLlmApi(List.of("response1", "response2"));
         final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(), responseParser);
 
-        final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse("");
+        final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse(program, "");
         assertThat(response).isEqualTo(code2);
 
         final int lastIdx = llmApi.getRequests().size() - 1;
@@ -91,6 +102,40 @@ class ScratchLlmTest {
                 """);
     }
 
+    @Test
+    void requestFixForUndefinedCustomCallStmts() {
+        final LlmResponseParser responseParser = mock(LlmResponseParser.class);
+        final ParsedLlmResponseCode code1 = new ParsedLlmResponseCode(
+                Map.of("actor1", Map.of("script1", dummyScriptUndefinedCustomBlockCall("invalid"), "script2", dummyScript())),
+                Collections.emptyMap()
+        );
+        when(responseParser.parseLLMResponse("response1")).thenReturn(code1);
+        final ParsedLlmResponseCode code2 = new ParsedLlmResponseCode(
+                Map.of("actor1", Map.of("script1", dummyScript(), "script2", dummyScript())),
+                Collections.emptyMap()
+        );
+        when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
+
+        final DummyLlmApi llmApi =  new DummyLlmApi(List.of("response1", "response2"));
+        final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(), responseParser);
+
+        final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse(program, "");
+        assertThat(response.parseFailedScripts()).isEmpty();
+
+        final int lastIdx = llmApi.getRequests().size() - 1;
+        final String lastRequest = llmApi.getRequests().get(lastIdx);
+        assertThat(lastRequest).contains("//Sprite: actor1");
+        assertThat(lastRequest).contains("""
+                ```
+                //Sprite: actor1
+                //Script: script1
+                when green flag clicked
+                invalid
+                ```
+                """);
+        assertThat(lastRequest).doesNotContain("//Script: script2");
+    }
+
     private ScratchLlm buildLlm(final List<String> apiResponses) {
         return new ScratchLlm(new DummyLlmApi(apiResponses), new DefaultPrompts());
     }
@@ -100,11 +145,17 @@ class ScratchLlmTest {
                 //Sprite: %s
                 //Script: %s
                 when green flag clicked
-                %s
-                """.formatted(actor, scriptId, scriptId);
+                """.formatted(actor, scriptId);
     }
 
-    private Script dummyScript(final String scriptId) {
+    private Script dummyScript() {
+        return new Script(
+                new GreenFlag(new NoBlockMetadata()),
+                new StmtList(new IfOnEdgeBounce(new NoBlockMetadata()))
+        );
+    }
+
+    private Script dummyScriptUndefinedCustomBlockCall(final String scriptId) {
         return new Script(
                 new GreenFlag(new NoBlockMetadata()),
                 new StmtList(new CallStmt(

@@ -171,8 +171,11 @@ public class DefaultPrompts extends PromptBuilder {
     @Override
     public String fixSyntax(final String scratchBlocksScripts) {
         return """
-                The following code block contains Scratch scripts in the ScratchBlocks syntax which you know from the
-                Scratch community forums. They contain invalid syntax. Fix the syntax.
+                You know the ScratchBlocks syntax from the Scratch community forums. Numbers, strings, and variables are
+                surrounded by parentheses. Boolean conditions are surrounded by angled brackets < and > instead. Only
+                dropdown menus surround the selected option with brackets like `[option v]`.
+                The following Scratch scripts are in the ScratchBlocks syntax. They contain invalid syntax.
+                Fix the syntax.
                 Only return the fixed ScratchBlocks code. Do not change the comments starting with `//`.
 
                 ```

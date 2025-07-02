@@ -55,9 +55,7 @@ public record ParsedLlmResponseCode(
     }
 
     public ParsedLlmResponseCode merge(final ParsedLlmResponseCode other) {
-        final Map<String, Map<String, ScriptEntity>> parsedScripts = new HashMap<>(scripts());
-        final Map<String, Map<String, String>> parseFailedScripts = new HashMap<>(parseFailedScripts());
-
+        final Map<String, Map<String, ScriptEntity>> parsedScripts = deepClone(scripts());
         for (final var entry : other.scripts().entrySet()) {
             if (parsedScripts.containsKey(entry.getKey())) {
                 parsedScripts.get(entry.getKey()).putAll(entry.getValue());
@@ -66,6 +64,7 @@ public record ParsedLlmResponseCode(
             }
         }
 
+        final Map<String, Map<String, String>> parseFailedScripts = deepClone(parseFailedScripts());
         for (final var entry : other.parseFailedScripts().entrySet()) {
             if (parseFailedScripts.containsKey(entry.getKey())) {
                 parseFailedScripts.get(entry.getKey()).putAll(entry.getValue());
@@ -75,5 +74,15 @@ public record ParsedLlmResponseCode(
         }
 
         return new ParsedLlmResponseCode(parsedScripts, parseFailedScripts);
+    }
+
+    private static <A, B, C> Map<A, Map<B, C>> deepClone(final Map<A, Map<B, C>> map) {
+        final Map<A, Map<B, C>> result = new HashMap<>();
+
+        for (final var outerEntry : map.entrySet()) {
+            result.put(outerEntry.getKey(), new HashMap<>(outerEntry.getValue()));
+        }
+
+        return result;
     }
 }

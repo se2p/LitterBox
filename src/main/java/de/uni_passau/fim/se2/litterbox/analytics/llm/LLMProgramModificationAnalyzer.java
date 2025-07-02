@@ -69,7 +69,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     @Override
     public Program analyze(Program program) {
         String query = buildPrompt(program);
-        ParsedLlmResponseCode llmResponse = scratchLlm.singleQueryWithCodeOnlyResponse(query);
+        ParsedLlmResponseCode llmResponse = scratchLlm.singleQueryWithCodeOnlyResponse(program, query);
         return llmResponseParser.updateProgram(program, llmResponse);
     }
 }
