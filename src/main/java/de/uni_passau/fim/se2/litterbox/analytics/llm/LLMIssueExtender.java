@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
@@ -36,7 +37,11 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 abstract class LLMIssueExtender implements LLMIssueProcessor {
+
     private static final Logger log = Logger.getLogger(LLMIssueExtender.class.getName());
+
+    private static final String DESCRIPTION_MARKER = "Finding Description:";
+    private static final String LOCATION_MARKER = "Finding Location:";
 
     protected ScratchLlm scratchLlm;
 
@@ -46,12 +51,10 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
 
     protected QueryTarget target;
 
-    protected LLMIssueExtender(LlmApi llmApi,
-                                       PromptBuilder promptBuilder,
-                                       QueryTarget target) {
+    protected LLMIssueExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
-        this.scratchLlm = new ScratchLlm();
+        this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
@@ -73,9 +76,9 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
 
     private Set<Issue> getIssuesFromResponse(String response, Program program, LLMIssueFinder issueFinder) {
         Set<Issue> issues = new LinkedHashSet<>();
-        String[] issueEntries = response.split("New Finding \\d+:");
+        String[] issueEntries = response.split("New Finding( \\d+)?:");
         for (String entry : issueEntries) {
-            if (entry.trim().isEmpty()) {
+            if (entry.isBlank()) {
                 continue;
             }
 
@@ -88,9 +91,15 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
     private Optional<Issue> tryParseIssue(
             final Program program, final LLMIssueFinder issueFinder, final String issueText
     ) {
-        IssueSeverity severity = IssueSeverity.LOW; // TODO?
-        String description = extractValue(issueText, "Finding Description:");
-        String location = extractValue(issueText, "Finding Location:");
+        if (!issueText.contains(DESCRIPTION_MARKER) || !issueText.contains(LOCATION_MARKER)) {
+            log.info("Issue text does not follow the requested format, ignoring: " + issueText);
+            return Optional.empty();
+        }
+
+        String description = extractValue(issueText, DESCRIPTION_MARKER, LOCATION_MARKER);
+        String location = extractValue(issueText, LOCATION_MARKER)
+                .replace(ScratchBlocksVisitor.SCRIPT_ID_MARKER, "")
+                .trim();
 
         Optional<ASTNode> node = BlockByIdFinder.findBlock(program, location);
         if (node.isEmpty()) {
@@ -110,19 +119,23 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
 
         Issue issue = new IssueBuilder()
                 .withFinder(issueFinder)
-                .withSeverity(severity)
+                .withSeverity(IssueSeverity.LOW)
                 .withHint(Hint.fromText(description))
                 .withActor(actor.get())
                 .withScriptOrProcedure(script)
-                .withCurrentNode(script.getEvent()) // TODO: This is likely not the actual node
+                .withCurrentNode(node.orElse(script.getEvent()))
                 .withProgram(program)
                 .build();
         return Optional.of(issue);
     }
 
     private String extractValue(String entry, String key) {
-        int startIndex = entry.indexOf(key) + key.length();
-        int endIndex = entry.indexOf("\n", startIndex);
+        return extractValue(entry, key, "\n");
+    }
+
+    private String extractValue(String entry, String startMarker, String endMarker) {
+        int startIndex = entry.indexOf(startMarker) + startMarker.length();
+        int endIndex = entry.indexOf(endMarker, startIndex);
         return entry.substring(startIndex, endIndex).trim();
     }
 

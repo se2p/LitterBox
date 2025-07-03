@@ -136,6 +136,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
     public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
     public static final String QUESTION_NOTE = "⇦   \u2753   ";
+    public static final String SPRITE_MARKER = "//Sprite:";
+    public static final String SCRIPT_ID_MARKER = "//Script:";
 
     private boolean inScript = false;
 
@@ -257,7 +259,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 if (hasContent) {
                     newLine();
                 }
-                emitNoSpace("//Sprite: " + node.getIdent().getName());
+                emitNoSpace(SPRITE_MARKER + " " + node.getIdent().getName());
                 newLine();
                 hasContent = true;
             }
@@ -274,7 +276,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 newLine();
             }
             if (addActorNames) {
-                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(procedureDefinition));
+                emitNoSpace(SCRIPT_ID_MARKER + " " + AstNodeUtil.getBlockId(procedureDefinition));
                 newLine();
             }
             procedureDefinition.accept(this);
@@ -289,7 +291,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 newLine();
             }
             if (addActorNames) {
-                emitNoSpace("//Script: " + AstNodeUtil.getBlockId(script));
+                emitNoSpace(SCRIPT_ID_MARKER + " " + AstNodeUtil.getBlockId(script));
                 newLine();
             }
             script.accept(this);

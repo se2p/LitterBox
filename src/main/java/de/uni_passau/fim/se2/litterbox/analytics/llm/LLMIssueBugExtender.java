@@ -31,9 +31,7 @@ import java.util.Set;
 
 public class LLMIssueBugExtender extends LLMIssueExtender {
 
-    public LLMIssueBugExtender(LlmApi llmApi,
-                               PromptBuilder promptBuilder,
-                               QueryTarget target) {
+    public LLMIssueBugExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
         super(llmApi, promptBuilder, target);
     }
 
@@ -46,7 +44,7 @@ public class LLMIssueBugExtender extends LLMIssueExtender {
         StringBuilder issueList = new StringBuilder();
         int numIssue = 0;
         List<Issue> bugsOrSmells = issues.stream()
-                .filter(i -> i.getIssueType() == IssueType.BUG || i.getIssueType() == IssueType.SMELL)
+                .filter(i -> IssueType.BUG.equals(i.getIssueType()) || IssueType.SMELL.equals(i.getIssueType()))
                 .toList();
 
         for (Issue issue : bugsOrSmells) {
