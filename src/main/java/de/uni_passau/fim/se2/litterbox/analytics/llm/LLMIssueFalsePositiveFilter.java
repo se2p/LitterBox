@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
+
     private static final Logger log = Logger.getLogger(LLMIssueFalsePositiveFilter.class.getName());
 
     protected ScratchLlm scratchLlm;
@@ -44,9 +45,7 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
 
     protected QueryTarget target;
 
-    public LLMIssueFalsePositiveFilter(LlmApi llmApi,
-                                 PromptBuilder promptBuilder,
-                                 QueryTarget target) {
+    public LLMIssueFalsePositiveFilter(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
@@ -62,29 +61,32 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
         Set<Issue> filteredIssues = new LinkedHashSet<>();
 
         for (Issue issue : issues) {
-            log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
+            log.fine("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
 
-            if (issue.getIssueType() == IssueType.PERFUME) {
-                // We only want to filter false warnings
-                filteredIssues.add(issue);
-                continue;
-            }
-
-            if (issue.getScript() == null || issue.getActor() == null) {
-                // TODO: Currently only looking at issues related to specific scripts
+            if (shouldBeIgnoredForFilter(issue)) {
                 filteredIssues.add(issue);
                 continue;
             }
 
             LlmQuery issueQuery = new LlmQuery.CustomQuery(promptBuilder.isIssueFalsePositive(issue));
             final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
-            log.info("Prompt: " + prompt);
+            log.fine("Prompt: " + prompt);
             String response = scratchLlm.singleQueryWithTextResponse(prompt);
-            log.info("Response: " + response);
+            log.fine("Response: " + response);
             if (response.equalsIgnoreCase("yes")) {
                 filteredIssues.add(issue);
             }
         }
         return filteredIssues;
+    }
+
+    private boolean shouldBeIgnoredForFilter(final Issue issue) {
+        return
+                // We only want to filter false warnings
+                IssueType.PERFUME.equals(issue.getIssueType())
+                || IssueType.QUESTION.equals(issue.getIssueType())
+                // TODO: Currently only looking at issues related to specific scripts
+                || issue.getScript() == null
+                || issue.getActor() == null;
     }
 }

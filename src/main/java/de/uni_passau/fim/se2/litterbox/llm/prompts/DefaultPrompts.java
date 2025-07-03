@@ -177,8 +177,8 @@ public class DefaultPrompts extends PromptBuilder {
                 explanation:
                 %s
 
-                A false positive occurs when a static analysis tool incorrectly reports that a static analysis rule was
-                violated. Determine whether the issue is a false positive or not. Respond only with "yes" or "no".
+                Does the given program actually contain the issue described by the static code analysis tool?
+                Respond only with "yes" or "no".
                 """.formatted(
                         issue.getActorName(), AstNodeUtil.getBlockId(issue.getScript()), issue.getHintText()
                 ).stripIndent();
