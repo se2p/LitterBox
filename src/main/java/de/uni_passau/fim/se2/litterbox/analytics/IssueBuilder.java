@@ -33,6 +33,7 @@ public class IssueBuilder {
     private Metadata metaData;
     private Hint hint;
     private ScriptEntity refactoring;
+    private Integer id = null;
 
     public IssueBuilder withFinder(IssueFinder finder) {
         this.finder = finder;
@@ -96,6 +97,11 @@ public class IssueBuilder {
 
     public IssueBuilder withRefactoring(ScriptEntity refactoring) {
         this.refactoring = refactoring;
+        return this;
+    }
+
+    public IssueBuilder withId(int id) {
+        this.id = id;
         return this;
     }
 
@@ -163,5 +169,9 @@ public class IssueBuilder {
 
     public ScriptEntity getRefactoring() {
         return refactoring;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }
