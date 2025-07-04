@@ -53,6 +53,8 @@ public abstract class PromptBuilder {
 
     public abstract String isIssueFalsePositive(Issue issue);
 
+    public abstract String improveIssueHint(Issue issue);
+
     /**
      * Asks the LLM to fix the given scripts in ScratchBlocks syntax.
      *

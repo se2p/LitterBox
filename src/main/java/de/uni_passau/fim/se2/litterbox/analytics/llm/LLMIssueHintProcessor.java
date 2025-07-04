@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class LLMIssueHintProcessor implements LLMIssueProcessor {
+
     private static final Logger log = Logger.getLogger(LLMIssueHintProcessor.class.getName());
 
     protected ScratchLlm scratchLlm;
@@ -65,15 +66,8 @@ public class LLMIssueHintProcessor implements LLMIssueProcessor {
         for (Issue issue : issues) {
             log.info("Current issue: " + issue.getFinderName() + " in sprite " + issue.getActorName());
 
-            LlmQuery issueQuery = new LlmQuery.CustomQuery("""
-                    A static code analysis tool identified an issue in the code and provides the following explanation:
-                    %s
-
-                    Improve the explanation by making it clearer and easier to understand.
-                    If a misconception may be the cause of the issue, explain the misconception.
-                    Only output the improved explanation, but no suggested fix.
-                    """.formatted(issue.getHintText()));
-            final String prompt = promptBuilder.askQuestion(program, target, issueQuery);
+            final String query = promptBuilder.improveIssueHint(issue);
+            final String prompt = promptBuilder.askQuestion(program, target, new LlmQuery.CustomQuery(query));
             log.info("Prompt: " + prompt);
             String response = scratchLlm.singleQueryWithTextResponse(prompt);
             log.info("Response: " + response);

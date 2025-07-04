@@ -185,6 +185,18 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
+    public String improveIssueHint(final Issue issue) {
+        return """
+                A static code analysis tool identified an issue in the code and provides the following explanation:
+                %s
+
+                Improve the explanation by making it clearer and easier to understand.
+                If a misconception may be the cause of the issue, explain the misconception.
+                Only output the improved explanation, but no suggested fix.
+                """.formatted(issue.getHintText()).stripIndent();
+    }
+
+    @Override
     public String fixSyntax(final String scratchBlocksScripts) {
         return """
                 You know the ScratchBlocks syntax from the Scratch community forums. Numbers, strings, and variables are
