@@ -33,6 +33,7 @@ public class IssueBuilder {
     private Metadata metaData;
     private Hint hint;
     private ScriptEntity refactoring;
+    private Integer id = null;
 
     public IssueBuilder withFinder(IssueFinder finder) {
         this.finder = finder;
@@ -99,6 +100,24 @@ public class IssueBuilder {
         return this;
     }
 
+    public IssueBuilder withId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public IssueBuilder fromIssue(Issue issue) {
+        this.finder = issue.getFinder();
+        this.severity = issue.getSeverity();
+        this.program = issue.getProgram();
+        this.actor = issue.getActor();
+        this.script = issue.getScript();
+        this.currentNode = issue.getCodeLocation();
+        this.metaData = issue.getCodeMetadata();
+        this.hint = issue.getHint();
+        this.refactoring = issue.getRefactoredScriptOrProcedureDefinition();
+        return this;
+    }
+
     private void validate() {
         if (finder == null) {
             throw new IllegalArgumentException("Finder not set.");
@@ -150,5 +169,9 @@ public class IssueBuilder {
 
     public ScriptEntity getRefactoring() {
         return refactoring;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

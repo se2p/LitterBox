@@ -33,20 +33,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Issue {
 
-    private IssueFinder finder;
-    private IssueSeverity severity;
-    private ActorDefinition actor;
-    private ASTNode node;
-    private ASTNode normalizedNode;
+    private final IssueFinder finder;
+    private final IssueSeverity severity;
+    private final ActorDefinition actor;
+    private final ASTNode node;
+    private final ASTNode normalizedNode;
 
-    private ScriptEntity script;
-    private ScriptEntity normalizedScript;
+    private final ScriptEntity script;
+    private final ScriptEntity normalizedScript;
     private ScriptEntity refactoredScript;
 
-    private Program program;
-    private Metadata metaData;
-    private Hint hint;
-    private int id;
+    private final Program program;
+    private final Metadata metaData;
+    private final Hint hint;
+    private final int id;
 
     private static final AtomicInteger globalIssueCount = new AtomicInteger(0);
 
@@ -89,7 +89,12 @@ public class Issue {
         this.refactoredScript = builder.getRefactoring();
         this.metaData = builder.getMetaData();
         this.hint = builder.getHint();
-        this.id = globalIssueCount.getAndIncrement();
+
+        if (builder.getId() == null) {
+            this.id = globalIssueCount.getAndIncrement();
+        } else {
+            this.id = builder.getId();
+        }
     }
 
     public IssueFinder getFinder() {
@@ -211,5 +216,15 @@ public class Issue {
         }
         NormalizationVisitor visitor = new NormalizationVisitor();
         return (T) node.accept(visitor);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Issue issue) && id == issue.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
