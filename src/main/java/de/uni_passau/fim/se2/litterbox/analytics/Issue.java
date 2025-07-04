@@ -25,6 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * The Issue represents issues that are identified in Scratch Projects.
  */
@@ -45,7 +48,7 @@ public class Issue {
     private Hint hint;
     private int id;
 
-    private static int globalIssueCount = 0;
+    private static final AtomicInteger globalIssueCount = new AtomicInteger(0);
 
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
@@ -71,7 +74,7 @@ public class Issue {
         this.normalizedScript = normalize(script);
         this.metaData = metaData;
         this.hint = hint;
-        this.id = globalIssueCount++;
+        this.id = globalIssueCount.getAndIncrement();
     }
 
     public Issue(IssueBuilder builder) {
@@ -86,7 +89,7 @@ public class Issue {
         this.refactoredScript = builder.getRefactoring();
         this.metaData = builder.getMetaData();
         this.hint = builder.getHint();
-        this.id = globalIssueCount++;
+        this.id = globalIssueCount.getAndIncrement();
     }
 
     public IssueFinder getFinder() {
