@@ -53,13 +53,13 @@ public class JSONReportGenerator implements ReportGenerator {
 
     private final JsonGenerator jsonGenerator;
 
-    private static final boolean INCLUDE_SIMILARITY = PropertyLoader.getSystemBoolProperty("json.similarity");
+    private final boolean includeSimilarity = PropertyLoader.getSystemBoolProperty("json.similarity");
 
-    private static final boolean INCLUDE_SUBSUMPTION = PropertyLoader.getSystemBoolProperty("json.subsumption");
+    private final boolean includeSubsumption = PropertyLoader.getSystemBoolProperty("json.subsumption");
 
-    private static final boolean INCLUDE_DUPLICATES = PropertyLoader.getSystemBoolProperty("json.duplicates");
+    private final boolean includeDuplicates = PropertyLoader.getSystemBoolProperty("json.duplicates");
 
-    private static final boolean INCLUDE_COUPLING = PropertyLoader.getSystemBoolProperty("json.coupling");
+    private final boolean includeCoupling = PropertyLoader.getSystemBoolProperty("json.coupling");
 
     public JSONReportGenerator(Path fileName) throws IOException {
         this(Files.newOutputStream(fileName), true);
@@ -133,10 +133,10 @@ public class JSONReportGenerator implements ReportGenerator {
                 issue.getSeverity().getSeverityLevel(),
                 issue.getActorName(),
                 issueLocation,
-                INCLUDE_DUPLICATES ? getDuplicateIds(issues, issue) : null,
-                INCLUDE_SUBSUMPTION ? getSubsumingIssueIds(issues, issue) : null,
-                INCLUDE_COUPLING ? getCoupledIssueIds(issues, issue) : null,
-                INCLUDE_SIMILARITY ? getSimilarIssues(issues, issue) : null,
+                includeDuplicates ? getDuplicateIds(issues, issue) : null,
+                includeSubsumption ? getSubsumingIssueIds(issues, issue) : null,
+                includeCoupling ? getCoupledIssueIds(issues, issue) : null,
+                includeSimilarity ? getSimilarIssues(issues, issue) : null,
                 issue.getHintText(),
                 costumes,
                 issue.getActor().getActorMetadata().getCurrentCostume(),
