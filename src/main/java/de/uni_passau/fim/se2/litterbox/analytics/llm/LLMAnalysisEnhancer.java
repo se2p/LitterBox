@@ -44,13 +44,14 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
 
     protected QueryTarget target;
 
-    private List<LLMIssueProcessor> issueProcessors = new LinkedList<>();
+    private final List<LLMIssueProcessor> issueProcessors = new LinkedList<>();
 
     public LLMAnalysisEnhancer(
             LlmApi llmApi,
             PromptBuilder promptBuilder,
             QueryTarget target,
-            Path output, String detectors,
+            Path output,
+            String detectors,
             boolean ignoreLooseBlocks
     ) {
         super(output, detectors, ignoreLooseBlocks, false, false);
@@ -59,11 +60,7 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
         this.target = target;
     }
 
-    public LLMAnalysisEnhancer(
-            QueryTarget target,
-            Path output, String detectors,
-            boolean ignoreLooseBlocks
-    ) {
+    public LLMAnalysisEnhancer(QueryTarget target, Path output, String detectors, boolean ignoreLooseBlocks) {
         super(output, detectors, ignoreLooseBlocks, false, false);
         this.llmApi = LlmApiProvider.get();
         this.promptBuilder = LlmPromptProvider.get();
@@ -81,7 +78,11 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
     }
 
     private Set<Issue> enhanceIssues(Program program, Set<Issue> issues) {
-        Set<Issue> enhancedResult = new LinkedHashSet<>();
+        if (issueProcessors.isEmpty()) {
+            return issues;
+        }
+
+        final Set<Issue> enhancedResult = new LinkedHashSet<>();
 
         for (LLMIssueProcessor processor : issueProcessors) {
             Set<Issue> newIssues = processor.apply(program, issues);

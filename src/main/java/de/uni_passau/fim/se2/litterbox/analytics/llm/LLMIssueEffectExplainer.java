@@ -75,7 +75,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
             Hint improvedHint = Hint.fromText(issue.getHintText() + "\n" + response);
 
             IssueBuilder issueBuilder = new IssueBuilder();
-            issueBuilder.fromIssue(issue).withHint(improvedHint);
+            issueBuilder.fromIssue(issue).withId(issue.getId()).withHint(improvedHint);
             enhancedIssues.add(issueBuilder.build());
         }
 

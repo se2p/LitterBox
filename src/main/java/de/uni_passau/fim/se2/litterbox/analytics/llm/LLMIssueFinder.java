@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class LLMIssueFinder implements IssueFinder {
 
-    private static final String NAME = "llm_issue_finder";
+    public static final String NAME = "llm_issue_finder";
 
     private IssueType issueType;
 
