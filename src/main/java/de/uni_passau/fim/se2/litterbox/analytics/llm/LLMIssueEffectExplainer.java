@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public class LLMIssueEffectExplainer implements LLMIssueProcessor {
+
     private static final Logger log = Logger.getLogger(LLMIssueEffectExplainer.class.getName());
 
     protected ScratchLlm scratchLLM;
@@ -45,9 +46,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
 
     protected QueryTarget target;
 
-    public LLMIssueEffectExplainer(LlmApi llmApi,
-                                 PromptBuilder promptBuilder,
-                                 QueryTarget target) {
+    public LLMIssueEffectExplainer(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLLM = new ScratchLlm(llmApi, promptBuilder);
@@ -79,6 +78,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
             issueBuilder.fromIssue(issue).withHint(improvedHint);
             enhancedIssues.add(issueBuilder.build());
         }
+
         return enhancedIssues;
     }
 }
