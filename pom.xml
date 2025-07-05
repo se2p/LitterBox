@@ -6,7 +6,7 @@
 
     <groupId>de.uni_passau.fim.se2</groupId>
     <artifactId>Litterbox</artifactId>
-    <version>1.10-SNAPSHOT</version>
+    <version>1.10.llm-SNAPSHOT</version>
 
     <repositories>
         <repository>
