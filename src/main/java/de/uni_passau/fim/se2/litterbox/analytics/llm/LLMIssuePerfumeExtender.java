@@ -31,10 +31,7 @@ import java.util.Set;
 
 public class LLMIssuePerfumeExtender extends LLMIssueExtender {
 
-
-    public LLMIssuePerfumeExtender(LlmApi llmApi,
-                                  PromptBuilder promptBuilder,
-                                  QueryTarget target) {
+    public LLMIssuePerfumeExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
         super(llmApi, promptBuilder, target);
     }
 
@@ -44,32 +41,21 @@ public class LLMIssuePerfumeExtender extends LLMIssueExtender {
 
     @Override
     public Set<Issue> apply(Program program, Set<Issue> issues) {
-        StringBuilder issueList = new StringBuilder();
+        final List<Issue> perfumes = issues.stream()
+                .filter(i -> IssueType.PERFUME.equals(i.getIssueType()))
+                .toList();
+
+        final StringBuilder issueList = new StringBuilder();
         int numIssue = 0;
-        List<Issue> perfumes = issues.stream().filter(i -> i.getIssueType() == IssueType.PERFUME).toList();
-        for (Issue issue : perfumes) {
-            issueList.append("Issue #" + numIssue++ + "\n");
-            issueList.append(issue.getHintText());
-            issueList.append("\n");
+
+        for (final Issue issue : perfumes) {
+            issueList
+                    .append("Issue #").append(numIssue++).append('\n')
+                    .append(issue.getHintText())
+                    .append('\n');
         }
 
-        LlmQuery issueQuery = new LlmQuery.CustomQuery("""
-                    A code perfume is the opposite of a code smell: It describes aspects of
-                    the code that demonstrate good programming.
-
-                    A static code analysis tool identified the following list of code perfumes in the given code:
-                    %s
-
-                    List any commendable aspects of the code not already included in this list.
-                    Do not suggest new program features.
-                    Do not list negative aspects of the code, only positive ones.
-                    Report each issue using the following structure:
-
-                    New Finding <number>:
-                    - Finding Description: <textual description of commendable code aspect>
-                    - Finding Location: <ID of the script containing the finding>
-                    """.formatted(issueList.toString()));
-
+        final LlmQuery issueQuery = new LlmQuery.CustomQuery(promptBuilder.findNewPerfumes(issueList.toString()));
         return apply(program, issues, issueQuery, new LLMIssueFinder(IssueType.PERFUME));
     }
 }

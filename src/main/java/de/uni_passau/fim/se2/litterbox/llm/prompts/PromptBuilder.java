@@ -49,6 +49,8 @@ public abstract class PromptBuilder {
 
     public abstract String findNewBugs(String existingBugsDescription);
 
+    public abstract String findNewPerfumes(String existingPerfumesDescription);
+
     public abstract String explainIssue(Issue issue);
 
     public abstract String isIssueFalsePositive(Issue issue);

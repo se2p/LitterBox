@@ -157,6 +157,26 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
+    public String findNewPerfumes(final String existingPerfumesDescription) {
+        return """
+                A code perfume is the opposite of a code smell: It describes aspects of
+                the code that demonstrate good programming.
+
+                A static code analysis tool identified the following list of code perfumes in the given code:
+                %s
+
+                List any commendable aspects of the code not already included in this list.
+                Do not suggest new program features.
+                Do not list negative aspects of the code, only positive ones.
+                Report each issue using the following structure:
+
+                New Finding <number>:
+                - Finding Description: <textual description of commendable code aspect>
+                - Finding Location: <ID of the script containing the finding>
+                """.formatted(existingPerfumesDescription).stripIndent();
+    }
+
+    @Override
     public String explainIssue(Issue issue) {
         return """
                 A static code analysis tool identified an issue and provides the following explanation:
