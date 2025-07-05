@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.llm.api;
 
 public final class LlmApiProvider {
 
-    private static final String LLM_API_PROPERTY = "litterbox.llm.api";
+    static final String LLM_API_PROPERTY = "litterbox.llm.api";
 
     private LlmApiProvider() {
         // intentionally empty
