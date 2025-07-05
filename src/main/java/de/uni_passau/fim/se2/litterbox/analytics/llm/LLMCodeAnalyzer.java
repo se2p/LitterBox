@@ -22,6 +22,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import org.apache.commons.io.file.PathUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,19 +30,11 @@ import java.nio.file.Path;
 
 public class LLMCodeAnalyzer extends FileAnalyzer<Program> {
 
-    public LLMCodeAnalyzer(
-            LLMProgramModificationAnalyzer analyzer,
-            Path output,
-            boolean delete
-    ) {
+    public LLMCodeAnalyzer(LLMProgramModificationAnalyzer analyzer, Path output, boolean delete) {
         super(analyzer, output, delete);
     }
 
-    public LLMCodeAnalyzer(
-            LLMProgramCompletionAnalyzer analyzer,
-            Path output,
-            boolean delete
-    ) {
+    public LLMCodeAnalyzer(LLMProgramCompletionAnalyzer analyzer, Path output, boolean delete) {
         super(analyzer, output, delete);
     }
 
@@ -58,10 +51,11 @@ public class LLMCodeAnalyzer extends FileAnalyzer<Program> {
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Program modifiedProgram) throws IOException {
-        // TODO: This needs checking
-        if (projectFile.toString().endsWith(".json")) {
+        final String extension = PathUtils.getExtension(projectFile);
+
+        if ("json".equals(extension)) {
             JSONFileCreator.writeJsonFromProgram(modifiedProgram, output, "_llm");
-        } else if (projectFile.toString().endsWith(".sb3")) {
+        } else if ("sb3".equals(extension)) {
             JSONFileCreator.writeSb3FromProgram(modifiedProgram, output, projectFile.toFile(), "_llm");
         } else {
             throw new IllegalArgumentException("Unsupported file type: " + projectFile);
