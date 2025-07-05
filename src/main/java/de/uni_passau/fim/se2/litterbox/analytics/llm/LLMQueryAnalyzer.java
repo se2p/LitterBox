@@ -57,9 +57,9 @@ public class LLMQueryAnalyzer extends FileAnalyzer<String> {
     }
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, String scratchBlocks) throws IOException {
+    protected void writeResultToFile(Path projectFile, Program program, String llmResponse) throws IOException {
         try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-            bw.write(scratchBlocks);
+            bw.write(llmResponse);
         }
     }
 }
