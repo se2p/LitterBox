@@ -55,7 +55,7 @@ public sealed interface QueryTarget {
 
         @Override
         public ASTNode getTargetNode(Program program) {
-            return AstNodeUtil.getActors(program, false)
+            return AstNodeUtil.getActors(program, true)
                     .filter(actor -> actor.getIdent().getName().equals(spriteName))
                     .findFirst()
                     .orElseThrow(
