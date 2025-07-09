@@ -70,9 +70,13 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
             String response = scratchLLM.singleQueryWithTextResponse(prompt);
             log.info("Response: " + response);
 
+            response = response.replace("\n", "[newLine]");
+
             // TODO: Appending the explanation to the existing hint would be undone
             //       if the LLMIssueHintProcessor is applied afterwards.
-            Hint improvedHint = Hint.fromText(issue.getHintText() + "\n" + response);
+            Hint improvedHint = Hint.fromText(
+                    issue.getHintText() + "[newLine][newLine][b]LLM Feedback:[/b]" + response
+            );
 
             IssueBuilder issueBuilder = new IssueBuilder();
             issueBuilder.fromIssue(issue).withId(issue.getId()).withHint(improvedHint);

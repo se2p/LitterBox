@@ -99,7 +99,7 @@ class LLMAnalysisEnhancerTest implements JsonTest {
         assertThat(originalIssues).hasSize(issues.size());
         assertAll(originalIssues.stream()
                 .map(issue ->
-                        () -> assertThat(issue.hint()).contains("\nhint extension that explains the effect")
+                        () -> assertThat(issue.hint()).contains("hint extension that explains the effect")
                 )
         );
 
