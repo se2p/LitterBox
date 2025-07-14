@@ -174,7 +174,8 @@ public class ScratchBlocksParser {
     private de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser buildParser(
             final AtomicBoolean cancelMarker, final String scratchBlocks
     ) {
-        final ScratchBlocksLexer lexer = new ScratchBlocksLexer(CharStreams.fromString(scratchBlocks));
+        // without the final newline our parser does not work
+        final ScratchBlocksLexer lexer = new ScratchBlocksLexer(CharStreams.fromString(scratchBlocks.trim() + "\n"));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         return new ScratchBlocksInterruptibleParser(tokens, cancelMarker);
     }

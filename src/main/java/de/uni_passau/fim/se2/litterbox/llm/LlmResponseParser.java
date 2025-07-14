@@ -248,7 +248,7 @@ public class LlmResponseParser {
         StringBuilder currentScriptCode = new StringBuilder();
 
         for (String line : response.lines().toList()) {
-            line = fixSpriteScriptMarkerComments(line);
+            line = fixSpriteScriptMarkerComments(line.trim());
 
             if (line.startsWith("scratch") || line.startsWith(MARKDOWN_CLOSING)) {
                 // skip -- GPT likes to start markdown blocks with language tags; also skip markdown closing tags
