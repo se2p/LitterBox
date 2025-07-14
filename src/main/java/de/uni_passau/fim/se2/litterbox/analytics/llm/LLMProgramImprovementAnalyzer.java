@@ -32,13 +32,36 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
 
     private final String detectors;
 
+    private final Set<Issue> issues;
+
+    public LLMProgramImprovementAnalyzer(QueryTarget target, Set<Issue> issues) {
+        super(target, false);
+
+        this.detectors = null;
+        this.issues = issues;
+    }
+
+    public LLMProgramImprovementAnalyzer(
+            LlmApi llmApi,
+            PromptBuilder promptBuilder,
+            QueryTarget target,
+            Set<Issue> issues
+    ) {
+        super(llmApi, promptBuilder, target, false);
+
+        this.detectors = null;
+        this.issues = issues;
+    }
+
     public LLMProgramImprovementAnalyzer(
             QueryTarget target,
             String detectors,
             boolean ignoreLooseBlocks
     ) {
         super(target, ignoreLooseBlocks);
+
         this.detectors = detectors;
+        this.issues = null;
     }
 
     public LLMProgramImprovementAnalyzer(
@@ -49,13 +72,21 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
             boolean ignoreLooseBlocks
     ) {
         super(llmApi, promptBuilder, target, ignoreLooseBlocks);
+
         this.detectors = detectors;
+        this.issues = null;
     }
 
     @Override
     public String buildPrompt(Program program) {
-        final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
-        final Set<Issue> issues = bugAnalyzer.analyze(program);
+        final Set<Issue> issues;
+
+        if (this.issues == null) {
+            final ProgramBugAnalyzer bugAnalyzer = new ProgramBugAnalyzer(detectors, ignoreLooseBlocks);
+            issues = bugAnalyzer.analyze(program);
+        } else {
+            issues = this.issues;
+        }
 
         return promptBuilder.improveCode(program, target, issues);
     }

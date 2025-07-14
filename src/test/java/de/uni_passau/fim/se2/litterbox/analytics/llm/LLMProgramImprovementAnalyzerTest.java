@@ -42,8 +42,42 @@ class LLMProgramImprovementAnalyzerTest implements JsonTest {
     private final PromptBuilder promptBuilder = new DefaultPrompts();
 
     @Test
-    void testFixBugInTargetScript() throws ParsingException, IOException {
+    void testFixSpecificIssue() throws ParsingException, IOException {
+        final Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        final Set<Issue> issues = new MissingLoopSensing().check(program);
+        assertThat(issues).isNotEmpty();
 
+        final LLMProgramImprovementAnalyzer analyzer = getLlmProgramImprovementAnalyzer(issues);
+
+        final Program modifiedProgram = analyzer.analyze(program);
+        assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
+        assertThat(
+                modifiedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()
+        ).isEqualTo(1);
+
+        Set<Issue> modifiedIssues = new MissingLoopSensing().check(modifiedProgram);
+        assertThat(modifiedIssues).isEmpty();
+    }
+
+    private LLMProgramImprovementAnalyzer getLlmProgramImprovementAnalyzer(final Set<Issue> issues) {
+        final String response = """
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8
+                when green flag clicked
+                set rotation to (0)
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+                """;
+        final LlmApi llm = new DummyLlmApi(response);
+
+        return new LLMProgramImprovementAnalyzer(llm, promptBuilder, new QueryTarget.ProgramTarget(), issues);
+    }
+
+    @Test
+    void testFixBugInTargetScript() throws ParsingException, IOException {
         String response = """
                 scratch
                 //Sprite: Sprite1
