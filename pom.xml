@@ -265,9 +265,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <langchain.version>1.0.0-rc1</langchain.version>
+        <langchain.version>1.1.0</langchain.version>
         <!-- remove when same as langchain.version again in the future -->
-        <langchain.ollama.version>1.0.0-beta4</langchain.ollama.version>
+        <langchain.ollama.version>1.1.0-rc1</langchain.ollama.version>
     </properties>
 
     <dependencies>
