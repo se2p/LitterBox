@@ -186,11 +186,11 @@ public class DefaultPrompts extends PromptBuilder {
                 %s
 
                 Execute the following tasks based on the provided Scratch program and bug:
-                Task 1: Explain how the faulty code affects the observable behaviour of sprites.
-                Task 2: Explain the underlying programming concept that may be misunderstood by the person who wrote
-                        the code.
-                Task 3: Generate a list of steps I need to perform in order to observe the faulty behaviour, starting
-                        with pressing the green flag.
+                * Explain how the faulty code affects the observable behaviour of sprites.
+                * Generate a list of steps I need to perform in order to observe the faulty behaviour, starting with
+                  pressing the green flag.
+                * Explain the underlying programming concept that may be misunderstood by the person who wrote  the
+                  code.
                 """.formatted(issue.getHintText()).stripIndent();
     }
 
