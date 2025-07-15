@@ -182,11 +182,12 @@ public class DefaultPrompts extends PromptBuilder {
                 A static code analysis tool identified an issue and provides the following explanation:
                 %s
 
-                Describe an example user interaction with the program and
-                how it might be affected by the issue.
-
-                Only provide a list of steps to reproduce the issue, but no other text,
-                except for a title "Here is how you might observe effects of this issue:".
+                Execute the following tasks based on the provided Scratch program and bug:
+                Task 1: Explain how the faulty code affects the observable behaviour of sprites.
+                Task 2: Explain the underlying programming concept that may be misunderstood by the person who wrote
+                        the code.
+                Task 3: Generate a list of steps I need to perform in order to observe the faulty behaviour, starting
+                        with pressing the green flag.
                 """.formatted(issue.getHintText()).stripIndent();
     }
 
