@@ -198,7 +198,7 @@ public class LlmResponseParser {
     private ActorDefinition getBlankActorDefinition(String actorName) {
         List<SetStmt> setStmtLists = new ArrayList<>();
         setStmtLists.add(
-                new SetAttributeTo(new StringLiteral("Volume"), new NumberLiteral(100), new NoBlockMetadata())
+                new SetAttributeTo(new StringLiteral("volume"), new NumberLiteral(100), new NoBlockMetadata())
         );
         setStmtLists.add(
                 new SetAttributeTo(new StringLiteral("layerOrder"), new NumberLiteral(1), new NoBlockMetadata())
