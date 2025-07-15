@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
@@ -217,6 +218,13 @@ public class LlmResponseParser {
                 )
         );
 
+        // the default Scratch cat
+        // required, because otherwise the `currentCostume` indexes into an empty list
+        ImageMetadata defaultCostume = new ImageMetadata(
+                "bcf454acf82e4504149f7ffe07081dbc", "costume1", "bcf454acf82e4504149f7ffe07081dbc.svg",
+                "svg", null, 48, 50
+        );
+
         return new ActorDefinition(ActorType.getSprite(),
                 new StrId(actorName),
                 new DeclarationStmtList(Collections.emptyList()),
@@ -226,7 +234,7 @@ public class LlmResponseParser {
                 new ActorMetadata(
                         new CommentMetadataList(Collections.emptyList()),
                         0,
-                        new ImageMetadataList(Collections.emptyList()),
+                        new ImageMetadataList(Collections.singletonList(defaultCostume)),
                         new SoundMetadataList(Collections.emptyList())
                 )
         );
