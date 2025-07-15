@@ -36,7 +36,7 @@ public class DefaultPrompts extends PromptBuilder {
     public String systemPrompt() {
         return """
                 You are a teacher whose aim it is to help a student learning.
-                The student has created a Scratch program and now needs help on this program.
+                I am a student and have created a Scratch program and now need your help on this program.
 
                 All textual responses and identifiers in code examples should be using the language: %s
                 """.formatted(IssueTranslator.getInstance().getLanguage());
