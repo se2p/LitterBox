@@ -272,6 +272,9 @@ public class LlmResponseParser {
                 }
                 currentScriptId = line.substring(SCRIPT_HEADER.length()).trim();
                 currentScriptCode.setLength(0);
+            } else if (line.startsWith("//")) {
+                // ignore full-line inline comments
+                // would need some changes to the parser to work correctly
             } else {
                 currentScriptCode.append(line.trim()).append("\n");
             }

@@ -46,9 +46,11 @@ actor                   : BEGIN_ACTOR actorContent NEWLINE*;
 
 actorContent            : ((customBlock | script) (((COMMENT? NEWLINE)+) | EOF))*?;
 
-script                  : expressionStmt NEWLINE
-                        | event NEWLINE (nonEmptyStmtList | stmtList)
-                        | nonEmptyStmtList
+script                  : BEGIN_SCRIPT? (
+                            expressionStmt NEWLINE
+                            | event NEWLINE (nonEmptyStmtList | stmtList)
+                            | nonEmptyStmtList
+                        )
                         ;
 
 customBlock             : 'define ' customBlockParameter* suffix=stringArgument COMMENT? NEWLINE stmtList;
@@ -586,6 +588,7 @@ NEWLINE                 : '\r\n' | '\n' ;
 WS                      : [ \t]+;
 
 BEGIN_ACTOR             : '//Sprite: ' ~[\r\n]+ NEWLINE;
+BEGIN_SCRIPT            : '//Script: ' ~[\r\n]+ NEWLINE;
 
 COMMENT                 : WS* '//' ~[\r\n]*;
 
