@@ -39,6 +39,9 @@ public class DefaultPrompts extends PromptBuilder {
                 I am a student and have created a Scratch program and now need your help on this program.
 
                 All textual responses and identifiers in code examples should be using the language: %s
+
+                In ScratchBlocks code, we identify sprites and scripts with the special comment lines starting with
+                `//Script:` and `//Sprite:`. Do *not* change these lines when making other changes to the code.
                 """.formatted(IssueTranslator.getInstance().getLanguage());
     }
 
