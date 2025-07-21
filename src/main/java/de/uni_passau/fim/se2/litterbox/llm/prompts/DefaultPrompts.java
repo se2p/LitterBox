@@ -191,6 +191,9 @@ public class DefaultPrompts extends PromptBuilder {
                   pressing the green flag.
                 * Explain the underlying programming concept that may be misunderstood by the person who wrote  the
                   code.
+
+                Keep your explanations brief and focussed on the important parts with helpful examples so that I as a
+                beginner Scratch programmer do not get overwhelmed with too much information.
                 """.formatted(issue.getHintText()).stripIndent();
     }
 
