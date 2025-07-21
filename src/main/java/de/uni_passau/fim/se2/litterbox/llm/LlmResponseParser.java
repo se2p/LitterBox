@@ -185,6 +185,7 @@ public class LlmResponseParser {
         // override scripts and procedures also contained in LLM response
         for (final var entry : llmResponseScripts.entrySet()) {
             if (entry.getValue() instanceof Script script) {
+                // todo: if the script already exists, copy the x/y pos from the old script metadata to the new script
                 scripts.put(entry.getKey(), script);
             } else if (entry.getValue() instanceof ProcedureDefinition procedureDefinition) {
                 procedures.put(entry.getKey(), procedureDefinition);
