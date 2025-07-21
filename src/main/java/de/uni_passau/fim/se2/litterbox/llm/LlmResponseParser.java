@@ -57,6 +57,16 @@ public class LlmResponseParser {
         return scratchBlocks.replace("set rotation to", "point in direction");
     }
 
+    private static String fixCommonScratchBlocksLineIssues(String scratchBlocksLine) {
+        // `wait/say for ( ) seconds` appears frequently as `wait for ( ) secs` instead
+        if (scratchBlocksLine.endsWith("secs")) {
+            final int idx = scratchBlocksLine.lastIndexOf("secs");
+            scratchBlocksLine = scratchBlocksLine.substring(0, idx) + "seconds";
+        }
+
+        return scratchBlocksLine;
+    }
+
     /**
      * Integrates the parsed response into the given program.
      *
@@ -257,6 +267,7 @@ public class LlmResponseParser {
 
         for (String line : response.lines().toList()) {
             line = fixSpriteScriptMarkerComments(line.trim());
+            line = fixCommonScratchBlocksLineIssues(line);
 
             if (line.startsWith("scratch") || line.startsWith(MARKDOWN_CLOSING)) {
                 // skip -- GPT likes to start markdown blocks with language tags; also skip markdown closing tags
