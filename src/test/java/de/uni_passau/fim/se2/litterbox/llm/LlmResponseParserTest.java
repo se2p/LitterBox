@@ -35,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -47,6 +49,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LlmResponseParserTest implements JsonTest {
@@ -66,13 +70,13 @@ public class LlmResponseParserTest implements JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        Assertions.assertEquals(1, program.getSymbolTable().getVariables().size());
-        Assertions.assertEquals(9, program.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
+        assertEquals(1, program.getSymbolTable().getVariables().size());
+        assertEquals(9, program.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(2, updatedProgram.getSymbolTable().getVariables().size());
-        Assertions.assertEquals(10, updatedProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
+        assertEquals(2, updatedProgram.getSymbolTable().getVariables().size());
+        assertEquals(10, updatedProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
     }
 
     @Test
@@ -115,11 +119,11 @@ public class LlmResponseParserTest implements JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        assertEquals(0, program.getSymbolTable().getMessages().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
+        assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
         Assertions.assertTrue(updatedProgram.getSymbolTable().getMessage("test").isPresent());
     }
 
@@ -133,15 +137,46 @@ public class LlmResponseParserTest implements JsonTest {
                 say [test]
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
-        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+    }
+
+    @Test
+    void testAddNewBrokenScript() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                forever {
+                wait (0.1) secs
+                }
+                if <touching color [#ffffff] ?> {
+                    move (-1) steps
+                }
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+
+        assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.get(1);
+
+        assertEquals(2, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(RepeatForeverStmt.class, newScript.getStmtList().getStmts().get(0));
+        assertInstanceOf(IfThenStmt.class, newScript.getStmtList().getStmts().get(1));
     }
 
     @Test
@@ -159,27 +194,27 @@ public class LlmResponseParserTest implements JsonTest {
                 say [test]
                 """;
         Program program = getAST("./src/test/fixtures/emptyProject.json");
-        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
-        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
+        assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(0, program.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(0);
-        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
 
-        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
+        assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
         scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getScriptList();
         newScript = scripts.get(0);
-        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(StageClicked.class, newScript.getEvent());
-        Assertions.assertInstanceOf(Think.class, newScript.getStmtList().getStmts().get(0));
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(StageClicked.class, newScript.getEvent());
+        assertInstanceOf(Think.class, newScript.getStmtList().getStmts().get(0));
         Think think = (Think) newScript.getStmtList().getStmts().get(0);
-        Assertions.assertInstanceOf(AsString.class, think.getThought());
+        assertInstanceOf(AsString.class, think.getThought());
         AsString asString = (AsString) think.getThought();
-        Assertions.assertInstanceOf(Qualified.class, asString.getOperand1());
+        assertInstanceOf(Qualified.class, asString.getOperand1());
     }
 
     @Test
@@ -201,22 +236,22 @@ public class LlmResponseParserTest implements JsonTest {
                 say [test]
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
-        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(0, program.getSymbolTable().getMessages().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
-        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
 
-        Assertions.assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
+        assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
         Assertions.assertTrue(updatedProgram.getSymbolTable().getMessage("test").isPresent());
         Script modified = scripts.get(0);
-        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertEquals(2, modified.getStmtList().getStmts().size());
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
     }
 
     @Test
@@ -238,24 +273,24 @@ public class LlmResponseParserTest implements JsonTest {
                 test (newMessage)
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
-        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
-        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        assertEquals(0, program.getSymbolTable().getMessages().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(2, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
-        Assertions.assertEquals(1, newScript.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().get(0));
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().get(0));
 
-        Assertions.assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
-        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
+        assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
         ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
         ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
-        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertEquals(2, modified.getStmtList().getStmts().size());
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
     }
 
 
@@ -274,20 +309,20 @@ public class LlmResponseParserTest implements JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/singleProcedure.json");
-        Assertions.assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
-        Assertions.assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
-        Assertions.assertEquals(0, program.getSymbolTable().getMessages().size());
+        assertEquals(0, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        assertEquals(0, program.getSymbolTable().getMessages().size());
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(0, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(0, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
 
-        Assertions.assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
-        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
+        assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
+        assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
         ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
         ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
-        Assertions.assertEquals(2, modified.getStmtList().getStmts().size());
-        Assertions.assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertEquals(2, modified.getStmtList().getStmts().size());
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
     }
 
     @Test
@@ -396,7 +431,7 @@ public class LlmResponseParserTest implements JsonTest {
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(7, updatedProgram.getActorDefinitionList().getDefinitions().size());
+        assertEquals(7, updatedProgram.getActorDefinitionList().getDefinitions().size());
         Assertions.assertTrue(updatedProgram.getActorDefinitionList().getActorDefinition("unidentifiedActor").isPresent());
     }
 
@@ -416,38 +451,38 @@ public class LlmResponseParserTest implements JsonTest {
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+        assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(0);
-        Assertions.assertEquals(4, newScript.getStmtList().getStmts().size());
+        assertEquals(4, newScript.getStmtList().getStmts().size());
         for (int i = 0; i < 3; i++) {
-            Assertions.assertInstanceOf(MoveSteps.class, newScript.getStmtList().getStmts().get(i));
+            assertInstanceOf(MoveSteps.class, newScript.getStmtList().getStmts().get(i));
         }
-        Assertions.assertInstanceOf(PointTowards.class, newScript.getStmtList().getStmts().get(3));
+        assertInstanceOf(PointTowards.class, newScript.getStmtList().getStmts().get(3));
 
         MoveSteps move = (MoveSteps) newScript.getStmtList().getStmts().get(0);
-        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        assertInstanceOf(DistanceTo.class, move.getSteps());
         DistanceTo distance = (DistanceTo) move.getSteps();
-        Assertions.assertInstanceOf(FromExpression.class, distance.getPosition());
+        assertInstanceOf(FromExpression.class, distance.getPosition());
         FromExpression from = (FromExpression) distance.getPosition();
-        Assertions.assertInstanceOf(AsString.class, from.getStringExpr());
+        assertInstanceOf(AsString.class, from.getStringExpr());
 
         move = (MoveSteps) newScript.getStmtList().getStmts().get(1);
-        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        assertInstanceOf(DistanceTo.class, move.getSteps());
         distance = (DistanceTo) move.getSteps();
-        Assertions.assertInstanceOf(MousePos.class, distance.getPosition());
+        assertInstanceOf(MousePos.class, distance.getPosition());
 
         move = (MoveSteps) newScript.getStmtList().getStmts().get(2);
-        Assertions.assertInstanceOf(DistanceTo.class, move.getSteps());
+        assertInstanceOf(DistanceTo.class, move.getSteps());
         distance = (DistanceTo) move.getSteps();
-        Assertions.assertInstanceOf(FromExpression.class, distance.getPosition());
+        assertInstanceOf(FromExpression.class, distance.getPosition());
         from = (FromExpression) distance.getPosition();
-        Assertions.assertInstanceOf(Username.class, from.getStringExpr());
+        assertInstanceOf(Username.class, from.getStringExpr());
 
         PointTowards pointTowards = (PointTowards) newScript.getStmtList().getStmts().get(3);
-        Assertions.assertInstanceOf(FromExpression.class, pointTowards.getPosition());
+        assertInstanceOf(FromExpression.class, pointTowards.getPosition());
         from = (FromExpression) pointTowards.getPosition();
-        Assertions.assertInstanceOf(AsString.class, from.getStringExpr());
+        assertInstanceOf(AsString.class, from.getStringExpr());
     }
 
     @Test
@@ -463,7 +498,7 @@ public class LlmResponseParserTest implements JsonTest {
         LlmResponseParser responseParser = new LlmResponseParser();
         var parsedResponse = responseParser.parseLLMResponse(response);
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
-        Assertions.assertEquals(3, updatedProgram.getActorDefinitionList().getDefinitions().size());
+        assertEquals(3, updatedProgram.getActorDefinitionList().getDefinitions().size());
         ActorDefinition newActor = updatedProgram.getActorDefinitionList().getActorDefinition("CatNew").get();
         Assertions.assertFalse(newActor.getSetStmtList().getStmts().isEmpty());
     }

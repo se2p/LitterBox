@@ -58,14 +58,28 @@ public class LlmResponseParser {
         return scratchBlocks.replace("set rotation to", "point in direction");
     }
 
-    private static String fixCommonScratchBlocksLineIssues(String scratchBlocksLine) {
+    /*
+     * Try to fix common obvious errors in ScratchBlocks syntax produced by LLMs.
+     */
+    private static String fixCommonScratchBlocksLineIssues(String line) {
         // `wait/say for ( ) seconds` appears frequently as `wait for ( ) secs` instead
-        if (scratchBlocksLine.endsWith("secs")) {
-            final int idx = scratchBlocksLine.lastIndexOf("secs");
-            scratchBlocksLine = scratchBlocksLine.substring(0, idx) + "seconds";
+        if (line.endsWith("secs")) {
+            final int idx = line.lastIndexOf("secs");
+            line = line.substring(0, idx) + "seconds";
         }
 
-        return scratchBlocksLine;
+        // sometimes control structures use braces
+        if (line.endsWith("{")) {
+            line = line.substring(0, line.length() - 1);
+        }
+        if (line.startsWith("if") && !line.endsWith("then")) {
+            line = line + (line.endsWith(" ") ? "" : " ") + "then";
+        }
+        if ("}".equals(line)) {
+            line = "end";
+        }
+
+        return line;
     }
 
     /**
