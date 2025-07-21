@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LlmResponseParserTest implements JsonTest {
@@ -72,6 +73,31 @@ public class LlmResponseParserTest implements JsonTest {
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         Assertions.assertEquals(2, updatedProgram.getSymbolTable().getVariables().size());
         Assertions.assertEquals(10, updatedProgram.getActorDefinitionList().getDefinitions().get(1).getSetStmtList().getStmts().size());
+    }
+
+    @Test
+    void testReplaceExistingScript() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8 (ignored suffix)
+                when green flag clicked
+                forever
+                    if <key (space v) pressed?> then
+                        turn right (15) degrees
+                    end
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        assertThat(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList())
+                .hasSize(1);
+
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+
+        assertThat(updatedProgram.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList())
+                .hasSize(1);
     }
 
     @Test

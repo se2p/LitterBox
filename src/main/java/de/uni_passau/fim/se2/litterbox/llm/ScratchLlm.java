@@ -93,6 +93,8 @@ public class ScratchLlm {
         }
 
         final String rawResponse = llmApi.query(promptBuilder.fixSyntax(scratchBlocksScripts)).getLast().text();
+        log.info("Requested fix for broken script:\n" + scratchBlocksScripts);
+        log.info("Received fixed script:\n" + rawResponse);
         final ParsedLlmResponseCode parsedResponse = responseParser.parseLLMResponse(rawResponse);
 
         final ParsedLlmResponseCode newResponse = new ParsedLlmResponseCode(response.scripts(), Collections.emptyMap())

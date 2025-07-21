@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchProjectMerger;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -322,6 +323,15 @@ public class LlmResponseParser {
             line = line
                     .replaceFirst("^[sS]prite:(\\s*)", "//Sprite: ")
                     .replaceFirst("^[sS]cript:(\\s*)", "//Script: ");
+        }
+
+        // one space between `//Script:` and ID. Since the ID cannot contain spaces, we know that the LLM added some
+        // additional suffix. Sprite names are allowed to contain spaces.
+        if (line.contains("Script:") && StringUtils.countMatches(line, " ") > 1) {
+            final int spaceIdx = line.replace("//Script: ", "").indexOf(' ');
+            if (spaceIdx > -1) {
+                line = line.substring(0, "//Script: ".length() + spaceIdx);
+            }
         }
 
         return line;
