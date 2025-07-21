@@ -69,9 +69,11 @@ public class DefaultPrompts extends PromptBuilder {
                 The code contains the following bugs and code smells:
                 %s
 
-                Create a version of the program where these issues are fixed.
-                Only output the ScratchBlocks code and nothing else.
-                Include sprite and script ids in the ScratchBlocks code.
+                Fix these issues by changing existing code and adding new code.
+                Only output the ScratchBlocks code of changed and new scripts but nothing else.
+                Output whole scripts.
+                Include sprite and script ids in the ScratchBlocks code for changed scripts exactly as they appear in
+                the existing comments. Add sprite and script ids for new scripts.
                 """.formatted(issueDescription);
     }
 
