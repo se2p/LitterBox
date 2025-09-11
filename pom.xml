@@ -265,9 +265,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <langchain.version>1.1.0</langchain.version>
-        <!-- remove when same as langchain.version again in the future -->
-        <langchain.ollama.version>1.1.0-rc1</langchain.ollama.version>
+        <langchain.version>1.4.0</langchain.version>
     </properties>
 
     <dependencies>
@@ -284,7 +282,7 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <version>${langchain.ollama.version}</version>
+            <version>${langchain.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
