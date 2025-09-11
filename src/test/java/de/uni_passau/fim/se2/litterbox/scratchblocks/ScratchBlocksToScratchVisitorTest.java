@@ -888,6 +888,14 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     @Test
+    void joinExpr() {
+        StmtList stmtList = getStmtList("(join [your score is] [123])");
+        Join join = assertHasExprStmt(stmtList, Join.class);
+        assertInstanceOf(StringLiteral.class, join.getOperand1());
+        assertInstanceOf(StringLiteral.class, join.getOperand2());
+    }
+
+    @Test
     void testPenBlocks() {
         final String scratchBlocks = """
                 erase all
@@ -928,14 +936,6 @@ class ScratchBlocksToScratchVisitorTest {
         Assertions.assertInstanceOf(FixedColorParam.class, setPenColorParamTo.getParam());
         fixedColorParam = (FixedColorParam) setPenColorParamTo.getParam();
         Assertions.assertEquals("saturation", fixedColorParam.getType().getType());
-    }
-
-    @Test
-    void joinExpr() {
-        StmtList stmtList = getStmtList("(join [your score is] [123])");
-        Join join = assertHasExprStmt(stmtList, Join.class);
-        assertInstanceOf(StringLiteral.class, join.getOperand1());
-        assertInstanceOf(StringLiteral.class, join.getOperand2());
     }
 
     // region: common helper methods

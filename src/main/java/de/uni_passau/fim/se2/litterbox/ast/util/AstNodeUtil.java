@@ -37,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.MonitorMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -112,6 +113,32 @@ public class AstNodeUtil {
                 .getDefinitions()
                 .stream()
                 .filter(actor -> includeStage || actor.isSprite());
+    }
+
+    public static Stream<ScriptEntity> getScriptEntities(final Program program) {
+        return Stream.concat(getProcedures(program), getScripts(program));
+    }
+
+    /**
+     * Gets all procedures in the program.
+     *
+     * @param program Some program.
+     * @return The procedures in the given program.
+     */
+    public static Stream<ProcedureDefinition> getProcedures(final Program program) {
+        return program.getActorDefinitionList().getDefinitions().stream()
+                .flatMap(actor -> actor.getProcedureDefinitionList().getList().stream());
+    }
+
+    /**
+     * Gets all scripts in the program.
+     *
+     * @param program Some program.
+     * @return The scripts in the given program.
+     */
+    public static Stream<Script> getScripts(final Program program) {
+        return program.getActorDefinitionList().getDefinitions().stream()
+                .flatMap(actor -> actor.getScripts().getScriptList().stream());
     }
 
     /**

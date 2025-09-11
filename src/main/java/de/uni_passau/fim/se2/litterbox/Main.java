@@ -38,6 +38,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
+                LlmSubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
                 Main.LeilaSubcommand.class,
@@ -82,7 +83,9 @@ public class Main implements Callable<Integer> {
         PropertyLoader.setDefaultSystemProperties("litterbox.properties");
         PropertyLoader.setGlobalLoggingLevelFromEnvironment();
 
-        int exitCode = new CommandLine(new Main()).execute(args);
+        int exitCode = new CommandLine(new Main())
+                .setCaseInsensitiveEnumValuesAllowed(true)
+                .execute(args);
         System.exit(exitCode);
     }
 

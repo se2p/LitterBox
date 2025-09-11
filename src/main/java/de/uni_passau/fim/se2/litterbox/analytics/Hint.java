@@ -49,7 +49,7 @@ public class Hint {
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
-    private String hintText;
+    protected String hintText;
 
     private Hint(String hintText) {
         this.hintText = hintText;

@@ -91,8 +91,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public class NodeReplacementVisitor extends OnlyCodeCloneVisitor {
 
-    private ASTNode target;
-    private ASTNode replacement;
+    private final ASTNode target;
+    private final ASTNode replacement;
+
+    public ASTNode getReplacement() {
+        return replacement;
+    }
 
     public NodeReplacementVisitor(ASTNode target, ASTNode replacement) {
         this.target = target;

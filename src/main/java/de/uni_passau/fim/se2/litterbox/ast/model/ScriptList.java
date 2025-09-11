@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ScriptList extends AbstractNode {
 
@@ -39,6 +40,10 @@ public class ScriptList extends AbstractNode {
 
     public Script getScript(int num) {
         return scriptList.get(num);
+    }
+
+    public Optional<Script> getScript(String id) {
+        return scriptList.stream().filter(script -> script.getEvent().getUniqueName().equals(id)).findFirst();
     }
 
     public int getSize() {
