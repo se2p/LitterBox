@@ -64,7 +64,7 @@ import java.util.concurrent.Callable;
                         + "    --path ~/path/to/json/project/or/folder/with/projects%n"
                         + "    -o ~/path/to/folder/or/file/for/the/output",
                 "%nExample for refactoring:%n"
-                        + "java -jar Litterbox.jar refactor%n"
+                        + "java -jar Litterbox.jar refactoring%n"
                         + "    --path ~/path/to/project%n"
                         + "    -r ~/path/to/output/folder/for/refactored/project"
         }

@@ -134,7 +134,6 @@ To select all bug patterns, you can also use the term `bugs` in the
 list; to select all code smell checks use `smells`.
 
 
-
 ### Reporting the bug patterns per script
 
 The bug patterns can be reported per scripts and procedures instead of for the whole program. In this case, only the bug patterns that can be detected through intra-scripts and intra-procedures analysis are considered.
@@ -158,6 +157,7 @@ the analysis and the size of a resulting CSV file.
 issues.load_mblock=false
 ```
 
+
 ### Collecting statistics
 
 LitterBox can produce statistics on code metrics of a project (e.g.,
@@ -169,6 +169,7 @@ java -jar Litterbox-1.9.full.jar \
     --path <path/to/project.json> \
     --output <statsfile.csv>
 ```
+
 
 ### Automatically refactoring projects
 
@@ -184,6 +185,24 @@ java -jar Litterbox-1.9.full.jar \
 To this end, Litterbox uses a multi-objective search-based approach to explore possible
 refactorings that optimize code readability metrics such as size, complexity and entropy.
 The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
+
+
+### LLM Interaction
+
+Since version 1.10 LitterBox allows you to ask an LLM about a Scratch program and makes it possible to automatically integrate LLM-provided issue fixes into the program.
+You can find all features under the `llm` subcommand:
+```bash
+java -jar Litterbox-1.10.full.jar llm --help
+```
+
+It supports either the OpenAI API, or a self-hosted Ollama instance.
+To provide an OpenAI API key, start LitterBox like
+```bash
+java -Dlitterbox.llm.openai.api-key=KEY Litterbox-1.10.full.jar llm …
+```
+You can find other configuration options that can be passed via `-D` flags (e.g., model choice, Ollama API endpoint) in `src/main/resources/scratchllm.properties`.
+
+For our integration of some of the LLM-features into the Scratch browser interface, see https://github.com/se2p/NuzzleBug and https://github.com/se2p/LitterBox-Web.
 
 
 ## Adding new bug patterns or code smells
@@ -203,38 +222,45 @@ provide hints in `IssueHints_de.properties` / `IssueHints_en.properties`, so tha
 
 We provide a website in which users can check their projects with LitterBox directly by uploading the project file or entering the project ID: [https://scratch-litterbox.org/](https://scratch-litterbox.org/)
 
+
 ## Publications
 
-To learn more about LitterBox, see the following paper:
+### LitterBox
 
 G. Fraser, U. Heuer, N. Körber, E. Wasmeier, "LitterBox: A Linter for Scratch Programs", 
 in Proceedings of the IEEE/ACM 43rd International Conference on Software Engineering: Software Engineering Education and Training (ICSE-SEET) (pp. 183-188). IEEE, 2021.
 [https://doi.org/10.1109/ICSE-SEET52601.2021.00028](https://doi.org/10.1109/ICSE-SEET52601.2021.00028)
 
-To learn more about bug patterns, see the following paper:
+### Bug Patterns
 
 C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
 the 25th Annual Conference on Innovation and Technology in Computer
 Science Education (ITiCSE), pages 89-95, ACM,
 2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
 
-To learn more about code perfumes, see the following paper:
+### Code Perfumes
 
 F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage
 Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM,
 2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
 
-To learn more about code patterns in mBlock robot programs, see the following paper:
+### Code Patterns in mBlock Programs
 
 F. Obermüller, R. Pernerstorfer, L. Bailey, U. Heuer, and G. Fraser, "Common Patterns in Block-Based Robot Programs",
 in Proceedings of the 17th Workshop in Primary and Secondary Computing Education (WiPSCE ’22). ACM,
 2022. [https://doi.org/10.1145/3556787.3556859](https://doi.org/10.1145/3556787.3556859)
 
-To learn if Scratch programmers fix issues and how we detect such fixes:
+### Do Scratchers Fix Their Bugs?
 
-F. Obermüller and Gordon Fraser, "Do Scratchers Fix Their Bugs? Detecting Fixes of Scratch Static Analysis Warnings",
+F. Obermüller and G. Fraser, "Do Scratchers Fix Their Bugs? Detecting Fixes of Scratch Static Analysis Warnings",
 in Proceedings of the 19th Workshop in Primary and Secondary Computing Education (WIPSCE ’24). ACM,
 2024. [https://doi.org/10.1145/3677619.3678108](https://doi.org/10.1145/3677619.3678108)
+
+### LLM Interaction
+
+B. Fein, F. Obermüller and G. Fraser, "LitterBox+: An Extensible Framework for LLM-enhanced Scratch Static Code Analysis",
+in Proceedings of the 40th IEEE/ACM International Conference on Automated Software Engineering (ASE ’25). IEEE,
+2025. https://doi.org/TBD ([arXiv:2509.12021](https://arxiv.org/abs/2509.12021))
 
 
 ## Contributors
