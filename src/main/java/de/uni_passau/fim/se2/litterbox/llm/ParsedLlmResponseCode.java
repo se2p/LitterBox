@@ -19,9 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.llm;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public record ParsedLlmResponseCode(
      * @param actor The name of the sprite/actor.
      * @return All scripts of this actor.
      */
-    @Nonnull
+    @NonNull
     public Map<String, ScriptEntity> actor(final String actor) {
         return Objects.requireNonNullElse(scripts.get(actor), Collections.emptyMap());
     }
