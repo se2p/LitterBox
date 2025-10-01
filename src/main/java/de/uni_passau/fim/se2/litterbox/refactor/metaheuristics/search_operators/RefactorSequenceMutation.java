@@ -38,18 +38,15 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
     }
 
     /**
-     * <p>
      * Returns a mutated deep copy of the given refactoring sequence.
-     * </p>
-     * <p>
-     * Each integer in the production list mutates with a probability of one divided by the lists size.
-     * If a index inside the list mutates it executes one of the following mutations with equal probability:
+     *
+     * <p>Each integer in the production list mutates with a probability of one divided by the lists size.
+     * If an index inside the list mutates it executes one of the following mutations with equal probability:
      * <ol>
      *  <li>add a new production to the list at the index</li>
      *  <li>replace the current production at the index</li>
      *  <li>remove the current production at the index</li>
      * </ol>
-     * </p>
      *
      * @param refactorSequence The original RefactorSequence, that mutates.
      * @return A mutated deep copy of the given RefactorSequence object.
@@ -69,7 +66,13 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
             index++;
         }
 
-        return new RefactorSequence(refactorSequence.getOriginalProgram(), refactorSequence.getMutation(), refactorSequence.getCrossover(), mutatedProductions, refactoringFinders);
+        return new RefactorSequence(
+                refactorSequence.getOriginalProgram(),
+                refactorSequence.getMutation(),
+                refactorSequence.getCrossover(),
+                mutatedProductions,
+                refactoringFinders
+        );
     }
 
     /**

@@ -194,7 +194,7 @@ final class StringExprConverter extends ExprConverter {
         final String property = exprBlock.getFieldValueAsString(KnownFields.PROPERTY);
         final Attribute attribute = switch (property) {
             case "y position", "x position", "direction", "costume #", "costume name", "size", "volume",
-                 "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(property));
+                    "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(property));
             default -> new AttributeFromVariable(new Variable(new StrId(property)));
         };
 
