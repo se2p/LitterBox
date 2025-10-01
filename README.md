@@ -27,7 +27,7 @@ produce an executable jar-file, run the following command:
 mvn package
 ```
 
-This will produce `target/Litterbox-1.9.full.jar`
+This will produce `target/Litterbox-1.10.full.jar`
 
 
 ## Using LitterBox
@@ -35,7 +35,7 @@ This will produce `target/Litterbox-1.9.full.jar`
 To see an overview of the command line options available in LitterBox type:
 
 ```bash
-java -jar Litterbox-1.9.full.jar --help
+java -jar Litterbox-1.10.full.jar --help
 ```
 
 ### Basic usage
@@ -44,7 +44,7 @@ LitterBox parses the JSON file of a Scratch project, which contains
 its source code. Given such a JSON file, LitterBox is invoked as follows:
 
 ```bash
-java -jar Litterbox-1.9.full.jar check --path <path/to/project.json>
+java -jar Litterbox-1.10.full.jar check --path <path/to/project.json>
 ```
 
 As a result, LitterBox will report any occurrences of bug patterns or
@@ -57,7 +57,7 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```bash
-java -jar Litterbox-1.9.full.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
+java -jar Litterbox-1.10.full.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
@@ -73,7 +73,7 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```bash
-java -jar Litterbox-1.9.full.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
+java -jar Litterbox-1.10.full.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -90,7 +90,7 @@ filename specified in order to decide whether to produce CSV or JSON
 output:
 
 ```bash
-java -jar Litterbox-1.9.full.jar check --path <path/to/project.json> --output <result.csv>
+java -jar Litterbox-1.10.full.jar check --path <path/to/project.json> --output <result.csv>
 ```
 
 The CSV file will contain a high-level summary of the number of
@@ -102,7 +102,7 @@ analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
 ```bash
-java -jar Litterbox-1.9.full.jar check --path <path/to/project.json> --annotate <results/>
+java -jar Litterbox-1.10.full.jar check --path <path/to/project.json> --annotate <results/>
 ```
 
 
@@ -118,7 +118,7 @@ comma-separated list of bug patterns, e.g.:
 
 
 ```bash
-java -jar Litterbox-1.9.full.jar \
+java -jar Litterbox-1.10.full.jar \
     check \
     --path <path/to/project.json> \
     --detectors endless_recursion,call_without_definition
@@ -127,7 +127,7 @@ java -jar Litterbox-1.9.full.jar \
 A full list of available bug checkers can be retrieved using:
 
 ```bash
-java -jar Litterbox-1.9.full.jar --help
+java -jar Litterbox-1.10.full.jar --help
 ```
 
 To select all bug patterns, you can also use the term `bugs` in the
@@ -139,7 +139,7 @@ list; to select all code smell checks use `smells`.
 The bug patterns can be reported per scripts and procedures instead of for the whole program. In this case, only the bug patterns that can be detected through intra-scripts and intra-procedures analysis are considered.
 
 ```bash
-java -jar Litterbox-1.9.full.jar check \
+java -jar Litterbox-1.10.full.jar check \
     --path <path/to/project.json> \
     --output <result.csv> \
     --detectors script-bugs \
@@ -164,7 +164,7 @@ LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
 ```bash
-java -jar Litterbox-1.9.full.jar \
+java -jar Litterbox-1.10.full.jar \
     stats \
     --path <path/to/project.json> \
     --output <statsfile.csv>
@@ -176,7 +176,7 @@ java -jar Litterbox-1.9.full.jar \
 Since version 1.7 Litterbox can automatically refactor a given Scratch project to improve its readability:
 
 ```bash
-java -jar Litterbox-1.9.full.jar \
+java -jar Litterbox-1.10.full.jar \
     refactoring \
     --path <path/to/project.json> \
     --refactored-projects <path/to/output-dir>
