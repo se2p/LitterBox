@@ -32,17 +32,14 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
     String DEFAULT_NAME = "fitness_function";
 
     /**
-     * <p>
      * Computes and returns the fitness value of the given solution {@code c}. Minimizing fitness
      * functions must return lower values for better solutions, whereas maximizing fitness
      * functions are expected to return higher values.
-     * </p>
-     * <p>
-     * When two solutions {@code c1} and {@code c2} are equal it is generally recommended to
+     *
+     * <p>When two solutions {@code c1} and {@code c2} are equal it is generally recommended to
      * return the same fitness value for both of them. That is, {@code c1.equals(c2)} implies {@code
      * getFitness(c1) == getFitness(c2)}. While this is not an absolute requirement implementations
      * that do not conform to this should clearly indicate this fact.
-     * </p>
      *
      * @param c the solution to rate
      * @return the fitness value of the given solutions
@@ -66,20 +63,19 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
      * Tells whether this function is a minimizing fitness function.
      *
      * @return {@code true} if this is a minimizing fitness function, {@code false} if this is a
-     * maximizing fitness function
+     *         maximizing fitness function
      */
     boolean isMinimizing();
 
     /**
-     * Returns the reference point of the fitness function for the hypervolume
+     * Returns the reference point of the fitness function for the hypervolume.
      *
      * @return {@code 1} if this is a minimizing fitness function, {@code 0} if this is a
-     * maximizing fitness function
+     *         maximizing fitness function
      */
     double getReferencePoint();
 
     /**
-     * <p>
      * Returns a comparator that compares two solutions by their fitness, taking into account
      * whether this is a maximizing or a minimizing fitness function. In other words, given two
      * solutions {@code c1} and {@code c2} with fitness values {@code f1} and {@code f2},
@@ -88,9 +84,8 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
      * {@code f1} is worse than {@code f2}. If this is a minimizing fitness function, smaller
      * fitness values are considered better, and, on the contrary, if this is a maximizing fitness
      * function, larger fitness values are considered better.
-     * </p>
-     * <p>
-     * Example usage:
+     *
+     * <p>Example usage:
      * <pre>{@code
      * FitnessFunction<C> ff = ...;
      * C c1 = ...; // first solution to compare
@@ -105,7 +100,6 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
      *     // c1 and c2 are equally good
      * }
      * }</pre>
-     * </p>
      *
      * @return a {@code Comparator<C>} that uses this fitness function as extractor for its sort key
      */
