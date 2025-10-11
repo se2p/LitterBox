@@ -47,7 +47,7 @@ public class EmptyControlBodyTest implements JsonTest {
         Assertions.assertEquals(6, reports.size());
         Hint repeat = Hint.fromKey(parameterName.getName());
         repeat.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
-        Assertions.assertEquals(repeat.getHintText(), reports.get(0).getHintText());
+        Assertions.assertEquals(repeat.getHintText(), reports.getFirst().getHintText());
         Hint forever = Hint.fromKey(parameterName.getName());
         forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
         Assertions.assertEquals(forever.getHintText(), reports.get(1).getHintText());

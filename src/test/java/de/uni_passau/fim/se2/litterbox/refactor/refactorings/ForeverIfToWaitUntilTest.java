@@ -42,20 +42,20 @@ public class ForeverIfToWaitUntilTest implements JsonTest {
         ForeverIfToWaitUntilFinder finder = new ForeverIfToWaitUntilFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(ForeverIfToWaitUntil.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(ForeverIfToWaitUntil.class);
     }
 
     @Test
     public void testForeverIfToWaitUntilRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/foreverToWaitUntil.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         RepeatForeverStmt loopStmt = (RepeatForeverStmt) stmtList.getStmts().stream().filter(s -> s instanceof RepeatForeverStmt).findFirst().get();
         IfThenStmt ifThenStmt = (IfThenStmt) loopStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfThenStmt).findFirst().get();
         ForeverIfToWaitUntil refactoring = new ForeverIfToWaitUntil(loopStmt);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(1);
 

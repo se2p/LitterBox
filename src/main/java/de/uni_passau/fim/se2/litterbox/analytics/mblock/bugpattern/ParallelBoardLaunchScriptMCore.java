@@ -68,7 +68,7 @@ public class ParallelBoardLaunchScriptMCore extends AbstractRobotFinder {
     protected void finishRobotVisit() {
         if (robot == MCORE) {
             if (launchCount >= 2) {
-                MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, scripts, nodes, nodes.get(0).getMetadata(), Hint.fromKey(getName()));
+                MultiBlockIssue issue = new MultiBlockIssue(this, IssueSeverity.HIGH, program, currentActor, scripts, nodes, nodes.getFirst().getMetadata(), Hint.fromKey(getName()));
                 addIssue(issue);
             }
             actors.clear();

@@ -34,13 +34,13 @@ public class MultiBlockIssue extends Issue {
     private List<ASTNode> normalizedNodes;
 
     public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ScriptEntity script, List<ASTNode> nodes, Metadata metaData, Hint hint) {
-        super(finder, severity, program, actor, script, nodes.get(0), metaData, hint);
+        super(finder, severity, program, actor, script, nodes.getFirst(), metaData, hint);
         this.nodes.addAll(nodes);
         scripts.add(script);
     }
 
     public MultiBlockIssue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, List<ScriptEntity> scripts, List<ASTNode> nodes, Metadata metaData, Hint hint) {
-        super(finder, severity, program, actor, scripts.get(0), nodes.get(0), metaData, hint);
+        super(finder, severity, program, actor, scripts.getFirst(), nodes.getFirst(), metaData, hint);
         this.nodes.addAll(nodes);
         this.scripts.addAll(scripts);
     }
@@ -64,17 +64,17 @@ public class MultiBlockIssue extends Issue {
 
     @Override
     public Script getScript() {
-        return scripts.get(0) instanceof Script script ? script : null;
+        return scripts.getFirst() instanceof Script script ? script : null;
     }
 
     @Override
     public ProcedureDefinition getProcedure() {
-        return scripts.get(0) instanceof ProcedureDefinition procedure ? procedure : null;
+        return scripts.getFirst() instanceof ProcedureDefinition procedure ? procedure : null;
     }
 
     @Override
     public ScriptEntity getScriptOrProcedureDefinition() {
-        return scripts.get(0);
+        return scripts.getFirst();
     }
 
     public List<ScriptEntity> getScriptsOrProcedureDefinitions() {

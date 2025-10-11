@@ -64,7 +64,7 @@ public class StutteringMovement extends AbstractIssueFinder {
         if (script.getEvent() instanceof KeyPressed keyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() <= 2 && !listOfStmt.isEmpty()) {
-                Stmt stmt = listOfStmt.get(0);
+                Stmt stmt = listOfStmt.getFirst();
                 if (hasRotation || hasPositionMove) {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 

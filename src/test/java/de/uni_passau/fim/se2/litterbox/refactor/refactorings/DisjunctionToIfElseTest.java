@@ -42,13 +42,13 @@ public class DisjunctionToIfElseTest implements JsonTest {
         DisjunctionToIfElseFinder finder = new DisjunctionToIfElseFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(DisjunctionToIfElse.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(DisjunctionToIfElse.class);
     }
 
     @Test
     public void testDisjunctionToIfElseRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/disjunctionToIfElse.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
 
         IfThenStmt ifStatement1 = (IfThenStmt) stmtList.getStatement(0);
@@ -57,7 +57,7 @@ public class DisjunctionToIfElseTest implements JsonTest {
         DisjunctionToIfElse refactoring = new DisjunctionToIfElse(ifStatement1);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(1);
 

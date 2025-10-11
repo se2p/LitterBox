@@ -306,7 +306,7 @@ public class LoopSensingRobot extends AbstractRobotFinder {
     }
 
     public void generateMultiBlockIssue(ASTNode node) {
-        ASTNode loop = loops.get(loops.size() - 1);
+        ASTNode loop = loops.getLast();
         IfStmt parent = AstNodeUtil.findParent(node, IfStmt.class);
 
         List<ASTNode> concernedNodes = new ArrayList<>();

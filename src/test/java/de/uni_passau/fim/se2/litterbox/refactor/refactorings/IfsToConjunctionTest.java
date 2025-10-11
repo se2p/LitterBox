@@ -41,13 +41,13 @@ public class IfsToConjunctionTest implements JsonTest {
         IfsToConjunctionFinder finder = new IfsToConjunctionFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(IfsToConjunction.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(IfsToConjunction.class);
     }
 
     @Test
     public void testIfsToConjunctionRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/ifsToConjunction.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         IfThenStmt if1 = (IfThenStmt) stmtList.getStatement(0);
         IfThenStmt if2 = (IfThenStmt) if1.getThenStmts().getStatement(0);
@@ -55,7 +55,7 @@ public class IfsToConjunctionTest implements JsonTest {
         IfsToConjunction refactoring = new IfsToConjunction(if1, if2);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(1);
 

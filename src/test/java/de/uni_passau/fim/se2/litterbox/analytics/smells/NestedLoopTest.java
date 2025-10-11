@@ -51,7 +51,7 @@ public class NestedLoopTest implements JsonTest {
         ForeverInsideLoop foreverInsideLoop = new ForeverInsideLoop();
         List<Issue> reportsForever = new ArrayList<>(foreverInsideLoop.check(nestedLoops));
         Assertions.assertEquals(1, reportsForever.size());
-        Assertions.assertTrue(reportsNested.get(0).isSubsumedBy(reportsForever.get(0)));
+        Assertions.assertTrue(reportsNested.getFirst().isSubsumedBy(reportsForever.getFirst()));
     }
 
     @Test
@@ -63,6 +63,6 @@ public class NestedLoopTest implements JsonTest {
         UnnecessaryLoop foreverInsideLoop = new UnnecessaryLoop();
         List<Issue> reportsUnnecessary = new ArrayList<>(foreverInsideLoop.check(nestedLoops));
         Assertions.assertEquals(1, reportsUnnecessary.size());
-        Assertions.assertTrue(reportsNested.get(0).isSubsumedBy(reportsUnnecessary.get(0)));
+        Assertions.assertTrue(reportsNested.getFirst().isSubsumedBy(reportsUnnecessary.getFirst()));
     }
 }

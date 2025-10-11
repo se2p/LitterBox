@@ -59,10 +59,10 @@ public class ProgramParserTest implements JsonTest {
     @Test
     public void testSetStmts() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
+        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().getFirst();
         SetStmtList setStmtList = stage.getSetStmtList();
         List<SetStmt> stmts = setStmtList.getStmts();
-        SetAttributeTo setAttr = (SetAttributeTo) stmts.get(0);
+        SetAttributeTo setAttr = (SetAttributeTo) stmts.getFirst();
         Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("volume");
         Truth.assertThat(((NumberLiteral) setAttr.getExpr()).getValue()).isEqualTo(100);
 
@@ -86,10 +86,10 @@ public class ProgramParserTest implements JsonTest {
     @Test
     public void testVariable() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
-        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
+        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().getFirst();
         List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmts();
-        Assertions.assertInstanceOf(Variable.class, ((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent());
-        Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
+        Assertions.assertInstanceOf(Variable.class, ((DeclarationIdentAsTypeStmt) decls.getFirst()).getIdent());
+        Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.getFirst()).getIdent()
                 .getName().getName()).isEqualTo("my variable");
 
         SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
@@ -105,7 +105,7 @@ public class ProgramParserTest implements JsonTest {
                 .filter(t -> t instanceof SetVariableTo).collect(
                         Collectors.toList());
 
-        SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
+        SetVariableTo setList = (SetVariableTo) spriteSetStmts.getFirst();
         Qualified variable = (Qualified) setList.getIdentifier();
         Assertions.assertInstanceOf(ScratchList.class, variable.getSecond());
         Truth.assertThat(variable.getSecond().getName().getName()).isEqualTo("SpriteLocalList");

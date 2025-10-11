@@ -48,7 +48,7 @@ public class ForeverIfToWaitUntil extends OnlyCodeCloneVisitor implements Refact
         WaitUntil waitUntil = new WaitUntil(apply(ifThenStmt.getBoolExpr()), apply(ifThenStmt.getMetadata()));
 
         List<Stmt> loopBody = apply(ifThenStmt.getThenStmts()).getStmts();
-        loopBody.add(0, waitUntil);
+        loopBody.addFirst(waitUntil);
 
         replacementLoop = new RepeatForeverStmt(new StmtList(loopBody), apply(loop.getMetadata()));
     }

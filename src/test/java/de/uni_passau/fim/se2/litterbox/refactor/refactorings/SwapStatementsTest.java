@@ -41,21 +41,21 @@ public class SwapStatementsTest implements JsonTest {
         SwapStatementsFinder finder = new SwapStatementsFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SwapStatements.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SwapStatements.class);
     }
 
     @Test
     public void testSwapStatementRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/swappable.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
 
         SwapStatementsFinder finder = new SwapStatementsFinder();
         List<Refactoring> refactorings = finder.check(program);
 
-        SwapStatements refactoring = (SwapStatements) refactorings.get(0);
+        SwapStatements refactoring = (SwapStatements) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         assertThat(refactoredScript.getEvent()).isEqualTo(script.getEvent());
         assertThat(refactoredScript.getStmtList().getNumberOfStatements()).isEqualTo(script.getStmtList().getNumberOfStatements());
         assertThat(refactoredScript.getStmtList().getStmts()).containsExactlyElementsIn(script.getStmtList().getStmts());

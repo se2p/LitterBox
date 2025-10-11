@@ -47,7 +47,7 @@ class LLMProgramQueryAnalyzerTest implements JsonTest {
         );
 
         final String response = analyzer.analyze(program);
-        final String request = llmApi.getRequests().get(0);
+        final String request = llmApi.getRequests().getFirst();
 
         assertThat(request).contains("custom user question");
         assertThat(request).contains("//Sprite: Sprite1");

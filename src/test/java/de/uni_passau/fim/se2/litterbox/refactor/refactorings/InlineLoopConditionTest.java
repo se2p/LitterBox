@@ -43,19 +43,19 @@ public class InlineLoopConditionTest implements JsonTest {
         InlineLoopConditionFinder finder = new InlineLoopConditionFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(InlineLoopCondition.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(InlineLoopCondition.class);
     }
 
     @Test
     public void testInlineLoopConditionRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/inlineLoopCondition.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         UntilStmt loopStmt = (UntilStmt) stmtList.getStmts().stream().filter(s -> s instanceof UntilStmt).findFirst().get();
         InlineLoopCondition refactoring = new InlineLoopCondition(loopStmt);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 

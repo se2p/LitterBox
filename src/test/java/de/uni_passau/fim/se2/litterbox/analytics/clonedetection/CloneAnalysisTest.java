@@ -43,7 +43,7 @@ public class CloneAnalysisTest implements JsonTest {
     public void testIdentity() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        Script script = actor.getScripts().getScriptList().get(0);
+        Script script = actor.getScripts().getScriptList().getFirst();
         assertEquals(script, script);
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
@@ -129,7 +129,7 @@ public class CloneAnalysisTest implements JsonTest {
     public void testScriptWithItself() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/cloneScriptWithItself.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script1 = actor.getScripts().getScriptList().getFirst();
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clonesType = cloneAnalysis.check(script1, CodeClone.CloneType.TYPE1);
@@ -204,8 +204,8 @@ public class CloneAnalysisTest implements JsonTest {
     public void testCustomBlockClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        Script script = actor.getScripts().getScriptList().get(0);
-        ProcedureDefinition procedure = actor.getProcedureDefinitionList().getList().get(0);
+        Script script = actor.getScripts().getScriptList().getFirst();
+        ProcedureDefinition procedure = actor.getProcedureDefinitionList().getList().getFirst();
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(3, 2);
         Set<CodeClone> clones = cloneAnalysis.check(script, procedure, CodeClone.CloneType.TYPE1);
@@ -217,7 +217,7 @@ public class CloneAnalysisTest implements JsonTest {
     public void testNoCloneWithNormalizedKey() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclone_keynormalization.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        Script script = actor.getScripts().getScriptList().get(0);
+        Script script = actor.getScripts().getScriptList().getFirst();
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis();
         Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE3);
@@ -258,7 +258,7 @@ public class CloneAnalysisTest implements JsonTest {
     public void testNoCloneWithOverlappingCode() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/notype2clone.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(3); // Pufferfish
-        Script script = actor.getScripts().getScriptList().get(0);
+        Script script = actor.getScripts().getScriptList().getFirst();
 
         // Gap size is > 2
         CloneAnalysis cloneAnalysis = new CloneAnalysis();

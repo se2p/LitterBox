@@ -64,6 +64,6 @@ public class UnnecessaryLoopTest implements JsonTest {
         ForeverInsideLoop foreverInsideLoop = new ForeverInsideLoop();
         List<Issue> reportsForever = new ArrayList<>(foreverInsideLoop.check(longScript));
         Assertions.assertEquals(1, reportsForever.size());
-        Assertions.assertTrue(reports.get(0).isSubsumedBy(reportsForever.get(0)));
+        Assertions.assertTrue(reports.getFirst().isSubsumedBy(reportsForever.getFirst()));
     }
 }

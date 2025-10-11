@@ -56,7 +56,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Truth.assertThat(listOfStmt.get(0)).isInstanceOf(AskAndWait.class);
@@ -75,10 +75,10 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Stmt askAndWaitStmt = listOfStmt.get(0);
+        Stmt askAndWaitStmt = listOfStmt.getFirst();
         Truth.assertThat(askAndWaitStmt).isInstanceOf(AskAndWait.class);
         Truth.assertThat(((StringLiteral) ((AskAndWait) askAndWaitStmt).getQuestion()).getText())
                 .isEqualTo("What's your name?");
@@ -90,7 +90,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt switchBackropStmt = listOfStmt.get(1);
@@ -109,7 +109,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt switchBackdrop = listOfStmt.get(1);
@@ -123,7 +123,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt showVariable = listOfStmt.get(2);
@@ -146,7 +146,7 @@ public class ActorLookStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Stmt showVariable = listOfStmt.get(4);

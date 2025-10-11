@@ -46,7 +46,7 @@ class DeleteControlBlockTest {
         }
         assertNotNull(program);
 
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> stmtList = script.getStmtList().getStmts();
         ControlStmt controlStmt = null;
         for (Stmt stmt : stmtList) {
@@ -59,7 +59,7 @@ class DeleteControlBlockTest {
         DeleteControlBlock refactoring = new DeleteControlBlock(controlStmt);
         program = refactoring.apply(program);
 
-        Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertFalse(refactoredStmtList.contains(controlStmt));
     }

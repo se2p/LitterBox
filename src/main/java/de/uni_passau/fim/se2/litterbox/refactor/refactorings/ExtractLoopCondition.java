@@ -82,7 +82,7 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
                 """,
                 NAME,
                 ScratchBlocksVisitor.of(foreverLoop),
-                ScratchBlocksVisitor.of(replacement.get(0))
+                ScratchBlocksVisitor.of(replacement.getFirst())
         );
     }
 

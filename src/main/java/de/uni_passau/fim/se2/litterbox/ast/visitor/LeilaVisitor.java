@@ -963,7 +963,7 @@ public class LeilaVisitor extends PrintVisitor {
                 expressions.get(i).accept(this);
                 comma();
             }
-            expressions.get(expressions.size() - 1).accept(this);
+            expressions.getLast().accept(this);
             endExpectation();
         }
         if (!methodCall) {
@@ -1116,7 +1116,7 @@ public class LeilaVisitor extends PrintVisitor {
                 parameterDefinitions.get(i).accept(this);
                 comma();
             }
-            parameterDefinitions.get(parameterDefinitions.size() - 1).accept(this);
+            parameterDefinitions.getLast().accept(this);
         }
         closeParentheses();
     }

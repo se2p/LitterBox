@@ -40,7 +40,7 @@ public class InvalidOpCodesTest implements JsonTest {
         Program program = getAST("src/test/fixtures/invalidOPCodes.json");
         ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         for (Script s : sprite.getScripts().getScriptList()) {
-            Stmt stmt = s.getStmtList().getStmts().get(0);
+            Stmt stmt = s.getStmtList().getStmts().getFirst();
             assertInstanceOf(UnspecifiedStmt.class, stmt, "Sprite may not contain any stmts except Unspecifiedstmt");
         }
     }

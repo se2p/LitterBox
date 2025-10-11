@@ -46,7 +46,7 @@ public class ScriptCount<T extends ASTNode> implements MetricExtractor<T>, Scrat
     public void visit(Script node) {
         if (node.getEvent() instanceof Never) {
             List<Stmt> statements = node.getStmtList().getStmts();
-            if (statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
+            if (statements.size() == 1 && statements.getFirst() instanceof ExpressionStmt) {
                 // loose reporter block
                 return;
             }

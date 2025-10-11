@@ -53,7 +53,7 @@ class LLMCodeAnalyzerTest {
 
         analyzer.checkAndWrite(inputFile.toFile());
 
-        assertThat(llmApi.getRequests().get(0)).contains("[b]Problem:[/b]");
+        assertThat(llmApi.getRequests().getFirst()).contains("[b]Problem:[/b]");
 
         final Program inputProgram = new Scratch3Parser().parseFile(inputFile.toFile());
         final Program outputProgram = new Scratch3Parser().parseFile(outputFile.toFile());
@@ -79,7 +79,7 @@ class LLMCodeAnalyzerTest {
 
         analyzer.checkAndWrite(inputFile.toFile());
 
-        assertThat(llmApi.getRequests().get(0)).doesNotContain("[b]Problem:[/b]");
+        assertThat(llmApi.getRequests().getFirst()).doesNotContain("[b]Problem:[/b]");
 
         final Program inputProgram = new Scratch3Parser().parseFile(inputFile.toFile());
         final Program outputProgram = new Scratch3Parser().parseFile(outputFile.toFile());
@@ -88,7 +88,7 @@ class LLMCodeAnalyzerTest {
 
         final List<Script> scripts = NodeFilteringVisitor.getBlocks(outputProgram, Script.class);
         assertThat(scripts).hasSize(1);
-        assertThat(scripts.get(0).getEvent()).isInstanceOf(GreenFlag.class);
-        assertThat(scripts.get(0).getStmtList().getStmts()).isNotEmpty();
+        assertThat(scripts.getFirst().getEvent()).isInstanceOf(GreenFlag.class);
+        assertThat(scripts.getFirst().getStmtList().getStmts()).isNotEmpty();
     }
 }

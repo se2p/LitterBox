@@ -42,13 +42,13 @@ public class ExtractLoopConditionTest implements JsonTest {
         ExtractLoopConditionFinder finder = new ExtractLoopConditionFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(ExtractLoopCondition.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(ExtractLoopCondition.class);
     }
 
     @Test
     public void testExtractLoopConditionRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/extractLoopCondition.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         RepeatForeverStmt loopStmt = (RepeatForeverStmt) stmtList.getStatement(0);
         IfThenStmt ifStmt = (IfThenStmt) loopStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfThenStmt).findFirst().get();
@@ -56,7 +56,7 @@ public class ExtractLoopConditionTest implements JsonTest {
         ExtractLoopCondition refactoring = new ExtractLoopCondition(loopStmt, ifStmt);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 

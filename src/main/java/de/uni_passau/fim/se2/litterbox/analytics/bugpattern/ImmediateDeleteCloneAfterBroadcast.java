@@ -39,7 +39,7 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts();
         // check size > 1 because there has to be room for a say/think AND a stop stmt
-        if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
+        if (stmts.size() > 1 && stmts.getLast() instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Broadcast broadcast) {
                 Hint hint = Hint.fromKey(getName());

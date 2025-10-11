@@ -109,15 +109,15 @@ class BlockMetadataTest {
         Program prog = JsonTest.parseProgram("src/test/fixtures/metadata/variableMetadata.json");
         List<Script> scripts = prog.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
         Assertions.assertEquals(2, scripts.size());
-        Assertions.assertInstanceOf(ExpressionStmt.class, scripts.get(0).getStmtList().getStmts().get(0));
-        ExpressionStmt expressionStmt = (ExpressionStmt) scripts.get(0).getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(ExpressionStmt.class, scripts.getFirst().getStmtList().getStmts().getFirst());
+        ExpressionStmt expressionStmt = (ExpressionStmt) scripts.getFirst().getStmtList().getStmts().getFirst();
         Qualified qualified = (Qualified) expressionStmt.getExpression();
         Assertions.assertInstanceOf(Variable.class, qualified.getSecond());
         Variable var = (Variable) qualified.getSecond();
         Assertions.assertInstanceOf(DataBlockMetadata.class, var.getMetadata());
 
-        Assertions.assertInstanceOf(MoveSteps.class, scripts.get(1).getStmtList().getStmts().get(0));
-        MoveSteps moveSteps = (MoveSteps) scripts.get(1).getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(MoveSteps.class, scripts.get(1).getStmtList().getStmts().getFirst());
+        MoveSteps moveSteps = (MoveSteps) scripts.get(1).getStmtList().getStmts().getFirst();
         Assertions.assertInstanceOf(AsNumber.class, moveSteps.getSteps());
         AsNumber asNumber = (AsNumber) moveSteps.getSteps();
         Assertions.assertInstanceOf(Qualified.class, asNumber.getOperand1());

@@ -42,20 +42,20 @@ public class IfElseToIfIfNotTest implements JsonTest {
         IfElseToIfIfNotFinder finder = new IfElseToIfIfNotFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(IfElseToIfIfNot.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(IfElseToIfIfNot.class);
     }
 
     @Test
     public void testIfElseToIfIfNotRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/ifelse.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         IfElseStmt ifElse = (IfElseStmt) stmtList.getStatement(0);
 
         IfElseToIfIfNot refactoring = new IfElseToIfIfNot(ifElse);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 

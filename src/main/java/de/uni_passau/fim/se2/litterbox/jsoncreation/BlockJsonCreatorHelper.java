@@ -174,7 +174,7 @@ public abstract class BlockJsonCreatorHelper {
             jsonString.append(parameterInfos.get(i).getDefaultValue()).append(",");
         }
         if (!parameterInfos.isEmpty()) {
-            jsonString.append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue());
+            jsonString.append(parameterInfos.getLast().getDefaultValue());
         }
         jsonString.append("]\"");
         return jsonString;
@@ -186,7 +186,7 @@ public abstract class BlockJsonCreatorHelper {
             jsonString.append("\\\"").append(parameterInfos.get(i).getName()).append("\\\"").append(",");
         }
         if (!parameterInfos.isEmpty()) {
-            jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getName()).append("\\\"");
+            jsonString.append("\\\"").append(parameterInfos.getLast().getName()).append("\\\"");
         }
         jsonString.append("]\"");
         return jsonString;
@@ -198,7 +198,7 @@ public abstract class BlockJsonCreatorHelper {
             jsonString.append("\\\"").append(argumentId.get(i)).append("\\\"").append(",");
         }
         if (!argumentId.isEmpty()) {
-            jsonString.append("\\\"").append(argumentId.get(argumentId.size() - 1)).append("\\\"");
+            jsonString.append("\\\"").append(argumentId.getLast()).append("\\\"");
         }
         jsonString.append("]\"");
         return jsonString;
@@ -245,7 +245,7 @@ public abstract class BlockJsonCreatorHelper {
             jsonString.append(inputsList.get(i)).append(",");
         }
         if (!inputsList.isEmpty()) {
-            jsonString.append(inputsList.get(inputsList.size() - 1));
+            jsonString.append(inputsList.getLast());
         }
         jsonString.append("}");
         return jsonString.toString();

@@ -46,10 +46,10 @@ public class ControlStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(IfThenStmt.class);
+        Truth.assertThat(listOfStmt.getFirst()).isInstanceOf(IfThenStmt.class);
         IfThenStmt ifthen = (IfThenStmt) listOfStmt.get(0);
         Truth.assertThat(ifthen.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
 

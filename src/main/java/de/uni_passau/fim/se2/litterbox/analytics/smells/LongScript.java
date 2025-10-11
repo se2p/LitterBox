@@ -53,7 +53,7 @@ public class LongScript extends AbstractIssueFinder {
             if (!(node.getEvent() instanceof Never)) {
                 top = node.getEvent();
             } else {
-                top = node.getStmtList().getStmts().get(0);
+                top = node.getStmtList().getStmts().getFirst();
             }
             addIssue(top, top.getMetadata());
         }

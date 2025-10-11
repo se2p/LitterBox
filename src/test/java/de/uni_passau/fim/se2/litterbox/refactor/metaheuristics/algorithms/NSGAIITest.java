@@ -165,7 +165,7 @@ class NSGAIITest implements JsonTest {
     }
 
     private static List<Stmt> getStmtListOfProgram(Program program) {
-        return program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts();
+        return program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts();
     }
 
     private static NSGAII<RefactorSequence> initializeNSGAII(Program program, List<RefactoringFinder> refactorings, int populationSize) {

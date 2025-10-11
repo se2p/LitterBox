@@ -42,7 +42,7 @@ public class BinaryRankTournament<C extends Solution<C>> implements Selection<C>
             throw new IllegalArgumentException("Empty population given to binary rank tournament.");
         }
         if (population.size() == 1) {
-            return population.get(0);
+            return population.getFirst();
         }
 
 

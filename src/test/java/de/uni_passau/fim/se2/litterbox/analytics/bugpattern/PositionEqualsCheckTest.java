@@ -91,6 +91,6 @@ public class PositionEqualsCheckTest implements JsonTest {
         TypeError typeError = new TypeError();
         List<Issue> reportsType = new ArrayList<>(typeError.check(prog));
         Assertions.assertEquals(1, reportsType.size());
-        Assertions.assertTrue(reportsPEC.get(0).isSubsumedBy(reportsType.get(0)));
+        Assertions.assertTrue(reportsPEC.getFirst().isSubsumedBy(reportsType.getFirst()));
     }
 }

@@ -105,7 +105,7 @@ public class PQGramProfile {
     }
 
     private void shift(List<Label> register, Label label) {
-        register.remove(0);
+        register.removeFirst();
         register.add(label);
     }
 

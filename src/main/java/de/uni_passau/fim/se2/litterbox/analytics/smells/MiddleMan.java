@@ -51,11 +51,11 @@ public class MiddleMan extends AbstractIssueFinder {
         Event event = script.getEvent();
         if (event instanceof ReceptionOfMessage receptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
-            if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
+            if (stmts.size() == 1 && (stmts.getFirst() instanceof Broadcast || stmts.getFirst() instanceof BroadcastAndWait)) {
                 Hint hint = Hint.fromKey(BROADCAST_HINT);
                 String message = ((StringLiteral) (receptionOfMessage.getMsg()).getMessage()).getText();
                 hint.setParameter(Hint.HINT_MESSAGE_MIDDLE, message);
-                Stmt broadcast = stmts.get(0);
+                Stmt broadcast = stmts.getFirst();
                 StringExpr stringExpr;
                 if (broadcast instanceof Broadcast normalBroadcast) {
                     stringExpr = normalBroadcast.getMessage().getMessage();
@@ -77,7 +77,7 @@ public class MiddleMan extends AbstractIssueFinder {
         currentProcedure = node;
         currentScript = null;
         List<Stmt> stmts = node.getStmtList().getStmts();
-        if (stmts.size() == 1 && stmts.get(0) instanceof CallStmt callStmt) {
+        if (stmts.size() == 1 && stmts.getFirst() instanceof CallStmt callStmt) {
             if (!callStmt.getIdent().getName().equals(node.getIdent().getName())) {
                 Hint hint = Hint.fromKey(PROCEDURE_HINT);
                 hint.setParameter(Hint.HINT_BLOCKNAME_MIDDLE, node.getIdent().getName());

@@ -51,7 +51,7 @@ public class KeySetPositionTest implements JsonTest {
         MissingLoopSensing mls = new MissingLoopSensing();
         List<Issue> reportsMLS = new ArrayList<>(mls.check(illegalParameter));
         Assertions.assertEquals(1, reportsMLS.size());
-        Assertions.assertTrue(reports.get(4).isSubsumedBy(reportsMLS.get(0)));
+        Assertions.assertTrue(reports.get(4).isSubsumedBy(reportsMLS.getFirst()));
     }
 
     @Test
@@ -63,6 +63,6 @@ public class KeySetPositionTest implements JsonTest {
         Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter("XY","x");
         hint.setParameter(Hint.HINT_KEY,"right arrow");
-        Assertions.assertEquals(hint.getHintText(),reports.get(0).getHintText());
+        Assertions.assertEquals(hint.getHintText(),reports.getFirst().getHintText());
     }
 }

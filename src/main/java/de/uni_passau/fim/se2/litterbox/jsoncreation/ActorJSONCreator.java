@@ -79,7 +79,7 @@ public class ActorJSONCreator {
             addVariable(jsonString, variableSetStmts.get(i), symbol).append(",");
         }
         if (!variableSetStmts.isEmpty()) {
-            addVariable(jsonString, variableSetStmts.get(variableSetStmts.size() - 1), symbol);
+            addVariable(jsonString, variableSetStmts.getLast(), symbol);
         }
         jsonString.append("},");
 
@@ -89,7 +89,7 @@ public class ActorJSONCreator {
             addList(jsonString, listSetStmts.get(i), symbol).append(",");
         }
         if (!listSetStmts.isEmpty()) {
-            addList(jsonString, listSetStmts.get(listSetStmts.size() - 1), symbol);
+            addList(jsonString, listSetStmts.getLast(), symbol);
         }
         jsonString.append("},");
 
@@ -111,7 +111,7 @@ public class ActorJSONCreator {
             ).append(",");
         }
         if (!currentMessages.isEmpty()) {
-            MessageInfo info = currentMessages.get(currentMessages.size() - 1);
+            MessageInfo info = currentMessages.getLast();
             JSONStringCreator.createFieldValue(
                     jsonString,
                     info.identifier(),
@@ -130,7 +130,7 @@ public class ActorJSONCreator {
                     actor.getIdent().getName(), symbol, procDefNameMapping)).append(",");
         }
         if (!procedures.isEmpty()) {
-            jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(procedures.size() - 1),
+            jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.getLast(),
                     actor.getIdent().getName(), symbol, procDefNameMapping));
             if (!scripts.isEmpty()) {
                 jsonString.append(",");
@@ -140,7 +140,7 @@ public class ActorJSONCreator {
             jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(i), symbol)).append(",");
         }
         if (!scripts.isEmpty()) {
-            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(scripts.size() - 1), symbol));
+            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.getLast(), symbol));
         }
         jsonString.append("},");
 
@@ -151,7 +151,7 @@ public class ActorJSONCreator {
             addComment(jsonString, comments.get(i)).append(",");
         }
         if (!comments.isEmpty()) {
-            addComment(jsonString, comments.get(comments.size() - 1));
+            addComment(jsonString, comments.getLast());
         }
         jsonString.append("},");
 
@@ -164,7 +164,7 @@ public class ActorJSONCreator {
             addImage(jsonString, images.get(i)).append(",");
         }
         if (!images.isEmpty()) {
-            addImage(jsonString, images.get(images.size() - 1));
+            addImage(jsonString, images.getLast());
         }
         jsonString.append("],");
 
@@ -175,7 +175,7 @@ public class ActorJSONCreator {
             addSound(jsonString, sounds.get(i)).append(",");
         }
         if (!sounds.isEmpty()) {
-            addSound(jsonString, sounds.get(sounds.size() - 1));
+            addSound(jsonString, sounds.getLast());
         }
         jsonString.append("],");
 
@@ -190,7 +190,7 @@ public class ActorJSONCreator {
             }
         }
         if (!attributeToStmts.isEmpty()) {
-            SetAttributeTo attributeTo = attributeToStmts.get(attributeToStmts.size() - 1);
+            SetAttributeTo attributeTo = attributeToStmts.getLast();
             String attribute = ((StringLiteral) attributeTo.getStringExpr()).getText();
             if (attributeTo.getExpr() instanceof StringLiteral stringLiteral) {
                 JSONStringCreator.createFieldValue(jsonString, attribute, stringLiteral.getText());
@@ -264,7 +264,7 @@ public class ActorJSONCreator {
             }
         }
         if (!expressionList.isEmpty()) {
-            Expression expr = expressionList.get(expressionList.size() - 1);
+            Expression expr = expressionList.getLast();
             if (expr instanceof StringLiteral stringLiteral) {
                 jsonString.append("\"").append(stringLiteral.getText()).append("\"");
             } else if (expr instanceof NumberLiteral numberLiteral) {

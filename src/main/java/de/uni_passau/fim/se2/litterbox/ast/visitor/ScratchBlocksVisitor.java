@@ -2065,7 +2065,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                     }
                 } else {
                     List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
-                    if (node == (nodes.get(0))) {
+                    if (node == (nodes.getFirst())) {
                         if (issue.getIssueType() == IssueType.PERFUME) {
                             issueNote.add(PERFUME_NOTE);
                         } else if (issue.getIssueType() == IssueType.QUESTION) {

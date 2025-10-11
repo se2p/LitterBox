@@ -56,7 +56,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
                 ActorDefinition actor = entry.getKey();
                 List<Script> scripts = entry.getValue();
                 currentActor = actor;
-                Script script = scripts.get(0);
+                Script script = scripts.getFirst();
                 currentScript = script;
                 addIssue(script.getEvent(), script.getEvent().getMetadata());
             }

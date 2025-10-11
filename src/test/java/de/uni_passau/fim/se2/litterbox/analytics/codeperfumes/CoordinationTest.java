@@ -45,6 +45,6 @@ public class CoordinationTest implements JsonTest {
         Coordination coordination = new Coordination();
         List<Issue> reportCoord = new ArrayList<>(coordination.check(prog));
         Assertions.assertEquals(1, reportCoord.size());
-        Assertions.assertTrue(reportCoord.get(0).isSubsumedBy(report.get(0)));
+        Assertions.assertTrue(reportCoord.getFirst().isSubsumedBy(report.getFirst()));
     }
 }

@@ -49,7 +49,7 @@ public class ConsoleReportGenerator implements ReportGenerator {
                     .toList();
 
             if (!relevantIssues.isEmpty()) {
-                Issue firstIssue = relevantIssues.get(0);
+                Issue firstIssue = relevantIssues.getFirst();
                 System.out.println("Issue "
                         + firstIssue.getFinderName()
                         + " was found "

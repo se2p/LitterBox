@@ -34,7 +34,7 @@ public class PenStmtParserTest implements JsonTest {
     @Test
     public void parseAllBlocks() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/stmtParser/penStmts.json");
-        List<Stmt> stmts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts();
+        List<Stmt> stmts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts();
         Assertions.assertEquals(10, stmts.size());
         Assertions.assertInstanceOf(PenClearStmt.class, stmts.get(0));
         Assertions.assertInstanceOf(PenStampStmt.class, stmts.get(1));

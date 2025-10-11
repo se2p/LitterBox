@@ -39,7 +39,7 @@ public class EmptyProject extends AbstractIssueFinder {
         issues = new LinkedHashSet<>();
         program.accept(this);
         if (!foundScript) {
-            currentActor = program.getActorDefinitionList().getDefinitions().get(0); //stage has to exist
+            currentActor = program.getActorDefinitionList().getDefinitions().getFirst(); //stage has to exist
             addIssueWithLooseComment();
         }
         return issues;

@@ -58,7 +58,7 @@ public class LoopSensingTest implements JsonTest {
         LoopSensing LoopSensing = new LoopSensing();
         List<Issue> reports = new ArrayList<>(LoopSensing.check(prog));
         Assertions.assertEquals(1, reports.size());
-        MultiBlockIssue issue = (MultiBlockIssue) reports.get(0);
+        MultiBlockIssue issue = (MultiBlockIssue) reports.getFirst();
         List<ASTNode> nodes = issue.getNodes();
         Assertions.assertInstanceOf(UntilStmt.class, nodes.get(0));
         Assertions.assertInstanceOf(IfThenStmt.class, nodes.get(1));

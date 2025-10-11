@@ -92,7 +92,7 @@ public class UseTest implements JsonTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         VariableUseVisitor visitor = new VariableUseVisitor();
-        nodes.get(0).getASTNode().accept(visitor);
+        nodes.getFirst().getASTNode().accept(visitor);
 
         Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
@@ -171,7 +171,7 @@ public class UseTest implements JsonTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/timerBlock.json");
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).toList();
         assertThat(nodes).hasSize(1);
-        CFGNode node = nodes.iterator().next();
+        CFGNode node = nodes.getFirst();
 
         assertThat(node.getUses()).hasSize(2);
         assertThat(node.getDefinitions()).isEmpty();

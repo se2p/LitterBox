@@ -93,7 +93,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
         if (subStmts.isEmpty()) {
             return false;
         }
-        if (subStmts.get(subStmts.size() - 1) instanceof StopAll || subStmts.get(subStmts.size() - 1) instanceof StopThisScript) {
+        if (subStmts.getLast() instanceof StopAll || subStmts.getLast() instanceof StopThisScript) {
             return true;
         }
         for (Stmt subStmt : subStmts) {

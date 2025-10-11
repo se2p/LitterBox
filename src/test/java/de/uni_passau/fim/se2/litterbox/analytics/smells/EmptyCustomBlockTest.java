@@ -49,7 +49,7 @@ public class EmptyCustomBlockTest implements JsonTest {
         EmptyCustomBlock parameterName = new EmptyCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.get(0).getScriptOrProcedureDefinition());
+        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.getFirst().getScriptOrProcedureDefinition());
     }
 
     @Test
@@ -60,6 +60,6 @@ public class EmptyCustomBlockTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter(Hint.BLOCK_NAME, "define Blockname () <>");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
+        Assertions.assertEquals(hint.getHintText(), reports.getFirst().getHintText());
     }
 }

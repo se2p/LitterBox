@@ -52,7 +52,7 @@ public class CommonStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Truth.assertThat(listOfStmt.get(0)).isInstanceOf(WaitSeconds.class);

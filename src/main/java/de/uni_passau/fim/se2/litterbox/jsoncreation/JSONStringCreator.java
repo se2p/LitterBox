@@ -43,7 +43,7 @@ public class JSONStringCreator {
                     program.getSymbolTable(), program.getProcedureMapping()));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1),
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.getLast(),
                 program.getSymbolTable(), program.getProcedureMapping()));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
@@ -60,7 +60,7 @@ public class JSONStringCreator {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
         }
         if (!ext.isEmpty()) {
-            jsonString.append("\"").append(ext.get(ext.size() - 1)).append("\"");
+            jsonString.append("\"").append(ext.getLast()).append("\"");
         }
         jsonString.append("]");
         return jsonString;
@@ -109,7 +109,7 @@ public class JSONStringCreator {
         }
         if (!monitorMetadataList.isEmpty()) {
             createMonitorJSONString(jsonString,
-                    monitorMetadataList.get(monitorMetadataList.size() - 1));
+                    monitorMetadataList.getLast());
         }
         jsonString.append("]");
         return jsonString;
@@ -137,8 +137,8 @@ public class JSONStringCreator {
             createFieldValue(jsonString, monitors.get(i).getInputName(), monitors.get(i).getInputValue()).append(",");
         }
         if (!monitors.isEmpty()) {
-            createFieldValue(jsonString, monitors.get(monitors.size() - 1).getInputName(),
-                    monitors.get(monitors.size() - 1).getInputValue());
+            createFieldValue(jsonString, monitors.getLast().getInputName(),
+                    monitors.getLast().getInputValue());
         }
         jsonString.append("},");
 
@@ -159,7 +159,7 @@ public class JSONStringCreator {
                 jsonString.append("\"").append(values.get(i)).append("\"").append(",");
             }
             if (!values.isEmpty()) {
-                jsonString.append("\"").append(values.get(values.size() - 1)).append("\"");
+                jsonString.append("\"").append(values.getLast()).append("\"");
             }
             jsonString.append("]");
         }

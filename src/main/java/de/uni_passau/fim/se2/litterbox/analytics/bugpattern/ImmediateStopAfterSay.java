@@ -61,7 +61,7 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts();
         // check size > 1 because there has to be room for a say/think AND a stop stmt
-        if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof StopAll) {
+        if (stmts.size() > 1 && stmts.getLast() instanceof StopAll) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Say || questionableNode instanceof Think) {
                 IssueBuilder issueBuilder = prepareIssueBuilder(questionableNode).withSeverity(IssueSeverity.LOW);

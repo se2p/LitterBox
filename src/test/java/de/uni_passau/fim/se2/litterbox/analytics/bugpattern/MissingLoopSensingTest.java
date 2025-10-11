@@ -122,6 +122,6 @@ public class MissingLoopSensingTest implements JsonTest {
         List<Issue> reportsFII = new ArrayList<>(fii.check(prog));
         Assertions.assertEquals(1, reportsFII.size());
         Assertions.assertEquals(1, reportsMLS.size());
-        Assertions.assertTrue(mls.isSubsumedBy(reportsMLS.get(0), reportsFII.get(0)));
+        Assertions.assertTrue(mls.isSubsumedBy(reportsMLS.getFirst(), reportsFII.getFirst()));
     }
 }

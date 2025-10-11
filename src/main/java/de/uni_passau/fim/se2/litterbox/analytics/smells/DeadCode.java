@@ -36,7 +36,7 @@ public class DeadCode extends AbstractIssueFinder {
     public void visit(Script node) {
         currentScript = node;
         if (node.getEvent() instanceof Never && !node.getStmtList().getStmts().isEmpty()) {
-            ASTNode top = node.getStmtList().getStmts().get(0);
+            ASTNode top = node.getStmtList().getStmts().getFirst();
             addIssue(top, top.getMetadata());
         }
         currentScript = null;

@@ -35,8 +35,8 @@ public class OnlyEmptyCodeCloneVisitorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/visitors/foreverWithSay.json");
         OnlyEmptyCodeCloneVisitor vis = new OnlyEmptyCodeCloneVisitor();
         Script script = vis.apply(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScript(0));
-        Assertions.assertInstanceOf(RepeatForeverStmt.class, script.getStmtList().getStmts().get(0));
-        RepeatForeverStmt forever = (RepeatForeverStmt) script.getStmtList().getStmts().get(0);
+        Assertions.assertInstanceOf(RepeatForeverStmt.class, script.getStmtList().getStmts().getFirst());
+        RepeatForeverStmt forever = (RepeatForeverStmt) script.getStmtList().getStmts().getFirst();
         Assertions.assertTrue(forever.getStmtList().getStmts().isEmpty());
     }
 }

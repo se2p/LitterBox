@@ -53,6 +53,6 @@ public class UsedVariableTest implements JsonTest {
         List<Issue> issuesUsedVariables = new ArrayList<>(usedVariables.check(prog));
         Assertions.assertEquals(1, issuesUsedVariables.size());
 
-        Assertions.assertTrue(issuesUsedVariables.get(0).isSubsumedBy(issues.get(0)));
+        Assertions.assertTrue(issuesUsedVariables.getFirst().isSubsumedBy(issues.getFirst()));
     }
 }

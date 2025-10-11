@@ -48,7 +48,7 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/extractEventHandler.json");
         ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
-        Refactoring r = refactorings.get(0);
+        Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
         assertThat(program).isNotEqualTo(refactored);
     }
@@ -58,7 +58,7 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/extractEventHandler.json");
         ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
-        Refactoring r = refactorings.get(0);
+        Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
         Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);

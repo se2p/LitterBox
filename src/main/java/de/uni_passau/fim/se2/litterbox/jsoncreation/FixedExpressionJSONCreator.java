@@ -85,7 +85,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
         if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
+            jsonString.append(finishedJSONStrings.getLast());
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
     }

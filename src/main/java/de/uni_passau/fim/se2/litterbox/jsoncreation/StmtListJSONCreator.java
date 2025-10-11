@@ -122,7 +122,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
             jsonString.append(finishedJSONStrings.get(i)).append(",");
         }
         if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
+            jsonString.append(finishedJSONStrings.getLast());
         }
         return jsonString.toString();
     }
@@ -970,7 +970,7 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         StmtListJSONCreator creator = null;
         if (!stmtList.getStmts().isEmpty()) {
             creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
-            insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
+            insideBlockId = idVis.getBlockId(stmtList.getStmts().getFirst());
         }
         if (creator != null) {
             finishedJSONStrings.add(creator.createStmtListJSONString());

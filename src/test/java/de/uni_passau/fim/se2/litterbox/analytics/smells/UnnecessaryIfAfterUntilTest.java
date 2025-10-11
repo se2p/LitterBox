@@ -68,7 +68,7 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
         MissingLoopSensing mls = new MissingLoopSensing();
         List<Issue> reportsMLS = new ArrayList<>(mls.check(program));
         Assertions.assertEquals(1, reportsMLS.size());
-        Assertions.assertTrue(finder.areCoupled(reportsUnnecessaryIf.get(0), reportsMLS.get(0)));
-        Assertions.assertTrue(mls.areCoupled(reportsMLS.get(0), reportsUnnecessaryIf.get(0)));
+        Assertions.assertTrue(finder.areCoupled(reportsUnnecessaryIf.getFirst(), reportsMLS.getFirst()));
+        Assertions.assertTrue(mls.areCoupled(reportsMLS.getFirst(), reportsUnnecessaryIf.getFirst()));
     }
 }

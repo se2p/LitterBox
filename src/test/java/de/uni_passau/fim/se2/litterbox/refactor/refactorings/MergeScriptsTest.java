@@ -57,7 +57,7 @@ public class MergeScriptsTest implements JsonTest {
         MergeScriptsFinder finder = new MergeScriptsFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(MergeScripts.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(MergeScripts.class);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class MergeScriptsTest implements JsonTest {
         Program refactored = refactoring.apply(program);
 
         assertThat(refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize()).isEqualTo(1);
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         assertThat(refactoredScript.getEvent()).isEqualTo(script1.getEvent());
         assertThat(refactoredScript.getEvent()).isEqualTo(script2.getEvent());
 
@@ -90,7 +90,7 @@ public class MergeScriptsTest implements JsonTest {
         Program refactored = refactoring.apply(program);
 
         assertThat(refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize()).isEqualTo(1);
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         assertThat(refactoredScript.getEvent()).isEqualTo(script1.getEvent());
         assertThat(refactoredScript.getEvent()).isEqualTo(script2.getEvent());
 

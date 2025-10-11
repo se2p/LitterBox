@@ -71,6 +71,6 @@ class DuplicatedScriptTest implements JsonTest {
         DuplicatedScriptsCovering duplicatedScriptsCovering = new DuplicatedScriptsCovering();
         List<Issue> reportsDuplicatedScriptsCovering = new ArrayList<>(duplicatedScriptsCovering.check(empty));
         Assertions.assertEquals(1, reportsDuplicatedScriptsCovering.size());
-        Assertions.assertTrue(duplicatedScript.isSubsumedBy(reportsDuplicatedScript.get(0), reportsDuplicatedScriptsCovering.get(0)));
+        Assertions.assertTrue(duplicatedScript.isSubsumedBy(reportsDuplicatedScript.getFirst(), reportsDuplicatedScriptsCovering.getFirst()));
     }
 }

@@ -42,7 +42,7 @@ public class SplitLoopTest implements JsonTest {
         SplitLoopFinder finder = new SplitLoopFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitLoop.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitLoop.class);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class SplitLoopTest implements JsonTest {
     @Test
     public void testSplitLoopRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splittableLoop.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         LoopStmt loop = (LoopStmt) stmtList.getStatement(0);
 

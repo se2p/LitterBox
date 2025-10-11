@@ -109,7 +109,7 @@ public class PostDominatorTreeTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).iterator().next();
         CFGNode ifelse = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof IfElseStmt).findFirst().get();
-        CFGNode move1 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(0);
+        CFGNode move1 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().getFirst();
         CFGNode move2 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(1);
         CFGNode exit = cfg.getExitNode();
 
@@ -131,7 +131,7 @@ public class PostDominatorTreeTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
         CFGNode move1 = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
-        CFGNode keyPressed = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).toList().get(0);
+        CFGNode keyPressed = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).toList().getFirst();
         CFGNode move2 = cfg.getSuccessors(keyPressed).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
         CFGNode exit = cfg.getExitNode();
 

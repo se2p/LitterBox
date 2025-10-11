@@ -50,6 +50,6 @@ public class EmptyScriptTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter(Hint.BLOCK_NAME, "when I start as a clone");
-        Assertions.assertEquals(hint.getHintText(), reports.get(0).getHintText());
+        Assertions.assertEquals(hint.getHintText(), reports.getFirst().getHintText());
     }
 }
