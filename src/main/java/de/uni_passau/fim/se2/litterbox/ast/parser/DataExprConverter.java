@@ -41,14 +41,14 @@ final class DataExprConverter extends ExprConverter {
     }
 
     static boolean parseableAsDataExpr(final RawTarget target, final RawInput exprBlock) {
-        if (!(exprBlock.input() instanceof BlockRef.IdRef inputRef)) {
+        if (!(exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId))) {
             // If not an IdRef, we technically would have to look up the identifier stored in the Block in the
             // symbol table. However, some JSON files contain references to IDs which are not present in the lookup
             // tables, and we want to keep these without exception.
             return true;
         }
 
-        final RawBlock inputBlock = target.blocks().get(inputRef.id());
+        final RawBlock inputBlock = target.blocks().get(inputId);
         if (inputBlock == null) {
             return true;
         }

@@ -118,16 +118,16 @@ final class ConverterUtilities {
     }
 
     private static Touchable convertTouchableMenuOption(final RawTarget target, final RawInput touched) {
-        if (!(touched.input() instanceof BlockRef.IdRef touchedId)) {
+        if (!(touched.input() instanceof BlockRef.IdRef(RawBlockId touchedId))) {
             throw new InternalParsingException("Unknown format for touched object.");
         }
 
-        final RawBlock obj = target.blocks().get(touchedId.id());
+        final RawBlock obj = target.blocks().get(touchedId);
         if (!(obj instanceof RawBlock.RawRegularBlock touchedTarget)) {
             throw new InternalParsingException("Unknown format for touched object.");
         }
 
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(touchedId.id(), touchedTarget);
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(touchedId, touchedTarget);
 
         final String touchedObjectName = touchedTarget.getFieldValueAsString(KnownFields.TOUCHINGOBJECTMENU);
         return switch (touchedObjectName) {
@@ -140,12 +140,12 @@ final class ConverterUtilities {
     static Color convertColor(
             final ProgramParserState state, final RawBlock.RawRegularBlock containingBlock, final RawInput block
     ) {
-        if (block.input() instanceof BlockRef.Block dataBlock
-                && dataBlock.block() instanceof RawBlock.RawColorLiteral color
-                && color.color().startsWith("#")
-                && color.color().length() == 7
+        if (block.input() instanceof BlockRef.Block(RawBlock.ArrayBlock dataBlock)
+                && dataBlock instanceof RawBlock.RawColorLiteral(String color)
+                && color.startsWith("#")
+                && color.length() == 7
         ) {
-            return ColorLiteral.tryFromRgbHexString(color.color());
+            return ColorLiteral.tryFromRgbHexString(color);
         } else {
             final NumExpr numExpr = NumExprConverter.convertNumExpr(state, containingBlock, block);
             return new FromNumber(numExpr);
@@ -157,12 +157,11 @@ final class ConverterUtilities {
     ) {
         final RawInput elementChoiceInput = containingStmt.getInput(KnownInputs.BACKDROP);
 
-        if (
-                ShadowType.SHADOW.equals(elementChoiceInput.shadowType())
-                && elementChoiceInput.input() instanceof BlockRef.IdRef blockIdRef
-                && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+        if (ShadowType.SHADOW.equals(elementChoiceInput.shadowType())
+                && elementChoiceInput.input() instanceof BlockRef.IdRef(RawBlockId inputId)
+                && state.getBlock(inputId) instanceof RawBlock.RawRegularBlock menuBlock
         ) {
-            return convertElementChoiceFromMenu(blockIdRef.id(), menuBlock);
+            return convertElementChoiceFromMenu(inputId, menuBlock);
         } else {
             final Expression expr = ExprConverter.convertExpr(state, containingStmt, elementChoiceInput);
             return new WithExpr(expr, new NoBlockMetadata());

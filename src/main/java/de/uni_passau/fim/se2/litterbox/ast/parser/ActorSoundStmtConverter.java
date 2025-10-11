@@ -78,11 +78,10 @@ final class ActorSoundStmtConverter extends StmtConverter<ActorSoundStmt> {
     private ElementChoice getSoundElement(final RawBlock.RawRegularBlock block) {
         final RawInput soundInput = block.getInput(KnownInputs.SOUND_MENU);
 
-        if (
-                ShadowType.SHADOW.equals(soundInput.shadowType())
-                        && soundInput.input() instanceof BlockRef.IdRef blockIdRef
+        if (ShadowType.SHADOW.equals(soundInput.shadowType())
+                && soundInput.input() instanceof BlockRef.IdRef(RawBlockId blockId)
         ) {
-            return convertSoundChoiceMenu(blockIdRef.id());
+            return convertSoundChoiceMenu(blockId);
         } else {
             final BlockMetadata metadata = new NoBlockMetadata();
             final Expression expr = ExprConverter.convertExpr(state, block, soundInput);

@@ -86,18 +86,18 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static boolean isParseableAsNumberLiteral(final RawInput exprBlock) {
-        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block exprInput && (
-                exprInput.block() instanceof RawBlock.RawFloatBlockLiteral
-                        || exprInput.block() instanceof RawBlock.RawIntBlockLiteral
-                        || exprInput.block() instanceof RawBlock.RawAngleBlockLiteral
+        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput) && (
+                exprInput instanceof RawBlock.RawFloatBlockLiteral
+                || exprInput instanceof RawBlock.RawIntBlockLiteral
+                || exprInput instanceof RawBlock.RawAngleBlockLiteral
         );
 
         boolean canBeParsedAsNumber = false;
-        if (exprBlock.input() instanceof BlockRef.Block exprInput
-                && exprInput.block() instanceof RawBlock.RawStringLiteral s
+        if (exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput)
+                && exprInput instanceof RawBlock.RawStringLiteral(String s)
         ) {
             try {
-                Double.parseDouble(s.value());
+                Double.parseDouble(s);
                 canBeParsedAsNumber = true;
             } catch (NumberFormatException e) {
                 // ignored, canBeParsedAsNumber false by default
@@ -108,8 +108,8 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static boolean hasNumExprOpcode(final RawTarget target, final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.IdRef inputIdRef) {
-            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+        if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
             if (inputBlock == null) {
                 return false;
             }

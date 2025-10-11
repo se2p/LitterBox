@@ -41,12 +41,10 @@ final class KeyConverter {
             final RawInput keyInput = actualKeyBlock.getInput(KnownInputs.KEY_OPTION);
 
             if (ShadowType.SHADOW == keyInput.shadowType()
-                    && keyInput.input() instanceof BlockRef.IdRef menuIdRef
-                    && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                    && keyInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                    && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
             ) {
-                final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
-                        menuIdRef.id(), menuBlock
-                );
+                final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
                 final String keyValue = menuBlock.getFieldValueAsString(KnownFields.KEY_OPTION);
 
                 return convertKey(keyValue, metadata);

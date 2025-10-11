@@ -49,12 +49,10 @@ public class DefaultPrompts extends PromptBuilder {
     public String askQuestion(
             final Program program, final QueryTarget target, final LlmQuery question, final boolean ignoreLooseBlocks
     ) {
-        String questionText;
-        if (question instanceof LlmQuery.PredefinedQuery predefinedQuery) {
-            questionText = createPromptForCommonQuery(predefinedQuery.query());
-        } else {
-            questionText = ((LlmQuery.CustomQuery) question).query();
-        }
+        final String questionText = switch (question) {
+            case LlmQuery.PredefinedQuery(CommonQuery query) -> createPromptForCommonQuery(query);
+            case LlmQuery.CustomQuery(String query) -> query;
+        };
         return describeTarget(program, target, ignoreLooseBlocks) + """
                 Answer the following question:
                 %s

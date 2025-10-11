@@ -119,8 +119,8 @@ public class ScratchBlocksParser {
         vis.setCurrentActor(actorName);
         final ASTNode node = vis.visit(tree);
 
-        if (node instanceof ActorContentHelperNode actorContentHelperNode) {
-            return new ActorContent(actorContentHelperNode.scripts(), actorContentHelperNode.procedures());
+        if (node instanceof ActorContentHelperNode(ScriptList scripts, ProcedureDefinitionList procedures)) {
+            return new ActorContent(scripts, procedures);
         } else if (node == null) {
             return null;
         } else {

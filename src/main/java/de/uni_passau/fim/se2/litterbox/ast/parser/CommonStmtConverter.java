@@ -122,9 +122,9 @@ final class CommonStmtConverter extends StmtConverter<CommonStmt> {
 
         if (
                 ShadowType.SHADOW.equals(cloneOptionInput.shadowType())
-                        && cloneOptionInput.input() instanceof BlockRef.IdRef menuRef
+                        && cloneOptionInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
         ) {
-            return convertCreateCloneOfWithMenu(blockId, block, menuRef.id());
+            return convertCreateCloneOfWithMenu(blockId, block, menuId);
         } else {
             final WithCloneExpr cloneExpr = new WithCloneExpr(
                     ExprConverter.convertExpr(state, block, cloneOptionInput), new NoBlockMetadata()

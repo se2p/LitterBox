@@ -73,12 +73,12 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
         final Drum drum;
 
         if (ShadowType.SHADOW.equals(drumInput.shadowType())
-                && drumInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                && drumInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.music_menu_DRUM.getName().equals(menuBlock.opcode())
         ) {
             final String drumName = menuBlock.getFieldValueAsString(KnownFields.DRUM);
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
+            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
             drum = new FixedDrum(drumName, menuMeta);
         } else {
             final Expression expr = ExprConverter.convertExpr(state, block, drumInput);
@@ -109,22 +109,22 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     }
 
     private Note getNoteFromMenu(final RawInput noteInput) {
-        if (noteInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+        if (noteInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.note.getName().equals(menuBlock.opcode())
         ) {
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
+            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
             final double noteValue = getLiteralNoteValue(menuBlock);
 
             return new FixedNote(noteValue, menuMeta);
-        } else if (noteInput.input() instanceof BlockRef.Block arrayBlock) {
-            if (arrayBlock.block() instanceof RawBlock.ArrayBlock.RawIntBlockLiteral i) {
-                return new FixedNote(i.value(), new NoBlockMetadata());
-            } else if (arrayBlock.block() instanceof RawBlock.ArrayBlock.RawFloatBlockLiteral d) {
-                return new FixedNote(d.value(), new NoBlockMetadata());
-            } else if (arrayBlock.block() instanceof RawBlock.RawStringLiteral s) {
+        } else if (noteInput.input() instanceof BlockRef.Block(RawBlock.ArrayBlock arrayBlock)) {
+            if (arrayBlock instanceof RawBlock.RawIntBlockLiteral(long value)) {
+                return new FixedNote(value, new NoBlockMetadata());
+            } else if (arrayBlock instanceof RawBlock.RawFloatBlockLiteral(double value)) {
+                return new FixedNote(value, new NoBlockMetadata());
+            } else if (arrayBlock instanceof RawBlock.RawStringLiteral(String s)) {
                 try {
-                    final double value = Double.parseDouble(s.value());
+                    final double value = Double.parseDouble(s);
                     return new FixedNote(value, new NoBlockMetadata());
                 } catch (NumberFormatException e) {
                     throw new InternalParsingException("Unknown format for musical note in PlayNoteForBeats.", e);
@@ -156,12 +156,12 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
         final Instrument instrument;
 
         if (ShadowType.SHADOW.equals(instrumentInput.shadowType())
-                && instrumentInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                && instrumentInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.music_menu_INSTRUMENT.getName().equals(menuBlock.opcode())
         ) {
             final String instrumentName = menuBlock.getFieldValueAsString(KnownFields.INSTRUMENT);
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
+            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
             instrument = new FixedInstrument(instrumentName, menuMeta);
         } else {
             final Expression expr = ExprConverter.convertExpr(state, block, instrumentInput);

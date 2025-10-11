@@ -60,6 +60,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.ObjDoubleConsumer;
 import java.util.stream.Collectors;
 
 final class RawTargetConverter {
@@ -369,7 +370,7 @@ final class RawTargetConverter {
     private List<SetStmt> convertActorAttributes(final RawTarget target) {
         final List<SetStmt> stmts = new ArrayList<>();
 
-        final BiConsumer<String, Double> addNumber = (name, value) -> {
+        final ObjDoubleConsumer<String> addNumber = (name, value) -> {
             final StringLiteral n = new StringLiteral(name);
             final NumberLiteral v = new NumberLiteral(value);
             stmts.add(new SetAttributeTo(n, v, new NoBlockMetadata()));
@@ -475,15 +476,12 @@ final class RawTargetConverter {
     ) {
         final RawInput input = procedureDefinition.getInput(KnownInputs.CUSTOM_BLOCK);
 
-        if (input.input() instanceof BlockRef.IdRef defId) {
-            final RawBlockId prototypeBlockId = defId.id();
-            final RawBlock prototype = target.blocks().get(prototypeBlockId);
+        if (input.input() instanceof BlockRef.IdRef(RawBlockId defId)) {
+            final RawBlock prototype = target.blocks().get(defId);
             if (prototype instanceof RawBlock.RawRegularBlock p) {
-                return Pair.of(prototypeBlockId, p);
+                return Pair.of(defId, p);
             } else {
-                throw new InternalParsingException(
-                        "Unexpected format for procedure prototype: " + prototypeBlockId.id()
-                );
+                throw new InternalParsingException("Unexpected format for procedure prototype: " + defId.id());
             }
         } else {
             throw new InternalParsingException("Expected procedure definition to contain reference to prototype!");
@@ -535,8 +533,8 @@ final class RawTargetConverter {
     ) {
         if (argumentInput == null) {
             return getParameterType(argumentDefault);
-        } else if (argumentInput.input() instanceof BlockRef.IdRef inputIdRef) {
-            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+        } else if (argumentInput.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
 
             if (inputBlock instanceof RawBlock.RawRegularBlock block) {
                 if (ProcedureOpcode.argument_reporter_boolean.getName().equals(block.opcode())) {
@@ -551,10 +549,10 @@ final class RawTargetConverter {
     }
 
     private BlockMetadata getParameterMetadata(final RawInput argument) {
-        if (argument != null && argument.input() instanceof BlockRef.IdRef inputIdRef) {
-            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+        if (argument != null && argument.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
             if (inputBlock instanceof RawBlock.RawRegularBlock block) {
-                return RawBlockMetadataConverter.convertBlockMetadata(inputIdRef.id(), block);
+                return RawBlockMetadataConverter.convertBlockMetadata(inputId, block);
             }
         }
 

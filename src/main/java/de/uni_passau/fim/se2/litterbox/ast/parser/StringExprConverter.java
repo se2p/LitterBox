@@ -73,10 +73,10 @@ final class StringExprConverter extends ExprConverter {
         }
 
         if (
-                exprBlock.input() instanceof BlockRef.IdRef exprInput
-                        && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
+                exprBlock.input() instanceof BlockRef.IdRef(RawBlockId exprInputId)
+                        && state.getBlock(exprInputId) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return convertStringExpr(state, exprInput.id(), exprInputRegularBlock);
+            return convertStringExpr(state, exprInputId, exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -97,23 +97,23 @@ final class StringExprConverter extends ExprConverter {
     }
 
     private static boolean isParseableAsStringLiteral(final RawInput exprBlock) {
-        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block exprInput
+        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput)
                 && (
                         // Raw color literals in string positions can only be achieved by JSON hacking.
                         // Since the JSON contains the hex-string of the color, though, we can parse it as string.
                         //
                         // Broadcasts behave like String messages.
-                        exprInput.block() instanceof RawBlock.RawStringLiteral
-                                || exprInput.block() instanceof RawBlock.RawColorLiteral
-                                || exprInput.block() instanceof RawBlock.RawBroadcast
+                        exprInput instanceof RawBlock.RawStringLiteral
+                                || exprInput instanceof RawBlock.RawColorLiteral
+                                || exprInput instanceof RawBlock.RawBroadcast
                 );
 
         return hasCorrectShadow(exprBlock) && hasCorrectType;
     }
 
     private static boolean hasStringExprOpcode(final RawTarget target, final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.IdRef inputIdRef) {
-            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+        if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
             if (inputBlock == null) {
                 return false;
             }
@@ -127,14 +127,13 @@ final class StringExprConverter extends ExprConverter {
     }
 
     private static StringExpr parseLiteralStringInput(final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.Block inputBlock) {
-            final RawBlock.ArrayBlock literalInput = inputBlock.block();
-            if (literalInput instanceof RawBlock.RawStringLiteral s) {
-                return new StringLiteral(s.value());
-            } else if (literalInput instanceof RawBlock.RawBroadcast b) {
+        if (exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock inputBlock)) {
+            if (inputBlock instanceof RawBlock.RawStringLiteral(String value)) {
+                return new StringLiteral(value);
+            } else if (inputBlock instanceof RawBlock.RawBroadcast b) {
                 return new StringLiteral(b.name());
-            } else if (literalInput instanceof RawBlock.RawColorLiteral c) {
-                return new StringLiteral(c.color());
+            } else if (inputBlock instanceof RawBlock.RawColorLiteral(String color)) {
+                return new StringLiteral(color);
             }
         }
 
@@ -202,8 +201,8 @@ final class StringExprConverter extends ExprConverter {
         final RawInput input = exprBlock.getInput(KnownInputs.OBJECT);
 
         if (ShadowType.SHADOW.equals(input.shadowType())) {
-            if (input.input() instanceof BlockRef.IdRef menuBlockRef) {
-                elementChoice = convertSensingOfMenu(state, menuBlockRef.id());
+            if (input.input() instanceof BlockRef.IdRef(RawBlockId menuBlockId)) {
+                elementChoice = convertSensingOfMenu(state, menuBlockId);
             } else {
                 throw new InternalParsingException("Expected a menu item for sensing block.");
             }
@@ -244,16 +243,13 @@ final class StringExprConverter extends ExprConverter {
     private static TLanguage getLanguage(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
         final RawInput languageInput = block.getInput(KnownInputs.LANGUAGE);
 
-        if (
-                ShadowType.SHADOW.equals(languageInput.shadowType())
-                && languageInput.input() instanceof BlockRef.IdRef blockIdRef
-                && state.getBlock(blockIdRef.id()) instanceof RawBlock.RawRegularBlock languageMenuBlock
+        if (ShadowType.SHADOW.equals(languageInput.shadowType())
+                && languageInput.input() instanceof BlockRef.IdRef(RawBlockId blockId)
+                && state.getBlock(blockId) instanceof RawBlock.RawRegularBlock languageMenuBlock
                 && DependentBlockOpcode.translate_menu_languages.getName().equals(languageMenuBlock.opcode())
         ) {
             final String languageName = languageMenuBlock.getFieldValueAsString(KnownFields.LANGUAGES);
-            final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
-                    blockIdRef.id(), languageMenuBlock
-            );
+            final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(blockId, languageMenuBlock);
 
             return new TFixedLanguage(languageName, metadata);
         } else {
