@@ -54,7 +54,7 @@ class LLMIssuePerfumeExtenderTest implements JsonTest {
         final Set<Issue> newIssueSet = extender.apply(program, issues);
         assertThat(newIssueSet).containsExactlyElementsIn(issues);
 
-        assertThat(api.getRequests().get(0)).doesNotContain("Issue #");
+        assertThat(api.getRequests().getFirst()).doesNotContain("Issue #");
     }
 
     @ParameterizedTest
@@ -70,7 +70,7 @@ class LLMIssuePerfumeExtenderTest implements JsonTest {
                 """.formatted(scriptIdPrefix));
         assertThat(llmIssues).hasSize(1);
 
-        final Issue llmIssue = llmIssues.get(0);
+        final Issue llmIssue = llmIssues.getFirst();
         assertThat(llmIssue.getHintText()).isEqualTo("dummy description\nspanning multiple lines");
         assertThat(llmIssue.getCodeLocation()).isNotNull();
     }

@@ -96,7 +96,7 @@ class ScratchBlocksToScratchVisitorTest {
         if (!scratchBlocksInput.endsWith("\n")) {
             scratchBlocksInput += "\n";
         }
-        return parser.parseActorContent(scratchBlocksInput).procedures().getList().get(0);
+        return parser.parseActorContent(scratchBlocksInput).procedures().getList().getFirst();
     }
 
     private ScriptList getScriptList(String scratchBlocksInput) {
