@@ -74,9 +74,9 @@ public class MissingInitialization extends AbstractIssueFinder {
 
         // Initial definitions: All definitions that can be reached without a use before them
         DataflowAnalysisBuilder<Definition> defBuilder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> analysis
-                = defBuilder.withBackward().withMay().withTransferFunction(
-                new InitialDefinitionTransferFunction()).build();
+        DataflowAnalysis<Definition> analysis = defBuilder.withBackward().withMay().withTransferFunction(
+                new InitialDefinitionTransferFunction()
+        ).build();
         analysis.applyAnalysis();
         Set<Definition> initialDefinitions = analysis.getDataflowFacts(cfg.getEntryNode());
 
@@ -112,8 +112,7 @@ public class MissingInitialization extends AbstractIssueFinder {
                         hint = Hint.fromKey(getName());
                     }
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
-                    issues.add(new UseIssue(this, program,
-                            (Script) containingScript, hint, use));
+                    issues.add(new UseIssue(this, program, script, hint, use));
                 } else {
                     hint = Hint.fromKey(getName());
                     hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));

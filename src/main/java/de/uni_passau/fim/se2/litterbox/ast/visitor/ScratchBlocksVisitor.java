@@ -775,14 +775,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SwitchBackdrop node) {
         emitNoSpace("switch backdrop to ");
-        if (node.getElementChoice() instanceof Next) {
-            emitNoSpace("(next backdrop v)");
-        } else if (node.getElementChoice() instanceof Prev) {
-            emitNoSpace("(previous backdrop v)");
-        } else if (node.getElementChoice() instanceof Random) {
-            emitNoSpace("(random backdrop v)");
-        } else {
-            node.getElementChoice().accept(this);
+        switch (node.getElementChoice()) {
+            case Next ignored -> emitNoSpace("(next backdrop v)");
+            case Prev ignored -> emitNoSpace("(previous backdrop v)");
+            case Random ignored -> emitNoSpace("(random backdrop v)");
+            default -> node.getElementChoice().accept(this);
         }
         storeNotesForIssue(node);
         newLine();
@@ -791,14 +788,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SwitchBackdropAndWait node) {
         emitNoSpace("switch backdrop to ");
-        if (node.getElementChoice() instanceof Next) {
-            emitNoSpace("(next backdrop v)");
-        } else if (node.getElementChoice() instanceof Prev) {
-            emitNoSpace("(previous backdrop v)");
-        } else if (node.getElementChoice() instanceof Random) {
-            emitNoSpace("(random backdrop v)");
-        } else {
-            node.getElementChoice().accept(this);
+        switch (node.getElementChoice()) {
+            case Next ignored -> emitNoSpace("(next backdrop v)");
+            case Prev ignored -> emitNoSpace("(previous backdrop v)");
+            case Random ignored -> emitNoSpace("(random backdrop v)");
+            default -> node.getElementChoice().accept(this);
         }
         emitNoSpace(" and wait");
         storeNotesForIssue(node);
@@ -1647,28 +1641,27 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(AsString node) {
-        if (node.getOperand1() instanceof SingularExpression) {
-            node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof BoolExpr) {
-            node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof NumExpr) {
-            node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof Parameter) {
-            node.getOperand1().accept(this);
-        } else if (node.getOperand1() instanceof StrId strId) {
-            emitNoSpace("(");
-            final String spriteName = strId.getName();
-            if (spriteName.equals("_myself_")) {
-                emitNoSpace("myself");
-            } else {
-                emitNoSpace(escapeBrackets(spriteName));
+        switch (node.getOperand1()) {
+            case SingularExpression ignored -> node.getOperand1().accept(this);
+            case BoolExpr ignored -> node.getOperand1().accept(this);
+            case NumExpr ignored -> node.getOperand1().accept(this);
+            case Parameter ignored -> node.getOperand1().accept(this);
+            case StrId strId -> {
+                emitNoSpace("(");
+                final String spriteName = strId.getName();
+                if (spriteName.equals("_myself_")) {
+                    emitNoSpace("myself");
+                } else {
+                    emitNoSpace(escapeBrackets(spriteName));
+                }
+                emitNoSpace(" v)");
             }
-            emitNoSpace(" v)");
-        } else {
-            emitNoSpace("(");
-            node.getOperand1().accept(this);
-            storeNotesForIssue(node);
-            emitNoSpace(")");
+            default -> {
+                emitNoSpace("(");
+                node.getOperand1().accept(this);
+                storeNotesForIssue(node);
+                emitNoSpace(")");
+            }
         }
     }
 

@@ -60,15 +60,10 @@ final class RawStmtConverter {
     }
 
     Stmt convertStmt(final RawBlockId blockId, final RawBlock stmtBlock) {
-        if (stmtBlock instanceof RawBlock.ArrayBlock arrayBlock) {
-            return ExprConverter.convertExprStmt(state, blockId, arrayBlock);
-        } else if (stmtBlock instanceof RawBlock.RawRegularBlock regularBlock) {
-            return convertStmt(blockId, regularBlock);
-        } else {
-            // should never happen unless sealed interface RawBlock changes,
-            // use pattern-matching switch when upgrading to Java 21
-            throw new InternalParsingException("Unknown statement format.");
-        }
+        return switch (stmtBlock) {
+            case RawBlock.ArrayBlock arrayBlock -> ExprConverter.convertExprStmt(state, blockId, arrayBlock);
+            case RawBlock.RawRegularBlock regularBlock -> convertStmt(blockId, regularBlock);
+        };
     }
 
     Stmt convertStmt(final RawBlockId blockId, final RawBlock.RawRegularBlock stmtBlock) {

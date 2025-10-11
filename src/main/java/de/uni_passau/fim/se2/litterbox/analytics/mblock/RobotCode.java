@@ -43,7 +43,7 @@ public enum RobotCode {
             if (setStmt instanceof SetAttributeTo setAttributeTo) {
                 if (setAttributeTo.getStringExpr() instanceof StringLiteral stringLiteral) {
                     if (stringLiteral.getText().equals("visible")) {
-                        visible = ((BoolLiteral) ((SetAttributeTo) setStmt).getExpr()).getValue();
+                        visible = ((BoolLiteral) setAttributeTo.getExpr()).getValue();
                     }
                 }
             }

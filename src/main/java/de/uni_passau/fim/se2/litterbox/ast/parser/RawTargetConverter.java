@@ -516,7 +516,7 @@ final class RawTargetConverter {
             final StrId name = new StrId(argumentNames.get(i));
             final String argumentId = argumentIds.get(i).id();
             final RawInput argumentInput = procedurePrototype.inputs().get(argumentId);
-            final Type parameterType = getParameterTypeFromInput(name, argumentInput, argumentDefaults.get(i));
+            final Type parameterType = getParameterTypeFromInput(argumentInput, argumentDefaults.get(i));
             final BlockMetadata metadata = getParameterMetadata(argumentInput);
 
             definitions.add(new ParameterDefinition(name, parameterType, metadata));
@@ -531,10 +531,10 @@ final class RawTargetConverter {
     }
 
     private Type getParameterTypeFromInput(
-            final StrId name, final RawInput argumentInput, final RawMutation.ArgumentDefault<?> argumentDefault
+            final RawInput argumentInput, final RawMutation.ArgumentDefault<?> argumentDefault
     ) {
         if (argumentInput == null) {
-            return getParameterType(name, argumentDefault);
+            return getParameterType(argumentDefault);
         } else if (argumentInput.input() instanceof BlockRef.IdRef inputIdRef) {
             final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
 
@@ -561,22 +561,12 @@ final class RawTargetConverter {
         return new NoBlockMetadata();
     }
 
-    private static Type getParameterType(final StrId name, final RawMutation.ArgumentDefault<?> defaultValue) {
-        final Type parameterType;
-
-        // implementation note: should be changed to pattern-matching switch when updating to Java 21
-        if (
-                defaultValue instanceof RawMutation.ArgumentDefault.StringArgumentDefault
-                        || defaultValue instanceof RawMutation.ArgumentDefault.NumArgumentDefault
-        ) {
-            parameterType = new StringType();
-        } else if (defaultValue instanceof RawMutation.ArgumentDefault.BoolArgumentDefault) {
-            parameterType = new BooleanType();
-        } else {
-            throw new InternalParsingException("Parameter '" + name.getName() + "' has unknown type!");
-        }
-
-        return parameterType;
+    private static Type getParameterType(final RawMutation.ArgumentDefault<?> defaultValue) {
+        return switch (defaultValue) {
+            case RawMutation.ArgumentDefault.StringArgumentDefault ignored -> new StringType();
+            case RawMutation.ArgumentDefault.NumArgumentDefault ignored -> new StringType();
+            case RawMutation.ArgumentDefault.BoolArgumentDefault ignored -> new BooleanType();
+        };
     }
 
     private ProcedureMetadata convertProcedureMetadata(

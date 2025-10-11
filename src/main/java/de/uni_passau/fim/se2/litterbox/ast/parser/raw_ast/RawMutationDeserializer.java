@@ -83,17 +83,13 @@ final class RawMutationDeserializer {
         }
 
         private static RawMutation.ArgumentDefault<?> getDefaultValue(final Object item) {
-            if (item instanceof Boolean b) {
-                return new RawMutation.ArgumentDefault.BoolArgumentDefault(b);
-            } else if (item instanceof String s) {
-                return new RawMutation.ArgumentDefault.StringArgumentDefault(s);
-            } else if (item instanceof Integer i) {
-                return new RawMutation.ArgumentDefault.NumArgumentDefault(i.doubleValue());
-            } else if (item instanceof Double d) {
-                return new RawMutation.ArgumentDefault.NumArgumentDefault(d);
-            } else {
-                throw new IllegalArgumentException("Unknown procedure default type: " + item);
-            }
+            return switch (item) {
+                case Boolean b -> new RawMutation.ArgumentDefault.BoolArgumentDefault(b);
+                case String s -> new RawMutation.ArgumentDefault.StringArgumentDefault(s);
+                case Integer i -> new RawMutation.ArgumentDefault.NumArgumentDefault(i.doubleValue());
+                case Double d -> new RawMutation.ArgumentDefault.NumArgumentDefault(d);
+                default -> throw new IllegalArgumentException("Unknown procedure default type: " + item);
+            };
         }
     }
 }

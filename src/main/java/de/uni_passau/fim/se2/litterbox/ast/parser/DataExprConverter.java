@@ -61,22 +61,24 @@ final class DataExprConverter extends ExprConverter {
     }
 
     static Expression convertDataExpr(final ProgramParserState state, final RawInput exprBlock) {
-        // convert to pattern-matching switch with Java 21
-        if (exprBlock.input() instanceof BlockRef.IdRef exprIdRef) {
-            final RawBlock referencedBlock = state.getBlock(exprIdRef.id());
-            if (!(referencedBlock instanceof RawBlock.RawRegularBlock referencedRegularBlock)) {
-                // should not happen if the parseableAsDataExpr check works as intended
-                throw new InternalParsingException("Unknown format for data expressions.");
-            }
+        switch (exprBlock.input()) {
+            case BlockRef.IdRef(RawBlockId exprIdRef) -> {
+                final RawBlock referencedBlock = state.getBlock(exprIdRef);
+                if (!(referencedBlock instanceof RawBlock.RawRegularBlock referencedRegularBlock)) {
+                    // should not happen if the parseableAsDataExpr check works as intended
+                    throw new InternalParsingException("Unknown format for data expressions.");
+                }
 
-            if (isParameter(referencedRegularBlock.opcode())) {
-                return convertParameter(exprIdRef.id(), referencedRegularBlock);
+                if (isParameter(referencedRegularBlock.opcode())) {
+                    return convertParameter(exprIdRef, referencedRegularBlock);
+                }
             }
-        } else if (exprBlock.input() instanceof BlockRef.Block exprArrayBlock) {
-            if (exprArrayBlock.block() instanceof RawBlock.RawVariable rawVariable) {
-                return convertVariable(state, rawVariable);
-            } else if (exprArrayBlock.block() instanceof RawBlock.RawList rawList) {
-                return convertList(state, rawList);
+            case BlockRef.Block(RawBlock.ArrayBlock exprArrayBlock) -> {
+                if (exprArrayBlock instanceof RawBlock.RawVariable rawVariable) {
+                    return convertVariable(state, rawVariable);
+                } else if (exprArrayBlock instanceof RawBlock.RawList rawList) {
+                    return convertList(state, rawList);
+                }
             }
         }
 

@@ -49,8 +49,8 @@ final class BoolExprConverter extends ExprConverter {
             return true;
         }
 
-        if (exprBlock.input() instanceof BlockRef.IdRef inputRef) {
-            final RawBlock inputBlock = target.blocks().get(inputRef.id());
+        if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
             // if not regular block: must be `null`, therefore this is a DataExpr, not a BoolExpr
             return inputBlock instanceof RawBlock.RawRegularBlock block
                     && BoolExprOpcode.contains(block.opcode());
@@ -78,32 +78,24 @@ final class BoolExprConverter extends ExprConverter {
         }
 
         if (
-                exprBlock.input() instanceof BlockRef.IdRef exprInput
-                        && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
+                exprBlock.input() instanceof BlockRef.IdRef(RawBlockId exprInputId)
+                        && state.getBlock(exprInputId) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return convertBoolExpr(state, exprInput.id(), exprInputRegularBlock);
+            return convertBoolExpr(state, exprInputId, exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse BoolExpr.");
     }
 
     private static BoolExpr convertBoolLiteral(final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.Block inputBlock) {
-            final RawBlock.ArrayBlock literalInput = inputBlock.block();
-
-            // can be pattern-matching switch when upgrading to Java 21
-            final boolean value;
-            if (literalInput instanceof RawBlock.RawStringLiteral s) {
-                value = Boolean.parseBoolean(s.value());
-            } else if (literalInput instanceof RawBlock.RawFloatBlockLiteral f) {
-                value = f.value() == 0.0;
-            } else if (literalInput instanceof RawBlock.RawIntBlockLiteral i) {
-                value = i.value() == 0;
-            } else if (literalInput instanceof RawBlock.RawAngleBlockLiteral a) {
-                value = a.angle() == 0.0;
-            } else {
-                value = false;
-            }
+        if (exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock inputBlock)) {
+            final boolean value = switch (inputBlock) {
+                case RawBlock.RawStringLiteral(String s) -> Boolean.parseBoolean(s);
+                case RawBlock.RawFloatBlockLiteral(double f) -> f == 0.0;
+                case RawBlock.RawIntBlockLiteral(long i) -> i == 0;
+                case RawBlock.RawAngleBlockLiteral(double a) -> a == 0.0;
+                default -> false;
+            };
 
             return new BoolLiteral(value);
         }

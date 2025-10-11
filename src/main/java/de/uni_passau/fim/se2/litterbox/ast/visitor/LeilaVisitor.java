@@ -494,17 +494,16 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SwitchBackdrop switchBackdrop) {
-        if (switchBackdrop.getElementChoice() instanceof Next) {
-            emitNoSpace("switchBackdropToNext()");
-        } else if (switchBackdrop.getElementChoice() instanceof Prev) {
-            emitNoSpace("switchBackdropToPrev()");
-        } else if (switchBackdrop.getElementChoice() instanceof Random) {
-            emitNoSpace("switchBackdropToRandom()");
-        } else {
-            emitNoSpace("switchBackdropToId(\"");
-            switchBackdrop.getElementChoice().accept(this);
-            emitNoSpace("\"");
-            closeParentheses();
+        switch (switchBackdrop.getElementChoice()) {
+            case Next ignored -> emitNoSpace("switchBackdropToNext()");
+            case Prev ignored -> emitNoSpace("switchBackdropToPrev()");
+            case Random ignored -> emitNoSpace("switchBackdropToRandom()");
+            default -> {
+                emitNoSpace("switchBackdropToId(\"");
+                switchBackdrop.getElementChoice().accept(this);
+                emitNoSpace("\"");
+                closeParentheses();
+            }
         }
     }
 
@@ -1448,16 +1447,17 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(Touching touching) {
         Touchable touchable = touching.getTouchable();
-        if (touchable instanceof Edge) {
-            emitNoSpace("touchingEdge()");
-            return;
-        } else if (touchable instanceof MousePointer) {
-            emitNoSpace("touchingMousePointer()");
-            return;
-        } else if (touchable instanceof Color) {
-            emitNoSpace("touchingColor(");
-        } else {
-            emitNoSpace("touchingObject(");
+        switch (touchable) {
+            case Edge ignored -> {
+                emitNoSpace("touchingEdge()");
+                return;
+            }
+            case MousePointer ignored -> {
+                emitNoSpace("touchingMousePointer()");
+                return;
+            }
+            case Color ignored -> emitNoSpace("touchingColor(");
+            default -> emitNoSpace("touchingObject(");
         }
         touching.getTouchable().accept(this);
         closeParentheses();
