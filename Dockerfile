@@ -18,7 +18,7 @@
 #
 
 # Container image for building the project
-FROM docker.io/library/maven:3-eclipse-temurin-17 AS build
+FROM docker.io/library/maven:3-eclipse-temurin-21 AS build
 LABEL maintainer="Sebastian Schweikl"
 
 # Parameter for skipping the tests in the build process
@@ -38,7 +38,7 @@ RUN mvn -e -B package -DskipTests=${SKIP_TESTS} && \
     mv target/Litterbox-*.full.jar bin/Litterbox.jar
 
 # Slim container image for running LitterBox
-FROM docker.io/library/eclipse-temurin:17-jre
+FROM docker.io/library/eclipse-temurin:21-jre
 
 WORKDIR /litterbox
 VOLUME /litterbox
