@@ -256,6 +256,12 @@ F. Obermüller and G. Fraser, "Do Scratchers Fix Their Bugs? Detecting Fixes of 
 in Proceedings of the 19th Workshop in Primary and Secondary Computing Education (WIPSCE ’24). ACM,
 2024. [https://doi.org/10.1145/3677619.3678108](https://doi.org/10.1145/3677619.3678108)
 
+### Question Generation
+
+F. Obermüller and G. Fraser. "Automatically Generating Questions About Scratch Programs",
+in Proceedings of the ACM Global Computing Education Conference 2025 Vol 1 (CompEd 2025). ACM,
+2025. https://doi.org/10.1145/3736181.3747131
+
 ### LLM Interaction
 
 B. Fein, F. Obermüller and G. Fraser, "LitterBox+: An Extensible Framework for LLM-enhanced Scratch Static Code Analysis",
