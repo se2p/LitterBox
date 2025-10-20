@@ -49,9 +49,9 @@ public class TopLevelMetadataTest implements JsonTest {
     @Test
     public void testVariablesProgram() {
         List<Script> scripts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
-        List<Stmt> stmtList = scripts.get(0).getStmtList().getStmts();
-        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.get(0));
-        Expression expr = ((ExpressionStmt) stmtList.get(0)).getExpression();
+        List<Stmt> stmtList = scripts.getFirst().getStmtList().getStmts();
+        Assertions.assertInstanceOf(ExpressionStmt.class, stmtList.getFirst());
+        Expression expr = ((ExpressionStmt) stmtList.getFirst()).getExpression();
         Assertions.assertInstanceOf(Qualified.class, expr);
         DataExpr data = ((Qualified) expr).getSecond();
         Assertions.assertInstanceOf(Variable.class, data);
@@ -65,7 +65,7 @@ public class TopLevelMetadataTest implements JsonTest {
     @Test
     public void testProcedureProgram() {
         ProcedureDefinition def =
-                program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
+                program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().getFirst();
         ProcedureMetadata meta = def.getMetadata();
         Assertions.assertInstanceOf(TopNonDataBlockMetadata.class, meta.getDefinition());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();

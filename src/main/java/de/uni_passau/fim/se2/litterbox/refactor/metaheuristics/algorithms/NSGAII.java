@@ -87,7 +87,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
             log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", MAX_SECONDS);
         }
 
-        population = fastNonDominatedSort.fastNonDominatedSort(population).get(0);
+        population = fastNonDominatedSort.fastNonDominatedSort(population).getFirst();
         return population.stream().distinct().toList(); // only return unique solutions
     }
 

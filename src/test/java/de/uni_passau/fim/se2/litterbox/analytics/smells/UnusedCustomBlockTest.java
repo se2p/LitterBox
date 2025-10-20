@@ -48,6 +48,6 @@ public class UnusedCustomBlockTest implements JsonTest {
         UnusedCustomBlock parameterName = new UnusedCustomBlock();
         List<Issue> reports = new ArrayList<>(parameterName.check(unusedProc));
         Assertions.assertEquals(1, reports.size());
-        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.get(0).getScriptOrProcedureDefinition());
+        Assertions.assertInstanceOf(ProcedureDefinition.class, reports.getFirst().getScriptOrProcedureDefinition());
     }
 }

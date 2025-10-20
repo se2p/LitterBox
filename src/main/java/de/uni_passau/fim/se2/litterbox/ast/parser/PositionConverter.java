@@ -38,8 +38,7 @@ final class PositionConverter {
     }
 
     static Position convertPosition(final ProgramParserState state, final RawBlock.RawRegularBlock block) {
-        if (
-                !block.hasInput(KnownInputs.TO)
+        if (!block.hasInput(KnownInputs.TO)
                 && !block.hasInput(KnownInputs.TOWARDS)
                 && !block.hasInput(KnownInputs.DISTANCE_TO_MENU)
         ) {
@@ -70,12 +69,10 @@ final class PositionConverter {
         final RawInput positionInput = block.getInput(inputKey);
 
         if (ShadowType.SHADOW.equals(positionInput.shadowType())
-                && positionInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock positionBlock
+                && positionInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock positionBlock
         ) {
-            final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(
-                    menuIdRef.id(), positionBlock
-            );
+            final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(menuId, positionBlock);
 
             final RawField field = positionBlock.getField(fieldKey);
             if (field.value() == null) {

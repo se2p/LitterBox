@@ -42,7 +42,7 @@ public class IfElseToDisjunctionTest implements JsonTest {
         IfElseToDisjunctionFinder finder = new IfElseToDisjunctionFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(IfElseToDisjunction.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(IfElseToDisjunction.class);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class IfElseToDisjunctionTest implements JsonTest {
     @Test
     public void testIfElseToDisjunctionRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/ifElseToDisjunction.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         IfElseStmt if1 = (IfElseStmt) stmtList.getStatement(0);
         IfThenStmt if2 = (IfThenStmt) if1.getElseStmts().getStatement(0);
@@ -64,7 +64,7 @@ public class IfElseToDisjunctionTest implements JsonTest {
         IfElseToDisjunction refactoring = new IfElseToDisjunction(if1, if2);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(1);
 

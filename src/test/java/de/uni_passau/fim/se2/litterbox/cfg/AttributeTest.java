@@ -309,8 +309,8 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).hasSize(1);
         assertThat(defs).hasSize(1);
-        Attribute use = uses.get(0);
-        Attribute def = uses.get(0);
+        Attribute use = uses.getFirst();
+        Attribute def = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
         assertThat(def.getAttributeType()).isEqualTo(Attribute.AttributeType.GRAPHIC_EFFECT);
     }
@@ -324,8 +324,8 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).hasSize(1);
         assertThat(defs).hasSize(1);
-        Attribute use = uses.get(0);
-        Attribute def = uses.get(0);
+        Attribute use = uses.getFirst();
+        Attribute def = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(COSTUME);
         assertThat(def.getAttributeType()).isEqualTo(COSTUME);
     }
@@ -340,8 +340,8 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).hasSize(1);
         assertThat(defs).hasSize(1);
-        Attribute use = uses.get(0);
-        Attribute def = uses.get(0);
+        Attribute use = uses.getFirst();
+        Attribute def = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
         assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
     }
@@ -355,8 +355,8 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).hasSize(1);
         assertThat(defs).hasSize(1);
-        Attribute use = uses.get(0);
-        Attribute def = uses.get(0);
+        Attribute use = uses.getFirst();
+        Attribute def = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
         assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
     }
@@ -370,8 +370,8 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).hasSize(1);
         assertThat(defs).hasSize(1);
-        Attribute use = uses.get(0);
-        Attribute def = uses.get(0);
+        Attribute use = uses.getFirst();
+        Attribute def = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
         assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
     }
@@ -385,7 +385,7 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).isEmpty();
         assertThat(defs).hasSize(1);
-        Attribute def = defs.get(0);
+        Attribute def = defs.getFirst();
         assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
     }
 
@@ -398,7 +398,7 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).isEmpty();
         assertThat(defs).hasSize(1);
-        Attribute def = defs.get(0);
+        Attribute def = defs.getFirst();
         assertThat(def.getAttributeType()).isEqualTo(BACKDROP);
     }
 
@@ -411,7 +411,7 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(defs).isEmpty();
         assertThat(uses).hasSize(1);
-        Attribute use = uses.get(0);
+        Attribute use = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(BACKDROP);
     }
 
@@ -448,7 +448,7 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(defs).isEmpty();
         assertThat(uses).hasSize(1);
-        Attribute use = uses.get(0);
+        Attribute use = uses.getFirst();
         assertThat(use.getAttributeType()).isEqualTo(TIMER);
     }
 
@@ -461,7 +461,7 @@ public class AttributeTest implements JsonTest {
         List<Attribute> defs = new ArrayList<>(getDefinedAttributes(node));
         assertThat(uses).isEmpty();
         assertThat(defs).hasSize(1);
-        Attribute def = defs.get(0);
+        Attribute def = defs.getFirst();
         assertThat(def.getAttributeType()).isEqualTo(TIMER);
     }
 

@@ -33,7 +33,6 @@ import java.util.List;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MergeEventsIntoForeverTest implements JsonTest {
 
@@ -50,7 +49,7 @@ public class MergeEventsIntoForeverTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/mergeEventHandler.json");
         MergeEventsIntoForeverFinder finder = new MergeEventsIntoForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
-        Refactoring r = refactorings.get(0);
+        Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
         assertThat(program).isNotEqualTo(refactored);
     }
@@ -60,12 +59,12 @@ public class MergeEventsIntoForeverTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/mergeEventHandler.json");
         MergeEventsIntoForeverFinder finder = new MergeEventsIntoForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
-        Refactoring r = refactorings.get(0);
+        Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
-        Stmt stmt = refactoredStmtList.get(0);
+        Stmt stmt = refactoredStmtList.getFirst();
         assertInstanceOf(RepeatForeverStmt.class, stmt);
     }
 

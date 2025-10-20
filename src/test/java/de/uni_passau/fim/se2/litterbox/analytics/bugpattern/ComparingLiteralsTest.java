@@ -118,7 +118,7 @@ class ComparingLiteralsTest implements JsonTest {
         Assertions.assertEquals(2, reportsVariableAsLiteral.size());
         List<Issue> reportsComparingLiterals = new ArrayList<>((new ComparingLiterals()).check(program));
         Assertions.assertEquals(1, reportsComparingLiterals.size());
-        Assertions.assertFalse(reportsComparingLiterals.get(0).isSubsumedBy(reportsVariableAsLiteral.get(0)));
-        Assertions.assertTrue(reportsComparingLiterals.get(0).isSubsumedBy(reportsVariableAsLiteral.get(1)));
+        Assertions.assertFalse(reportsComparingLiterals.getFirst().isSubsumedBy(reportsVariableAsLiteral.get(0)));
+        Assertions.assertTrue(reportsComparingLiterals.getFirst().isSubsumedBy(reportsVariableAsLiteral.get(1)));
     }
 }

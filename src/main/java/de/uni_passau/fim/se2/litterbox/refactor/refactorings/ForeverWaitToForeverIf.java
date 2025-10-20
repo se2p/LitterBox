@@ -46,7 +46,7 @@ public class ForeverWaitToForeverIf extends OnlyCodeCloneVisitor implements Refa
 
         WaitUntil waitUntil = (WaitUntil) loop.getStmtList().getStatement(0);
         List<Stmt> statements = apply(loop.getStmtList()).getStmts();
-        statements.remove(0);
+        statements.removeFirst();
 
         IfThenStmt ifThenStmt = new IfThenStmt(
                 apply(waitUntil.getUntil()),

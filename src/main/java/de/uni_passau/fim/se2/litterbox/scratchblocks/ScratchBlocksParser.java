@@ -70,7 +70,7 @@ public class ScratchBlocksParser {
             if (content.scripts().getSize() > 0) {
                 return content.scripts().getScript(0);
             } else if (!content.procedures().getList().isEmpty()) {
-                return content.procedures().getList().get(0);
+                return content.procedures().getList().getFirst();
             }
             throw new IllegalArgumentException(
                     "ActorContent has no scripts to add."
@@ -119,8 +119,8 @@ public class ScratchBlocksParser {
         vis.setCurrentActor(actorName);
         final ASTNode node = vis.visit(tree);
 
-        if (node instanceof ActorContentHelperNode actorContentHelperNode) {
-            return new ActorContent(actorContentHelperNode.scripts(), actorContentHelperNode.procedures());
+        if (node instanceof ActorContentHelperNode(ScriptList scripts, ProcedureDefinitionList procedures)) {
+            return new ActorContent(scripts, procedures);
         } else if (node == null) {
             return null;
         } else {

@@ -49,8 +49,8 @@ class DataExprParserTest implements JsonTest {
         for (ActorDefinition actorDefinition : actorDefinitions) {
             if (actorDefinition.isSprite()) {
                 List<Script> scriptList = actorDefinition.getScripts().getScriptList();
-                Script script = scriptList.get(0);
-                Stmt stmt = script.getStmtList().getStmts().get(0);
+                Script script = scriptList.getFirst();
+                Stmt stmt = script.getStmtList().getStmts().getFirst();
                 assertInstanceOf(SetVariableTo.class, stmt);
                 SetVariableTo setVariableTo = (SetVariableTo) stmt;
                 Expression param = setVariableTo.getExpr();

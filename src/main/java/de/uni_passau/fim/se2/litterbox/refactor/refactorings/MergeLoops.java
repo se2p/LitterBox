@@ -67,15 +67,14 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
 
     // TODO: Code clone
     private LoopStmt getLoop(LoopStmt loopStmt, StmtList body) {
-        if (loopStmt instanceof RepeatForeverStmt origLoop) {
-            return new RepeatForeverStmt(body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof RepeatTimesStmt origLoop) {
-            return new RepeatTimesStmt(apply(origLoop.getTimes()), body, apply(origLoop.getMetadata()));
-        } else if (loopStmt instanceof UntilStmt origLoop) {
-            return new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
-        } else {
-            throw new RuntimeException("Unknown loop statement: " + loopStmt);
-        }
+        return switch (loopStmt) {
+            case RepeatForeverStmt origLoop -> new RepeatForeverStmt(body, apply(origLoop.getMetadata()));
+            case RepeatTimesStmt origLoop ->
+                    new RepeatTimesStmt(apply(origLoop.getTimes()), body, apply(origLoop.getMetadata()));
+            case UntilStmt origLoop ->
+                    new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
+            default -> throw new RuntimeException("Unknown loop statement: " + loopStmt);
+        };
     }
 
     @Override

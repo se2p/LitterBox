@@ -62,11 +62,10 @@ final class NumExprConverter extends ExprConverter {
             return parseLiteralNumberInput(exprBlock);
         }
 
-        if (
-                exprBlock.input() instanceof BlockRef.IdRef exprInput
-                && state.getBlock(exprInput.id()) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
+        if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId exprId)
+                && state.getBlock(exprId) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
-            return convertNumExpr(state, exprInput.id(), exprInputRegularBlock);
+            return convertNumExpr(state, exprId, exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -87,18 +86,18 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static boolean isParseableAsNumberLiteral(final RawInput exprBlock) {
-        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block exprInput && (
-                exprInput.block() instanceof RawBlock.RawFloatBlockLiteral
-                        || exprInput.block() instanceof RawBlock.RawIntBlockLiteral
-                        || exprInput.block() instanceof RawBlock.RawAngleBlockLiteral
+        final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput) && (
+                exprInput instanceof RawBlock.RawFloatBlockLiteral
+                || exprInput instanceof RawBlock.RawIntBlockLiteral
+                || exprInput instanceof RawBlock.RawAngleBlockLiteral
         );
 
         boolean canBeParsedAsNumber = false;
-        if (exprBlock.input() instanceof BlockRef.Block exprInput
-                && exprInput.block() instanceof RawBlock.RawStringLiteral s
+        if (exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput)
+                && exprInput instanceof RawBlock.RawStringLiteral(String s)
         ) {
             try {
-                Double.parseDouble(s.value());
+                Double.parseDouble(s);
                 canBeParsedAsNumber = true;
             } catch (NumberFormatException e) {
                 // ignored, canBeParsedAsNumber false by default
@@ -109,8 +108,8 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static boolean hasNumExprOpcode(final RawTarget target, final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.IdRef inputIdRef) {
-            final RawBlock inputBlock = target.blocks().get(inputIdRef.id());
+        if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
+            final RawBlock inputBlock = target.blocks().get(inputId);
             if (inputBlock == null) {
                 return false;
             }
@@ -124,27 +123,25 @@ final class NumExprConverter extends ExprConverter {
     }
 
     private static NumExpr parseLiteralNumberInput(final RawInput exprBlock) {
-        if (exprBlock.input() instanceof BlockRef.Block inputBlock) {
-            final RawBlock.ArrayBlock literalInput = inputBlock.block();
-            // note: should be converted to pattern-matching switch with Java 21
-            if (literalInput instanceof RawBlock.RawFloatBlockLiteral f) {
-                return new NumberLiteral(f.value());
-            } else if (literalInput instanceof RawBlock.RawIntBlockLiteral i) {
-                return new NumberLiteral(i.value());
-            } else if (literalInput instanceof RawBlock.RawAngleBlockLiteral a) {
-                return new NumberLiteral(a.angle());
-            } else if (literalInput instanceof RawBlock.RawStringLiteral s) {
-                try {
-                    double parsed = Double.parseDouble(s.value());
-                    return new NumberLiteral(parsed);
-                } catch (NumberFormatException e) {
-                    // note: if the parseable as number check works, we should never end up here
-                    throw new InternalParsingException("Cannot parse number: " + s.value(), e);
-                }
-            }
+        if (!(exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock arrayBlock))) {
+            return new UnspecifiedNumExpr();
         }
 
-        return new UnspecifiedNumExpr();
+        return switch (arrayBlock) {
+            case RawBlock.RawFloatBlockLiteral(double f) -> new NumberLiteral(f);
+            case RawBlock.RawIntBlockLiteral(long i) -> new NumberLiteral(i);
+            case RawBlock.RawAngleBlockLiteral(double a) -> new NumberLiteral(a);
+            case RawBlock.RawStringLiteral(String s) -> {
+                try {
+                    double parsed = Double.parseDouble(s);
+                    yield new NumberLiteral(parsed);
+                } catch (NumberFormatException e) {
+                    // note: if the parseable as number check works, we should never end up here
+                    throw new InternalParsingException("Cannot parse number: " + s, e);
+                }
+            }
+            default -> new UnspecifiedNumExpr();
+        };
     }
 
     static NumExpr convertNumExpr(

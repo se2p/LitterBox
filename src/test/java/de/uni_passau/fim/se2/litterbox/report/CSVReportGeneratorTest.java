@@ -118,7 +118,7 @@ public class CSVReportGeneratorTest implements JsonTest {
         int procedureCountPerProgram = (int) procedureCount.calculateMetric(program);
 
         assertThat(lines).hasSize(1 + scriptCountPerProgram + procedureCountPerProgram);
-        assertThat(lines.get(0)).isEqualTo("script," + String.join(",", finders));
+        assertThat(lines.getFirst()).isEqualTo("script," + String.join(",", finders));
 
         int totalBugsInScripts = getTotalBugsCountInScripts(lines);
         assertThat(totalBugsInScripts).isEqualTo(issues.size());

@@ -43,9 +43,9 @@ class ColorParserTest implements JsonTest {
         Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
 
         final ActorDefinition first = list.getDefinitions().get(1);
-        final Script script = first.getScripts().getScriptList().get(0);
+        final Script script = first.getScripts().getScriptList().getFirst();
         final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
-                .get(0);
+                .getFirst();
         Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(ColorTouchingColor.class);
         ColorTouchingColor expression = (ColorTouchingColor) expressionStmt.getExpression();
 
@@ -62,7 +62,7 @@ class ColorParserTest implements JsonTest {
         final ActorDefinition first = list.getDefinitions().get(1);
         final Script script = first.getScripts().getScriptList().get(1);
         final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
-                .get(0);
+                .getFirst();
         Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(SpriteTouchingColor.class);
         SpriteTouchingColor expression = (SpriteTouchingColor) expressionStmt.getExpression();
 

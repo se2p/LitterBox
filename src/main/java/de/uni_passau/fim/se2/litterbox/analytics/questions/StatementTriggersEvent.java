@@ -74,14 +74,14 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
 
         scriptsForEvent.forEach((event, scripts) -> {
             if (!eventStatements.get(event).isEmpty()) {
-                currentScript = scripts.get(0);
+                currentScript = scripts.getFirst();
                 currentActor = actorForScript.get(currentScript);
 
                 ASTNode topBlockCurrent;
                 if (!(currentScript.getEvent() instanceof Never)) {
                     topBlockCurrent = currentScript.getEvent();
                 } else {
-                    topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
+                    topBlockCurrent = currentScript.getStmtList().getStmts().getFirst();
                 }
                 IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
                 Hint hint = Hint.fromKey(getName());

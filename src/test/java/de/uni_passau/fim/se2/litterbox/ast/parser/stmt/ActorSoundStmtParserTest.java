@@ -55,11 +55,11 @@ public class ActorSoundStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
-        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
+        Truth.assertThat(listOfStmt.getFirst()).isInstanceOf(PlaySoundUntilDone.class);
+        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.getFirst();
         Truth.assertThat(playSoundUntilDone.getMetadata()).isInstanceOf(NonDataBlockMetadata.class);
         Truth.assertThat(playSoundUntilDone.getElementChoice()).isInstanceOf(WithExpr.class);
         WithExpr expr = (WithExpr) playSoundUntilDone.getElementChoice();
@@ -80,12 +80,12 @@ public class ActorSoundStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-        Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.getFirst()).isInstanceOf(PlaySoundUntilDone.class);
 
-        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
+        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.getFirst();
         WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
         StrId strid = (StrId) elementChoice.getExpression();
         Truth.assertThat(strid.getName()).isEqualTo("Meow");
@@ -97,7 +97,7 @@ public class ActorSoundStmtParserTest implements JsonTest {
         ActorDefinitionList list = program.getActorDefinitionList();
         ActorDefinition sprite = list.getDefinitions().get(1);
 
-        Script script = sprite.getScripts().getScriptList().get(0);
+        Script script = sprite.getScripts().getScriptList().getFirst();
         List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
         Truth.assertThat(listOfStmt.get(0)).isInstanceOf(PlaySoundUntilDone.class);

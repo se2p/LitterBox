@@ -62,12 +62,12 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
         final Language language;
 
         if (ShadowType.SHADOW.equals(languageInput.shadowType())
-                && languageInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                && languageInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.text2speech_menu_languages.getName().equals(menuBlock.opcode())
         ) {
             final String languageName = menuBlock.getFieldValueAsString(KnownFields.LANGUAGES);
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
+            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
             language = new FixedLanguage(languageName, menuMeta);
         } else {
             final Expression expr = ExprConverter.convertExpr(state, block, languageInput);
@@ -82,12 +82,12 @@ final class TextToSpeechStmtConverter extends StmtConverter<TextToSpeechStmt> {
         final Voice voice;
 
         if (ShadowType.SHADOW.equals(voiceInput.shadowType())
-                && voiceInput.input() instanceof BlockRef.IdRef menuIdRef
-                && state.getBlock(menuIdRef.id()) instanceof RawBlock.RawRegularBlock menuBlock
+                && voiceInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
                 && DependentBlockOpcode.text2speech_menu_voices.getName().equals(menuBlock.opcode())
         ) {
             final String voiceName = menuBlock.getFieldValueAsString(KnownFields.VOICES);
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuIdRef.id(), menuBlock);
+            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
             voice = new FixedVoice(voiceName, menuMeta);
         } else {
             final Expression expr = ExprConverter.convertExpr(state, block, voiceInput);

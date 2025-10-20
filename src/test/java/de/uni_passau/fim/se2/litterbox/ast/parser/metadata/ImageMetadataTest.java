@@ -31,15 +31,15 @@ public class ImageMetadataTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/emptyProject.json");
-        ImageMetadataList meta = program.getActorDefinitionList().getDefinitions().get(0).getActorMetadata().getCostumes();
+        ImageMetadataList meta = program.getActorDefinitionList().getDefinitions().getFirst().getActorMetadata().getCostumes();
 
         Assertions.assertEquals(1, meta.getList().size());
-        Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a", meta.getList().get(0).getAssetId());
-        Assertions.assertEquals("svg", meta.getList().get(0).getDataFormat());
-        Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a.svg", meta.getList().get(0).getMd5ext());
-        Assertions.assertEquals("backdrop1", meta.getList().get(0).getName());
-        Assertions.assertNull(meta.getList().get(0).getBitmapResolution());
-        Assertions.assertEquals(240, meta.getList().get(0).getRotationCenterX());
-        Assertions.assertEquals(180, meta.getList().get(0).getRotationCenterY());
+        Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a", meta.getList().getFirst().getAssetId());
+        Assertions.assertEquals("svg", meta.getList().getFirst().getDataFormat());
+        Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a.svg", meta.getList().getFirst().getMd5ext());
+        Assertions.assertEquals("backdrop1", meta.getList().getFirst().getName());
+        Assertions.assertNull(meta.getList().getFirst().getBitmapResolution());
+        Assertions.assertEquals(240, meta.getList().getFirst().getRotationCenterX());
+        Assertions.assertEquals(180, meta.getList().getFirst().getRotationCenterY());
     }
 }

@@ -41,13 +41,13 @@ public class SplitScriptAfterUntilTest implements JsonTest {
         SplitScriptAfterUntilFinder finder = new SplitScriptAfterUntilFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitScriptAfterUntil.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitScriptAfterUntil.class);
     }
 
     @Test
     public void testSplitScriptAfterUntilRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScriptAfterUntil.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         UntilStmt untilStmt = (UntilStmt) stmtList.getStatement(0);
 

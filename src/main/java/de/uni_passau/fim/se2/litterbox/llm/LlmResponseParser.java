@@ -146,7 +146,7 @@ public class LlmResponseParser {
         for (ActorDefinition actor : originalProgram.getActorDefinitionList().getDefinitions()) {
             if (!llmCode.scripts().containsKey(actor.getIdent().getName())) {
                 if (actor.isStage()) {
-                    actors.add(0, actor);
+                    actors.addFirst(actor);
                 } else {
                     actors.add(actor);
                 }
@@ -166,7 +166,7 @@ public class LlmResponseParser {
             final ActorDefinition updatedActor = mergeActor(actor, scripts);
 
             if (updatedActor.isStage()) {
-                actors.add(0, updatedActor);
+                actors.addFirst(updatedActor);
             } else {
                 actors.add(updatedActor);
             }

@@ -65,9 +65,9 @@ public class BusyWaiting extends AbstractIssueFinder {
         if (foreverLoop != null && hasStop) {
 
             List<Stmt> statements = new ArrayList<>(node.getThenStmts().getStmts());
-            statements.remove(statements.size() - 1); // stop statement
+            statements.removeLast(); // stop statement
             WaitUntil waitUntil = new WaitUntil(node.getBoolExpr(), node.getMetadata());
-            statements.add(0, waitUntil);
+            statements.addFirst(waitUntil);
             StatementReplacementVisitor visitor = new StatementReplacementVisitor(foreverLoop, statements);
             ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
             IssueBuilder builder = prepareIssueBuilder(node)

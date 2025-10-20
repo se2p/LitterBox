@@ -36,7 +36,7 @@ public record Conversation(String systemPrompt, List<LlmMessage> messages) {
         // least the initial user prompt
         Preconditions.checkArgument(!messages.isEmpty());
 
-        return messages.get(messages.size() - 1);
+        return messages.getLast();
     }
 
     public Conversation add(LlmMessage... messages) {

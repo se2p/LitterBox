@@ -40,7 +40,7 @@ public class SplitIfTest implements JsonTest {
         SplitIfFinder finder = new SplitIfFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitIf.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitIf.class);
     }
 
 
@@ -59,7 +59,7 @@ public class SplitIfTest implements JsonTest {
     @Test
     public void testSplitIfRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splittableIf.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
 
         IfThenStmt ifStatement1 = (IfThenStmt) stmtList.getStatement(0);
@@ -67,7 +67,7 @@ public class SplitIfTest implements JsonTest {
         SplitIf refactoring = new SplitIf(ifStatement1, ifStatement1.getThenStmts().getStatement(1));
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 
@@ -85,7 +85,7 @@ public class SplitIfTest implements JsonTest {
     @Test
     public void testSplitIfRefactoringMultipleBlocks() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splittableIfMultipleBlocks.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
 
         IfThenStmt ifStatement1 = (IfThenStmt) stmtList.getStatement(0);
@@ -93,7 +93,7 @@ public class SplitIfTest implements JsonTest {
         SplitIf refactoring = new SplitIf(ifStatement1, ifStatement1.getThenStmts().getStatement(2));
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
 

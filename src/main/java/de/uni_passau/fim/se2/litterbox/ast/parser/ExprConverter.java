@@ -69,31 +69,34 @@ abstract class ExprConverter {
     ) {
         final SymbolTable symbolTable = state.getSymbolTable();
 
-        if (exprBlock instanceof RawBlock.RawRegularBlock regularExprBlock) {
-            final Expression expr = convertExprBlock(state, blockId, regularExprBlock);
-            return new ExpressionStmt(expr);
-        } else if (exprBlock instanceof RawBlock.RawVariable variable) {
-            final VariableInfo varInfo = symbolTable.getVariable(
-                    variable.id().id(), variable.name(), state.getCurrentActor().getName()
-            ).orElseThrow(() -> new InternalParsingException(
-                    "Program contains unknown variable '" + variable.name() + "' in actor '"
-                            + state.getCurrentActor().getName() + "'."
-            ));
-            final Qualified varId = ConverterUtilities.topLevelVariableInfoToIdentifier(varInfo, variable);
+        switch (exprBlock) {
+            case RawBlock.RawRegularBlock regularExprBlock -> {
+                final Expression expr = convertExprBlock(state, blockId, regularExprBlock);
+                return new ExpressionStmt(expr);
+            }
+            case RawBlock.RawVariable variable -> {
+                final VariableInfo varInfo = symbolTable.getVariable(
+                        variable.id().id(), variable.name(), state.getCurrentActor().getName()
+                ).orElseThrow(() -> new InternalParsingException(
+                        "Program contains unknown variable '" + variable.name() + "' in actor '"
+                                + state.getCurrentActor().getName() + "'."
+                ));
+                final Qualified varId = ConverterUtilities.topLevelVariableInfoToIdentifier(varInfo, variable);
 
-            return new ExpressionStmt(varId);
-        } else if (exprBlock instanceof RawBlock.RawList list) {
-            final ExpressionListInfo listInfo = symbolTable.getList(
-                    list.id().id(), list.name(), state.getCurrentActor().getName()
-            ).orElseThrow(() -> new InternalParsingException(
-                    "Program contains unknown list '" + list.name() + "' in actor '"
-                            + state.getCurrentActor().getName() + "'."
-            ));
-            final Qualified listId = ConverterUtilities.topLevelListInfoToIdentifier(listInfo, list);
+                return new ExpressionStmt(varId);
+            }
+            case RawBlock.RawList list -> {
+                final ExpressionListInfo listInfo = symbolTable.getList(
+                        list.id().id(), list.name(), state.getCurrentActor().getName()
+                ).orElseThrow(() -> new InternalParsingException(
+                        "Program contains unknown list '" + list.name() + "' in actor '"
+                                + state.getCurrentActor().getName() + "'."
+                ));
+                final Qualified listId = ConverterUtilities.topLevelListInfoToIdentifier(listInfo, list);
 
-            return new ExpressionStmt(listId);
-        } else {
-            throw new InternalParsingException("Unknown format for expression statement.");
+                return new ExpressionStmt(listId);
+            }
+            default -> throw new InternalParsingException("Unknown format for expression statement.");
         }
     }
 
@@ -114,6 +117,6 @@ abstract class ExprConverter {
     protected static boolean hasCorrectShadow(final RawInput exprBlock) {
         return exprBlock.shadowType() == ShadowType.SHADOW || (
                 exprBlock.shadowType() == ShadowType.NO_SHADOW && !(exprBlock.input() instanceof BlockRef.IdRef)
-            );
+                );
     }
 }

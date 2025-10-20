@@ -41,15 +41,10 @@ final class RawBlockMetadataConverter {
     private static BlockMetadata convertBlockMetadata(
             final RawBlockId blockId, final RawBlock block, final boolean isTopLevel
     ) {
-        // implementation note: can be switch-case pattern when upgrading to Java 21
-        if (block instanceof RawBlock.RawRegularBlock regularBlock) {
-            return convertRegularBlockMetadata(blockId, regularBlock);
-        } else if (block instanceof RawBlock.ArrayBlock arrayBlock) {
-            return convertArrayBlockMetadata(blockId, arrayBlock, isTopLevel);
-        } else {
-            // cannot happen as long as RawBlock sealed interface does not get additional implementations
-            throw new InternalParsingException("Unknown block type!");
-        }
+        return switch (block) {
+            case RawBlock.RawRegularBlock regularBlock -> convertRegularBlockMetadata(blockId, regularBlock);
+            case RawBlock.ArrayBlock arrayBlock -> convertArrayBlockMetadata(blockId, arrayBlock, isTopLevel);
+        };
     }
 
     private static BlockMetadata convertRegularBlockMetadata(

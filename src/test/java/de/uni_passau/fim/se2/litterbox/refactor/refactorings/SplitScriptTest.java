@@ -114,7 +114,7 @@ public class SplitScriptTest implements JsonTest {
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitScript.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitScript.class);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class SplitScriptTest implements JsonTest {
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitScript.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitScript.class);
     }
 
     @Test
@@ -132,13 +132,13 @@ public class SplitScriptTest implements JsonTest {
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitScript.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitScript.class);
     }
 
     @Test
     public void testSplitScriptRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScript.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
 
         WaitSeconds wait = (WaitSeconds)stmtList.getStmts().get(2);
@@ -156,7 +156,7 @@ public class SplitScriptTest implements JsonTest {
         assertThat(refactoredStmtList1.getStmts().size()).isEqualTo(2);
         assertThat(refactoredStmtList2.getStmts().size()).isEqualTo(3);
 
-        assertThat(refactoredStmtList2.getStmts().get(0)).isEqualTo(wait);
+        assertThat(refactoredStmtList2.getStmts().getFirst()).isEqualTo(wait);
     }
 
 }

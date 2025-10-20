@@ -55,7 +55,7 @@ public class BoolExprParserTest implements JsonTest {
     @Test
     public void testContains() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(1);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
@@ -69,7 +69,7 @@ public class BoolExprParserTest implements JsonTest {
     @Test
     public void testOr() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(2);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
@@ -77,7 +77,7 @@ public class BoolExprParserTest implements JsonTest {
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
         StmtList substack = repeatTimesStmt.getStmtList();
 
-        final Stmt subStackStmt = substack.getStmts().get(0);
+        final Stmt subStackStmt = substack.getStmts().getFirst();
         Truth.assertThat(subStackStmt).isInstanceOf(IfElseStmt.class);
 
         IfElseStmt ifThenStmt = (IfElseStmt) subStackStmt;
@@ -89,7 +89,7 @@ public class BoolExprParserTest implements JsonTest {
     @Test
     public void testWaitUntil() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(WaitUntil.class);
@@ -102,7 +102,7 @@ public class BoolExprParserTest implements JsonTest {
     @Test
     public void testAnd() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(WaitSeconds.class);
@@ -116,13 +116,13 @@ public class BoolExprParserTest implements JsonTest {
     @Test
     public void testNot() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
 
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
-        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().get(0);
+        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().getFirst();
         Truth.assertThat(ifElseStmt.getBoolExpr()).isInstanceOf(Not.class);
         Not boolExpr = (Not) ifElseStmt.getBoolExpr();
         Truth.assertThat(boolExpr.getOperand1()).isInstanceOf(BiggerThan.class);
@@ -133,7 +133,7 @@ public class BoolExprParserTest implements JsonTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().get(0);
+        final Stmt stmt = script.getStmtList().getStmts().getFirst();
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;

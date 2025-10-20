@@ -53,7 +53,7 @@ public class LEDOffScript extends AbstractRobotFinder {
         turnsOffLED = false;
         super.visit(node);
         if (secondRun && !node.getStmtList().getStmts().isEmpty()) {
-            ASTNode last = node.getStmtList().getStmts().get(node.getStmtList().getStmts().size() - 1);
+            ASTNode last = node.getStmtList().getStmts().getLast();
             if (last instanceof StopAll || last instanceof StopOtherScriptsInSprite) {
                 if (!(node.getEvent() instanceof Never)
                         && turnsOnLED && turnsOffLED) {

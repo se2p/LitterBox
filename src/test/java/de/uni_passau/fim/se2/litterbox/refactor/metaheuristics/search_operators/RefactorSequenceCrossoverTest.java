@@ -90,7 +90,7 @@ class RefactorSequenceCrossoverTest {
         mockedRandomness.when(() -> Randomness.nextInt(1)).thenReturn(0);
         Pair<RefactorSequence> children = parent1.crossover(parent2);
 
-        assertEquals(0, children.getFst().getProductions().get(0));
+        assertEquals(0, children.getFst().getProductions().getFirst());
 
         assertEquals(1, children.getSnd().getProductions().get(0));
         assertEquals(0, children.getSnd().getProductions().get(1));

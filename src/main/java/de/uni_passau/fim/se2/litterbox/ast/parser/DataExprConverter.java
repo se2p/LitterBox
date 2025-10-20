@@ -41,14 +41,14 @@ final class DataExprConverter extends ExprConverter {
     }
 
     static boolean parseableAsDataExpr(final RawTarget target, final RawInput exprBlock) {
-        if (!(exprBlock.input() instanceof BlockRef.IdRef inputRef)) {
+        if (!(exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId))) {
             // If not an IdRef, we technically would have to look up the identifier stored in the Block in the
             // symbol table. However, some JSON files contain references to IDs which are not present in the lookup
             // tables, and we want to keep these without exception.
             return true;
         }
 
-        final RawBlock inputBlock = target.blocks().get(inputRef.id());
+        final RawBlock inputBlock = target.blocks().get(inputId);
         if (inputBlock == null) {
             return true;
         }
@@ -61,22 +61,24 @@ final class DataExprConverter extends ExprConverter {
     }
 
     static Expression convertDataExpr(final ProgramParserState state, final RawInput exprBlock) {
-        // convert to pattern-matching switch with Java 21
-        if (exprBlock.input() instanceof BlockRef.IdRef exprIdRef) {
-            final RawBlock referencedBlock = state.getBlock(exprIdRef.id());
-            if (!(referencedBlock instanceof RawBlock.RawRegularBlock referencedRegularBlock)) {
-                // should not happen if the parseableAsDataExpr check works as intended
-                throw new InternalParsingException("Unknown format for data expressions.");
-            }
+        switch (exprBlock.input()) {
+            case BlockRef.IdRef(RawBlockId exprIdRef) -> {
+                final RawBlock referencedBlock = state.getBlock(exprIdRef);
+                if (!(referencedBlock instanceof RawBlock.RawRegularBlock referencedRegularBlock)) {
+                    // should not happen if the parseableAsDataExpr check works as intended
+                    throw new InternalParsingException("Unknown format for data expressions.");
+                }
 
-            if (isParameter(referencedRegularBlock.opcode())) {
-                return convertParameter(exprIdRef.id(), referencedRegularBlock);
+                if (isParameter(referencedRegularBlock.opcode())) {
+                    return convertParameter(exprIdRef, referencedRegularBlock);
+                }
             }
-        } else if (exprBlock.input() instanceof BlockRef.Block exprArrayBlock) {
-            if (exprArrayBlock.block() instanceof RawBlock.RawVariable rawVariable) {
-                return convertVariable(state, rawVariable);
-            } else if (exprArrayBlock.block() instanceof RawBlock.RawList rawList) {
-                return convertList(state, rawList);
+            case BlockRef.Block(RawBlock.ArrayBlock exprArrayBlock) -> {
+                if (exprArrayBlock instanceof RawBlock.RawVariable rawVariable) {
+                    return convertVariable(state, rawVariable);
+                } else if (exprArrayBlock instanceof RawBlock.RawList rawList) {
+                    return convertList(state, rawList);
+                }
             }
         }
 

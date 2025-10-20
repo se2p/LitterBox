@@ -67,7 +67,7 @@ public class KeySetPosition extends AbstractIssueFinder {
                             || key == KeyCode.RIGHT_ARROW.getKeycode()
             ) {
                 if (node.getStmtList().getStmts().size() == 1) {
-                    checkStmt(node.getStmtList().getStmts().get(0), key);
+                    checkStmt(node.getStmtList().getStmts().getFirst(), key);
                 } else {
                     checkNumberStmts(node.getStmtList().getStmts(), key, 2); //used 2 as a placeholder
                 }
@@ -126,7 +126,7 @@ public class KeySetPosition extends AbstractIssueFinder {
         inCondition = false;
         if (lastKeyValue != null) {
             if (node.getThenStmts().getStmts().size() == 1) {
-                checkStmt(node.getThenStmts().getStmts().get(0), (int) lastKeyValue.getValue());
+                checkStmt(node.getThenStmts().getStmts().getFirst(), (int) lastKeyValue.getValue());
             } else {
                 // used 2 as a placeholder
                 checkNumberStmts(node.getThenStmts().getStmts(), (int) lastKeyValue.getValue(), 2);

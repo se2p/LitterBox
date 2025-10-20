@@ -47,7 +47,7 @@ class ParserRegressionTest implements JsonTest {
     void failParseHackedColourString() throws ParsingException, IOException {
         final Program p = getAST("src/test/fixtures/parserRegressions/hackedColourString.json");
 
-        final var setPenColourBlock = NodeFilteringVisitor.getBlocks(p, SetPenColorToColorStmt.class).get(0);
+        final var setPenColourBlock = NodeFilteringVisitor.getBlocks(p, SetPenColorToColorStmt.class).getFirst();
         assertInstanceOf(FromNumber.class, setPenColourBlock.getColorExpr());
 
         assertThat(NodeFilteringVisitor.getBlocks(p, ColorLiteral.class)).isEmpty();
@@ -57,8 +57,8 @@ class ParserRegressionTest implements JsonTest {
     void implicitlyDefinedListShouldBeListNotVariable() throws ParsingException, IOException {
         final Program p = getAST("src/test/fixtures/parserRegressions/listParsedAsVariable.json");
 
-        final var speakBlock = NodeFilteringVisitor.getBlocks(p, Speak.class).get(0);
-        final Qualified speakText = (Qualified) speakBlock.getText().getChildren().get(0);
+        final var speakBlock = NodeFilteringVisitor.getBlocks(p, Speak.class).getFirst();
+        final Qualified speakText = (Qualified) speakBlock.getText().getChildren().getFirst();
 
         assertInstanceOf(ScratchList.class, speakText.getSecond());
     }
@@ -67,7 +67,7 @@ class ParserRegressionTest implements JsonTest {
     void acceptVariableNoShadowInput() throws ParsingException, IOException {
         final Program p = getAST("src/test/fixtures/parserRegressions/acceptVariableInputsHackedShadow.json");
 
-        final var equalsBlock = NodeFilteringVisitor.getBlocks(p, Equals.class).get(0);
+        final var equalsBlock = NodeFilteringVisitor.getBlocks(p, Equals.class).getFirst();
         final Qualified leftOperand = (Qualified) equalsBlock.getOperand1();
 
         assertInstanceOf(Variable.class, leftOperand.getSecond());
@@ -77,7 +77,7 @@ class ParserRegressionTest implements JsonTest {
     void backdropNamesStartingWithRandom() throws ParsingException, IOException {
         final Program p = getAST("src/test/fixtures/parserRegressions/backdropNameStartsWithRandom.json");
 
-        final var switchBackdropBlock = NodeFilteringVisitor.getBlocks(p, SwitchBackdropAndWait.class).get(0);
+        final var switchBackdropBlock = NodeFilteringVisitor.getBlocks(p, SwitchBackdropAndWait.class).getFirst();
         assertInstanceOf(WithExpr.class, switchBackdropBlock.getElementChoice());
         assertInstanceOf(StrId.class, ((WithExpr) switchBackdropBlock.getElementChoice()).getExpression());
 

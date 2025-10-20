@@ -66,15 +66,15 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                 if (actorsWithEvent.containsKey(stage)) {
                     actor1 = stage;
                     actors.remove(stage);
-                    actor2 = actors.get(0);
-                    script1 = actorsWithEvent.get(actor1).get(0);
-                    script2 = actorsWithEvent.get(actor2).get(0);
+                    actor2 = actors.getFirst();
+                    script1 = actorsWithEvent.get(actor1).getFirst();
+                    script2 = actorsWithEvent.get(actor2).getFirst();
                     hint.setParameter(Hint.CONDITION, "");
                 } else {
                     actor1 = actors.get(0);
                     actor2 = actors.get(1);
-                    script1 = actorsWithEvent.get(actor1).get(0);
-                    script2 = actorsWithEvent.get(actor2).get(0);
+                    script1 = actorsWithEvent.get(actor1).getFirst();
+                    script2 = actorsWithEvent.get(actor2).getFirst();
                     hint.setParameter(Hint.CONDITION, " Suppose " + actor2 + " is in front of " + actor1 + ".");
                 }
 

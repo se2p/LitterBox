@@ -46,12 +46,12 @@ public class MergeScriptsAfterUntilFinder extends AbstractRefactoringFinder {
 
                 List<Stmt> script1Statements = script1.getStmtList().getStmts();
                 List<Stmt> script2Statements = script2.getStmtList().getStmts();
-                if (script2Statements.isEmpty() || !(script2Statements.get(0) instanceof WaitUntil waitUntil)) {
+                if (script2Statements.isEmpty() || !(script2Statements.getFirst() instanceof WaitUntil waitUntil)) {
                     continue;
                 }
 
                 if (script1Statements.isEmpty()
-                        || !(script1Statements.get(script1Statements.size() - 1) instanceof UntilStmt untilStmt)) {
+                        || !(script1Statements.getLast() instanceof UntilStmt untilStmt)) {
                     continue;
                 }
                 if (untilStmt.getBoolExpr().equals(waitUntil.getUntil())) {

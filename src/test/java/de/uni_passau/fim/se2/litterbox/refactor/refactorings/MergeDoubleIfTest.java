@@ -49,9 +49,9 @@ class MergeDoubleIfTest implements JsonTest {
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
         program = getAST("src/test/fixtures/refactoring/simple-ifs.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> stmtList = script.getStmtList().getStmts();
-        RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.get(0);
+        RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.getFirst();
         if0 = (IfThenStmt) forever.getStmtList().getStmts().get(0);
         if1 = (IfThenStmt) forever.getStmtList().getStmts().get(1);
         if2 = (IfThenStmt) forever.getStmtList().getStmts().get(2);
@@ -69,7 +69,7 @@ class MergeDoubleIfTest implements JsonTest {
         }
         assertNotNull(program);
 
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> stmtList = script.getStmtList().getStmts();
         IfThenStmt if1 = null;
         IfThenStmt if2 = null;
@@ -88,10 +88,10 @@ class MergeDoubleIfTest implements JsonTest {
         MergeDoubleIf refactoring = new MergeDoubleIf(if1, if2);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
-        Stmt stmt = refactoredStmtList.get(0);
+        Stmt stmt = refactoredStmtList.getFirst();
         assertInstanceOf(IfThenStmt.class, stmt);
     }
 

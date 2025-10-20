@@ -161,18 +161,17 @@ public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
     }
 
     protected Stmt getSingleStmt(Stmt stmt) {
-        if (stmt instanceof IfThenStmt ifThenStmt) {
-            return new IfThenStmt(ifThenStmt.getBoolExpr(), new StmtList(), ifThenStmt.getMetadata());
-        } else if (stmt instanceof IfElseStmt ifElseStmt) {
-            return new IfElseStmt(ifElseStmt.getBoolExpr(), new StmtList(), new StmtList(), ifElseStmt.getMetadata());
-        } else if (stmt instanceof RepeatTimesStmt repeatTimesStmt) {
-            return new RepeatTimesStmt(repeatTimesStmt.getTimes(), new StmtList(), repeatTimesStmt.getMetadata());
-        } else if (stmt instanceof RepeatForeverStmt repeatForeverStmt) {
-            return new RepeatForeverStmt(new StmtList(), repeatForeverStmt.getMetadata());
-        } else if (stmt instanceof UntilStmt untilStmt) {
-            return new UntilStmt(untilStmt.getBoolExpr(), new StmtList(), untilStmt.getMetadata());
-        } else {
-            return stmt;
-        }
+        return switch (stmt) {
+            case IfThenStmt ifThenStmt ->
+                    new IfThenStmt(ifThenStmt.getBoolExpr(), new StmtList(), ifThenStmt.getMetadata());
+            case IfElseStmt ifElseStmt ->
+                    new IfElseStmt(ifElseStmt.getBoolExpr(), new StmtList(), new StmtList(), ifElseStmt.getMetadata());
+            case RepeatTimesStmt repeatTimesStmt ->
+                    new RepeatTimesStmt(repeatTimesStmt.getTimes(), new StmtList(), repeatTimesStmt.getMetadata());
+            case RepeatForeverStmt repeatForeverStmt ->
+                    new RepeatForeverStmt(new StmtList(), repeatForeverStmt.getMetadata());
+            case UntilStmt untilStmt -> new UntilStmt(untilStmt.getBoolExpr(), new StmtList(), untilStmt.getMetadata());
+            default -> stmt;
+        };
     }
 }

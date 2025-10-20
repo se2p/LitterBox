@@ -81,12 +81,12 @@ class RefactorSequenceTest {
         assertEquals(refactorSequence, copy);
 
         // change the first element of the production list
-        copy.getProductions().add(0, 1);
+        copy.getProductions().addFirst(1);
         copy.getProductions().remove(1);
         copy.getExecutedRefactorings().add(mock(MergeDoubleIf.class));
 
         assertNotSame(refactorSequence, copy);
-        assertNotSame(copy.getProductions().get(0), refactorSequence.getProductions().get(0));
+        assertNotSame(copy.getProductions().getFirst(), refactorSequence.getProductions().getFirst());
         assertNotEquals(copy.getExecutedRefactorings(), refactorSequence.getExecutedRefactorings());
     }
 

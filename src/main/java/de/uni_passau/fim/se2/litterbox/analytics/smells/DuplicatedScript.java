@@ -62,7 +62,7 @@ public class DuplicatedScript extends AbstractIssueFinder {
                     if (!(currentScript.getEvent() instanceof Never)) {
                         topBlockCurrent = currentScript.getEvent();
                     } else {
-                        topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
+                        topBlockCurrent = currentScript.getStmtList().getStmts().getFirst();
                     }
                     addIssue(topBlockCurrent, topBlockCurrent.getMetadata());
                 }

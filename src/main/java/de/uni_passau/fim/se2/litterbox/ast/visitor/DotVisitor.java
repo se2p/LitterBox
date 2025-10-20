@@ -93,19 +93,13 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
     }
 
     private String getLabel(final ASTLeaf node) {
-        final String label;
-
-        if (node instanceof StringLiteral stringLiteral) {
-            label = stringLiteral.getText();
-        } else if (node instanceof NumberLiteral numberLiteral) {
-            label = Double.toString(numberLiteral.getValue());
-        } else if (node instanceof ColorLiteral colorLiteral) {
-            label = colorLiteral.getRGB();
-        } else if (node instanceof BoolLiteral boolLiteral) {
-            label = Boolean.toString(boolLiteral.getValue());
-        } else {
-            label = node.getUniqueName();
-        }
+        final String label = switch (node) {
+            case StringLiteral stringLiteral -> stringLiteral.getText();
+            case NumberLiteral numberLiteral -> Double.toString(numberLiteral.getValue());
+            case ColorLiteral colorLiteral -> colorLiteral.getRGB();
+            case BoolLiteral boolLiteral -> Boolean.toString(boolLiteral.getValue());
+            default -> node.getUniqueName();
+        };
 
         return withSafeEscapes(label);
     }

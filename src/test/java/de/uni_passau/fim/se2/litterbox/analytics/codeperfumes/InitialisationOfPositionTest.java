@@ -62,7 +62,7 @@ public class InitialisationOfPositionTest implements JsonTest {
         ProcedureDefinition nanoProcedure = nanoIssue.getProcedure();
         Assertions.assertNotNull(gigaProcedure);
         Assertions.assertNotNull(nanoProcedure);
-        Assertions.assertInstanceOf(GoToPosXY.class, gigaProcedure.getStmtList().getStmts().get(0));
-        Assertions.assertInstanceOf(GoToPosXY.class, nanoProcedure.getStmtList().getStmts().get(0));
+        Assertions.assertInstanceOf(GoToPosXY.class, gigaProcedure.getStmtList().getStmts().getFirst());
+        Assertions.assertInstanceOf(GoToPosXY.class, nanoProcedure.getStmtList().getStmts().getFirst());
     }
 }

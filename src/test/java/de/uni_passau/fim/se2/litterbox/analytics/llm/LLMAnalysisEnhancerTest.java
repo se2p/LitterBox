@@ -107,7 +107,7 @@ class LLMAnalysisEnhancerTest implements JsonTest {
                 .filter(issue -> LLMIssueFinder.NAME.equals(issue.finder()))
                 .toList();
         assertThat(newlyAddedIssues).hasSize(1);
-        assertThat(newlyAddedIssues.get(0).hint()).isEqualTo("description of the new issue");
+        assertThat(newlyAddedIssues.getFirst().hint()).isEqualTo("description of the new issue");
     }
 
     private List<IssueDTO> parseIssues(final Path issuesFile) throws ParsingException, IOException {

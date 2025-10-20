@@ -49,12 +49,10 @@ public class DefaultPrompts extends PromptBuilder {
     public String askQuestion(
             final Program program, final QueryTarget target, final LlmQuery question, final boolean ignoreLooseBlocks
     ) {
-        String questionText;
-        if (question instanceof LlmQuery.PredefinedQuery predefinedQuery) {
-            questionText = createPromptForCommonQuery(predefinedQuery.query());
-        } else {
-            questionText = ((LlmQuery.CustomQuery) question).query();
-        }
+        final String questionText = switch (question) {
+            case LlmQuery.PredefinedQuery(CommonQuery query) -> createPromptForCommonQuery(query);
+            case LlmQuery.CustomQuery(String query) -> query;
+        };
         return describeTarget(program, target, ignoreLooseBlocks) + """
                 Answer the following question:
                 %s
@@ -114,31 +112,25 @@ public class DefaultPrompts extends PromptBuilder {
     @Override
     public String createPromptForCommonQuery(CommonQuery query) {
         return switch (query) {
-            case SUMMARISE:
-                yield """
-                        Summarise what this code does.
-                        """;
-            case EXPLAIN:
-                yield """
-                        Explain how this code works.
-                        """;
-            case SUGGEST_EXTENSION:
-                yield """
-                        Suggest how to extend this code with new functionality.
-                        """;
-            case PROVIDE_FEEDBACK:
-                yield """
-                        This code was written by a student.
-                        Provide feedback to the student about the code as well as the creativity.
-                        """;
-            case PROVIDE_PRAISE:
-                yield """
-                        This code was written by a student. Provide praise to the student who wrote it.
-                        """;
-            case FIND_BUGS:
-                yield """
-                        Find and describe any bugs in this code.
-                        """;
+            case SUMMARISE -> """
+                    Summarise what this code does.
+                    """;
+            case EXPLAIN -> """
+                    Explain how this code works.
+                    """;
+            case SUGGEST_EXTENSION -> """
+                    Suggest how to extend this code with new functionality.
+                    """;
+            case PROVIDE_FEEDBACK -> """
+                    This code was written by a student.
+                    Provide feedback to the student about the code as well as the creativity.
+                    """;
+            case PROVIDE_PRAISE -> """
+                    This code was written by a student. Provide praise to the student who wrote it.
+                    """;
+            case FIND_BUGS -> """
+                    Find and describe any bugs in this code.
+                    """;
         };
     }
 

@@ -66,7 +66,7 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
                     } else {
                         currentProcedure = (ProcedureDefinition) scriptEntity;
                     }
-                    addIssue(nodes.get(0), nodes.get(0).getMetadata());
+                    addIssue(nodes.getFirst(), nodes.getFirst().getMetadata());
                 }
             }
         }

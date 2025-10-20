@@ -60,7 +60,7 @@ class LLMIssueEffectExplainerTest implements JsonTest {
                 })
         );
 
-        assertThat(api.getRequests().get(0)).contains(ScratchBlocksVisitor.SPRITE_MARKER + " Figur1");
+        assertThat(api.getRequests().getFirst()).contains(ScratchBlocksVisitor.SPRITE_MARKER + " Figur1");
     }
 
     @Test

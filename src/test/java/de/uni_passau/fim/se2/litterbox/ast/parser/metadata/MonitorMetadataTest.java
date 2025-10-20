@@ -65,16 +65,16 @@ public class MonitorMetadataTest implements JsonTest {
         MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
 
         Assertions.assertEquals(1, monitors.getList().size());
-        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().get(0));
-        Assertions.assertFalse(monitors.getList().get(0).isVisible());
-        Assertions.assertEquals(0, ((MonitorSliderMetadata) monitors.getList().get(0)).getSliderMin());
+        Assertions.assertInstanceOf(MonitorSliderMetadata.class, monitors.getList().getFirst());
+        Assertions.assertFalse(monitors.getList().getFirst().isVisible());
+        Assertions.assertEquals(0, ((MonitorSliderMetadata) monitors.getList().getFirst()).getSliderMin());
     }
 
     @Test
     public void testSlider() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/metadata/sliderMetadata.json");
         MonitorMetadataList monitors = program.getProgramMetadata().getMonitor();
-        MonitorSliderMetadata monitorSliderMetadata = (MonitorSliderMetadata) monitors.getList().get(0);
+        MonitorSliderMetadata monitorSliderMetadata = (MonitorSliderMetadata) monitors.getList().getFirst();
 
         Assertions.assertEquals(0, monitorSliderMetadata.getSliderMin());
         Assertions.assertEquals(100, monitorSliderMetadata.getSliderMax());

@@ -43,7 +43,7 @@ public class IfsToConjunctionFinder extends AbstractRefactoringFinder {
             Stmt thenStmt = thenStmts.getStatement(0);
             if (thenStmt instanceof IfThenStmt ifThenStmt2) {
                 if (!ifThenStmt.getBoolExpr().equals(ifThenStmt2.getBoolExpr())) {
-                    refactorings.add(new IfsToConjunction(ifThenStmt, (IfThenStmt) thenStmt));
+                    refactorings.add(new IfsToConjunction(ifThenStmt, ifThenStmt2));
                 }
             }
         }

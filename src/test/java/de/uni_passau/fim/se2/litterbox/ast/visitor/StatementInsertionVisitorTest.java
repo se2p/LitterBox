@@ -46,7 +46,7 @@ public class StatementInsertionVisitorTest implements JsonTest {
         StatementInsertionVisitor visitor = new StatementInsertionVisitor(parent, 0, move);
         Program programCopy = visitor.apply(program);
 
-        StmtList statements1 = programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList();
+        StmtList statements1 = programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList();
         assertEquals(parent.getStmtList().getStmts().size() + 1, statements1.getStmts().size());
         assertEquals(move, statements1.getStatement(0));
     }
@@ -62,7 +62,7 @@ public class StatementInsertionVisitorTest implements JsonTest {
         StatementInsertionVisitor visitor = new StatementInsertionVisitor(parent, 0, move);
         Program programCopy = visitor.apply(program);
 
-        StmtList statements1 = ((RepeatForeverStmt) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(0)).getStmtList();
+        StmtList statements1 = ((RepeatForeverStmt) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStatement(0)).getStmtList();
         assertEquals(parent.getStmtList().getStmts().size() + 1, statements1.getStmts().size());
         assertEquals(move, statements1.getStatement(0));
     }

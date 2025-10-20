@@ -46,9 +46,9 @@ class ScratchListStmtParserTest implements JsonTest {
     @Test
     public void testAddToGlobal() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
-        final Stmt stmt = script.getStmtList().getStmts().get(0);
+        final Stmt stmt = script.getStmtList().getStmts().getFirst();
         Truth.assertThat(stmt).isInstanceOf(AddTo.class);
 
         final AddTo addTo = (AddTo) stmt;
@@ -74,7 +74,7 @@ class ScratchListStmtParserTest implements JsonTest {
     @Test
     public void testInsertGlobal() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(InsertAt.class);
@@ -89,7 +89,7 @@ class ScratchListStmtParserTest implements JsonTest {
     @Test
     public void testReplaceItem() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(ReplaceItem.class);
@@ -104,7 +104,7 @@ class ScratchListStmtParserTest implements JsonTest {
     @Test
     public void testDeleteOf() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(DeleteOf.class);
@@ -118,7 +118,7 @@ class ScratchListStmtParserTest implements JsonTest {
     @Test
     public void testDeleteAll() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
         final Stmt stmt = script.getStmtList().getStmts().get(6);
         Truth.assertThat(stmt).isInstanceOf(DeleteAllOf.class);

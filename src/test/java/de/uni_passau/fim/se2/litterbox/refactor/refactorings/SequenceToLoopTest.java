@@ -40,13 +40,13 @@ public class SequenceToLoopTest implements JsonTest {
         SequenceToLoopFinder finder = new SequenceToLoopFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SequenceToLoop.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SequenceToLoop.class);
     }
 
     @Test
     public void testSequenceToLoopRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/unrolledLoop.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList stmtList = script.getStmtList();
         List<Stmt> subsequence = stmtList.getStmts().subList(1, 3);
         int times = 3;
@@ -54,7 +54,7 @@ public class SequenceToLoopTest implements JsonTest {
         SequenceToLoop refactoring = new SequenceToLoop(stmtList, subsequence, times);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(stmtList.getNumberOfStatements() + 1 - times * subsequence.size());
     }

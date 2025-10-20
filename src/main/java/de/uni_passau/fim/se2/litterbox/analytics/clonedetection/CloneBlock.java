@@ -43,19 +43,19 @@ public class CloneBlock {
     }
 
     public int getLastX() {
-        return positions1.get(positions1.size() - 1);
+        return positions1.getLast();
     }
 
     public int getLastY() {
-        return positions2.get(positions2.size() - 1);
+        return positions2.getLast();
     }
 
     public int getFirstX() {
-        return positions1.get(0);
+        return positions1.getFirst();
     }
 
     public int getFirstY() {
-        return positions2.get(0);
+        return positions2.getFirst();
     }
 
     public boolean contains(CloneBlock other) {

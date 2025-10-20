@@ -66,7 +66,7 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     public void visitControlStmts(ControlStmt controlStmt) {
         if (controlStmt instanceof IfThenStmt ifThenStmt) {
             this.getBlockCount(ifThenStmt.getBoolExpr(), true);
-            for (Stmt stmt : ((IfThenStmt) controlStmt).getThenStmts().getStmts()) {
+            for (Stmt stmt : ifThenStmt.getThenStmts().getStmts()) {
                 visit(stmt);
             }
         } else if (controlStmt instanceof RepeatTimesStmt repeatTimesStmt) {

@@ -145,7 +145,7 @@ public class LlmResponseParserTest implements JsonTest {
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().getFirst());
     }
 
     @Test
@@ -201,17 +201,17 @@ public class LlmResponseParserTest implements JsonTest {
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
-        Script newScript = scripts.get(0);
+        Script newScript = scripts.getFirst();
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().getFirst());
 
         assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getSize());
         scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Stage").get().getScripts().getScriptList();
-        newScript = scripts.get(0);
+        newScript = scripts.getFirst();
         assertEquals(1, newScript.getStmtList().getStmts().size());
         assertInstanceOf(StageClicked.class, newScript.getEvent());
-        assertInstanceOf(Think.class, newScript.getStmtList().getStmts().get(0));
-        Think think = (Think) newScript.getStmtList().getStmts().get(0);
+        assertInstanceOf(Think.class, newScript.getStmtList().getStmts().getFirst());
+        Think think = (Think) newScript.getStmtList().getStmts().getFirst();
         assertInstanceOf(AsString.class, think.getThought());
         AsString asString = (AsString) think.getThought();
         assertInstanceOf(Qualified.class, asString.getOperand1());
@@ -245,13 +245,13 @@ public class LlmResponseParserTest implements JsonTest {
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().get(0));
+        assertInstanceOf(Say.class, newScript.getStmtList().getStmts().getFirst());
 
         assertEquals(1, updatedProgram.getSymbolTable().getMessages().size());
         Assertions.assertTrue(updatedProgram.getSymbolTable().getMessage("test").isPresent());
-        Script modified = scripts.get(0);
+        Script modified = scripts.getFirst();
         assertEquals(2, modified.getStmtList().getStmts().size());
-        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().getFirst());
     }
 
     @Test
@@ -283,14 +283,14 @@ public class LlmResponseParserTest implements JsonTest {
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.get(1);
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().get(0));
+        assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().getFirst());
 
         assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
         assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
         ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
-        ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
+        ProcedureDefinition modified = procedureDefinitionList.getList().getFirst();
         assertEquals(2, modified.getStmtList().getStmts().size());
-        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().getFirst());
     }
 
 
@@ -320,9 +320,9 @@ public class LlmResponseParserTest implements JsonTest {
         assertEquals(0, updatedProgram.getSymbolTable().getMessages().size());
         assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList().getList().size());
         ProcedureDefinitionList procedureDefinitionList = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getProcedureDefinitionList();
-        ProcedureDefinition modified = procedureDefinitionList.getList().get(0);
+        ProcedureDefinition modified = procedureDefinitionList.getList().getFirst();
         assertEquals(2, modified.getStmtList().getStmts().size());
-        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().get(0));
+        assertInstanceOf(Broadcast.class, modified.getStmtList().getStmts().getFirst());
     }
 
     @Test
@@ -453,7 +453,7 @@ public class LlmResponseParserTest implements JsonTest {
         Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
         assertEquals(1, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
-        Script newScript = scripts.get(0);
+        Script newScript = scripts.getFirst();
         assertEquals(4, newScript.getStmtList().getStmts().size());
         for (int i = 0; i < 3; i++) {
             assertInstanceOf(MoveSteps.class, newScript.getStmtList().getStmts().get(i));

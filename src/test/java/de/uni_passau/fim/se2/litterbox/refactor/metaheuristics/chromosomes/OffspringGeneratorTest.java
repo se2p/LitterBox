@@ -139,6 +139,6 @@ class OffspringGeneratorTest {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(1, generation1.size());
-        assertSame(mutant2, generation1.get(0));
+        assertSame(mutant2, generation1.getFirst());
     }
 }

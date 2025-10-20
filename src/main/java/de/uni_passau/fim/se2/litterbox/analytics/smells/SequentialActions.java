@@ -34,8 +34,8 @@ public class SequentialActions extends AbstractIssueFinder {
         new RepeatedSubsequenceFinder() {
             @Override
             protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences) {
-                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.get(0))
-                                .withMetadata(subsequence.get(0).getMetadata())
+                IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.getFirst())
+                                .withMetadata(subsequence.getFirst().getMetadata())
                                 .withSeverity(IssueSeverity.LOW)
                                 .withHint(Hint.fromKey(getName()));
                 SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences);

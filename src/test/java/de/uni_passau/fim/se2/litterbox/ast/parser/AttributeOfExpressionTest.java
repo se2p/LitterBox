@@ -36,10 +36,10 @@ public class AttributeOfExpressionTest implements JsonTest {
     @Test
     public void testContains() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/attributeOfExpression.json");
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(0);
-        final Script script = sprite.getScripts().getScriptList().get(0);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().getFirst();
+        final Script script = sprite.getScripts().getScriptList().getFirst();
 
-        final Stmt stmt = script.getStmtList().getStmts().get(0);
+        final Stmt stmt = script.getStmtList().getStmts().getFirst();
         Truth.assertThat(stmt).isInstanceOf(ExpressionStmt.class);
 
         ExpressionStmt expressionStmt = (ExpressionStmt) stmt;

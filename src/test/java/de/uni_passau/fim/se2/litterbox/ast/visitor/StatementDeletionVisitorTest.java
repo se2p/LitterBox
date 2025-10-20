@@ -35,14 +35,14 @@ public class StatementDeletionVisitorTest implements JsonTest {
     public void testDeletion() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/motionblocks.json");
 
-        MoveSteps target = (MoveSteps)program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0);
+        MoveSteps target = (MoveSteps)program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts().getFirst();
         // Stmt replacement = new TurnLeft(target.getSteps(), target.getMetadata());
 
         StatementDeletionVisitor deletionVisitor = new StatementDeletionVisitor(target);
         Program programCopy = deletionVisitor.apply(program);
 
-        StmtList statements1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList();
-        StmtList statements2 = programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList();
+        StmtList statements1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList();
+        StmtList statements2 = programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList();
         assertEquals(statements1.getStmts().size(), statements2.getStmts().size() + 1);
     }
 }

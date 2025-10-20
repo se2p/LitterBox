@@ -44,7 +44,7 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
         List<Stmt> stmts = script.getStmtList().getStmts();
         if (!stmts.isEmpty()) {
             currentScript = script;
-            Stmt last = stmts.get(stmts.size() - 1);
+            Stmt last = stmts.getLast();
             if (last instanceof StopThisScript) {
                 StatementDeletionVisitor visitor = new StatementDeletionVisitor(last);
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());

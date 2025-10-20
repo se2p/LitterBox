@@ -39,7 +39,7 @@ public class SplitSlicesTest implements JsonTest {
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitSlice.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitSlice.class);
     }
 
     @Test
@@ -78,12 +78,12 @@ public class SplitSlicesTest implements JsonTest {
     @Test
     public void testSplitSliceRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/sliceable.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
 
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);
 
-        SplitSlice refactoring = (SplitSlice) refactorings.get(0);
+        SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
         Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
@@ -100,12 +100,12 @@ public class SplitSlicesTest implements JsonTest {
     @Test
     public void testSplitSliceRefactoring_Wait() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitSliceWait.json");
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
 
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);
 
-        SplitSlice refactoring = (SplitSlice) refactorings.get(0);
+        SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
         Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);

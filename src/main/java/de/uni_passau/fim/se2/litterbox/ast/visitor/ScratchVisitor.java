@@ -3434,14 +3434,11 @@ public interface ScratchVisitor {
      * @param node A node that should be visited.
      */
     default void visitDefaultVisitor(ASTNode node) {
-        if (node instanceof Stmt stmt) {
-            visit(stmt);
-        } else if (node instanceof Expression expression) {
-            visit(expression);
-        } else if (node instanceof Event event) {
-            visit(event);
-        } else {
-            visit(node);
+        switch (node) {
+            case Stmt stmt -> visit(stmt);
+            case Expression expression -> visit(expression);
+            case Event event -> visit(event);
+            default -> visit(node);
         }
     }
 

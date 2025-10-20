@@ -56,7 +56,7 @@ public class ScriptJSONCreator {
 
             if (!stmtList.getStmts().isEmpty()) {
                 IdVisitor vis = new IdVisitor();
-                nextId = vis.getBlockId(stmtList.getStmts().get(0));
+                nextId = vis.getBlockId(stmtList.getStmts().getFirst());
             }
 
             if (event instanceof AttributeAboveValue attributeAboveValue) {

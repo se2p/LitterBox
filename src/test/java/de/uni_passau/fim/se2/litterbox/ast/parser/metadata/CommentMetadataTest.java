@@ -48,13 +48,13 @@ class CommentMetadataTest implements JsonTest {
                                 .getActorMetadata().getCommentsMetadata();
 
         assertEquals(2, comments.getList().size());
-        assertEquals("csOuoew*W[q[5bX=8_ah", comments.getList().get(0).getCommentId());
-        assertEquals("z;/~(2Z_Xv9~^9yakTU1", comments.getList().get(0).getBlockId());
-        assertEquals("Block comment", comments.getList().get(0).getText());
-        assertFalse(comments.getList().get(0).isMinimized());
-        assertEquals(200, comments.getList().get(0).getHeight());
-        assertEquals(200, comments.getList().get(0).getWidth());
-        assertEquals(504.0740740740741, comments.getList().get(0).getX());
-        assertEquals(457.48148148148147, comments.getList().get(0).getY());
+        assertEquals("csOuoew*W[q[5bX=8_ah", comments.getList().getFirst().getCommentId());
+        assertEquals("z;/~(2Z_Xv9~^9yakTU1", comments.getList().getFirst().getBlockId());
+        assertEquals("Block comment", comments.getList().getFirst().getText());
+        assertFalse(comments.getList().getFirst().isMinimized());
+        assertEquals(200, comments.getList().getFirst().getHeight());
+        assertEquals(200, comments.getList().getFirst().getWidth());
+        assertEquals(504.0740740740741, comments.getList().getFirst().getX());
+        assertEquals(457.48148148148147, comments.getList().getFirst().getY());
     }
 }

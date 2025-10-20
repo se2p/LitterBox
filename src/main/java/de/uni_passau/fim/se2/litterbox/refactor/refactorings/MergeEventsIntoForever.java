@@ -57,7 +57,7 @@ public class MergeEventsIntoForever extends OnlyCodeCloneVisitor implements Refa
         StmtList foreverStmt = new StmtList(new RepeatForeverStmt(new StmtList(ifThenArrayList),
                 NonDataBlockMetadata.emptyNonBlockMetadata()));
 
-        GreenFlag greenFlag = new GreenFlag(apply(scriptList.get(0).getEvent().getMetadata()));
+        GreenFlag greenFlag = new GreenFlag(apply(scriptList.getFirst().getEvent().getMetadata()));
         replacement = new Script(greenFlag, foreverStmt);
     }
 

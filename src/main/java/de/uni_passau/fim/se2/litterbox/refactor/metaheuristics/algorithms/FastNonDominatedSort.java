@@ -76,7 +76,7 @@ public class FastNonDominatedSort<C extends Solution<C>> {
                 }
             }
             if (amountDominated[p] == 0) {
-                fronts.get(0).add(solutions.get(p));
+                fronts.getFirst().add(solutions.get(p));
                 solutions.get(p).setRank(0);
             }
         }
@@ -114,7 +114,7 @@ public class FastNonDominatedSort<C extends Solution<C>> {
             i++;
             fronts.add(nextFront);
         }
-        fronts.remove(fronts.size() - 1);
+        fronts.removeLast();
     }
 
     /**

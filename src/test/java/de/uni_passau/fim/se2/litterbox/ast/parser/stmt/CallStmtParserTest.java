@@ -51,8 +51,8 @@ class CallStmtParserTest implements JsonTest {
         for (ActorDefinition definition : actorDefinitionList.getDefinitions()) {
             if (definition.isSprite()) {
                 List<Script> scriptList = definition.getScripts().getScriptList();
-                Script script = scriptList.get(0);
-                Stmt stmt = script.getStmtList().getStmts().get(0);
+                Script script = scriptList.getFirst();
+                Stmt stmt = script.getStmtList().getStmts().getFirst();
                 assertInstanceOf(CallStmt.class, stmt);
                 CallStmt callStmt = (CallStmt) stmt;
                 List<Expression> expressions = callStmt.getExpressions().getExpressions();

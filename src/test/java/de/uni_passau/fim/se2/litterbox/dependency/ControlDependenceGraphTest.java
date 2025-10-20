@@ -119,7 +119,7 @@ public class ControlDependenceGraphTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).iterator().next();
         CFGNode ifelse = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof IfElseStmt).findFirst().get();
-        CFGNode move1 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(0);
+        CFGNode move1 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().getFirst();
         CFGNode move2 = cfg.getSuccessors(ifelse).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(1);
         CFGNode exit = cfg.getExitNode();
 
@@ -141,7 +141,7 @@ public class ControlDependenceGraphTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
         CFGNode move1 = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
-        CFGNode keyPressed = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).toList().get(0);
+        CFGNode keyPressed = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof KeyPressed).toList().getFirst();
         CFGNode move2 = cfg.getSuccessors(keyPressed).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
         CFGNode exit = cfg.getExitNode();
 
@@ -161,7 +161,7 @@ public class ControlDependenceGraphTest implements JsonTest {
 
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
-        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().get(0);
+        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().getFirst();
         CFGNode move = cfg.getSuccessors(createCloneOf).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
         CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
         CFGNode exit = cfg.getExitNode();
@@ -183,7 +183,7 @@ public class ControlDependenceGraphTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
         CFGNode repeatTimes = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof RepeatTimesStmt).findFirst().get();
-        CFGNode createCloneOf = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().get(0);
+        CFGNode createCloneOf = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().getFirst();
         CFGNode move = cfg.getSuccessors(createCloneOf).stream().filter(t -> t.getASTNode() instanceof MoveSteps).findFirst().get();
         CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
         CFGNode exit = cfg.getExitNode();
@@ -206,7 +206,7 @@ public class ControlDependenceGraphTest implements JsonTest {
 
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
-        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().get(0);
+        CFGNode createCloneOf = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof CreateCloneOf).toList().getFirst();
         CFGNode clone = cfg.getSuccessors(createCloneOf).stream().filter(t -> t instanceof CloneEventNode).findFirst().get();
         CFGNode deleteClone = cfg.getSuccessors(clone).stream().filter(t -> t.getASTNode() instanceof DeleteClone).findFirst().get();
         CFGNode exit = cfg.getExitNode();
@@ -228,11 +228,11 @@ public class ControlDependenceGraphTest implements JsonTest {
         CFGNode entry = cfg.getEntryNode();
         CFGNode greenFlag = cfg.getSuccessors(entry).stream().filter(t -> t.getASTNode() instanceof GreenFlag).findFirst().get();
         CFGNode repeatTimes = cfg.getSuccessors(greenFlag).stream().filter(t -> t.getASTNode() instanceof RepeatTimesStmt).findFirst().get();
-        CFGNode broadcast = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof Broadcast).toList().get(0);
-        CFGNode say = cfg.getSuccessors(broadcast).stream().filter(t -> t.getASTNode() instanceof SayForSecs).toList().get(0);
-        CFGNode move = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().get(0);
+        CFGNode broadcast = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof Broadcast).toList().getFirst();
+        CFGNode say = cfg.getSuccessors(broadcast).stream().filter(t -> t.getASTNode() instanceof SayForSecs).toList().getFirst();
+        CFGNode move = cfg.getSuccessors(repeatTimes).stream().filter(t -> t.getASTNode() instanceof MoveSteps).toList().getFirst();
         CFGNode message = cfg.getSuccessors(broadcast).stream().filter(t -> t instanceof MessageNode).findFirst().get();
-        CFGNode think = cfg.getSuccessors(message).stream().filter(t -> t.getASTNode() instanceof ThinkForSecs).toList().get(0);
+        CFGNode think = cfg.getSuccessors(message).stream().filter(t -> t.getASTNode() instanceof ThinkForSecs).toList().getFirst();
         CFGNode exit = cfg.getExitNode();
 
         assertThat(cdg.getEdges()).contains(EndpointPair.ordered(entry, exit));

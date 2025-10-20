@@ -153,7 +153,7 @@ public class ScratchBlocksParserTest implements JsonTest {
         Program newProgram = parser.extendProject(program, "Sprite1", "define test (schritte) steps <evtl> do\n");
         Assertions.assertEquals(1, newProgram.getProcedureMapping().getProcedures().size());
         Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().size());
-        ProcedureDefinition procedureDefinition = newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
+        ProcedureDefinition procedureDefinition = newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().getFirst();
         Assertions.assertEquals(2, procedureDefinition.getParameterDefinitionList().getParameterDefinitions().size());
     }
 }

@@ -1,4 +1,4 @@
-image: maven:3-eclipse-temurin-17
+image: maven:3-eclipse-temurin-21
 
 include:
   - template: Jobs/Secret-Detection.gitlab-ci.yml

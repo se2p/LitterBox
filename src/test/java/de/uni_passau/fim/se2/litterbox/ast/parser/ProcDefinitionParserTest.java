@@ -45,13 +45,13 @@ public class ProcDefinitionParserTest implements JsonTest {
         final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefinitions();
         final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
         final String actorName = defintions.get(1).getIdent().getName();
-        Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
+        Truth.assertThat(list.getFirst()).isInstanceOf(ProcedureDefinition.class);
         Assertions.assertEquals("BlockNoInputs",
-                program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
+                program.getProcedureMapping().getProcedures().get(actorName).get(list.getFirst().getIdent()).getName());
         Assertions.assertEquals(0,
-                program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
-        Assertions.assertEquals(0, list.get(0).getParameterDefinitionList().getParameterDefinitions().size());
-        Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().size());
+                program.getProcedureMapping().getProcedures().get(actorName).get(list.getFirst().getIdent()).getArguments().length);
+        Assertions.assertEquals(0, list.getFirst().getParameterDefinitionList().getParameterDefinitions().size());
+        Assertions.assertEquals(3, list.getFirst().getStmtList().getStmts().size());
 
     }
 
@@ -87,10 +87,10 @@ public class ProcDefinitionParserTest implements JsonTest {
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getType());
         Assertions.assertEquals(procedureInfo.getArguments()[0].type(),
                 list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getType());
-        Assertions.assertInstanceOf(MoveSteps.class, list.get(1).getStmtList().getStmts().get(0));
-        Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
+        Assertions.assertInstanceOf(MoveSteps.class, list.get(1).getStmtList().getStmts().getFirst());
+        Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().getFirst()).getSteps()).isInstanceOf(AsNumber.class);
         Assertions.assertEquals("NumInput",
-                ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName().getName());
+                ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().getFirst()).getSteps()).getOperand1()).getName().getName());
     }
 
     @Test
@@ -100,9 +100,9 @@ public class ProcDefinitionParserTest implements JsonTest {
         final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
         final String actorName = defintions.get(1).getIdent().getName();
 
-        Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
+        Truth.assertThat(list.getFirst()).isInstanceOf(ProcedureDefinition.class);
         ProcedureInfo procedureInfo =
-                program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent());
+                program.getProcedureMapping().getProcedures().get(actorName).get(list.getFirst().getIdent());
         Assertions.assertEquals("manipulate",
                 procedureInfo.getName());
     }

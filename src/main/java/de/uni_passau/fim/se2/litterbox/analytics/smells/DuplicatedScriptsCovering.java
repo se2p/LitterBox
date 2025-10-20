@@ -59,8 +59,8 @@ public class DuplicatedScriptsCovering extends AbstractIssueFinder {
                     ASTNode topBlockCurrent;
                     ASTNode topBlockOther;
                     if (currentScript.getEvent() instanceof Never) {
-                        topBlockCurrent = currentScript.getStmtList().getStmts().get(0);
-                        topBlockOther = script2.getStmtList().getStmts().get(0);
+                        topBlockCurrent = currentScript.getStmtList().getStmts().getFirst();
+                        topBlockOther = script2.getStmtList().getStmts().getFirst();
                     } else {
                         topBlockCurrent = currentScript.getEvent();
                         topBlockOther = script2.getEvent();

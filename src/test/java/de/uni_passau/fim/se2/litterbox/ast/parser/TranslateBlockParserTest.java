@@ -43,7 +43,7 @@ public class TranslateBlockParserTest implements JsonTest {
 
         final var fixedLanguages = NodeFilteringVisitor.getBlocks(program, TFixedLanguage.class);
         assertThat(fixedLanguages).hasSize(1);
-        assertThat(fixedLanguages.get(0).getType()).isEqualTo(TFixedLanguage.TFixedLanguageType.CZECH);
+        assertThat(fixedLanguages.getFirst().getType()).isEqualTo(TFixedLanguage.TFixedLanguageType.CZECH);
 
         final var viewerLanguage = NodeFilteringVisitor.getBlocks(program, ViewerLanguage.class);
         assertThat(viewerLanguage).hasSize(1);

@@ -65,7 +65,7 @@ public class SplitScriptAfterUntil extends OnlyCodeCloneVisitor implements Refac
             }
         }
 
-        remainingStatements.add(0, new WaitUntil(apply(untilStmt.getBoolExpr()), apply(untilStmt.getMetadata())));
+        remainingStatements.addFirst(new WaitUntil(apply(untilStmt.getBoolExpr()), apply(untilStmt.getMetadata())));
         StmtList subStatements1 = new StmtList(initialStatements);
         StmtList subStatements2 = new StmtList(remainingStatements);
 

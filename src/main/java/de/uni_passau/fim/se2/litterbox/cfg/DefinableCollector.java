@@ -35,7 +35,7 @@ public interface DefinableCollector<T extends Defineable> extends ScratchVisitor
             ASTNode parent = actor.getParentNode();
             if (parent != null && parent.getParentNode() != null) {
                 Program program = (Program) parent.getParentNode();
-                return program.getActorDefinitionList().getDefinitions().get(0);
+                return program.getActorDefinitionList().getDefinitions().getFirst();
             }
             // Fallback: return actor itself
             return actor;

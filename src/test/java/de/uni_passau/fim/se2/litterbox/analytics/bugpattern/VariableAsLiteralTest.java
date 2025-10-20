@@ -80,7 +80,7 @@ public class VariableAsLiteralTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugpattern/listAsLiteral.json");
         VariableAsLiteral finder = new VariableAsLiteral();
         List<Issue> issues = new ArrayList<>(finder.check(program));
-        Issue issue = issues.get(0);
+        Issue issue = issues.getFirst();
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
         visitor.begin();

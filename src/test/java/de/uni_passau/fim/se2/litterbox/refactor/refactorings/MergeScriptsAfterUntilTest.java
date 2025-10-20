@@ -40,7 +40,7 @@ public class MergeScriptsAfterUntilTest implements JsonTest {
         MergeScriptsAfterUntilFinder finder = new MergeScriptsAfterUntilFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(MergeScriptsAfterUntil.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(MergeScriptsAfterUntil.class);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MergeScriptsAfterUntilTest implements JsonTest {
         Program refactored = refactoring.apply(program);
 
         assertThat(refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().size()).isEqualTo(1);
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
 
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(script1.getStmtList().getNumberOfStatements() + script2.getStmtList().getNumberOfStatements() - 1);

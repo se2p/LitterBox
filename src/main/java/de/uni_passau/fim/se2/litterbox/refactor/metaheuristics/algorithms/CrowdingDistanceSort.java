@@ -69,7 +69,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
             double rangeFitness = minMaxPairPerFF.get(ff).getSnd() - minMaxPairPerFF.get(ff).getFst();
 
             sorted.sort(Comparator.comparingDouble(c -> c.getFitness(ff)));
-            newDistancesPerSolution.put(sorted.get(0), Double.MAX_VALUE);
+            newDistancesPerSolution.put(sorted.getFirst(), Double.MAX_VALUE);
             newDistancesPerSolution.put(sorted.get(l - 1), Double.MAX_VALUE);
             for (int k = 1; k < l - 1; k++) {
                 double newDistance = newDistancesPerSolution.get(sorted.get(k))

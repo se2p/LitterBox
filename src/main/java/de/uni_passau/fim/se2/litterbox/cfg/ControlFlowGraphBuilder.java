@@ -232,7 +232,7 @@ public class ControlFlowGraphBuilder {
         if (names.size() == 1) {
             // If a name is specified, add an edge to that actor
 
-            String name = names.get(0);
+            String name = names.getFirst();
             if (name.equals(Identifier.MYSELF.getValue())) {
                 name = currentActor.getIdent().getName();
             }

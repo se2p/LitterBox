@@ -92,11 +92,10 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
     private ElementChoice convertCostumeChoice(final RawBlock.RawRegularBlock block) {
         final RawInput costumeInput = block.getInput(KnownInputs.COSTUME);
 
-        if (
-                ShadowType.SHADOW.equals(costumeInput.shadowType())
-                && costumeInput.input() instanceof BlockRef.IdRef blockIdRef
+        if (ShadowType.SHADOW.equals(costumeInput.shadowType())
+                && costumeInput.input() instanceof BlockRef.IdRef(RawBlockId blockId)
         ) {
-            return convertCostumeChoiceMenu(blockIdRef.id());
+            return convertCostumeChoiceMenu(blockId);
         } else {
             final BlockMetadata metadata = new NoBlockMetadata();
             final Expression expr = ExprConverter.convertExpr(state, block, costumeInput);

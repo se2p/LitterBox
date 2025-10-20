@@ -59,7 +59,7 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
             if (!(node.getEvent() instanceof Never)) {
                 topBlockCurrent = node.getEvent();
             } else {
-                topBlockCurrent = node.getStmtList().getStmts().get(0);
+                topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
             IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
             Hint hint = Hint.fromKey(getName());

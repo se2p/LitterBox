@@ -48,7 +48,7 @@ public class MergeScriptsAfterUntil extends OnlyCodeCloneVisitor implements Refa
 
         List<Stmt> mergedStatements = apply(script1.getStmtList()).getStmts();
         List<Stmt> script2Statements = apply(script2.getStmtList()).getStmts();
-        script2Statements.remove(0);
+        script2Statements.removeFirst();
         mergedStatements.addAll(script2Statements);
 
         replacementScript = new Script(apply(script1.getEvent()), new StmtList(mergedStatements));

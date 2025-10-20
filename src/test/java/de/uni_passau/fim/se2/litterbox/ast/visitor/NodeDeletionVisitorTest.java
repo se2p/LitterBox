@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeDeletionVisitorTest implements JsonTest {
 
@@ -44,28 +43,28 @@ public class NodeDeletionVisitorTest implements JsonTest {
     public void testDeletion() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/visitors/deleteBlock.json");
 
-        DistanceTo distance = (DistanceTo) ((MoveSteps) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0)).getSteps();
+        DistanceTo distance = (DistanceTo) ((MoveSteps) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts().getFirst()).getSteps();
         // Stmt replacement = new TurnLeft(target.getSteps(), target.getMetadata());
 
         NodeDeletionVisitor deletionVisitor = new NodeDeletionVisitor(distance);
         Program programCopy = deletionVisitor.apply(program);
 
-        MoveSteps statements2 = (MoveSteps) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(0);
+        MoveSteps statements2 = (MoveSteps) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStatement(0);
         assertInstanceOf(NumberLiteral.class, statements2.getSteps());
 
-        LessThan lessThan = (LessThan) ((UntilStmt) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(1)).getBoolExpr();
+        LessThan lessThan = (LessThan) ((UntilStmt) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts().get(1)).getBoolExpr();
         deletionVisitor = new NodeDeletionVisitor(lessThan);
         programCopy = deletionVisitor.apply(program);
 
-        UntilStmt until = (UntilStmt) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(1);
+        UntilStmt until = (UntilStmt) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStatement(1);
         assertInstanceOf(UnspecifiedBoolExpr.class, until.getBoolExpr());
 
-        Equals eq = (Equals) ((WaitUntil) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(2)).getUntil();
+        Equals eq = (Equals) ((WaitUntil) program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStatement(2)).getUntil();
         assertInstanceOf(Qualified.class, eq.getOperand1());
         deletionVisitor = new NodeDeletionVisitor(eq.getOperand1());
         programCopy = deletionVisitor.apply(program);
 
-        Equals equals = (Equals) ((WaitUntil) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStatement(2)).getUntil();
+        Equals equals = (Equals) ((WaitUntil) programCopy.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStatement(2)).getUntil();
         assertInstanceOf(StringLiteral.class, equals.getOperand1());
     }
 }
