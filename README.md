@@ -268,6 +268,8 @@ B. Fein, F. Obermüller and G. Fraser, "LitterBox+: An Extensible Framework for 
 in Proceedings of the 40th IEEE/ACM International Conference on Automated Software Engineering (ASE ’25). IEEE,
 2025. https://doi.org/TBD ([arXiv:2509.12021](https://arxiv.org/abs/2509.12021))
 
+The accompanying poster is available at https://doi.org/10.5281/zenodo.17532057.
+
 
 ## Contributors
 
