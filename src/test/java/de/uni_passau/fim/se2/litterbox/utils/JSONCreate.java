@@ -31,9 +31,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Set;
 
 class JSONCreate implements JsonTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     @AfterAll
     static void cleanUp() throws IOException {
@@ -52,7 +55,7 @@ class JSONCreate implements JsonTest {
         Program prog = getAST("./src/test/fixtures/bugpattern/foreverInLoop.json");
         ForeverInsideLoop fil = new ForeverInsideLoop();
         Set<Issue> issues = fil.check(prog);
-        CommentGenerator gen = new CommentGenerator();
+        CommentGenerator gen = new CommentGenerator(translator);
         gen.generateReport(prog, issues);
         JSONFileCreator.writeJsonFromProgram(prog, "_annotated");
     }

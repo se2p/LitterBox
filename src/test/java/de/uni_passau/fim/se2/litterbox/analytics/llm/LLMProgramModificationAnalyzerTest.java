@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramModificationAnalyzerTest implements JsonTest  {
+class LLMProgramModificationAnalyzerTest implements FinderTest, JsonTest  {
 
     @Test
     void testAddSprite() throws ParsingException, IOException {
@@ -51,7 +52,7 @@ class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
 
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(), null, true) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(translator), null, true) {
             @Override
             public String buildPrompt(Program program) {
                 return "";
@@ -85,7 +86,7 @@ class LLMProgramModificationAnalyzerTest implements JsonTest  {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(), null, true) {
+        LLMProgramModificationAnalyzer analyzer = new LLMProgramModificationAnalyzer(new DummyLlmApi(response), new DefaultPrompts(translator), null, true) {
             @Override
             public String buildPrompt(Program program) {
                 return "";

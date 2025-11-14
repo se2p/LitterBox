@@ -18,41 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Isolated;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Isolated  // ensure no parallel tests to avoid parallel mutation of global state (i.e. IssueTranslator language)
 class IssueTranslatorTest {
-
-    @AfterEach
-    void reset() {
-        IssueTranslator.getInstance().setLanguage("en");
-    }
 
     @Test
     void fallbackToEnglish() {
-        IssueTranslator.getInstance().setLanguage("no");
-        assertEquals("costume", getInfo(IssueTranslator.GeneralTerm.COSTUME));
+        final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.of("no"));
+        assertEquals("costume", translator.getInfo(IssueTranslator.GeneralTerm.COSTUME));
     }
 
     @Test
     void fallbackToEnglishMissingLocale() {
-        IssueTranslator.getInstance().setLanguage(null);
-        assertEquals("attribute", getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+        final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
+        assertEquals("attribute", translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
     }
 
     @Test
     void switchLanguage() {
-        IssueTranslator.getInstance().setLanguage("en");
-        assertEquals("Visibility", getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
-        IssueTranslator.getInstance().setLanguage("de");
-        assertEquals("Sichtbarkeit", getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
-    }
-
-    private String getInfo(final IssueTranslator.GeneralTerm term) {
-        return IssueTranslator.getInstance().getInfo(term);
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        assertEquals("Visibility", translator.getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
+        translator = IssueTranslatorFactory.getIssueTranslator(Locale.GERMAN);
+        assertEquals("Sichtbarkeit", translator.getInfo(IssueTranslator.GeneralTerm.VISIBILITY));
     }
 }

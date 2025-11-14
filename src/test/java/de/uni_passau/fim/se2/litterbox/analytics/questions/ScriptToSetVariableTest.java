@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class ScriptToSetVariableTest implements JsonTest {
+class ScriptToSetVariableTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -63,7 +64,7 @@ class ScriptToSetVariableTest implements JsonTest {
         Set<Issue> issues = runFinder(prog, new ScriptToSetVariable(), false);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText();
+            String hint = issue.getHint().getHintText(translator);
             String choices = "\\[choices](\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\|){3}\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/choices]";
             String answer = "\\[solutions]\\[scratchblocks](?:(?!\\[scratchblocks]).)*set \\[my variable v] to \\(0\\)(?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/solutions]";
             assertThat(hint).containsMatch(Pattern.compile(choices, Pattern.DOTALL));

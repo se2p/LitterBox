@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<Program> {
 
@@ -58,10 +59,11 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
     }
 
     protected LLMProgramModificationAnalyzer(
+            IssueTranslator translator,
             QueryTarget target,
             boolean ignoreLooseBlocks
     ) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target, ignoreLooseBlocks);
+        this(LlmApiProvider.get(), LlmPromptProvider.get(translator), target, ignoreLooseBlocks);
     }
 
     public abstract String buildPrompt(Program program);

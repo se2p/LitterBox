@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class StatementsInIfStatementTest implements JsonTest {
+class StatementsInIfStatementTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -51,8 +52,8 @@ class StatementsInIfStatementTest implements JsonTest {
          for (Issue issue : issues) {
              String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
              String answer = "\\[solutions](\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){2}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-             assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-             assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+             assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+             assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
          }
     }
 
@@ -65,8 +66,8 @@ class StatementsInIfStatementTest implements JsonTest {
         for (Issue issue : issues) {
             String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
             String answer = "\\[solutions](\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){2}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }
     }
 
@@ -95,8 +96,8 @@ class StatementsInIfStatementTest implements JsonTest {
         for (Issue issue : issues) {
             String choices = "\\[choices]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
             String answer = "\\[solutions]\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/solutions]";
-            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
-            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(choices, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }
     }
 

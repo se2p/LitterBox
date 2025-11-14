@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.io.IOException;
@@ -44,6 +45,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class JSONReportGenerator implements ReportGenerator {
+
+    private final IssueTranslator translator;
 
     private final OutputStream outputStream;
 
@@ -61,15 +64,18 @@ public class JSONReportGenerator implements ReportGenerator {
 
     private final boolean includeCoupling = PropertyLoader.getSystemBoolProperty("json.coupling");
 
-    public JSONReportGenerator(Path fileName) throws IOException {
-        this(Files.newOutputStream(fileName), true);
+    public JSONReportGenerator(final IssueTranslator translator, final Path fileName) throws IOException {
+        this(translator, Files.newOutputStream(fileName), true);
     }
 
-    public JSONReportGenerator(OutputStream stream) throws IOException {
-        this(stream, false);
+    public JSONReportGenerator(final IssueTranslator translator, OutputStream stream) throws IOException {
+        this(translator, stream, false);
     }
 
-    private JSONReportGenerator(final OutputStream stream, final boolean closeStream) throws IOException {
+    private JSONReportGenerator(
+            final IssueTranslator translator, final OutputStream stream, final boolean closeStream
+    ) throws IOException {
+        this.translator = translator;
         this.outputStream = stream;
         jsonGenerator = mapper.createGenerator(outputStream, JsonEncoding.UTF8);
         jsonGenerator.useDefaultPrettyPrinter();
@@ -128,7 +134,7 @@ public class JSONReportGenerator implements ReportGenerator {
         return new IssueDTO(
                 issue.getId(),
                 issue.getFinderName(),
-                issue.getTranslatedFinderName(),
+                issue.getTranslatedFinderName(translator),
                 issue.getIssueType(),
                 issue.getSeverity().getSeverityLevel(),
                 issue.getActorName(),
@@ -137,7 +143,7 @@ public class JSONReportGenerator implements ReportGenerator {
                 includeSubsumption ? getSubsumingIssueIds(issues, issue) : null,
                 includeCoupling ? getCoupledIssueIds(issues, issue) : null,
                 includeSimilarity ? getSimilarIssues(issues, issue) : null,
-                issue.getHintText(),
+                issue.getHintText(translator),
                 costumes,
                 issue.getActor().getActorMetadata().getCurrentCostume(),
                 scratchBlocksCode,

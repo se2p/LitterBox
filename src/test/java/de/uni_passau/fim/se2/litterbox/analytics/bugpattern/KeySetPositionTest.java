@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeySetPositionTest implements JsonTest {
+public class KeySetPositionTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -63,6 +64,6 @@ public class KeySetPositionTest implements JsonTest {
         Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter("XY","x");
         hint.setParameter(Hint.HINT_KEY,"right arrow");
-        Assertions.assertEquals(hint.getHintText(),reports.getFirst().getHintText());
+        Assertions.assertEquals(hint.getHintText(translator),reports.getFirst().getHintText(translator));
     }
 }

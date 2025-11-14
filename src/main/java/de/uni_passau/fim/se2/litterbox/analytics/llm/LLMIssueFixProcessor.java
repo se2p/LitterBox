@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -58,8 +59,8 @@ public class LLMIssueFixProcessor implements LLMIssueProcessor {
         this.target = target;
     }
 
-    public LLMIssueFixProcessor(QueryTarget target) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target);
+    public LLMIssueFixProcessor(IssueTranslator translator, QueryTarget target) {
+        this(LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 
     @Override

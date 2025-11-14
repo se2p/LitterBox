@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -32,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,7 +63,7 @@ public class MiddleMan extends AbstractIssueFinder {
                 if (stringExpr instanceof StringLiteral stringLiteral) {
                     hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, stringLiteral.getText());
                 } else {
-                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, IssueTranslator.getInstance().getInfo("message"));
+                    hint.setParameter(Hint.HINT_BLOCKNAME_FINAL, new HintPlaceholder.Translatable("message"));
                 }
                 addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, hint);
             }

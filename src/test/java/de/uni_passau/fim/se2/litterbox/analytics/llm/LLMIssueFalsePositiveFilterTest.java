@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class LLMIssueFalsePositiveFilterTest implements JsonTest {
+class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
 
     @Test
     void shouldIgnorePerfumes() throws ParsingException, IOException {
@@ -70,7 +71,7 @@ class LLMIssueFalsePositiveFilterTest implements JsonTest {
         final LlmApi api = spy(new DummyLlmApi());
 
         final LLMIssueFalsePositiveFilter filter = new LLMIssueFalsePositiveFilter(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget()
+                api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
         );
 
         final Set<Issue> issuesAfterFilter = filter.apply(program, issues);
@@ -90,7 +91,7 @@ class LLMIssueFalsePositiveFilterTest implements JsonTest {
         final LlmApi api = new DummyLlmApi("yes", "no", "yes");
 
         final LLMIssueFalsePositiveFilter filter = new LLMIssueFalsePositiveFilter(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget()
+                api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
         );
 
         final Set<Issue> issuesAfterFilter = filter.apply(program, issues);

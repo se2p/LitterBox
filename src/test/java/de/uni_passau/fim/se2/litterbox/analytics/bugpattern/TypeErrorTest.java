@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class TypeErrorTest implements JsonTest {
+public class TypeErrorTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -74,7 +75,7 @@ public class TypeErrorTest implements JsonTest {
         Set<Issue> issues = parameterName.check(booleanEquals);
         Assertions.assertEquals(1, issues.size());
         for (Issue issue : issues) {
-            Assertions.assertEquals((Hint.fromKey(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHintText());
+            Assertions.assertEquals((Hint.fromKey(TypeError.WEIRD_DISTANCE)).getHintText(translator), issue.getHintText(translator));
         }
     }
 

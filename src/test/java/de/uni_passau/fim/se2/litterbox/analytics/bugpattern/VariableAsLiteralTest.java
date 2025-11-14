@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -39,7 +40,7 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VariableAsLiteralTest implements JsonTest {
+public class VariableAsLiteralTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmpty() throws IOException, ParsingException {
@@ -130,7 +131,7 @@ public class VariableAsLiteralTest implements JsonTest {
         Hint hint = Hint.fromKey(lit.getName());
         hint.setParameter(Hint.HINT_VARIABLE, "aktuelles Jahr");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText(translator)).isEqualTo(hint.getHintText(translator));
         }
     }
 

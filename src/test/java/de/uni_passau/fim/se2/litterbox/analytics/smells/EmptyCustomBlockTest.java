@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -31,7 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmptyCustomBlockTest implements JsonTest {
+public class EmptyCustomBlockTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -60,6 +61,6 @@ public class EmptyCustomBlockTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = Hint.fromKey(parameterName.getName());
         hint.setParameter(Hint.BLOCK_NAME, "define Blockname () <>");
-        Assertions.assertEquals(hint.getHintText(), reports.getFirst().getHintText());
+        Assertions.assertEquals(hint.getHintText(translator), reports.getFirst().getHintText(translator));
     }
 }

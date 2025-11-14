@@ -18,12 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
  * Checks for empty if or else bodies.
@@ -36,12 +32,16 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
+            hint.setParameter(
+                    Hint.BLOCK_NAME, new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}} {{else]}")
+            );
             addIssue(node, node.getMetadata(), severity, hint);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + IssueTranslator.getInstance().getInfo("else"));
+            hint.setParameter(
+                    Hint.BLOCK_NAME, new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}} {{else}}")
+            );
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
@@ -51,7 +51,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
+            hint.setParameter(
+                    Hint.BLOCK_NAME, new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}}")
+            );
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
@@ -61,7 +63,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("until") + " < > ");
+            hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.ValueWithTranslatableElements("{{until}} < >"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
@@ -71,7 +73,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
+            hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("forever"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);
@@ -81,7 +83,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             Hint hint = Hint.fromKey(NAME);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
+            hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.ValueWithTranslatableElements("{{repeat}} ( )"));
             addIssue(node, node.getMetadata(), severity, hint);
         }
         visitChildren(node);

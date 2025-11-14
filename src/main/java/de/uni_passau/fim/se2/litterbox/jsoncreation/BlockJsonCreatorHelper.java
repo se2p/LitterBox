@@ -23,14 +23,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
+
+    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
     public static final String DEFAULT_VALUE = "[10,\"\"]";
 
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
@@ -209,12 +214,12 @@ public abstract class BlockJsonCreatorHelper {
 
         if (keyCode.isPresent()) {
             return switch (keyCode.get()) {
-                case UP_ARROW -> IssueTranslator.getInstance().getInfo("up_arrow");
-                case DOWN_ARROW -> IssueTranslator.getInstance().getInfo("down_arrow");
-                case LEFT_ARROW -> IssueTranslator.getInstance().getInfo("left_arrow");
-                case RIGHT_ARROW -> IssueTranslator.getInstance().getInfo("right_arrow");
-                case SPACE -> IssueTranslator.getInstance().getInfo("space");
-                case ANY_KEY -> IssueTranslator.getInstance().getInfo("any");
+                case UP_ARROW -> translator.getInfo("up_arrow");
+                case DOWN_ARROW -> translator.getInfo("down_arrow");
+                case LEFT_ARROW -> translator.getInfo("left_arrow");
+                case RIGHT_ARROW -> translator.getInfo("right_arrow");
+                case SPACE -> translator.getInfo("space");
+                case ANY_KEY -> translator.getInfo("any");
             };
         } else {
             return String.valueOf((char) numberValue);

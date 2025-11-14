@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-class BlockingIfElseTest implements JsonTest {
+class BlockingIfElseTest implements FinderTest, JsonTest {
 
     @Test
     public void testBlockingIfElse() throws IOException, ParsingException {
@@ -42,9 +43,9 @@ class BlockingIfElseTest implements JsonTest {
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
-                Truth.assertThat(issue.getHintText()).isEqualTo(loopHint.getHintText());
+                Truth.assertThat(issue.getHintText(translator)).isEqualTo(loopHint.getHintText(translator));
             } else {
-                Truth.assertThat(issue.getHintText()).isEqualTo(normalHint.getHintText());
+                Truth.assertThat(issue.getHintText(translator)).isEqualTo(normalHint.getHintText(translator));
             }
             i++;
         }

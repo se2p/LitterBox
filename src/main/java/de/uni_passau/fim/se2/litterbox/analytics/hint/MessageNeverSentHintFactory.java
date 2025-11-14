@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.hint;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ public abstract class MessageNeverSentHintFactory {
         for (Map.Entry<String, Set<String>> entry : sayText.entrySet()) {
             if (entry.getKey().contains(messageText)) {
                 hint = Hint.fromKey(MESSAGE_IN_SAY_OR_THINK);
-                hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
+                hint.setParameter(Hint.HINT_SAY_THINK, new HintPlaceholder.Translatable("say"));
                 hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
                 return hint;
@@ -44,7 +44,7 @@ public abstract class MessageNeverSentHintFactory {
         for (Map.Entry<String, Set<String>> entry : thinkText.entrySet()) {
             if (entry.getKey().contains(messageText)) {
                 hint = Hint.fromKey(MESSAGE_IN_SAY_OR_THINK);
-                hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
+                hint.setParameter(Hint.HINT_SAY_THINK, new HintPlaceholder.Translatable("think"));
                 hint.setParameter(Hint.HINT_SPRITES, generateSpritesText(entry.getValue()));
                 hint.setParameter(Hint.HINT_MESSAGE, messageText);
                 return hint;

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class ScriptsTriggeredByStatementTest implements JsonTest {
+class ScriptsTriggeredByStatementTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -45,13 +46,13 @@ class ScriptsTriggeredByStatementTest implements JsonTest {
 
         for (Issue issue : issues) {
             String answer;
-            if (issue.getHint().getHintText().contains("[solutions][scratchblocks]\nwhen backdrop switches to [backdrop1 v]")) {
+            if (issue.getHint().getHintText(translator).contains("[solutions][scratchblocks]\nwhen backdrop switches to [backdrop1 v]")) {
                 answer = "\\[solutions]\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/solutions]";
             }
             else {
                 answer = "\\[solutions]\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\|\\[scratchblocks](?:(?!\\[scratchblocks]).)*\\[/scratchblocks]\\[/solutions]";
             }
-            assertThat(issue.getHint().getHintText()).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
+            assertThat(issue.getHint().getHintText(translator)).containsMatch(Pattern.compile(answer, Pattern.DOTALL));
         }
     }
 

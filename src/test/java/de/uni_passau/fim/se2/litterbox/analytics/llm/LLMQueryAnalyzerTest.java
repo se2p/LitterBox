@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
@@ -33,7 +34,7 @@ import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMQueryAnalyzerTest implements JsonTest {
+class LLMQueryAnalyzerTest implements FinderTest, JsonTest {
 
     @Test
     void testAnalyze(@TempDir final Path outputDir) throws IOException {
@@ -45,6 +46,7 @@ class LLMQueryAnalyzerTest implements JsonTest {
             mockStatic.when(LlmApiProvider::get).thenReturn(llmApi);
 
             LLMQueryAnalyzer analyzer = new LLMQueryAnalyzer(
+                    translator,
                     outputFile,
                     false,
                     new LlmQuery.CustomQuery("custom user question"),

@@ -25,18 +25,21 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 import java.util.Set;
 
 public class LLMIssuePerfumeExtender extends LLMIssueExtender {
 
-    public LLMIssuePerfumeExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
-        super(llmApi, promptBuilder, target);
+    public LLMIssuePerfumeExtender(
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+    ) {
+        super(translator, llmApi, promptBuilder, target);
     }
 
-    public LLMIssuePerfumeExtender(QueryTarget target) {
-        super(target);
+    public LLMIssuePerfumeExtender(IssueTranslator translator, QueryTarget target) {
+        super(translator, target);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class LLMIssuePerfumeExtender extends LLMIssueExtender {
         for (final Issue issue : perfumes) {
             issueList
                     .append("Issue #").append(numIssue++).append('\n')
-                    .append(issue.getHintText())
+                    .append(issue.getHintText(translator))
                     .append('\n');
         }
 

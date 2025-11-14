@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
@@ -37,9 +38,9 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramImprovementAnalyzerTest implements JsonTest {
+class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
 
-    private final PromptBuilder promptBuilder = new DefaultPrompts();
+    private final PromptBuilder promptBuilder = new DefaultPrompts(translator);
 
     @Test
     void testFixSpecificIssue() throws ParsingException, IOException {

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -35,9 +36,9 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramCompletionAnalyzerTest implements JsonTest {
+class LLMProgramCompletionAnalyzerTest implements FinderTest, JsonTest {
 
-    private final PromptBuilder promptBuilder = new DefaultPrompts();
+    private final PromptBuilder promptBuilder = new DefaultPrompts(translator);
 
     private int countBlocks(Script script) {
         BlockCount<Script> countBlocks = new BlockCount<>();

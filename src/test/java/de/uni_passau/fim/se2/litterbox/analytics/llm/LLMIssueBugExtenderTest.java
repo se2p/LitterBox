@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
@@ -39,7 +40,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMIssueBugExtenderTest implements JsonTest {
+class LLMIssueBugExtenderTest implements FinderTest, JsonTest {
 
     @Test
     void doesNotAddPerfumesToPrompt() throws ParsingException, IOException {
@@ -48,7 +49,7 @@ class LLMIssueBugExtenderTest implements JsonTest {
         final DummyLlmApi api = new DummyLlmApi("no new issues");
 
         final LLMIssueBugExtender extender = new LLMIssueBugExtender(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget()
+                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
         );
 
         final Set<Issue> newIssueSet = extender.apply(program, issues);
@@ -71,7 +72,7 @@ class LLMIssueBugExtenderTest implements JsonTest {
         assertThat(llmIssues).hasSize(1);
 
         final Issue llmIssue = llmIssues.getFirst();
-        assertThat(llmIssue.getHintText()).isEqualTo("dummy description\nspanning multiple lines");
+        assertThat(llmIssue.getHintText(translator)).isEqualTo("dummy description\nspanning multiple lines");
         assertThat(llmIssue.getCodeLocation()).isNotNull();
     }
 
@@ -114,7 +115,7 @@ class LLMIssueBugExtenderTest implements JsonTest {
         final LlmApi api = new DummyLlmApi(llmResponse);
 
         final LLMIssueBugExtender extender = new LLMIssueBugExtender(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget()
+                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
         );
 
         final Set<Issue> newIssueSet = extender.apply(program, issues);

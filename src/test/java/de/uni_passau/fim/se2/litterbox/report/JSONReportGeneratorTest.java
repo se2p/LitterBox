@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,11 +41,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 public class JSONReportGeneratorTest implements JsonTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     private void assertValidJsonIssue(String issueText, int numIssues) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -101,7 +106,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         assertValidJsonIssue(os.toString(), 1);
@@ -114,7 +119,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String jsonText = os.toString();
@@ -134,7 +139,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         assertValidJsonIssue(os.toString(), 4);
@@ -147,7 +152,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         Path tmpFile = Files.createTempFile(null, null);
-        JSONReportGenerator generator = new JSONReportGenerator(tmpFile);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, tmpFile);
         generator.generateReport(program, issues);
 
         String result = Files.readString(tmpFile);
@@ -164,7 +169,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = emptySprite.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         assertValidJsonIssue(os.toString(), 1);
@@ -178,7 +183,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();
@@ -223,7 +228,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();
@@ -259,7 +264,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         issues.addAll(literalFinder.check(program));
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();
@@ -293,7 +298,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         issues.addAll(mls.check(program));
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();
@@ -325,7 +330,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();
@@ -370,7 +375,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        JSONReportGenerator generator = new JSONReportGenerator(os);
+        JSONReportGenerator generator = new JSONReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
         String issueText = os.toString();

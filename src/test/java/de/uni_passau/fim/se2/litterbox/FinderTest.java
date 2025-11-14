@@ -16,30 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox;
 
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
-import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-public class HintTest {
-
-    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
-
-    @Test
-    public void testParameterReplacement() {
-        Hint hint = Hint.fromKey(EmptySprite.NAME);
-
-        String origText = hint.getHintText(translator);
-        assertThat(origText.indexOf(Hint.ESCAPE_CHARACTER)).isAtLeast(0);
-
-        hint.setParameter(Hint.HINT_SPRITE, "FooBar");
-        assertEquals(origText.replace(Hint.ESCAPE_CHARACTER + Hint.HINT_SPRITE, "FooBar"), hint.getHintText(translator));
-    }
+public interface FinderTest {
+    IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 }

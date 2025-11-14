@@ -32,6 +32,10 @@ import java.util.stream.Collectors;
 
 public class DefaultPrompts extends PromptBuilder {
 
+    public DefaultPrompts(final IssueTranslator translator) {
+        super(translator);
+    }
+
     @Override
     public String systemPrompt() {
         return """
@@ -43,7 +47,7 @@ public class DefaultPrompts extends PromptBuilder {
                 In ScratchBlocks code, we identify sprites and scripts with the special comment lines starting with
                 `//Script:` and `//Sprite:`. Do *not* change these lines when making other changes to the code.
                 Use proper Markdown syntax to mark code as such.
-                """.formatted(IssueTranslator.getInstance().getLanguage());
+                """.formatted(translator.getLanguage());
     }
 
     @Override
@@ -62,7 +66,9 @@ public class DefaultPrompts extends PromptBuilder {
 
     @Override
     public String improveCode(final Program program, final QueryTarget target, final Collection<Issue> issues) {
-        final String issueDescription = issues.stream().map(Issue::getHintText).collect(Collectors.joining("\n\n"));
+        final String issueDescription = issues.stream()
+                .map(issue -> issue.getHintText(translator))
+                .collect(Collectors.joining("\n\n"));
 
         return describeTarget(program, target) + """
                 The code contains the following bugs and code smells:
@@ -189,7 +195,7 @@ public class DefaultPrompts extends PromptBuilder {
 
                 Keep your explanations brief and focussed on the important parts with helpful examples so that I as a
                 beginner Scratch programmer do not get overwhelmed with too much information.
-                """.formatted(issue.getHintText()).stripIndent();
+                """.formatted(issue.getHintText(translator)).stripIndent();
     }
 
     @Override
@@ -202,7 +208,7 @@ public class DefaultPrompts extends PromptBuilder {
                 Does the given program actually contain the issue described by the static code analysis tool?
                 Respond only with "yes" or "no".
                 """.formatted(
-                        issue.getActorName(), AstNodeUtil.getBlockId(issue.getScript()), issue.getHintText()
+                        issue.getActorName(), AstNodeUtil.getBlockId(issue.getScript()), issue.getHintText(translator)
                 ).stripIndent();
     }
 
@@ -215,7 +221,7 @@ public class DefaultPrompts extends PromptBuilder {
                 Improve the explanation by making it clearer and easier to understand.
                 If a misconception may be the cause of the issue, explain the misconception.
                 Only output the improved explanation, but no suggested fix.
-                """.formatted(issue.getHintText()).stripIndent();
+                """.formatted(issue.getHintText(translator)).stripIndent();
     }
 
     @Override

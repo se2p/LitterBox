@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueParser;
@@ -39,7 +40,7 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class LLMAnalysisEnhancerTest implements JsonTest {
+class LLMAnalysisEnhancerTest implements FinderTest, JsonTest {
 
     @Test
     void enhanceAnalysisNoOp(@TempDir final Path outputDir) throws ParsingException, IOException {
@@ -52,7 +53,7 @@ class LLMAnalysisEnhancerTest implements JsonTest {
 
         final DummyLlmApi api = new DummyLlmApi();
         final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget(), resultPath, "all", false
+                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), resultPath, "all", false
         );
 
         enhancer.writeResultToFile(fixture, program, issues);
@@ -79,13 +80,13 @@ class LLMAnalysisEnhancerTest implements JsonTest {
                     """
         );
         final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
-                api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget(), resultPath, "all", false
+                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), resultPath, "all", false
         );
         enhancer.addIssueProcessor(
-                new LLMIssueEffectExplainer(api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget())
+                new LLMIssueEffectExplainer(translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget())
         );
         enhancer.addIssueProcessor(
-                new LLMIssueBugExtender(api, LlmPromptProvider.get(), new QueryTarget.ProgramTarget())
+                new LLMIssueBugExtender(translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget())
         );
 
         enhancer.writeResultToFile(fixture, program, issues);

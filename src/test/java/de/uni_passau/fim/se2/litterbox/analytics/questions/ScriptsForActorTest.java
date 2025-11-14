@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class ScriptsForActorTest implements JsonTest {
+class ScriptsForActorTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -38,7 +39,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(2);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]0\\[/a-n]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]0\\[/a-n]");
         }
     }
 
@@ -49,7 +50,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]1\\[/a-n]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]1\\[/a-n]");
         }
     }
 
@@ -60,7 +61,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]2\\[/a-n]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]2\\[/a-n]");
         }
     }
 
@@ -71,7 +72,7 @@ class ScriptsForActorTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(2);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText();
+            String hint = issue.getHint().getHintText(translator);
             if (hint.contains("Sprite1"))
                 assertThat(hint).containsMatch("\\[a-n]6\\[/a-n]");
             else

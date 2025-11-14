@@ -18,15 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
  * Checks if all Sprites have a starting point.
@@ -51,7 +47,7 @@ public class EmptyScript extends AbstractIssueFinder {
 
     private void createHint(ASTNode node, String eventName) {
         Hint hint = Hint.fromKey(getName());
-        hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo(eventName));
+        hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable(eventName));
         addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
     }
 

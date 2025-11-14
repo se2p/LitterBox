@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -33,7 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,8 +43,9 @@ import java.util.Set;
 public abstract class AbstractQuestionFinder extends AbstractIssueFinder {
 
     protected final int maxChoices;
-    protected static final String YES = IssueTranslator.getInstance().getInfo("yes");
-    protected static final String NO = IssueTranslator.getInstance().getInfo("no");
+
+    protected static final HintPlaceholder.Translatable YES = new HintPlaceholder.Translatable("yes");
+    protected static final HintPlaceholder.Translatable NO = new HintPlaceholder.Translatable("no");
 
     protected Set<String> choices;
     protected Set<String> answers;

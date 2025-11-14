@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
 
     private static final String ANNOTATED_PROGRAM_SUFFIX = "_annotated";
 
+    private final IssueTranslator translator;
     private final List<String> detectorNames;
     private Path annotationOutput;
     private final boolean outputPerScript;
@@ -49,21 +51,23 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     private final Path priorResultPath;
 
     public BugAnalyzer(
-            Path output, String detectors,
+            IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
         super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, null), output, delete);
 
+        this.translator = translator;
         this.outputPerScript = outputPerScript;
         this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
         priorResultPath = null;
     }
 
     public BugAnalyzer(
-            Path output, String detectors,
+            IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript, Path priorResultPath
     ) {
         super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, priorResultPath), output, delete);
+        this.translator = translator;
         this.outputPerScript = outputPerScript;
         this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
         this.priorResultPath = priorResultPath;
@@ -89,7 +93,7 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorsToWrite);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".json")) {
-                JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
+                JSONReportGenerator reportGenerator = new JSONReportGenerator(translator, reportFileName);
                 reportGenerator.generateReport(program, issues);
             } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
                 try (CSVReportGenerator reportGenerator
@@ -111,7 +115,7 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
         }
 
         try {
-            CommentGenerator commentGenerator = new CommentGenerator();
+            CommentGenerator commentGenerator = new CommentGenerator(translator);
             commentGenerator.generateReport(program, issues);
             String fileExtension = FilenameUtils.getExtension(fileEntry.getPath());
 

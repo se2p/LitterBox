@@ -33,13 +33,19 @@ import java.util.Collection;
 
 public class CommentGenerator implements ReportGenerator {
 
+    private final IssueTranslator translator;
+
+    public CommentGenerator(final IssueTranslator translator) {
+        this.translator = translator;
+    }
+
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
         int numIssue = 0;
         for (Issue issue : issues) {
             ActorDefinition currentActor = issue.getActor();
-            String hintText = issue.getHintText();
+            String hintText = issue.getHintText(translator);
             hintText = formatHintText(hintText);
             String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
@@ -71,8 +77,8 @@ public class CommentGenerator implements ReportGenerator {
         hintText = hintText.replace("[b]", "");
         hintText = hintText.replace("[/b]", "");
         hintText = hintText.replace("[/bc]","");
-        hintText = hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
-        hintText = hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
+        hintText = hintText.replace("[IF]", translator.getInfo("if"));
+        hintText = hintText.replace("[ELSE]", translator.getInfo("else"));
         //if there is a linebreak followed by a whitespace, the whitespace should be removed for styling reasons
         hintText = hintText.replace("[newLine] ", "\n");
         hintText = hintText.replace("[newLine]", "\n");

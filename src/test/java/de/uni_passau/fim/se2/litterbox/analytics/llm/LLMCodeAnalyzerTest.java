@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -37,7 +38,7 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMCodeAnalyzerTest {
+class LLMCodeAnalyzerTest implements FinderTest {
 
     @Test
     void testAnalyzeModifyProgram(@TempDir final Path outputDir) throws IOException, ParsingException {
@@ -47,7 +48,7 @@ class LLMCodeAnalyzerTest {
         DummyLlmApi llmApi = new DummyLlmApi("dummy response");
 
         LLMProgramImprovementAnalyzer improvementAnalyzer = new LLMProgramImprovementAnalyzer(
-                llmApi, LlmPromptProvider.get(), new QueryTarget.ProgramTarget(), "bugs", false
+                llmApi, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), "bugs", false
         );
         LLMCodeAnalyzer analyzer = new LLMCodeAnalyzer(improvementAnalyzer, outputDir, false);
 
@@ -73,7 +74,7 @@ class LLMCodeAnalyzerTest {
                 """);
 
         LLMProgramCompletionAnalyzer improvementAnalyzer = new LLMProgramCompletionAnalyzer(
-                llmApi, LlmPromptProvider.get(), new QueryTarget.ProgramTarget(), false
+                llmApi, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), false
         );
         LLMCodeAnalyzer analyzer = new LLMCodeAnalyzer(improvementAnalyzer, outputDir, false);
 

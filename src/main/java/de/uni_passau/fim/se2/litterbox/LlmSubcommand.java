@@ -168,28 +168,29 @@ class LlmSubcommand implements Callable<Integer> {
 
         private LLMAnalysisEnhancer buildEnhancer(QueryTarget target) {
             final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
+                    translator,
                     buildQueryTarget(),
                     commonOptions.outputPath,
                     String.join(",", detectors),
                     ignoreLooseBlocks
             );
             if (analysisOptions.addIssues) {
-                enhancer.addIssueProcessor(new LLMIssueBugExtender(target));
+                enhancer.addIssueProcessor(new LLMIssueBugExtender(translator, target));
             }
             if (analysisOptions.addPerfumes) {
-                enhancer.addIssueProcessor(new LLMIssuePerfumeExtender(target));
+                enhancer.addIssueProcessor(new LLMIssuePerfumeExtender(translator, target));
             }
             if (analysisOptions.filter) {
-                enhancer.addIssueProcessor(new LLMIssueFalsePositiveFilter(target));
+                enhancer.addIssueProcessor(new LLMIssueFalsePositiveFilter(translator, target));
             }
             if (analysisOptions.fix) {
-                enhancer.addIssueProcessor(new LLMIssueFixProcessor(target));
+                enhancer.addIssueProcessor(new LLMIssueFixProcessor(translator, target));
             }
             if (analysisOptions.hint) {
-                enhancer.addIssueProcessor(new LLMIssueHintProcessor(target));
+                enhancer.addIssueProcessor(new LLMIssueHintProcessor(translator, target));
             }
             if (analysisOptions.effects) {
-                enhancer.addIssueProcessor(new LLMIssueEffectExplainer(target));
+                enhancer.addIssueProcessor(new LLMIssueEffectExplainer(translator, target));
             }
             return enhancer;
         }
@@ -211,7 +212,7 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(
-                    buildQueryTarget(), ignoreLooseBlocks
+                    translator, buildQueryTarget(), ignoreLooseBlocks
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
@@ -242,7 +243,7 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(
-                    buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
+                    translator, buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
@@ -262,7 +263,12 @@ class LlmSubcommand implements Callable<Integer> {
         protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.CustomQuery(query);
             return new LLMQueryAnalyzer(
-                    commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks
+                    translator,
+                    commonOptions.outputPath,
+                    commonOptions.deleteProject,
+                    q,
+                    buildQueryTarget(),
+                    ignoreLooseBlocks
             );
         }
     }
@@ -283,7 +289,12 @@ class LlmSubcommand implements Callable<Integer> {
         protected FileAnalyzer<?> createAnalyzer() {
             final LlmQuery q = new LlmQuery.PredefinedQuery(commonQuery);
             return new LLMQueryAnalyzer(
-                    commonOptions.outputPath, commonOptions.deleteProject, q, buildQueryTarget(), ignoreLooseBlocks
+                    translator,
+                    commonOptions.outputPath,
+                    commonOptions.deleteProject,
+                    q,
+                    buildQueryTarget(),
+                    ignoreLooseBlocks
             );
         }
     }

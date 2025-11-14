@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
@@ -45,7 +46,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
  * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like moving.
@@ -61,7 +61,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     private boolean hasStop = false;
     private boolean hasStopInIf = false;
     private boolean checkingStop = false;
-    private String blockName;
+    private HintPlaceholder blockName;
     private ASTNode variableName;
     private boolean checkingVariable;
 
@@ -85,7 +85,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             inCondition = false;
             checkForStop(node.getStmtList());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("until");
+            blockName = new HintPlaceholder.Translatable("until");
             node.getStmtList().accept(this);
             insideControl = false;
             sensingCollision = false;
@@ -107,7 +107,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
                 checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
                 insideControl = true;
-                blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                blockName = new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}} {{else}}");
                 node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
                 insideControl = false;
@@ -138,7 +138,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             inCondition = false;
             checkForStop(node.getThenStmts());
             insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then");
+            blockName = new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}}");
             node.getThenStmts().accept(this);
             insideControl = false;
             sensingCollision = false;
@@ -229,13 +229,15 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
         }
     }
 
+    // TODO: deduplicate and add add actual translations to properties files to resolve the todos below
+
     @Override
     public void visit(KeepBackwardTimed node) {
         if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -247,7 +249,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -259,7 +261,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -271,7 +273,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -283,7 +285,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -295,7 +297,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -307,7 +309,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -319,7 +321,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -331,7 +333,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -343,7 +345,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -355,7 +357,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds")); //TODO
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds")); //TODO
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
@@ -367,7 +369,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
             if (insideControl && sensingOther) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
-                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
+                hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }

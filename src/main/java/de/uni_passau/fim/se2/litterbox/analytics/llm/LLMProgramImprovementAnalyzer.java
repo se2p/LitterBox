@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Set;
 
@@ -34,8 +35,8 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
 
     private final Set<Issue> issues;
 
-    public LLMProgramImprovementAnalyzer(QueryTarget target, Set<Issue> issues) {
-        super(target, false);
+    public LLMProgramImprovementAnalyzer(IssueTranslator translator, QueryTarget target, Set<Issue> issues) {
+        super(translator, target, false);
 
         this.detectors = null;
         this.issues = issues;
@@ -54,11 +55,12 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
     }
 
     public LLMProgramImprovementAnalyzer(
+            IssueTranslator translator,
             QueryTarget target,
             String detectors,
             boolean ignoreLooseBlocks
     ) {
-        super(target, ignoreLooseBlocks);
+        super(translator, target, ignoreLooseBlocks);
 
         this.detectors = detectors;
         this.issues = null;

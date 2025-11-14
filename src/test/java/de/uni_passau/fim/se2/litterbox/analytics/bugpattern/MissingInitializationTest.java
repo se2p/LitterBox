@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -34,7 +35,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class MissingInitializationTest implements JsonTest {
+public class MissingInitializationTest implements FinderTest, JsonTest {
 
     @Test
     public void testMissingInitialization() throws IOException, ParsingException {
@@ -143,7 +144,7 @@ public class MissingInitializationTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = Hint.fromKey(MissingInitialization.NAME_CLONE);
         hint.setParameter(Hint.HINT_VARIABLE, "attribute \"costume\"");
-        Assertions.assertEquals(hint.getHintText(), reports.getFirst().getHintText());
+        Assertions.assertEquals(hint.getHintText(translator), reports.getFirst().getHintText(translator));
     }
 
     @Test

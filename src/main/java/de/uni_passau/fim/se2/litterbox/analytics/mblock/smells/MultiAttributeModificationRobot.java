@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.mblock.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.AbstractRobotFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -95,7 +92,7 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     public void generateMultiBlockIssue(ASTNode node, Defineable defineable) {
         Hint hint = Hint.fromKey(HINT_PARAMETERISED);
-        hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(defineable));
+        hint.setParameter(Hint.HINT_VARIABLE, new HintPlaceholder.Defineable(defineable));
         generateMultiBlockIssue(node, hint);
     }
 

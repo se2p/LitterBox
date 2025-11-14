@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
@@ -37,9 +38,9 @@ import java.util.stream.Collectors;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class LLMIssueFixProcessorTest implements JsonTest {
+class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
-    private final PromptBuilder promptBuilder = new DefaultPrompts();
+    private final PromptBuilder promptBuilder = new DefaultPrompts(translator);
 
     @Test
     void ignorePerfumes() throws Exception {
