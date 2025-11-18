@@ -42,6 +42,7 @@ public class DefaultPrompts extends PromptBuilder {
 
                 In ScratchBlocks code, we identify sprites and scripts with the special comment lines starting with
                 `//Script:` and `//Sprite:`. Do *not* change these lines when making other changes to the code.
+                Use proper Markdown syntax to mark code as such.
                 """.formatted(IssueTranslator.getInstance().getLanguage());
     }
 
