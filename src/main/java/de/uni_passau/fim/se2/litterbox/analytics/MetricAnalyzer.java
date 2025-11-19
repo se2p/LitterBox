@@ -78,7 +78,8 @@ public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
         }
 
         if (fileName == null) {
-            try (CSVPrinter printer = new CSVPrinter(System.out, CSVFormat.DEFAULT.builder().setHeader(headers.toArray(new String[0])).get())) {
+            final CSVFormat csvFormat = CSVFormat.DEFAULT.builder().setHeader(headers.toArray(new String[0])).get();
+            try (CSVPrinter printer = new CSVPrinter(System.out, csvFormat)) {
                 printer.printRecord(row);
                 printer.flush();
             }
