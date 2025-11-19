@@ -21,20 +21,13 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
-
-    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     public static final String DEFAULT_VALUE = "[10,\"\"]";
 
@@ -207,23 +200,6 @@ public abstract class BlockJsonCreatorHelper {
         }
         jsonString.append("]\"");
         return jsonString;
-    }
-
-    public static String getKeyValue(int numberValue) {
-        final Optional<KeyCode> keyCode = KeyCode.tryFromKeycode(numberValue);
-
-        if (keyCode.isPresent()) {
-            return switch (keyCode.get()) {
-                case UP_ARROW -> translator.getInfo("up_arrow");
-                case DOWN_ARROW -> translator.getInfo("down_arrow");
-                case LEFT_ARROW -> translator.getInfo("left_arrow");
-                case RIGHT_ARROW -> translator.getInfo("right_arrow");
-                case SPACE -> translator.getInfo("space");
-                case ANY_KEY -> translator.getInfo("any");
-            };
-        } else {
-            return String.valueOf((char) numberValue);
-        }
     }
 
     public static String createReferenceInput(String inputName, int shadowIndicator, String reference,

@@ -19,11 +19,18 @@
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.Main;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import picocli.CommandLine;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class JSONStringCreationTest implements JsonTest {
 
@@ -39,5 +46,23 @@ public class JSONStringCreationTest implements JsonTest {
         final var program = getAST("src/test/fixtures/looseVariable.json");
         final String json = JSONStringCreator.createProgramJSONString(program);
         Assertions.assertTrue(json.contains("[12,\"meine Variable\",\"`jEk@4|i[#Fk?(8x)AV.-my variable\",676.0,120.0]"));
+    }
+
+    @Test
+    void createProgramJSONWithKeycode(@TempDir final Path outputDir) throws IOException {
+        new CommandLine(new Main()).execute(
+                "check", "-l", "de", "-p", "src/test/fixtures/jsonCreation/keyCodes.json", "-a", outputDir.toString()
+        );
+
+        final String json = Files.readString(outputDir.resolve("keyCodes_annotated.json"));
+
+        // actual block should contain the English name
+        assertThat(json).contains("\"right arrow\"");
+        assertThat(json).contains("\"space\"");
+        assertThat(json).doesNotContain("\"Pfeil nach rechts\"");
+        assertThat(json).doesNotContain("\"Leertaste\"");
+
+        // the hint description should be in German
+        assertThat(json).contains("falls <Taste (Pfeil nach rechts ) gedrückt?>");
     }
 }

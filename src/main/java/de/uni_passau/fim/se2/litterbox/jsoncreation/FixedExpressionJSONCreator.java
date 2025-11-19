@@ -53,12 +53,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -69,6 +73,9 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelpe
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice}.
  */
 public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+
+    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
@@ -174,7 +181,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         NumExpr numExpr = node.getKey();
         if (numExpr instanceof NumberLiteral numberLiteral) {
             createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), KEY_OPTION,
-                    getKeyValue((int) numberLiteral.getValue()));
+                    KeyValueTranslator.getKeyValue(translator, (int) numberLiteral.getValue()));
         }
     }
 
