@@ -33,10 +33,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
 
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.getKeyValue;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -66,7 +65,9 @@ public class StutteringMovement extends AbstractIssueFinder {
             if (listOfStmt.size() <= 2 && !listOfStmt.isEmpty()) {
                 Stmt stmt = listOfStmt.getFirst();
                 if (hasRotation || hasPositionMove) {
-                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                    HintPlaceholder key = KeyValueTranslator.getKeyValue(
+                            (int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue()
+                    );
 
                     IssueBuilder builder = prepareIssueBuilder(stmt)
                             .withSeverity(IssueSeverity.HIGH)

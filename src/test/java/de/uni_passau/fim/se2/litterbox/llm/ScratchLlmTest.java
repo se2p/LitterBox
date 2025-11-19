@@ -29,11 +29,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -41,6 +44,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ScratchLlmTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     private static Program program;
 
@@ -84,7 +89,7 @@ class ScratchLlmTest {
         when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
 
         final DummyLlmApi llmApi =  new DummyLlmApi(List.of("response1", "response2"));
-        final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(), responseParser);
+        final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(translator), responseParser);
 
         final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse(program, "");
         assertThat(response).isEqualTo(code2);
@@ -117,7 +122,7 @@ class ScratchLlmTest {
         when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
 
         final DummyLlmApi llmApi =  new DummyLlmApi(List.of("response1", "response2"));
-        final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(), responseParser);
+        final ScratchLlm llm = new ScratchLlm(llmApi, new DefaultPrompts(translator), responseParser);
 
         final ParsedLlmResponseCode response = llm.singleQueryWithCodeOnlyResponse(program, "");
         assertThat(response.parseFailedScripts()).isEmpty();
@@ -137,7 +142,7 @@ class ScratchLlmTest {
     }
 
     private ScratchLlm buildLlm(final List<String> apiResponses) {
-        return new ScratchLlm(new DummyLlmApi(apiResponses), new DefaultPrompts());
+        return new ScratchLlm(new DummyLlmApi(apiResponses), new DefaultPrompts(translator));
     }
 
     private String buildScript(final String actor, final String scriptId) {

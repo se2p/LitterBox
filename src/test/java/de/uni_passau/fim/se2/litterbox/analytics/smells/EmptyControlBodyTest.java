@@ -24,14 +24,18 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class EmptyControlBodyTest implements JsonTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.GERMAN);
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -42,18 +46,16 @@ public class EmptyControlBodyTest implements JsonTest {
     public void testEmptyBodies() throws IOException, ParsingException {
         Program emptyBodies = getAST("./src/test/fixtures/smells/emptyBodies.json");
         EmptyControlBody parameterName = new EmptyControlBody();
-        IssueTranslator.getInstance().setLanguage("de");
         List<Issue> reports = new ArrayList<>(parameterName.check(emptyBodies));
         Assertions.assertEquals(6, reports.size());
         Hint repeat = Hint.fromKey(parameterName.getName());
-        repeat.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("repeat") + " ( )");
-        Assertions.assertEquals(repeat.getHintText(), reports.getFirst().getHintText());
+        repeat.setParameter(Hint.BLOCK_NAME, translator.getInfo("repeat") + " ( )");
+        Assertions.assertEquals(repeat.getHintText(translator), reports.getFirst().getHintText(translator));
         Hint forever = Hint.fromKey(parameterName.getName());
-        forever.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("forever"));
-        Assertions.assertEquals(forever.getHintText(), reports.get(1).getHintText());
+        forever.setParameter(Hint.BLOCK_NAME, translator.getInfo("forever"));
+        Assertions.assertEquals(forever.getHintText(translator), reports.get(1).getHintText(translator));
         Hint ifThen = Hint.fromKey(parameterName.getName());
-        ifThen.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
-        Assertions.assertEquals("[b]Problem:[/b] [newLine] Du hast einen [sbi]falls < > , dann[/sbi]-Baustein verwendet, der keine Bausteine enthält. Beim Aufruf dieses Bausteins passiert also nichts. Das macht dein Programm unübersichtlich. [newLine] [newLine] [b]Verbesserungsidee:[/b] [newLine] Entferne den Baustein oder füge passende Bausteine in die Definition ein.", reports.get(2).getHintText());
-        IssueTranslator.getInstance().setLanguage("en");
+        ifThen.setParameter(Hint.BLOCK_NAME, translator.getInfo("if") + " < > " + translator.getInfo("then"));
+        Assertions.assertEquals("[b]Problem:[/b] [newLine] Du hast einen [sbi]falls < > , dann[/sbi]-Baustein verwendet, der keine Bausteine enthält. Beim Aufruf dieses Bausteins passiert also nichts. Das macht dein Programm unübersichtlich. [newLine] [newLine] [b]Verbesserungsidee:[/b] [newLine] Entferne den Baustein oder füge passende Bausteine in die Definition ein.", reports.get(2).getHintText(translator));
     }
 }

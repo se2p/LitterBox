@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -29,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class CallWithoutDefinitionTest implements JsonTest {
+public class CallWithoutDefinitionTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -70,7 +71,7 @@ public class CallWithoutDefinitionTest implements JsonTest {
         Hint hint = Hint.fromKey(finder.getName());
         hint.setParameter(Hint.BLOCK_NAME,"block name ()");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText(translator)).isEqualTo(hint.getHintText(translator));
         }
     }
 
@@ -83,7 +84,7 @@ public class CallWithoutDefinitionTest implements JsonTest {
         Hint hint = Hint.fromKey(finder.getName());
         hint.setParameter(Hint.BLOCK_NAME,"block name () <>");
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText(translator)).isEqualTo(hint.getHintText(translator));
         }
     }
 }

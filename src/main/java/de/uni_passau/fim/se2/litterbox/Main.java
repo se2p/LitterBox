@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
 
@@ -29,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -152,6 +154,8 @@ public class Main implements Callable<Integer> {
 
         protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
+        protected IssueTranslator translator;
+
         /**
          * Override to implement custom parameter validation before the analyzer is run.
          *
@@ -163,7 +167,8 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-            IssueTranslator.getInstance().setLanguage(commonOptions.language);
+            final Locale locale = Locale.of(commonOptions.language);
+            translator = IssueTranslatorFactory.getIssueTranslator(locale);
 
             validateParams();
 
@@ -250,6 +255,7 @@ public class Main implements Callable<Integer> {
             final BugAnalyzer analyzer;
             if (priorResultPath == null) {
                 analyzer = new BugAnalyzer(
+                        translator,
                         commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
@@ -258,6 +264,7 @@ public class Main implements Callable<Integer> {
                 );
             } else {
                 analyzer = new BugAnalyzer(
+                        translator,
                         commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
@@ -281,7 +288,7 @@ public class Main implements Callable<Integer> {
     )
     static class DetectorsSubcommand implements Callable<Integer> {
 
-        private final IssueTranslator messages = IssueTranslator.getInstance();
+        private IssueTranslator translator;
 
         @CommandLine.Option(
                 names = {"-l", "--lang"},
@@ -291,7 +298,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         public Integer call() throws Exception {
-            IssueTranslator.getInstance().setLanguage(language);
+            translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
             printDetectorList();
             return 0;
         }
@@ -300,12 +307,12 @@ public class Main implements Callable<Integer> {
             final String detectorFormat = "\t%-20s %-30s%n";
 
             System.out.println("Detectors:");
-            System.out.printf(detectorFormat, FinderGroup.ALL, messages.getInfo(FinderGroup.ALL));
-            System.out.printf(detectorFormat, FinderGroup.BUGS, messages.getInfo(FinderGroup.BUGS));
-            System.out.printf(detectorFormat, FinderGroup.SMELLS, messages.getInfo(FinderGroup.SMELLS));
-            System.out.printf(detectorFormat, FinderGroup.PERFUMES, messages.getInfo(FinderGroup.PERFUMES));
-            System.out.printf(detectorFormat, FinderGroup.QUESTIONS, messages.getInfo(FinderGroup.QUESTIONS));
-            System.out.printf(detectorFormat, FinderGroup.FLAWS, messages.getInfo(FinderGroup.FLAWS));
+            System.out.printf(detectorFormat, FinderGroup.ALL, translator.getInfo(FinderGroup.ALL));
+            System.out.printf(detectorFormat, FinderGroup.BUGS, translator.getInfo(FinderGroup.BUGS));
+            System.out.printf(detectorFormat, FinderGroup.SMELLS, translator.getInfo(FinderGroup.SMELLS));
+            System.out.printf(detectorFormat, FinderGroup.PERFUMES, translator.getInfo(FinderGroup.PERFUMES));
+            System.out.printf(detectorFormat, FinderGroup.QUESTIONS, translator.getInfo(FinderGroup.QUESTIONS));
+            System.out.printf(detectorFormat, FinderGroup.FLAWS, translator.getInfo(FinderGroup.FLAWS));
 
             System.out.println(System.lineSeparator());
             System.out.printf(detectorFormat, "Bugpatterns:", "");
@@ -325,7 +332,7 @@ public class Main implements Callable<Integer> {
         }
 
         private void printDetectorGroup(final Collection<String> detectors) {
-            detectors.forEach(finder -> System.out.printf("\t%-20s %-30s%n", finder, messages.getName(finder)));
+            detectors.forEach(finder -> System.out.printf("\t%-20s %-30s%n", finder, translator.getName(finder)));
         }
     }
 

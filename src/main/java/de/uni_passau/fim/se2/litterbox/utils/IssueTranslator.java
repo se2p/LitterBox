@@ -27,11 +27,10 @@ public final class IssueTranslator {
 
     private static final Logger log = Logger.getLogger(IssueTranslator.class.getName());
 
-    private static IssueTranslator instance;
-    private ResourceBundle hints;
-    private ResourceBundle names;
-    private ResourceBundle general;
-    private Locale locale;
+    private final Locale locale;
+    private final ResourceBundle hints;
+    private final ResourceBundle names;
+    private final ResourceBundle general;
 
     public enum GeneralTerm {
         SIZE("size"),
@@ -66,59 +65,18 @@ public final class IssueTranslator {
     }
 
     /**
-     * Private constructor to avoid instantiation of singleton.
+     * Package-private constructor to avoid instantiation without factory.
      */
-    private IssueTranslator() {
-        locale = Locale.ENGLISH;
-        loadResourceBundles();
+    IssueTranslator(final Locale locale) {
+        this.locale = locale;
+        names = loadBundle("IssueNames", locale);
+        hints = loadBundle("IssueHints", locale);
+        general = loadBundle("GeneralTerms", locale);
     }
 
-    /**
-     * Returns an instance of this Singleton.
-     *
-     * <p>If not instance exists yet a new one will be created
-     *
-     * @return singleton instance of the IssueTranslator
-     */
-    public static IssueTranslator getInstance() {
-        if (instance == null) {
-            instance = new IssueTranslator();
-        }
-        return instance;
-    }
-
-    /**
-     * Sets the locale for the issue translator and reloads the resource bundles.
-     *
-     * @param lang that identifies the locale to set
-     */
-    public void setLanguage(String lang) {
-        final Locale newLocale;
-        if (lang == null) {
-            newLocale = Locale.ENGLISH;
-        } else {
-            newLocale = Locale.forLanguageTag(lang);
-        }
-
-        if (!locale.equals(newLocale)) {
-            locale = newLocale;
-            loadResourceBundles();
-        }
-    }
-
-    public String getLanguage() {
-        return locale.getLanguage();
-    }
-
-    private void loadResourceBundles() {
-        names = loadResourceBundle("IssueNames", locale);
-        hints = loadResourceBundle("IssueHints", locale);
-        general = loadResourceBundle("GeneralTerms", locale);
-    }
-
-    private ResourceBundle loadResourceBundle(final String name, final Locale locale) {
+    private ResourceBundle loadBundle(final String bundleName, final Locale locale) {
         try {
-            final ResourceBundle bundle = ResourceBundle.getBundle(name, locale);
+            final ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
             // getBundle has a built-in fallback functionality that uses the system locale instead and would use the
             // German resource bundle instead if the system uses a de_DE locale.
             // The MissingResourceException below might still happen in case the system locale is one for which we do
@@ -126,14 +84,18 @@ public final class IssueTranslator {
             if (bundle.getLocale().equals(locale)) {
                 return bundle;
             } else {
-                return ResourceBundle.getBundle(name, Locale.ENGLISH);
+                return ResourceBundle.getBundle(bundleName, Locale.ENGLISH);
             }
         } catch (MissingResourceException e) {
             log.warning("Could not load resource bundle for language "
                     + locale.toLanguageTag()
                     + ". Defaulting to English.");
-            return ResourceBundle.getBundle(name, Locale.ENGLISH);
+            return ResourceBundle.getBundle(bundleName, Locale.ENGLISH);
         }
+    }
+
+    public String getLanguage() {
+        return locale.getLanguage();
     }
 
     /**

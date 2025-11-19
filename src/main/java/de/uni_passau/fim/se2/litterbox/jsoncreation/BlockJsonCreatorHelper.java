@@ -21,16 +21,14 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
-import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
+
     public static final String DEFAULT_VALUE = "[10,\"\"]";
 
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
@@ -204,23 +202,6 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString;
     }
 
-    public static String getKeyValue(int numberValue) {
-        final Optional<KeyCode> keyCode = KeyCode.tryFromKeycode(numberValue);
-
-        if (keyCode.isPresent()) {
-            return switch (keyCode.get()) {
-                case UP_ARROW -> IssueTranslator.getInstance().getInfo("up_arrow");
-                case DOWN_ARROW -> IssueTranslator.getInstance().getInfo("down_arrow");
-                case LEFT_ARROW -> IssueTranslator.getInstance().getInfo("left_arrow");
-                case RIGHT_ARROW -> IssueTranslator.getInstance().getInfo("right_arrow");
-                case SPACE -> IssueTranslator.getInstance().getInfo("space");
-                case ANY_KEY -> IssueTranslator.getInstance().getInfo("any");
-            };
-        } else {
-            return String.valueOf((char) numberValue);
-        }
-    }
-
     public static String createReferenceInput(String inputName, int shadowIndicator, String reference,
                                               boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
@@ -258,15 +239,14 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createTypeInput(int shadowIndicator, int typeNumber,
-                                         String value) {
+    public static String createTypeInput(int shadowIndicator, int typeNumber, String value) {
         return "["
-            + shadowIndicator
-            + ",["
-            + typeNumber
-            + ",\""
-            + value
-            + "\"]]";
+                + shadowIndicator
+                + ",["
+                + typeNumber
+                + ",\""
+                + value
+                + "\"]]";
     }
 
     public static String createReferenceTypeInput(String inputName, int shadowIndicator, int typeNumber,

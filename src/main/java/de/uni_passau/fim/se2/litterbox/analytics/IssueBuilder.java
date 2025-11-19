@@ -95,6 +95,11 @@ public class IssueBuilder {
         return this;
     }
 
+    public IssueBuilder withHintParameter(String key, HintPlaceholder value) {
+        this.hint.setParameter(key, value);
+        return this;
+    }
+
     public IssueBuilder withRefactoring(ScriptEntity refactoring) {
         this.refactoring = refactoring;
         return this;

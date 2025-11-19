@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class PositionEqualsCheckTest implements JsonTest {
+public class PositionEqualsCheckTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -78,7 +79,7 @@ public class PositionEqualsCheckTest implements JsonTest {
         Assertions.assertEquals(1, reports.size());
         Hint hint = Hint.fromKey(PositionEqualsCheckHintFactory.DISTANCE_ZERO_SPRITES);
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHintText()).isEqualTo(hint.getHintText());
+            Truth.assertThat(issue.getHintText(translator)).isEqualTo(hint.getHintText(translator));
         }
     }
 

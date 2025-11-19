@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -32,7 +33,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
+public class ImmediateDeleteCloneAfterBroadcastTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -51,7 +52,7 @@ public class ImmediateDeleteCloneAfterBroadcastTest implements JsonTest {
         Hint expectedHint = Hint.fromKey(issueFinder.getName());
         expectedHint.setParameter(Hint.HINT_SPRITE, "Sprite1");
         expectedHint.setParameter(Hint.HINT_MESSAGE, "Nachricht1");
-        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText(translator)).isEqualTo(expectedHint.getHintText(translator));
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

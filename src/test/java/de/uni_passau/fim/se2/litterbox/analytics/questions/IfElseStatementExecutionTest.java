@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class IfElseStatementExecutionTest implements JsonTest {
+class IfElseStatementExecutionTest implements FinderTest, JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatFinderReports(0, new IfElseStatementExecution(), "./src/test/fixtures/emptyProject.json");
@@ -76,7 +77,7 @@ class IfElseStatementExecutionTest implements JsonTest {
         Set<Issue> issues = runFinder(prog, new IfElseStatementExecution(), false);
 
         for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText();
+            String hint = issue.getHint().getHintText(translator);
             if (hint.contains("TRUE"))
                 assertThat(hint).containsMatch("\\[solutions]\\[scratchblocks]\nset \\[new variable v] to \\(0\\)");
             else

@@ -103,7 +103,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
 
     public void generateMultiBlockIssue(ASTNode node, Defineable defineable) {
         Hint hint = Hint.fromKey(HINT_PARAMETERISED);
-        hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(defineable));
+        hint.setParameter(Hint.HINT_VARIABLE, new HintPlaceholder.Defineable(defineable));
         generateMultiBlockIssue(node, hint);
     }
 

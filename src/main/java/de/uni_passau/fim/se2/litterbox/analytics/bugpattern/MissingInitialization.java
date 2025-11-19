@@ -111,11 +111,15 @@ public class MissingInitialization extends AbstractIssueFinder {
                     } else {
                         hint = Hint.fromKey(getName());
                     }
-                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                    hint.setParameter(
+                            Hint.HINT_VARIABLE, new HintPlaceholder.Defineable(use.getDefinable())
+                    );
                     issues.add(new UseIssue(this, program, script, hint, use));
                 } else {
                     hint = Hint.fromKey(getName());
-                    hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
+                    hint.setParameter(
+                            Hint.HINT_VARIABLE, new HintPlaceholder.Defineable(use.getDefinable())
+                    );
                     issues.add(new UseIssue(this, program,
                             (ProcedureDefinition) containingScript, hint, use));
                 }

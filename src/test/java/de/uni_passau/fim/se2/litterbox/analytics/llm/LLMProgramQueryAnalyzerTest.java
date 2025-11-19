@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -31,7 +32,7 @@ import java.io.IOException;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramQueryAnalyzerTest implements JsonTest {
+class LLMProgramQueryAnalyzerTest implements FinderTest, JsonTest {
 
     @Test
     void testAnalyze() throws ParsingException, IOException {
@@ -40,7 +41,7 @@ class LLMProgramQueryAnalyzerTest implements JsonTest {
 
         LLMProgramQueryAnalyzer analyzer = new LLMProgramQueryAnalyzer(
                 llmApi,
-                LlmPromptProvider.get(),
+                LlmPromptProvider.get(translator),
                 new LlmQuery.CustomQuery("custom user question"),
                 new QueryTarget.ProgramTarget(),
                 false

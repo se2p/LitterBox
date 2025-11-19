@@ -28,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
@@ -41,6 +44,9 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelpe
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
 public class ScriptJSONCreator {
+
+    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
     public static String createScriptJSONString(Script script, SymbolTable symbol) {
         StringBuilder jsonString = new StringBuilder();
         Event event = script.getEvent();
@@ -108,7 +114,9 @@ public class ScriptJSONCreator {
                 blockId = meta.getBlockId();
 
                 Preconditions.checkArgument(keyPressed.getKey().getKey() instanceof NumberLiteral);
-                String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                String key = KeyValueTranslator.getKeyValue(
+                        translator, (int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue()
+                );
 
                 String fields = createFields(KEY_OPTION, key, null);
                 String blockJson = createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields,

@@ -19,13 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.MessageNeverSentHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class MessageNeverSentTest implements JsonTest {
+class MessageNeverSentTest implements FinderTest, JsonTest {
 
     @Test
     public void testMessageNeverSent() throws IOException, ParsingException {
@@ -58,8 +58,8 @@ class MessageNeverSentTest implements JsonTest {
             Hint hint = Hint.fromKey(MessageNeverSentHintFactory.MESSAGE_IN_SAY_OR_THINK);
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_MESSAGE, "test");
-            hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
-            Assertions.assertEquals(hint.getHintText(), issue.getHintText());
+            hint.setParameter(Hint.HINT_SAY_THINK, translator.getInfo("say"));
+            Assertions.assertEquals(hint.getHintText(translator), issue.getHintText(translator));
         }
         assertThatFinderReports(1, new MessageNeverSent(), "src/test/fixtures/bugpattern/messageRec.json");
     }
@@ -75,7 +75,7 @@ class MessageNeverSentTest implements JsonTest {
             hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
             hint.setParameter(Hint.HINT_SPRITE, "Bat");
             hint.setParameter(Hint.HINT_MESSAGE, "Bat berührt");
-            Assertions.assertEquals(hint.getHintText(), issue.getHintText());
+            Assertions.assertEquals(hint.getHintText(translator), issue.getHintText(translator));
         }
     }
 

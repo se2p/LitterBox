@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
@@ -51,7 +50,8 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_initialization";
     public static final String HAS_DELETE_CLONE = "missing_clone_initialization_delete_clone";
     public static final String HAS_DELETE_CLONE_MESSAGE = "missing_clone_initialization_delete_clone_message";
-    public static final String HAS_DELETE_CLONE_MESSAGE_MULTIPLE = "missing_clone_initialization_delete_clone_message_multiple";
+    public static final String HAS_DELETE_CLONE_MESSAGE_MULTIPLE
+            = "missing_clone_initialization_delete_clone_message_multiple";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
@@ -142,7 +142,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                 actorMessageWithEvent.get(key).add(currentScript.getEvent().getUniqueName());
             } else {
                 Set<String> events = new LinkedHashSet<>();
-                events.add(IssueTranslator.getInstance().getInfo(currentScript.getEvent().getUniqueName().toLowerCase()));
+                events.add("{{" + currentScript.getEvent().getUniqueName().toLowerCase() + "}}");
                 actorMessageWithEvent.put(key, events);
             }
         }
@@ -176,8 +176,8 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         return hint;
     }
 
-    private String generateMessageString(Set<String> messages) {
-        StringBuilder builder = new StringBuilder();
+    private HintPlaceholder.ValueWithTranslatableElements generateMessageString(Set<String> messages) {
+        final StringBuilder builder = new StringBuilder();
         int i = 1;
         for (String string : messages) {
             builder.append(string);
@@ -186,7 +186,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
             }
             i++;
         }
-        return builder.toString();
+        return new HintPlaceholder.ValueWithTranslatableElements(builder.toString());
     }
 
     @Override

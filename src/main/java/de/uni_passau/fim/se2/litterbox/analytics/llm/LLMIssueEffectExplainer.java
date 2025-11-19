@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -38,23 +39,28 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
 
     private static final Logger log = Logger.getLogger(LLMIssueEffectExplainer.class.getName());
 
-    protected ScratchLlm scratchLLM;
+    protected final IssueTranslator translator;
 
-    protected LlmApi llmApi;
+    protected final ScratchLlm scratchLLM;
 
-    protected PromptBuilder promptBuilder;
+    protected final LlmApi llmApi;
 
-    protected QueryTarget target;
+    protected final PromptBuilder promptBuilder;
 
-    public LLMIssueEffectExplainer(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
+    protected final QueryTarget target;
+
+    public LLMIssueEffectExplainer(
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+    ) {
+        this.translator = translator;
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLLM = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
-    public LLMIssueEffectExplainer(QueryTarget target) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target);
+    public LLMIssueEffectExplainer(IssueTranslator translator, QueryTarget target) {
+        this(translator, LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 
     @Override
@@ -75,7 +81,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
             // TODO: Appending the explanation to the existing hint would be undone
             //       if the LLMIssueHintProcessor is applied afterwards.
             Hint improvedHint = Hint.fromText(
-                    issue.getHintText() + "[newLine][newLine][b]LLM Feedback:[/b]" + response
+                    issue.getHintText(translator) + "[newLine][newLine][b]LLM Feedback:[/b]" + response
             );
 
             IssueBuilder issueBuilder = new IssueBuilder();

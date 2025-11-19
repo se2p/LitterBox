@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.hint;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,15 +88,15 @@ public abstract class ComparingLiteralsHintFactory {
             }
             if (top) {
                 if (value) {
-                    hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ALWAYS));
+                    hint.setParameter(ALWAYS_NEVER, new HintPlaceholder.Translatable(ALWAYS));
                 } else {
-                    hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(NEVER));
+                    hint.setParameter(ALWAYS_NEVER, new HintPlaceholder.Translatable(NEVER));
                 }
             } else {
                 if (!value) {
-                    hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ALWAYS));
+                    hint.setParameter(ALWAYS_NEVER, new HintPlaceholder.Translatable(ALWAYS));
                 } else {
-                    hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(NEVER));
+                    hint.setParameter(ALWAYS_NEVER, new HintPlaceholder.Translatable(NEVER));
                 }
             }
             setBlock(parent, hint, top);
@@ -118,9 +118,9 @@ public abstract class ComparingLiteralsHintFactory {
             } else {
                 hint = Hint.fromKey(DEFAULT_WITHOUT_INFORMATION);
             }
-            hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
+            hint.setParameter(HINT_TRUE_FALSE, new HintPlaceholder.Translatable(String.valueOf(value)));
             if (value) {
-                hint.setParameter(ADD_INFO_DICT, IssueTranslator.getInstance().getInfo(ADD_INFO_DICT_RESOURCE));
+                hint.setParameter(ADD_INFO_DICT, new HintPlaceholder.Translatable(ADD_INFO_DICT_RESOURCE));
             } else {
                 hint.setParameter(ADD_INFO_DICT, "");
             }
@@ -137,9 +137,9 @@ public abstract class ComparingLiteralsHintFactory {
             currentParent = parent;
         }
         if (currentParent instanceof IfThenStmt || currentParent instanceof IfElseStmt) {
-            hint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
+            hint.setParameter(Hint.THEN_ELSE, new HintPlaceholder.Translatable("then"));
         } else if (currentParent instanceof UntilStmt) {
-            hint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
+            hint.setParameter(Hint.THEN_ELSE, new HintPlaceholder.Translatable("until"));
         }
     }
 
@@ -147,12 +147,12 @@ public abstract class ComparingLiteralsHintFactory {
         Hint hint;
         if (variable != null && variable2 != null) {
             hint = Hint.fromKey(waitVariable2);
-            hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
+            hint.setParameter(HINT_TRUE_FALSE, new HintPlaceholder.Translatable(String.valueOf(value)));
             hint.setParameter(Hint.HINT_VARIABLE1, variable);
             hint.setParameter(Hint.HINT_VARIABLE2, variable2);
         } else if (variable != null) {
             hint = Hint.fromKey(waitVariable);
-            hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
+            hint.setParameter(HINT_TRUE_FALSE, new HintPlaceholder.Translatable(String.valueOf(value)));
             hint.setParameter(Hint.HINT_VARIABLE, variable);
         } else {
             if (value) {
@@ -162,7 +162,7 @@ public abstract class ComparingLiteralsHintFactory {
             }
         }
         if (value) {
-            hint.setParameter(ADD_INFO_DICT, IssueTranslator.getInstance().getInfo(ADD_INFO_DICT_RESOURCE));
+            hint.setParameter(ADD_INFO_DICT, new HintPlaceholder.Translatable(ADD_INFO_DICT_RESOURCE));
         } else {
             hint.setParameter(ADD_INFO_DICT, "");
         }

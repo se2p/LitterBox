@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
@@ -101,14 +102,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
+import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*
  * Documentation of syntax:
@@ -130,6 +130,8 @@ import java.util.Set;
  */
 public class ScratchBlocksVisitor extends PrintVisitor implements
         PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
+
+    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -374,7 +376,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         Key key = keyPressed.getKey();
         assert (key.getKey() instanceof NumberLiteral);
         NumberLiteral num = (NumberLiteral) key.getKey();
-        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
+        emitNoSpace(KeyValueTranslator.getKeyValue(translator, (int) num.getValue()));
         storeNotesForIssue(key);
         emitNoSpace(" v] key pressed");
         storeNotesForIssue(keyPressed);
@@ -1881,7 +1883,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void visit(Key node) {
         if (node.getKey() instanceof NumberLiteral num) {
             emitNoSpace("(");
-            emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int) num.getValue()));
+            emitNoSpace(KeyValueTranslator.getKeyValue(translator, (int) num.getValue()));
             emitNoSpace(" v)");
         } else {
             node.getKey().accept(this);

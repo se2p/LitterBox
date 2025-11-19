@@ -21,15 +21,20 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import static com.google.common.truth.Truth.assertThat;
 
 class DefaultPromptsTest implements JsonTest {
 
-    private final DefaultPrompts prompts = new DefaultPrompts();
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
+    private final DefaultPrompts prompts = new DefaultPrompts(translator);
 
     @Test
     void askQuestionAllBlocks() throws IOException, ParsingException {

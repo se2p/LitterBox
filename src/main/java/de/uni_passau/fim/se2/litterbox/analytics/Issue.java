@@ -158,16 +158,16 @@ public class Issue {
         return finder.getName();
     }
 
-    public String getTranslatedFinderName() {
-        return IssueTranslator.getInstance().getName(this.finder.getName());
+    public String getTranslatedFinderName(final IssueTranslator translator) {
+        return translator.getName(this.finder.getName());
     }
 
     public Hint getHint() {
         return hint;
     }
 
-    public String getHintText() {
-        return hint.getHintText();
+    public String getHintText(final IssueTranslator translator) {
+        return hint.getHintText(translator);
     }
 
     public ASTNode getCodeLocation() {

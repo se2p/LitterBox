@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -43,23 +44,28 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
     private static final String DESCRIPTION_MARKER = "Finding Description:";
     private static final String LOCATION_MARKER = "Finding Location:";
 
-    protected ScratchLlm scratchLlm;
+    protected final IssueTranslator translator;
 
-    protected LlmApi llmApi;
+    protected final ScratchLlm scratchLlm;
 
-    protected PromptBuilder promptBuilder;
+    protected final LlmApi llmApi;
 
-    protected QueryTarget target;
+    protected final PromptBuilder promptBuilder;
 
-    protected LLMIssueExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
+    protected final QueryTarget target;
+
+    protected LLMIssueExtender(
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+    ) {
+        this.translator = translator;
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
-    protected LLMIssueExtender(QueryTarget target) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target);
+    protected LLMIssueExtender(IssueTranslator translator, QueryTarget target) {
+        this(translator, LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 
     protected Set<Issue> apply(Program program, Set<Issue> issues, LlmQuery llmQuery, LLMIssueFinder issueFinder) {

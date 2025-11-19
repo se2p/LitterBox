@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,14 +72,14 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
                     hint = Hint.fromKey(getName());
                 }
                 if (questionableNode instanceof Say say) {
-                    hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
+                    hint.setParameter(Hint.HINT_SAY_THINK, new HintPlaceholder.Translatable("say"));
                     // TODO: This does not clone the message and metadata, should it?
                     SayForSecs sayForSecs = new SayForSecs(say.getString(), new NumberLiteral(2), say.getMetadata());
                     StatementReplacementVisitor visitor = new StatementReplacementVisitor(say, sayForSecs);
                     ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
                     issueBuilder = issueBuilder.withHint(hint).withRefactoring(refactoredScript);
                 } else if (questionableNode instanceof Think think) {
-                    hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
+                    hint.setParameter(Hint.HINT_SAY_THINK, new HintPlaceholder.Translatable("think"));
                     // TODO: This does not clone the message and metadata, should it?
                     SayForSecs say = new SayForSecs(think.getThought(), new NumberLiteral(2), think.getMetadata());
                     StatementReplacementVisitor visitor = new StatementReplacementVisitor(think, say);

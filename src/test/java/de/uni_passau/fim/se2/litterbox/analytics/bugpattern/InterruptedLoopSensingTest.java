@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class InterruptedLoopSensingTest implements JsonTest {
+public class InterruptedLoopSensingTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -47,13 +47,13 @@ public class InterruptedLoopSensingTest implements JsonTest {
         Assertions.assertEquals(2, reports.size());
         List<Issue> issues = new ArrayList<>(reports);
         Hint hint1 = Hint.fromKey(parameterName.getName());
-        hint1.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then"));
-        hint1.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
+        hint1.setParameter(Hint.THEN_ELSE, translator.getInfo("if") + " < > " + translator.getInfo("then"));
+        hint1.setParameter(Hint.BLOCK_NAME, translator.getInfo("glide_secs_to_xy"));
         Hint hint2 = Hint.fromKey(parameterName.getName());
-        hint2.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
-        hint2.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-        Assertions.assertEquals(hint1.getHintText(), issues.get(0).getHintText());
-        Assertions.assertEquals(hint2.getHintText(), issues.get(1).getHintText());
+        hint2.setParameter(Hint.THEN_ELSE, translator.getInfo("until"));
+        hint2.setParameter(Hint.BLOCK_NAME, translator.getInfo("glide_secs_to"));
+        Assertions.assertEquals(hint1.getHintText(translator), issues.get(0).getHintText(translator));
+        Assertions.assertEquals(hint2.getHintText(translator), issues.get(1).getHintText(translator));
     }
 
     @Test

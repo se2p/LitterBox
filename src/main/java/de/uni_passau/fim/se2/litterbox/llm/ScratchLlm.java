@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,8 +58,8 @@ public class ScratchLlm {
         this(llmApi, promptBuilder, new LlmResponseParser());
     }
 
-    public ScratchLlm() {
-        this(LlmApiProvider.get(), LlmPromptProvider.get());
+    public ScratchLlm(final IssueTranslator translator) {
+        this(LlmApiProvider.get(), LlmPromptProvider.get(translator));
     }
 
     /**

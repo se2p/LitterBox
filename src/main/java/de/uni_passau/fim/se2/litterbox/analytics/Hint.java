@@ -18,12 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import com.google.common.base.CharMatcher;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Hint {
 
-    public static final char ESCAPE_CHARACTER = '%';
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
+
+    public static final String ESCAPE_CHARACTER = "%";
 
     public static final String HINT_SPRITE = "SPRITE";
     public static final String HINT_SPRITES = "SPRITES";
@@ -49,34 +58,133 @@ public class Hint {
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
-    protected String hintText;
+    protected final String hintKey;
 
-    private Hint(String hintText) {
+    /**
+     * Pre-translated hint text. Using the {@link #hintKey} is preferred.
+     */
+    protected final String hintText;
+
+    protected final Map<String, HintPlaceholder> parameters = new HashMap<>();
+
+    private Hint(String hintKey, String hintText) {
+        this.hintKey = hintKey;
         this.hintText = hintText;
     }
 
-    public void setParameter(String key, String value) {
-        hintText = hintText.replace("" + ESCAPE_CHARACTER + key, value);
+    public static Hint fromKey(final String hintKey) {
+        return new Hint(hintKey, null);
     }
 
-    public int getNumParameters() {
-        return CharMatcher.is(ESCAPE_CHARACTER).countIn(hintText);
+    public static Hint fromText(final String hintText) {
+        return new Hint(null, hintText);
     }
 
-    public boolean hasParameters() {
-        return hintText.indexOf(ESCAPE_CHARACTER) >= 0;
+    public void setParameter(final String key, final String value) {
+        parameters.put(key, new HintPlaceholder.Value(value));
     }
 
-    public String getHintText() {
+    public void setParameter(final String key, final HintPlaceholder value) {
+        parameters.put(key, value);
+    }
+
+    public String getHintText(final IssueTranslator translator) {
+        if (hintText != null) {
+            return hintText;
+        }
+
+        String hintText = translator.getHint(hintKey);
+
+        for (final var entry : parameters.entrySet()) {
+            final String key = entry.getKey();
+            final HintPlaceholder placeholder = entry.getValue();
+            final String value = translatePlaceholder(translator, placeholder);
+
+            hintText = hintText.replace(ESCAPE_CHARACTER + key, value);
+        }
+
         return hintText;
     }
 
-    public static Hint fromKey(String hintKey) {
-        String hintText = IssueTranslator.getInstance().getHint(hintKey);
-        return new Hint(hintText);
+    private String translatePlaceholder(final IssueTranslator translator, final HintPlaceholder placeholder) {
+        return switch (placeholder) {
+            case HintPlaceholder.Value v -> v.value();
+            case HintPlaceholder.Translatable key -> translator.getInfo(key.translationKey());
+            case HintPlaceholder.Defineable d -> getDefineableName(translator, d.defineable());
+            case HintPlaceholder.ValueWithTranslatableElements v -> {
+                final Matcher matcher = PLACEHOLDER_PATTERN.matcher(v.value());
+                yield matcher.replaceAll(matchResult -> {
+                    final String translationKey = matchResult.group().replace("{{", "").replace("}}", "");
+                    return translator.getInfo(translationKey);
+                });
+            }
+        };
     }
 
-    public static Hint fromText(String hintText) {
-        return new Hint(hintText);
+    private String getDefineableName(final IssueTranslator translator, final Defineable def) {
+        final StringBuilder builder = new StringBuilder();
+
+        if (def instanceof Variable variable) {
+            builder.append("[var]");
+            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.VARIABLE));
+            builder.append(" \"");
+            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
+                builder.append(localIdentifier.getName());
+            } else {
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
+            }
+            builder.append("\"");
+            builder.append("[/var]");
+        } else if (def instanceof ListVariable variable) {
+            builder.append("[list]");
+            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.LIST));
+            builder.append(" \"");
+            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
+                builder.append(localIdentifier.getName());
+            } else {
+                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
+            }
+            builder.append("\"");
+            builder.append("[/list]");
+        } else if (def instanceof Attribute attr) {
+            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+            builder.append(" \"");
+            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
+            builder.append(translator.getInfo(attributeType));
+            builder.append("\"");
+        } else if (def instanceof RobotAttribute attr) {
+            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
+            builder.append(" \"");
+            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
+            builder.append(translator.getInfo(attributeType));
+            builder.append("\"");
+        }
+
+        return builder.toString();
+    }
+
+    private IssueTranslator.GeneralTerm getTermFromAttributeType(final Attribute.AttributeType attributeType) {
+        return switch (attributeType) {
+            case POSITION -> IssueTranslator.GeneralTerm.POSITION;
+            case ROTATION -> IssueTranslator.GeneralTerm.ROTATION;
+            case SIZE -> IssueTranslator.GeneralTerm.SIZE;
+            case VISIBILITY -> IssueTranslator.GeneralTerm.VISIBILITY;
+            case GRAPHIC_EFFECT -> IssueTranslator.GeneralTerm.GRAPHIC_EFFECT;
+            case SOUND_EFFECT -> IssueTranslator.GeneralTerm.SOUND_EFFECT;
+            case VOLUME -> IssueTranslator.GeneralTerm.VOLUME;
+            case LAYER -> IssueTranslator.GeneralTerm.LAYER;
+            case COSTUME -> IssueTranslator.GeneralTerm.COSTUME;
+            case BACKDROP -> IssueTranslator.GeneralTerm.BACKDROP;
+            case TIMER -> IssueTranslator.GeneralTerm.TIMER;
+        };
+    }
+
+    private IssueTranslator.GeneralTerm getTermFromAttributeType(final RobotAttribute.AttributeType attributeType) {
+        return switch (attributeType) {
+            case LED -> IssueTranslator.GeneralTerm.LED;
+            case ROCKY_LIGHT -> IssueTranslator.GeneralTerm.ROCKY_LIGHT;
+            case MOTOR_POWER -> IssueTranslator.GeneralTerm.MOTOR_POWER;
+            case MATRIX -> IssueTranslator.GeneralTerm.MATRIX;
+        };
     }
 }

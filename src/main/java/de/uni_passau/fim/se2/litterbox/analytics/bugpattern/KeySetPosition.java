@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -36,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 
@@ -91,9 +87,9 @@ public class KeySetPosition extends AbstractIssueFinder {
                 Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "y");
                 if (key == KeyCode.DOWN_ARROW.getKeycode()) {
-                    hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("down_arrow"));
+                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("down_arrow"));
                 } else {
-                    hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("up_arrow"));
+                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("up_arrow"));
                 }
                 addIssue(stmt, stmt.getMetadata(), hint);
                 return true;
@@ -103,9 +99,9 @@ public class KeySetPosition extends AbstractIssueFinder {
                 Hint hint = Hint.fromKey(NAME);
                 hint.setParameter("XY", "x");
                 if (key == KeyCode.LEFT_ARROW.getKeycode()) {
-                    hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("left_arrow"));
+                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("left_arrow"));
                 } else {
-                    hint.setParameter(Hint.HINT_KEY, IssueTranslator.getInstance().getInfo("right_arrow"));
+                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("right_arrow"));
                 }
                 addIssue(stmt, stmt.getMetadata(), hint);
                 return true;

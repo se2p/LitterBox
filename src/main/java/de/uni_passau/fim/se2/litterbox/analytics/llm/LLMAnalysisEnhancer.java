@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -47,6 +48,7 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
     private final List<LLMIssueProcessor> issueProcessors = new LinkedList<>();
 
     public LLMAnalysisEnhancer(
+            IssueTranslator translator,
             LlmApi llmApi,
             PromptBuilder promptBuilder,
             QueryTarget target,
@@ -54,16 +56,18 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
             String detectors,
             boolean ignoreLooseBlocks
     ) {
-        super(output, detectors, ignoreLooseBlocks, false, false);
+        super(translator, output, detectors, ignoreLooseBlocks, false, false);
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.target = target;
     }
 
-    public LLMAnalysisEnhancer(QueryTarget target, Path output, String detectors, boolean ignoreLooseBlocks) {
-        super(output, detectors, ignoreLooseBlocks, false, false);
+    public LLMAnalysisEnhancer(
+            IssueTranslator translator, QueryTarget target, Path output, String detectors, boolean ignoreLooseBlocks
+    ) {
+        super(translator, output, detectors, ignoreLooseBlocks, false, false);
         this.llmApi = LlmApiProvider.get();
-        this.promptBuilder = LlmPromptProvider.get();
+        this.promptBuilder = LlmPromptProvider.get(translator);
         this.target = target;
     }
 

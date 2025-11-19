@@ -20,11 +20,18 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collection;
 import java.util.List;
 
 public abstract class PromptBuilder {
+
+    protected final IssueTranslator translator;
+
+    protected PromptBuilder(final IssueTranslator translator) {
+        this.translator = translator;
+    }
 
     /**
      * The system prompt used as a starting point for each conversation with an LLM.
@@ -76,6 +83,6 @@ public abstract class PromptBuilder {
     }
 
     protected List<String> issueHints(final Collection<Issue> issues) {
-        return issues.stream().map(Issue::getHintText).toList();
+        return issues.stream().map(issue -> issue.getHintText(translator)).toList();
     }
 }

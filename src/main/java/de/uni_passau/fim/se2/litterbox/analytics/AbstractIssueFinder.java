@@ -21,13 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
@@ -78,7 +76,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected IssueBuilder prepareIssueBuilder() {
-        return new IssueBuilder().withFinder(this).withProgram(program).withActor(currentActor).withScriptOrProcedure(getCurrentScriptEntity());
+        return new IssueBuilder()
+                .withFinder(this)
+                .withProgram(program)
+                .withActor(currentActor)
+                .withScriptOrProcedure(getCurrentScriptEntity());
     }
 
     protected IssueBuilder prepareIssueBuilder(ASTNode node) {
@@ -149,74 +151,6 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         ignoreLooseBlocks = value;
-    }
-
-    // TODO: Clean this up
-    public String getDefineableName(Defineable def) {
-        StringBuilder builder = new StringBuilder();
-
-        if (def instanceof Variable variable) {
-            builder.append("[var]");
-            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.VARIABLE));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/var]");
-        } else if (def instanceof ListVariable variable) {
-            builder.append("[list]");
-            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.LIST));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/list]");
-        } else if (def instanceof Attribute attr) {
-            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(IssueTranslator.getInstance().getInfo(attributeType));
-            builder.append("\"");
-        } else if (def instanceof RobotAttribute attr) {
-            builder.append(IssueTranslator.getInstance().getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(IssueTranslator.getInstance().getInfo(attributeType));
-            builder.append("\"");
-        }
-
-        return builder.toString();
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final Attribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case POSITION -> IssueTranslator.GeneralTerm.POSITION;
-            case ROTATION -> IssueTranslator.GeneralTerm.ROTATION;
-            case SIZE -> IssueTranslator.GeneralTerm.SIZE;
-            case VISIBILITY -> IssueTranslator.GeneralTerm.VISIBILITY;
-            case GRAPHIC_EFFECT -> IssueTranslator.GeneralTerm.GRAPHIC_EFFECT;
-            case SOUND_EFFECT -> IssueTranslator.GeneralTerm.SOUND_EFFECT;
-            case VOLUME -> IssueTranslator.GeneralTerm.VOLUME;
-            case LAYER -> IssueTranslator.GeneralTerm.LAYER;
-            case COSTUME -> IssueTranslator.GeneralTerm.COSTUME;
-            case BACKDROP -> IssueTranslator.GeneralTerm.BACKDROP;
-            case TIMER -> IssueTranslator.GeneralTerm.TIMER;
-        };
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final RobotAttribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case LED -> IssueTranslator.GeneralTerm.LED;
-            case ROCKY_LIGHT -> IssueTranslator.GeneralTerm.ROCKY_LIGHT;
-            case MOTOR_POWER -> IssueTranslator.GeneralTerm.MOTOR_POWER;
-            case MATRIX -> IssueTranslator.GeneralTerm.MATRIX;
-        };
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class SetVariableTest implements JsonTest {
+class SetVariableTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -43,7 +44,7 @@ class SetVariableTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-s]0\\[/a-s]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-s]0\\[/a-s]");
         }
     }
 
@@ -54,7 +55,7 @@ class SetVariableTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-s]Hello\\[/a-s]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-s]Hello\\[/a-s]");
         }
     }
 

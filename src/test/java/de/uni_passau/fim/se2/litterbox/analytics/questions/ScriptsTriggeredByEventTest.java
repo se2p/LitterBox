@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class ScriptsTriggeredByEventTest implements JsonTest {
+class ScriptsTriggeredByEventTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -48,7 +49,7 @@ class ScriptsTriggeredByEventTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(1);
 
         for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText()).containsMatch("\\[a-n]2\\[/a-n]");
+            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]2\\[/a-n]");
         }
     }
 

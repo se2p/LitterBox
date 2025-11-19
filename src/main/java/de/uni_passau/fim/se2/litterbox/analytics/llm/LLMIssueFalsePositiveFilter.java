@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -52,8 +53,8 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
         this.target = target;
     }
 
-    public LLMIssueFalsePositiveFilter(QueryTarget target) {
-        this(LlmApiProvider.get(), LlmPromptProvider.get(), target);
+    public LLMIssueFalsePositiveFilter(IssueTranslator translator, QueryTarget target) {
+        this(LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 
     @Override

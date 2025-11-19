@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+
 public final class LlmPromptProvider {
 
     private static final String LLM_PROMPT_TYPE_PROPERTY = "litterbox.llm.prompts";
@@ -26,11 +28,11 @@ public final class LlmPromptProvider {
         // intentionally empty
     }
 
-    public static PromptBuilder get() {
+    public static PromptBuilder get(final IssueTranslator translator) {
         final String choice = System.getProperty(LLM_PROMPT_TYPE_PROPERTY, "default");
         return switch (choice) {
-            case "default" -> new DefaultPrompts();
-            default -> new DefaultPrompts();
+            case "default" -> new DefaultPrompts(translator);
+            default -> new DefaultPrompts(translator);
         };
     }
 }

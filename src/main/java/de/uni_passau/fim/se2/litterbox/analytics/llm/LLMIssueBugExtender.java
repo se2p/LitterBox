@@ -25,18 +25,21 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 import java.util.Set;
 
 public class LLMIssueBugExtender extends LLMIssueExtender {
 
-    public LLMIssueBugExtender(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
-        super(llmApi, promptBuilder, target);
+    public LLMIssueBugExtender(
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+    ) {
+        super(translator, llmApi, promptBuilder, target);
     }
 
-    public LLMIssueBugExtender(QueryTarget target) {
-        super(target);
+    public LLMIssueBugExtender(IssueTranslator translator, QueryTarget target) {
+        super(translator, target);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class LLMIssueBugExtender extends LLMIssueExtender {
 
         for (Issue issue : bugsOrSmells) {
             issueList.append("Issue #").append(numIssue++).append("\n");
-            issueList.append(issue.getHintText());
+            issueList.append(issue.getHintText(translator));
             issueList.append("\n");
         }
 

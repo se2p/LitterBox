@@ -1,0 +1,141 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Hintergrund1",
+                    "dataFormat": "svg",
+                    "assetId": "87ec29ad216c0074c731d581c7f40c39",
+                    "md5ext": "87ec29ad216c0074c731d581c7f40c39.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "I{4V9=*G?tH1}|^H2jpz": {
+                    "opcode": "event_whenkeypressed",
+                    "next": ")1{iQZe}UaYiAck-d;n]",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "right arrow",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 404,
+                    "y": 288
+                },
+                ")1{iQZe}UaYiAck-d;n]": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "I{4V9=*G?tH1}|^H2jpz",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "W.l9#Q_THX$!znC[+7Sf": {
+                    "opcode": "event_whenkeypressed",
+                    "next": "l+Obk_l|2Dp_)fr5NRY^",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "space",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 791,
+                    "y": 293
+                },
+                "l+Obk_l|2Dp_)fr5NRY^": {
+                    "opcode": "looks_say",
+                    "next": null,
+                    "parent": "W.l9#Q_THX$!znC[+7Sf",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "6f0c9b9f05092d28f36191d7e68d84a3",
+                    "md5ext": "6f0c9b9f05092d28f36191d7e68d84a3.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "12.0.2-hotfix",
+        "agent": "key codes (right arrow, space) should not be translated when emitting an annotated project in another language"
+    }
+}

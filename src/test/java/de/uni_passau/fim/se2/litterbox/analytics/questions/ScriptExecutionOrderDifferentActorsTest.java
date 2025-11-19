@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -29,7 +30,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class ScriptExecutionOrderDifferentActorsTest implements JsonTest {
+class ScriptExecutionOrderDifferentActorsTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
@@ -58,11 +59,11 @@ class ScriptExecutionOrderDifferentActorsTest implements JsonTest {
         assertThat(issues.size()).isEqualTo(2);
 
         for (Issue issue : issues) {
-            if (issue.getHint().getHintText().contains("Stage")) {
-                assertThat(issue.getHint().getHintText()).contains("[solutions]The script belonging to Sprite1[/solutions]");
+            if (issue.getHint().getHintText(translator).contains("Stage")) {
+                assertThat(issue.getHint().getHintText(translator)).contains("[solutions]The script belonging to Sprite1[/solutions]");
             }
             else {
-                assertThat(issue.getHint().getHintText()).contains("Suppose");
+                assertThat(issue.getHint().getHintText(translator)).contains("Suppose");
             }
         }
     }

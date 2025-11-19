@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -36,7 +37,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class UnnecessaryIfAfterUntilTest implements JsonTest {
+public class UnnecessaryIfAfterUntilTest implements FinderTest, JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatFinderReports(0, new UnnecessaryIfAfterUntil(), "src/test/fixtures/emptyProject.json");
@@ -51,7 +52,7 @@ public class UnnecessaryIfAfterUntilTest implements JsonTest {
 
         Issue theIssue = reports.iterator().next();
         Hint expectedHint = Hint.fromKey(finder.getName());
-        assertThat(theIssue.getHintText()).isEqualTo(expectedHint.getHintText());
+        assertThat(theIssue.getHintText(translator)).isEqualTo(expectedHint.getHintText(translator));
 
         ScriptReplacementVisitor visitor = new ScriptReplacementVisitor(theIssue.getScript(), (Script) theIssue.getRefactoredScriptOrProcedureDefinition());
         Program refactoredProgram = (Program) program.accept(visitor);

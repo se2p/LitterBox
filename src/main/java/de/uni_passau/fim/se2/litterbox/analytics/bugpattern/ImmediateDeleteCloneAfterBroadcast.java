@@ -28,12 +28,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 
 public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
-    private String NAME = "immediate_delete_clone_after_broadcast";
+
+    private static final String NAME = "immediate_delete_clone_after_broadcast";
 
     @Override
     public void visit(StmtList node) {
@@ -47,11 +47,13 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
                 if (broadcast.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
                     hint.setParameter(Hint.HINT_MESSAGE, stringLiteral.getText());
                 } else {
-                    hint.setParameter(Hint.HINT_MESSAGE, IssueTranslator.getInstance().getInfo("message"));
+                    hint.setParameter(Hint.HINT_MESSAGE, new HintPlaceholder.Translatable("message"));
                 }
 
                 // TODO: This does not clone the message and metadata, should it?
-                StatementReplacementVisitor visitor = new StatementReplacementVisitor(broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata()));
+                StatementReplacementVisitor visitor = new StatementReplacementVisitor(
+                        broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata())
+                );
                 ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
 
                 IssueBuilder issueBuilder = prepareIssueBuilder(questionableNode)
