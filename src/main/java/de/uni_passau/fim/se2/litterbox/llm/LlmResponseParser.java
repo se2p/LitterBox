@@ -68,6 +68,21 @@ public class LlmResponseParser {
             line = line.substring(0, idx) + "seconds";
         }
 
+        // "turn cw" -> "turn right"
+        if (line.contains("turn cw")) {
+            line = line.replace("turn cw", "turn right");
+        }
+
+        // "change color effect" -> "change [color v] effect"
+        if (line.contains("change color effect")) {
+            line = line.replace("change color effect", "change [color v] effect");
+        }
+
+        // General <number> -> (number) replacement
+        // This handles "move <10> steps", "turn cw <15> degrees" (after turn cw fix), etc.
+        // Regex looks for <digits optionally with dot> and replaces with (digits)
+        line = line.replaceAll("<([0-9]+(\\.[0-9]+)?)>", "($1)");
+
         // sometimes control structures use braces
         if (line.endsWith("{")) {
             line = line.substring(0, line.length() - 1);
