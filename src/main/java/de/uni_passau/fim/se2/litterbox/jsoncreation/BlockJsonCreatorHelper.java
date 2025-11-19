@@ -263,15 +263,14 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createTypeInput(int shadowIndicator, int typeNumber,
-                                         String value) {
+    public static String createTypeInput(int shadowIndicator, int typeNumber, String value) {
         return "["
-            + shadowIndicator
-            + ",["
-            + typeNumber
-            + ",\""
-            + value
-            + "\"]]";
+                + shadowIndicator
+                + ",["
+                + typeNumber
+                + ",\""
+                + value
+                + "\"]]";
     }
 
     public static String createReferenceTypeInput(String inputName, int shadowIndicator, int typeNumber,

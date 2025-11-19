@@ -32,7 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import java.util.List;
 
 public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
-    private String NAME = "immediate_delete_clone_after_broadcast";
+
+    private static final String NAME = "immediate_delete_clone_after_broadcast";
 
     @Override
     public void visit(StmtList node) {
@@ -50,7 +51,9 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
                 }
 
                 // TODO: This does not clone the message and metadata, should it?
-                StatementReplacementVisitor visitor = new StatementReplacementVisitor(broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata()));
+                StatementReplacementVisitor visitor = new StatementReplacementVisitor(
+                        broadcast, new BroadcastAndWait(broadcast.getMessage(), broadcast.getMetadata())
+                );
                 ScriptEntity refactoredScript = visitor.apply(getCurrentScriptEntity());
 
                 IssueBuilder issueBuilder = prepareIssueBuilder(questionableNode)

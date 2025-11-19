@@ -83,9 +83,15 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
         concernedNodes.add(node);
         MultiBlockIssue issue;
         if (currentScript != null) {
-            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentScript, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.LOW, program, currentActor, currentScript, concernedNodes,
+                    node.getMetadata(), hint
+            );
         } else {
-            issue = new MultiBlockIssue(this, IssueSeverity.LOW, program, currentActor, currentProcedure, concernedNodes, node.getMetadata(), hint);
+            issue = new MultiBlockIssue(
+                    this, IssueSeverity.LOW, program, currentActor, currentProcedure, concernedNodes,
+                    node.getMetadata(), hint
+            );
         }
         addIssue(issue);
     }
@@ -98,7 +104,12 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(LEDColorShow node) {
-        if (prevNode != null && (prevNode instanceof LEDColorShow || prevNode instanceof LEDColorShowPosition || prevNode instanceof RGBValue || prevNode instanceof RGBValuesPosition || prevNode instanceof LEDOff)) {
+        if (prevNode != null && (prevNode instanceof LEDColorShow
+                || prevNode instanceof LEDColorShowPosition
+                || prevNode instanceof RGBValue
+                || prevNode instanceof RGBValuesPosition
+                || prevNode instanceof LEDOff)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), LED));
         }
 
@@ -107,7 +118,12 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(LEDColorShowPosition node) {
-        if (prevNode != null && (prevNode instanceof LEDColorShow || prevNode instanceof LEDColorShowPosition || prevNode instanceof RGBValue || prevNode instanceof RGBValuesPosition || prevNode instanceof LEDOff)) {
+        if (prevNode != null && (prevNode instanceof LEDColorShow
+                || prevNode instanceof LEDColorShowPosition
+                || prevNode instanceof RGBValue
+                || prevNode instanceof RGBValuesPosition
+                || prevNode instanceof LEDOff)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), LED));
         }
 
@@ -116,7 +132,12 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(RGBValuesPosition node) {
-        if (prevNode != null && (prevNode instanceof LEDColorShow || prevNode instanceof LEDColorShowPosition || prevNode instanceof RGBValue || prevNode instanceof RGBValuesPosition || prevNode instanceof LEDOff)) {
+        if (prevNode != null && (prevNode instanceof LEDColorShow
+                || prevNode instanceof LEDColorShowPosition
+                || prevNode instanceof RGBValue
+                || prevNode instanceof RGBValuesPosition
+                || prevNode instanceof LEDOff)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), LED));
         }
 
@@ -125,7 +146,12 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(RGBValue node) {
-        if (prevNode != null && (prevNode instanceof LEDColorShow || prevNode instanceof LEDColorShowPosition || prevNode instanceof RGBValue || prevNode instanceof RGBValuesPosition || prevNode instanceof LEDOff)) {
+        if (prevNode != null && (prevNode instanceof LEDColorShow
+                || prevNode instanceof LEDColorShowPosition
+                || prevNode instanceof RGBValue
+                || prevNode instanceof RGBValuesPosition
+                || prevNode instanceof LEDOff)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), LED));
         }
 
@@ -134,7 +160,12 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(LEDOff node) {
-        if (prevNode != null && (prevNode instanceof LEDColorShow || prevNode instanceof LEDColorShowPosition || prevNode instanceof RGBValue || prevNode instanceof RGBValuesPosition || prevNode instanceof LEDOff)) {
+        if (prevNode != null && (prevNode instanceof LEDColorShow
+                || prevNode instanceof LEDColorShowPosition
+                || prevNode instanceof RGBValue
+                || prevNode instanceof RGBValuesPosition
+                || prevNode instanceof LEDOff)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), LED));
         }
 
@@ -240,7 +271,21 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
     }
 
     private void handleMatrixNodes(ASTNode node) {
-        if (prevNode != null && (prevNode instanceof FacePosition || prevNode instanceof FacePositionPort || prevNode instanceof LEDNumPort || prevNode instanceof LEDString || prevNode instanceof LEDStringPort || prevNode instanceof LEDStringPosition || prevNode instanceof LEDStringPositionPort || prevNode instanceof LEDSwitchOff || prevNode instanceof LEDSwitchOn || prevNode instanceof LEDToggle || prevNode instanceof ShowFace || prevNode instanceof ShowFacePort || prevNode instanceof TurnOffFace || prevNode instanceof TurnOffFacePort)) {
+        if (prevNode != null && (prevNode instanceof FacePosition
+                || prevNode instanceof FacePositionPort
+                || prevNode instanceof LEDNumPort
+                || prevNode instanceof LEDString
+                || prevNode instanceof LEDStringPort
+                || prevNode instanceof LEDStringPosition
+                || prevNode instanceof LEDStringPositionPort
+                || prevNode instanceof LEDSwitchOff
+                || prevNode instanceof LEDSwitchOn
+                || prevNode instanceof LEDToggle
+                || prevNode instanceof ShowFace
+                || prevNode instanceof ShowFacePort
+                || prevNode instanceof TurnOffFace
+                || prevNode instanceof TurnOffFacePort)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), MATRIX));
         }
 
@@ -249,7 +294,10 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(MoveDirection node) {
-        if (prevNode != null && (prevNode instanceof MoveDirection || prevNode instanceof MoveSides || prevNode instanceof MoveStop)) {
+        if (prevNode != null && (prevNode instanceof MoveDirection
+                || prevNode instanceof MoveSides
+                || prevNode instanceof MoveStop)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), MOTOR_POWER));
         }
 
@@ -258,7 +306,10 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(MoveSides node) {
-        if (prevNode != null && (prevNode instanceof MoveDirection || prevNode instanceof MoveSides || prevNode instanceof MoveStop)) {
+        if (prevNode != null && (prevNode instanceof MoveDirection
+                || prevNode instanceof MoveSides
+                || prevNode instanceof MoveStop)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), MOTOR_POWER));
         }
 
@@ -267,7 +318,10 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(MoveStop node) {
-        if (prevNode != null && (prevNode instanceof MoveDirection || prevNode instanceof MoveSides || prevNode instanceof MoveStop)) {
+        if (prevNode != null && (prevNode instanceof MoveDirection
+                || prevNode instanceof MoveSides
+                || prevNode instanceof MoveStop)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), MOTOR_POWER));
         }
 
@@ -276,7 +330,10 @@ public class MultiAttributeModificationRobot extends AbstractRobotFinder {
 
     @Override
     public void visit(MovingEmotion node) {
-        if (prevNode != null && (prevNode instanceof MoveDirection || prevNode instanceof MoveSides || prevNode instanceof MoveStop)) {
+        if (prevNode != null && (prevNode instanceof MoveDirection
+                || prevNode instanceof MoveSides
+                || prevNode instanceof MoveStop)
+        ) {
             generateMultiBlockIssue(node, new RobotAttribute(currentActor.getIdent(), MOTOR_POWER));
         }
 

@@ -76,7 +76,11 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected IssueBuilder prepareIssueBuilder() {
-        return new IssueBuilder().withFinder(this).withProgram(program).withActor(currentActor).withScriptOrProcedure(getCurrentScriptEntity());
+        return new IssueBuilder()
+                .withFinder(this)
+                .withProgram(program)
+                .withActor(currentActor)
+                .withScriptOrProcedure(getCurrentScriptEntity());
     }
 
     protected IssueBuilder prepareIssueBuilder(ASTNode node) {

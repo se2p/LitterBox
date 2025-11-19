@@ -50,7 +50,8 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_initialization";
     public static final String HAS_DELETE_CLONE = "missing_clone_initialization_delete_clone";
     public static final String HAS_DELETE_CLONE_MESSAGE = "missing_clone_initialization_delete_clone_message";
-    public static final String HAS_DELETE_CLONE_MESSAGE_MULTIPLE = "missing_clone_initialization_delete_clone_message_multiple";
+    public static final String HAS_DELETE_CLONE_MESSAGE_MULTIPLE
+            = "missing_clone_initialization_delete_clone_message_multiple";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
