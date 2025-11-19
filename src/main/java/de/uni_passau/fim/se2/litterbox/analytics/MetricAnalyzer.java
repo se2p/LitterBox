@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
@@ -76,9 +77,16 @@ public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
             row.add(Double.toString(result.value()));
         }
 
-        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
-            printer.printRecord(row);
-            printer.flush();
+        if (fileName == null) {
+            try (CSVPrinter printer = new CSVPrinter(System.out, CSVFormat.DEFAULT.builder().setHeader(headers.toArray(new String[0])).get())) {
+                printer.printRecord(row);
+                printer.flush();
+            }
+        } else {
+            try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
+                printer.printRecord(row);
+                printer.flush();
+            }
         }
     }
 }

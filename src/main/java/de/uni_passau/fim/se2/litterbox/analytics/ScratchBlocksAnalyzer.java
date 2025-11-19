@@ -33,8 +33,12 @@ public class ScratchBlocksAnalyzer extends FileAnalyzer<String> {
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, String scratchBlocks) throws IOException {
-        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-            bw.write(scratchBlocks);
+        if (output == null) {
+            System.out.println(scratchBlocks);
+        } else {
+            try (BufferedWriter bw = Files.newBufferedWriter(output)) {
+                bw.write(scratchBlocks);
+            }
         }
     }
 }
