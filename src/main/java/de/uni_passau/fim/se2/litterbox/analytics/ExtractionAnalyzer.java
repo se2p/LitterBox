@@ -51,14 +51,14 @@ public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
             return;
         }
 
-        createCSVFile(program, output);
+        createCSVFile(program);
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, List<ExtractionResult> checkResult)
             throws IOException {
         try {
-            createCSVFile(program, output);
+            createCSVFile(program);
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + output);
             throw e;
