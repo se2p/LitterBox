@@ -86,7 +86,7 @@ public class LlmResponseParser {
         // General <number> -> (number) replacement
         // This handles "move <10> steps", "turn cw <15> degrees" (after turn cw fix), etc.
         // Regex looks for <digits optionally with dot> and replaces with (digits)
-        line = line.replaceAll("<([0-9]+(\\.[0-9]+)?)>", "($1)");
+        line = line.replaceAll("<\\s*([0-9]+(\\.[0-9]+)?)\\s*>", "($1)");
 
         // sometimes control structures use braces
         if (line.endsWith("{")) {
