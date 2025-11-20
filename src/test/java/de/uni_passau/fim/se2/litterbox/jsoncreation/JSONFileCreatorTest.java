@@ -42,7 +42,7 @@ class JSONFileCreatorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         JSONFileCreator.writeJsonFromProgram(program, tempDir, "_test");
         
-        Path expectedFile = tempDir.resolve("EmptyProject_test.json");
+        Path expectedFile = tempDir.resolve("emptyProject_test.json");
         assertTrue(Files.exists(expectedFile), "File should be created in the directory with default name");
     }
 
@@ -55,7 +55,7 @@ class JSONFileCreatorTest implements JsonTest {
         
         assertTrue(Files.exists(specificFile), "File should be created at the specific path");
         // Ensure the default file was NOT created
-        Path defaultFile = tempDir.resolve("EmptyProject_ignored.json");
+        Path defaultFile = tempDir.resolve("emptyProject_ignored.json");
         assertFalse(Files.exists(defaultFile), "Default file should not be created when specific path is given");
     }
 
