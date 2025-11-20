@@ -50,7 +50,9 @@ public final class JSONFileCreator {
     public static void writeJsonFromProgram(Program program, Path output, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        Path outPath;
+        Path outPath = buildOutputPath(output, JSON);
+
+    private Path buildOutputPath(final Path output, final String fileExtension) {
         if (output.toString().endsWith(JSON)) {
             outPath = output;
             if (Files.exists(outPath)) {
@@ -65,6 +67,7 @@ public final class JSONFileCreator {
                 throw new java.nio.file.FileAlreadyExistsException(outPath.toString());
             }
         }
+    }
 
         try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
