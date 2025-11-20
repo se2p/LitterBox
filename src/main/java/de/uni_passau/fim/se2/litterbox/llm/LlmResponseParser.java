@@ -79,7 +79,6 @@ public class LlmResponseParser {
         }
 
         // "play sound [name v]" -> "play sound (name v)"
-        // "play sound" is often used by LLMs instead of "play sound", and [ ] instead of ( )
         if (line.contains("play sound [")) {
             line = line.replaceAll("play sound \\[([^\\]]+)\\]", "play sound ($1)");
         }
