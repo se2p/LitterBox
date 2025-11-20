@@ -202,4 +202,43 @@ public class ScratchBlocksParserTest implements JsonTest {
         // 2 move statements
         Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements());
     }
+    @Test
+    void testCustomBlockStartingWithKeyword() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "define endSequence (param)\n" +
+                "move (param) steps\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "endSequence (10)\n" +
+                "move (3) steps\n";
+
+        ActorContent content = parser.parseActorContent(input);
+        Assertions.assertNotNull(content);
+        Assertions.assertEquals(1, content.procedures().getList().size(), "Should have 1 custom block definition");
+        Assertions.assertEquals(1, content.scripts().getSize(), "Should have 1 script");
+
+        Script script = content.scripts().getScript(0);
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements(), "Script should have 2 statements");
+    }
+    @Test
+    void testCustomBlockStartingWithKeywordAndComments() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "define endSequence (param)\n" +
+                "// comment inside define\n" +
+                "move (param) steps\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "// comment before call\n" +
+                "endSequence (10)\n" +
+                "// comment after call\n" +
+                "move (3) steps\n";
+
+        ActorContent content = parser.parseActorContent(input);
+        Assertions.assertNotNull(content);
+        Assertions.assertEquals(1, content.procedures().getList().size(), "Should have 1 custom block definition");
+        Assertions.assertEquals(1, content.scripts().getSize(), "Should have 1 script");
+
+        Script script = content.scripts().getScript(0);
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements(), "Script should have 2 statements");
+    }
 }

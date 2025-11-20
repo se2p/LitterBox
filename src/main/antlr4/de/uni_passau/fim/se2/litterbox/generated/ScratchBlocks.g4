@@ -80,7 +80,7 @@ customBlockCallStmt     : customBlockCallPrefix customBlockCallParam* WS* (COMME
 
 customBlockCallParam    : exprOrLiteral stringArgument;
 
-customBlockCallPrefix   : (ESC|NUMBER|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM|COMMENT|'end'|'else'|'define '|'when'))(ESC|NUMBER|~(NEWLINE|DELIM|COMMENT))+?;
+customBlockCallPrefix   : (ESC|NUMBER|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM|COMMENT))(ESC|NUMBER|~(NEWLINE|DELIM|COMMENT))+?;
 
 nonEmptyStmtList        : (WS* (stmt | COMMENT) NEWLINE)+;
 
