@@ -51,21 +51,37 @@ public abstract class FileAnalyzer<R> {
      * <p>If the input is a file it will be directly analyzed, if it is a director all files in the
      * directory will be analyzed one after another.</p>
      */
-    public final void analyzeFile(final Path input) throws IOException {
+    public void analyzeFile(final Path input) throws IOException {
         File file = input.toFile();
         if (file.exists() && file.isDirectory()) {
             List<Path> listOfFiles = getProgramPaths(file.toPath());
-            for (Path filePath : listOfFiles) {
-                File fileEntry = filePath.toFile();
-                checkAndWrite(fileEntry);
-                deleteFile(fileEntry);
+            beginAnalysis();
+            try {
+                for (Path filePath : listOfFiles) {
+                    File fileEntry = filePath.toFile();
+                    checkAndWrite(fileEntry);
+                    deleteFile(fileEntry);
+                }
+            } finally {
+                endAnalysis();
             }
         } else if (file.exists() && !file.isDirectory()) {
-            checkAndWrite(file);
-            deleteFile(file);
+            beginAnalysis();
+            try {
+                checkAndWrite(file);
+                deleteFile(file);
+            } finally {
+                endAnalysis();
+            }
         } else {
             log.severe("Folder or file '" + file.getName() + "' does not exist");
         }
+    }
+
+    protected void beginAnalysis() throws IOException {
+    }
+
+    protected void endAnalysis() throws IOException {
     }
 
     private static List<Path> getProgramPaths(Path dirPath) throws IOException {

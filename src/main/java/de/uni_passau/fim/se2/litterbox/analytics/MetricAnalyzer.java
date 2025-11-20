@@ -37,6 +37,7 @@ public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
 
     private final ProgramMetricAnalyzer analyzer;
+    private CSVPrinter printer;
 
     public MetricAnalyzer(Path output, boolean delete) {
         super(new ProgramMetricAnalyzer(), output, delete);
@@ -64,11 +65,31 @@ public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
         }
     }
 
-    private void createCSVFile(Program program, Path fileName) throws IOException {
+    @Override
+    protected void beginAnalysis() throws IOException {
         final List<String> headers = new ArrayList<>();
         headers.add("project");
         analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
+        if (output == null) {
+            // Use default format but manually print headers to avoid double printing issues and control behavior
+            printer = new CSVPrinter(System.out, CSVFormat.DEFAULT);
+            printer.printRecord(headers);
+        } else {
+            printer = CSVPrinterFactory.getNewPrinter(output, headers);
+        }
+    }
 
+    @Override
+    protected void endAnalysis() throws IOException {
+        if (printer != null) {
+            printer.flush();
+            if (output != null) {
+                printer.close();
+            }
+        }
+    }
+
+    private void createCSVFile(Program program, Path fileName) throws IOException {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
@@ -78,15 +99,11 @@ public class MetricAnalyzer extends FileAnalyzer<List<MetricResult>> {
         }
 
         if (fileName == null) {
-            try (CSVPrinter printer = new CSVPrinter(System.out, CSVFormat.DEFAULT.builder().setHeader(headers.toArray(new String[0])).get())) {
-                printer.printRecord(row);
-                printer.flush();
-            }
+            printer.printRecord(row);
+            printer.flush();
         } else {
-            try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
-                printer.printRecord(row);
-                printer.flush();
-            }
+            printer.printRecord(row);
+            printer.flush();
         }
     }
 }

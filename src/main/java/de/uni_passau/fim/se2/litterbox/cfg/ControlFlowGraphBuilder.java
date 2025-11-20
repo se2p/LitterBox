@@ -66,6 +66,11 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEndOfProcedure(Program program, ProcedureDefinition node, List<CFGNode> endOfProcedure) {
+        if (program == null || currentActor == null) {
+            ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName(), "UnknownActor");
+            procedureMap.put(customBlockNode, endOfProcedure);
+            return;
+        }
 
         ProcedureInfo procDef = program.getProcedureMapping()
                 .getProcedureForHash(
@@ -263,6 +268,11 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addProcedure(Program program, ProcedureDefinition node) {
+        if (program == null || currentActor == null) {
+            ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName(), "UnknownActor");
+            setCurrentNode(customBlockNode);
+            return;
+        }
 
         ProcedureInfo procDef = program.getProcedureMapping().getProcedureForHash(
                 currentActor.getIdent().getName(),

@@ -27,8 +27,24 @@ import java.nio.file.Path;
 
 public class ScratchBlocksAnalyzer extends FileAnalyzer<String> {
 
+    private BufferedWriter writer;
+
     public ScratchBlocksAnalyzer(Path output, boolean delete) {
         super(new ProgramScratchBlocksAnalyzer(), output, delete);
+    }
+
+    @Override
+    protected void beginAnalysis() throws IOException {
+        if (output != null) {
+            writer = Files.newBufferedWriter(output);
+        }
+    }
+
+    @Override
+    protected void endAnalysis() throws IOException {
+        if (writer != null) {
+            writer.close();
+        }
     }
 
     @Override
@@ -36,9 +52,8 @@ public class ScratchBlocksAnalyzer extends FileAnalyzer<String> {
         if (output == null) {
             System.out.println(scratchBlocks);
         } else {
-            try (BufferedWriter bw = Files.newBufferedWriter(output)) {
-                bw.write(scratchBlocks);
-            }
+            writer.write(scratchBlocks);
+            writer.newLine();
         }
     }
 }

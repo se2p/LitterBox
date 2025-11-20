@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
 
     private final ProgramFeatureAnalyzer analyzer;
+    private CSVPrinter printer;
 
     public FeatureAnalyzer(Path output, boolean delete) {
         super(new ProgramFeatureAnalyzer(), output, delete);
@@ -66,13 +68,33 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
         }
     }
 
-    private void createCSVFile(Program program, Path fileName) throws IOException {
+    @Override
+    protected void beginAnalysis() throws IOException {
         List<String> headers = new ArrayList<>();
         headers.add("project");
         headers.add("id");
         analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
         headers.add("scratch_block_code");
-        CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers);
+        if (output == null) {
+            // Use default format but manually print headers to avoid double printing issues and control behavior
+            printer = new CSVPrinter(System.out, CSVFormat.DEFAULT);
+            printer.printRecord(headers);
+        } else {
+            printer = CSVPrinterFactory.getNewPrinter(output, headers);
+        }
+    }
+
+    @Override
+    protected void endAnalysis() throws IOException {
+        if (printer != null) {
+            printer.flush();
+            if (output != null) {
+                printer.close();
+            }
+        }
+    }
+
+    private void createCSVFile(Program program, Path fileName) throws IOException {
         int actorCount = 0;
         List<ActorDefinition> actorDefinitions = AstNodeUtil.getActors(program, true).toList();
         for (ActorDefinition actorDefinition : actorDefinitions) {
@@ -102,11 +124,14 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 }
                 String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
                 row.add(stringScratchCode);
-                printer.printRecord(row);
+        if (fileName == null) {
+            printer.printRecord(row);
+        } else {
+            printer.printRecord(row);
+        }
             }
         }
         printer.flush();
-        printer.close();
     }
 
     private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
