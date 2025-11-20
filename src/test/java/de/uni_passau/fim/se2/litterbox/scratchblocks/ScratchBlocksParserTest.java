@@ -186,4 +186,20 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertEquals(1, script.getStmtList().getStmts().size(), "Should have 1 statement");
         Assertions.assertInstanceOf(Say.class, script.getStmtList().getStatement(0), "Statement should be Say");
     }
+
+    @Test
+    void testCommentsAsScriptSeparators() {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "move (10) steps\n" +
+                "// comment 2\n" +
+                "move (1) steps\n";
+        ActorContent sprite = parser.parseActorContent(input);
+        // Should be 1 to match parsing a single script
+        Assertions.assertEquals(1, sprite.scripts().getScriptList().size());
+        Script script = sprite.scripts().getScript(0);
+
+        // 2 move statements
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements());
+    }
 }
