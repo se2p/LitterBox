@@ -89,7 +89,7 @@ public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
         }
     }
 
-    public void createCSVFile(Program program, Path fileName) throws IOException {
+    private void createCSVFile(Program program) throws IOException {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
