@@ -3350,6 +3350,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         name = name.replace(")", "\\)");
         name = name.replace("[", "\\[");
         name = name.replace("]", "\\]");
+        name = name.replace("::", ":\\:");
         return name;
     }
 
