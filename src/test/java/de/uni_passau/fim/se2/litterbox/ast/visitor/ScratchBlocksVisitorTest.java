@@ -29,6 +29,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -1961,5 +1971,38 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
         assertThat(scratchBlocks).contains("stop all sounds");
         assertThat(scratchBlocks).doesNotContain("reset timer");
+    }
+
+
+    @Test
+    void testParameterWithColonEscaped() throws ParsingException, IOException {
+        Parameter parameter = new Parameter(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
+        parameter.accept(visitor);
+
+        String result = visitor.getScratchBlocks();
+        Assertions.assertEquals("(abc:\\:de)", result.trim());
+    }
+    
+    @Test
+    void testParameterDefinitionWithColonEscaped() throws ParsingException, IOException {
+        ParameterDefinition definition = new ParameterDefinition(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
+        definition.accept(visitor);
+
+        String result = visitor.getScratchBlocks();
+        Assertions.assertEquals("abc:\\:de", result.trim());
+    }
+    
+    @Test
+    void testVariableWithDoubleColonGeneration() {
+        Variable variable = new Variable(new StrId("abc::de"));
+        SetVariableTo setVariableTo = new SetVariableTo(new Qualified(new StrId("Stage"), variable), new Qualified(new StrId("Stage"), variable), new NoBlockMetadata());
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
+        setVariableTo.accept(visitor);
+
+        String result = visitor.getScratchBlocks();
+        Assertions.assertEquals("set [abc:\\:de v] to (abc:\\:de)", result.trim());
     }
 }
