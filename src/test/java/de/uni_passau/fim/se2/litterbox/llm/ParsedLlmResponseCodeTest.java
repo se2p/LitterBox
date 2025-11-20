@@ -39,12 +39,13 @@ class ParsedLlmResponseCodeTest {
     @Test
     void mergeSuccessfulScriptsDifferentActors() {
         final var scripts1 = getScripts(Map.of("actor1", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(scripts1, Collections.emptyMap());
+        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(scripts1, Collections.emptyMap(), Collections.emptyMap());
         final var scripts2 = getScripts(Map.of("actor2", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(scripts2, Collections.emptyMap());
+        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(scripts2, Collections.emptyMap(), Collections.emptyMap());
 
         final ParsedLlmResponseCode expected = new ParsedLlmResponseCode(
                 getScripts(Map.of("actor1", List.of("script1", "script2"), "actor2", List.of("script1", "script2"))),
+                Collections.emptyMap(),
                 Collections.emptyMap()
         );
 
@@ -55,12 +56,13 @@ class ParsedLlmResponseCodeTest {
     @Test
     void mergeSuccessfulScriptsSameActors() {
         final var scripts1 = getScripts(Map.of("actor1", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(scripts1, Collections.emptyMap());
+        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(scripts1, Collections.emptyMap(), Collections.emptyMap());
         final var scripts2 = getScripts(Map.of("actor1", List.of("script3", "script4")));
-        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(scripts2, Collections.emptyMap());
+        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(scripts2, Collections.emptyMap(), Collections.emptyMap());
 
         final ParsedLlmResponseCode expected = new ParsedLlmResponseCode(
                 getScripts(Map.of("actor1", List.of("script1", "script2", "script3", "script4"))),
+                Collections.emptyMap(),
                 Collections.emptyMap()
         );
 
@@ -71,15 +73,16 @@ class ParsedLlmResponseCodeTest {
     @Test
     void mergeFailedScriptsDifferentActors() {
         final var scripts1 = getFailedScripts(Map.of("actor1", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts1);
+        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts1, Collections.emptyMap());
         final var scripts2 = getFailedScripts(Map.of("actor2", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts2);
+        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts2, Collections.emptyMap());
 
         final ParsedLlmResponseCode expected = new ParsedLlmResponseCode(
                 Collections.emptyMap(),
                 getFailedScripts(
                         Map.of("actor1", List.of("script1", "script2"), "actor2", List.of("script1", "script2"))
-                )
+                ),
+                Collections.emptyMap()
         );
 
         final ParsedLlmResponseCode merged = response1.merge(response2);
@@ -89,13 +92,14 @@ class ParsedLlmResponseCodeTest {
     @Test
     void mergeFailedScriptsSameActors() {
         final var scripts1 = getFailedScripts(Map.of("actor1", List.of("script1", "script2")));
-        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts1);
+        final ParsedLlmResponseCode response1 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts1, Collections.emptyMap());
         final var scripts2 = getFailedScripts(Map.of("actor1", List.of("script3", "script4")));
-        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts2);
+        final ParsedLlmResponseCode response2 = new ParsedLlmResponseCode(Collections.emptyMap(), scripts2, Collections.emptyMap());
 
         final ParsedLlmResponseCode expected = new ParsedLlmResponseCode(
                 Collections.emptyMap(),
-                getFailedScripts(Map.of("actor1", List.of("script1", "script2", "script3", "script4")))
+                getFailedScripts(Map.of("actor1", List.of("script1", "script2", "script3", "script4"))),
+                Collections.emptyMap()
         );
 
         final ParsedLlmResponseCode merged = response1.merge(response2);

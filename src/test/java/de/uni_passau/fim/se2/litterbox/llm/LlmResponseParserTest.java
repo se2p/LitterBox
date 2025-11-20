@@ -502,4 +502,21 @@ public class LlmResponseParserTest implements JsonTest {
         ActorDefinition newActor = updatedProgram.getActorDefinitionList().getActorDefinition("CatNew").get();
         Assertions.assertFalse(newActor.getSetStmtList().getStmts().isEmpty());
     }
+    @Test
+    void testDeleteScript() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: V/6:G4i[HL#.bvM4XA|8
+                end
+                """;
+        Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
+        assertEquals(1, program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+
+        assertEquals(0, updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize());
+    }
 }

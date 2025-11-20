@@ -74,11 +74,13 @@ class ScratchLlmTest {
         final LlmResponseParser responseParser = mock(LlmResponseParser.class);
         final ParsedLlmResponseCode code1 = new ParsedLlmResponseCode(
                 Collections.emptyMap(),
-                Map.of("actor1", Map.of("script1", "invalid", "script2", "invalid2"))
+                Map.of("actor1", Map.of("script1", "invalid", "script2", "invalid2")),
+                Collections.emptyMap()
         );
         when(responseParser.parseLLMResponse("response1")).thenReturn(code1);
         final ParsedLlmResponseCode code2 = new ParsedLlmResponseCode(
                 Map.of("actor1", Map.of("script1", dummyScript(), "script2", dummyScript())),
+                Collections.emptyMap(),
                 Collections.emptyMap()
         );
         when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
@@ -107,11 +109,13 @@ class ScratchLlmTest {
         final LlmResponseParser responseParser = mock(LlmResponseParser.class);
         final ParsedLlmResponseCode code1 = new ParsedLlmResponseCode(
                 Map.of("actor1", Map.of("script1", dummyScriptUndefinedCustomBlockCall("invalid"), "script2", dummyScript())),
+                Collections.emptyMap(),
                 Collections.emptyMap()
         );
         when(responseParser.parseLLMResponse("response1")).thenReturn(code1);
         final ParsedLlmResponseCode code2 = new ParsedLlmResponseCode(
                 Map.of("actor1", Map.of("script1", dummyScript(), "script2", dummyScript())),
+                Collections.emptyMap(),
                 Collections.emptyMap()
         );
         when(responseParser.parseLLMResponse("response2")).thenReturn(code2);
