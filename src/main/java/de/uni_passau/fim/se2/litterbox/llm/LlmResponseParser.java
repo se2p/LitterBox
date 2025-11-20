@@ -78,6 +78,12 @@ public class LlmResponseParser {
             line = line.replace("change color effect", "change [color v] effect");
         }
 
+        // "play sound [name v]" -> "play sound (name v)"
+        // "play sound" is often used by LLMs instead of "play sound", and [ ] instead of ( )
+        if (line.contains("play sound [")) {
+            line = line.replaceAll("play sound \\[([^\\]]+)\\]", "play sound ($1)");
+        }
+
         // General <number> -> (number) replacement
         // This handles "move <10> steps", "turn cw <15> degrees" (after turn cw fix), etc.
         // Regex looks for <digits optionally with dot> and replaces with (digits)

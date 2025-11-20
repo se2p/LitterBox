@@ -22,8 +22,9 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -128,5 +129,29 @@ public class LlmResponseParserHeuristicsTest implements JsonTest {
         WaitSeconds wait = (WaitSeconds) newScript.getStmtList().getStmts().getFirst();
         assertInstanceOf(NumberLiteral.class, wait.getSeconds());
         assertEquals(0.5, ((NumberLiteral) wait.getSeconds()).getValue());
+    }
+    @Test
+    void testPlaySoundHeuristic() throws ParsingException, IOException {
+        String response = """
+                scratch
+                //Sprite: Sprite1
+                //Script: newlyadded
+                when green flag clicked
+                play sound [meow v]
+                """;
+        Program program = getAST("./src/test/fixtures/emptyProject.json");
+        LlmResponseParser responseParser = new LlmResponseParser();
+        var parsedResponse = responseParser.parseLLMResponse(response);
+        Program updatedProgram = responseParser.updateProgram(program, parsedResponse);
+        
+        List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
+        Script newScript = scripts.getFirst();
+        assertEquals(1, newScript.getStmtList().getStmts().size());
+        // The user explicitly requested "play sound" -> "play sound", which parses as a CallStmt
+        assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().getFirst());
+        CallStmt callStmt = (CallStmt) newScript.getStmtList().getStmts().getFirst();
+        // The parser consumes the entire string as the identifier in this case
+        assertEquals("play sound (meow v)", callStmt.getIdent().getName());
+        assertEquals(0, callStmt.getExpressions().getExpressions().size());
     }
 }
