@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -155,5 +156,34 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertEquals(1, newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().size());
         ProcedureDefinition procedureDefinition = newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().getFirst();
         Assertions.assertEquals(2, procedureDefinition.getParameterDefinitionList().getParameterDefinitions().size());
+    }
+
+    @Test
+    void testCommentsInVariousPlaces() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "// comment after hat\n" +
+                "move (10) steps\n" +
+                "// comment between blocks\n" +
+                "move (20) steps\n" +
+                "// comment at end\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertInstanceOf(GreenFlag.class, script.getEvent());
+        Assertions.assertEquals(2, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(1));
+    }
+
+    @Test
+    void testCommentBetweenHatAndStack() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n// comment\nsay (foo)\n";
+        Script script = parser.parseScript("Stage", input);
+
+        Assertions.assertNotNull(script);
+        Assertions.assertInstanceOf(GreenFlag.class, script.getEvent(), "Event should be GreenFlag");
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size(), "Should have 1 statement");
+        Assertions.assertInstanceOf(Say.class, script.getStmtList().getStatement(0), "Statement should be Say");
     }
 }

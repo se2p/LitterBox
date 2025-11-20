@@ -80,11 +80,11 @@ customBlockCallStmt     : customBlockCallPrefix customBlockCallParam* WS* (COMME
 
 customBlockCallParam    : exprOrLiteral stringArgument;
 
-customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM))(ESC|NUMBER|~(NEWLINE|DELIM))+?;
+customBlockCallPrefix   : (ESC||NUMBER~(NEWLINE|'//'|BEGIN_ACTOR|DELIM|COMMENT))(ESC|NUMBER|~(NEWLINE|DELIM|COMMENT))+?;
 
-nonEmptyStmtList        : (WS* stmt NEWLINE)+?;
+nonEmptyStmtList        : (WS* (stmt | COMMENT) NEWLINE)+?;
 
-stmtList                : (WS* stmt NEWLINE)*?;
+stmtList                : (WS* (stmt | COMMENT) NEWLINE)*?;
 
 event                   : greenFlag (COMMENT)?
                         | keyEvent (COMMENT)?
