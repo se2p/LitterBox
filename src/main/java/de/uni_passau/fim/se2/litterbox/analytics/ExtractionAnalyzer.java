@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.extraction.ExtractionResult;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
@@ -36,6 +37,7 @@ public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
     private static final Logger log = Logger.getLogger(ExtractionAnalyzer.class.getName());
 
     private final ProgramExtractionAnalyzer analyzer;
+    private CSVPrinter printer;
 
     public ExtractionAnalyzer(Path output, boolean delete) {
         super(new ProgramExtractionAnalyzer(), output, delete);
@@ -49,25 +51,45 @@ public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
             return;
         }
 
-        createCSVFile(program, output);
+        createCSVFile(program);
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, List<ExtractionResult> checkResult)
             throws IOException {
         try {
-            createCSVFile(program, output);
+            createCSVFile(program);
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + output);
             throw e;
         }
     }
 
-    public void createCSVFile(Program program, Path fileName) throws IOException {
+    @Override
+    protected void beginAnalysis() throws IOException {
         final List<String> headers = new ArrayList<>();
         headers.add("project");
         analyzer.getExtractors().stream().map(NameExtraction::getName).forEach(headers::add);
+        if (output == null) {
+            // Use default format but manually print headers to avoid double printing issues and control behavior
+            printer = new CSVPrinter(System.out, CSVFormat.DEFAULT);
+            printer.printRecord(headers);
+        } else {
+            printer = CSVPrinterFactory.getNewPrinter(output, headers);
+        }
+    }
 
+    @Override
+    protected void endAnalysis() throws IOException {
+        if (printer != null) {
+            printer.flush();
+            if (output != null) {
+                printer.close();
+            }
+        }
+    }
+
+    private void createCSVFile(Program program) throws IOException {
         final List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
 
@@ -76,9 +98,7 @@ public class ExtractionAnalyzer extends FileAnalyzer<List<ExtractionResult>> {
             row.add(extraction.result().toString());
         }
 
-        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(fileName, headers)) {
-            printer.printRecord(row);
-            printer.flush();
-        }
+        printer.printRecord(row);
+        printer.flush();
     }
 }

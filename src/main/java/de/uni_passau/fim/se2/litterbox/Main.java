@@ -344,7 +344,6 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            requireOutputPath();
         }
 
         @Override
@@ -408,7 +407,6 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            requireOutputPath();
         }
 
         @Override
@@ -426,7 +424,6 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            requireOutputPath();
         }
 
         @Override
@@ -462,7 +459,6 @@ public class Main implements Callable<Integer> {
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            requireOutputPath();
         }
 
         @Override
