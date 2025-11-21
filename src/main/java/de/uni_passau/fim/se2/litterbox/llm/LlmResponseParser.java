@@ -68,6 +68,26 @@ public class LlmResponseParser {
             line = line.substring(0, idx) + "seconds";
         }
 
+        // "turn cw" -> "turn right"
+        if (line.contains("turn cw")) {
+            line = line.replace("turn cw", "turn right");
+        }
+
+        // "change color effect" -> "change [color v] effect"
+        if (line.contains("change color effect")) {
+            line = line.replace("change color effect", "change [color v] effect");
+        }
+
+        // "play sound [name v]" -> "play sound (name v)"
+        if (line.contains("play sound [")) {
+            line = line.replaceAll("play sound \\[([^\\]]+)\\]", "play sound ($1)");
+        }
+
+        // General <number> -> (number) replacement
+        // This handles "move <10> steps", "turn cw <15> degrees" (after turn cw fix), etc.
+        // Regex looks for <digits optionally with dot> and replaces with (digits)
+        line = line.replaceAll("<\\s*(\\d+(\\.\\d+)?)\\s*>", "($1)");
+
         // sometimes control structures use braces
         if (line.endsWith("{")) {
             line = line.substring(0, line.length() - 1);
@@ -141,10 +161,13 @@ public class LlmResponseParser {
      */
     private ActorDefinitionList mergeActors(final Program originalProgram, final ParsedLlmResponseCode llmCode) {
         List<ActorDefinition> actors = new ArrayList<>();
+        Set<String> affectedActors = new HashSet<>();
+        affectedActors.addAll(llmCode.scripts().keySet());
+        affectedActors.addAll(llmCode.deletedScripts().keySet());
 
         // copy over unchanged actors
         for (ActorDefinition actor : originalProgram.getActorDefinitionList().getDefinitions()) {
-            if (!llmCode.scripts().containsKey(actor.getIdent().getName())) {
+            if (!affectedActors.contains(actor.getIdent().getName())) {
                 if (actor.isStage()) {
                     actors.addFirst(actor);
                 } else {
@@ -154,16 +177,16 @@ public class LlmResponseParser {
         }
 
         // merge changed actors from original program + new/changed scripts from LLM response
-        for (final var entry : llmCode.scripts().entrySet()) {
-            final String actorName = entry.getKey();
-            final Map<String, ScriptEntity> scripts = entry.getValue();
+        for (final String actorName : affectedActors) {
+            final Map<String, ScriptEntity> scripts = llmCode.scripts().getOrDefault(actorName, Collections.emptyMap());
+            final Set<String> deletedScripts = llmCode.deletedScripts().getOrDefault(actorName, Collections.emptySet());
 
             final ActorDefinition actor = originalProgram.getActorDefinitionList()
                     .getActorDefinition(actorName)
                     .orElseGet(() -> getBlankActorDefinition(
                             Objects.requireNonNullElse(actorName, "unidentifiedActor")
                     ));
-            final ActorDefinition updatedActor = mergeActor(actor, scripts);
+            final ActorDefinition updatedActor = mergeActor(actor, scripts, deletedScripts);
 
             if (updatedActor.isStage()) {
                 actors.addFirst(updatedActor);
@@ -185,7 +208,9 @@ public class LlmResponseParser {
      * @return The updated actor.
      */
     private ActorDefinition mergeActor(
-            final ActorDefinition originalActor, final Map<String, ScriptEntity> llmResponseScripts
+            final ActorDefinition originalActor,
+            final Map<String, ScriptEntity> llmResponseScripts,
+            final Set<String> deletedScripts
     ) {
         final Map<String, Script> scripts = new HashMap<>();
         final Map<String, ProcedureDefinition> procedures = new HashMap<>();
@@ -195,6 +220,12 @@ public class LlmResponseParser {
                 .forEach(script -> scripts.put(AstNodeUtil.getBlockId(script), script));
         originalActor.getProcedureDefinitionList().getList()
                 .forEach(procedure -> procedures.put(AstNodeUtil.getBlockId(procedure), procedure));
+
+        // remove deleted scripts
+        for (String deletedScriptId : deletedScripts) {
+            scripts.remove(deletedScriptId);
+            procedures.remove(deletedScriptId);
+        }
 
         // override scripts and procedures also contained in LLM response
         for (final var entry : llmResponseScripts.entrySet()) {
@@ -277,6 +308,7 @@ public class LlmResponseParser {
 
         Map<String, Map<String, ScriptEntity>> spriteScripts = new HashMap<>();
         Map<String, Map<String, String>> unparseableScripts = new HashMap<>();
+        Map<String, Set<String>> deletedScripts = new HashMap<>();
         String currentSprite = null;
         String currentScriptId = null;
         StringBuilder currentScriptCode = new StringBuilder();
@@ -291,7 +323,7 @@ public class LlmResponseParser {
             } else if (line.startsWith(SPRITE_HEADER)) {
                 if (currentScriptId != null) {
                     parseScript(
-                            spriteScripts, unparseableScripts, currentSprite, currentScriptId,
+                            spriteScripts, unparseableScripts, deletedScripts, currentSprite, currentScriptId,
                             currentScriptCode.toString()
                     );
                 }
@@ -301,7 +333,7 @@ public class LlmResponseParser {
             } else if (line.startsWith(SCRIPT_HEADER)) {
                 if (currentScriptId != null) {
                     parseScript(
-                            spriteScripts, unparseableScripts, currentSprite, currentScriptId,
+                            spriteScripts, unparseableScripts, deletedScripts, currentSprite, currentScriptId,
                             currentScriptCode.toString()
                     );
                 }
@@ -317,11 +349,12 @@ public class LlmResponseParser {
 
         if (currentSprite != null && currentScriptId != null) {
             parseScript(
-                    spriteScripts, unparseableScripts, currentSprite, currentScriptId, currentScriptCode.toString()
+                    spriteScripts, unparseableScripts, deletedScripts,
+                    currentSprite, currentScriptId, currentScriptCode.toString()
             );
         }
 
-        return new ParsedLlmResponseCode(spriteScripts, unparseableScripts);
+        return new ParsedLlmResponseCode(spriteScripts, unparseableScripts, deletedScripts);
     }
 
     /**
@@ -336,16 +369,16 @@ public class LlmResponseParser {
 
         if (lineLower.startsWith("sprite:") || lineLower.startsWith("script:")) {
             line = line
-                    .replaceFirst("^[sS]prite:(\\s*)", "//Sprite: ")
-                    .replaceFirst("^[sS]cript:(\\s*)", "//Script: ");
+                    .replaceFirst("^[sS]prite:(\\s*)", SPRITE_HEADER)
+                    .replaceFirst("^[sS]cript:(\\s*)", SCRIPT_HEADER);
         }
 
         // one space between `//Script:` and ID. Since the ID cannot contain spaces, we know that the LLM added some
         // additional suffix. Sprite names are allowed to contain spaces.
         if (line.contains("Script:") && StringUtils.countMatches(line, " ") > 1) {
-            final int spaceIdx = line.replace("//Script: ", "").indexOf(' ');
+            final int spaceIdx = line.replace(SCRIPT_HEADER, "").indexOf(' ');
             if (spaceIdx > -1) {
-                line = line.substring(0, "//Script: ".length() + spaceIdx);
+                line = line.substring(0, SCRIPT_HEADER.length() + spaceIdx);
             }
         }
 
@@ -355,10 +388,16 @@ public class LlmResponseParser {
     private void parseScript(
             final Map<String, Map<String, ScriptEntity>> scripts,
             final Map<String, Map<String, String>> parseFailedScripts,
+            final Map<String, Set<String>> deletedScripts,
             final String currentSprite,
             final String currentScriptId,
             final String scratchBlocksScript
     ) {
+        if ("end".equals(scratchBlocksScript.trim())) {
+            deletedScripts.computeIfAbsent(currentSprite, k -> new HashSet<>()).add(currentScriptId);
+            return;
+        }
+
         final Optional<ScriptEntity> parsedScript = tryParseScript(currentSprite, scratchBlocksScript);
 
         if (parsedScript.isEmpty()) {

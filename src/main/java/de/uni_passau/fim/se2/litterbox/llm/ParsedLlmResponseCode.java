@@ -24,12 +24,15 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public record ParsedLlmResponseCode(
         Map<String, Map<String, ScriptEntity>> scripts,
-        Map<String, Map<String, String>> parseFailedScripts
+        Map<String, Map<String, String>> parseFailedScripts,
+        Map<String, Set<String>> deletedScripts
 ) {
     /**
      * Returns all scripts for the given actor.
@@ -73,7 +76,16 @@ public record ParsedLlmResponseCode(
             }
         }
 
-        return new ParsedLlmResponseCode(parsedScripts, parseFailedScripts);
+        final Map<String, Set<String>> deletedScripts = deepCloneSet(deletedScripts());
+        for (final var entry : other.deletedScripts().entrySet()) {
+            if (deletedScripts.containsKey(entry.getKey())) {
+                deletedScripts.get(entry.getKey()).addAll(entry.getValue());
+            } else {
+                deletedScripts.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return new ParsedLlmResponseCode(parsedScripts, parseFailedScripts, deletedScripts);
     }
 
     private static <A, B, C> Map<A, Map<B, C>> deepClone(final Map<A, Map<B, C>> map) {
@@ -81,6 +93,16 @@ public record ParsedLlmResponseCode(
 
         for (final var outerEntry : map.entrySet()) {
             result.put(outerEntry.getKey(), new HashMap<>(outerEntry.getValue()));
+        }
+
+        return result;
+    }
+
+    private static <A, B> Map<A, Set<B>> deepCloneSet(final Map<A, Set<B>> map) {
+        final Map<A, Set<B>> result = new HashMap<>();
+
+        for (final var outerEntry : map.entrySet()) {
+            result.put(outerEntry.getKey(), new HashSet<>(outerEntry.getValue()));
         }
 
         return result;
