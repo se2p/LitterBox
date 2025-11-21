@@ -23,7 +23,7 @@ import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -49,29 +49,29 @@ public final class JSONFileCreator {
 
     public static void writeJsonFromProgram(Program program, Path output, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
+        Path outPath = buildOutputPath(program, output, postfix, JSON);
+        try (PrintWriter out = new PrintWriter(outPath.toString())) {
+            out.println(jsonString);
+        }
+    }
 
-        Path outPath = buildOutputPath(output, JSON);
-
-    private Path buildOutputPath(final Path output, final String fileExtension) {
-        if (output.toString().endsWith(JSON)) {
+    private static Path buildOutputPath(Program program, Path output, String postfix, String fileExtension) throws IOException {
+        Path outPath;
+        if (output.toString().endsWith(fileExtension)) {
             outPath = output;
             if (Files.exists(outPath)) {
                 throw new java.nio.file.FileAlreadyExistsException(outPath.toString());
             }
         } else {
             if (!Files.isDirectory(output)) {
-                throw new FileNotFoundException("Directory does not exist: " + output);
+                Files.createDirectories(output);
             }
-            outPath = output.resolve(program.getIdent().getName() + postfix + JSON);
+            outPath = output.resolve(program.getIdent().getName() + postfix + fileExtension);
             if (Files.exists(outPath)) {
                 throw new java.nio.file.FileAlreadyExistsException(outPath.toString());
             }
         }
-    }
-
-        try (PrintWriter out = new PrintWriter(outPath.toString())) {
-            out.println(jsonString);
-        }
+        return outPath;
     }
 
     public static void writeSb3FromProgram(Program program, Path outputPath, File sourceSB3File, String postfix) throws IOException {
@@ -81,21 +81,7 @@ public final class JSONFileCreator {
     private static void writeBinary(Program program, Path outputPath, File sourceFile, String postfix, String fileExtension) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        Path destinationPath;
-        if (outputPath.toString().endsWith(fileExtension)) {
-            destinationPath = outputPath;
-            if (Files.exists(destinationPath)) {
-                throw new java.nio.file.FileAlreadyExistsException(destinationPath.toString());
-            }
-        } else {
-            if (!Files.isDirectory(outputPath)) {
-                throw new FileNotFoundException("Directory does not exist: " + outputPath);
-            }
-            destinationPath = outputPath.resolve(program.getIdent().getName() + postfix + fileExtension);
-            if (Files.exists(destinationPath)) {
-                throw new java.nio.file.FileAlreadyExistsException(destinationPath.toString());
-            }
-        }
+        Path destinationPath = buildOutputPath(program, outputPath, postfix, fileExtension);
 
         Path tmp = Files.createTempDirectory("litterbox_");
 

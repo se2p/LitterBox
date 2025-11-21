@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,9 +64,10 @@ class JSONFileCreatorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         Path nonExistentDir = tempDir.resolve("nonExistentDir");
         
-        assertThrows(FileNotFoundException.class, () -> {
-            JSONFileCreator.writeJsonFromProgram(program, nonExistentDir, "_test");
-        });
+        JSONFileCreator.writeJsonFromProgram(program, nonExistentDir, "_test");
+        
+        Path expectedFile = nonExistentDir.resolve("emptyProject_test.json");
+        assertTrue(Files.exists(expectedFile), "File should be created in the new directory");
     }
 
     @Test
@@ -76,7 +77,7 @@ class JSONFileCreatorTest implements JsonTest {
         
         JSONFileCreator.writeSb3FromProgram(program, tempDir, sourceSb3, "_test");
         
-        Path expectedFile = tempDir.resolve("EmptyProject_test.sb3");
+        Path expectedFile = tempDir.resolve("emptyProject_test.sb3");
         assertTrue(Files.exists(expectedFile), "SB3 file should be created in the directory with default name");
     }
 
@@ -90,7 +91,7 @@ class JSONFileCreatorTest implements JsonTest {
         
         assertTrue(Files.exists(specificFile), "SB3 file should be created at the specific path");
         // Ensure the default file was NOT created
-        Path defaultFile = tempDir.resolve("EmptyProject_ignored.sb3");
+        Path defaultFile = tempDir.resolve("emptyProject_ignored.sb3");
         assertFalse(Files.exists(defaultFile), "Default SB3 file should not be created when specific path is given");
     }
 
@@ -100,9 +101,10 @@ class JSONFileCreatorTest implements JsonTest {
         File sourceSb3 = new File("src/test/fixtures/emptyProject.sb3");
         Path nonExistentDir = tempDir.resolve("nonExistentDir");
         
-        assertThrows(FileNotFoundException.class, () -> {
-            JSONFileCreator.writeSb3FromProgram(program, nonExistentDir, sourceSb3, "_test");
-        });
+        JSONFileCreator.writeSb3FromProgram(program, nonExistentDir, sourceSb3, "_test");
+        
+        Path expectedFile = nonExistentDir.resolve("emptyProject_test.sb3");
+        assertTrue(Files.exists(expectedFile), "SB3 file should be created in the new directory");
     }
 
     @Test
