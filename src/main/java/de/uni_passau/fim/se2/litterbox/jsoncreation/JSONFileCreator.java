@@ -23,9 +23,9 @@ import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -55,30 +55,36 @@ public final class JSONFileCreator {
         }
     }
 
-    private static Path buildOutputPath(Program program, Path output, String postfix, String fileExtension) throws IOException {
-        Path outPath;
+    private static Path buildOutputPath(
+            Program program, Path output, String postfix, String fileExtension
+    ) throws IOException {
+        final Path outPath;
+
         if (output.toString().endsWith(fileExtension)) {
             outPath = output;
-            if (Files.exists(outPath)) {
-                throw new java.nio.file.FileAlreadyExistsException(outPath.toString());
-            }
         } else {
             if (!Files.isDirectory(output)) {
                 Files.createDirectories(output);
             }
             outPath = output.resolve(program.getIdent().getName() + postfix + fileExtension);
-            if (Files.exists(outPath)) {
-                throw new java.nio.file.FileAlreadyExistsException(outPath.toString());
-            }
         }
+
+        if (Files.exists(outPath)) {
+            throw new FileAlreadyExistsException(outPath.toString());
+        }
+
         return outPath;
     }
 
-    public static void writeSb3FromProgram(Program program, Path outputPath, File sourceSB3File, String postfix) throws IOException {
+    public static void writeSb3FromProgram(
+            Program program, Path outputPath, File sourceSB3File, String postfix
+    ) throws IOException {
         writeBinary(program, outputPath, sourceSB3File, postfix, SB3);
     }
 
-    private static void writeBinary(Program program, Path outputPath, File sourceFile, String postfix, String fileExtension) throws IOException {
+    private static void writeBinary(
+            Program program, Path outputPath, File sourceFile, String postfix, String fileExtension
+    ) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
         Path destinationPath = buildOutputPath(program, outputPath, postfix, fileExtension);
@@ -109,7 +115,9 @@ public final class JSONFileCreator {
         }
     }
 
-    public static void writeMBlockFromProgram(Program program, Path outputPath, File sourceSB3File, String postfix) throws IOException {
+    public static void writeMBlockFromProgram(
+            Program program, Path outputPath, File sourceSB3File, String postfix
+    ) throws IOException {
         writeBinary(program, outputPath, sourceSB3File, postfix, MBLOCK);
     }
 }
