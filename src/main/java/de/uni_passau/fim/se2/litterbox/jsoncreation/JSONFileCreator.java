@@ -23,9 +23,9 @@ import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -40,30 +40,55 @@ public final class JSONFileCreator {
     private static final String SB3 = ".sb3";
     private static final String MBLOCK = ".mblock";
 
-    public static void writeJsonFromProgram(Program program, String postfix) throws FileNotFoundException {
+    public static void writeJsonFromProgram(Program program, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
     }
 
-    public static void writeJsonFromProgram(Program program, Path output, String postfix) throws FileNotFoundException {
+    public static void writeJsonFromProgram(Program program, Path output, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-
-        Path outPath = output.resolve(program.getIdent().getName() + postfix + JSON);
+        Path outPath = buildOutputPath(program, output, postfix, JSON);
         try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
         }
     }
 
-    public static void writeSb3FromProgram(Program program, Path outputPath, File sourceSB3File, String postfix) throws IOException {
+    private static Path buildOutputPath(
+            Program program, Path output, String postfix, String fileExtension
+    ) throws IOException {
+        final Path outPath;
+
+        if (output.toString().endsWith(fileExtension)) {
+            outPath = output;
+        } else {
+            if (!Files.isDirectory(output)) {
+                Files.createDirectories(output);
+            }
+            outPath = output.resolve(program.getIdent().getName() + postfix + fileExtension);
+        }
+
+        if (Files.exists(outPath)) {
+            throw new FileAlreadyExistsException(outPath.toString());
+        }
+
+        return outPath;
+    }
+
+    public static void writeSb3FromProgram(
+            Program program, Path outputPath, File sourceSB3File, String postfix
+    ) throws IOException {
         writeBinary(program, outputPath, sourceSB3File, postfix, SB3);
     }
 
-    private static void writeBinary(Program program, Path outputPath, File sourceFile, String postfix, String fileExtension) throws IOException {
+    private static void writeBinary(
+            Program program, Path outputPath, File sourceFile, String postfix, String fileExtension
+    ) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        Path destinationPath = outputPath.resolve(program.getIdent().getName() + postfix + fileExtension);
+        Path destinationPath = buildOutputPath(program, outputPath, postfix, fileExtension);
+
         Path tmp = Files.createTempDirectory("litterbox_");
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
@@ -90,7 +115,9 @@ public final class JSONFileCreator {
         }
     }
 
-    public static void writeMBlockFromProgram(Program program, Path outputPath, File sourceSB3File, String postfix) throws IOException {
+    public static void writeMBlockFromProgram(
+            Program program, Path outputPath, File sourceSB3File, String postfix
+    ) throws IOException {
         writeBinary(program, outputPath, sourceSB3File, postfix, MBLOCK);
     }
 }
