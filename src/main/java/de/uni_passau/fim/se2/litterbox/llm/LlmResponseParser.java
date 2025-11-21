@@ -86,7 +86,7 @@ public class LlmResponseParser {
         // General <number> -> (number) replacement
         // This handles "move <10> steps", "turn cw <15> degrees" (after turn cw fix), etc.
         // Regex looks for <digits optionally with dot> and replaces with (digits)
-        line = line.replaceAll("<\\s*([0-9]+(\\.[0-9]+)?)\\s*>", "($1)");
+        line = line.replaceAll("<\\s*(\\d+(\\.\\d+)?)\\s*>", "($1)");
 
         // sometimes control structures use braces
         if (line.endsWith("{")) {
@@ -349,7 +349,8 @@ public class LlmResponseParser {
 
         if (currentSprite != null && currentScriptId != null) {
             parseScript(
-                    spriteScripts, unparseableScripts, deletedScripts, currentSprite, currentScriptId, currentScriptCode.toString()
+                    spriteScripts, unparseableScripts, deletedScripts,
+                    currentSprite, currentScriptId, currentScriptCode.toString()
             );
         }
 
@@ -368,16 +369,16 @@ public class LlmResponseParser {
 
         if (lineLower.startsWith("sprite:") || lineLower.startsWith("script:")) {
             line = line
-                    .replaceFirst("^[sS]prite:(\\s*)", "//Sprite: ")
-                    .replaceFirst("^[sS]cript:(\\s*)", "//Script: ");
+                    .replaceFirst("^[sS]prite:(\\s*)", SPRITE_HEADER)
+                    .replaceFirst("^[sS]cript:(\\s*)", SCRIPT_HEADER);
         }
 
         // one space between `//Script:` and ID. Since the ID cannot contain spaces, we know that the LLM added some
         // additional suffix. Sprite names are allowed to contain spaces.
         if (line.contains("Script:") && StringUtils.countMatches(line, " ") > 1) {
-            final int spaceIdx = line.replace("//Script: ", "").indexOf(' ');
+            final int spaceIdx = line.replace(SCRIPT_HEADER, "").indexOf(' ');
             if (spaceIdx > -1) {
-                line = line.substring(0, "//Script: ".length() + spaceIdx);
+                line = line.substring(0, SCRIPT_HEADER.length() + spaceIdx);
             }
         }
 

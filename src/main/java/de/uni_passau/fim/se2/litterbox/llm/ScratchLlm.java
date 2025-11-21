@@ -97,8 +97,9 @@ public class ScratchLlm {
         log.info("Received fixed script:\n" + rawResponse);
         final ParsedLlmResponseCode parsedResponse = responseParser.parseLLMResponse(rawResponse);
 
-        final ParsedLlmResponseCode newResponse = new ParsedLlmResponseCode(response.scripts(), Collections.emptyMap(), Collections.emptyMap())
-                .merge(parsedResponse);
+        final ParsedLlmResponseCode newResponse = new ParsedLlmResponseCode(
+                response.scripts(), Collections.emptyMap(), Collections.emptyMap()
+        ).merge(parsedResponse);
         return askForSyntaxFixes(program, newResponse, remainingTries - 1);
     }
 
