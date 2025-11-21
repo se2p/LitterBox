@@ -438,6 +438,13 @@ public class Main implements Callable<Integer> {
     )
     static class DotSubcommand extends LitterBoxSubcommand {
 
+        @CommandLine.Option(
+                names = {"-g", "--graph"},
+                description = "The type of graph to generate. Default: AST. Values: ${COMPLETION-CANDIDATES}",
+                defaultValue = "AST"
+        )
+        GraphType graphType;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -446,7 +453,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected DotAnalyzer getAnalyzer() {
-            return new DotAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
+            return new DotAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, graphType);
         }
     }
 

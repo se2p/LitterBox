@@ -26,13 +26,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DotAnalyzer extends FileAnalyzer<String> {
-    public DotAnalyzer(Path output, boolean delete) {
-        super(new DotGraphAnalyzer(), output, delete);
+
+    private final GraphType graphType;
+
+    public DotAnalyzer(Path output, boolean delete, GraphType graphType) {
+        super(new DotGraphAnalyzer(graphType), output, delete);
+        this.graphType = graphType;
     }
 
     @Override
     protected void writeResultToFile(Path projectFile, Program program, String dotString) throws IOException {
-        try (BufferedWriter bw = Files.newBufferedWriter(output)) {
+        Path outputPath = output;
+        if (Files.isDirectory(output)) {
+            String fileName = projectFile.getFileName().toString();
+            int lastDotIndex = fileName.lastIndexOf('.');
+            if (lastDotIndex > 0) {
+                fileName = fileName.substring(0, lastDotIndex);
+            }
+            outputPath = output.resolve(fileName + "_" + graphType.name() + ".dot");
+        }
+
+        try (BufferedWriter bw = Files.newBufferedWriter(outputPath)) {
             bw.write(dotString);
         }
     }

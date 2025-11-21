@@ -20,11 +20,41 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.dependency.*;
 
 public class DotGraphAnalyzer implements ProgramAnalyzer<String> {
 
+    private final GraphType graphType;
+
+    public DotGraphAnalyzer(GraphType graphType) {
+        this.graphType = graphType;
+    }
+
+    public DotGraphAnalyzer() {
+        this(GraphType.AST);
+    }
+
     @Override
     public String analyze(Program program) {
-        return DotVisitor.buildDotGraph(program);
+        if (graphType == GraphType.AST) {
+            return DotVisitor.buildDotGraph(program);
+        }
+
+        ControlFlowGraphVisitor cfgVisitor = new ControlFlowGraphVisitor(program, null);
+        cfgVisitor.visit(program);
+        ControlFlowGraph cfg = cfgVisitor.getControlFlowGraph();
+
+        return switch (graphType) {
+            case CFG -> cfg.toDotString();
+            case CDG -> new ControlDependenceGraph(cfg).toDotString();
+            case DDG -> new DataDependenceGraph(cfg).toDotString();
+            case DT -> new DominatorTree(cfg).toDotString();
+            case PDT -> new PostDominatorTree(cfg).toDotString();
+            case TDG -> new TimeDependenceGraph(cfg).toDotString();
+            case PDG -> new ProgramDependenceGraph(cfg).toDotString();
+            default -> throw new IllegalStateException("Unexpected value: " + graphType);
+        };
     }
 }
