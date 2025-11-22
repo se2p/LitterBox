@@ -18,9 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,77 +39,22 @@ class DotGraphAnalyzerTest {
     private Program program;
 
     @BeforeEach
-    void setUp() throws IOException, de.uni_passau.fim.se2.litterbox.ast.ParsingException {
-        de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser parser = new de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser();
+    void setUp() throws IOException, ParsingException {
+        Scratch3Parser parser = new Scratch3Parser();
         program = parser.parseFile(Path.of("src/test/fixtures/MWE.json").toFile());
     }
 
-    @Test
-    void testAnalyzeAST() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.AST);
+    @ParameterizedTest
+    @EnumSource(GraphType.class)
+    void testAnalyzeGraph(GraphType graphType) {
+        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(graphType);
         String result = analyzer.analyze(program);
         assertNotNull(result);
         assertTrue(result.contains("digraph"));
     }
 
     @Test
-    void testAnalyzeCFG() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.CFG);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzeCDG() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.CDG);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzeDDG() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.DDG);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzeDT() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.DT);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzePDT() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.PDT);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzeTDG() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.TDG);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testAnalyzePDG() {
-        DotGraphAnalyzer analyzer = new DotGraphAnalyzer(GraphType.PDG);
-        String result = analyzer.analyze(program);
-        assertNotNull(result);
-        assertTrue(result.contains("digraph"));
-    }
-
-    @Test
-    void testDirectoryOutput(@org.junit.jupiter.api.io.TempDir Path tempDir) throws IOException {
+    void testDirectoryOutput(@TempDir Path tempDir) throws IOException {
         DotAnalyzer analyzer = new DotAnalyzer(tempDir, false, GraphType.CFG);
         Path projectFile = Path.of("test_project.json");
         String dotString = "digraph G {}";
