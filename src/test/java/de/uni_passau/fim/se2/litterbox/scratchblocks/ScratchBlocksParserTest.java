@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.Assertions;
@@ -240,5 +241,16 @@ public class ScratchBlocksParserTest implements JsonTest {
 
         Script script = content.scripts().getScript(0);
         Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements(), "Script should have 2 statements");
+    }
+
+    @Test
+    void testIfWithComment() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "if <> then // comment\n" +
+                "end\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0));
     }
 }
