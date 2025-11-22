@@ -24,10 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +57,7 @@ public final class Downloader {
 
     public static String downloadProjectJSON(String projectId) throws IOException {
         final String projectAccessToken = getProjectToken(projectId);
-        final String url = "https://projects.scratch.mit.edu/" + projectId + "/?token=" + projectAccessToken;
+        final String url = "https://projects.scratch.mit.edu/" + projectId + "?token=" + projectAccessToken;
 
         return readFromUrl(url);
     }
@@ -72,9 +74,19 @@ public final class Downloader {
         }
     }
 
+    public static void downloadBinary(String url, Path destination) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
+
+        try (InputStream is = con.getInputStream()) {
+            Files.copy(is, destination, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
     private static String readFromUrl(String url) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
+
         try (
-                InputStream is = URI.create(url).toURL().openStream();
+                InputStream is = con.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                 BufferedReader br = new BufferedReader(isr)
         ) {

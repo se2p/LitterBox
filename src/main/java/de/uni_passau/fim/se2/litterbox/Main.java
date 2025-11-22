@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import de.uni_passau.fim.se2.litterbox.utils.ScratchClient;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -49,6 +50,7 @@ import java.util.concurrent.Callable;
                 Main.DotSubcommand.class,
                 Main.ScratchBlocksSubcommand.class,
                 Main.ExtractSubcommand.class,
+                Main.MineSubcommand.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {
@@ -471,6 +473,118 @@ public class Main implements Callable<Integer> {
         @Override
         protected ScratchBlocksAnalyzer getAnalyzer() {
             return new ScratchBlocksAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
+        }
+    }
+    @CommandLine.Command(name = "mine", description = "Download projects from Scratch.")
+    static class MineSubcommand implements Callable<Integer> {
+
+        @CommandLine.Option(names = {"-o", "--output"}, description = "Output directory for downloaded projects.", required = true)
+        Path outputPath;
+
+        @CommandLine.Option(names = {"--project-id"}, description = "ID of the project to download.")
+        String projectId;
+
+        @CommandLine.Option(names = {"--project-list"}, description = "File containing a list of project IDs.")
+        Path projectList;
+
+        @CommandLine.Option(names = {"--metadata"}, description = "Download project metadata.")
+        boolean metadata;
+
+        @CommandLine.Option(names = {"--sb3"}, description = "Download as .sb3 file (zipped JSON + assets).")
+        boolean sb3;
+
+        @CommandLine.Option(names = {"--from"}, description = "Start project ID for range download.")
+        Integer fromId;
+
+        @CommandLine.Option(names = {"--to"}, description = "End project ID for range download.")
+        Integer toId;
+
+        @CommandLine.Option(names = {"--recent"}, description = "Download X most recent projects.")
+        Integer recent;
+
+        @CommandLine.Option(names = {"--popular"}, description = "Download X most popular projects.")
+        Integer popular;
+
+        @CommandLine.Option(names = {"--user"}, description = "Download all projects of a user.")
+        String user;
+
+        private ScratchClient client;
+
+        public MineSubcommand() {
+            this.client = new ScratchClient();
+        }
+
+        public MineSubcommand(ScratchClient client) {
+            this.client = client;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            // Validate options
+            if (projectId == null && projectList == null && fromId == null && recent == null && popular == null && user == null) {
+                System.err.println("Please specify a download source: --project-id, --project-list, --from/--to, --recent, --popular, or --user");
+                return 1;
+            }
+
+            if (projectId != null) {
+                processId(projectId);
+            }
+
+            if (projectList != null) {
+                if (Files.exists(projectList)) {
+                    List<String> ids = Files.readAllLines(projectList);
+                    for (String id : ids) {
+                        processId(id.trim());
+                    }
+                } else {
+                    System.err.println("Project list file not found: " + projectList);
+                }
+            }
+
+            if (fromId != null && toId != null) {
+                for (int i = fromId; i <= toId; i++) {
+                    processId(String.valueOf(i));
+                }
+            }
+
+            if (recent != null) {
+                List<String> ids = client.getRecentProjects(recent);
+                for (String id : ids) {
+                    processId(id);
+                }
+            }
+
+            if (popular != null) {
+                List<String> ids = client.getPopularProjects(popular);
+                for (String id : ids) {
+                    processId(id);
+                }
+            }
+
+            if (user != null) {
+                List<String> ids = client.getUserProjects(user);
+                for (String id : ids) {
+                    processId(id);
+                }
+            }
+
+            return 0;
+        }
+
+        private void processId(String id) {
+            try {
+                System.out.println("Downloading project " + id + "...");
+                if (sb3) {
+                    client.downloadProjectSb3(id, outputPath);
+                } else {
+                    client.downloadProject(id, outputPath);
+                }
+                if (metadata) {
+                    client.downloadMetadata(id, outputPath);
+                }
+            } catch (IOException e) {
+                System.err.println("Failed to download project " + id + ": " + e.getMessage());
+            }
         }
     }
 }
