@@ -34,14 +34,16 @@ import java.util.regex.Pattern;
 public class InvalidNumberString extends AbstractIssueFinder {
 
     public static final String NAME = "invalid_number_string";
-    private static final Pattern MULTIPLE_DECIMAL_POINTS = Pattern.compile("^-?\\d*\\.\\d*\\.\\d*$");
-    private static final Pattern SCIENTIFIC_NOTATION = Pattern.compile("^-?\\d+(\\.\\d+)?[eE]-?\\d+$");
+    private static final Pattern ALLOWED_CHARS = Pattern.compile("^[0-9eE.+\\-]+$");
+    // Regex for a valid number: optional sign, integer or decimal part, optional scientific notation
+    private static final Pattern VALID_NUMBER = Pattern.compile("^[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?$");
 
     @Override
     public void visit(AsNumber node) {
         if (node.getOperand1() instanceof StringLiteral stringLiteral) {
             String text = stringLiteral.getText();
-            if (MULTIPLE_DECIMAL_POINTS.matcher(text).matches() || SCIENTIFIC_NOTATION.matcher(text).matches()) {
+            // If it looks like a number (only contains number-like chars) but isn't a valid number
+            if (ALLOWED_CHARS.matcher(text).matches() && !VALID_NUMBER.matcher(text).matches()) {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }

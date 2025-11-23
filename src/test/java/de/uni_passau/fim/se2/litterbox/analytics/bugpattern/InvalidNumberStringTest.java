@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019-2024 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -66,6 +84,44 @@ public class InvalidNumberStringTest {
         AsNumber asNumber = new AsNumber(stringLiteral);
         finder.visit(asNumber);
         
+        Assertions.assertEquals(0, finder.getIssues().size());
+    }
+
+    @Test
+    void testInvalidScientificNotation() {
+        TestableInvalidNumberString finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+
+        // "1e" is invalid (missing exponent)
+        finder.visit(new AsNumber(new StringLiteral("1e")));
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        // "e5" is invalid (missing mantissa)
+        finder.visit(new AsNumber(new StringLiteral("e5")));
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        // "1e5.5" is invalid (exponent must be integer)
+        finder.visit(new AsNumber(new StringLiteral("1e5.5")));
+        Assertions.assertEquals(1, finder.getIssues().size());
+    }
+
+    @Test
+    void testOtherInvalidFormats() {
+        TestableInvalidNumberString finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+
+        // "1-2" is invalid (minus in middle)
+        finder.visit(new AsNumber(new StringLiteral("1-2")));
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        // "--5" is invalid (double sign)
+        finder.visit(new AsNumber(new StringLiteral("--5")));
         Assertions.assertEquals(1, finder.getIssues().size());
     }
 
@@ -123,7 +179,7 @@ public class InvalidNumberStringTest {
             
         glide.accept(finder);
         
-        Assertions.assertEquals(3, finder.getIssues().size());
+        Assertions.assertEquals(2, finder.getIssues().size());
     }
 
     @Test
