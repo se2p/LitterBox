@@ -77,6 +77,8 @@ final class StringExprConverter extends ExprConverter {
                         && state.getBlock(exprInputId) instanceof RawBlock.RawRegularBlock exprInputRegularBlock
         ) {
             return convertStringExpr(state, exprInputId, exprInputRegularBlock);
+        } else if (exprBlock.input() instanceof BlockRef.Block(RawBlock block) && block instanceof RawBlock.RawRegularBlock exprInputRegularBlock) {
+            return convertStringExpr(state, new RawBlockId("embedded"), exprInputRegularBlock);
         }
 
         throw new InternalParsingException("Could not parse NumExpr.");
@@ -112,15 +114,16 @@ final class StringExprConverter extends ExprConverter {
     }
 
     private static boolean hasStringExprOpcode(final RawTarget target, final RawInput exprBlock) {
+        RawBlock inputBlock = null;
         if (exprBlock.input() instanceof BlockRef.IdRef(RawBlockId inputId)) {
-            final RawBlock inputBlock = target.blocks().get(inputId);
-            if (inputBlock == null) {
-                return false;
-            }
+            inputBlock = target.blocks().get(inputId);
+        } else if (exprBlock.input() instanceof BlockRef.Block(RawBlock block)) {
+            inputBlock = block;
+        }
 
-            if (inputBlock instanceof RawBlock.RawRegularBlock inputRegularBlock) {
-                return StringExprOpcode.contains(inputRegularBlock.opcode());
-            }
+        if (inputBlock instanceof RawBlock.RawRegularBlock inputRegularBlock) {
+            return StringExprOpcode.contains(inputRegularBlock.opcode())
+                    || "event_broadcast_menu".equals(inputRegularBlock.opcode());
         }
 
         return false;
@@ -145,6 +148,11 @@ final class StringExprConverter extends ExprConverter {
             final RawBlockId id,
             final RawBlock.RawRegularBlock block
     ) {
+        if ("event_broadcast_menu".equals(block.opcode())) {
+            final String value = block.getFieldValueAsString(KnownFields.BROADCAST_OPTION);
+            return new StringLiteral(value);
+        }
+
         final StringExprOpcode opcode = StringExprOpcode.getOpcode(block.opcode());
         final BlockMetadata metadata = RawBlockMetadataConverter.convertBlockMetadata(id, block);
 
