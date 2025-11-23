@@ -203,6 +203,7 @@ public class ScratchBlocksParserTest implements JsonTest {
         // 2 move statements
         Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements());
     }
+
     @Test
     void testCustomBlockStartingWithKeyword() {
         ScratchBlocksParser parser = new ScratchBlocksParser();
@@ -268,4 +269,24 @@ public class ScratchBlocksParserTest implements JsonTest {
         IfThenStmt ifStmt = (IfThenStmt) script.getStmtList().getStatement(0);
         Assertions.assertInstanceOf(MoveSteps.class, ifStmt.getThenStmts().getStatement(0));
     }
+
+    @Test
+    void testIfWithCommentAndContentAtActorLevel() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "if <> then // comment\n" +
+                "move (10) steps\n" +
+                "end\n";
+        ActorContent sprite = parser.parseActorContent(input);
+        // Should be 1 to match parsing a single script
+        Assertions.assertEquals(1, sprite.scripts().getScriptList().size());
+        Script script = sprite.scripts().getScript(0);
+
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0));
+
+        IfThenStmt ifStmt = (IfThenStmt) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(MoveSteps.class, ifStmt.getThenStmts().getStatement(0));
+    }
+
 }
