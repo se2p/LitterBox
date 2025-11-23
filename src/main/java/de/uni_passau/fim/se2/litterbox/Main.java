@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 @CommandLine.Command(
         name = "LitterBox",
@@ -475,17 +476,22 @@ public class Main implements Callable<Integer> {
             return new ScratchBlocksAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
-    @CommandLine.Command(name = "mine", description = "Download projects from Scratch.")
+
+    @CommandLine.Command(
+            name = "mine",
+            description = "Download projects from Scratch.",
+            mixinStandardHelpOptions = true
+    )
     static class MineSubcommand implements Callable<Integer> {
 
-        @CommandLine.Option(names = {"-o", "--output"}, description = "Output directory for downloaded projects.", required = true)
+        private static final Logger log = Logger.getLogger(MineSubcommand.class.getName());
+
+        @CommandLine.Option(
+                names = {"-o", "--output"},
+                description = "Output directory for downloaded projects.",
+                required = true
+        )
         Path outputPath;
-
-        @CommandLine.Option(names = {"--project-id"}, description = "ID of the project to download.")
-        String projectId;
-
-        @CommandLine.Option(names = {"--project-list"}, description = "File containing a list of project IDs.")
-        Path projectList;
 
         @CommandLine.Option(names = {"--metadata"}, description = "Download project metadata.")
         boolean metadata;
@@ -493,22 +499,48 @@ public class Main implements Callable<Integer> {
         @CommandLine.Option(names = {"--sb3"}, description = "Download as .sb3 file (zipped JSON + assets).")
         boolean sb3;
 
-        @CommandLine.Option(names = {"--from"}, description = "Start project ID for range download.")
-        Integer fromId;
+        @CommandLine.ArgGroup(exclusive = false, multiplicity = "1..*")
+        DownloadKind downloadKind;
 
-        @CommandLine.Option(names = {"--to"}, description = "End project ID for range download.")
-        Integer toId;
+        static class DownloadKind {
+            @CommandLine.Option(names = {"--project-id"}, description = "ID of the project to download.")
+            String projectId;
 
-        @CommandLine.Option(names = {"--recent"}, description = "Download X most recent projects.")
-        Integer recent;
+            @CommandLine.Option(names = {"--project-list"}, description = "File containing a list of project IDs.")
+            Path projectList;
 
-        @CommandLine.Option(names = {"--popular"}, description = "Download X most popular projects.")
-        Integer popular;
+            @CommandLine.ArgGroup(exclusive = false)
+            RangeDownload rangeDownload;
 
-        @CommandLine.Option(names = {"--user"}, description = "Download all projects of a user.")
-        String user;
+            @CommandLine.Option(names = {"--recent"}, description = "Download X most recent projects.")
+            Integer recent;
 
-        private ScratchClient client;
+            @CommandLine.Option(names = {"--popular"}, description = "Download X most popular projects.")
+            Integer popular;
+
+            @CommandLine.Option(names = {"--user"}, description = "Download all projects of a user.")
+            String user;
+        }
+
+        // all options within group required, but the rangeDownload group is optional above: if one of the two options
+        // from/to in here is specified, then the other one is also required. This is enforced by the picocli library.
+        static class RangeDownload {
+            @CommandLine.Option(
+                    names = {"--from"},
+                    description = "Start project ID for range download.",
+                    required = true
+            )
+            Integer fromId;
+
+            @CommandLine.Option(
+                    names = {"--to"},
+                    description = "End project ID for range download.",
+                    required = true
+            )
+            Integer toId;
+        }
+
+        private final ScratchClient client;
 
         public MineSubcommand() {
             this.client = new ScratchClient();
@@ -520,49 +552,43 @@ public class Main implements Callable<Integer> {
 
         @Override
         public Integer call() throws Exception {
-            // Validate options
-            if (projectId == null && projectList == null && fromId == null && recent == null && popular == null && user == null) {
-                System.err.println("Please specify a download source: --project-id, --project-list, --from/--to, --recent, --popular, or --user");
-                return 1;
+            if (downloadKind.projectId != null) {
+                processId(downloadKind.projectId);
             }
 
-            if (projectId != null) {
-                processId(projectId);
-            }
-
-            if (projectList != null) {
-                if (Files.exists(projectList)) {
-                    List<String> ids = Files.readAllLines(projectList);
+            if (downloadKind.projectList != null) {
+                if (Files.exists(downloadKind.projectList)) {
+                    List<String> ids = Files.readAllLines(downloadKind.projectList);
                     for (String id : ids) {
                         processId(id.trim());
                     }
                 } else {
-                    System.err.println("Project list file not found: " + projectList);
+                    log.warning("Project list file not found: " + downloadKind.projectList);
                 }
             }
 
-            if (fromId != null && toId != null) {
-                for (int i = fromId; i <= toId; i++) {
+            if (downloadKind.rangeDownload != null) {
+                for (int i = downloadKind.rangeDownload.fromId; i <= downloadKind.rangeDownload.toId; i++) {
                     processId(String.valueOf(i));
                 }
             }
 
-            if (recent != null) {
-                List<String> ids = client.getRecentProjects(recent);
+            if (downloadKind.recent != null) {
+                List<String> ids = client.getRecentProjects(downloadKind.recent);
                 for (String id : ids) {
                     processId(id);
                 }
             }
 
-            if (popular != null) {
-                List<String> ids = client.getPopularProjects(popular);
+            if (downloadKind.popular != null) {
+                List<String> ids = client.getPopularProjects(downloadKind.popular);
                 for (String id : ids) {
                     processId(id);
                 }
             }
 
-            if (user != null) {
-                List<String> ids = client.getUserProjects(user);
+            if (downloadKind.user != null) {
+                List<String> ids = client.getUserProjects(downloadKind.user);
                 for (String id : ids) {
                     processId(id);
                 }
@@ -573,7 +599,7 @@ public class Main implements Callable<Integer> {
 
         private void processId(String id) {
             try {
-                System.out.println("Downloading project " + id + "...");
+                log.info("Downloading project " + id + "...");
                 if (sb3) {
                     client.downloadProjectSb3(id, outputPath);
                 } else {
@@ -583,7 +609,7 @@ public class Main implements Callable<Integer> {
                     client.downloadMetadata(id, outputPath);
                 }
             } catch (IOException e) {
-                System.err.println("Failed to download project " + id + ": " + e.getMessage());
+                log.severe("Failed to download project " + id + ": " + e.getMessage());
             }
         }
     }
