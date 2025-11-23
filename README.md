@@ -171,6 +171,44 @@ java -jar Litterbox-1.10.full.jar \
 ```
 
 
+### Generating Graphviz files
+
+LitterBox can generate a Graphviz `.dot` file representing various graphs of the project, such as the Abstract Syntax Tree (AST) or Control Flow Graph (CFG).
+
+```bash
+java -jar Litterbox-1.10.full.jar dot --path <path/to/project.json> --output <output.dot> [--graph <GraphType>]
+```
+
+Available graph types:
+- `AST`: Abstract Syntax Tree (default)
+- `CFG`: Control Flow Graph
+- `CDG`: Control Dependence Graph
+- `DDG`: Data Dependence Graph
+- `DT`: Dominator Tree
+- `PDT`: Post Dominator Tree
+- `TDG`: Time Dependence Graph
+- `PDG`: Program Dependence Graph
+
+
+### Mining projects
+
+LitterBox provides a dedicated `mine` command for bulk downloading of Scratch projects. This is useful for creating datasets.
+
+```bash
+java -jar Litterbox-1.10.full.jar mine --output <path/to/output/dir> [options]
+```
+
+Available options:
+- `--project-id <id>`: Download a specific project.
+- `--project-list <file>`: Download projects listed in a file (one ID per line).
+- `--from <id> --to <id>`: Download a range of project IDs.
+- `--recent <count>`: Download the X most recent projects.
+- `--popular <count>`: Download the X most popular projects.
+- `--user <username>`: Download all projects of a specific user.
+- `--sb3`: Download as `.sb3` file (zipped JSON + assets).
+- `--metadata`: Download project metadata.
+
+
 ### Automatically refactoring projects
 
 Since version 1.7 Litterbox can automatically refactor a given Scratch project to improve its readability:
