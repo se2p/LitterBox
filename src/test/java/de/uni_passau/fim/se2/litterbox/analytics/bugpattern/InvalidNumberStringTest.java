@@ -3,11 +3,26 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +50,6 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Test with "1.2.3"
         StringLiteral stringLiteral = new StringLiteral("1.2.3");
         AsNumber asNumber = new AsNumber(stringLiteral);
         finder.visit(asNumber);
@@ -48,7 +62,6 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Test with "1e5"
         StringLiteral stringLiteral = new StringLiteral("1e5");
         AsNumber asNumber = new AsNumber(stringLiteral);
         finder.visit(asNumber);
@@ -61,7 +74,6 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Test with "1.23"
         StringLiteral stringLiteral = new StringLiteral("1.23");
         AsNumber asNumber = new AsNumber(stringLiteral);
         finder.visit(asNumber);
@@ -74,20 +86,10 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Say "1.2.3" -> Should NOT trigger
         StringLiteral stringLiteral = new StringLiteral("1.2.3");
-        // Say takes StringExpr, so no AsNumber wrapper
-        de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say say = 
-            new de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say(stringLiteral, new NoBlockMetadata());
+        Say say = new Say(stringLiteral, new NoBlockMetadata());
         
-        // We need to visit the Say node, which will visit its children
-        // But InvalidNumberString only visits AsNumber. 
-        // If we visit Say, it visits StringLiteral. InvalidNumberString doesn't visit StringLiteral directly.
-        // So we just need to ensure that if we visit the children of Say, no issue is reported.
-        // Since there is no AsNumber, no issue should be reported.
-        
-        // Simulate visiting children
-        stringLiteral.accept(finder);
+        say.accept(finder);
         
         Assertions.assertEquals(0, finder.getIssues().size());
     }
@@ -97,23 +99,14 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Say "1.2.3" for "1.2.3" secs
-        // Text "1.2.3" -> Should NOT trigger
-        // Secs "1.2.3" -> Should trigger (wrapped in AsNumber)
-        
         StringLiteral text = new StringLiteral("1.2.3");
         StringLiteral secsString = new StringLiteral("1.2.3");
         AsNumber secs = new AsNumber(secsString);
         
-        de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs sayForSecs = 
-            new de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs(text, secs, new NoBlockMetadata());
+        SayForSecs sayForSecs = new SayForSecs(text, secs, new NoBlockMetadata());
             
-        // Visit text (StringLiteral) -> No issue
-        text.accept(finder);
-        Assertions.assertEquals(0, finder.getIssues().size());
+        sayForSecs.accept(finder);
         
-        // Visit secs (AsNumber) -> Issue
-        finder.visit(secs);
         Assertions.assertEquals(1, finder.getIssues().size());
     }
 
@@ -122,19 +115,13 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Glide "1.2.3" secs to x: "1e5" y: "1.2.3"
-        // All should trigger
-        
         AsNumber secs = new AsNumber(new StringLiteral("1.2.3"));
         AsNumber x = new AsNumber(new StringLiteral("1e5"));
         AsNumber y = new AsNumber(new StringLiteral("1.2.3"));
         
-        de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY glide = 
-            new de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY(secs, x, y, new NoBlockMetadata());
+        GlideSecsToXY glide = new GlideSecsToXY(secs, x, y, new NoBlockMetadata());
             
-        finder.visit(secs);
-        finder.visit(x);
-        finder.visit(y);
+        glide.accept(finder);
         
         Assertions.assertEquals(3, finder.getIssues().size());
     }
@@ -144,17 +131,10 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Set variable to "1.2.3" -> Should NOT trigger
-        // SetVariableTo takes Expression. If it's a string, it's StringLiteral, not AsNumber.
-        
         StringLiteral value = new StringLiteral("1.2.3");
-        // We need an Identifier, let's mock or create a simple one if possible, or just test the value visiting
-        // Since we are manually visiting, we just visit the value.
+        SetVariableTo setVar = new SetVariableTo(new StrId("var"), value, new NoBlockMetadata());
         
-        // If the parser parses `set var to "1.2.3"`, it creates SetVariableTo(id, StringLiteral("1.2.3")).
-        // So we visit StringLiteral.
-        
-        value.accept(finder);
+        setVar.accept(finder);
         
         Assertions.assertEquals(0, finder.getIssues().size());
     }
@@ -164,13 +144,80 @@ public class InvalidNumberStringTest {
         TestableInvalidNumberString finder = new TestableInvalidNumberString();
         finder.setCurrentScript(createDummyScript());
         
-        // Play note for "1.2.3" beats -> Should trigger
-        
         AsNumber beats = new AsNumber(new StringLiteral("1.2.3"));
-        // Note is an enum or similar, but we only care about beats which is NumExpr
+        PlayNoteForBeats playNote = new PlayNoteForBeats(new FixedNote(60, new NoBlockMetadata()), beats, new NoBlockMetadata());
         
-        finder.visit(beats);
+        playNote.accept(finder);
         
+        Assertions.assertEquals(1, finder.getIssues().size());
+    }
+
+    @Test
+    void testCoordinates() {
+        TestableInvalidNumberString finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+
+        AsNumber x = new AsNumber(new StringLiteral("1.2.3"));
+        AsNumber y = new AsNumber(new StringLiteral("1.2.3"));
+        GoToPosXY goTo = new GoToPosXY(x, y, new NoBlockMetadata());
+        goTo.accept(finder);
+        Assertions.assertEquals(2, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        AsNumber setX = new AsNumber(new StringLiteral("1.2.3"));
+        SetXTo setXTo = new SetXTo(setX, new NoBlockMetadata());
+        setXTo.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+    }
+
+    @Test
+    void testAngles() {
+        TestableInvalidNumberString finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+
+        AsNumber degreesLeft = new AsNumber(new StringLiteral("1.2.3"));
+        TurnLeft turnLeft = new TurnLeft(degreesLeft, new NoBlockMetadata());
+        turnLeft.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        AsNumber degreesRight = new AsNumber(new StringLiteral("1.2.3"));
+        TurnRight turnRight = new TurnRight(degreesRight, new NoBlockMetadata());
+        turnRight.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        AsNumber direction = new AsNumber(new StringLiteral("1.2.3"));
+        PointInDirection point = new PointInDirection(direction, new NoBlockMetadata());
+        point.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+    }
+
+    @Test
+    void testOtherNumericBlocks() {
+        TestableInvalidNumberString finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+
+        AsNumber steps = new AsNumber(new StringLiteral("1.2.3"));
+        MoveSteps move = new MoveSteps(steps, new NoBlockMetadata());
+        move.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        AsNumber seconds = new AsNumber(new StringLiteral("1.2.3"));
+        WaitSeconds wait = new WaitSeconds(seconds, new NoBlockMetadata());
+        wait.accept(finder);
+        Assertions.assertEquals(1, finder.getIssues().size());
+
+        finder = new TestableInvalidNumberString();
+        finder.setCurrentScript(createDummyScript());
+        AsNumber times = new AsNumber(new StringLiteral("1.2.3"));
+        RepeatTimesStmt repeat = new RepeatTimesStmt(times, new StmtList(new ArrayList<>()), new NoBlockMetadata());
+        repeat.accept(finder);
         Assertions.assertEquals(1, finder.getIssues().size());
     }
 }
