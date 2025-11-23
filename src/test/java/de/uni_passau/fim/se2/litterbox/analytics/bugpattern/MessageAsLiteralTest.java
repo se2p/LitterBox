@@ -30,10 +30,10 @@ public class MessageAsLiteralTest implements FinderTest, JsonTest {
     @Test
     public void testMessageAsLiteral() throws IOException, ParsingException {
         // //Script: receive_msg1
-when I receive [Msg1 v]
-say [Msg1]
-broadcast (Msg2 v)
-say [Msg2]
+        // when I receive [Msg1 v]
+        // say [Msg1]
+        // broadcast (Msg2 v)
+        // say [Msg2]
         // Expect 1 issue: "Msg1" is defined (received) but never sent, and used as literal in say block.
         // "Msg2" is sent, so usage as literal is allowed.
         assertThatFinderReports(1, new MessageAsLiteral(), "src/test/fixtures/bugpattern/messageAsLiteral.json");
