@@ -61,7 +61,7 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
+    protected Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
                  ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;

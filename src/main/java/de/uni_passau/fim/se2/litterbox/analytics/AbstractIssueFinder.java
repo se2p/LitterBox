@@ -121,31 +121,62 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
         if (currentScript != null) {
-            issues.add(new Issue(this, severity, program, currentActor, currentScript, node, metadata, hint));
+            issues.add(new IssueBuilder()
+                    .withFinder(this)
+                    .withSeverity(severity)
+                    .withProgram(program)
+                    .withActor(currentActor)
+                    .withScript(currentScript)
+                    .withCurrentNode(node)
+                    .withMetadata(metadata)
+                    .withHint(hint)
+                    .build());
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, severity, program, currentActor, currentProcedure, node, metadata, hint));
+            issues.add(new IssueBuilder()
+                    .withFinder(this)
+                    .withSeverity(severity)
+                    .withProgram(program)
+                    .withActor(currentActor)
+                    .withProcedure(currentProcedure)
+                    .withCurrentNode(node)
+                    .withMetadata(metadata)
+                    .withHint(hint)
+                    .build());
         }
     }
 
     protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata, Hint hint) {
-        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, theScript, node, metadata, hint));
+        issues.add(new IssueBuilder()
+                .withFinder(this)
+                .withSeverity(IssueSeverity.HIGH)
+                .withProgram(program)
+                .withActor(currentActor)
+                .withScript(theScript)
+                .withCurrentNode(node)
+                .withMetadata(metadata)
+                .withHint(hint)
+                .build());
     }
 
     protected void addIssueWithLooseComment() {
-        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                null, // TODO: There is no script
-                null, // TODO: There is no node?
-                null,  // TODO: There is no metadata
-                Hint.fromKey(getName())));
+        issues.add(new IssueBuilder()
+                .withFinder(this)
+                .withSeverity(IssueSeverity.HIGH)
+                .withProgram(program)
+                .withActor(currentActor)
+                .withHint(Hint.fromKey(getName()))
+                .build());
     }
 
     protected void addIssueWithLooseComment(Hint hint) {
-        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
-                null, // TODO: There is no script
-                null, // TODO: There is no node?
-                null,  // TODO: There is no metadata
-                hint));
+        issues.add(new IssueBuilder()
+                .withFinder(this)
+                .withSeverity(IssueSeverity.HIGH)
+                .withProgram(program)
+                .withActor(currentActor)
+                .withHint(hint)
+                .build());
     }
 
     @Override
