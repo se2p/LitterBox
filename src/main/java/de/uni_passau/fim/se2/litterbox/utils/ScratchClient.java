@@ -21,16 +21,18 @@ package de.uni_passau.fim.se2.litterbox.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.common.util.concurrent.RateLimiter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +41,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -50,8 +54,16 @@ public class ScratchClient {
     private static final String API_BASE_URL = "https://api.scratch.mit.edu";
     private final ObjectMapper mapper = new ObjectMapper();
 
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+
+    // 10 requests per second according to https://github.com/scratchfoundation/scratch-rest-api/wiki#rate-limits
+    private static final RateLimiter rateLimiter = RateLimiter.create(10.0);
+
     public void downloadProject(String projectId, Path outputDir) throws IOException {
-        Downloader.downloadAndSaveProject(projectId, outputDir);
+        if (!isAlreadyDownloaded(projectId, outputDir)) {
+            String json = downloadProjectJSON(projectId);
+            saveDownloadedProject(json, projectId, outputDir);
+        }
     }
 
     public void downloadProjectSb3(String projectId, Path outputDir) throws IOException {
@@ -60,7 +72,7 @@ public class ScratchClient {
         }
 
         // 1. Download project JSON
-        String json = Downloader.downloadProjectJSON(projectId);
+        String json = downloadProjectJSON(projectId);
         
         // 2. Create a temporary directory for assets
         Path tempDir = Files.createTempDirectory("sb3_assets_" + projectId);
@@ -71,10 +83,6 @@ public class ScratchClient {
             // 3. Parse JSON to find assets (md5ext)
             JsonNode rootNode = new ObjectMapper().readTree(json);
             Set<String> assets = new HashSet<>();
-            
-            // Helper to collect assets from a list of targets (stage + sprites)
-            // Note: "targets" is used in SB3 format, but older API might return "objName" style.
-            // The API response we saw earlier (10128125.json) has "costumes" and "sounds" at root (Stage) and in "children" (Sprites).
             
             // Collect from root (Stage)
             collectAssets(rootNode, assets);
@@ -147,7 +155,7 @@ public class ScratchClient {
     private void downloadAsset(String md5ext, Path outputDir) {
         String url = "https://assets.scratch.mit.edu/internalapi/asset/" + md5ext + "/get/";
         try {
-            Downloader.downloadBinary(url, outputDir.resolve(md5ext));
+            downloadBinary(url, outputDir.resolve(md5ext));
         } catch (IOException e) {
             System.err.println("Failed to download asset: " + md5ext);
         }
@@ -206,21 +214,74 @@ public class ScratchClient {
     }
 
     private String readFromUrl(String url) throws IOException {
+        rateLimiter.acquire();
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)).body();
+        } catch (InterruptedException e) {
+            throw new IOException("Network connection interruption.", e);
+        }
+    }
+
+    /**
+     * The first capturing group contains the actual project token value.
+     */
+    private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
+
+    public String downloadProjectJSON(String projectId) throws IOException {
+        final String projectAccessToken = getProjectToken(projectId);
+        final String url = "https://projects.scratch.mit.edu/" + projectId + "?token=" + projectAccessToken;
+
+        return readFromUrl(url);
+    }
+
+    private String getProjectToken(String projectId) throws IOException {
+        final String url = "https://api.scratch.mit.edu/projects/" + projectId;
+        final String projectInfo = readFromUrl(url);
+
+        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfo);
+        if (matcher.find() && matcher.groupCount() == 1) {
+            return matcher.group(1);
+        } else {
+            throw new IOException("Cannot extract download token from project metadata.");
+        }
+    }
+
+    public void downloadBinary(String url, Path destination) throws IOException {
+        rateLimiter.acquire();
         HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
 
-        try (
-                InputStream is = con.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(isr)
-        ) {
-            final StringBuilder sb = new StringBuilder();
-            int cp = br.read();
-            while (cp != -1) {
-                sb.append(((char) cp));
-                cp = br.read();
-            }
-            return sb.toString();
+        try (InputStream is = con.getInputStream()) {
+            Files.copy(is, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         }
+    }
+
+    public boolean isAlreadyDownloaded(String projectid, Path projectout) {
+        Path path = projectout.resolve(projectid + ".json");
+        return path.toFile().exists();
+    }
+
+    public void saveDownloadedProject(String json, String projectid, Path projectout) throws IOException {
+        if (projectout == null) {
+            return;
+        }
+
+        File folder = projectout.toFile();
+        if (folder.exists() && !folder.isDirectory()) {
+            System.out.println("Projectout is not a folder but a file");
+        }
+
+        if (!folder.exists()) {
+            boolean success = folder.mkdir();
+            if (!success) {
+                System.out.println("Could not create projectout");
+            }
+        }
+
+        JsonNode jsonNode = mapper.readTree(json);
+        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        Path path = projectout.resolve(projectid + ".json");
+        writer.writeValue(path.toFile(), jsonNode);
     }
 
     private void saveJson(String json, String filename, Path outputDir) throws IOException {
