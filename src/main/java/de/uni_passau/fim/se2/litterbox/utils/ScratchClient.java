@@ -36,11 +36,13 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -49,6 +51,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ScratchClient {
 
+    private static final Logger log = Logger.getLogger(ScratchClient.class.getName());
 
     private static final String API_BASE_URL = "https://api.scratch.mit.edu";
     private final ObjectMapper mapper = new ObjectMapper();
@@ -79,9 +82,7 @@ public class ScratchClient {
     }
 
     public void downloadProjectSb3(String projectId, Path outputDir) throws IOException {
-        if (!Files.exists(outputDir)) {
-            Files.createDirectories(outputDir);
-        }
+        Files.createDirectories(outputDir);
 
         // 1. Download project JSON
         String json = downloadProjectJSON(projectId);
@@ -90,16 +91,16 @@ public class ScratchClient {
         Path tempDir = Files.createTempDirectory("sb3_assets_" + projectId);
         try {
             // Save project.json
-            saveJson(json, "project", tempDir);
+            saveJson(tempDir, "project.json", json);
 
             // 3. Parse JSON to find assets (md5ext)
             JsonNode rootNode = new ObjectMapper().readTree(json);
             Set<String> assets = new HashSet<>();
 
-            // Collect from root (Stage)
+            // collects assets for Stage in Scratch 1.1 files
             collectAssets(rootNode, assets);
 
-            // Collect from children (Sprites)
+            // Collect from children (Sprites) in Scratch 1.1 files
             if (rootNode.has("children")) {
                 for (JsonNode child : rootNode.get("children")) {
                     collectAssets(child, assets);
@@ -113,20 +114,20 @@ public class ScratchClient {
 
             // 5. Zip everything into .sb3
             Path sb3Path = outputDir.resolve(projectId + ".sb3");
-            try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(sb3Path.toFile()))) {
-                Stream<Path> walk = Files.walk(tempDir);
-                walk.filter(path -> !Files.isDirectory(path))
-                        .forEach(path -> {
-                            ZipEntry zipEntry = new ZipEntry(tempDir.relativize(path).toString());
-                            try {
-                                zos.putNextEntry(zipEntry);
-                                Files.copy(path, zos);
-                                zos.closeEntry();
-                            } catch (IOException e) {
-                                System.err.println("Failed to zip file: " + path);
-                            }
-                        });
-                walk.close();
+            try (
+                    ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(sb3Path.toFile()));
+                    Stream<Path> walk = Files.walk(tempDir);
+            ) {
+                walk.filter(path -> !Files.isDirectory(path)).forEach(path -> {
+                    ZipEntry zipEntry = new ZipEntry(tempDir.relativize(path).toString());
+                    try {
+                        zos.putNextEntry(zipEntry);
+                        Files.copy(path, zos);
+                        zos.closeEntry();
+                    } catch (IOException e) {
+                        log.severe("Failed to zip file: " + path);
+                    }
+                });
             }
 
         } finally {
@@ -169,14 +170,15 @@ public class ScratchClient {
         try {
             downloadBinary(url, outputDir.resolve(md5ext));
         } catch (IOException e) {
-            System.err.println("Failed to download asset: " + md5ext);
+            log.warning("Failed to download asset: " + md5ext);
+            log.warning(e.getMessage());
         }
     }
 
     public void downloadMetadata(String projectId, Path outputDir) throws IOException {
         String url = API_BASE_URL + "/projects/" + projectId;
         String json = readFromUrl(url);
-        saveJson(json, projectId + "_metadata", outputDir);
+        saveJson(outputDir, projectId + "_metadata.json", json);
     }
 
     public List<String> getRecentProjects(int limit) throws IOException {
@@ -192,9 +194,9 @@ public class ScratchClient {
     }
 
     public List<String> getUserProjects(String username) throws IOException {
-        List<String> projectIds = new ArrayList<>();
+        final List<String> projectIds = new ArrayList<>();
+        final int limit = 40; // Max limit per request
         int offset = 0;
-        int limit = 40; // Max limit per request
         boolean more = true;
 
         while (more) {
@@ -264,45 +266,44 @@ public class ScratchClient {
         HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
 
         try (InputStream is = con.getInputStream()) {
-            Files.copy(is, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(is, destination, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
-    public boolean isAlreadyDownloaded(String projectid, Path projectout) {
-        Path path = projectout.resolve(projectid + ".json");
+    public boolean isAlreadyDownloaded(String projectId, Path projectOut) {
+        Path path = projectOut.resolve(projectId + ".json");
         return path.toFile().exists();
     }
 
-    public void saveDownloadedProject(String json, String projectid, Path projectout) throws IOException {
-        if (projectout == null) {
+    public void saveDownloadedProject(String json, String projectId, Path projectOut) throws IOException {
+        if (projectOut == null) {
             return;
         }
 
-        File folder = projectout.toFile();
+        File folder = projectOut.toFile();
         if (folder.exists() && !folder.isDirectory()) {
-            System.out.println("Projectout is not a folder but a file");
+            throw new IOException("Project output directory " + projectOut + " is not a directory but a file!");
         }
 
         if (!folder.exists()) {
             boolean success = folder.mkdir();
             if (!success) {
-                System.out.println("Could not create projectout");
+                throw new IOException("Could not create project output directory " + projectOut);
             }
         }
 
         JsonNode jsonNode = mapper.readTree(json);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-        Path path = projectout.resolve(projectid + ".json");
+        Path path = projectOut.resolve(projectId + ".json");
         writer.writeValue(path.toFile(), jsonNode);
     }
 
-    private void saveJson(String json, String filename, Path outputDir) throws IOException {
-        if (!Files.exists(outputDir)) {
-            Files.createDirectories(outputDir);
-        }
+    private void saveJson(Path outputDir, String filename, String json) throws IOException {
+        Files.createDirectories(outputDir);
+
         JsonNode jsonNode = mapper.readTree(json);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-        Path path = outputDir.resolve(filename + ".json");
+        Path path = outputDir.resolve(filename);
         writer.writeValue(path.toFile(), jsonNode);
     }
 }
