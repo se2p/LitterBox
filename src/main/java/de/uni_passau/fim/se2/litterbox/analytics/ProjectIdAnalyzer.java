@@ -70,7 +70,7 @@ public class ProjectIdAnalyzer<R> {
         File projectFile = path.toFile();
         if (!projectFile.exists()) {
             try {
-                new ScratchClient().downloadProject(pid, projectDir, false);
+                new ScratchClient().downloadProject(pid, projectDir);
             } catch (IOException e) {
                 log.warning("Could not download project with PID: " + pid);
                 return;

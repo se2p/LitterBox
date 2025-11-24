@@ -24,13 +24,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -47,13 +52,10 @@ public class ScratchClientTest {
     @Mock
     private HttpClient httpClient;
 
-    @Mock
-    private HttpResponse<String> httpResponse;
-
     @Test
-    public void testRateLimiterIsAcquired() throws IOException, InterruptedException {
+    public void testRateLimiterIsAcquired() {
         ScratchClient client = new ScratchClient(rateLimiter, httpClient);
-        
+
         // downloadBinary uses HttpURLConnection, so httpClient is not used.
         // We just verify rateLimiter is acquired.
 
@@ -84,10 +86,10 @@ public class ScratchClientTest {
 
         Path outputDir = Files.createTempDirectory("scratch_test_output");
         try {
-            client.downloadProject(projectId, outputDir, true);
+            client.downloadProject(projectId, outputDir, false, true);
             Path sbPath = outputDir.resolve(projectId + ".sb");
-            assert Files.exists(sbPath);
-            assert Files.readString(sbPath).equals("ScratchV02...binary data...");
+            assertTrue(Files.exists(sbPath));
+            assertEquals("ScratchV02...binary data...", Files.readString(sbPath));
         } finally {
             deleteDirectory(outputDir);
         }
@@ -109,13 +111,17 @@ public class ScratchClientTest {
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
 
-        doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
+        // mock asset response
+        HttpResponse<InputStream> assetResponse = mock(HttpResponse.class);
+        when(assetResponse.body()).thenReturn(new ByteArrayInputStream(new byte[]{}));
+
+        doReturn(tokenResponse).doReturn(projectResponse).doReturn(assetResponse).when(httpClient).send(any(), any());
 
         Path outputDir = Files.createTempDirectory("scratch_test_output");
         try {
-            client.downloadProject(projectId, outputDir, true);
+            client.downloadProject(projectId, outputDir, false, true);
             Path sb2Path = outputDir.resolve(projectId + ".sb2");
-            assert Files.exists(sb2Path);
+            assertTrue(Files.exists(sb2Path));
         } finally {
             deleteDirectory(outputDir);
         }
@@ -137,13 +143,17 @@ public class ScratchClientTest {
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
 
-        doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
+        // mock asset response
+        HttpResponse<InputStream> assetResponse = mock(HttpResponse.class);
+        when(assetResponse.body()).thenReturn(new ByteArrayInputStream(new byte[]{}));
+
+        doReturn(tokenResponse).doReturn(projectResponse).doReturn(assetResponse).when(httpClient).send(any(), any());
 
         Path outputDir = Files.createTempDirectory("scratch_test_output");
         try {
-            client.downloadProject(projectId, outputDir, true);
+            client.downloadProject(projectId, outputDir, false, true);
             Path sb3Path = outputDir.resolve(projectId + ".sb3");
-            assert Files.exists(sb3Path);
+            assertTrue(Files.exists(sb3Path));
         } finally {
             deleteDirectory(outputDir);
         }
@@ -170,15 +180,15 @@ public class ScratchClientTest {
         Path outputDir = Files.createTempDirectory("scratch_test_output");
         try {
             // downloadAssets = false
-            client.downloadProject(projectId, outputDir, false);
-            
+            client.downloadProject(projectId, outputDir, false, false);
+
             // Should have .json file
             Path jsonPath = outputDir.resolve(projectId + ".json");
-            assert Files.exists(jsonPath);
-            
+            assertTrue(Files.exists(jsonPath));
+
             // Should NOT have .sb2 file
             Path sb2Path = outputDir.resolve(projectId + ".sb2");
-            assert !Files.exists(sb2Path);
+            assertFalse(Files.exists(sb2Path));
         } finally {
             deleteDirectory(outputDir);
         }

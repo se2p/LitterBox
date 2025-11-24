@@ -603,10 +603,7 @@ public class Main implements Callable<Integer> {
         private void processId(String id) {
             try {
                 log.info("Downloading project " + id + "...");
-                if (metadata) {
-                    client.downloadMetadata(id, outputPath);
-                }
-                client.downloadProject(id, outputPath, withAssets);
+                client.downloadProject(id, outputPath, metadata, withAssets);
             } catch (IOException e) {
                 log.severe("Failed to download project " + id + ": " + e.getMessage());
             }

@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -54,6 +53,9 @@ public class ScratchClient {
     private static final Logger log = Logger.getLogger(ScratchClient.class.getName());
 
     private static final String API_BASE_URL = "https://api.scratch.mit.edu";
+
+    private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     // 10 requests per second according to https://github.com/scratchfoundation/scratch-rest-api/wiki#rate-limits
@@ -74,47 +76,63 @@ public class ScratchClient {
         this.httpClient = httpClient;
     }
 
-    public void downloadProject(String projectId, Path outputDir, boolean downloadAssets) throws IOException {
-        if (!isAlreadyDownloaded(projectId, outputDir, downloadAssets)) {
-            // Fetch raw data first to determine type
-            byte[] projectData = downloadProjectBytes(projectId);
+    public void downloadProject(String projectId, Path outputDir) throws IOException {
+        downloadProject(projectId, outputDir, false, false);
+    }
 
-            if (isBinaryScratchProject(projectData)) {
-                // Scratch 1.x - Binary Blob
-                saveBinaryProject(projectData, projectId, outputDir);
+    public void downloadProject(
+            String projectId, Path outputDir, boolean saveMetadata, boolean downloadAssets
+    ) throws IOException {
+        if (isAlreadyDownloaded(projectId, outputDir, downloadAssets)) {
+            return;
+        }
+
+        Files.createDirectories(outputDir);
+
+        String metadataJson = downloadMetadata(projectId);
+        String downloadToken = getProjectToken(metadataJson);
+        if (saveMetadata) {
+            saveJson(outputDir, projectId + "_metadata.json", metadataJson);
+        }
+
+        // Fetch raw data first to determine type
+        byte[] projectData = downloadProjectBytes(projectId, downloadToken);
+
+        if (isBinaryScratchProject(projectData)) {
+            // Scratch 1.x - Binary Blob
+            saveBinaryProject(projectData, projectId, outputDir);
+        } else {
+            // JSON-based (Scratch 2 or 3)
+            String json = new String(projectData, StandardCharsets.UTF_8);
+
+            if (!downloadAssets) {
+                saveDownloadedProject(json, projectId, outputDir);
             } else {
-                // JSON-based (Scratch 2 or 3)
-                String json = new String(projectData, StandardCharsets.UTF_8);
+                JsonNode rootNode = mapper.readTree(json);
 
-                if (!downloadAssets) {
-                    saveDownloadedProject(json, projectId, outputDir);
+                if (isScratch2(rootNode)) {
+                    downloadProjectSb2(json, rootNode, projectId, outputDir);
                 } else {
-                    JsonNode rootNode = mapper.readTree(json);
-
-                    if (isScratch2(rootNode)) {
-                        downloadProjectSb2(json, rootNode, projectId, outputDir);
-                    } else {
-                        // Assume Scratch 3 by default or if it matches SB3 structure
-                        downloadProjectSb3(json, rootNode, projectId, outputDir);
-                    }
+                    // Assume Scratch 3 by default or if it matches SB3 structure
+                    downloadProjectSb3(json, rootNode, projectId, outputDir);
                 }
             }
         }
     }
 
-    private byte[] downloadProjectBytes(String projectId) throws IOException {
-        final String projectAccessToken = getProjectToken(projectId);
-        final String url = "https://projects.scratch.mit.edu/" + projectId + "?token=" + projectAccessToken;
-        return readBytesFromUrl(url);
-    }
-
+    /**
+     * Checks the file header to determine if this is a binary Scratch 1.x project.
+     *
+     * <p>Scratch 1.3 projects use {@code ScratchV01} at the start. Scratch 1.4 projects use {@code ScratchV02}.
+     *
+     * @param data The downloaded project data.
+     * @return True, if this is a binary Scratch 1.x project.
+     */
     private boolean isBinaryScratchProject(byte[] data) {
-        // Scratch 1.4 files usually start with "ScratchV02" or similar header string,
-        // but checking if it's NOT valid JSON is a decent heuristic if we expect JSON for others.
-        // However, a more robust check is looking for the magic string.
-        // Scratch 1.4 header: 'S', 'c', 'r', 'a', 't', 'c', 'h', 'V', '0', '2'
-        // Scratch 1.3 header: 'S', 'c', 'r', 'a', 't', 'c', 'h', 'V', '0', '1'
-        if (data.length < 10) return false;
+        if (data.length < 10) {
+            return false;
+        }
+
         String header = new String(data, 0, 10, StandardCharsets.US_ASCII);
         return header.startsWith("ScratchV");
     }
@@ -130,7 +148,14 @@ public class ScratchClient {
         Files.write(sbPath, data);
     }
 
-    public void downloadProjectSb2(String json, JsonNode rootNode, String projectId, Path outputDir) throws IOException {
+    private byte[] downloadProjectBytes(String projectId, String projectAccessToken) throws IOException {
+        final String url = "https://projects.scratch.mit.edu/" + projectId + "?token=" + projectAccessToken;
+        return readBytesFromUrl(url);
+    }
+
+    public void downloadProjectSb2(
+            String json, JsonNode rootNode, String projectId, Path outputDir
+    ) throws IOException {
         Files.createDirectories(outputDir);
         Path tempDir = Files.createTempDirectory("sb2_assets_" + projectId);
         try {
@@ -149,13 +174,15 @@ public class ScratchClient {
         }
     }
 
-    public void downloadProjectSb3(String json, JsonNode rootNode, String projectId, Path outputDir) throws IOException {
+    private void downloadProjectSb3(
+            String json, JsonNode projectJsonRoot, String projectId, Path outputDir
+    ) throws IOException {
         Files.createDirectories(outputDir);
         Path tempDir = Files.createTempDirectory("sb3_assets_" + projectId);
         try {
             saveJson(tempDir, "project.json", json);
             Set<String> assets = new HashSet<>();
-            collectAssetsSb3(rootNode, assets);
+            collectAssetsSb3(projectJsonRoot, assets);
 
             for (String asset : assets) {
                 downloadAsset(asset, tempDir);
@@ -168,42 +195,52 @@ public class ScratchClient {
         }
     }
 
-    private void collectAssetsSb2(JsonNode node, Set<String> assets) {
+    private void collectAssetsSb2(JsonNode projectJsonRoot, Set<String> assets) {
         // Scratch 2: costumes have baseLayerMD5, textLayerMD5; sounds have md5; penLayerMD5
-        if (node.has("costumes")) {
-            for (JsonNode costume : node.get("costumes")) {
-                if (costume.has("baseLayerMD5")) assets.add(costume.get("baseLayerMD5").asText());
-                if (costume.has("textLayerMD5")) assets.add(costume.get("textLayerMD5").asText());
+        if (projectJsonRoot.has("costumes")) {
+            for (JsonNode costume : projectJsonRoot.get("costumes")) {
+                if (costume.has("baseLayerMD5")) {
+                    assets.add(costume.get("baseLayerMD5").asText());
+                }
+                if (costume.has("textLayerMD5")) {
+                    assets.add(costume.get("textLayerMD5").asText());
+                }
             }
         }
-        if (node.has("sounds")) {
-            for (JsonNode sound : node.get("sounds")) {
-                if (sound.has("md5")) assets.add(sound.get("md5").asText());
+        if (projectJsonRoot.has("sounds")) {
+            for (JsonNode sound : projectJsonRoot.get("sounds")) {
+                if (sound.has("md5")) {
+                    assets.add(sound.get("md5").asText());
+                }
             }
         }
-        if (node.has("penLayerMD5")) {
-            assets.add(node.get("penLayerMD5").asText());
+        if (projectJsonRoot.has("penLayerMD5")) {
+            assets.add(projectJsonRoot.get("penLayerMD5").asText());
         }
 
-        if (node.has("children")) {
-            for (JsonNode child : node.get("children")) {
+        if (projectJsonRoot.has("children")) {
+            for (JsonNode child : projectJsonRoot.get("children")) {
                 collectAssetsSb2(child, assets);
             }
         }
     }
 
-    private void collectAssetsSb3(JsonNode root, Set<String> assets) {
+    private void collectAssetsSb3(JsonNode projectJsonRoot, Set<String> assets) {
         // Scratch 3: targets -> costumes/sounds -> md5ext
-        if (root.has("targets")) {
-            for (JsonNode target : root.get("targets")) {
+        if (projectJsonRoot.has("targets")) {
+            for (JsonNode target : projectJsonRoot.get("targets")) {
                 if (target.has("costumes")) {
                     for (JsonNode costume : target.get("costumes")) {
-                        if (costume.has("md5ext")) assets.add(costume.get("md5ext").asText());
+                        if (costume.has("md5ext")) {
+                            assets.add(costume.get("md5ext").asText());
+                        }
                     }
                 }
                 if (target.has("sounds")) {
                     for (JsonNode sound : target.get("sounds")) {
-                        if (sound.has("md5ext")) assets.add(sound.get("md5ext").asText());
+                        if (sound.has("md5ext")) {
+                            assets.add(sound.get("md5ext").asText());
+                        }
                     }
                 }
             }
@@ -220,10 +257,9 @@ public class ScratchClient {
         }
     }
 
-    public void downloadMetadata(String projectId, Path outputDir) throws IOException {
+    private String downloadMetadata(final String projectId) throws IOException {
         String url = API_BASE_URL + "/projects/" + projectId;
-        String json = readFromUrl(url);
-        saveJson(outputDir, projectId + "_metadata.json", json);
+        return readFromUrl(url);
     }
 
     public List<String> getRecentProjects(int limit) throws IOException {
@@ -285,15 +321,8 @@ public class ScratchClient {
         }
     }
 
-    private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
-
-    private String getProjectToken(String projectId) throws IOException {
-        rateLimiter.acquire();
-
-        final String url = "https://api.scratch.mit.edu/projects/" + projectId;
-        final String projectInfo = readFromUrl(url);
-
-        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfo);
+    private String getProjectToken(String projectInfoJson) throws IOException {
+        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfoJson);
         if (matcher.find() && matcher.groupCount() == 1) {
             return matcher.group(1);
         } else {
@@ -303,22 +332,28 @@ public class ScratchClient {
 
     public void downloadBinary(String url, Path destination) throws IOException {
         rateLimiter.acquire();
-        HttpURLConnection con = (HttpURLConnection) URI.create(url).toURL().openConnection();
 
-        try (InputStream is = con.getInputStream()) {
-            Files.copy(is, destination, StandardCopyOption.REPLACE_EXISTING);
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
+        try {
+            final HttpResponse<InputStream> response = httpClient.send(
+                    request, HttpResponse.BodyHandlers.ofInputStream()
+            );
+            try (InputStream is = response.body()) {
+                Files.copy(is, destination, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (InterruptedException e) {
+            throw new IOException("Network connection interruption.", e);
         }
     }
 
     public boolean isAlreadyDownloaded(String projectId, Path projectOut, boolean downloadAssets) {
-        // Check for any of the possible extensions
         if (downloadAssets) {
-            return projectOut.resolve(projectId + ".sb").toFile().exists() ||
-                   projectOut.resolve(projectId + ".sb2").toFile().exists() ||
-                   projectOut.resolve(projectId + ".sb3").toFile().exists();
+            return projectOut.resolve(projectId + ".sb").toFile().exists()
+                    || projectOut.resolve(projectId + ".sb2").toFile().exists()
+                    || projectOut.resolve(projectId + ".sb3").toFile().exists();
         } else {
-            return projectOut.resolve(projectId + ".sb").toFile().exists() ||
-                   projectOut.resolve(projectId + ".json").toFile().exists();
+            return projectOut.resolve(projectId + ".sb").toFile().exists()
+                    || projectOut.resolve(projectId + ".json").toFile().exists();
         }
     }
 
@@ -336,8 +371,10 @@ public class ScratchClient {
     }
 
     private void zipDirectory(Path sourceDir, Path zipFile) throws IOException {
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile.toFile()));
-             Stream<Path> walk = Files.walk(sourceDir)) {
+        try (
+                ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile.toFile()));
+                Stream<Path> walk = Files.walk(sourceDir)
+        ) {
             walk.filter(path -> !Files.isDirectory(path)).forEach(path -> {
                 ZipEntry zipEntry = new ZipEntry(sourceDir.relativize(path).toString());
                 try {
