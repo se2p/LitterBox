@@ -78,19 +78,19 @@ public class ScratchClient {
         if (!isAlreadyDownloaded(projectId, outputDir, downloadAssets)) {
             // Fetch raw data first to determine type
             byte[] projectData = downloadProjectBytes(projectId);
-            
+
             if (isBinaryScratchProject(projectData)) {
                 // Scratch 1.x - Binary Blob
                 saveBinaryProject(projectData, projectId, outputDir);
             } else {
                 // JSON-based (Scratch 2 or 3)
                 String json = new String(projectData, StandardCharsets.UTF_8);
-                
+
                 if (!downloadAssets) {
                     saveDownloadedProject(json, projectId, outputDir);
                 } else {
                     JsonNode rootNode = mapper.readTree(json);
-                    
+
                     if (isScratch2(rootNode)) {
                         downloadProjectSb2(json, rootNode, projectId, outputDir);
                     } else {
@@ -109,7 +109,7 @@ public class ScratchClient {
     }
 
     private boolean isBinaryScratchProject(byte[] data) {
-        // Scratch 1.4 files usually start with "ScratchV02" or similar header string, 
+        // Scratch 1.4 files usually start with "ScratchV02" or similar header string,
         // but checking if it's NOT valid JSON is a decent heuristic if we expect JSON for others.
         // However, a more robust check is looking for the magic string.
         // Scratch 1.4 header: 'S', 'c', 'r', 'a', 't', 'c', 'h', 'V', '0', '2'
@@ -210,8 +210,6 @@ public class ScratchClient {
         }
     }
 
-
-
     private void downloadAsset(String filename, Path outputDir) {
         String url = "https://assets.scratch.mit.edu/internalapi/asset/" + filename + "/get/";
         try {
@@ -290,6 +288,8 @@ public class ScratchClient {
     private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
 
     private String getProjectToken(String projectId) throws IOException {
+        rateLimiter.acquire();
+
         final String url = "https://api.scratch.mit.edu/projects/" + projectId;
         final String projectInfo = readFromUrl(url);
 

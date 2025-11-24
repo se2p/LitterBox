@@ -205,7 +205,7 @@ Available options:
 - `--recent <count>`: Download the X most recent projects.
 - `--popular <count>`: Download the X most popular projects.
 - `--user <username>`: Download all projects of a specific user.
-- `--sb3`: Download as `.sb3` file (zipped JSON + assets).
+- `--with-assets`: Download as `.sb`/`.sb2`/`.sb3` file (zipped JSON + assets).
 - `--metadata`: Download project metadata.
 
 

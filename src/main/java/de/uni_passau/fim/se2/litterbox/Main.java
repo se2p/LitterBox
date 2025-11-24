@@ -496,8 +496,11 @@ public class Main implements Callable<Integer> {
         @CommandLine.Option(names = {"--metadata"}, description = "Download project metadata.")
         boolean metadata;
 
-        @CommandLine.Option(names = {"--sb3"}, description = "Download as .sb3 file (zipped JSON + assets).")
-        boolean sb3;
+        @CommandLine.Option(
+                names = {"--with-assets"},
+                description = "Download as .sb/.sb2/.sb3 file (zipped JSON + assets)."
+        )
+        boolean withAssets;
 
         @CommandLine.ArgGroup(exclusive = false, multiplicity = "1..*")
         DownloadKind downloadKind;
@@ -600,10 +603,10 @@ public class Main implements Callable<Integer> {
         private void processId(String id) {
             try {
                 log.info("Downloading project " + id + "...");
-                client.downloadProject(id, outputPath, sb3);
                 if (metadata) {
                     client.downloadMetadata(id, outputPath);
                 }
+                client.downloadProject(id, outputPath, withAssets);
             } catch (IOException e) {
                 log.severe("Failed to download project " + id + ": " + e.getMessage());
             }
