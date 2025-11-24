@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.util.concurrent.RateLimiter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,7 +46,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 
 public class ScratchClient {
 
@@ -86,7 +85,7 @@ public class ScratchClient {
 
         // 1. Download project JSON
         String json = downloadProjectJSON(projectId);
-        
+
         // 2. Create a temporary directory for assets
         Path tempDir = Files.createTempDirectory("sb3_assets_" + projectId);
         try {
@@ -96,10 +95,10 @@ public class ScratchClient {
             // 3. Parse JSON to find assets (md5ext)
             JsonNode rootNode = new ObjectMapper().readTree(json);
             Set<String> assets = new HashSet<>();
-            
+
             // Collect from root (Stage)
             collectAssets(rootNode, assets);
-            
+
             // Collect from children (Sprites)
             if (rootNode.has("children")) {
                 for (JsonNode child : rootNode.get("children")) {
@@ -117,25 +116,25 @@ public class ScratchClient {
             try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(sb3Path.toFile()))) {
                 Stream<Path> walk = Files.walk(tempDir);
                 walk.filter(path -> !Files.isDirectory(path))
-                    .forEach(path -> {
-                        ZipEntry zipEntry = new ZipEntry(tempDir.relativize(path).toString());
-                        try {
-                            zos.putNextEntry(zipEntry);
-                            Files.copy(path, zos);
-                            zos.closeEntry();
-                        } catch (IOException e) {
-                            System.err.println("Failed to zip file: " + path);
-                        }
-                    });
+                        .forEach(path -> {
+                            ZipEntry zipEntry = new ZipEntry(tempDir.relativize(path).toString());
+                            try {
+                                zos.putNextEntry(zipEntry);
+                                Files.copy(path, zos);
+                                zos.closeEntry();
+                            } catch (IOException e) {
+                                System.err.println("Failed to zip file: " + path);
+                            }
+                        });
                 walk.close();
             }
-            
+
         } finally {
             // Cleanup temp dir
             Stream<Path> walk = Files.walk(tempDir);
             walk.sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
+                    .map(Path::toFile)
+                    .forEach(File::delete);
             walk.close();
         }
     }
@@ -146,8 +145,8 @@ public class ScratchClient {
                 if (costume.has("baseLayerMD5")) {
                     assets.add(costume.get("baseLayerMD5").asText());
                 }
-                 // Sometimes it might be just md5ext or similar in newer formats, but the example showed baseLayerMD5
-                 // Also check for "md5ext" just in case
+                // Sometimes it might be just md5ext or similar in newer formats, but the example showed baseLayerMD5
+                // Also check for "md5ext" just in case
                 if (costume.has("md5ext")) {
                     assets.add(costume.get("md5ext").asText());
                 }
@@ -202,7 +201,7 @@ public class ScratchClient {
             String url = API_BASE_URL + "/users/" + username + "/projects?limit=" + limit + "&offset=" + offset;
             List<String> batch = extractProjectIds(url);
             projectIds.addAll(batch);
-            
+
             if (batch.size() < limit) {
                 more = false;
             } else {

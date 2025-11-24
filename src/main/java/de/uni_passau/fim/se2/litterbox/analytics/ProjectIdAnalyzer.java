@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-
+import de.uni_passau.fim.se2.litterbox.utils.ScratchClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import de.uni_passau.fim.se2.litterbox.utils.ScratchClient;
 
 public class ProjectIdAnalyzer<R> {
     private static final Logger log = Logger.getLogger(ProjectIdAnalyzer.class.getName());
