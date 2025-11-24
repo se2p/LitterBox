@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -308,6 +309,15 @@ public class ScratchClient {
         return ids;
     }
 
+    private String getProjectToken(String projectInfoJson) throws IOException {
+        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfoJson);
+        if (matcher.find() && matcher.groupCount() == 1) {
+            return matcher.group(1);
+        } else {
+            throw new IOException("Cannot extract download token from project metadata.");
+        }
+    }
+
     private String readFromUrl(String url) throws IOException {
         byte[] bytes = readBytesFromUrl(url);
         return new String(bytes, StandardCharsets.UTF_8);
@@ -315,20 +325,16 @@ public class ScratchClient {
 
     private byte[] readBytesFromUrl(String url) throws IOException {
         rateLimiter.acquire();
+
         final HttpRequest request = HttpRequest.newBuilder(URI.create(url)).GET().build();
         try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray()).body();
+            final HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Could not download from " + url + ". Error: " + response.statusCode());
+            }
+            return response.body();
         } catch (InterruptedException e) {
             throw new IOException("Network connection interruption.", e);
-        }
-    }
-
-    private String getProjectToken(String projectInfoJson) throws IOException {
-        final Matcher matcher = PROJECT_TOKEN_PATTERN.matcher(projectInfoJson);
-        if (matcher.find() && matcher.groupCount() == 1) {
-            return matcher.group(1);
-        } else {
-            throw new IOException("Cannot extract download token from project metadata.");
         }
     }
 
@@ -340,6 +346,10 @@ public class ScratchClient {
             final HttpResponse<InputStream> response = httpClient.send(
                     request, HttpResponse.BodyHandlers.ofInputStream()
             );
+            if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Could not download from " + url + ". Error: " + response.statusCode());
+            }
+
             try (InputStream is = response.body()) {
                 Files.copy(is, destination, StandardCopyOption.REPLACE_EXISTING);
             }

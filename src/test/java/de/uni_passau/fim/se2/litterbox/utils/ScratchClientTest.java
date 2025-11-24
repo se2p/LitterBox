@@ -77,10 +77,12 @@ public class ScratchClientTest {
         // Mock token response
         HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
         when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+        when(tokenResponse.statusCode()).thenReturn(200);
 
         // Mock project response
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
+        when(projectResponse.statusCode()).thenReturn(200);
 
         doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
 
@@ -106,14 +108,17 @@ public class ScratchClientTest {
         // Mock token response
         HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
         when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+        when(tokenResponse.statusCode()).thenReturn(200);
 
         // Mock project response
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
+        when(projectResponse.statusCode()).thenReturn(200);
 
         // mock asset response
         HttpResponse<InputStream> assetResponse = mock(HttpResponse.class);
         when(assetResponse.body()).thenReturn(new ByteArrayInputStream(new byte[]{}));
+        when(assetResponse.statusCode()).thenReturn(200);
 
         doReturn(tokenResponse).doReturn(projectResponse).doReturn(assetResponse).when(httpClient).send(any(), any());
 
@@ -138,14 +143,17 @@ public class ScratchClientTest {
         // Mock token response
         HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
         when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+        when(tokenResponse.statusCode()).thenReturn(200);
 
         // Mock project response
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
+        when(projectResponse.statusCode()).thenReturn(200);
 
         // mock asset response
         HttpResponse<InputStream> assetResponse = mock(HttpResponse.class);
         when(assetResponse.body()).thenReturn(new ByteArrayInputStream(new byte[]{}));
+        when(assetResponse.statusCode()).thenReturn(200);
 
         doReturn(tokenResponse).doReturn(projectResponse).doReturn(assetResponse).when(httpClient).send(any(), any());
 
@@ -170,10 +178,12 @@ public class ScratchClientTest {
         // Mock token response
         HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
         when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+        when(tokenResponse.statusCode()).thenReturn(200);
 
         // Mock project response
         HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
         when(projectResponse.body()).thenReturn(projectData);
+        when(projectResponse.statusCode()).thenReturn(200);
 
         doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
 
