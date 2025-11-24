@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -30,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.Assertions;
@@ -156,4 +158,135 @@ public class ScratchBlocksParserTest implements JsonTest {
         ProcedureDefinition procedureDefinition = newProgram.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().getFirst();
         Assertions.assertEquals(2, procedureDefinition.getParameterDefinitionList().getParameterDefinitions().size());
     }
+
+    @Test
+    void testCommentsInVariousPlaces() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "// comment after hat\n" +
+                "move (10) steps\n" +
+                "// comment between blocks\n" +
+                "move (20) steps\n" +
+                "// comment at end\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertInstanceOf(GreenFlag.class, script.getEvent());
+        Assertions.assertEquals(2, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(MoveSteps.class, script.getStmtList().getStatement(1));
+    }
+
+    @Test
+    void testCommentBetweenHatAndStack() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n// comment\nsay (foo)\n";
+        Script script = parser.parseScript("Stage", input);
+
+        Assertions.assertNotNull(script);
+        Assertions.assertInstanceOf(GreenFlag.class, script.getEvent(), "Event should be GreenFlag");
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size(), "Should have 1 statement");
+        Assertions.assertInstanceOf(Say.class, script.getStmtList().getStatement(0), "Statement should be Say");
+    }
+
+    @Test
+    void testCommentsAsScriptSeparators() {
+        final ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "move (10) steps\n" +
+                "// comment 2\n" +
+                "move (1) steps\n";
+        ActorContent sprite = parser.parseActorContent(input);
+        // Should be 1 to match parsing a single script
+        Assertions.assertEquals(1, sprite.scripts().getScriptList().size());
+        Script script = sprite.scripts().getScript(0);
+
+        // 2 move statements
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements());
+    }
+
+    @Test
+    void testCustomBlockStartingWithKeyword() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "define endSequence (param)\n" +
+                "move (param) steps\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "endSequence (10)\n" +
+                "move (3) steps\n";
+
+        ActorContent content = parser.parseActorContent(input);
+        Assertions.assertNotNull(content);
+        Assertions.assertEquals(1, content.procedures().getList().size(), "Should have 1 custom block definition");
+        Assertions.assertEquals(1, content.scripts().getSize(), "Should have 1 script");
+
+        Script script = content.scripts().getScript(0);
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements(), "Script should have 2 statements");
+    }
+    @Test
+    void testCustomBlockStartingWithKeywordAndComments() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "define endSequence (param)\n" +
+                "// comment inside define\n" +
+                "move (param) steps\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "// comment before call\n" +
+                "endSequence (10)\n" +
+                "// comment after call\n" +
+                "move (3) steps\n";
+
+        ActorContent content = parser.parseActorContent(input);
+        Assertions.assertNotNull(content);
+        Assertions.assertEquals(1, content.procedures().getList().size(), "Should have 1 custom block definition");
+        Assertions.assertEquals(1, content.scripts().getSize(), "Should have 1 script");
+
+        Script script = content.scripts().getScript(0);
+        Assertions.assertEquals(2, script.getStmtList().getNumberOfStatements(), "Script should have 2 statements");
+    }
+
+    @Test
+    void testIfWithComment() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "if <> then // comment\n" +
+                "end\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testIfWithCommentAndContent() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "if <> then // comment\n" +
+                "move (10) steps\n" +
+                "end\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0));
+
+        IfThenStmt ifStmt = (IfThenStmt) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(MoveSteps.class, ifStmt.getThenStmts().getStatement(0));
+    }
+
+    @Test
+    void testIfWithCommentAndContentAtActorLevel() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "if <> then // comment\n" +
+                "move (10) steps\n" +
+                "end\n";
+        ActorContent sprite = parser.parseActorContent(input);
+        // Should be 1 to match parsing a single script
+        Assertions.assertEquals(1, sprite.scripts().getScriptList().size());
+        Script script = sprite.scripts().getScript(0);
+
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(IfThenStmt.class, script.getStmtList().getStatement(0));
+
+        IfThenStmt ifStmt = (IfThenStmt) script.getStmtList().getStatement(0);
+        Assertions.assertInstanceOf(MoveSteps.class, ifStmt.getThenStmts().getStatement(0));
+    }
+
 }
