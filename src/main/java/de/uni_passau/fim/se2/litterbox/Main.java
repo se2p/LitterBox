@@ -523,6 +523,12 @@ public class Main implements Callable<Integer> {
 
             @CommandLine.Option(names = {"--user"}, description = "Download all projects of a user.")
             String user;
+
+            @CommandLine.Option(
+                    names = {"--remixes"},
+                    description = "Download all remixes of project with the given project ID."
+            )
+            String remixes;
         }
 
         // all options within group required, but the rangeDownload group is optional above: if one of the two options
@@ -592,6 +598,13 @@ public class Main implements Callable<Integer> {
 
             if (downloadKind.user != null) {
                 List<String> ids = client.getUserProjects(downloadKind.user);
+                for (String id : ids) {
+                    processId(id);
+                }
+            }
+
+            if (downloadKind.remixes != null) {
+                List<String> ids = client.getRemixes(downloadKind.remixes);
                 for (String id : ids) {
                     processId(id);
                 }

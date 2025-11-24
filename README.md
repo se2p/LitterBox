@@ -205,6 +205,7 @@ Available options:
 - `--recent <count>`: Download the X most recent projects.
 - `--popular <count>`: Download the X most popular projects.
 - `--user <username>`: Download all projects of a specific user.
+- `--remixes <projectId>`: Download all remixes of the project with the given ID.
 - `--with-assets`: Download as `.sb`/`.sb2`/`.sb3` file (zipped JSON + assets).
 - `--with-metadata`: Additionally download project metadata.
 
