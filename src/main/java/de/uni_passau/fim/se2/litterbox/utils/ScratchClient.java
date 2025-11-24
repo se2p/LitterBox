@@ -54,10 +54,23 @@ public class ScratchClient {
     private static final String API_BASE_URL = "https://api.scratch.mit.edu";
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-
     // 10 requests per second according to https://github.com/scratchfoundation/scratch-rest-api/wiki#rate-limits
-    private static final RateLimiter rateLimiter = RateLimiter.create(10.0);
+    private static final RateLimiter DEFAULT_RATE_LIMITER = RateLimiter.create(10.0);
+    private final RateLimiter rateLimiter;
+    private final HttpClient httpClient;
+
+    public ScratchClient() {
+        this(DEFAULT_RATE_LIMITER, HttpClient.newHttpClient());
+    }
+
+    public ScratchClient(RateLimiter rateLimiter) {
+        this(rateLimiter, HttpClient.newHttpClient());
+    }
+
+    public ScratchClient(RateLimiter rateLimiter, HttpClient httpClient) {
+        this.rateLimiter = rateLimiter;
+        this.httpClient = httpClient;
+    }
 
     public void downloadProject(String projectId, Path outputDir) throws IOException {
         if (!isAlreadyDownloaded(projectId, outputDir)) {
