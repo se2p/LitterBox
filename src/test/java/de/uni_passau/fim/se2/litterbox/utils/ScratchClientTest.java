@@ -27,12 +27,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,26 +66,129 @@ public class ScratchClientTest {
     }
 
     @Test
-    public void testDownloadProjectJSON() throws IOException, InterruptedException {
+    public void testDownloadProjectScratch1() throws IOException, InterruptedException {
         ScratchClient client = new ScratchClient(rateLimiter, httpClient);
-        String projectId = "12345";
+        String projectId = "20000";
         String tokenJson = "{\"project_token\":\"abcde\"}";
-        String projectJson = "{\"targets\":[]}";
+        byte[] projectData = "ScratchV02...binary data...".getBytes(StandardCharsets.UTF_8);
 
-        // Mock first call for token
-        HttpResponse<String> tokenResponse = mock(HttpResponse.class);
-        when(tokenResponse.body()).thenReturn(tokenJson);
+        // Mock token response
+        HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
+        when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
 
-        // Mock second call for project JSON
-        HttpResponse<String> projectResponse = mock(HttpResponse.class);
-        when(projectResponse.body()).thenReturn(projectJson);
+        // Mock project response
+        HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
+        when(projectResponse.body()).thenReturn(projectData);
 
         doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
 
-        String result = client.downloadProjectJSON(projectId);
-        
-        verify(rateLimiter, times(2)).acquire();
-        verify(httpClient, times(2)).send(any(), any());
-        assert result.equals(projectJson);
+        Path outputDir = Files.createTempDirectory("scratch_test_output");
+        try {
+            client.downloadProject(projectId, outputDir, true);
+            Path sbPath = outputDir.resolve(projectId + ".sb");
+            assert Files.exists(sbPath);
+            assert Files.readString(sbPath).equals("ScratchV02...binary data...");
+        } finally {
+            deleteDirectory(outputDir);
+        }
+    }
+
+    @Test
+    public void testDownloadProjectScratch2() throws IOException, InterruptedException {
+        ScratchClient client = new ScratchClient(rateLimiter, httpClient);
+        String projectId = "1231230";
+        String tokenJson = "{\"project_token\":\"abcde\"}";
+        String projectJson = "{\"objName\":\"Stage\", \"costumes\":[{\"baseLayerMD5\":\"costume1.png\"}]}";
+        byte[] projectData = projectJson.getBytes(StandardCharsets.UTF_8);
+
+        // Mock token response
+        HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
+        when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+
+        // Mock project response
+        HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
+        when(projectResponse.body()).thenReturn(projectData);
+
+        doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
+
+        Path outputDir = Files.createTempDirectory("scratch_test_output");
+        try {
+            client.downloadProject(projectId, outputDir, true);
+            Path sb2Path = outputDir.resolve(projectId + ".sb2");
+            assert Files.exists(sb2Path);
+        } finally {
+            deleteDirectory(outputDir);
+        }
+    }
+
+    @Test
+    public void testDownloadProjectScratch3() throws IOException, InterruptedException {
+        ScratchClient client = new ScratchClient(rateLimiter, httpClient);
+        String projectId = "1190759830";
+        String tokenJson = "{\"project_token\":\"abcde\"}";
+        String projectJson = "{\"targets\":[{\"costumes\":[{\"md5ext\":\"costume1.png\"}]}]}";
+        byte[] projectData = projectJson.getBytes(StandardCharsets.UTF_8);
+
+        // Mock token response
+        HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
+        when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+
+        // Mock project response
+        HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
+        when(projectResponse.body()).thenReturn(projectData);
+
+        doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
+
+        Path outputDir = Files.createTempDirectory("scratch_test_output");
+        try {
+            client.downloadProject(projectId, outputDir, true);
+            Path sb3Path = outputDir.resolve(projectId + ".sb3");
+            assert Files.exists(sb3Path);
+        } finally {
+            deleteDirectory(outputDir);
+        }
+    }
+
+    @Test
+    public void testDownloadProjectScratch2NoAssets() throws IOException, InterruptedException {
+        ScratchClient client = new ScratchClient(rateLimiter, httpClient);
+        String projectId = "1231230";
+        String tokenJson = "{\"project_token\":\"abcde\"}";
+        String projectJson = "{\"objName\":\"Stage\", \"costumes\":[{\"baseLayerMD5\":\"costume1.png\"}]}";
+        byte[] projectData = projectJson.getBytes(StandardCharsets.UTF_8);
+
+        // Mock token response
+        HttpResponse<byte[]> tokenResponse = mock(HttpResponse.class);
+        when(tokenResponse.body()).thenReturn(tokenJson.getBytes(StandardCharsets.UTF_8));
+
+        // Mock project response
+        HttpResponse<byte[]> projectResponse = mock(HttpResponse.class);
+        when(projectResponse.body()).thenReturn(projectData);
+
+        doReturn(tokenResponse).doReturn(projectResponse).when(httpClient).send(any(), any());
+
+        Path outputDir = Files.createTempDirectory("scratch_test_output");
+        try {
+            // downloadAssets = false
+            client.downloadProject(projectId, outputDir, false);
+            
+            // Should have .json file
+            Path jsonPath = outputDir.resolve(projectId + ".json");
+            assert Files.exists(jsonPath);
+            
+            // Should NOT have .sb2 file
+            Path sb2Path = outputDir.resolve(projectId + ".sb2");
+            assert !Files.exists(sb2Path);
+        } finally {
+            deleteDirectory(outputDir);
+        }
+    }
+
+    private void deleteDirectory(Path dir) throws IOException {
+        try (java.util.stream.Stream<Path> walk = Files.walk(dir)) {
+            walk.sorted(java.util.Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(java.io.File::delete);
+        }
     }
 }

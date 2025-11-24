@@ -58,7 +58,7 @@ class MineSubcommandTest {
     void testDownloadSingleProject() throws IOException {
         int exitCode = cmd.execute("--project-id", "12345", "--output", "out");
         
-        verify(client).downloadProject(eq("12345"), any(Path.class));
+        verify(client).downloadProject(eq("12345"), any(Path.class), eq(false));
         assert exitCode == 0;
     }
 
@@ -66,7 +66,7 @@ class MineSubcommandTest {
     void testDownloadSb3() throws IOException {
         int exitCode = cmd.execute("--project-id", "12345", "--sb3", "--output", "out");
 
-        verify(client).downloadProjectSb3(eq("12345"), any(Path.class));
+        verify(client).downloadProject(eq("12345"), any(Path.class), eq(true));
         assert exitCode == 0;
     }
 
@@ -74,7 +74,7 @@ class MineSubcommandTest {
     void testDownloadMetadata() throws IOException {
         int exitCode = cmd.execute("--project-id", "12345", "--metadata", "--output", "out");
 
-        verify(client).downloadProject(eq("12345"), any(Path.class));
+        verify(client).downloadProject(eq("12345"), any(Path.class), eq(false));
         verify(client).downloadMetadata(eq("12345"), any(Path.class));
         assert exitCode == 0;
     }
@@ -86,7 +86,7 @@ class MineSubcommandTest {
         int exitCode = cmd.execute("--recent", "2", "--output", "out");
 
         verify(client).getRecentProjects(2);
-        verify(client, times(2)).downloadProject(anyString(), any(Path.class));
+        verify(client, times(2)).downloadProject(anyString(), any(Path.class), eq(false));
         assert exitCode == 0;
     }
 
@@ -97,7 +97,7 @@ class MineSubcommandTest {
         int exitCode = cmd.execute("--popular", "2", "--output", "out");
 
         verify(client).getPopularProjects(2);
-        verify(client, times(2)).downloadProject(anyString(), any(Path.class));
+        verify(client, times(2)).downloadProject(anyString(), any(Path.class), eq(false));
         assert exitCode == 0;
     }
 
@@ -108,7 +108,7 @@ class MineSubcommandTest {
         int exitCode = cmd.execute("--user", "testuser", "--output", "out");
 
         verify(client).getUserProjects("testuser");
-        verify(client, times(2)).downloadProject(anyString(), any(Path.class));
+        verify(client, times(2)).downloadProject(anyString(), any(Path.class), eq(false));
         assert exitCode == 0;
     }
 
@@ -120,8 +120,8 @@ class MineSubcommandTest {
 
         int exitCode = cmd.execute("--project-list", tempFile.toString(), "--output", "out");
 
-        verify(client).downloadProject(eq("111"), any(Path.class));
-        verify(client).downloadProject(eq("222"), any(Path.class));
+        verify(client).downloadProject(eq("111"), any(Path.class), eq(false));
+        verify(client).downloadProject(eq("222"), any(Path.class), eq(false));
         assert exitCode == 0;
     }
     
@@ -129,9 +129,9 @@ class MineSubcommandTest {
     void testRangeProjects() throws IOException {
         int exitCode = cmd.execute("--from", "10", "--to", "12", "--output", "out");
 
-        verify(client).downloadProject(eq("10"), any(Path.class));
-        verify(client).downloadProject(eq("11"), any(Path.class));
-        verify(client).downloadProject(eq("12"), any(Path.class));
+        verify(client).downloadProject(eq("10"), any(Path.class), eq(false));
+        verify(client).downloadProject(eq("11"), any(Path.class), eq(false));
+        verify(client).downloadProject(eq("12"), any(Path.class), eq(false));
         assert exitCode == 0;
     }
 }

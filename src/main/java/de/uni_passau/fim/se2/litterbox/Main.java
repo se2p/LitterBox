@@ -600,11 +600,7 @@ public class Main implements Callable<Integer> {
         private void processId(String id) {
             try {
                 log.info("Downloading project " + id + "...");
-                if (sb3) {
-                    client.downloadProjectSb3(id, outputPath);
-                } else {
-                    client.downloadProject(id, outputPath);
-                }
+                client.downloadProject(id, outputPath, sb3);
                 if (metadata) {
                     client.downloadMetadata(id, outputPath);
                 }
