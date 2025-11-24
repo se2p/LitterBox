@@ -46,12 +46,12 @@ class MineSubcommandTest {
     @Mock
     private ScratchClient client;
 
-    private Main.MineSubcommand mineSubcommand;
+    private MineSubcommand mineSubcommand;
     private CommandLine cmd;
 
     @BeforeEach
     void setUp() {
-        mineSubcommand = new Main.MineSubcommand(client);
+        mineSubcommand = new MineSubcommand(client);
         cmd = new CommandLine(mineSubcommand);
     }
 
