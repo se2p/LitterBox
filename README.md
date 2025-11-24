@@ -206,8 +206,13 @@ Available options:
 - `--popular <count>`: Download the X most popular projects.
 - `--user <username>`: Download all projects of a specific user.
 - `--remixes <projectId>`: Download all remixes of the project with the given ID.
+  - `--transitive-remixes`: Also download remixes of remixes (of remixes …).
 - `--with-assets`: Download as `.sb`/`.sb2`/`.sb3` file (zipped JSON + assets).
 - `--with-metadata`: Additionally download project metadata.
+
+Note: The options are additive.
+E.g. `--project-id 2 --user CodeClubRik` will download the project with ID 2 *and* also download all projects of the
+Scratch user CodeClubRik.
 
 
 ### Automatically refactoring projects

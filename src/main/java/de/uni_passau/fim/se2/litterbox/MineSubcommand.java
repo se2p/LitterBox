@@ -24,7 +24,9 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
@@ -75,11 +77,8 @@ class MineSubcommand implements Callable<Integer> {
         @CommandLine.Option(names = {"--user"}, description = "Download all projects of a user.")
         String user;
 
-        @CommandLine.Option(
-                names = {"--remixes"},
-                description = "Download all remixes of project with the given project ID."
-        )
-        String remixes;
+        @CommandLine.ArgGroup(exclusive = false)
+        RemixDownload remixDownload;
     }
 
     // all options within group required, but the rangeDownload group is optional above: if one of the two options
@@ -98,6 +97,21 @@ class MineSubcommand implements Callable<Integer> {
                 required = true
         )
         Integer toId;
+    }
+
+    static class RemixDownload {
+        @CommandLine.Option(
+                names = {"--remixes"},
+                description = "Download all remixes of project with the given project ID.",
+                required = true
+        )
+        String remixes;
+
+        @CommandLine.Option(
+                names = {"--transitive-remixes"},
+                description = "Also download transitive remixes (i.e. remixes of remixes)."
+        )
+        boolean transitive;
     }
 
     private final ScratchClient client;
@@ -154,10 +168,19 @@ class MineSubcommand implements Callable<Integer> {
             }
         }
 
-        if (downloadKind.remixes != null) {
-            List<String> ids = client.getRemixes(downloadKind.remixes);
-            for (String id : ids) {
+        if (downloadKind.remixDownload != null) {
+            final Queue<String> ids = new ArrayDeque<>(client.getRemixes(downloadKind.remixDownload.remixes));
+            log.info("Downloading " + ids.size() + " remixes...");
+
+            while (!ids.isEmpty()) {
+                final String id = ids.remove();
                 processId(id);
+
+                if (downloadKind.remixDownload.transitive) {
+                    final List<String> remixes = client.getRemixes(id);
+                    log.info("Project " + id + " has " + remixes.size() + " remixes.");
+                    ids.addAll(remixes);
+                }
             }
         }
 

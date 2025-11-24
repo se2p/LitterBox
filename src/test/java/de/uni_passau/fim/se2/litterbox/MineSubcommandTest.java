@@ -30,12 +30,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,5 +136,37 @@ class MineSubcommandTest {
         verify(client).downloadProject(eq("11"), any(Path.class), eq(false), eq(false));
         verify(client).downloadProject(eq("12"), any(Path.class), eq(false), eq(false));
         assertEquals(0, exitCode);
+    }
+
+    @Test
+    void testRemixes() throws IOException {
+        doReturn(List.of("10", "12")).when(client).getRemixes("2");
+
+        int exitCode = cmd.execute("--remixes", "2", "--output", "out");
+        assertEquals(0, exitCode);
+
+        verify(client).downloadProject(eq("10"), any(Path.class), eq(false), eq(false));
+        verify(client).downloadProject(eq("12"), any(Path.class), eq(false), eq(false));
+    }
+
+    @Test
+    void testRemixesTransitive() throws IOException {
+        when(client.getRemixes(anyString())).thenAnswer(args -> {
+            final String id = args.getArgument(0);
+            if ("2".equals(id)) {
+                return List.of("10", "12");
+            } else if ("12".equals(id)) {
+                return List.of("13");
+            } else {
+                return Collections.emptyList();
+            }
+        });
+
+        int exitCode = cmd.execute("--remixes", "2", "--transitive-remixes", "--output", "out");
+        assertEquals(0, exitCode);
+
+        verify(client).downloadProject(eq("10"), any(Path.class), eq(false), eq(false));
+        verify(client).downloadProject(eq("12"), any(Path.class), eq(false), eq(false));
+        verify(client).downloadProject(eq("13"), any(Path.class), eq(false), eq(false));
     }
 }
