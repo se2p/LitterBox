@@ -197,28 +197,28 @@ public class ScratchClient {
 
     private void collectAssetsSb2(JsonNode projectJsonRoot, Set<String> assets) {
         // Scratch 2: costumes have baseLayerMD5, textLayerMD5; sounds have md5; penLayerMD5
-        if (projectJsonRoot.has("costumes")) {
+        if (projectJsonRoot.hasNonNull("costumes")) {
             for (JsonNode costume : projectJsonRoot.get("costumes")) {
-                if (costume.has("baseLayerMD5")) {
+                if (costume.hasNonNull("baseLayerMD5")) {
                     assets.add(costume.get("baseLayerMD5").asText());
                 }
-                if (costume.has("textLayerMD5")) {
+                if (costume.hasNonNull("textLayerMD5")) {
                     assets.add(costume.get("textLayerMD5").asText());
                 }
             }
         }
-        if (projectJsonRoot.has("sounds")) {
+        if (projectJsonRoot.hasNonNull("sounds")) {
             for (JsonNode sound : projectJsonRoot.get("sounds")) {
-                if (sound.has("md5")) {
+                if (sound.hasNonNull("md5")) {
                     assets.add(sound.get("md5").asText());
                 }
             }
         }
-        if (projectJsonRoot.has("penLayerMD5")) {
+        if (projectJsonRoot.hasNonNull("penLayerMD5")) {
             assets.add(projectJsonRoot.get("penLayerMD5").asText());
         }
 
-        if (projectJsonRoot.has("children")) {
+        if (projectJsonRoot.hasNonNull("children")) {
             for (JsonNode child : projectJsonRoot.get("children")) {
                 collectAssetsSb2(child, assets);
             }
@@ -227,20 +227,22 @@ public class ScratchClient {
 
     private void collectAssetsSb3(JsonNode projectJsonRoot, Set<String> assets) {
         // Scratch 3: targets -> costumes/sounds -> md5ext
-        if (projectJsonRoot.has("targets")) {
-            for (JsonNode target : projectJsonRoot.get("targets")) {
-                if (target.has("costumes")) {
-                    for (JsonNode costume : target.get("costumes")) {
-                        if (costume.has("md5ext")) {
-                            assets.add(costume.get("md5ext").asText());
-                        }
+        if (!projectJsonRoot.hasNonNull("targets")) {
+            return;
+        }
+
+        for (JsonNode target : projectJsonRoot.get("targets")) {
+            if (target.hasNonNull("costumes")) {
+                for (JsonNode costume : target.get("costumes")) {
+                    if (costume.hasNonNull("md5ext")) {
+                        assets.add(costume.get("md5ext").asText());
                     }
                 }
-                if (target.has("sounds")) {
-                    for (JsonNode sound : target.get("sounds")) {
-                        if (sound.has("md5ext")) {
-                            assets.add(sound.get("md5ext").asText());
-                        }
+            }
+            if (target.hasNonNull("sounds")) {
+                for (JsonNode sound : target.get("sounds")) {
+                    if (sound.hasNonNull("md5ext")) {
+                        assets.add(sound.get("md5ext").asText());
                     }
                 }
             }
@@ -298,7 +300,7 @@ public class ScratchClient {
         List<String> ids = new ArrayList<>();
         if (root.isArray()) {
             for (JsonNode node : root) {
-                if (node.has("id")) {
+                if (node.hasNonNull("id")) {
                     ids.add(node.get("id").asText());
                 }
             }
