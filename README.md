@@ -206,7 +206,7 @@ Available options:
 - `--popular <count>`: Download the X most popular projects.
 - `--user <username>`: Download all projects of a specific user.
 - `--with-assets`: Download as `.sb`/`.sb2`/`.sb3` file (zipped JSON + assets).
-- `--metadata`: Download project metadata.
+- `--with-metadata`: Additionally download project metadata.
 
 
 ### Automatically refactoring projects

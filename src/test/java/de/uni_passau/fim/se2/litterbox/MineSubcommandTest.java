@@ -73,7 +73,7 @@ class MineSubcommandTest {
 
     @Test
     void testDownloadMetadata() throws IOException {
-        int exitCode = cmd.execute("--project-id", "12345", "--metadata", "--output", "out");
+        int exitCode = cmd.execute("--project-id", "12345", "--with-metadata", "--output", "out");
 
         verify(client).downloadProject(eq("12345"), any(Path.class), eq(true), eq(false));
         assertEquals(0, exitCode);

@@ -493,8 +493,8 @@ public class Main implements Callable<Integer> {
         )
         Path outputPath;
 
-        @CommandLine.Option(names = {"--metadata"}, description = "Download project metadata.")
-        boolean metadata;
+        @CommandLine.Option(names = {"--with-metadata"}, description = "Additionally download project metadata.")
+        boolean withMetadata;
 
         @CommandLine.Option(
                 names = {"--with-assets"},
@@ -603,7 +603,7 @@ public class Main implements Callable<Integer> {
         private void processId(String id) {
             try {
                 log.info("Downloading project " + id + "...");
-                client.downloadProject(id, outputPath, metadata, withAssets);
+                client.downloadProject(id, outputPath, withMetadata, withAssets);
             } catch (IOException e) {
                 log.severe("Failed to download project " + id + ": " + e.getMessage());
             }
