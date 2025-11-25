@@ -22,8 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -54,21 +56,21 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
     public void visit(StmtList node) {
         // We only check for sequences within a single StmtList.
         // We do not traverse into child blocks here (visitChildren will do that).
-        
+
         Map<String, Stmt> lastEffectStmt = new HashMap<>();
 
         for (Stmt stmt : node.getStmts()) {
             boolean isHalting = containsHalting(stmt);
-            
-            if (stmt instanceof SwitchCostumeTo) {
+
+            if (stmt instanceof SwitchCostumeTo || stmt instanceof NextCostume) {
                 checkAndPut(lastEffectStmt, "COSTUME", stmt);
-            } else if (stmt instanceof SwitchBackdrop) {
+            } else if (stmt instanceof SwitchBackdrop || stmt instanceof NextBackdrop) {
                 checkAndPut(lastEffectStmt, "BACKDROP", stmt);
             } else if (stmt instanceof SetSizeTo) {
                 checkAndPut(lastEffectStmt, "SIZE", stmt);
             } else if (stmt instanceof Show || stmt instanceof Hide) {
                 checkAndPut(lastEffectStmt, "VISIBILITY", stmt);
-            } else if (stmt instanceof GoToLayer) {
+            } else if (stmt instanceof GoToLayer || stmt instanceof ChangeLayerBy) {
                 checkAndPut(lastEffectStmt, "LAYER", stmt);
             } else if (stmt instanceof Say || stmt instanceof Think) {
                 checkAndPut(lastEffectStmt, "BUBBLE", stmt);
