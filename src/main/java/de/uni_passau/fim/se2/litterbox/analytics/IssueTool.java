@@ -232,6 +232,7 @@ public class IssueTool {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
         if (LOAD_GENERAL) {
+            registerPerfumeFinder(new AskAndAnswerPerfume(), perfumeFinders);
             registerPerfumeFinder(new BackdropSwitch(), perfumeFinders);
             registerPerfumeFinder(new BoolExpression(), perfumeFinders);
             registerPerfumeFinder(new Collision(), perfumeFinders);
