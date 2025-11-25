@@ -67,6 +67,7 @@ public class IssueTool {
             registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+            registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
@@ -145,6 +146,7 @@ public class IssueTool {
         registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
         registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
         registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+        registerBugFinder(new InvalidNumberString(), bugFinders);
         registerBugFinder(new KeySetPosition(), bugFinders);
         registerBugFinder(new MissingLoopMousePosition(), bugFinders);
         registerBugFinder(new MissingLoopSensing(), bugFinders);
