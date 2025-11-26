@@ -41,17 +41,30 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
 
     private int iteration = 0;
 
-    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
-    private static final int MAX_SECONDS = PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime");
+    private final int maxGen;
+    private final int maxSeconds;
 
     public NSGAII(FixedSizePopulationGenerator<C> populationGenerator,
                   OffspringGenerator<C> offspringGenerator,
                   FastNonDominatedSort<C> fastNonDominatedSort,
                   CrowdingDistanceSort<C> crowdingDistanceSort) {
+        this(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort,
+                PropertyLoader.getSystemIntProperty("nsga-ii.generations"),
+                PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime"));
+    }
+
+    public NSGAII(FixedSizePopulationGenerator<C> populationGenerator,
+                  OffspringGenerator<C> offspringGenerator,
+                  FastNonDominatedSort<C> fastNonDominatedSort,
+                  CrowdingDistanceSort<C> crowdingDistanceSort,
+                  int maxGen,
+                  int maxSeconds) {
         this.populationGenerator = populationGenerator;
         this.offspringGenerator = offspringGenerator;
         this.fastNonDominatedSort = fastNonDominatedSort;
         this.crowdingDistanceSort = crowdingDistanceSort;
+        this.maxGen = maxGen;
+        this.maxSeconds = maxSeconds;
     }
 
     private List<C> generateInitialPopulation() {
@@ -64,8 +77,8 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     public List<C> findSolution() {
         List<C> population = generateInitialPopulation();
         iteration = 0;
-        long end = System.currentTimeMillis() + MAX_SECONDS * 1000L; // MAX_SECONDS seconds * 1000 ms/sec
-        while (iteration < MAX_GEN && System.currentTimeMillis() < end) {
+        long end = System.currentTimeMillis() + maxSeconds * 1000L; // maxSeconds seconds * 1000 ms/sec
+        while (iteration < maxGen && System.currentTimeMillis() < end) {
             log.log(Level.FINE, "### NSGA-II ITERATION {0} ###", iteration);
 
             population = evolve(population);
@@ -81,19 +94,22 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
             iteration++;
         }
 
-        if (iteration == MAX_GEN) {
-            log.log(Level.FINE, "NSGA-II stopped after reaching the maximum iteration {0}", MAX_GEN);
+        if (iteration == maxGen) {
+            log.log(Level.FINE, "NSGA-II stopped after reaching the maximum iteration {0}", maxGen);
         } else {
-            log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", MAX_SECONDS);
+            log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", maxSeconds);
         }
 
         population = fastNonDominatedSort.fastNonDominatedSort(population).getFirst();
+        log.log(Level.FINE, "Final first front has size {0}, of which are distict: {1}", new Object[]{population.size(), population.stream().distinct().count()});
+
         return population.stream().distinct().toList(); // only return unique solutions
     }
 
     @VisibleForTesting
     List<C> evolve(List<C> population) {
         List<List<C>> nonDominatedSortedSolution = fastNonDominatedSort.fastNonDominatedSort(population);
+        log.log(Level.FINE, "Fronts: "+nonDominatedSortedSolution.size());
         population = Lists.newLinkedList();
 
 

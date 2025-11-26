@@ -131,4 +131,99 @@ class FastNonDominatedSortTest {
         assertSame(c1, fronts.get(1).get(0));
         assertSame(c2, fronts.get(1).get(1));
     }
+    
+    @Test
+    void testEmptyPopulation() {
+        FastNonDominatedSort<RefactorSequence> sort = new FastNonDominatedSort<>(Collections.emptyList());
+        List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(Collections.emptyList());
+        assertTrue(fronts.isEmpty());
+    }
+
+    @Test
+    void testSingleSolution() {
+        RefactorSequence s1 = mock(RefactorSequence.class);
+        FastNonDominatedSort<RefactorSequence> sort = new FastNonDominatedSort<>(Collections.emptyList());
+        
+        List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(List.of(s1));
+        
+        assertEquals(1, fronts.size());
+        assertEquals(1, fronts.get(0).size());
+        assertSame(s1, fronts.get(0).get(0));
+        verify(s1).setRank(0);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testChainDomination() {
+        // S1 > S2 > S3
+        RefactorSequence s1 = mock(RefactorSequence.class);
+        RefactorSequence s2 = mock(RefactorSequence.class);
+        RefactorSequence s3 = mock(RefactorSequence.class);
+        List<RefactorSequence> solutions = List.of(s1, s2, s3);
+
+        Dominance<RefactorSequence> dominance = mock(Dominance.class);
+        
+        // S1 dominates S2 and S3
+        when(dominance.test(s1, s2)).thenReturn(true);
+        when(dominance.test(s1, s3)).thenReturn(true);
+        when(dominance.test(s1, s1)).thenReturn(false);
+
+        // S2 dominates S3, dominated by S1
+        when(dominance.test(s2, s3)).thenReturn(true);
+        when(dominance.test(s2, s1)).thenReturn(false);
+        when(dominance.test(s2, s2)).thenReturn(false);
+
+        // S3 dominated by S1 and S2
+        when(dominance.test(s3, s1)).thenReturn(false);
+        when(dominance.test(s3, s2)).thenReturn(false);
+        when(dominance.test(s3, s3)).thenReturn(false);
+
+        FastNonDominatedSort<RefactorSequence> sort = new FastNonDominatedSort<>(Collections.emptyList(), dominance);
+        List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(solutions);
+
+        assertEquals(3, fronts.size());
+        
+        // Front 0: S1
+        assertEquals(1, fronts.get(0).size());
+        assertSame(s1, fronts.get(0).get(0));
+        verify(s1).setRank(0);
+
+        // Front 1: S2
+        assertEquals(1, fronts.get(1).size());
+        assertSame(s2, fronts.get(1).get(0));
+        verify(s2).setRank(1);
+
+        // Front 2: S3
+        assertEquals(1, fronts.get(2).size());
+        assertSame(s3, fronts.get(2).get(0));
+        verify(s3).setRank(2);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testAllNonDominated() {
+        // S1, S2, S3 - none dominate each other
+        RefactorSequence s1 = mock(RefactorSequence.class);
+        RefactorSequence s2 = mock(RefactorSequence.class);
+        RefactorSequence s3 = mock(RefactorSequence.class);
+        List<RefactorSequence> solutions = List.of(s1, s2, s3);
+
+        Dominance<RefactorSequence> dominance = mock(Dominance.class);
+        
+        // No domination
+        when(dominance.test(any(), any())).thenReturn(false);
+
+        FastNonDominatedSort<RefactorSequence> sort = new FastNonDominatedSort<>(Collections.emptyList(), dominance);
+        List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(solutions);
+
+        assertEquals(1, fronts.size());
+        assertEquals(3, fronts.get(0).size());
+        assertTrue(fronts.get(0).contains(s1));
+        assertTrue(fronts.get(0).contains(s2));
+        assertTrue(fronts.get(0).contains(s3));
+        
+        verify(s1).setRank(0);
+        verify(s2).setRank(0);
+        verify(s3).setRank(0);
+    }
 }

@@ -57,20 +57,91 @@ class RefactorSequenceMutationTest {
     }
 
     @Test
-    void testMutation() {
+    void testMutationInsert() {
         final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
-        mockedRandomness.when(Randomness::nextDouble).thenReturn(1d).thenReturn(0d); // do not mutate 0th element, but everything afterwards
-        mockedRandomness.when(() -> Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS)).thenReturn(13).thenReturn(17);
-        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(0).thenReturn(1).thenReturn(2);
+        
+        // Mock randomness to:
+        // 1. Trigger mutation for the first element (nextDouble < 1/size)
+        // 2. Select mutation type 0 (Insert)
+        // 3. Select new production value (e.g., 42)
+        // 4. For subsequent elements, do not trigger mutation (nextDouble >= 1/size)
+        
+        // Initial list: [1, 2]
+        // Size: 2. pMutate = 0.5.
+        // Iteration 0 (index 0): nextDouble() returns 0.1 (< 0.5) -> Mutate
+        //   mutateAtIndex: nextInt(3) returns 0 (Insert)
+        //   nextInt(MAX) returns 42
+        //   List becomes [42, 1, 2]. Index increments to 1.
+        // Loop increments index to 2.
+        // Iteration 1 (index 2): nextDouble() returns 0.9 (> 0.5) -> No mutate
+        // Loop increments index to 3.
+        // Size is 3. Loop terminates.
+        
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.1).thenReturn(0.9);
+        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(0); // Insert
+        mockedRandomness.when(() -> Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS)).thenReturn(42);
 
-        List<Integer> productions = List.of(0, 0, 0, 0);
+        List<Integer> productions = List.of(1, 2);
         RefactorSequence parent = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
 
         RefactorSequence mutant = parent.mutate();
-        assertEquals(4, mutant.getProductions().size());
-        assertEquals(0, mutant.getProductions().get(0));
-        assertEquals(13, mutant.getProductions().get(1));
-        assertEquals(0, mutant.getProductions().get(2));
-        assertEquals(17, mutant.getProductions().get(3));
+        
+        List<Integer> mutatedProductions = mutant.getProductions();
+        assertEquals(3, mutatedProductions.size());
+        assertEquals(42, mutatedProductions.get(0));
+        assertEquals(1, mutatedProductions.get(1));
+        assertEquals(2, mutatedProductions.get(2));
+    }
+
+    @Test
+    void testMutationReplace() {
+        final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
+        
+        // Mock randomness to:
+        // 1. Trigger mutation for the first element
+        // 2. Select mutation type 1 (Replace)
+        // 3. Select new production value (e.g., 99)
+        // 4. No further mutations
+        
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.1).thenReturn(0.9);
+        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(1); // Replace
+        mockedRandomness.when(() -> Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS)).thenReturn(99);
+
+        List<Integer> productions = List.of(1, 2);
+        RefactorSequence parent = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
+
+        RefactorSequence mutant = parent.mutate();
+        
+        List<Integer> mutatedProductions = mutant.getProductions();
+        assertEquals(2, mutatedProductions.size());
+        assertEquals(99, mutatedProductions.get(0));
+        assertEquals(2, mutatedProductions.get(1));
+    }
+
+    @Test
+    void testMutationDelete() {
+        // Mock randomness to:
+        // 1. Trigger mutation for the first element
+        // 2. Select mutation type 2 (Delete)
+        // 3. No further mutations
+        
+        // Initial: [1, 2]
+        // Index 0: Mutate -> Delete. List becomes [2]. Index decrements to -1.
+        // Loop increments index to 0.
+        // Index 0 (was 1): nextDouble() returns 0.9 -> No mutate.
+        // Loop increments index to 1.
+        // Size is 1. Loop terminates.
+        
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.1).thenReturn(0.9);
+        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(2); // Delete
+
+        List<Integer> productions = List.of(1, 2);
+        RefactorSequence parent = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
+
+        RefactorSequence mutant = parent.mutate();
+        
+        List<Integer> mutatedProductions = mutant.getProductions();
+        assertEquals(1, mutatedProductions.size());
+        assertEquals(2, mutatedProductions.get(0));
     }
 }

@@ -19,25 +19,26 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
-import de.uni_passau.fim.se2.litterbox.report.CSVRefactorReportGenerator;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
-import de.uni_passau.fim.se2.litterbox.utils.HyperVolume2D;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
-import org.apache.commons.io.FilenameUtils;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CohesionFitness;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfScriptsFitness;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -48,7 +49,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RefactoringAnalyzer extends FileAnalyzer<Void> {
@@ -57,8 +57,8 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
     private final List<RefactoringFinder> refactoringFinders;
     private final Path refactoredPath;
 
-    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
-    private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
+    private static final int MAX_GEN = 100; // Default value, as PropertyLoader is removed
+    private static final int POPULATION_SIZE = 100; // Default value, as PropertyLoader is removed
 
     public RefactoringAnalyzer(Path output, Path refactoredPath, boolean delete) {
         super(new RefactoringProgramAnalyzer(), output, delete);
@@ -75,64 +75,45 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
     protected void writeResultToFile(Path projectFile, Program program, Void result) throws IOException {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
-        final Instant startRefactoringSearch = Instant.now();
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
-        final Instant endRefactoringSearch = Instant.now();
-        final long refactoringSearchTime = Duration.between(startRefactoringSearch, endRefactoringSearch).toMillis();
         if (!solutions.isEmpty()) {
-            int iteration = nsgaii.getIteration();
+            System.out.println("Found " + solutions.size() + " solutions");
             List<RefactorSequence> uniqueSolutions = solutions
                     .stream()
                     .filter(distinctByFitness(RefactorSequence::getFitnessMap))
                     .toList();
-            generateProjectsFromParetoFront(
-                    projectFile.toFile(), output, nsgaii.getFitnessFunctions(), uniqueSolutions, iteration,
-                    refactoringSearchTime
-            );
+            System.out.println("Unique solutions: " + uniqueSolutions.size());
+
+            System.out.println("Filtering for dominating solutions...");
             Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
-            for (RefactorSequence solution : uniqueSolutions) {
-                RefactorSequence empty = new RefactorSequence(
-                        program, solution.getMutation(), solution.getCrossover(), Collections.emptyList()
-                );
-                if (dominance.test(empty, solution)) {
-                    log.log(Level.FINE, "Found dominating solution " + solution.getFitnessMap());
-                }
+            
+            // Create an empty sequence representing the original program
+            RefactorSequence original = new RefactorSequence(
+                    program, 
+                    uniqueSolutions.get(0).getMutation(), 
+                    uniqueSolutions.get(0).getCrossover(), 
+                    Collections.emptyList()
+            );
+
+            // Filter solutions that dominate the original program
+            List<RefactorSequence> dominatingSolutions = uniqueSolutions.stream()
+                    .filter(solution -> dominance.test(solution, original))
+                    .toList();
+
+            System.out.println("Dominating solutions: " + dominatingSolutions.size());
+
+            if (!dominatingSolutions.isEmpty()) {
+                RefactoringPostProcessor postProcessor = new RefactoringPostProcessor();
+                postProcessor.process(dominatingSolutions, refactoredPath, projectFile);
+            } else {
+                System.out.println("No solutions found that dominate the original program.");
             }
         } else {
-            log.log(Level.FINE, "NSGA-II found no solutions!");
+            System.out.println("NSGA-II found no solutions!");
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, Path reportName,
-            List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<RefactorSequence> solutions, int iteration,
-            long refactoringSearchTime) throws IOException {
-        Preconditions.checkArgument(fitnessFunctions.size() >= 2);
-        NormalizingFitnessFunction<RefactorSequence> ff1 = new NormalizingFitnessFunction<>(fitnessFunctions.get(0));
-        NormalizingFitnessFunction<RefactorSequence> ff2 = new NormalizingFitnessFunction<>(fitnessFunctions.get(1));
-        final HyperVolume2D<RefactorSequence> hv = new HyperVolume2D<>(
-                ff1, ff2, ff1.getReferencePoint(), ff2.getReferencePoint()
-        );
-        double hyperVolumeValue = hv.compute(solutions.stream().map(RefactorSequence::copy).toList());
 
-        for (int i = 0; i < solutions.size(); i++) {
-            Program refactored = solutions.get(i).getRefactoredProgram();
-            StringBuilder sb = new StringBuilder();
-            sb.append("Solution,");
-            sb.append(refactored.getIdent().getName()).append("_refactored_").append(i);
-            sb.append(',');
-            sb.append(solutions.get(i).getExecutedRefactorings().size());
-            sb.append(',');
-            for (FitnessFunction<RefactorSequence> fitnessFunction : fitnessFunctions) {
-                sb.append(solutions.get(i).getFitness(fitnessFunction));
-                sb.append(',');
-            }
-            log.log(Level.FINE, sb.toString());
-            generateOutput(
-                    i, refactored, solutions.get(i), reportName, hyperVolumeValue, iteration, refactoringSearchTime
-            );
-            createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
-        }
-    }
 
 
     /**
@@ -173,43 +154,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(
-            int index, Program program, RefactorSequence refactorSequence, Path reportFileName, double hyperVolume,
-            int iteration, long refactoringSearchTime
-    ) throws IOException {
-        if (reportFileName == null) {
-            ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
-            reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
-        } else if (FilenameUtils.getExtension(reportFileName.toString()).equals("csv")) {
-            try (CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(
-                    reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet()
-            )) {
-                reportGenerator.generateReport(
-                        index, program, refactorSequence, POPULATION_SIZE, MAX_GEN, hyperVolume, iteration,
-                        refactoringSearchTime
-                );
-            }
-        } else {
-            throw new IllegalArgumentException(
-                    "Unknown output file type: " + reportFileName + ". "
-                            + "Expected nothing for console output, or a csv file."
-            );
-        }
-    }
 
-    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix)
-            throws IOException {
-        Path outputPath = refactoredPath == null ? fileEntry.toPath().getParent() : refactoredPath;
-        File folder = outputPath.toFile();
-        if (!folder.exists()) {
-            Files.createDirectories(outputPath);
-        }
-        if ((FilenameUtils.getExtension(fileEntry.toString())).equalsIgnoreCase("json")) {
-            JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
-        } else {
-            JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
-        }
-    }
 
     private static class RefactoringProgramAnalyzer implements ProgramAnalyzer<Void> {
 
