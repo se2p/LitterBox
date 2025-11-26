@@ -276,14 +276,24 @@ public class ScratchClient {
     }
 
     public List<String> getUserProjects(String username) throws IOException {
+        final String baseUrl = API_BASE_URL + "/users/" + username + "/projects";
+        return fetchPaginatedProjectsList(baseUrl);
+    }
+
+    public List<String> getRemixes(final String projectId) throws IOException {
+        final String baseUrl = API_BASE_URL + "/projects/" + projectId + "/remixes";
+        return fetchPaginatedProjectsList(baseUrl);
+    }
+
+    private List<String> fetchPaginatedProjectsList(final String baseUrl) throws IOException {
         final List<String> projectIds = new ArrayList<>();
         final int limit = 40;
         int offset = 0;
         boolean more = true;
 
         while (more) {
-            String url = API_BASE_URL + "/users/" + username + "/projects?limit=" + limit + "&offset=" + offset;
-            List<String> batch = extractProjectIds(url);
+            final String url = baseUrl + "?limit=" + limit + "&offset=" + offset;
+            final List<String> batch = extractProjectIds(url);
             projectIds.addAll(batch);
 
             if (batch.size() < limit) {
@@ -292,6 +302,7 @@ public class ScratchClient {
                 offset += limit;
             }
         }
+
         return projectIds;
     }
 

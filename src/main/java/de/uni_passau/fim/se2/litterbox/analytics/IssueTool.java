@@ -67,6 +67,7 @@ public class IssueTool {
             registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+            registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
@@ -145,6 +146,7 @@ public class IssueTool {
         registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
         registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
         registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+        registerBugFinder(new InvalidNumberString(), bugFinders);
         registerBugFinder(new KeySetPosition(), bugFinders);
         registerBugFinder(new MissingLoopMousePosition(), bugFinders);
         registerBugFinder(new MissingLoopSensing(), bugFinders);
@@ -230,6 +232,7 @@ public class IssueTool {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
         if (LOAD_GENERAL) {
+            registerPerfumeFinder(new AskAndAnswerPerfume(), perfumeFinders);
             registerPerfumeFinder(new BackdropSwitch(), perfumeFinders);
             registerPerfumeFinder(new BoolExpression(), perfumeFinders);
             registerPerfumeFinder(new Collision(), perfumeFinders);
