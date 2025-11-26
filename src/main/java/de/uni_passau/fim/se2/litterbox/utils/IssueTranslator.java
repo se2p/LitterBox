@@ -95,7 +95,9 @@ public final class IssueTranslator {
     }
 
     public String getLanguage() {
-        return locale.getLanguage();
+        // translate the currently set language into a displayable String in English.
+        // E.g. `de` will be returned as `German`.
+        return locale.getDisplayLanguage(Locale.ENGLISH);
     }
 
     /**
