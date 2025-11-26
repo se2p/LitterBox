@@ -215,7 +215,8 @@ public class Main implements Callable<Integer> {
     static class CheckProgramsSubcommand extends LitterBoxSubcommand {
         @CommandLine.Option(
                 names = {"-d", "--detectors"},
-                description = "All detectors you want to run, separated by commas.",
+                description = "All detectors or detector groups you want to run, separated by commas. "
+                    + "Prefix group names or names of individual detectors with '-' to exclude them.",
                 split = ",",
                 defaultValue = "default",
                 paramLabel = "<detector>"
