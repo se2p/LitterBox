@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
@@ -31,9 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,8 +73,7 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
                 checkAndPut(lastEffectStmt, "LAYER", stmt);
             } else if (stmt instanceof Say || stmt instanceof Think) {
                 checkAndPut(lastEffectStmt, "BUBBLE", stmt);
-            } else if (stmt instanceof SetGraphicEffectTo) {
-                SetGraphicEffectTo setEffect = (SetGraphicEffectTo) stmt;
+            } else if (stmt instanceof SetGraphicEffectTo setEffect) {
                 String effectName = "EFFECT_" + setEffect.getEffect().getTypeName();
                 if (lastEffectStmt.containsKey(effectName)) {
                     addIssue(lastEffectStmt.get(effectName));
@@ -85,9 +83,9 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
                 if (lastEffectStmt.containsKey("CLEAR")) {
                     addIssue(lastEffectStmt.get("CLEAR"));
                 }
-                for (String key : lastEffectStmt.keySet()) {
-                    if (key.startsWith("EFFECT_")) {
-                        addIssue(lastEffectStmt.get(key));
+                for (var entry : lastEffectStmt.entrySet()) {
+                    if (entry.getKey().startsWith("EFFECT_")) {
+                        addIssue(entry.getValue());
                     }
                 }
                 lastEffectStmt.clear();
@@ -115,8 +113,8 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
         }
         // Recursively check children
         for (ASTNode child : stmt.getChildren()) {
-            if (child instanceof Stmt) {
-                if (containsHalting((Stmt) child)) {
+            if (child instanceof Stmt childStmt) {
+                if (containsHalting(childStmt)) {
                     return true;
                 }
             } else {
@@ -130,7 +128,7 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
     }
 
     private boolean containsHaltingNode(ASTNode node) {
-        if (node instanceof Stmt && isHalting((Stmt) node)) {
+        if (node instanceof Stmt stmt && isHalting(stmt)) {
             return true;
         }
         for (ASTNode child : node.getChildren()) {
@@ -142,12 +140,12 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
     }
 
     private boolean isHalting(Stmt stmt) {
-        return stmt instanceof WaitSeconds ||
-               stmt instanceof ThinkForSecs ||
-               stmt instanceof SayForSecs ||
-               stmt instanceof GlideSecsToXY ||
-               stmt instanceof GlideSecsTo ||
-               stmt instanceof PlaySoundUntilDone ||
-               stmt instanceof Speak;
+        return stmt instanceof WaitSeconds
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof SayForSecs
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof Speak;
     }
 }
