@@ -33,8 +33,6 @@ import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -43,7 +41,6 @@ import java.util.stream.Stream;
  */
 public class IssueTool {
 
-    private static final Logger log = Logger.getLogger(IssueTool.class.getName());
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     private static final boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
@@ -355,25 +352,38 @@ public class IssueTool {
         return List.copyOf(finders);
     }
 
-    public static List<IssueFinder> getFinders(String commandString) {
-        final Optional<FinderGroup> issueType = FinderGroup.tryFromString(commandString);
-        if (issueType.isPresent()) {
-            return getFinders(issueType.get());
-        }
+    /**
+     * Retrieves all finders that match the given command string.
+     *
+     * <p>The command string contains a comma-separated list of finder names or categories. For example,
+     * {@code unnecessary_if,stuttering_movement} returns the two finders {@link UnnecessaryIf} and
+     * {@link StutteringMovement}.
+     * The command string {@code smells,ask_and_answer_perfume} will return all finders of the
+     * {@link FinderGroup#SMELLS} category and in addition the {@link AskAndAnswerPerfume} perfume finder.
+     *
+     * @param commandString A comma-separated list of finder names or categories.
+     * @return All finders matching the given command string.
+     */
+    public static List<IssueFinder> getFinders(String commandString) throws IllegalArgumentException {
+        final List<String> requestedFinders = Arrays.stream(commandString.split(",")).map(String::trim).toList();
 
-        List<IssueFinder> finders = new ArrayList<>();
+        final Map<String, IssueFinder> allFinders = generateAllFinders();
+        final Map<String, IssueFinder> finders = new HashMap<>();
 
-        for (String detectorName : commandString.split(",")) {
-            Map<String, IssueFinder> allFinders = generateAllFinders();
-            if (!allFinders.containsKey(detectorName)) {
-                // TODO: Hard crash might be more appropriate to notify user
-                log.log(Level.SEVERE, "Unknown finder: " + detectorName);
+        for (String detectorName : requestedFinders) {
+            final Optional<FinderGroup> issueType = FinderGroup.tryFromString(detectorName);
+            if (issueType.isPresent()) {
+                getFinders(issueType.get()).forEach(finder -> finders.put(finder.getName(), finder));
                 continue;
             }
-            finders.add(allFinders.get(detectorName));
+
+            if (!allFinders.containsKey(detectorName)) {
+                throw new IllegalArgumentException("Unknown finder: " + detectorName);
+            }
+            finders.put(detectorName, allFinders.get(detectorName));
         }
 
-        return Collections.unmodifiableList(finders);
+        return finders.values().stream().toList();
     }
 
     public static Collection<String> getAllFinderNames() {
