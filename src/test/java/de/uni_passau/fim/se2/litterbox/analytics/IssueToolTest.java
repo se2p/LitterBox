@@ -19,8 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.AskAndAnswerPerfume;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyScript;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
@@ -43,6 +46,12 @@ class IssueToolTest {
                 " ask_and_answer_perfume  \t   ,\rempty_script\n"
         );
         assertThat(finders).hasSize(2);
+    }
+
+    @Test
+    void getFindersTrimWhitespaceRemoveEmpty() {
+        final List<IssueFinder> finders = IssueTool.getFinders(",\t,  \n   ");
+        assertThat(finders).isEmpty();
     }
 
     @Test
@@ -79,4 +88,35 @@ class IssueToolTest {
 
         assertThat(combined).hasSize(smells.size());
     }
+
+    @Test
+    void excludeGroup() {
+        final List<IssueFinder> smells = IssueTool.getFinders(FinderGroup.SMELLS);
+        final List<IssueFinder> combined = IssueTool.getFinders("bugs,smells,-bugs");
+
+        assertThat(combined.stream().map(IssueFinder::getName))
+                .containsExactlyElementsIn(smells.stream().map(IssueFinder::getName).toList());
+    }
+
+    @Test
+    void excludeGroupSelf() {
+        final List<IssueFinder> combined = IssueTool.getFinders("-smells,smells");
+
+        assertThat(combined).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "-empty_script,smells",
+            "empty_script,-empty_script,smells",
+            "smells,-empty_script,empty_script"
+    })
+    void excludeSpecificFinder(final String commandString) {
+        final List<IssueFinder> smells = IssueTool.getFinders("smells");
+        final List<IssueFinder> combined = IssueTool.getFinders(commandString);
+
+        assertThat(combined).hasSize(smells.size() - 1);
+        assertThat(combined.stream().filter(f -> EmptyScript.NAME.equals(f.getName()))).isEmpty();
+    }
+
 }

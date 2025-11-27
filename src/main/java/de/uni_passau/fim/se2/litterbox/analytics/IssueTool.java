@@ -361,27 +361,53 @@ public class IssueTool {
      * The command string {@code smells,ask_and_answer_perfume} will return all finders of the
      * {@link FinderGroup#SMELLS} category and in addition the {@link AskAndAnswerPerfume} perfume finder.
      *
+     * <p>You can also explicitly exclude groups or specific finders by prefixing them with a {@code -}.
+     * For example, {@code smells,-busy_waiting} includes all smells except for {@link BusyWaiting}.
+     * Excluding a group/finder always takes precedence over adding it, i.e., {@code busy_waiting,-busy_waiting} or
+     * {@code -busy_waiting,busy_waiting} both result in an empty list of finders.
+     *
      * @param commandString A comma-separated list of finder names or categories.
      * @return All finders matching the given command string.
      */
     public static List<IssueFinder> getFinders(String commandString) throws IllegalArgumentException {
-        final List<String> requestedFinders = Arrays.stream(commandString.split(",")).map(String::trim).toList();
+        final List<String> requestedFinders = Arrays.stream(commandString.split(","))
+                .map(String::trim)
+                .filter(cmd -> !cmd.isEmpty())
+                .toList();
 
         final Map<String, IssueFinder> allFinders = generateAllFinders();
         final Map<String, IssueFinder> finders = new HashMap<>();
+        final Set<String> excludedFinders = new HashSet<>();
 
         for (String detectorName : requestedFinders) {
+            boolean isExclusion = detectorName.startsWith("-");
+            if (isExclusion) {
+                detectorName = detectorName.substring(1);
+            }
+
             final Optional<FinderGroup> issueType = FinderGroup.tryFromString(detectorName);
             if (issueType.isPresent()) {
-                getFinders(issueType.get()).forEach(finder -> finders.put(finder.getName(), finder));
+                final List<IssueFinder> groupFinders = getFinders(issueType.get());
+                if (isExclusion) {
+                    groupFinders.stream().map(IssueFinder::getName).forEach(excludedFinders::add);
+                } else {
+                    groupFinders.forEach(finder -> finders.put(finder.getName(), finder));
+                }
                 continue;
             }
 
             if (!allFinders.containsKey(detectorName)) {
                 throw new IllegalArgumentException("Unknown finder: " + detectorName);
             }
-            finders.put(detectorName, allFinders.get(detectorName));
+
+            if (isExclusion) {
+                excludedFinders.add(detectorName);
+            } else {
+                finders.put(detectorName, allFinders.get(detectorName));
+            }
         }
+
+        excludedFinders.forEach(finders::remove);
 
         return finders.values().stream().toList();
     }
