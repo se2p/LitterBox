@@ -59,7 +59,9 @@ public class MessageAsLiteral extends AbstractIssueFinder {
         for (StringLiteral node : potentialLiterals) {
             String text = node.getText();
             if (unsentMessages.contains(text)) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
+                IssueBuilder builder = prepareIssueBuilder()
+                        .withSeverity(IssueSeverity.HIGH)
+                        .withMetadata(getMetadata(node));
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, text);
                 builder = builder.withCurrentNode(getCurrentReferencableNode(node));
@@ -120,8 +122,8 @@ public class MessageAsLiteral extends AbstractIssueFinder {
         if (node instanceof Program) {
             throw new IllegalArgumentException("should have found Metadata before Program node");
         }
-        if (node instanceof ActorDefinition) {
-            return ((ActorDefinition) node).getActorMetadata();
+        if (node instanceof ActorDefinition actor) {
+            return actor.getActorMetadata();
         }
         if (node.getMetadata() != null && !(node.getMetadata() instanceof NoBlockMetadata)) {
             return node.getMetadata();

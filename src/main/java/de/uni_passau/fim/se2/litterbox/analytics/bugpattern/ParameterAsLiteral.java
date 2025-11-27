@@ -70,10 +70,12 @@ public class ParameterAsLiteral extends AbstractIssueFinder {
 
         String literal = node.getText();
         if (parametersInScope.contains(literal)) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
+            IssueBuilder builder = prepareIssueBuilder()
+                    .withSeverity(IssueSeverity.HIGH)
+                    .withMetadata(getMetadata(node));
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.HINT_VARIABLE, node.getText());
-            builder = builder.withCurrentNode(getCurrentReferencableNode(node));            
+            builder = builder.withCurrentNode(getCurrentReferencableNode(node));
             addIssue(builder.withHint(hint));
         }
     }
