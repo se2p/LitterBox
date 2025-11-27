@@ -41,16 +41,63 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RefactoringPostProcessor {
 
-    public void process(List<RefactorSequence> sequences, Path outputDir, Path originalFile) throws IOException {
+    private final List<FitnessFunction<RefactorSequence>> fitnessFunctions;
+
+    public RefactoringPostProcessor(List<FitnessFunction<RefactorSequence>> fitnessFunctions) {
+        this.fitnessFunctions = fitnessFunctions;
+    }
+
+    public void process(List<RefactorSequence> solutions, Program originalProgram, Path outputDir, Path originalFile) throws IOException {
+        if (solutions.isEmpty()) {
+            return;
+        }
+
+        System.out.println("Found " + solutions.size() + " solutions");
+        List<RefactorSequence> uniqueSolutions = solutions
+                .stream()
+                .filter(distinctByFitness(RefactorSequence::getFitnessMap))
+                .toList();
+        System.out.println("Unique solutions: " + uniqueSolutions.size());
+
+        System.out.println("Filtering for dominating solutions...");
+        Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
+
+        // Create an empty sequence representing the original program
+        RefactorSequence original = new RefactorSequence(
+                originalProgram,
+                uniqueSolutions.get(0).getMutation(),
+                uniqueSolutions.get(0).getCrossover(),
+                Collections.emptyList()
+        );
+
+        // Filter solutions that dominate the original program
+        List<RefactorSequence> dominatingSolutions = uniqueSolutions.stream()
+                .filter(solution -> dominance.test(solution, original))
+                .toList();
+
+        System.out.println("Dominating solutions: " + dominatingSolutions.size());
+
+        if (dominatingSolutions.isEmpty()) {
+            System.out.println("No solutions found that dominate the original program.");
+            return;
+        }
+
         Set<Program> uniquePrograms = new HashSet<>();
         List<Program> processedPrograms = new ArrayList<>();
 
-        for (RefactorSequence sequence : sequences) {
+        for (RefactorSequence sequence : dominatingSolutions) {
             Program program = sequence.getRefactoredProgram(); // This is already a copy/new instance
             cleanProgram(program);
-            
+
             // We use the Program's equals/hashCode for uniqueness
             if (uniquePrograms.add(program)) {
                 processedPrograms.add(program);
@@ -72,6 +119,11 @@ public class RefactoringPostProcessor {
                 JSONFileCreator.writeSb3FromProgram(program, outputDir, originalFile.toFile(), suffix);
             }
         }
+    }
+
+    public static <T> Predicate<T> distinctByFitness(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 
     private void cleanProgram(Program program) {

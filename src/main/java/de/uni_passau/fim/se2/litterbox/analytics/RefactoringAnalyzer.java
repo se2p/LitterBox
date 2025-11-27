@@ -22,13 +22,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
+
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequenceGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CohesionFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
@@ -40,15 +41,8 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 public class RefactoringAnalyzer extends FileAnalyzer<Void> {
@@ -66,48 +60,14 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         refactoringFinders = RefactoringTool.getRefactoringFinders();
     }
 
-    public static <T> Predicate<T> distinctByFitness(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
-
     @Override
     protected void writeResultToFile(Path projectFile, Program program, Void result) throws IOException {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
         if (!solutions.isEmpty()) {
-            System.out.println("Found " + solutions.size() + " solutions");
-            List<RefactorSequence> uniqueSolutions = solutions
-                    .stream()
-                    .filter(distinctByFitness(RefactorSequence::getFitnessMap))
-                    .toList();
-            System.out.println("Unique solutions: " + uniqueSolutions.size());
-
-            System.out.println("Filtering for dominating solutions...");
-            Dominance<RefactorSequence> dominance = new Dominance<>(nsgaii.getFitnessFunctions());
-            
-            // Create an empty sequence representing the original program
-            RefactorSequence original = new RefactorSequence(
-                    program, 
-                    uniqueSolutions.get(0).getMutation(), 
-                    uniqueSolutions.get(0).getCrossover(), 
-                    Collections.emptyList()
-            );
-
-            // Filter solutions that dominate the original program
-            List<RefactorSequence> dominatingSolutions = uniqueSolutions.stream()
-                    .filter(solution -> dominance.test(solution, original))
-                    .toList();
-
-            System.out.println("Dominating solutions: " + dominatingSolutions.size());
-
-            if (!dominatingSolutions.isEmpty()) {
-                RefactoringPostProcessor postProcessor = new RefactoringPostProcessor();
-                postProcessor.process(dominatingSolutions, refactoredPath, projectFile);
-            } else {
-                System.out.println("No solutions found that dominate the original program.");
-            }
+            RefactoringPostProcessor postProcessor = new RefactoringPostProcessor(nsgaii.getFitnessFunctions());
+            postProcessor.process(solutions, program, refactoredPath, projectFile);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
