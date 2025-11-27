@@ -66,6 +66,7 @@ public class IssueTool {
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
+            registerBugFinder(new MessageAsLiteral(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
             registerBugFinder(new MissingAsk(), bugFinders);
@@ -83,6 +84,7 @@ public class IssueTool {
             registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
             registerBugFinder(new NoWorkingScripts(), bugFinders);
             registerBugFinder(new OrphanedParameter(), bugFinders);
+            registerBugFinder(new ParameterAsLiteral(), bugFinders);
             registerBugFinder(new ParameterOutOfScope(), bugFinders);
             registerBugFinder(new PositionEqualsCheck(), bugFinders);
             registerBugFinder(new RecursiveCloning(), bugFinders);
@@ -150,6 +152,7 @@ public class IssueTool {
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterAsLiteral(), bugFinders);
         registerBugFinder(new ParameterOutOfScope(), bugFinders);
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
