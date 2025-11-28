@@ -25,12 +25,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SequenceToLoopTest implements JsonTest {
 
@@ -57,5 +64,53 @@ public class SequenceToLoopTest implements JsonTest {
         Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         StmtList refactoredStmtList = refactoredScript.getStmtList();
         assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(stmtList.getNumberOfStatements() + 1 - times * subsequence.size());
+    }
+
+    @Test   
+    void testBuggySequence() throws IOException, ParsingException {
+        String code = """
+        when green flag clicked
+        turn cw (15) degrees
+        repeat (2)
+            move (10) steps
+        end
+        turn cw (15) degrees
+        turn cw (15) degrees
+        """;
+        Program program = parseScratchBlocks(code);
+        SequenceToLoopFinder sequenceToLoopFinder = new SequenceToLoopFinder();
+        List<Refactoring> refactorings = sequenceToLoopFinder.check(program);
+        assertEquals(1, refactorings.size());
+        Refactoring refactoring = refactorings.get(0);
+        Program result = refactorings.get(0).apply(program);
+        String resultCode = ScratchBlocksVisitor.of(result);
+        System.out.println(resultCode);
+    }
+
+    @Test
+    void testBuggySequence2() throws IOException, ParsingException {
+        String code = """
+        when green flag clicked
+        repeat (2)
+            move (10) steps
+        end
+        turn right (15) degrees
+        move (10) steps
+        turn right (15) degrees
+        turn right (15) degrees
+        """;
+        Program program = parseScratchBlocks(code);
+        SequenceToLoopFinder sequenceToLoopFinder = new SequenceToLoopFinder();
+        List<Refactoring> refactorings = sequenceToLoopFinder.check(program);
+        assertEquals(1, refactorings.size());
+        Refactoring refactoring = refactorings.get(0);
+        Program result = refactorings.get(0).apply(program);
+        String resultCode = ScratchBlocksVisitor.of(result);
+        System.out.println(resultCode);
+        List<Stmt> statements = result.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts();
+        assertTrue(statements.get(0) instanceof RepeatTimesStmt);
+        assertTrue(statements.get(1) instanceof TurnRight);
+        assertTrue(statements.get(2) instanceof MoveSteps);
+        assertTrue(statements.get(3) instanceof RepeatTimesStmt);
     }
 }

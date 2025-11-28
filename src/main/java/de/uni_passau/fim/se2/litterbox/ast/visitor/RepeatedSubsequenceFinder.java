@@ -43,7 +43,7 @@ public abstract class RepeatedSubsequenceFinder {
         this.minOccurrence = minOccurrence;
     }
 
-    protected abstract void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences);
+    protected abstract void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex);
 
     public void findRepetitions(StmtList statementList) {
         List<Stmt> statements = statementList.getStmts();
@@ -59,7 +59,7 @@ public abstract class RepeatedSubsequenceFinder {
                 }
                 int numSubsequences = findSubsequences(statements.subList(i, statements.size()), currentSequence);
                 if (numSubsequences >= minOccurrence) {
-                    handleRepetition(statementList, currentSequence, numSubsequences);
+                    handleRepetition(statementList, currentSequence, numSubsequences, i);
                     i += numSubsequences * currentSequence.size();
                 }
             }

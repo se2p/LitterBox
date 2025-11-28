@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
@@ -67,6 +68,14 @@ public interface JsonTest {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
+
+    default Program parseScratchBlocks(String code) throws IOException, ParsingException {
+        Program baseProject = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        // "Sprite1" is usually the default actor in emptyProject.json
+        return parser.extendProject(baseProject, "Sprite1", code);
+    }
+
 
     default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);
