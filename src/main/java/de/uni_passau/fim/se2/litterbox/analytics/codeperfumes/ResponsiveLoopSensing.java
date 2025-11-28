@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -106,32 +105,44 @@ public class ResponsiveLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(Touching node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (inCondition) sensingInput = true;
+        if (inCondition) {
+            sensingInput = true;
+        }
     }
 
     @Override
@@ -145,68 +156,197 @@ public class ResponsiveLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        if (insideEquals) sensingInput = true;
+        if (insideEquals) {
+            sensingInput = true;
+        }
     }
 
     @Override
     public void visit(ItemOfVariable node) {
-        if (insideEquals) sensingInput = true;
+        if (insideEquals) {
+            sensingInput = true;
+        }
     }
 
     // Time-Consuming Blocks (Forbidden)
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     @Override
     public void visit(WaitSeconds node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     @Override
     public void visit(SayForSecs node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (checkingLoopBody) hasTimeConsumingBlock = true;
+        if (checkingLoopBody) {
+            hasTimeConsumingBlock = true;
+        }
     }
 
     // Common instant blocks
-    @Override public void visit(Broadcast node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(BroadcastAndWait node) { if (checkingLoopBody) hasInstantBlock = true; } // Wait? "Broadcast and Wait" might be time consuming if the receiver takes time.
 
-    @Override public void visit(Say node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(Think node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(MoveSteps node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(GoToPos node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(GoToPosXY node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(PointInDirection node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(PointTowards node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(TurnLeft node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(TurnRight node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(StartSound node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(SetVariableTo node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(ChangeVariableBy node) { if (checkingLoopBody) hasInstantBlock = true; }
-    
-    @Override public void visit(AddTo node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(DeleteOf node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(DeleteAllOf node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(InsertAt node) { if (checkingLoopBody) hasInstantBlock = true; }
-    @Override public void visit(ReplaceItem node) { if (checkingLoopBody) hasInstantBlock = true; }
+    @Override
+    public void visit(Broadcast node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        // Wait? "Broadcast and Wait" might be time-consuming if the receiver takes time.
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(Say node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(Think node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(GoToPos node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(GoToPosXY node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(PointInDirection node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(PointTowards node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(StartSound node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(SetVariableTo node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(ChangeVariableBy node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(AddTo node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(DeleteOf node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(DeleteAllOf node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(InsertAt node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
+
+    @Override
+    public void visit(ReplaceItem node) {
+        if (checkingLoopBody) {
+            hasInstantBlock = true;
+        }
+    }
 
     @Override
     public String getName() {
