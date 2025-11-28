@@ -69,6 +69,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -234,18 +236,13 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     /*
-     * Binary expressions without spaces around the operator cannot be parsed.
+     * Binary expressions without spaces around the operator can now be parsed.
      */
     @ParameterizedTest
     @MethodSource("binaryComparisonOperators")
     <T extends Expression> void testBinaryComparisonOperatorNoSpaces(final String operator, final Class<T> expressionType) {
         final String expr = String.format("<(3)%s(4)>", operator);
-
-        if ("=".equals(operator)) {
-            assertHasExprStmt(getStmtList(expr), expressionType);
-        } else {
-            assertHasExprStmt(getStmtList(expr), Parameter.class);
-        }
+        assertHasExprStmt(getStmtList(expr), expressionType);
     }
 
     /*

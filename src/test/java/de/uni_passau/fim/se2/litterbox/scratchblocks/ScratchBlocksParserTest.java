@@ -32,8 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
+import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -289,4 +294,92 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertInstanceOf(MoveSteps.class, ifStmt.getThenStmts().getStatement(0));
     }
 
+    @Test
+    void testParsing() {
+        String code = """
+        when green flag clicked
+        turn cw (15) degrees
+        repeat (2)
+            move (10) steps
+        end
+        turn cw (15) degrees
+        turn cw (15) degrees
+        """;
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code);
+        Assertions.assertTrue(script.getStmtList().getStatement(0) instanceof TurnRight);
+        Assertions.assertTrue(script.getStmtList().getStatement(1) instanceof RepeatTimesStmt);
+        Assertions.assertTrue(script.getStmtList().getStatement(2) instanceof TurnRight);
+        Assertions.assertTrue(script.getStmtList().getStatement(3) instanceof TurnRight);
+    }
+
+    @Test
+    void testParsingCcw() {
+        String code = """
+        when green flag clicked
+        turn ccw (15) degrees
+        """;
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code);
+        Assertions.assertTrue(script.getStmtList().getStatement(0) instanceof TurnLeft);
+    }
+
+    @Test
+    void testIndentation() {
+        String code1 = """
+            when green flag clicked
+            if <key (space v) pressed?> then
+                if <mouse down?> then
+                    change [var1 v] by (1)
+                else
+                    change [var2 v] by (1)
+                end
+            end
+            """;
+        String code2 = """
+when green flag clicked
+if <key (space v) pressed?> then
+if <mouse down?> then
+change [var1 v] by (1)
+else
+change [var2 v] by (1)
+end
+end
+""";
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code1);
+        Script script2 = parser.parseScript("Stage", code2);
+        
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
+    }
+
+    @Test
+    void testIndentation2() {
+        String code1 = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                    if  <mouse down?> then
+                        say [Hello!]
+                    else
+                        say [Bye!]
+                    end
+                end
+                """;
+        String code2 = """
+when green flag clicked
+if <key (space v) pressed?> then
+if  <mouse down?> then
+say [Hello!]
+else
+say [Bye!]
+end
+end
+""";
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code1);
+        Script script2 = parser.parseScript("Stage", code2);
+        
+        Assertions.assertTrue(script.getStmtList().getNumberOfStatements() > 0);
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
+    }
 }
