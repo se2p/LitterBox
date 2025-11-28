@@ -37,6 +37,7 @@ import java.util.concurrent.Callable;
                 LlmSubcommand.AnalyzeSubcommand.class,
                 LlmSubcommand.CompleteSubcommand.class,
                 LlmSubcommand.FixSubcommand.class,
+                LlmSubcommand.ImproveReadabilitySubcommand.class,
                 LlmSubcommand.QuerySubcommand.class,
                 LlmSubcommand.PredefinedQuerySubcommand.class,
         }
@@ -242,8 +243,30 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
-            final LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(
+            final LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(
                     translator, buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
+            );
+            return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
+        }
+    }
+
+    @CommandLine.Command(
+            name = "readability",
+            description = "Ask LLM to improve readability.",
+            mixinStandardHelpOptions = true
+    )
+    static class ImproveReadabilitySubcommand extends LlmSubcommandBase {
+
+        @Override
+        protected void validateParams() {
+            super.validateParams();
+            requireOutputPath();
+        }
+
+        @Override
+        protected FileAnalyzer<?> createAnalyzer() {
+            final LLMProgramReadabilityImprovementAnalyzer analyzer = new LLMProgramReadabilityImprovementAnalyzer(
+                    translator, buildQueryTarget()
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }

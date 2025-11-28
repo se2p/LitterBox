@@ -43,7 +43,7 @@ public abstract class LLMProgramModificationAnalyzer implements ProgramAnalyzer<
 
     protected boolean ignoreLooseBlocks;
 
-    private final LlmResponseParser llmResponseParser = new LlmResponseParser();
+    protected final LlmResponseParser llmResponseParser = new LlmResponseParser();
 
     protected LLMProgramModificationAnalyzer(
             LlmApi llmApi,

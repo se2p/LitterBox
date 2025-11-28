@@ -84,6 +84,46 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
+    public String improveReadability(final Program program, final QueryTarget target) {
+        String result = describeTarget(program, target)
+                + """
+                Make the given code more readable and comprehensible.
+
+                Here are some common ways to improve readability:
+                - Remove unused blocks, reduce redundancy
+                - Remove any blocks that are useless and do not influence the program behaviour
+                - Remove any scripts that have no functionality or only contain control statements
+                - Simplify complex logical expressions
+                - Simplify deeply nested control structures
+                - Shorten long scripts (> 10 blocks)
+                - Coherence can be improved by splitting scripts into multiple concurrent scripts
+                - Split long scripts into multiple smaller concurrent scripts with independent functionality
+                - Name variables meaningfully
+                - The order of blocks can be changed if that increases coherence without breaking functionality
+                - Scripts that have no sprite-specific code can be moved to the Stage
+
+                You can also make other types of changes.
+                Here is what you must not do:
+                - Do not add code comments
+                - Do not delete any comments
+                - Do not add sprites
+                - Do not add custom blocks or subroutines
+                - Do not change text in say-blocks and think-blocks
+                - Do not change the functionality of the program
+                - Do not change the IDs of sprites and scripts
+                - Code cannot be shared between sprites
+                - Custom blocks cannot be shared between sprites
+
+                Only output the ScratchBlocks code of changed and new scripts but nothing else.
+                Output whole scripts.
+                Include sprite and script ids in the ScratchBlocks code for changed scripts exactly as they appear in
+                the existing comments. Add sprite and script ids for new scripts.
+                """;
+
+        return result;
+    }
+
+    @Override
     public String completeCode(final Program program, final QueryTarget target) {
         String result = describeTarget(program, target)
                 + """

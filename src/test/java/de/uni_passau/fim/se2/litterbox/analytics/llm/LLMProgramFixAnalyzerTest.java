@@ -38,7 +38,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
+class LLMProgramFixAnalyzerTest implements FinderTest, JsonTest {
 
     private final PromptBuilder promptBuilder = new DefaultPrompts(translator);
 
@@ -48,7 +48,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
         final Set<Issue> issues = new MissingLoopSensing().check(program);
         assertThat(issues).isNotEmpty();
 
-        final LLMProgramImprovementAnalyzer analyzer = getLlmProgramImprovementAnalyzer(issues);
+        final LLMProgramFixAnalyzer analyzer = getLlmProgramImprovementAnalyzer(issues);
 
         final Program modifiedProgram = analyzer.analyze(program);
         assertThat(modifiedProgram.getActorDefinitionList().getDefinitions()).hasSize(2);
@@ -60,7 +60,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
         assertThat(modifiedIssues).isEmpty();
     }
 
-    private LLMProgramImprovementAnalyzer getLlmProgramImprovementAnalyzer(final Set<Issue> issues) {
+    private LLMProgramFixAnalyzer getLlmProgramImprovementAnalyzer(final Set<Issue> issues) {
         final String response = """
                 //Sprite: Sprite1
                 //Script: V/6:G4i[HL#.bvM4XA|8
@@ -74,7 +74,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
                 """;
         final LlmApi llm = new DummyLlmApi(response);
 
-        return new LLMProgramImprovementAnalyzer(llm, promptBuilder, new QueryTarget.ProgramTarget(), issues);
+        return new LLMProgramFixAnalyzer(llm, promptBuilder, new QueryTarget.ProgramTarget(), issues);
     }
 
     @Test
@@ -98,7 +98,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(1);
@@ -142,7 +142,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
@@ -186,7 +186,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
@@ -230,7 +230,7 @@ class LLMProgramImprovementAnalyzerTest implements FinderTest, JsonTest {
 
         LlmApi llm = new DummyLlmApi(response);
 
-        LLMProgramImprovementAnalyzer analyzer = new LLMProgramImprovementAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
+        LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(llm, promptBuilder, target, "missing_loop_sensing", true);
 
         assertThat(program.getActorDefinitionList().getDefinitions()).hasSize(2);
         assertThat(program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getSize()).isEqualTo(2);
