@@ -30,11 +30,35 @@ public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements M
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
-        return cfg.getNumEdges() - cfg.getNumNodes() + 2;
+        double cfgComplexity = cfg.getNumEdges() - cfg.getNumNodes() + 2;
+
+        LogicalOperatorCounter counter = new LogicalOperatorCounter();
+        node.accept(counter);
+        return cfgComplexity + counter.getCount();
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    private static class LogicalOperatorCounter implements de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor {
+        private int count = 0;
+
+        public int getCount() {
+            return count;
+        }
+
+        @Override
+        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And node) {
+            count++;
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or node) {
+            count++;
+            visitChildren(node);
+        }
     }
 }
