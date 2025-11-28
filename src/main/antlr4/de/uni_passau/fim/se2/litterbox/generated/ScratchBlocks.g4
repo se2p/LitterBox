@@ -217,7 +217,7 @@ controlStmt             : waitSeconds
                         | deleteClone
                         ;
 
-ifStmt                  : 'if' WS* exprOrLiteral WS* 'then' (COMMENT)? NEWLINE thenBlock=stmtList WS* (ELSE (COMMENT)? NEWLINE elseBlock=stmtList WS*)? END;
+ifStmt                  : 'if' WS exprOrLiteral WS 'then' (COMMENT)? NEWLINE thenBlock=stmtList WS* (ELSE (COMMENT)? NEWLINE elseBlock=stmtList WS*)? END;
 
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
 repeat                  : 'repeat 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* END;
