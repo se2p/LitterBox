@@ -46,7 +46,7 @@ actor                   : BEGIN_ACTOR actorContent NEWLINE*;
 
 actorContent            : ((customBlock | script) (((COMMENT? NEWLINE)+) | EOF))*?;
 
-script                  : BEGIN_SCRIPT? (
+script                  : BEGIN_SCRIPT? WS* (
                             expressionStmt NEWLINE
                             | event NEWLINE (nonEmptyStmtList | stmtList)
                             | nonEmptyStmtList
@@ -217,13 +217,13 @@ controlStmt             : waitSeconds
                         | deleteClone
                         ;
 
-ifStmt                  : 'if ' exprOrLiteral ' then' (COMMENT)? NEWLINE thenBlock=stmtList WS* ('else' (COMMENT)? NEWLINE elseBlock=stmtList WS*)? 'end';
+ifStmt                  : 'if' WS* exprOrLiteral WS* 'then' (COMMENT)? NEWLINE thenBlock=stmtList WS* (ELSE (COMMENT)? NEWLINE elseBlock=stmtList WS*)? END;
 
 waitSeconds             : 'wait 'exprOrLiteral' seconds';
-repeat                  : 'repeat 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* 'end';
-forever                 : 'forever' (COMMENT)? NEWLINE stmtList WS* 'end';
+repeat                  : 'repeat 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* END;
+forever                 : 'forever' (COMMENT)? NEWLINE stmtList WS* END;
 waitUntil               : 'wait until 'exprOrLiteral;
-repeatUntil             : 'repeat until 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* 'end';
+repeatUntil             : 'repeat until 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* END;
 stop                    : 'stop' WS '['stopChoice' v]';
 createClone             : 'create clone of 'cloneChoice;
 deleteClone             : 'delete this clone';
@@ -432,7 +432,7 @@ boolExpr                : empty=WS*
                         | procDefParam=stringArgument
                         ;
 
-binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or='or') WS?) | (lt=' < ' | gt=' > ')) secondExpr=exprOrLiteral;
+binaryBoolExpr          : firstExpr=exprOrLiteral ((WS? (eq='=' | and='and' | or='or') WS?) | (WS? (lt='<' | gt='>') WS?)) secondExpr=exprOrLiteral;
 
 touching                : 'touching 'touchingChoice WS? '?';
 touchingColor           : 'touching color 'touchingColorChoice WS? '?';
@@ -576,6 +576,10 @@ stringArgument          : (ESC | ~(NEWLINE|DELIM|LIST_MARKER))*?;
 /*
  * Lexer Rules
  */
+
+ELSE                    : WS? 'else' WS? ;
+
+END                     : WS? 'end' WS? ;
 
 fragment HEX_DIGIT      : [0-9a-fA-F];
 

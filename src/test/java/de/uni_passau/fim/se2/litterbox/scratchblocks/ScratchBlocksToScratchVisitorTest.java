@@ -234,18 +234,33 @@ class ScratchBlocksToScratchVisitorTest {
     }
 
     /*
-     * Binary expressions without spaces around the operator cannot be parsed.
+     * Binary expressions without spaces around the operator should be parsed correctly.
      */
     @ParameterizedTest
     @MethodSource("binaryComparisonOperators")
     <T extends Expression> void testBinaryComparisonOperatorNoSpaces(final String operator, final Class<T> expressionType) {
         final String expr = String.format("<(3)%s(4)>", operator);
+        assertHasExprStmt(getStmtList(expr), expressionType);
+    }
 
-        if ("=".equals(operator)) {
-            assertHasExprStmt(getStmtList(expr), expressionType);
-        } else {
-            assertHasExprStmt(getStmtList(expr), Parameter.class);
-        }
+    @ParameterizedTest
+    @MethodSource("binaryComparisonOperators")
+    <T extends Expression> void testBinaryComparisonOperatorCornerCases(final String operator, final Class<T> expressionType) {
+        assertHasExprStmt(getStmtList(String.format("<(1)%s (2)>", operator)), expressionType);
+        assertHasExprStmt(getStmtList(String.format("<(1) %s(2)>", operator)), expressionType);
+        assertHasExprStmt(getStmtList(String.format("<(1) %s (2)>", operator)), expressionType);
+    }
+
+    @Test
+    void testParameterParsingCornerCases() {
+        final ProcedureDefinition procDef = parseProcDef("define my block <param1> (param2)");
+        
+        List<ParameterDefinition> params = procDef.getParameterDefinitionList().getParameterDefinitions();
+        assertEquals(2, params.size());
+        assertEquals("param1", params.get(0).getIdent().getName());
+        assertInstanceOf(BooleanType.class, params.get(0).getType());
+        assertEquals("param2", params.get(1).getIdent().getName());
+        assertInstanceOf(StringType.class, params.get(1).getType());
     }
 
     /*
