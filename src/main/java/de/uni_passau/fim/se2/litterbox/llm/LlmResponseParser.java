@@ -68,11 +68,6 @@ public class LlmResponseParser {
             line = line.substring(0, idx) + "seconds";
         }
 
-        // "turn cw" -> "turn right"
-        if (line.contains("turn cw")) {
-            line = line.replace("turn cw", "turn right");
-        }
-
         // "change color effect" -> "change [color v] effect"
         if (line.contains("change color effect")) {
             line = line.replace("change color effect", "change [color v] effect");

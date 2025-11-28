@@ -96,7 +96,7 @@ event                   : greenFlag (COMMENT)?
                         | stageClicked (COMMENT)?
                         ;
 
-greenFlag               : 'when green flag clicked';
+greenFlag               : 'when green flag clicked' | 'when flag clicked' | 'when gf clicked';
 keyEvent                : 'when' WS '[' key' v] key pressed';
 spriteClicked           : 'when this sprite clicked';
 stageClicked            : 'when stage clicked';
@@ -123,8 +123,8 @@ motionStmt              : moveSteps
                         ;
 
 moveSteps               : 'move 'exprOrLiteral' steps';
-turnRight               : 'turn right 'exprOrLiteral' degrees';
-turnLeft                : 'turn left 'exprOrLiteral' degrees';
+turnRight               : ('turn right ' | 'turn cw ') exprOrLiteral ' degrees';
+turnLeft                : ('turn left ' | 'turn ccw ') exprOrLiteral ' degrees';
 goToPos                 : 'go to' WS position;
 goToPosXY               : 'go to x: 'x=exprOrLiteral' y: 'y=exprOrLiteral;
 glideToPos              : 'glide 'time=exprOrLiteral' secs to 'position;
