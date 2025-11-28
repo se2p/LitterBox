@@ -1,0 +1,282 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "responsive_loop_start": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "responsive_forever",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 100,
+                    "y": 100
+                },
+                "responsive_forever": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "responsive_loop_start",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "responsive_if"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "responsive_if": {
+                    "opcode": "control_if",
+                    "next": "responsive_instant_action",
+                    "parent": "responsive_forever",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "responsive_sensing"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "responsive_action_inside"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "responsive_sensing": {
+                    "opcode": "sensing_keypressed",
+                    "next": null,
+                    "parent": "responsive_if",
+                    "inputs": {
+                        "KEY_OPTION": [
+                            1,
+                            "responsive_key_option"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "responsive_key_option": {
+                    "opcode": "sensing_keyoptions",
+                    "next": null,
+                    "parent": "responsive_sensing",
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "space",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "responsive_action_inside": {
+                    "opcode": "looks_say",
+                    "next": null,
+                    "parent": "responsive_if",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "responsive_instant_action": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "responsive_if",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "unresponsive_loop_start": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "unresponsive_forever",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 300,
+                    "y": 100
+                },
+                "unresponsive_forever": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "unresponsive_loop_start",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "unresponsive_if"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "unresponsive_if": {
+                    "opcode": "control_if",
+                    "next": "unresponsive_wait",
+                    "parent": "unresponsive_forever",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "unresponsive_sensing"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "unresponsive_sensing": {
+                    "opcode": "sensing_mousedown",
+                    "next": null,
+                    "parent": "unresponsive_if",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "unresponsive_wait": {
+                    "opcode": "control_wait",
+                    "next": null,
+                    "parent": "unresponsive_if",
+                    "inputs": {
+                        "DURATION": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "no_sensing_loop_start": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "no_sensing_forever",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 500,
+                    "y": 100
+                },
+                "no_sensing_forever": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "no_sensing_loop_start",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "no_sensing_action"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "no_sensing_action": {
+                    "opcode": "motion_turnright",
+                    "next": null,
+                    "parent": "no_sensing_forever",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "15"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "b7853f557e4426412e64bb3da6531a99",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0",
+        "agent": "Mozilla/5.0"
+    }
+}

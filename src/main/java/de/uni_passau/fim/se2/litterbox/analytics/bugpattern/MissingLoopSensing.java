@@ -247,7 +247,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         IfStmt parent = AstNodeUtil.findParent(codeLocation.getParentNode(), IfStmt.class);
         if (parent == null) {
             throw new IllegalStateException(
-                    "It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
+                    "It cannot happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
             );
         }
         return parent;
