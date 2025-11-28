@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import org.apache.commons.io.FilenameUtils;
@@ -96,6 +97,13 @@ public class RefactoringPostProcessor {
 
         for (RefactorSequence sequence : dominatingSolutions) {
             Program program = sequence.getRefactoredProgram(); // This is already a copy/new instance
+
+            // If the refactored program is identical to the original, we skip it.
+            // This can happen if a sequence of refactorings cancels itself out.
+            if (StructuralEquality.areStructurallyEqual(originalProgram, program)) {
+                continue;
+            }
+
             cleanProgram(program);
 
             // We use the Program's equals/hashCode for uniqueness

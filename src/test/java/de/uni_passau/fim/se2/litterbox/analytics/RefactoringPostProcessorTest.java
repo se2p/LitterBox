@@ -92,7 +92,7 @@ class RefactoringPostProcessorTest {
         List<RefactorSequence> sequences = new ArrayList<>();
         sequences.add(sequence);
 
-        postProcessor.process(sequences, mock(Program.class), tempDir, Path.of("test.json"));
+        postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Verify that the dead script was removed
         // Stage is the first actor in our helper
@@ -113,7 +113,7 @@ class RefactoringPostProcessorTest {
         List<RefactorSequence> sequences = new ArrayList<>();
         sequences.add(sequence);
 
-        postProcessor.process(sequences, mock(Program.class), tempDir, Path.of("test.json"));
+        postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Verify that the script was removed
         assertEquals(0, program.getActorDefinitionList().getDefinitions().get(0).getScripts().getSize());
@@ -132,7 +132,7 @@ class RefactoringPostProcessorTest {
         List<RefactorSequence> sequences = new ArrayList<>();
         sequences.add(sequence);
 
-        postProcessor.process(sequences, mock(Program.class), tempDir, Path.of("test.json"));
+        postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Verify that the script was NOT removed
         assertEquals(1, program.getActorDefinitionList().getDefinitions().get(0).getScripts().getSize());
@@ -225,7 +225,7 @@ class RefactoringPostProcessorTest {
         sequences.add(sequence1);
         sequences.add(sequence2);
 
-        postProcessor.process(sequences, mock(Program.class), tempDir, Path.of("test.json"));
+        postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Check that only one file was written
         assertTrue(tempDir.resolve("test_refactored_0.json").toFile().exists());
@@ -305,6 +305,32 @@ class RefactoringPostProcessorTest {
         return programMetadata;
     }
 
+    @Test
+    void testProcessFiltersIdenticalPrograms() throws IOException {
+        // Create a program
+        Program originalProgram = createProgramWithDeadAndLiveScripts();
+        
+        // Use the SAME program instance to ensure equals() returns true.
+        // In a real scenario, it would be a different instance but structurally equal.
+        // Since we are testing the filtering logic in RefactoringPostProcessor (which relies on equals()),
+        // using the same instance is a valid way to simulate "equality".
+        
+        RefactorSequence sequence = mock(RefactorSequence.class);
+        when(sequence.getRefactoredProgram()).thenReturn(originalProgram);
+        when(sequence.getFitnessMap()).thenReturn(Collections.emptyMap());
+        when(sequence.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequence.getCrossover()).thenReturn(mock(Crossover.class));
+
+        List<RefactorSequence> sequences = new ArrayList<>();
+        sequences.add(sequence);
+
+        // We pass originalProgram to process
+        postProcessor.process(sequences, originalProgram, tempDir, Path.of("test.json"));
+
+        // Verify that NO file was written because the program was filtered out
+        assertFalse(tempDir.resolve("test_refactored_0.json").toFile().exists());
+    }
+
     private Program createProgramWithScripts(ScriptList scripts, LocalIdentifier programIdent, ProgramMetadata programMetadata) {
         LocalIdentifier stageIdent = mock(LocalIdentifier.class);
         when(stageIdent.getName()).thenReturn("Stage");
@@ -344,5 +370,13 @@ class RefactoringPostProcessorTest {
                 mock(ProcedureDefinitionNameMapping.class),
                 programMetadata
         );
+    }
+
+    private Program createDummyOriginalProgram() {
+        Program program = mock(Program.class);
+        ActorDefinitionList actorList = mock(ActorDefinitionList.class);
+        when(actorList.getDefinitions()).thenReturn(Collections.emptyList());
+        when(program.getActorDefinitionList()).thenReturn(actorList);
+        return program;
     }
 }
