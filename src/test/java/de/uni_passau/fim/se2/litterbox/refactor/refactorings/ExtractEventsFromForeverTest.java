@@ -19,11 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.ExtractEventsFromForeverFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -71,5 +74,23 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).isEmpty();
+    }
+
+
+    @Test
+    void testExtractEventsFromForever() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                forever
+                    if <key (space v) pressed?> then
+                        change [var1 v] by (1)
+                    end
+                end
+                """;
+        
+        Program program = parseScratchBlocks(code);
+        ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isNotEmpty();
     }
 }
