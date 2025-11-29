@@ -46,7 +46,9 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
     public ExtractLoopCondition(RepeatForeverStmt foreverLoop, IfThenStmt ifThenStmt) {
         this.foreverLoop = Preconditions.checkNotNull(foreverLoop);
         this.ifThenStmt = Preconditions.checkNotNull(ifThenStmt);
-        TerminationStmt stopStmt = (TerminationStmt) ifThenStmt.getThenStmts().getStatement(0);
+        int numStatements = ifThenStmt.getThenStmts().getNumberOfStatements();
+        TerminationStmt stopStmt = (TerminationStmt) ifThenStmt.getThenStmts().getStatement(numStatements - 1);
+        List<Stmt> precedingStmts = ifThenStmt.getThenStmts().getStmts().subList(0, numStatements - 1);
 
         List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).toList();
 
@@ -56,6 +58,7 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
                 apply(foreverLoop.getMetadata())
         );
         replacement.add(replacementLoop);
+        replacement.addAll(applyList(precedingStmts));
         if (!(stopStmt instanceof StopThisScript)) {
             replacement.add(apply(stopStmt));
         }
