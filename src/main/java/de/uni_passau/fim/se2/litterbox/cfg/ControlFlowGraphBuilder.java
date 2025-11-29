@@ -57,6 +57,20 @@ public class ControlFlowGraphBuilder {
 
     private List<CFGNode> receivedMessages = new ArrayList<>();
 
+    private Map<ProcedureNode, ProcedureNode> canonicalProcedureNodes = new HashMap<>();
+
+    private ProcedureNode getCanonicalProcedureNode(String name, String actorName, ProcedureDefinition def) {
+        ProcedureNode key = new ProcedureNode(name, actorName);
+        if (!canonicalProcedureNodes.containsKey(key)) {
+            canonicalProcedureNodes.put(key, key);
+        }
+        ProcedureNode node = canonicalProcedureNodes.get(key);
+        if (def != null) {
+            node.setProcedureDefinition(def);
+        }
+        return node;
+    }
+
     public ControlFlowGraph getControlFlowGraph() {
         addMissingEdgesToExit();
         connectCustomBlockCalls();
@@ -73,7 +87,7 @@ public class ControlFlowGraphBuilder {
                         node.getIdent().getName()
                 );
 
-        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
+        ProcedureNode customBlockNode = getCanonicalProcedureNode(procDef.getName(), procDef.getActorName(), node);
 
         procedureMap.put(customBlockNode, endOfProcedure);
     }
@@ -267,7 +281,7 @@ public class ControlFlowGraphBuilder {
         ProcedureInfo procDef = program.getProcedureMapping().getProcedureForHash(
                 currentActor.getIdent().getName(),
                 node.getIdent().getName());
-        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
+        ProcedureNode customBlockNode = getCanonicalProcedureNode(procDef.getName(), procDef.getActorName(), node);
         setCurrentNode(customBlockNode);
     }
 
@@ -277,7 +291,7 @@ public class ControlFlowGraphBuilder {
         CFGNode node = addStatement(stmt);
 
         // Add edge to procedure entry node
-        ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName(), currentActor.getIdent().getName());
+        ProcedureNode customBlockNode = getCanonicalProcedureNode(stmt.getIdent().getName(), currentActor.getIdent().getName(), null);
         cfg.addEdge(node, customBlockNode);
 
         // Add return node as next node
