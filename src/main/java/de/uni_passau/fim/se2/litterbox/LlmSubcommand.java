@@ -23,10 +23,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.llm.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import picocli.CommandLine;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -63,6 +66,14 @@ class LlmSubcommand implements Callable<Integer> {
         )
         boolean ignoreLooseBlocks;
 
+        @CommandLine.Option(
+                names = {"-l", "--lang"},
+                description = "Language of the hints in the output."
+        )
+        String language = "en";
+
+        protected IssueTranslator translator;
+
         @Override
         protected void validateParams() {
             requireProjectPath();
@@ -70,6 +81,7 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> getAnalyzer() throws Exception {
+            translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
             PropertyLoader.setDefaultSystemProperties("scratchllm.properties");
             return createAnalyzer();
         }
