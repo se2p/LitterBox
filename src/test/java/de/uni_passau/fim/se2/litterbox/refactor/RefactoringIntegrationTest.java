@@ -487,6 +487,81 @@ public class RefactoringIntegrationTest implements JsonTest {
 
     }
 
+    @Test
+    void testParetoFrontDominance() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                move (10) steps
+                turn cw (15) degrees
+                move (10) steps
+                turn cw (15) degrees
+                if <key [space v] pressed?> then
+                    if <mouse down?> then
+                        say [Hello!]
+                    end
+                end
+                if <key [a v] pressed?> then
+                    move (10) steps
+                end
+                if <key [a v] pressed?> then
+                    turn cw (15) degrees
+                end
+                """;
+
+        Program program = parseProgram(code);
+        List<RefactoringFinder> finders = List.of(
+                new SequenceToLoopFinder(),
+                new IfsToConjunctionFinder(),
+                new MergeDoubleIfFinder()
+        );
+
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        fitnessFunctions.add(new CohesionFitness());
+        fitnessFunctions.add(new NumberOfScriptsFitness());
+        fitnessFunctions.add(new CyclomaticComplexityFitness());
+
+        NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, finders, fitnessFunctions);
+        List<RefactorSequence> paretoFront = nsgaii.findSolution();
+        List<RefactorSequence> population = nsgaii.getFinalPopulation();
+
+        assertFalse(paretoFront.isEmpty(), "Pareto front should not be empty");
+        assertFalse(population.isEmpty(), "Population should not be empty");
+
+        // Verify that every solution in the population that is NOT in the Pareto front
+        // is dominated by at least one solution in the Pareto front.
+        for (RefactorSequence other : population) {
+            if (paretoFront.contains(other)) {
+                continue;
+            }
+
+            boolean dominated = false;
+            for (RefactorSequence pareto : paretoFront) {
+                if (dominates(pareto, other, fitnessFunctions)) {
+                    dominated = true;
+                    break;
+                }
+            }
+            assertTrue(dominated, "Solution " + other + " is not in Pareto front but is not dominated by any Pareto solution");
+        }
+    }
+
+    private boolean dominates(RefactorSequence p1, RefactorSequence p2, List<FitnessFunction<RefactorSequence>> fitnessFunctions) {
+        boolean atLeastOneBetter = false;
+        for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {
+            double val1 = p1.getFitness(ff);
+            double val2 = p2.getFitness(ff);
+
+            if (ff.isMinimizing()) {
+                if (val1 > val2) return false; // p1 is worse than p2
+                if (val1 < val2) atLeastOneBetter = true;
+            } else {
+                if (val1 < val2) return false; // p1 is worse than p2
+                if (val1 > val2) atLeastOneBetter = true;
+            }
+        }
+        return atLeastOneBetter;
+    }
+
 
     private Program parseProgram(String code) throws IOException, ParsingException {
         Program baseProject = getAST("src/test/fixtures/emptyProject.json");

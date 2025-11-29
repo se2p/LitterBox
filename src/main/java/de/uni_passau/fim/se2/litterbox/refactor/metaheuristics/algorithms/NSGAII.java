@@ -103,7 +103,14 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         population = fastNonDominatedSort.fastNonDominatedSort(population).getFirst();
         log.log(Level.FINE, "Final first front has size {0}, of which are distict: {1}", new Object[]{population.size(), population.stream().distinct().count()});
 
+        this.finalPopulation = population;
         return population.stream().distinct().toList(); // only return unique solutions
+    }
+
+    private List<C> finalPopulation;
+
+    public List<C> getFinalPopulation() {
+        return finalPopulation;
     }
 
     @VisibleForTesting
