@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
@@ -306,29 +307,75 @@ class RefactoringPostProcessorTest {
     }
 
     @Test
-    void testProcessFiltersIdenticalPrograms() throws IOException {
-        // Create a program
-        Program originalProgram = createProgramWithDeadAndLiveScripts();
-        
-        // Use the SAME program instance to ensure equals() returns true.
-        // In a real scenario, it would be a different instance but structurally equal.
-        // Since we are testing the filtering logic in RefactoringPostProcessor (which relies on equals()),
-        // using the same instance is a valid way to simulate "equality".
-        
-        RefactorSequence sequence = mock(RefactorSequence.class);
-        when(sequence.getRefactoredProgram()).thenReturn(originalProgram);
-        when(sequence.getFitnessMap()).thenReturn(Collections.emptyMap());
-        when(sequence.getMutation()).thenReturn(mock(Mutation.class));
-        when(sequence.getCrossover()).thenReturn(mock(Crossover.class));
+    void testProcessFiltersStructurallyEqualPrograms() throws IOException {
+        // Create two programs that are structurally equal but different instances
+        // We use the helper that creates a fresh program structure each time
+        Program program1 = createProgramWithDeadAndLiveScripts();
+        Program program2 = createProgramWithDeadAndLiveScripts();
+
+        // Ensure they are NOT the same instance
+        assertNotSame(program1, program2);
+        // Ensure they ARE structurally equal
+        assertTrue(StructuralEquality.areStructurallyEqual(program1, program2));
+
+        FitnessFunction<RefactorSequence> f1 = mock(FitnessFunction.class);
+
+        RefactorSequence sequence1 = mock(RefactorSequence.class);
+        when(sequence1.getRefactoredProgram()).thenReturn(program1);
+        when(sequence1.getFitnessMap()).thenReturn(java.util.Map.of(f1, 1.0));
+        when(sequence1.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequence1.getCrossover()).thenReturn(mock(Crossover.class));
+
+        RefactorSequence sequence2 = mock(RefactorSequence.class);
+        when(sequence2.getRefactoredProgram()).thenReturn(program2);
+        when(sequence2.getFitnessMap()).thenReturn(java.util.Map.of(f1, 2.0));
+        when(sequence2.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequence2.getCrossover()).thenReturn(mock(Crossover.class));
 
         List<RefactorSequence> sequences = new ArrayList<>();
-        sequences.add(sequence);
+        sequences.add(sequence1);
+        sequences.add(sequence2);
 
-        // We pass originalProgram to process
-        postProcessor.process(sequences, originalProgram, tempDir, Path.of("test.json"));
+        postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
-        // Verify that NO file was written because the program was filtered out
-        assertFalse(tempDir.resolve("test_refactored_0.json").toFile().exists());
+        // Check that only one file was written
+        assertTrue(tempDir.resolve("test_refactored_0.json").toFile().exists());
+        assertFalse(tempDir.resolve("test_refactored_1.json").toFile().exists(), "Duplicate structurally equal program should be filtered out");
+    }
+
+    @Test
+    void testProcessReportsChanges() throws IOException {
+        // Capture System.out
+        java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
+        java.io.PrintStream originalOut = System.out;
+        System.setOut(new java.io.PrintStream(outContent));
+
+        try {
+            Program program = createProgramWithDeadAndLiveScripts();
+            RefactorSequence sequence = mock(RefactorSequence.class);
+            when(sequence.getRefactoredProgram()).thenReturn(program);
+            when(sequence.getFitnessMap()).thenReturn(Collections.emptyMap());
+            when(sequence.getMutation()).thenReturn(mock(Mutation.class));
+            when(sequence.getCrossover()).thenReturn(mock(Crossover.class));
+
+            List<RefactorSequence> sequences = new ArrayList<>();
+            sequences.add(sequence);
+
+            postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
+
+            String output = outContent.toString();
+            assertTrue(output.contains("Found 1 solutions"));
+            assertTrue(output.contains("Unique solutions: 1"));
+            assertTrue(output.contains("Dominating solutions: 1"));
+            // We expect details about removed scripts. 
+            // Since we use createProgramWithDeadAndLiveScripts, it has 1 dead script (Never) and 1 live script.
+            // The dead script should be removed.
+            assertTrue(output.contains("Removed 1 dead scripts"));
+            assertTrue(output.contains("Removed 0 control-only scripts"));
+            
+        } finally {
+            System.setOut(originalOut);
+        }
     }
 
     private Program createProgramWithScripts(ScriptList scripts, LocalIdentifier programIdent, ProgramMetadata programMetadata) {

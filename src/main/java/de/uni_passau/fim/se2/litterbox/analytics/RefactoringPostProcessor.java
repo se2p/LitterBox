@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Set;
 
@@ -47,9 +47,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RefactoringPostProcessor {
+
+    private static final Logger log = Logger.getLogger(RefactoringPostProcessor.class.getName());
 
     private final List<FitnessFunction<RefactorSequence>> fitnessFunctions;
 
@@ -59,17 +62,24 @@ public class RefactoringPostProcessor {
 
     public void process(List<RefactorSequence> solutions, Program originalProgram, Path outputDir, Path originalFile) throws IOException {
         if (solutions.isEmpty()) {
+            log.info("No solutions found");
             return;
         }
 
-        System.out.println("Found " + solutions.size() + " solutions");
+        log.info("Found " + solutions.size() + " solutions");
+
         List<RefactorSequence> uniqueSolutions = solutions
+                 .stream()
+                 .filter(s -> !StructuralEquality.areStructurallyEqual(s.getRefactoredProgram(), originalProgram))
+                 .toList();
+         log.info("After filtering unchanged programs: " + uniqueSolutions.size());
+
+        uniqueSolutions = uniqueSolutions
                 .stream()
                 .filter(distinctByFitness(RefactorSequence::getFitnessMap))
                 .toList();
-        System.out.println("Unique solutions: " + uniqueSolutions.size());
+        log.info("After filtering identical fitness values: " + uniqueSolutions.size());
 
-        System.out.println("Filtering for dominating solutions...");
         Dominance<RefactorSequence> dominance = new Dominance<>(fitnessFunctions);
 
         // Create an empty sequence representing the original program
@@ -85,34 +95,42 @@ public class RefactoringPostProcessor {
                 .filter(solution -> dominance.test(solution, original))
                 .toList();
 
-        System.out.println("Dominating solutions: " + dominatingSolutions.size());
+        log.info("Dominating solutions: " + dominatingSolutions.size());
 
         if (dominatingSolutions.isEmpty()) {
-            System.out.println("No solutions found that dominate the original program.");
+            log.info("No solutions found that dominate the original program.");
             return;
         }
 
-        Set<Program> uniquePrograms = new HashSet<>();
+
         List<Program> processedPrograms = new ArrayList<>();
 
+        int duplicateOthers = 0;
+        
         for (RefactorSequence sequence : dominatingSolutions) {
             Program program = sequence.getRefactoredProgram(); // This is already a copy/new instance
 
-            // If the refactored program is identical to the original, we skip it.
-            // This can happen if a sequence of refactorings cancels itself out.
-            if (StructuralEquality.areStructurallyEqual(originalProgram, program)) {
-                continue;
+            String cleaningReport = cleanProgram(program);
+            //log.info(cleaningReport);
+
+            // Check for structural equality against already processed programs
+            boolean isDuplicate = false;
+            for (Program existing : processedPrograms) {
+                if (StructuralEquality.areStructurallyEqual(existing, program)) {
+                    isDuplicate = true;
+                    break;
+                }
             }
 
-            cleanProgram(program);
-
-            // We use the Program's equals/hashCode for uniqueness
-            if (uniquePrograms.add(program)) {
+            if (!isDuplicate) {
                 processedPrograms.add(program);
+            } else {
+                duplicateOthers++;
             }
         }
+        log.info("Removed " + duplicateOthers + " solutions identical to other solutions.");
 
-        System.out.println("Unique cleaned solutions: " + processedPrograms.size());
+        log.info("Unique solutions: " + processedPrograms.size());
 
         if (!outputDir.toFile().exists()) {
             Files.createDirectories(outputDir);
@@ -126,6 +144,7 @@ public class RefactoringPostProcessor {
             } else {
                 JSONFileCreator.writeSb3FromProgram(program, outputDir, originalFile.toFile(), suffix);
             }
+            log.info("Written solution to " + outputDir.resolve(FilenameUtils.getBaseName(originalFile.toString()) + suffix + "." + FilenameUtils.getExtension(originalFile.toString())));
         }
     }
 
@@ -134,22 +153,32 @@ public class RefactoringPostProcessor {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
-    private void cleanProgram(Program program) {
+    private String cleanProgram(Program program) {
+        int removedDeadScripts = 0;
+        int removedControlOnlyScripts = 0;
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            cleanScripts(actor.getScripts());
+            int[] removed = cleanScripts(actor.getScripts());
+            removedDeadScripts += removed[0];
+            removedControlOnlyScripts += removed[1];
         }
+        return "Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts";
     }
 
-    private void cleanScripts(ScriptList scriptList) {
+    private int[] cleanScripts(ScriptList scriptList) {
         List<Script> scriptsToRemove = new ArrayList<>();
+        int removedDeadScripts = 0;
+        int removedControlOnlyScripts = 0;
         for (Script script : scriptList.getScriptList()) {
             if (script.getEvent() instanceof Never) {
                 scriptsToRemove.add(script);
+                removedDeadScripts++;
             } else if (isOnlyControl(script.getStmtList())) {
                 scriptsToRemove.add(script);
+                removedControlOnlyScripts++;
             }
         }
         scriptList.getScriptList().removeAll(scriptsToRemove);
+        return new int[]{removedDeadScripts, removedControlOnlyScripts};
     }
 
     private boolean isOnlyControl(StmtList stmtList) {
