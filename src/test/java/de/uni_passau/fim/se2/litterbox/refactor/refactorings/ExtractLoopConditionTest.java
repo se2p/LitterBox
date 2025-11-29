@@ -27,12 +27,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExtractLoopConditionTest implements JsonTest {
 
@@ -63,5 +67,28 @@ public class ExtractLoopConditionTest implements JsonTest {
         UntilStmt untilStmt = (UntilStmt) refactoredStmtList.getStatement(0);
         assertThat(untilStmt.getBoolExpr()).isEqualTo(ifStmt.getBoolExpr());
         assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(1);
+    }
+
+
+    @Test
+    public void testExtractLoopConditionRefactoringGeneralised() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/extractLoopConditionGeneralization.json");
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList stmtList = script.getStmtList();
+        RepeatForeverStmt loopStmt = (RepeatForeverStmt) stmtList.getStatement(0);
+        IfThenStmt ifStmt = (IfThenStmt) loopStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfThenStmt).findFirst().get();
+
+        ExtractLoopCondition refactoring = new ExtractLoopCondition(loopStmt, ifStmt);
+        Program refactored = refactoring.apply(program);
+
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList refactoredStmtList = refactoredScript.getStmtList();
+        
+        assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(3);
+
+        UntilStmt untilStmt = (UntilStmt) refactoredStmtList.getStatement(0);
+        assertThat(untilStmt.getBoolExpr()).isEqualTo(ifStmt.getBoolExpr());
+        assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(1); // Only "say Hello!" inside loop        
+        assertThat(refactoredStmtList.getStatement(1)).isInstanceOf(Say.class);
     }
 }
