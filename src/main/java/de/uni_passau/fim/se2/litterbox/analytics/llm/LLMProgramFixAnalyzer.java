@@ -29,20 +29,20 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Set;
 
-public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyzer {
+public class LLMProgramFixAnalyzer extends LLMProgramModificationAnalyzer {
 
     private final String detectors;
 
     private final Set<Issue> issues;
 
-    public LLMProgramImprovementAnalyzer(IssueTranslator translator, QueryTarget target, Set<Issue> issues) {
+    public LLMProgramFixAnalyzer(IssueTranslator translator, QueryTarget target, Set<Issue> issues) {
         super(translator, target, false);
 
         this.detectors = null;
         this.issues = issues;
     }
 
-    public LLMProgramImprovementAnalyzer(
+    public LLMProgramFixAnalyzer(
             LlmApi llmApi,
             PromptBuilder promptBuilder,
             QueryTarget target,
@@ -54,7 +54,7 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
         this.issues = issues;
     }
 
-    public LLMProgramImprovementAnalyzer(
+    public LLMProgramFixAnalyzer(
             IssueTranslator translator,
             QueryTarget target,
             String detectors,
@@ -66,7 +66,7 @@ public class LLMProgramImprovementAnalyzer extends LLMProgramModificationAnalyze
         this.issues = null;
     }
 
-    public LLMProgramImprovementAnalyzer(
+    public LLMProgramFixAnalyzer(
             LlmApi llmApi,
             PromptBuilder promptBuilder,
             QueryTarget target,

@@ -50,6 +50,8 @@ public abstract class PromptBuilder {
 
     public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
 
+    public abstract String improveReadability(Program program, QueryTarget target);
+
     public abstract String completeCode(Program program, QueryTarget target);
 
     public abstract String createPromptForCommonQuery(CommonQuery query);
