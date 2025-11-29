@@ -49,14 +49,11 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
 
     private static final Logger log = Logger.getLogger(RefactoringAnalyzer.class.getName());
     private final List<RefactoringFinder> refactoringFinders;
-    private final Path refactoredPath;
-
     private static final int MAX_GEN = 100; // Default value, as PropertyLoader is removed
     private static final int POPULATION_SIZE = 100; // Default value, as PropertyLoader is removed
 
-    public RefactoringAnalyzer(Path output, Path refactoredPath, boolean delete) {
+    public RefactoringAnalyzer(Path output, boolean delete) {
         super(new RefactoringProgramAnalyzer(), output, delete);
-        this.refactoredPath = refactoredPath;
         refactoringFinders = RefactoringTool.getRefactoringFinders();
     }
 
@@ -67,7 +64,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
         if (!solutions.isEmpty()) {
             RefactoringPostProcessor postProcessor = new RefactoringPostProcessor(nsgaii.getFitnessFunctions());
-            postProcessor.process(solutions, program, refactoredPath, projectFile);
+            postProcessor.process(solutions, program, output, projectFile);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
