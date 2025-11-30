@@ -38,6 +38,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     private final OffspringGenerator<C> offspringGenerator;
     private final FastNonDominatedSort<C> fastNonDominatedSort;
     private final CrowdingDistanceSort<C> crowdingDistanceSort;
+    private List<List<C>> finalFronts;
 
     private int iteration = 0;
 
@@ -90,6 +91,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
                 } else {
                     log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
                 }
+                log.log(Level.FINE, "Average fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).average().getAsDouble());
             }
             iteration++;
         }
@@ -100,7 +102,8 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
             log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", maxSeconds);
         }
 
-        population = fastNonDominatedSort.fastNonDominatedSort(population).getFirst();
+        finalFronts = fastNonDominatedSort.fastNonDominatedSort(population);
+        population = finalFronts.getFirst();
         log.log(Level.FINE, "Final first front has size {0}, of which are distict: {1}", new Object[]{population.size(), population.stream().distinct().count()});
 
         this.finalPopulation = population;
@@ -113,10 +116,17 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         return finalPopulation;
     }
 
+    public List<List<C>> getFinalFronts() {
+        return finalFronts;
+    }
+
     @VisibleForTesting
     List<C> evolve(List<C> population) {
         List<List<C>> nonDominatedSortedSolution = fastNonDominatedSort.fastNonDominatedSort(population);
         log.log(Level.FINE, "Fronts: "+nonDominatedSortedSolution.size());
+        if (!nonDominatedSortedSolution.isEmpty()) {
+            log.log(Level.FINE, "First Front Size: " + nonDominatedSortedSolution.get(0).size());
+        }
         population = Lists.newLinkedList();
 
 

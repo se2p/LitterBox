@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Crowdi
 
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
@@ -40,6 +41,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,8 +51,6 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
 
     private static final Logger log = Logger.getLogger(RefactoringAnalyzer.class.getName());
     private final List<RefactoringFinder> refactoringFinders;
-    private static final int MAX_GEN = 100; // Default value, as PropertyLoader is removed
-    private static final int POPULATION_SIZE = 100; // Default value, as PropertyLoader is removed
 
     public RefactoringAnalyzer(Path output, boolean delete) {
         super(new RefactoringProgramAnalyzer(), output, delete);
@@ -62,6 +62,13 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
+        
+        // Export population to CSV
+        List<List<RefactorSequence>> fronts = nsgaii.getFinalFronts();
+        if (fronts != null && !fronts.isEmpty() && PropertyLoader.getSystemBooleanProperty("nsga-ii.write_last_population")) {
+            exportPopulationToCSV(fronts, nsgaii.getFitnessFunctions());
+        }
+
         if (!solutions.isEmpty()) {
             RefactoringPostProcessor postProcessor = new RefactoringPostProcessor(nsgaii.getFitnessFunctions());
             postProcessor.process(solutions, program, output, projectFile);
@@ -70,7 +77,31 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         }
     }
 
+    private void exportPopulationToCSV(List<List<RefactorSequence>> fronts, List<FitnessFunction<RefactorSequence>> fitnessFunctions) {
+        Path csvFile = output.resolve("nsgaii_population.csv");
+        try (PrintWriter writer = new PrintWriter(csvFile.toFile())) {
+            // Write header
+            writer.print("ID,Rank");
+            for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {
+                writer.print("," + ff.getName());
+            }
+            writer.println();
 
+            // Write data
+            int id = 1;
+            for (List<RefactorSequence> front : fronts) {
+                for (RefactorSequence solution : front) {
+                    writer.print(id++ + "," + solution.getRank());
+                    for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {
+                        writer.print("," + solution.getFitness(ff));
+                    }
+                    writer.println();
+                }
+            }
+        } catch (IOException e) {
+            log.severe("Failed to write NSGA-II population to CSV: " + e.getMessage());
+        }
+    }
 
 
     /**
@@ -96,19 +127,58 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
                 program, mutation, crossover, refactoringFinders
         );
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(
-                chromosomeGenerator, POPULATION_SIZE
+                chromosomeGenerator, PropertyLoader.getSystemIntProperty("nsga-ii.populationSize")
         );
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
-        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        fitnessFunctions.add(new CohesionFitness());
-        fitnessFunctions.add(new CyclomaticComplexityFitness());
-        fitnessFunctions.add(new NumberOfScriptsFitness());
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = loadFitnessFunctions();
+        
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<FitnessFunction<RefactorSequence>> loadFitnessFunctions() {
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        String property = PropertyLoader.getSystemStringProperty("refactoring.fitness_functions");
+        
+        if (property == null || property.trim().isEmpty()) {
+            // Default fitness functions
+            fitnessFunctions.add(new CohesionFitness());
+            fitnessFunctions.add(new CyclomaticComplexityFitness());
+            fitnessFunctions.add(new NumberOfScriptsFitness());
+            return fitnessFunctions;
+        }
+
+        String[] classNames = property.split(",");
+        for (String className : classNames) {
+            className = className.trim();
+            if (!className.contains(".")) {
+                className = "de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions." + className;
+            }
+            try {
+                Class<?> clazz = Class.forName(className);
+                if (FitnessFunction.class.isAssignableFrom(clazz)) {
+                    fitnessFunctions.add((FitnessFunction<RefactorSequence>) clazz.getDeclaredConstructor().newInstance());
+                } else {
+                    log.warning("Class " + className + " does not implement FitnessFunction. Skipping.");
+                }
+            } catch (Exception e) {
+                log.warning("Failed to load fitness function " + className + ": " + e.getMessage() + ". Skipping.");
+            }
+        }
+        
+        if (fitnessFunctions.isEmpty()) {
+             log.warning("No valid fitness functions loaded from property. Using defaults.");
+             fitnessFunctions.add(new CohesionFitness());
+             fitnessFunctions.add(new CyclomaticComplexityFitness());
+             fitnessFunctions.add(new NumberOfScriptsFitness());
+        }
+
+        return fitnessFunctions;
     }
 
 

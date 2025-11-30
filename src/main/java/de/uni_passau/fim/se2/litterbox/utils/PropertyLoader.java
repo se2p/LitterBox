@@ -77,6 +77,23 @@ public final class PropertyLoader {
 
     /**
      * Load the string value of the given key from the system properties.
+     * If the key has a value assigned, return that value.
+     * Otherwise, write a warning to the logs and return null.
+     *
+     * @param name The key to the system variable.
+     * @return The value to the given key as string or null otherwise.
+     */
+    public static String getSystemStringProperty(String name) {
+        String stringValue = System.getProperty(name);
+        if (stringValue == null) {
+            throw getMissingValueForKeyException(name);
+        } else {
+            return stringValue;
+        }
+    }
+
+    /**
+     * Load the string value of the given key from the system properties.
      * If the key has a value assigned, that is a parsable floating number, return that value as a double.
      * Otherwise, write a warning to the logs and return 0.
      *

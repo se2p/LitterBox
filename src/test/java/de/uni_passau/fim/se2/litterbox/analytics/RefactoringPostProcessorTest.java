@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.refactor.postprocessing.DominationStep;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -49,11 +50,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -345,11 +351,13 @@ class RefactoringPostProcessorTest {
 
     @Test
     void testProcessReportsChanges() throws IOException {
-        // Capture System.out
-        java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        java.io.PrintStream originalOut = System.out;
-        System.setOut(new java.io.PrintStream(outContent));
-
+        // Capture logs for the entire analytics package
+        Logger logger = Logger.getLogger("de.uni_passau.fim.se2.litterbox");
+        
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        Handler handler = new StreamHandler(outContent, new SimpleFormatter());
+        logger.addHandler(handler);
+        
         try {
             Program program = createProgramWithDeadAndLiveScripts();
             RefactorSequence sequence = mock(RefactorSequence.class);
@@ -362,19 +370,89 @@ class RefactoringPostProcessorTest {
             sequences.add(sequence);
 
             postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
-
+            
+            handler.flush();
             String output = outContent.toString();
-            assertTrue(output.contains("Found 1 solutions"));
-            assertTrue(output.contains("Unique solutions: 1"));
-            assertTrue(output.contains("Dominating solutions: 1"));
+            
+            assertTrue(output.contains("Found 1 solutions"), "Output was: " + output);
+            assertTrue(output.contains("Unique solutions: 1"), "Output was: " + output);
+            assertTrue(output.contains("Dominating solutions: 1"), "Output was: " + output);
             // We expect details about removed scripts. 
             // Since we use createProgramWithDeadAndLiveScripts, it has 1 dead script (Never) and 1 live script.
             // The dead script should be removed.
-            assertTrue(output.contains("Removed 1 dead scripts"));
-            assertTrue(output.contains("Removed 0 control-only scripts"));
+            assertTrue(output.contains("Removed 1 dead scripts"), "Output was: " + output);
+            assertTrue(output.contains("Removed 0 control-only scripts"), "Output was: " + output);
             
         } finally {
-            System.setOut(originalOut);
+            logger.removeHandler(handler);
+        }
+    }
+
+    @Test
+    void testProcessReturnsNonDominatingIfNoDominatingFound() throws IOException {
+        // Setup:
+        // Original Program: f1=10, f2=10 (worse is higher)
+        // Solution A (Incomparable): f1=5, f2=15 (better in f1, worse in f2) -> Should be returned
+        // Solution B (Dominated by Original): f1=15, f2=15 (worse in both) -> Should NOT be returned
+        // Solution C (Dominating): None
+
+        FitnessFunction<RefactorSequence> f1 = mock(FitnessFunction.class);
+        when(f1.isMinimizing()).thenReturn(true);
+        FitnessFunction<RefactorSequence> f2 = mock(FitnessFunction.class);
+        when(f2.isMinimizing()).thenReturn(true);
+
+        // Re-initialize postProcessor with 2 fitness functions
+        postProcessor = new RefactoringPostProcessor(List.of(f1, f2));
+
+        // Original Program fitness
+        Program originalProgram = createDummyOriginalProgram();
+
+        when(f1.getFitness(argThat(seq -> seq != null && seq.getRefactoredProgram() == originalProgram))).thenReturn(10.0);
+        when(f2.getFitness(argThat(seq -> seq != null && seq.getRefactoredProgram() == originalProgram))).thenReturn(10.0);
+
+        // Solution A
+        Program programA = createProgramWithDeadAndLiveScripts();
+        RefactorSequence sequenceA = mock(RefactorSequence.class);
+        when(sequenceA.getRefactoredProgram()).thenReturn(programA);
+        when(sequenceA.getFitness(f1)).thenReturn(5.0);
+        when(sequenceA.getFitness(f2)).thenReturn(15.0);
+        when(sequenceA.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequenceA.getCrossover()).thenReturn(mock(Crossover.class));
+
+        // Solution B
+        Program programB = createProgramWithDeadAndLiveScripts();
+        RefactorSequence sequenceB = mock(RefactorSequence.class);
+        when(sequenceB.getRefactoredProgram()).thenReturn(programB);
+        when(sequenceB.getFitness(f1)).thenReturn(15.0);
+        when(sequenceB.getFitness(f2)).thenReturn(15.0);
+        when(sequenceB.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequenceB.getCrossover()).thenReturn(mock(Crossover.class));
+
+        List<RefactorSequence> sequences = new ArrayList<>();
+        sequences.add(sequenceA);
+        sequences.add(sequenceB);
+
+        // Capture logs to verify we hit the fallback path
+        Logger logger = Logger.getLogger(DominationStep.class.getName());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        Handler handler = new StreamHandler(outContent, new SimpleFormatter());
+        logger.addHandler(handler);
+
+        try {
+            postProcessor.process(sequences, originalProgram, tempDir, Path.of("test.json"));
+
+            handler.flush();
+            String output = outContent.toString();
+            assertTrue(output.contains("No solutions found that dominate the original program"), "Should have logged that no dominating solutions were found");
+            assertTrue(output.contains("Non-dominated solutions: 1"), "Should have found 1 non-dominated solution");
+
+            // Verify that only Solution A was written (we can check file existence)
+            // Note: The file naming depends on the index in the filtered list.
+            assertTrue(tempDir.resolve("test_refactored_0.json").toFile().exists());
+            assertFalse(tempDir.resolve("test_refactored_1.json").toFile().exists());
+
+        } finally {
+            logger.removeHandler(handler);
         }
     }
 
@@ -391,7 +469,7 @@ class RefactoringPostProcessorTest {
         when(actorMetadata.getSounds().getList()).thenReturn(Collections.emptyList());
         when(actorMetadata.getCurrentCostume()).thenReturn(0);
 
-        de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList setStmtList = mock(de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList.class);
+        SetStmtList setStmtList = mock(SetStmtList.class);
         when(setStmtList.getStmts()).thenReturn(Collections.emptyList());
 
         ProcedureDefinitionList procList = mock(ProcedureDefinitionList.class);
