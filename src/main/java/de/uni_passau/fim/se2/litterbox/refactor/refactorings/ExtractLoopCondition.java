@@ -19,8 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
@@ -40,20 +43,56 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
     public static final String NAME = "extract_loop_condition";
 
     private final RepeatForeverStmt foreverLoop;
-    private final IfThenStmt ifThenStmt;
+    private final Stmt conditionalStmt;
     private final List<Stmt> replacement = new ArrayList<>();
 
-    public ExtractLoopCondition(RepeatForeverStmt foreverLoop, IfThenStmt ifThenStmt) {
+    public ExtractLoopCondition(RepeatForeverStmt foreverLoop, Stmt conditionalStmt) {
         this.foreverLoop = Preconditions.checkNotNull(foreverLoop);
-        this.ifThenStmt = Preconditions.checkNotNull(ifThenStmt);
-        int numStatements = ifThenStmt.getThenStmts().getNumberOfStatements();
-        TerminationStmt stopStmt = (TerminationStmt) ifThenStmt.getThenStmts().getStatement(numStatements - 1);
-        List<Stmt> precedingStmts = ifThenStmt.getThenStmts().getStmts().subList(0, numStatements - 1);
+        this.conditionalStmt = Preconditions.checkNotNull(conditionalStmt);
 
-        List<Stmt> remainingStmts = foreverLoop.getStmtList().getStmts().stream().filter(s -> s != ifThenStmt).toList();
+        BoolExpr condition;
+        StmtList terminatingStmts;
+        List<Stmt> loopBodyStmts = new ArrayList<>();
+
+        if (conditionalStmt instanceof IfThenStmt ifThenStmt) {
+            condition = ifThenStmt.getBoolExpr();
+            terminatingStmts = ifThenStmt.getThenStmts();
+        } else if (conditionalStmt instanceof IfElseStmt ifElseStmt) {
+            condition = ifElseStmt.getBoolExpr();
+            StmtList thenStmts = ifElseStmt.getThenStmts();
+            StmtList elseStmts = ifElseStmt.getElseStmts();
+
+            boolean thenTerminates = thenStmts.getNumberOfStatements() >= 1
+                    && thenStmts.getStatement(thenStmts.getNumberOfStatements() - 1) instanceof TerminationStmt;
+
+            if (thenTerminates) {
+                terminatingStmts = thenStmts;
+                loopBodyStmts.addAll(elseStmts.getStmts());
+            } else {
+                // Else terminates
+                condition = new Not(condition, condition.getMetadata());
+                terminatingStmts = elseStmts;
+                loopBodyStmts.addAll(thenStmts.getStmts());
+            }
+        } else {
+            throw new IllegalArgumentException("Conditional statement must be IfThenStmt or IfElseStmt");
+        }
+
+        int numStatements = terminatingStmts.getNumberOfStatements();
+        TerminationStmt stopStmt = (TerminationStmt) terminatingStmts.getStatement(numStatements - 1);
+        List<Stmt> precedingStmts = terminatingStmts.getStmts().subList(0, numStatements - 1);
+
+        List<Stmt> remainingStmts = new ArrayList<>();
+        for (Stmt stmt : foreverLoop.getStmtList().getStmts()) {
+            if (stmt == conditionalStmt) {
+                remainingStmts.addAll(loopBodyStmts);
+            } else {
+                remainingStmts.add(stmt);
+            }
+        }
 
         UntilStmt replacementLoop = new UntilStmt(
-                apply(ifThenStmt.getBoolExpr()),
+                apply(condition),
                 new StmtList(applyList(remainingStmts)),
                 apply(foreverLoop.getMetadata())
         );
@@ -99,12 +138,12 @@ public class ExtractLoopCondition extends OnlyCodeCloneVisitor implements Refact
         }
         ExtractLoopCondition that = (ExtractLoopCondition) o;
         return Objects.equals(foreverLoop, that.foreverLoop)
-                && Objects.equals(ifThenStmt, that.ifThenStmt)
+                && Objects.equals(conditionalStmt, that.conditionalStmt)
                 && Objects.equals(replacement, that.replacement);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(foreverLoop, ifThenStmt, replacement);
+        return Objects.hash(foreverLoop, conditionalStmt, replacement);
     }
 }

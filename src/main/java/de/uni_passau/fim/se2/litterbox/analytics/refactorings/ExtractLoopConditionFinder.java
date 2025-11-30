@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
@@ -35,6 +36,15 @@ public class ExtractLoopConditionFinder extends AbstractRefactoringFinder {
                 if (ifThenStmt.getThenStmts().getNumberOfStatements() >= 1
                         && ifThenStmt.getThenStmts().getStatement(ifThenStmt.getThenStmts().getNumberOfStatements() - 1) instanceof TerminationStmt) {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifThenStmt));
+                }
+            } else if (stmt instanceof IfElseStmt ifElseStmt) {
+                boolean thenTerminates = ifElseStmt.getThenStmts().getNumberOfStatements() >= 1
+                        && ifElseStmt.getThenStmts().getStatement(ifElseStmt.getThenStmts().getNumberOfStatements() - 1) instanceof TerminationStmt;
+                boolean elseTerminates = ifElseStmt.getElseStmts().getNumberOfStatements() >= 1
+                        && ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) instanceof TerminationStmt;
+
+                if (thenTerminates || elseTerminates) {
+                    refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifElseStmt));
                 }
             }
         }

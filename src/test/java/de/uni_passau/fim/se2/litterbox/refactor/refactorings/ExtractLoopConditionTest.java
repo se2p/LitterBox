@@ -24,19 +24,19 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExtractLoopConditionTest implements JsonTest {
 
@@ -90,5 +90,69 @@ public class ExtractLoopConditionTest implements JsonTest {
         assertThat(untilStmt.getBoolExpr()).isEqualTo(ifStmt.getBoolExpr());
         assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(1); // Only "say Hello!" inside loop        
         assertThat(refactoredStmtList.getStatement(1)).isInstanceOf(Say.class);
+    }
+
+    @Test
+    public void testExtractLoopConditionRefactoringIfElse() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/extractLoopConditionIfElse.json");
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList stmtList = script.getStmtList();
+        RepeatForeverStmt loopStmt = (RepeatForeverStmt) stmtList.getStatement(0);
+        IfElseStmt ifStmt = (IfElseStmt) loopStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfElseStmt).findFirst().get();
+
+        ExtractLoopCondition refactoring = new ExtractLoopCondition(loopStmt, ifStmt);
+        Program refactored = refactoring.apply(program);
+
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList refactoredStmtList = refactoredScript.getStmtList();
+
+        // Original loop body:
+        // Say Hello! (2s)
+        // If <key space pressed> then
+        //   Stop all
+        // else
+        //   Say Else (1s)
+        
+        // Refactored:
+        // Repeat until <key space pressed>
+        //   Say Hello! (2s)
+        //   Say Else (1s)
+        // Stop all
+                
+        assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
+
+        UntilStmt untilStmt = (UntilStmt) refactoredStmtList.getStatement(0);
+        assertThat(untilStmt.getBoolExpr()).isEqualTo(ifStmt.getBoolExpr());
+        
+        // Inside loop:
+        // 1. Say Hello! (2s) - from original loop body before IfElse
+        // 2. Say Else (1s) - from else block
+        assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(2);
+        assertThat(untilStmt.getStmtList().getStatement(1)).isInstanceOf(SayForSecs.class); // Say Else
+    }
+
+    @Test
+    public void testExtractLoopConditionRefactoringIfElseNegated() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/extractLoopConditionIfElseNegated.json");
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList stmtList = script.getStmtList();
+        RepeatForeverStmt loopStmt = (RepeatForeverStmt) stmtList.getStatement(0);
+        IfElseStmt ifStmt = (IfElseStmt) loopStmt.getStmtList().getStmts().stream().filter(s -> s instanceof IfElseStmt).findFirst().get();
+
+        ExtractLoopCondition refactoring = new ExtractLoopCondition(loopStmt, ifStmt);
+        Program refactored = refactoring.apply(program);
+
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
+        StmtList refactoredStmtList = refactoredScript.getStmtList();
+
+        assertThat(refactoredStmtList.getNumberOfStatements()).isEqualTo(2);
+
+        UntilStmt untilStmt = (UntilStmt) refactoredStmtList.getStatement(0);
+        assertThat(untilStmt.getBoolExpr()).isInstanceOf(Not.class);
+        Not notExpr = (Not) untilStmt.getBoolExpr();
+        assertThat(notExpr.getOperand1()).isEqualTo(ifStmt.getBoolExpr());
+
+        assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(2);
+        assertThat(untilStmt.getStmtList().getStatement(1)).isInstanceOf(SayForSecs.class); // Say Then
     }
 }
