@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.mblock;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.CodeyCounterMetric;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.MCoreCounterMetric;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.RealCodeyMetric;

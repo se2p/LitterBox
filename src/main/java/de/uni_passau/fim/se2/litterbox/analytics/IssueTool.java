@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.perfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MultiAttributeModificationRobot;
