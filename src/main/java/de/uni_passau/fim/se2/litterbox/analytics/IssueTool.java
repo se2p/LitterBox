@@ -254,6 +254,7 @@ public class IssueTool {
             registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
             registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
+            registerPerfumeFinder(new ResponsiveLoopSensing(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
             registerPerfumeFinder(new UsedVariables(), perfumeFinders);
