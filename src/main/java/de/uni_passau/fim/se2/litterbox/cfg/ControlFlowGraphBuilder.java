@@ -138,6 +138,10 @@ public class ControlFlowGraphBuilder {
         currentNodes.clear();
     }
 
+    public void addEdgeToExit(CFGNode node) {
+        cfg.addEdgeToExit(node);
+    }
+
     public void setCurrentStatement(CFGNode... nodes) {
         currentNodes.clear();
         currentNodes.addAll(Arrays.asList(nodes));

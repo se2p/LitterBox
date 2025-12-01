@@ -198,6 +198,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
         // Edge back to loop header, and update current node
         builder.addEdge(node);
+        builder.addEdgeToExit(node);
     }
 
     @Override
