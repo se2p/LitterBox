@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
@@ -42,7 +45,7 @@ public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements M
         return NAME;
     }
 
-    private static class LogicalOperatorCounter implements de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor {
+    private static class LogicalOperatorCounter implements ScratchVisitor {
         private int count = 0;
 
         public int getCount() {
@@ -50,13 +53,13 @@ public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements M
         }
 
         @Override
-        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And node) {
+        public void visit(And node) {
             count++;
             visitChildren(node);
         }
 
         @Override
-        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or node) {
+        public void visit(Or node) {
             count++;
             visitChildren(node);
         }
