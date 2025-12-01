@@ -62,13 +62,8 @@ public class RefactoringPostProcessor {
         log.info("Found " + solutions.size() + " solutions");
 
         PostProcessorContext context = new PostProcessorContext(originalProgram, outputDir, originalFile, fitnessFunctions);
-        List<RefactorSequence> currentSolutions = solutions;
-
         for (PostProcessorStep step : pipeline) {
-            currentSolutions = step.apply(currentSolutions, context);
-            if (currentSolutions.isEmpty()) {
-                break;
-            }
+            solutions = step.apply(solutions, context);
         }
     }
 }

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.postprocessing;
 
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Dominance;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,6 @@ public class DominationStep implements PostProcessorStep {
                 first.getCrossover(),
                 Collections.emptyList()
         );
-
         List<RefactorSequence> dominatingSolutions = solutions.stream()
                 .filter(solution -> dominance.test(solution, original))
                 .toList();
@@ -52,16 +52,31 @@ public class DominationStep implements PostProcessorStep {
         log.info("Dominating solutions: " + dominatingSolutions.size());
         if (dominatingSolutions.isEmpty()) {
             log.info("No solutions found that dominate the original program. Checking for non-dominated solutions.");
-            // If no solution strictly dominates the original, we look for solutions that are NOT dominated BY the original.
-            // i.e., solutions that are incomparable or better in some way but maybe worse in others, but definitely not strictly worse.
-            // dominance.test(A, B) returns true if A dominates B.
-            // We want solutions S where NOT (Original dominates S).
             List<RefactorSequence> nonDominatedSolutions = solutions.stream()
                     .filter(solution -> !dominance.test(original, solution))
+                    .filter(solution -> isBetterInAtLeastOne(solution, original, context.getFitnessFunctions()))
                     .toList();
             log.info("Non-dominated solutions: " + nonDominatedSolutions.size());
             return nonDominatedSolutions;
         }
         return dominatingSolutions;
+    }
+
+    private boolean isBetterInAtLeastOne(RefactorSequence solution, RefactorSequence original, List<de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction<RefactorSequence>> fitnessFunctions) {
+        for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {            
+            double solFit = solution.getFitness(ff);
+            double orgFit = original.getFitness(ff);
+            
+            if (ff.isMinimizing()) {
+                if (solFit < orgFit) {
+                    return true;
+                }
+            } else {
+                if (solFit > orgFit) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

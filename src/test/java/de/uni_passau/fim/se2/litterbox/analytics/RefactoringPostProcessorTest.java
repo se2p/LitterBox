@@ -456,6 +456,74 @@ class RefactoringPostProcessorTest {
         }
     }
 
+    @Test
+    void testProcessFiltersEqualSolutionsWhenNoDominatingFound() throws IOException {
+        // Setup:
+        // Original Program: f1=10, f2=10
+        // Solution A (Equal): f1=10, f2=10 -> Should NOT be returned
+        // Solution B (Better in one): f1=5, f2=15 -> Should be returned
+        // Solution C (Worse in both): f1=15, f2=15 -> Should NOT be returned (dominated)
+
+        FitnessFunction<RefactorSequence> f1 = mock(FitnessFunction.class);
+        when(f1.isMinimizing()).thenReturn(true);
+        FitnessFunction<RefactorSequence> f2 = mock(FitnessFunction.class);
+        when(f2.isMinimizing()).thenReturn(true);
+
+        postProcessor = new RefactoringPostProcessor(List.of(f1, f2));
+
+        Program originalProgram = createDummyOriginalProgram();
+        when(f1.getFitness(any())).thenAnswer(inv -> {
+            java.util.logging.Logger.getAnonymousLogger().warning("Mock f1 called with: " + inv.getArgument(0));
+            return 10.0;
+        });
+        when(f2.getFitness(any())).thenAnswer(inv -> {
+            java.util.logging.Logger.getAnonymousLogger().warning("Mock f2 called with: " + inv.getArgument(0));
+            return 10.0;
+        });
+
+        // Solution A (Equal)
+        Program programA = createProgramWithDeadAndLiveScripts();
+        RefactorSequence sequenceA = mock(RefactorSequence.class);
+        when(sequenceA.getRefactoredProgram()).thenReturn(programA);
+        doReturn(5.0).when(sequenceA).getFitness(f1);
+        doReturn(15.0).when(sequenceA).getFitness(f2);
+        when(sequenceA.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequenceA.getCrossover()).thenReturn(mock(Crossover.class));
+
+        when(sequenceA.toString()).thenReturn("SequenceA");
+        // Solution B (Better in one)
+        Program programB = createProgramWithDeadAndLiveScripts();
+        RefactorSequence sequenceB = mock(RefactorSequence.class);
+        when(sequenceB.toString()).thenReturn("SequenceB");
+        when(sequenceB.getRefactoredProgram()).thenReturn(programB);
+        doReturn(5.0).when(sequenceB).getFitness(f1);
+        doReturn(15.0).when(sequenceB).getFitness(f2);
+        when(sequenceB.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequenceB.getCrossover()).thenReturn(mock(Crossover.class));
+
+        // Solution C (Dominated)
+        Program programC = createProgramWithDeadAndLiveScripts();
+        RefactorSequence sequenceC = mock(RefactorSequence.class);
+        when(sequenceC.toString()).thenReturn("SequenceC");
+        when(sequenceC.getRefactoredProgram()).thenReturn(programC);
+        doReturn(15.0).when(sequenceC).getFitness(f1);
+        doReturn(15.0).when(sequenceC).getFitness(f2);
+        when(sequenceC.getMutation()).thenReturn(mock(Mutation.class));
+        when(sequenceC.getCrossover()).thenReturn(mock(Crossover.class));
+
+        List<RefactorSequence> sequences = new ArrayList<>();
+        sequences.add(sequenceA);
+        sequences.add(sequenceB);
+        sequences.add(sequenceC);
+
+        postProcessor.process(sequences, originalProgram, tempDir, Path.of("test.json"));
+
+        assertTrue(tempDir.resolve("test_refactored_0.json").toFile().exists());
+        assertFalse(tempDir.resolve("test_refactored_1.json").toFile().exists());
+    }
+
+
+
     private Program createProgramWithScripts(ScriptList scripts, LocalIdentifier programIdent, ProgramMetadata programMetadata) {
         LocalIdentifier stageIdent = mock(LocalIdentifier.class);
         when(stageIdent.getName()).thenReturn("Stage");
