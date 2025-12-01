@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.SpriteCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
