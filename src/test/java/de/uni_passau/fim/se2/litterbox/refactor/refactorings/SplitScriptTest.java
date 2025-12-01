@@ -159,4 +159,30 @@ public class SplitScriptTest implements JsonTest {
         assertThat(refactoredStmtList2.getStmts().getFirst()).isEqualTo(wait);
     }
 
+    @Test
+    public void testSplitScriptWithScratchblocks() throws ParsingException, IOException {
+        String code = """
+                when green flag clicked
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                repeat until <touching color [#be362e] ?>
+                if <touching (Bowl v) ?> then
+                change [Punkte v] by (5)
+                end
+                if <touching (Bowl v) ?> then
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                end
+                change y by (-5)
+                end
+                say [Hello!]
+                stop [all v]
+                """;
+        Program program = parseScratchBlocks(code);
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        // The script has a loop which introduces a time dependency, so it should NOT split.
+        assertThat(refactorings).isEmpty();
+    }
+
 }

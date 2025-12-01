@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.ExtractLoopConditionFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.SplitScriptFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -154,5 +155,32 @@ public class ExtractLoopConditionTest implements JsonTest {
 
         assertThat(untilStmt.getStmtList().getNumberOfStatements()).isEqualTo(2);
         assertThat(untilStmt.getStmtList().getStatement(1)).isInstanceOf(SayForSecs.class); // Say Then
+    }
+
+
+    @Test
+    public void testExtractLoopConditionRefactoringGeneralization() throws ParsingException, IOException {
+        String code = """
+                when green flag clicked
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                forever
+                if <touching (Bowl v) ?> then
+                change [Punkte v] by (5)
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                end
+                if <touching color [#be362e] ?> then
+                say [Hello!]
+                stop [all v]
+                else
+                change y by (-5)
+                end
+                end
+                """;
+        Program program = parseScratchBlocks(code);
+        ExtractLoopConditionFinder finder = new ExtractLoopConditionFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).hasSize(1);
     }
 }
