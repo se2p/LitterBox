@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.postprocessing;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
@@ -47,6 +48,21 @@ public class WriteResultStep implements PostProcessorStep {
                     JSONFileCreator.writeSb3FromProgram(program, context.getOutputDir(), context.getOriginalFile().toFile(), suffix);
                 }
                 log.info("Written solution to " + context.getOutputDir().resolve(FilenameUtils.getBaseName(context.getOriginalFile().toString()) + suffix + "." + FilenameUtils.getExtension(context.getOriginalFile().toString())));
+                StringBuilder refactoringLog = new StringBuilder("Applied refactorings: ");
+                solutions.get(i).getExecutedRefactorings().forEach(r -> refactoringLog.append(r.getName()).append(": ").append(r.getDescription()).append(", "));
+                if (!solutions.get(i).getExecutedRefactorings().isEmpty()) {
+                    refactoringLog.setLength(refactoringLog.length() - 2); // Remove trailing comma and space
+                }
+                log.info(refactoringLog.toString());
+
+                StringBuilder fitnessLog = new StringBuilder("Fitness values: ");
+                for (FitnessFunction<RefactorSequence> ff : context.getFitnessFunctions()) {
+                    fitnessLog.append(ff.getName()).append(": ").append(solutions.get(i).getFitness(ff)).append(", ");
+                }
+                if (!context.getFitnessFunctions().isEmpty()) {
+                    fitnessLog.setLength(fitnessLog.length() - 2);
+                }
+                log.info(fitnessLog.toString());
             }
         } catch (IOException e) {
             log.severe("Failed to write solutions: " + e.getMessage());
