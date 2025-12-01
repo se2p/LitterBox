@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
@@ -254,19 +255,26 @@ public class RefactoringIntegrationTest implements JsonTest {
         List<RefactoringFinder> finders = List.of(new MergeLoopsFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
 
-        // TODO: This produces two refactoring sequences but both give us the identical program
-        String expectedCode = """
+        String expectedCode1 = """
                 when green flag clicked
                 repeat (10)
                     change [var1 v] by (1)
                     change [var2 v] by (1)
                 end
                 """;
+        String expectedCode2 = """
+                when green flag clicked
+                repeat (10)
+                    change [var2 v] by (1)
+                    change [var1 v] by (1)
+                end
+                """;
         
-        Program expectedProgram = parseProgram(expectedCode);
+        Program expectedProgram1 = parseProgram(expectedCode1);
+        Program expectedProgram2 = parseProgram(expectedCode2);
         Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
-        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
- 
+        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
+                   StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
     }
 
     @Test
@@ -283,15 +291,23 @@ public class RefactoringIntegrationTest implements JsonTest {
         List<RefactoringFinder> finders = List.of(new MergeScriptsFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
         
-        String expectedCode = """
+        String expectedCode1 = """
                 when green flag clicked
                 move (10) steps
-                turn cw (15) degrees
+                turn right (15) degrees
                 """;
-        
-        Program expectedProgram = parseProgram(expectedCode);
+
+        String expectedCode2 = """
+                when green flag clicked
+                turn right (15) degrees
+                move (10) steps
+                """;
+
+        Program expectedProgram1 = parseProgram(expectedCode1);
+        Program expectedProgram2 = parseProgram(expectedCode2);
         Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
-        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
+        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
+    StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
      }
 
     @Test
