@@ -382,4 +382,37 @@ end
         Assertions.assertTrue(script.getStmtList().getNumberOfStatements() > 0);
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
     }
+
+    void testGreenFlagAliases() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input1 = "when flag clicked\n";
+        Script script1 = parser.parseScript("Stage", input1);
+        Assertions.assertNotNull(script1);
+        Assertions.assertInstanceOf(GreenFlag.class, script1.getEvent());
+
+        String input2 = "when gf clicked\n";
+        Script script2 = parser.parseScript("Stage", input2);
+        Assertions.assertNotNull(script2);
+        Assertions.assertInstanceOf(GreenFlag.class, script2.getEvent());
+    }
+
+    @Test
+    void testTurnRightAlias() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\nturn cw (15) degrees\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testTurnLeftAlias() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\nturn ccw (15) degrees\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(0));
+    }
 }

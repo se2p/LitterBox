@@ -47,7 +47,7 @@ class LLMCodeAnalyzerTest implements FinderTest {
 
         DummyLlmApi llmApi = new DummyLlmApi("dummy response");
 
-        LLMProgramImprovementAnalyzer improvementAnalyzer = new LLMProgramImprovementAnalyzer(
+        LLMProgramFixAnalyzer improvementAnalyzer = new LLMProgramFixAnalyzer(
                 llmApi, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), "bugs", false
         );
         LLMCodeAnalyzer analyzer = new LLMCodeAnalyzer(improvementAnalyzer, outputDir, false);

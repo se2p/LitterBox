@@ -96,7 +96,7 @@ event                   : greenFlag (COMMENT)?
                         | stageClicked (COMMENT)?
                         ;
 
-greenFlag               : 'when green flag clicked';
+greenFlag               : 'when green flag clicked' | 'when flag clicked' | 'when gf clicked';
 keyEvent                : 'when' WS '[' key' v] key pressed';
 spriteClicked           : 'when this sprite clicked';
 stageClicked            : 'when stage clicked';
@@ -578,6 +578,7 @@ stringArgument          : (ESC | ~(NEWLINE|DELIM|LIST_MARKER))*?;
  */
 
 ELSE                    : WS? 'else' WS? ;
+
 END                     : WS? 'end' WS? ;
 
 fragment HEX_DIGIT      : [0-9a-fA-F];

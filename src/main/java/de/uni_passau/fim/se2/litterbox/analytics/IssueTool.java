@@ -33,8 +33,6 @@ import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -43,7 +41,6 @@ import java.util.stream.Stream;
  */
 public class IssueTool {
 
-    private static final Logger log = Logger.getLogger(IssueTool.class.getName());
     private static final boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     private static final boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
@@ -69,6 +66,7 @@ public class IssueTool {
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
+            registerBugFinder(new MessageAsLiteral(), bugFinders);
             registerBugFinder(new MessageNeverReceived(), bugFinders);
             registerBugFinder(new MessageNeverSent(), bugFinders);
             registerBugFinder(new MissingAsk(), bugFinders);
@@ -86,6 +84,7 @@ public class IssueTool {
             registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
             registerBugFinder(new NoWorkingScripts(), bugFinders);
             registerBugFinder(new OrphanedParameter(), bugFinders);
+            registerBugFinder(new ParameterAsLiteral(), bugFinders);
             registerBugFinder(new ParameterOutOfScope(), bugFinders);
             registerBugFinder(new PositionEqualsCheck(), bugFinders);
             registerBugFinder(new RecursiveCloning(), bugFinders);
@@ -153,6 +152,7 @@ public class IssueTool {
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterAsLiteral(), bugFinders);
         registerBugFinder(new ParameterOutOfScope(), bugFinders);
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
@@ -254,6 +254,7 @@ public class IssueTool {
             registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
             registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
             registerPerfumeFinder(new Parallelisation(), perfumeFinders);
+            registerPerfumeFinder(new ResponsiveLoopSensing(), perfumeFinders);
             registerPerfumeFinder(new SaySoundSynchronisation(), perfumeFinders);
             registerPerfumeFinder(new Timer(), perfumeFinders);
             registerPerfumeFinder(new UsedVariables(), perfumeFinders);
@@ -355,25 +356,64 @@ public class IssueTool {
         return List.copyOf(finders);
     }
 
-    public static List<IssueFinder> getFinders(String commandString) {
-        final Optional<FinderGroup> issueType = FinderGroup.tryFromString(commandString);
-        if (issueType.isPresent()) {
-            return getFinders(issueType.get());
-        }
+    /**
+     * Retrieves all finders that match the given command string.
+     *
+     * <p>The command string contains a comma-separated list of finder names or categories. For example,
+     * {@code unnecessary_if,stuttering_movement} returns the two finders {@link UnnecessaryIf} and
+     * {@link StutteringMovement}.
+     * The command string {@code smells,ask_and_answer_perfume} will return all finders of the
+     * {@link FinderGroup#SMELLS} category and in addition the {@link AskAndAnswerPerfume} perfume finder.
+     *
+     * <p>You can also explicitly exclude groups or specific finders by prefixing them with a {@code -}.
+     * For example, {@code smells,-busy_waiting} includes all smells except for {@link BusyWaiting}.
+     * Excluding a group/finder always takes precedence over adding it, i.e., {@code busy_waiting,-busy_waiting} or
+     * {@code -busy_waiting,busy_waiting} both result in an empty list of finders.
+     *
+     * @param commandString A comma-separated list of finder names or categories.
+     * @return All finders matching the given command string.
+     */
+    public static List<IssueFinder> getFinders(String commandString) throws IllegalArgumentException {
+        final List<String> requestedFinders = Arrays.stream(commandString.split(","))
+                .map(String::trim)
+                .filter(cmd -> !cmd.isEmpty())
+                .toList();
 
-        List<IssueFinder> finders = new ArrayList<>();
+        final Map<String, IssueFinder> allFinders = generateAllFinders();
+        final Map<String, IssueFinder> finders = new HashMap<>();
+        final Set<String> excludedFinders = new HashSet<>();
 
-        for (String detectorName : commandString.split(",")) {
-            Map<String, IssueFinder> allFinders = generateAllFinders();
-            if (!allFinders.containsKey(detectorName)) {
-                // TODO: Hard crash might be more appropriate to notify user
-                log.log(Level.SEVERE, "Unknown finder: " + detectorName);
+        for (String detectorName : requestedFinders) {
+            boolean isExclusion = detectorName.startsWith("-");
+            if (isExclusion) {
+                detectorName = detectorName.substring(1);
+            }
+
+            final Optional<FinderGroup> issueType = FinderGroup.tryFromString(detectorName);
+            if (issueType.isPresent()) {
+                final List<IssueFinder> groupFinders = getFinders(issueType.get());
+                if (isExclusion) {
+                    groupFinders.stream().map(IssueFinder::getName).forEach(excludedFinders::add);
+                } else {
+                    groupFinders.forEach(finder -> finders.put(finder.getName(), finder));
+                }
                 continue;
             }
-            finders.add(allFinders.get(detectorName));
+
+            if (!allFinders.containsKey(detectorName)) {
+                throw new IllegalArgumentException("Unknown finder: " + detectorName);
+            }
+
+            if (isExclusion) {
+                excludedFinders.add(detectorName);
+            } else {
+                finders.put(detectorName, allFinders.get(detectorName));
+            }
         }
 
-        return Collections.unmodifiableList(finders);
+        excludedFinders.forEach(finders::remove);
+
+        return finders.values().stream().toList();
     }
 
     public static Collection<String> getAllFinderNames() {

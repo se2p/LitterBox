@@ -79,6 +79,11 @@ public class MissingLoopSensingTest implements JsonTest {
     }
 
     @Test
+    public void testMissingLoopSensingFalsePositive() throws IOException, ParsingException {
+        assertThatFinderReports(0, new MissingLoopSensing(), "./src/test/fixtures/bugpattern/missingLoopSensingFalsePositive.json");
+    }
+
+    @Test
     public void testDistances() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/differentDistancesMLS.json");
         MissingLoopSensing mls = new MissingLoopSensing();

@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -54,6 +55,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     private boolean insideEquals = false;
     private boolean hasVariable = false;
     private boolean afterWaitUntil = false;
+    private boolean afterAskAndWait = false;
 
     @Override
     public void visit(Script node) {
@@ -66,6 +68,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             loopStack = new Stack<>();
             super.visit(node);
             afterWaitUntil = false;
+            afterAskAndWait = false;
         }
     }
 
@@ -101,49 +104,49 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Equals node) {
-        if (inCondition && !afterWaitUntil) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             insideEquals = true;
         }
         visitChildren(node);
@@ -184,6 +187,12 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(WaitUntil node) {
         afterWaitUntil = true;
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(AskAndWait node) {
+        afterAskAndWait = true;
         super.visit(node);
     }
 
@@ -247,7 +256,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         IfStmt parent = AstNodeUtil.findParent(codeLocation.getParentNode(), IfStmt.class);
         if (parent == null) {
             throw new IllegalStateException(
-                    "It can not happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
+                    "It cannot happen that MissingLoopSensing can be found without an IfStmt. Something went wrong."
             );
         }
         return parent;
