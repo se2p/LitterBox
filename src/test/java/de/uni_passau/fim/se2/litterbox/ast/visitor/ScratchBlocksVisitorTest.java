@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.LoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.perfumes.LoopSensing;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;

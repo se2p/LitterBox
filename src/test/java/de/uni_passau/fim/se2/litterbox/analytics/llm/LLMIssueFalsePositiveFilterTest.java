@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.InitialisationOfPosition;
+import de.uni_passau.fim.se2.litterbox.analytics.perfumes.InitialisationOfPosition;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.IfThenStatementExecution;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyProject;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -48,7 +48,7 @@ class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
 
     @Test
     void shouldIgnorePerfumes() throws ParsingException, IOException {
-        final Program program = getAST("src/test/fixtures/goodPractice/initLocInBlock.json");
+        final Program program = getAST("src/test/fixtures/perfumes/initLocInBlock.json");
         final Set<Issue> issues = new InitialisationOfPosition().check(program);
         shouldIgnoreIssues(program, issues);
     }

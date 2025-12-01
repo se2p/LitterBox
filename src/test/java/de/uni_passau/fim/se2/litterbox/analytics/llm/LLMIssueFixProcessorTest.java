@@ -44,7 +44,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void ignorePerfumes() throws Exception {
-        final Program program = getAST("./src/test/fixtures/goodPractice/usedVariable.json");
+        final Program program = getAST("./src/test/fixtures/perfumes/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> IssueType.PERFUME.equals(issue.getIssueType()))
                 .collect(Collectors.toSet());
@@ -61,7 +61,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void ignoreNonScriptIssues() throws Exception {
-        final Program program = getAST("./src/test/fixtures/goodPractice/usedVariable.json");
+        final Program program = getAST("./src/test/fixtures/perfumes/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> !Set.of(IssueType.PERFUME, IssueType.QUESTION).contains(issue.getIssueType()))
                 .collect(Collectors.toSet());

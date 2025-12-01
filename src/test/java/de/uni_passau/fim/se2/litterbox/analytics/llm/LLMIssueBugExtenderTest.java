@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.BoolExpression;
+import de.uni_passau.fim.se2.litterbox.analytics.perfumes.BoolExpression;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -44,7 +44,7 @@ class LLMIssueBugExtenderTest implements FinderTest, JsonTest {
 
     @Test
     void doesNotAddPerfumesToPrompt() throws ParsingException, IOException {
-        final Program program = getAST("src/test/fixtures/goodPractice/boolExpressions.json");
+        final Program program = getAST("src/test/fixtures/perfumes/boolExpressions.json");
         final Set<Issue> issues = new BoolExpression().check(program);
         final DummyLlmApi api = new DummyLlmApi("no new issues");
 
