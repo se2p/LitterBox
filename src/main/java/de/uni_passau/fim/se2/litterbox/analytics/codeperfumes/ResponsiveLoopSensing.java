@@ -26,28 +26,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 /**
@@ -216,14 +207,6 @@ public class ResponsiveLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (checkingLoopBody) {
-            hasInstantBlock = true;
-        }
-    }
-
-    @Override
-    public void visit(BroadcastAndWait node) {
-        // Wait? "Broadcast and Wait" might be time-consuming if the receiver takes time.
         if (checkingLoopBody) {
             hasInstantBlock = true;
         }
