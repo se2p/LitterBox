@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.Timer;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;

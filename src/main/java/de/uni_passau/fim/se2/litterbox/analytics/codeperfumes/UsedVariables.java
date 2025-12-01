@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;

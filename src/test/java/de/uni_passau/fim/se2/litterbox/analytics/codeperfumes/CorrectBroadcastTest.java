@@ -38,6 +38,6 @@ public class CorrectBroadcastTest implements JsonTest {
 
     @Test
     public void testMissingReceiver() throws IOException, ParsingException {
-        assertThatFinderReports(0, new CorrectBroadcast(), "./src/test/fixtures/bugpattern/messageNeverReceivedDouble.json");
+        assertThatFinderReports(0, new CorrectBroadcast(), "./src/test/fixtures/bugs/messageNeverReceivedDouble.json");
     }
 }

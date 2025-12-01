@@ -336,7 +336,7 @@ public class LlmResponseParserTest implements JsonTest {
                 say (answer) for (2) seconds
                 ```
                 """;
-        Program program = getAST("./src/test/fixtures/bugpattern/missingAsk.json");
+        Program program = getAST("./src/test/fixtures/bugs/missingAsk.json");
 
         final LlmResponseParser parser = new LlmResponseParser();
         final Script script = (Script) BlockByIdFinder.findBlock(program, "Z`w:F,*y_,WJPBw^$]b)")

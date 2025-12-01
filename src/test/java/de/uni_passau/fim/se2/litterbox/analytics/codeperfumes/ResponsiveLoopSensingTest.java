@@ -33,6 +33,6 @@ public class ResponsiveLoopSensingTest implements FinderTest, JsonTest {
         // 1. responsive_forever: Should be detected (1 issue)
         // 2. unresponsive_forever: Contains wait, should NOT be detected
         // 3. no_sensing_forever: No input sensing, should NOT be detected
-        assertThatFinderReports(1, new ResponsiveLoopSensing(), "./src/test/fixtures/bugpattern/responsiveLoopSensing.json");
+        assertThatFinderReports(1, new ResponsiveLoopSensing(), "./src/test/fixtures/bugs/responsiveLoopSensing.json");
     }
 }

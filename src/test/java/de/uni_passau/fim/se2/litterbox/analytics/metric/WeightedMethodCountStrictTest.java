@@ -33,6 +33,6 @@ public class WeightedMethodCountStrictTest implements JsonTest {
 
     @Test
     public void testMethodCount() throws IOException, ParsingException {
-        assertThatMetricReports(2, new WeightedMethodCountStrict<>(), "./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
+        assertThatMetricReports(2, new WeightedMethodCountStrict<>(), "./src/test/fixtures/bugs/weightedMethodCountStrict.json");
     }
 }

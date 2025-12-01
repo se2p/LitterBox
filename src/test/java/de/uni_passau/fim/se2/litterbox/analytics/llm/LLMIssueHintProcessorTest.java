@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.BlockingIfElse;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
@@ -40,7 +40,7 @@ class LLMIssueHintProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void newIssueHint() throws ParsingException, IOException {
-        final Program program = getAST("src/test/fixtures/bugpattern/blockingIfElse.json");
+        final Program program = getAST("src/test/fixtures/bugs/blockingIfElse.json");
         final Set<Issue> issues = new BlockingIfElse().check(program);
         assertThat(issues).isNotEmpty();
 

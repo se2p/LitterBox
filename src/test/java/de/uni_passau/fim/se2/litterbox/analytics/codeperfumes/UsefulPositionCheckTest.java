@@ -33,6 +33,6 @@ public class UsefulPositionCheckTest implements JsonTest {
 
     @Test
     public void testProblematicPositionCheck() throws IOException, ParsingException {
-        assertThatFinderReports(0, new UsefulPositionCheck(), "./src/test/fixtures/bugpattern/positionEqualsCheckStrict.json");
+        assertThatFinderReports(0, new UsefulPositionCheck(), "./src/test/fixtures/bugs/positionEqualsCheckStrict.json");
     }
 }

@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingInitialization;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Assertions;

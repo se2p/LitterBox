@@ -49,7 +49,7 @@ public class LoopSensingTest implements JsonTest {
 
     @Test
     public void testMissingSensingForEvent() throws IOException, ParsingException {
-        assertThatFinderReports(0, new LoopSensing(), "./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
+        assertThatFinderReports(0, new LoopSensing(), "./src/test/fixtures/bugs/missingLoopSensingMultiple.json");
     }
 
     @Test

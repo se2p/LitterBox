@@ -38,6 +38,6 @@ public class MovementInLoopTest implements JsonTest {
 
     @Test
     public void testStutteringMovement() throws IOException, ParsingException {
-        assertThatFinderReports(0, new MovementInLoop(), "./src/test/fixtures/bugpattern/stutteringMovement.json");
+        assertThatFinderReports(0, new MovementInLoop(), "./src/test/fixtures/bugs/stutteringMovement.json");
     }
 }

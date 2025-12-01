@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -101,7 +101,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testSingleIssue() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         PositionEqualsCheck finder = new PositionEqualsCheck();
         Set<Issue> issues = finder.check(program);
 
@@ -114,7 +114,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testCodeField() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         PositionEqualsCheck finder = new PositionEqualsCheck();
         Set<Issue> issues = finder.check(program);
 
@@ -134,7 +134,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testMultipleIssues() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/positionEqualsCheck.json");
+        Program program = getAST("src/test/fixtures/bugs/positionEqualsCheck.json");
         PositionEqualsCheck finder = new PositionEqualsCheck();
         Set<Issue> issues = finder.check(program);
 
@@ -147,7 +147,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testFileOutput() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         PositionEqualsCheck finder = new PositionEqualsCheck();
         Set<Issue> issues = finder.check(program);
 
@@ -177,7 +177,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testReportWithDuplicateInformation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/multiple_missingbroadcast.json");
+        Program program = getAST("src/test/fixtures/bugs/multiple_missingbroadcast.json");
 
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> issues = finder.check(program);
@@ -222,7 +222,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testReportWithoutDuplicateInformation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        Program program = getAST("src/test/fixtures/bugs/comparingLiterals.json");
 
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> issues = finder.check(program);
@@ -254,7 +254,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testReportWithSubsumptionInformation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/varcomparison_subsumption.json");
+        Program program = getAST("src/test/fixtures/bugs/varcomparison_subsumption.json");
         Set<Issue> issues = new LinkedHashSet<>();
 
         ComparingLiterals finder = new ComparingLiterals();
@@ -324,7 +324,7 @@ public class JSONReportGeneratorTest implements JsonTest {
 
     @Test
     public void testDuplicatesAreSimilar() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/multiple_missingbroadcast.json");
+        Program program = getAST("src/test/fixtures/bugs/multiple_missingbroadcast.json");
 
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> issues = finder.check(program);

@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.BoolExpression;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -110,7 +110,7 @@ class LLMIssueBugExtenderTest implements FinderTest, JsonTest {
     }
 
     private List<Issue> getLlmIssues(final String llmResponse) throws ParsingException, IOException {
-        final Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        final Program program = getAST("src/test/fixtures/bugs/comparingLiterals.json");
         final Set<Issue> issues = new ComparingLiterals().check(program);
         final LlmApi api = new DummyLlmApi(llmResponse);
 

@@ -33,6 +33,6 @@ public class CustomBlockUsageTest implements JsonTest {
 
     @Test
     public void testIgnoreIncomplete() throws IOException, ParsingException {
-        assertThatFinderReports(0, new CustomBlockUsage(), "./src/test/fixtures/bugpattern/callWithoutDefinition.json");
+        assertThatFinderReports(0, new CustomBlockUsage(), "./src/test/fixtures/bugs/callWithoutDefinition.json");
     }
 }

@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
