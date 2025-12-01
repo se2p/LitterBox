@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.DetectDistancePort;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.MEGAPI;
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
-
-public class MegapiCounterMetric extends AbstractRobotMetric<Program> {
-
-    public static final String NAME = "robot_megapi_counter";
-    private int megapiCounter = 0;
+public class DistanceBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "distance_block_count";
+    private int count = 0;
 
     @Override
-    public double calculateMetric(Program node) {
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        count = 0;
         node.accept(this);
-        return megapiCounter;
+        return count;
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        if (getRobot(actor.getIdent().getName(), actor.getSetStmtList()) == MEGAPI) {
-            megapiCounter++;
-        }
+    public void visit(DetectDistancePort node) {
+        count++;
     }
 
     @Override

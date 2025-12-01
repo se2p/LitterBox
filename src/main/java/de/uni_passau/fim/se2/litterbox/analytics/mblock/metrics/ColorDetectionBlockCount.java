@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.DetectLinePort;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.DetectRGBValue;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class LineFollowingBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
-    public static final String NAME = "line_following_block_count";
+public class ColorDetectionBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "color_detection_block_count";
     private int count = 0;
 
     @Override
@@ -35,7 +35,7 @@ public class LineFollowingBlockCount<T extends ASTNode> extends AbstractRobotMet
     }
 
     @Override
-    public void visit(DetectLinePort node) {
+    public void visit(DetectRGBValue node) {
         count++;
     }
 

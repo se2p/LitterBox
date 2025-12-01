@@ -16,27 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.BatteryEnergy;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
-
-public class RobotCodeMetric extends AbstractRobotMetric<Program> {
-
-    public static final String NAME = "robot_code_finder";
-    private boolean robot = false;
+public class BatteryBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "battery_block_count";
+    private int count = 0;
 
     @Override
-    public double calculateMetric(Program node) {
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        count = 0;
         node.accept(this);
-        return robot ? 1 : 0;
+        return count;
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        robot = robot || getRobot(actor.getIdent().getName(), actor.getSetStmtList()).isRobot();
+    public void visit(BatteryEnergy node) {
+        count++;
     }
 
     @Override

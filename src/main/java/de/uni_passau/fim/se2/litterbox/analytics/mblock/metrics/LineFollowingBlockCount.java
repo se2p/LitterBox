@@ -16,23 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.DetectLinePort;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public abstract class AbstractRobotMetric<T extends ASTNode>
-        implements MetricExtractor<T>, ScratchVisitor, MBlockVisitor {
+public class LineFollowingBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "line_following_block_count";
+    private int count = 0;
+
     @Override
-    public void visit(MBlockNode node) {
-        node.accept((MBlockVisitor) this);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        count = 0;
+        node.accept(this);
+        return count;
     }
 
     @Override
-    public void visitParentVisitor(MBlockNode node) {
-        visitDefaultVisitor(node);
+    public void visit(DetectLinePort node) {
+        count++;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }

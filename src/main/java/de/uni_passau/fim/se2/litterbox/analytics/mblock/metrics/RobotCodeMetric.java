@@ -16,27 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.DetectRGBValue;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ColorDetectionBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
-    public static final String NAME = "color_detection_block_count";
-    private int count = 0;
+import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
+
+public class RobotCodeMetric extends AbstractRobotMetric<Program> {
+
+    public static final String NAME = "robot_code_finder";
+    private boolean robot = false;
 
     @Override
-    public double calculateMetric(T node) {
-        Preconditions.checkNotNull(node);
-        count = 0;
+    public double calculateMetric(Program node) {
         node.accept(this);
-        return count;
+        return robot ? 1 : 0;
     }
 
     @Override
-    public void visit(DetectRGBValue node) {
-        count++;
+    public void visit(ActorDefinition actor) {
+        robot = robot || getRobot(actor.getIdent().getName(), actor.getSetStmtList()).isRobot();
     }
 
     @Override

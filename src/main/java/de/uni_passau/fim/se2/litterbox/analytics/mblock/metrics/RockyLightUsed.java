@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.MBlockEvent;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.MBlockBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.MBlockNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.string.MBlockStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBlockStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLight;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightOff;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
-    public static final String NAME = "m_block_count";
+public class RockyLightUsed<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "rocky_light_used";
     private int count = 0;
 
     @Override
@@ -35,37 +32,21 @@ public class MBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
         Preconditions.checkNotNull(node);
         count = 0;
         node.accept(this);
-        return count;
+        if (count > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public void visit(MBlockEvent node) {
+    public void visit(RockyLight node) {
         count++;
-        visitChildren(node);
     }
 
     @Override
-    public void visit(MBlockStmt node) {
+    public void visit(RockyLightOff node) {
         count++;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(MBlockStringExpr node) {
-        count++;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(MBlockNumExpr node) {
-        count++;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(MBlockBoolExpr node) {
-        count++;
-        visitChildren(node);
     }
 
     @Override

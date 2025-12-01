@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.BatteryEnergy;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.SoundVolume;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BatteryBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
-    public static final String NAME = "battery_block_count";
+public class LoudnessBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "loudness_block_count";
     private int count = 0;
 
     @Override
@@ -35,7 +35,7 @@ public class BatteryBlockCount<T extends ASTNode> extends AbstractRobotMetric<T>
     }
 
     @Override
-    public void visit(BatteryEnergy node) {
+    public void visit(SoundVolume node) {
         count++;
     }
 

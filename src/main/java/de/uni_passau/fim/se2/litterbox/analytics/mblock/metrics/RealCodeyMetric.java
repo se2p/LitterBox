@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -30,12 +30,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.MB
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.MBlockStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.MCORE;
+import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.CODEY;
 import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
 
-public class RealMCoreMetric extends AbstractRobotMetric<Program> {
+public class RealCodeyMetric extends AbstractRobotMetric<Program> {
 
-    public static final String NAME = "real_mcore_program";
+    public static final String NAME = "real_codey_program";
     private boolean robot = false;
     private boolean realRobot = false;
 
@@ -47,7 +47,7 @@ public class RealMCoreMetric extends AbstractRobotMetric<Program> {
 
     @Override
     public void visit(ActorDefinition actor) {
-        robot = robot || getRobot(actor.getIdent().getName(), actor.getSetStmtList()) == MCORE;
+        robot = robot || getRobot(actor.getIdent().getName(), actor.getSetStmtList()) == CODEY;
         if (robot) {
             visit((ASTNode) actor);
         }
@@ -67,6 +67,7 @@ public class RealMCoreMetric extends AbstractRobotMetric<Program> {
     public void visit(Event event) {
         if (robot && event instanceof MBlockEvent) {
             realRobot = true;
+            robot = false;
             return;
         }
         visit((ASTNode) event);
@@ -76,6 +77,7 @@ public class RealMCoreMetric extends AbstractRobotMetric<Program> {
     public void visit(Stmt stmt) {
         if (robot && stmt instanceof MBlockStmt) {
             realRobot = true;
+            robot = false;
             return;
         }
         visit((ASTNode) stmt);

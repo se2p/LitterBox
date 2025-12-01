@@ -16,36 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.AURIGA;
-import static de.uni_passau.fim.se2.litterbox.analytics.mblock.RobotCode.getRobot;
-
-public class AurigaCounterMetric implements MetricExtractor<Program>, ScratchVisitor, MBlockVisitor {
-
-    public static final String NAME = "robot_auriga_counter";
-    private int aurigaCounter = 0;
-
-    @Override
-    public double calculateMetric(Program node) {
-        node.accept(this);
-        return aurigaCounter;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        if (getRobot(actor.getIdent().getName(), actor.getSetStmtList()) == AURIGA) {
-            aurigaCounter++;
-        }
-    }
-
+public abstract class AbstractRobotMetric<T extends ASTNode>
+        implements MetricExtractor<T>, ScratchVisitor, MBlockVisitor {
     @Override
     public void visit(MBlockNode node) {
         node.accept((MBlockVisitor) this);
@@ -54,10 +34,5 @@ public class AurigaCounterMetric implements MetricExtractor<Program>, ScratchVis
     @Override
     public void visitParentVisitor(MBlockNode node) {
         visitDefaultVisitor(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

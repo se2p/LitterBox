@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.BatteryLevelInBounds;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class RealCodeyMetricTest implements JsonTest {
+public class BatteryBlockCountTest implements JsonTest {
 
     @Test
-    public void testMetric() throws ParsingException, IOException {
-        assertThatMetricReports(0, new RealCodeyMetric(), "./src/test/fixtures/mblock/test/codeyNotProgrammedMBotProgrammed.json");
-        assertThatMetricReports(1, new RealMCoreMetric(), "./src/test/fixtures/mblock/test/codeyNotProgrammedMBotProgrammed.json");
+    public void test2BatterBlocks() throws ParsingException, IOException {
+        assertThatMetricReports(2, new BatteryBlockCount<>(), "./src/test/fixtures/mblock/test/battery2blocks.json");
+        assertThatFinderReports(1, new BatteryLevelInBounds(), "./src/test/fixtures/mblock/test/battery2blocks.json");
     }
 }

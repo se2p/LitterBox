@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.mblock.metric;
+package de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLight;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.statement.led.RockyLightOff;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.num.ShakingStrength;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class RockyLightUsed<T extends ASTNode> extends AbstractRobotMetric<T> {
-    public static final String NAME = "rocky_light_used";
+public class ShakingStrengthBlockCount<T extends ASTNode> extends AbstractRobotMetric<T> {
+    public static final String NAME = "shaking_strength_block_count";
     private int count = 0;
 
     @Override
@@ -32,20 +31,11 @@ public class RockyLightUsed<T extends ASTNode> extends AbstractRobotMetric<T> {
         Preconditions.checkNotNull(node);
         count = 0;
         node.accept(this);
-        if (count > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return count;
     }
 
     @Override
-    public void visit(RockyLight node) {
-        count++;
-    }
-
-    @Override
-    public void visit(RockyLightOff node) {
+    public void visit(ShakingStrength node) {
         count++;
     }
 

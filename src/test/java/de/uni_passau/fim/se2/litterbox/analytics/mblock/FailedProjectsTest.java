@@ -20,10 +20,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugs.*;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.CodeyCounterMetric;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.MCoreCounterMetric;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.RealCodeyMetric;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.metric.RobotCodeMetric;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics.CodeyCounterMetric;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics.MCoreCounterMetric;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics.RealCodeyMetric;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.metrics.RobotCodeMetric;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.junit.jupiter.api.Test;
 
