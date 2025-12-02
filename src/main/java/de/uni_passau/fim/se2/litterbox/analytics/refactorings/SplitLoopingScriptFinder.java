@@ -62,7 +62,6 @@ public class SplitLoopingScriptFinder extends AbstractDependencyRefactoringFinde
                 return;
             }
         }
-        }
 
         List<Stmt> bodyStmts = loopBody.getStmts();
         if (bodyStmts.size() <= 1) {

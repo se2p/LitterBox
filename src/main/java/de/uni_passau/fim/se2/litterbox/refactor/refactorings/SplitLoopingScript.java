@@ -64,7 +64,8 @@ public class SplitLoopingScript extends OnlyCodeCloneVisitor implements Refactor
             Preconditions.checkArgument(stmt instanceof IfStmt);
             
             // Create a new loop with just this statement
-            newLoop = switch (loopStmt) {
+            StmtList newBody = new StmtList(apply(stmt));
+            Stmt newLoop = switch (loopStmt) {
                 case RepeatForeverStmt forever -> new RepeatForeverStmt(newBody, forever.getMetadata());
                 case RepeatTimesStmt repeat -> new RepeatTimesStmt(repeat.getTimes(), newBody, repeat.getMetadata());
                 case UntilStmt until -> new UntilStmt(until.getBoolExpr(), newBody, until.getMetadata());
