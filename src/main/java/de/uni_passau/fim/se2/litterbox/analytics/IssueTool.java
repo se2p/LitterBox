@@ -84,6 +84,7 @@ public class IssueTool {
             registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
             registerBugFinder(new NoWorkingScripts(), bugFinders);
             registerBugFinder(new OrphanedParameter(), bugFinders);
+            registerBugFinder(new OverwrittenVisualEffect(), bugFinders);
             registerBugFinder(new ParameterAsLiteral(), bugFinders);
             registerBugFinder(new ParameterOutOfScope(), bugFinders);
             registerBugFinder(new PositionEqualsCheck(), bugFinders);
@@ -153,6 +154,7 @@ public class IssueTool {
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new OrphanedParameter(), bugFinders);
         registerBugFinder(new ParameterAsLiteral(), bugFinders);
+        registerBugFinder(new OverwrittenVisualEffect(), bugFinders);
         registerBugFinder(new ParameterOutOfScope(), bugFinders);
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
