@@ -54,14 +54,14 @@ public class SplitLoopingScriptFinder extends AbstractDependencyRefactoringFinde
         }
 
         StmtList loopBody;
-        if (stmt instanceof RepeatForeverStmt forever) {
-            loopBody = forever.getStmtList();
-        } else if (stmt instanceof RepeatTimesStmt repeat) {
-            loopBody = repeat.getStmtList();
-        } else if (stmt instanceof UntilStmt until) {
-            loopBody = until.getStmtList();
-        } else {
-            return;
+        switch (stmt) {
+            case RepeatForeverStmt forever -> loopBody = forever.getStmtList();
+            case RepeatTimesStmt repeat -> loopBody = repeat.getStmtList();
+            case UntilStmt until -> loopBody = until.getStmtList();
+            default -> {
+                return;
+            }
+        }
         }
 
         List<Stmt> bodyStmts = loopBody.getStmts();

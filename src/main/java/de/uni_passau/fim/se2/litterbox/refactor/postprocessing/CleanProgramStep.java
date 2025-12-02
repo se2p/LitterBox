@@ -96,8 +96,7 @@ public class CleanProgramStep implements PostProcessorStep {
     }
 
     private boolean checkControlStmtChildren(ControlStmt stmt) {
-        if (stmt instanceof IfElseStmt) {
-            IfElseStmt ifElseStmt = (IfElseStmt) stmt;
+        if (stmt instanceof IfElseStmt ifElseStmt) {
             if (!isOnlyControl(ifElseStmt.getThenStmts())) {
                 return false;
             }
@@ -107,13 +106,11 @@ public class CleanProgramStep implements PostProcessorStep {
             return true;
         }
 
-        if (stmt instanceof IfStmt) {
-            IfStmt ifStmt = (IfStmt) stmt;
+        if (stmt instanceof IfStmt ifStmt) {
             return isOnlyControl(ifStmt.getThenStmts());
         }
         
-        if (stmt instanceof LoopStmt) {
-            LoopStmt loopStmt = (LoopStmt) stmt;
+        if (stmt instanceof LoopStmt loopStmt) {
             return isOnlyControl(loopStmt.getStmtList());
         }
         

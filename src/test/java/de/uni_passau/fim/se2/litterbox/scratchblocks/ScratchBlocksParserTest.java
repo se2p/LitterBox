@@ -365,16 +365,7 @@ end
                     end
                 end
                 """;
-        String code2 = """
-when green flag clicked
-if <key (space v) pressed?> then
-if  <mouse down?> then
-say [Hello!]
-else
-say [Bye!]
-end
-end
-""";
+        String code2 = Arrays.stream(code1.split("\n")).map(String::stripLeading).collect(Collectors.joining("\n"));
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code1);
         Script script2 = parser.parseScript("Stage", code2);
