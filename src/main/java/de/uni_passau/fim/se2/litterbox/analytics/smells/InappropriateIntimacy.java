@@ -36,26 +36,40 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class InappropriateIntimacy extends AbstractIssueFinder {
 
     private static final String NAME = "inappropriate_intimacy";
+    private static final int MIN_ACCESSES = 2;
 
     @Override
     public void visit(Script script) {
         currentScript = script;
-        AttributeAccessVisitor visitor = new AttributeAccessVisitor();
+        Set<String> localVariables = new HashSet<>();
+        if (program != null && currentActor != null) {
+            for (VariableInfo info : program.getSymbolTable().getVariables().values()) {
+                if (info.actor().equals(currentActor.getIdent().getName())) {
+                    localVariables.add(info.variableName());
+                }
+            }
+        }
+
+        AttributeAccessVisitor visitor = new AttributeAccessVisitor(localVariables);
         script.accept(visitor);
 
         int ownAccesses = visitor.getOwnAccesses();
         Map<String, Integer> otherSpriteAccesses = visitor.getOtherSpriteAccesses();
 
         for (Map.Entry<String, Integer> entry : otherSpriteAccesses.entrySet()) {
-            if (entry.getValue() > ownAccesses) {
+            if (entry.getValue() >= MIN_ACCESSES && entry.getValue() > ownAccesses) {
                 Hint hint = Hint.fromKey(NAME);
                 hint.setParameter(Hint.HINT_SPRITE, entry.getKey());
                 addIssue(script.getEvent(), script.getEvent().getMetadata(), IssueSeverity.MEDIUM, hint);
@@ -82,6 +96,11 @@ public class InappropriateIntimacy extends AbstractIssueFinder {
     private static class AttributeAccessVisitor implements ScratchVisitor {
         private int ownAccesses = 0;
         private final Map<String, Integer> otherSpriteAccesses = new HashMap<>();
+        private final Set<String> localVariables;
+
+        public AttributeAccessVisitor(Set<String> localVariables) {
+            this.localVariables = localVariables;
+        }
 
         public int getOwnAccesses() {
             return ownAccesses;
@@ -124,6 +143,14 @@ public class InappropriateIntimacy extends AbstractIssueFinder {
         @Override
         public void visit(PositionY node) {
             ownAccesses++;
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(LocalIdentifier node) {
+            if (localVariables.contains(node.getName())) {
+                ownAccesses++;
+            }
             visitChildren(node);
         }
 
