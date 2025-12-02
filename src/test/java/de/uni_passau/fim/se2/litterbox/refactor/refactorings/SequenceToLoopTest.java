@@ -81,8 +81,7 @@ public class SequenceToLoopTest implements JsonTest {
         SequenceToLoopFinder sequenceToLoopFinder = new SequenceToLoopFinder();
         List<Refactoring> refactorings = sequenceToLoopFinder.check(program);
         assertEquals(1, refactorings.size());
-        Refactoring refactoring = refactorings.get(0);
-        Program result = refactorings.get(0).apply(program);
+        Program result = refactorings.getFirst().apply(program);
         String resultCode = ScratchBlocksVisitor.of(result);
         System.out.println(resultCode);
     }
@@ -103,12 +102,11 @@ public class SequenceToLoopTest implements JsonTest {
         SequenceToLoopFinder sequenceToLoopFinder = new SequenceToLoopFinder();
         List<Refactoring> refactorings = sequenceToLoopFinder.check(program);
         assertEquals(1, refactorings.size());
-        Refactoring refactoring = refactorings.get(0);
-        Program result = refactorings.get(0).apply(program);
+        Program result = refactorings.getFirst().apply(program);
         String resultCode = ScratchBlocksVisitor.of(result);
         System.out.println(resultCode);
         List<Stmt> statements = result.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts();
-        assertTrue(statements.get(0) instanceof RepeatTimesStmt);
+        assertTrue(statements.getFirst() instanceof RepeatTimesStmt);
         assertTrue(statements.get(1) instanceof TurnRight);
         assertTrue(statements.get(2) instanceof MoveSteps);
         assertTrue(statements.get(3) instanceof RepeatTimesStmt);

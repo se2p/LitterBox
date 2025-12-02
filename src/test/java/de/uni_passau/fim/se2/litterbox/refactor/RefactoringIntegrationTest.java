@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
@@ -49,8 +48,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,7 +83,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, solutions.get(0).buildRefactoredProgram()));
+        assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, solutions.getFirst().buildRefactoredProgram()));
     }
 
     @Test
@@ -118,7 +115,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
     }
 
@@ -147,7 +144,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
     }
 
@@ -173,7 +170,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
     }
 
@@ -203,7 +200,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
      }
 
@@ -233,7 +230,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
     }
 
@@ -272,7 +269,7 @@ public class RefactoringIntegrationTest implements JsonTest {
         
         Program expectedProgram1 = parseProgram(expectedCode1);
         Program expectedProgram2 = parseProgram(expectedCode2);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
                    StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
     }
@@ -305,7 +302,7 @@ public class RefactoringIntegrationTest implements JsonTest {
 
         Program expectedProgram1 = parseProgram(expectedCode1);
         Program expectedProgram2 = parseProgram(expectedCode2);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
     StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
      }
@@ -338,7 +335,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
      }
 
@@ -369,7 +366,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 """;
         
         Program expectedProgram = parseProgram(expectedCode);
-        Program refactoredProgram = solutions.get(0).buildRefactoredProgram();
+        Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
       }
 

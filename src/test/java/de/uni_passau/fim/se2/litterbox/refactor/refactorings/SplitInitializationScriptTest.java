@@ -100,24 +100,24 @@ public class SplitInitializationScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof SplitInitializationScript);
+        assertTrue(refactorings.getFirst() instanceof SplitInitializationScript);
         
-        SplitInitializationScript refactoring = (SplitInitializationScript) refactorings.get(0);
+        SplitInitializationScript refactoring = (SplitInitializationScript) refactorings.getFirst();
         
         // And: Applying the refactoring should result in two scripts
         Program refactoredProgram = (Program) refactoring.apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(2, result.getScriptList().size());
         
-        Script script1 = result.getScriptList().get(0);
+        Script script1 = result.getScriptList().getFirst();
         Script script2 = result.getScriptList().get(1);
         
         assertEquals(2, script1.getStmtList().getNumberOfStatements()); // GoTo, SetVar
         assertEquals(1, script2.getStmtList().getNumberOfStatements()); // Loop
         
-        assertTrue(script1.getStmtList().getStmts().get(0) instanceof GoToPosXY);
+        assertTrue(script1.getStmtList().getStmts().getFirst() instanceof GoToPosXY);
         assertTrue(script1.getStmtList().getStmts().get(1) instanceof SetVariableTo);
-        assertTrue(script2.getStmtList().getStmts().get(0) instanceof RepeatForeverStmt);
+        assertTrue(script2.getStmtList().getStmts().getFirst() instanceof RepeatForeverStmt);
     }
     
     @Test
@@ -176,11 +176,11 @@ public class SplitInitializationScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof SplitInitializationScript);
+        assertTrue(refactorings.getFirst() instanceof SplitInitializationScript);
 
         // And: Applying the refactoring should result in two scripts
-        Program refactoredProgram = (Program) refactorings.get(0).apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        Program refactoredProgram = (Program) refactorings.getFirst().apply(program);
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(2, result.getScriptList().size());
     }
 }

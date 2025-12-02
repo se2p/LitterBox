@@ -52,7 +52,7 @@ class MergeDoubleIfTest implements JsonTest {
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         List<Stmt> stmtList = script.getStmtList().getStmts();
         RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.getFirst();
-        if0 = (IfThenStmt) forever.getStmtList().getStmts().get(0);
+        if0 = (IfThenStmt) forever.getStmtList().getStmts().getFirst();
         if1 = (IfThenStmt) forever.getStmtList().getStmts().get(1);
         if2 = (IfThenStmt) forever.getStmtList().getStmts().get(2);
         refactoring = new MergeDoubleIf(if1, if2);

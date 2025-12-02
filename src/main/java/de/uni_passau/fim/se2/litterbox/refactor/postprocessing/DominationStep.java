@@ -38,7 +38,7 @@ public class DominationStep implements PostProcessorStep {
         Dominance<RefactorSequence> dominance = new Dominance<>(context.getFitnessFunctions());
 
         // Create an empty sequence representing the original program
-        RefactorSequence first = solutions.get(0);
+        RefactorSequence first = solutions.getFirst();
         RefactorSequence original = new RefactorSequence(
                 context.getOriginalProgram(),
                 first.getMutation(),

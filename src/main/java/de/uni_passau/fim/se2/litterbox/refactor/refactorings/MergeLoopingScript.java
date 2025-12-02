@@ -44,8 +44,8 @@ public class MergeLoopingScript extends OnlyCodeCloneVisitor implements Refactor
         this.script1 = Preconditions.checkNotNull(script1);
         this.script2 = Preconditions.checkNotNull(script2);
 
-        Stmt loopStmt1 = script1.getStmtList().getStmts().get(0);
-        Stmt loopStmt2 = script2.getStmtList().getStmts().get(0);
+        Stmt loopStmt1 = script1.getStmtList().getStmts().getFirst();
+        Stmt loopStmt2 = script2.getStmtList().getStmts().getFirst();
         
         Preconditions.checkArgument(loopStmt1 instanceof LoopStmt);
         Preconditions.checkArgument(loopStmt2 instanceof LoopStmt);

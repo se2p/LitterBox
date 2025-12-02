@@ -100,21 +100,21 @@ public class MergeLoopingScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof MergeLoopingScript);
+        assertTrue(refactorings.getFirst() instanceof MergeLoopingScript);
         
-        MergeLoopingScript refactoring = (MergeLoopingScript) refactorings.get(0);
+        MergeLoopingScript refactoring = (MergeLoopingScript) refactorings.getFirst();
         
         // And: Applying the refactoring should result in one script
         Program refactoredProgram = (Program) refactoring.apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(1, result.getScriptList().size());
         
-        Script mergedScript = result.getScriptList().get(0);
+        Script mergedScript = result.getScriptList().getFirst();
         assertEquals(1, mergedScript.getStmtList().getNumberOfStatements()); // Loop
         
-        assertTrue(mergedScript.getStmtList().getStmts().get(0) instanceof RepeatForeverStmt);
+        assertTrue(mergedScript.getStmtList().getStmts().getFirst() instanceof RepeatForeverStmt);
         
-        RepeatForeverStmt mergedLoop = (RepeatForeverStmt) mergedScript.getStmtList().getStmts().get(0);
+        RepeatForeverStmt mergedLoop = (RepeatForeverStmt) mergedScript.getStmtList().getStmts().getFirst();
         assertEquals(2, mergedLoop.getStmtList().getNumberOfStatements());
     }
     @Test
@@ -141,11 +141,11 @@ public class MergeLoopingScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof MergeLoopingScript);
+        assertTrue(refactorings.getFirst() instanceof MergeLoopingScript);
 
         // And: Applying the refactoring should result in one script
-        Program refactoredProgram = (Program) refactorings.get(0).apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        Program refactoredProgram = (Program) refactorings.getFirst().apply(program);
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(1, result.getScriptList().size());
     }
 }

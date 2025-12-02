@@ -48,7 +48,7 @@ public class SplitLoopingScriptFinder extends AbstractDependencyRefactoringFinde
             return;
         }
 
-        Stmt stmt = script.getStmtList().getStmts().get(0);
+        Stmt stmt = script.getStmtList().getStmts().getFirst();
         if (!(stmt instanceof LoopStmt)) {
             return;
         }

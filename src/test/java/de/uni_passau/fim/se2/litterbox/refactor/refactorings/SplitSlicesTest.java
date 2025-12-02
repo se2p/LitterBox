@@ -86,7 +86,7 @@ public class SplitSlicesTest implements JsonTest {
         SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertThat(refactoredScript1.getEvent()).isEqualTo(script.getEvent());
         assertThat(refactoredScript2.getEvent()).isEqualTo(script.getEvent());
@@ -108,7 +108,7 @@ public class SplitSlicesTest implements JsonTest {
         SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         Script refactoredScript3 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(2);
 

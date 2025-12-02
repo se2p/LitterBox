@@ -124,11 +124,11 @@ class FastNonDominatedSortTest {
 
         List<List<RefactorSequence>> fronts = fastNonDominatedSort.fastNonDominatedSort(solutions);
         assertEquals(2, fronts.size());
-        assertEquals(2, fronts.get(0).size());
+        assertEquals(2, fronts.getFirst().size());
         assertEquals(2, fronts.get(1).size());
-        assertSame(c3, fronts.get(0).get(0));
-        assertSame(c4, fronts.get(0).get(1));
-        assertSame(c1, fronts.get(1).get(0));
+        assertSame(c3, fronts.getFirst().getFirst());
+        assertSame(c4, fronts.getFirst().get(1));
+        assertSame(c1, fronts.get(1).getFirst());
         assertSame(c2, fronts.get(1).get(1));
     }
     
@@ -147,8 +147,8 @@ class FastNonDominatedSortTest {
         List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(List.of(s1));
         
         assertEquals(1, fronts.size());
-        assertEquals(1, fronts.get(0).size());
-        assertSame(s1, fronts.get(0).get(0));
+        assertEquals(1, fronts.getFirst().size());
+        assertSame(s1, fronts.getFirst().getFirst());
         verify(s1).setRank(0);
     }
 
@@ -184,18 +184,18 @@ class FastNonDominatedSortTest {
         assertEquals(3, fronts.size());
         
         // Front 0: S1
-        assertEquals(1, fronts.get(0).size());
-        assertSame(s1, fronts.get(0).get(0));
+        assertEquals(1, fronts.getFirst().size());
+        assertSame(s1, fronts.getFirst().getFirst());
         verify(s1).setRank(0);
 
         // Front 1: S2
         assertEquals(1, fronts.get(1).size());
-        assertSame(s2, fronts.get(1).get(0));
+        assertSame(s2, fronts.get(1).getFirst());
         verify(s2).setRank(1);
 
         // Front 2: S3
         assertEquals(1, fronts.get(2).size());
-        assertSame(s3, fronts.get(2).get(0));
+        assertSame(s3, fronts.get(2).getFirst());
         verify(s3).setRank(2);
     }
 
@@ -217,10 +217,10 @@ class FastNonDominatedSortTest {
         List<List<RefactorSequence>> fronts = sort.fastNonDominatedSort(solutions);
 
         assertEquals(1, fronts.size());
-        assertEquals(3, fronts.get(0).size());
-        assertTrue(fronts.get(0).contains(s1));
-        assertTrue(fronts.get(0).contains(s2));
-        assertTrue(fronts.get(0).contains(s3));
+        assertEquals(3, fronts.getFirst().size());
+        assertTrue(fronts.getFirst().contains(s1));
+        assertTrue(fronts.getFirst().contains(s2));
+        assertTrue(fronts.getFirst().contains(s3));
         
         verify(s1).setRank(0);
         verify(s2).setRank(0);

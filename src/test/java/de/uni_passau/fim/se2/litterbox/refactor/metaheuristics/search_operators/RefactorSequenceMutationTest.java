@@ -88,7 +88,7 @@ class RefactorSequenceMutationTest {
         
         List<Integer> mutatedProductions = mutant.getProductions();
         assertEquals(3, mutatedProductions.size());
-        assertEquals(42, mutatedProductions.get(0));
+        assertEquals(42, mutatedProductions.getFirst());
         assertEquals(1, mutatedProductions.get(1));
         assertEquals(2, mutatedProductions.get(2));
     }
@@ -114,7 +114,7 @@ class RefactorSequenceMutationTest {
         
         List<Integer> mutatedProductions = mutant.getProductions();
         assertEquals(2, mutatedProductions.size());
-        assertEquals(99, mutatedProductions.get(0));
+        assertEquals(99, mutatedProductions.getFirst());
         assertEquals(2, mutatedProductions.get(1));
     }
 
@@ -142,6 +142,6 @@ class RefactorSequenceMutationTest {
         
         List<Integer> mutatedProductions = mutant.getProductions();
         assertEquals(1, mutatedProductions.size());
-        assertEquals(2, mutatedProductions.get(0));
+        assertEquals(2, mutatedProductions.getFirst());
     }
 }

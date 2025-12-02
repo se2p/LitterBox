@@ -46,7 +46,7 @@ public class SplitLoopingScript extends OnlyCodeCloneVisitor implements Refactor
         this.script = Preconditions.checkNotNull(script);
         this.replacementScripts = new ArrayList<>();
 
-        Stmt loopStmt = script.getStmtList().getStmts().get(0);
+        Stmt loopStmt = script.getStmtList().getStmts().getFirst();
         Preconditions.checkArgument(loopStmt instanceof LoopStmt);
         
         StmtList loopBody;

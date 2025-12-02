@@ -125,7 +125,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         List<List<C>> nonDominatedSortedSolution = fastNonDominatedSort.fastNonDominatedSort(population);
         log.log(Level.FINE, "Fronts: "+nonDominatedSortedSolution.size());
         if (!nonDominatedSortedSolution.isEmpty()) {
-            log.log(Level.FINE, "First Front Size: " + nonDominatedSortedSolution.get(0).size());
+            log.log(Level.FINE, "First Front Size: " + nonDominatedSortedSolution.getFirst().size());
         }
         population = Lists.newLinkedList();
 

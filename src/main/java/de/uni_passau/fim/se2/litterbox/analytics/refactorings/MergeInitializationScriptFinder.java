@@ -94,7 +94,7 @@ public class MergeInitializationScriptFinder extends AbstractDependencyRefactori
         if (script.getStmtList().getStmts().size() != 1) {
             return false;
         }
-        return script.getStmtList().getStmts().get(0) instanceof LoopStmt;
+        return script.getStmtList().getStmts().getFirst() instanceof LoopStmt;
     }
 
     private boolean isAttributeSetting(Stmt stmt) {

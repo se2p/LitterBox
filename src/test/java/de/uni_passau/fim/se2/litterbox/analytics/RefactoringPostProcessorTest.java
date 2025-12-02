@@ -103,8 +103,8 @@ class RefactoringPostProcessorTest {
 
         // Verify that the dead script was removed
         // Stage is the first actor in our helper
-        assertEquals(1, program.getActorDefinitionList().getDefinitions().get(0).getScripts().getSize());
-        assertTrue(program.getActorDefinitionList().getDefinitions().get(0).getScripts().getScriptList().get(0).getEvent() instanceof GreenFlag);
+        assertEquals(1, program.getActorDefinitionList().getDefinitions().getFirst().getScripts().getSize());
+        assertTrue(program.getActorDefinitionList().getDefinitions().getFirst().getScripts().getScriptList().getFirst().getEvent() instanceof GreenFlag);
     }
 
     @Test
@@ -123,7 +123,7 @@ class RefactoringPostProcessorTest {
         postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Verify that the script was removed
-        assertEquals(0, program.getActorDefinitionList().getDefinitions().get(0).getScripts().getSize());
+        assertEquals(0, program.getActorDefinitionList().getDefinitions().getFirst().getScripts().getSize());
     }
 
     @Test
@@ -142,7 +142,7 @@ class RefactoringPostProcessorTest {
         postProcessor.process(sequences, createDummyOriginalProgram(), tempDir, Path.of("test.json"));
 
         // Verify that the script was NOT removed
-        assertEquals(1, program.getActorDefinitionList().getDefinitions().get(0).getScripts().getSize());
+        assertEquals(1, program.getActorDefinitionList().getDefinitions().getFirst().getScripts().getSize());
     }
 
     @Test

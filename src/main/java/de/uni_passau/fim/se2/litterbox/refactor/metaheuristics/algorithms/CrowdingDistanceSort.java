@@ -78,7 +78,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
             sorted.sort(Comparator.comparingDouble(c -> c.getFitness(ff)));
             
             // Boundary points get MAX_VALUE
-            newDistancesPerSolution.put(sorted.get(0), Double.MAX_VALUE);
+            newDistancesPerSolution.put(sorted.getFirst(), Double.MAX_VALUE);
             newDistancesPerSolution.put(sorted.get(l - 1), Double.MAX_VALUE);
             
             if (rangeFitness == 0) {

@@ -19,13 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.ExtractEventsFromForeverFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +60,7 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         List<Refactoring> refactorings = finder.check(program);
         Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
-        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertInstanceOf(KeyPressed.class, refactoredScriptEvent1.getEvent());
         assertInstanceOf(KeyPressed.class, refactoredScriptEvent2.getEvent());

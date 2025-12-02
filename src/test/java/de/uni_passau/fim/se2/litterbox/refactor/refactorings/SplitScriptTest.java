@@ -146,7 +146,7 @@ public class SplitScriptTest implements JsonTest {
         SplitScript refactoring = new SplitScript(script, wait);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertThat(refactoredScript1.getEvent()).isEqualTo(script.getEvent());
         assertThat(refactoredScript2.getEvent()).isEqualTo(script.getEvent());

@@ -73,8 +73,8 @@ public class MergeLoopingScriptFinder extends AbstractDependencyRefactoringFinde
             return false;
         }
         
-        Stmt stmt1 = s1.getStmtList().getStmts().get(0);
-        Stmt stmt2 = s2.getStmtList().getStmts().get(0);
+        Stmt stmt1 = s1.getStmtList().getStmts().getFirst();
+        Stmt stmt2 = s2.getStmtList().getStmts().getFirst();
         
         if (!(stmt1 instanceof LoopStmt) || !(stmt2 instanceof LoopStmt)) {
             return false;

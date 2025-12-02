@@ -56,7 +56,7 @@ public class SplitScriptAfterUntilTest implements JsonTest {
         SplitScriptAfterUntil refactoring = new SplitScriptAfterUntil(script, untilStmt);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
 
         StmtList refactoredStmtList1 = refactoredScript1.getStmtList();
@@ -94,7 +94,7 @@ public class SplitScriptAfterUntilTest implements JsonTest {
         // However, we should also check if applying them produces a valid program.
         assertThat(refactorings).hasSize(1);
         
-        Program refactored = refactorings.get(0).apply(program);
+        Program refactored = refactorings.getFirst().apply(program);
         assertThat(refactored).isNotNull();
         assertEquals(2, refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
     }

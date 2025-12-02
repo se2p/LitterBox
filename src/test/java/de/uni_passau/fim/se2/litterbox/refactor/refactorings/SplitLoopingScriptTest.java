@@ -101,32 +101,32 @@ public class SplitLoopingScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof SplitLoopingScript);
+        assertTrue(refactorings.getFirst() instanceof SplitLoopingScript);
         
-        SplitLoopingScript refactoring = (SplitLoopingScript) refactorings.get(0);
+        SplitLoopingScript refactoring = (SplitLoopingScript) refactorings.getFirst();
         
         // And: Applying the refactoring should result in two scripts
         Program refactoredProgram = (Program) refactoring.apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(2, result.getScriptList().size());
         
-        Script script1 = result.getScriptList().get(0);
+        Script script1 = result.getScriptList().getFirst();
         Script script2 = result.getScriptList().get(1);
         
         assertEquals(1, script1.getStmtList().getNumberOfStatements()); // Loop
         assertEquals(1, script2.getStmtList().getNumberOfStatements()); // Loop
         
-        assertTrue(script1.getStmtList().getStmts().get(0) instanceof RepeatForeverStmt);
-        assertTrue(script2.getStmtList().getStmts().get(0) instanceof RepeatForeverStmt);
+        assertTrue(script1.getStmtList().getStmts().getFirst() instanceof RepeatForeverStmt);
+        assertTrue(script2.getStmtList().getStmts().getFirst() instanceof RepeatForeverStmt);
         
-        RepeatForeverStmt loop1 = (RepeatForeverStmt) script1.getStmtList().getStmts().get(0);
-        RepeatForeverStmt loop2 = (RepeatForeverStmt) script2.getStmtList().getStmts().get(0);
+        RepeatForeverStmt loop1 = (RepeatForeverStmt) script1.getStmtList().getStmts().getFirst();
+        RepeatForeverStmt loop2 = (RepeatForeverStmt) script2.getStmtList().getStmts().getFirst();
         
         assertEquals(1, loop1.getStmtList().getNumberOfStatements());
         assertEquals(1, loop2.getStmtList().getNumberOfStatements());
         
-        assertTrue(loop1.getStmtList().getStmts().get(0) instanceof IfThenStmt);
-        assertTrue(loop2.getStmtList().getStmts().get(0) instanceof IfThenStmt);
+        assertTrue(loop1.getStmtList().getStmts().getFirst() instanceof IfThenStmt);
+        assertTrue(loop2.getStmtList().getStmts().getFirst() instanceof IfThenStmt);
     }
     @Test
     public void testSplitLoopingWithScratchBlocks() {
@@ -153,11 +153,11 @@ public class SplitLoopingScriptTest {
 
         // Then: One refactoring should be found
         assertEquals(1, refactorings.size());
-        assertTrue(refactorings.get(0) instanceof SplitLoopingScript);
+        assertTrue(refactorings.getFirst() instanceof SplitLoopingScript);
 
         // And: Applying the refactoring should result in two scripts
-        Program refactoredProgram = (Program) refactorings.get(0).apply(program);
-        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().get(0).getScripts();
+        Program refactoredProgram = (Program) refactorings.getFirst().apply(program);
+        ScriptList result = refactoredProgram.getActorDefinitionList().getDefinitions().getFirst().getScripts();
         assertEquals(2, result.getScriptList().size());
     }
 }
