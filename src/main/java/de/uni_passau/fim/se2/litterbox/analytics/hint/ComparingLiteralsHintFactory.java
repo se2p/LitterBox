@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.VariableAsLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;

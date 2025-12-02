@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.LoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
+import de.uni_passau.fim.se2.litterbox.analytics.perfumes.LoopSensing;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
@@ -1102,7 +1102,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        Program program = getAST("src/test/fixtures/bugs/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> issues = finder.check(program);
 
@@ -1120,7 +1120,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMultipleIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        Program program = getAST("src/test/fixtures/bugs/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> issues = finder.check(program);
         StutteringMovement stuttMovement = new StutteringMovement();
@@ -1151,7 +1151,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testStutteringMovementIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/stutteringMovement.json");
+        Program program = getAST("src/test/fixtures/bugs/stutteringMovement.json");
         StutteringMovement finder = new StutteringMovement();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1169,7 +1169,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testEndlessRecursionIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/recursiveProcedure.json");
+        Program program = getAST("src/test/fixtures/bugs/recursiveProcedure.json");
         EndlessRecursion finder = new EndlessRecursion();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1189,7 +1189,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testCustomBlockWithForeverIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/procedureWithForever.json");
+        Program program = getAST("src/test/fixtures/bugs/procedureWithForever.json");
         CustomBlockWithForever finder = new CustomBlockWithForever();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1209,7 +1209,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testCustomBlockWithTerminationIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/procedureWithTermination.json");
+        Program program = getAST("src/test/fixtures/bugs/procedureWithTermination.json");
         CustomBlockWithTermination finder = new CustomBlockWithTermination();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1229,7 +1229,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testCallWithoutDefinitionIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/callWithoutDefinition.json");
+        Program program = getAST("src/test/fixtures/bugs/callWithoutDefinition.json");
         CallWithoutDefinition finder = new CallWithoutDefinition();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1247,7 +1247,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testAmbiguousParameterNameIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/realAmbiguousParameter.json");
+        Program program = getAST("src/test/fixtures/bugs/realAmbiguousParameter.json");
         AmbiguousParameterNameUsed finder = new AmbiguousParameterNameUsed();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1266,7 +1266,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testAmbiguousSignatureIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        Program program = getAST("src/test/fixtures/bugs/ambiguousProcedureSignature.json");
         AmbiguousCustomBlockSignature finder = new AmbiguousCustomBlockSignature();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1285,7 +1285,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testExpressionAsTouchingOrColorIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/touchingExpressions.json");
+        Program program = getAST("src/test/fixtures/bugs/touchingExpressions.json");
         ExpressionAsTouchingOrColor finder = new ExpressionAsTouchingOrColor();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1303,7 +1303,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testForeverInsideLoopIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/foreverInLoop.json");
+        Program program = getAST("src/test/fixtures/bugs/foreverInLoop.json");
         ForeverInsideLoop finder = new ForeverInsideLoop();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1329,7 +1329,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testIllegalParameterRefactorIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/illegalParameterRefactor.json");
+        Program program = getAST("src/test/fixtures/bugs/illegalParameterRefactor.json");
         IllegalParameterRefactor finder = new IllegalParameterRefactor();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1350,7 +1350,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMessageNeverReceivedIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
+        Program program = getAST("src/test/fixtures/bugs/broadcastSync.json");
         MessageNeverReceived finder = new MessageNeverReceived();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1370,7 +1370,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMessageNeverSentIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/messageRec.json");
+        Program program = getAST("src/test/fixtures/bugs/messageRec.json");
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1389,7 +1389,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingBackdropSwitchIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missBackdrop.json");
+        Program program = getAST("src/test/fixtures/bugs/missBackdrop.json");
         MissingBackdropSwitch finder = new MissingBackdropSwitch();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1408,7 +1408,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingCloneCallIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingCloneCall.json");
+        Program program = getAST("src/test/fixtures/bugs/missingCloneCall.json");
         MissingCloneCall finder = new MissingCloneCall();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1427,7 +1427,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingCloneInitializationIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingCloneInitialization.json");
+        Program program = getAST("src/test/fixtures/bugs/missingCloneInitialization.json");
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1447,7 +1447,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingEraseAllIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingEraseAll.json");
+        Program program = getAST("src/test/fixtures/bugs/missingEraseAll.json");
         MissingEraseAll finder = new MissingEraseAll();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1467,7 +1467,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingInitializationIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitialization.json");
+        Program program = getAST("src/test/fixtures/bugs/missingVariableInitialization.json");
         MissingInitialization finder = new MissingInitialization();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1486,7 +1486,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingLoopSensingIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
+        Program program = getAST("src/test/fixtures/bugs/nestedMissingLoopSensing.json");
         MissingLoopSensing finder = new MissingLoopSensing();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1507,7 +1507,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingPenDownIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingPenDown.json");
+        Program program = getAST("src/test/fixtures/bugs/missingPenDown.json");
         MissingPenDown finder = new MissingPenDown();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1529,7 +1529,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingPenUpIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingPenUp.json");
+        Program program = getAST("src/test/fixtures/bugs/missingPenUp.json");
         MissingPenUp finder = new MissingPenUp();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1571,7 +1571,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMissingWaitUntilConditionIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingWaitUntilCondition.json");
+        Program program = getAST("src/test/fixtures/bugs/missingWaitUntilCondition.json");
         MissingWaitUntilCondition finder = new MissingWaitUntilCondition();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1590,7 +1590,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testOrphanedParameterIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/orphanedParameter.json");
+        Program program = getAST("src/test/fixtures/bugs/orphanedParameter.json");
         OrphanedParameter finder = new OrphanedParameter();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1612,7 +1612,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testParameterOutOfScopeIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/parameterOutsideScope.json");
+        Program program = getAST("src/test/fixtures/bugs/parameterOutsideScope.json");
         ParameterOutOfScope finder = new ParameterOutOfScope();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1630,7 +1630,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testRecursiveCloningIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         PositionEqualsCheck finder = new PositionEqualsCheck();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1649,7 +1649,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testPositionEqualsIssueAnnotation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/recursiveCloning.json");
+        Program program = getAST("src/test/fixtures/bugs/recursiveCloning.json");
         RecursiveCloning finder = new RecursiveCloning();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
@@ -1949,7 +1949,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testEmptyActor() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/missingAsk.json");
+        Program program = getAST("src/test/fixtures/bugs/missingAsk.json");
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         visitor.setAddActorNames(true);
         visitor.begin();
@@ -1993,7 +1993,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String result = visitor.getScratchBlocks();
         Assertions.assertEquals("(abc:\\:de)", result.trim());
     }
-    
+
     @Test
     void testParameterDefinitionWithColonEscaped() throws ParsingException, IOException {
         ParameterDefinition definition = new ParameterDefinition(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
@@ -2003,7 +2003,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String result = visitor.getScratchBlocks();
         Assertions.assertEquals("abc:\\:de", result.trim());
     }
-    
+
     @Test
     void testVariableWithDoubleColonGeneration() {
         Variable variable = new Variable(new StrId("abc::de"));

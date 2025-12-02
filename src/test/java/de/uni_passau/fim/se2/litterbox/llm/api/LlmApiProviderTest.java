@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.llm.api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 
+@Isolated // modifies global system property
 class LlmApiProviderTest {
 
     @Test

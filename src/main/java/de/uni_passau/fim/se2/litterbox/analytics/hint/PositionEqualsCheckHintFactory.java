@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.hint;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.PositionEqualsCheck;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;

@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueParser;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingEraseAll;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
@@ -44,7 +44,7 @@ class LLMAnalysisEnhancerTest implements FinderTest, JsonTest {
 
     @Test
     void enhanceAnalysisNoOp(@TempDir final Path outputDir) throws ParsingException, IOException {
-        final Path fixture = Path.of("src/test/fixtures/bugpattern/missingEraseAll.json");
+        final Path fixture = Path.of("src/test/fixtures/bugs/missingEraseAll.json");
         final Path resultPath = outputDir.resolve("missingEraseAll.json");
 
         final Program program = getAST(fixture.toString());
@@ -64,7 +64,7 @@ class LLMAnalysisEnhancerTest implements FinderTest, JsonTest {
 
     @Test
     void enhanceAnalysis(@TempDir final Path outputDir) throws ParsingException, IOException {
-        final Path fixture = Path.of("src/test/fixtures/bugpattern/missingEraseAll.json");
+        final Path fixture = Path.of("src/test/fixtures/bugs/missingEraseAll.json");
         final Path resultPath = outputDir.resolve("missingEraseAll.json");
 
         final Program program = getAST(fixture.toString());

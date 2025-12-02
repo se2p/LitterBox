@@ -35,7 +35,7 @@ public class NumberOfHelloBlocksTest implements JsonTest{
 
     @Test
     void testGetFitnessCorrectly() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/bugpattern/missingPenDown.json");
+        Program program = getAST("./src/test/fixtures/bugs/missingPenDown.json");
         MaximizingFitnessFunction<RefactorSequence>  numberOfHelloBocks = new NumberOfHelloBlocks();
         RefactorSequence refactorSequence = mock(RefactorSequence.class);
         when(refactorSequence.getRefactoredProgram()).thenReturn(program);

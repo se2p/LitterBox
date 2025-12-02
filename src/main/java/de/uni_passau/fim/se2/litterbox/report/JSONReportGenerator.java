@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;

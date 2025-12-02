@@ -22,9 +22,9 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.EndlessRecursion;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.ProcedureCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -43,7 +43,7 @@ public class CSVReportGeneratorTest implements JsonTest {
 
     @Test
     public void testSingleIssueSingleProjectNewCSV() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/recursiveProcedure.json");
+        Program program = getAST("src/test/fixtures/bugs/recursiveProcedure.json");
         EndlessRecursion finder = new EndlessRecursion();
         Set<Issue> issues = finder.check(program);
 
@@ -64,7 +64,7 @@ public class CSVReportGeneratorTest implements JsonTest {
 
     @Test
     public void testSingleIssueTwoProjectsAppendCSV() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/recursiveProcedure.json");
+        Program program = getAST("src/test/fixtures/bugs/recursiveProcedure.json");
         EndlessRecursion finder = new EndlessRecursion();
         Set<Issue> issues = finder.check(program);
 

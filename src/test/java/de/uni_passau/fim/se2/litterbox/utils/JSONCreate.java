@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.utils;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
@@ -52,7 +52,7 @@ class JSONCreate implements JsonTest {
 
     @Test
     public void createAnnotatedJSON() throws ParsingException, IOException {
-        Program prog = getAST("./src/test/fixtures/bugpattern/foreverInLoop.json");
+        Program prog = getAST("./src/test/fixtures/bugs/foreverInLoop.json");
         ForeverInsideLoop fil = new ForeverInsideLoop();
         Set<Issue> issues = fil.check(prog);
         CommentGenerator gen = new CommentGenerator(translator);

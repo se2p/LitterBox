@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.SayHelloBlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.SayHelloBlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 

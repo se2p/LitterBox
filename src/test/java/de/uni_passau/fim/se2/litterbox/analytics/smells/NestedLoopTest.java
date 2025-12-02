@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -44,7 +44,7 @@ public class NestedLoopTest implements JsonTest {
 
     @Test
     public void testNestedForeverSubsumption() throws IOException, ParsingException {
-        Program nestedLoops = getAST("./src/test/fixtures/bugpattern/unnecessaryForever.json");
+        Program nestedLoops = getAST("./src/test/fixtures/bugs/unnecessaryForever.json");
         NestedLoops parameterName = new NestedLoops();
         List<Issue> reportsNested = new ArrayList<>(parameterName.check(nestedLoops));
         Assertions.assertEquals(1, reportsNested.size());

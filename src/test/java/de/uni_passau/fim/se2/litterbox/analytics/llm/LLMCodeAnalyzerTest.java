@@ -42,7 +42,7 @@ class LLMCodeAnalyzerTest implements FinderTest {
 
     @Test
     void testAnalyzeModifyProgram(@TempDir final Path outputDir) throws IOException, ParsingException {
-        final Path inputFile = Path.of("src/test/fixtures/bugpattern/equalsCondition.json");
+        final Path inputFile = Path.of("src/test/fixtures/bugs/equalsCondition.json");
         final Path outputFile = outputDir.resolve("equalsCondition_llm.json");
 
         DummyLlmApi llmApi = new DummyLlmApi("dummy response");

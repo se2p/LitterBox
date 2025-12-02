@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;

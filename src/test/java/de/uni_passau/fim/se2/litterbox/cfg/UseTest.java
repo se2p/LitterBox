@@ -89,7 +89,7 @@ public class UseTest implements JsonTest {
 
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
-        ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/bugs/missingVariableInitializationVariableOf.json");
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         VariableUseVisitor visitor = new VariableUseVisitor();
         nodes.getFirst().getASTNode().accept(visitor);
