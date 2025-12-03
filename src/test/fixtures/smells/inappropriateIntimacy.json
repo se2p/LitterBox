@@ -80,7 +80,7 @@
         },
         "c": {
           "opcode": "sensing_of",
-          "next": "d",
+          "next": null,
           "parent": "b",
           "inputs": {
             "OBJECT": [
@@ -109,15 +109,6 @@
             ]
           },
           "shadow": true,
-          "topLevel": false
-        },
-        "d": {
-          "opcode": "motion_xposition",
-          "next": null,
-          "parent": "c",
-          "inputs": {},
-          "fields": {},
-          "shadow": false,
           "topLevel": false
         }
       },

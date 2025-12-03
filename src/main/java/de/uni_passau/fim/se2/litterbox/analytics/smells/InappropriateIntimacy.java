@@ -48,7 +48,7 @@ import java.util.Set;
 public class InappropriateIntimacy extends AbstractIssueFinder {
 
     private static final String NAME = "inappropriate_intimacy";
-    private static final int MIN_ACCESSES = 2;
+    private static final int MIN_DIFFERENCE = 2;
 
     @Override
     public void visit(Script script) {
@@ -69,7 +69,7 @@ public class InappropriateIntimacy extends AbstractIssueFinder {
         Map<String, Integer> otherSpriteAccesses = visitor.getOtherSpriteAccesses();
 
         for (Map.Entry<String, Integer> entry : otherSpriteAccesses.entrySet()) {
-            if (entry.getValue() >= MIN_ACCESSES && entry.getValue() > ownAccesses) {
+            if (entry.getValue() - ownAccesses >= MIN_DIFFERENCE) {
                 Hint hint = Hint.fromKey(NAME);
                 hint.setParameter(Hint.HINT_SPRITE, entry.getKey());
                 addIssue(script.getEvent(), script.getEvent().getMetadata(), IssueSeverity.MEDIUM, hint);

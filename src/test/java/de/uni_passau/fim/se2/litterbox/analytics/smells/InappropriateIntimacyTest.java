@@ -77,6 +77,7 @@ public class InappropriateIntimacyTest implements JsonTest {
                 move (SpriteLocalVariable) steps
                 say ([x position v] of (Stage v))
                 say ([y position v] of (Stage v))
+                say ([direction v] of (Stage v))
                 """;
 
         Program newProgram = parser.extendProject(program, "Sprite1", script);
