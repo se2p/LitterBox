@@ -29,6 +29,11 @@ public class Definition implements DataflowFact {
         this.defineable = defineable;
     }
 
+    @Override
+    public String toString() {
+        return "Definition{" + defineable + "}";
+    }
+
     public CFGNode getDefinitionSource() {
         return source;
     }

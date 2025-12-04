@@ -95,7 +95,7 @@ public abstract class CFGNode {
 
         Set<Use> uses = new LinkedHashSet<>();
         List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
-                new VariableUseVisitor(),
+                new VariableUseVisitor(getActor()),
                 new ListUseVisitor()
         ));
 

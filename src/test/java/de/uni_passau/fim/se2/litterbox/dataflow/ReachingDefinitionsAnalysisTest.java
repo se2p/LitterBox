@@ -106,8 +106,8 @@ public class ReachingDefinitionsAnalysisTest implements JsonTest {
         assertThat(analysis.getDataflowFacts(setNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(firstDefinition);
         assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(firstDefinition);
-        assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(firstDefinition, secondDefinition);
-        assertThat(analysis.getDataflowFacts(sayNode)).containsExactly(firstDefinition, secondDefinition);
+        assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(secondDefinition);
+        assertThat(analysis.getDataflowFacts(sayNode)).containsExactly(secondDefinition);
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly(firstDefinition, secondDefinition);
     }
 }

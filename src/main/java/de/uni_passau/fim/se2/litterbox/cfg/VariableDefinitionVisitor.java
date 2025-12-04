@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 
@@ -61,5 +63,10 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
     @Override
     public void visit(Qualified node) {
         definitions.add(new Variable(node));
+    }
+
+    @Override
+    public void visit(AskAndWait node) {
+        definitions.add(new Variable(new StrId("answer")));
     }
 }
