@@ -69,7 +69,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -256,7 +255,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testParameterParsingCornerCases() {
         final ProcedureDefinition procDef = parseProcDef("define my block <param1> (param2)");
-        
+
         List<ParameterDefinition> params = procDef.getParameterDefinitionList().getParameterDefinitions();
         assertEquals(2, params.size());
         assertEquals("param1", params.get(0).getIdent().getName());
