@@ -143,13 +143,13 @@ class CrowdingDistanceSortTest {
         // s2 (index 1) gets 0.0.
         assertEquals(Double.MAX_VALUE, s1.getDistance());
         assertEquals(Double.MAX_VALUE, s3.getDistance());
-        assertEquals(0.0, s2.getDistance());
+        assertEquals(Double.MAX_VALUE, s2.getDistance());
     }
-    
+
     @Test
     void testEmptyAndSingleList() {
         CrowdingDistanceSort<TestSolution> sorter = new CrowdingDistanceSort<>(List.of(ff1));
-        
+
         List<TestSolution> empty = new ArrayList<>();
         sorter.calculateCrowdingDistanceAndSort(empty);
         assertEquals(0, empty.size());

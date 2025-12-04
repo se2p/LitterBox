@@ -45,7 +45,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
 
         List<C> sorted = new ArrayList<>(front);
         Map<C, Double> newDistancesPerSolution = new IdentityHashMap<>();
-        
+
         // Initialize distances to 0
         for (C c : front) {
             newDistancesPerSolution.put(c, 0d);
@@ -76,12 +76,13 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
             double rangeFitness = minMaxPairPerFF.get(ff).getSnd() - minMaxPairPerFF.get(ff).getFst();
 
             sorted.sort(Comparator.comparingDouble(c -> c.getFitness(ff)));
-            
+
             // Boundary points get MAX_VALUE
             newDistancesPerSolution.put(sorted.getFirst(), Double.MAX_VALUE);
             newDistancesPerSolution.put(sorted.get(l - 1), Double.MAX_VALUE);
-            
+
             if (rangeFitness == 0) {
+                sorted.forEach((s) -> newDistancesPerSolution.put(s, Double.MAX_VALUE));
                 continue;
             }
 
@@ -90,7 +91,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
                 if (currentDistance == Double.MAX_VALUE) {
                     continue; // Already max, stay max
                 }
-                
+
                 double newDistance = currentDistance
                         + (sorted.get(k + 1).getFitness(ff) - sorted.get(k - 1).getFitness(ff))
                         / rangeFitness;
@@ -99,8 +100,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
         }
 
         for (C c : front) {
-            Double d = newDistancesPerSolution.get(c);
-            c.setDistance(d != null ? d : 0.0);
+            c.setDistance(newDistancesPerSolution.get(c));
         }
     }
 }
