@@ -62,7 +62,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, refactoringFinders);
 
         List<RefactorSequence> solutions = findRefactoring(nsgaii);
-        
+
         // Export population to CSV
         List<List<RefactorSequence>> fronts = nsgaii.getFinalFronts();
         if (fronts != null && !fronts.isEmpty() && PropertyLoader.getSystemBooleanProperty("nsga-ii.write_last_population")) {
@@ -73,7 +73,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
             RefactoringPostProcessor postProcessor = new RefactoringPostProcessor(nsgaii.getFitnessFunctions());
             postProcessor.process(solutions, program, output, projectFile);
         } else {
-            System.out.println("NSGA-II found no solutions!");
+            log.info("NSGA-II found no solutions!");
         }
     }
 
@@ -133,7 +133,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = loadFitnessFunctions();
-        
+
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
@@ -144,7 +144,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
     private List<FitnessFunction<RefactorSequence>> loadFitnessFunctions() {
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
         String property = PropertyLoader.getSystemStringProperty("refactoring.fitness_functions");
-        
+
         if (property == null || property.trim().isEmpty()) {
             // Default fitness functions
             fitnessFunctions.add(new CohesionFitness());
@@ -170,7 +170,7 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
                 log.warning("Failed to load fitness function " + className + ": " + e.getMessage() + ". Skipping.");
             }
         }
-        
+
         if (fitnessFunctions.isEmpty()) {
              log.warning("No valid fitness functions loaded from property. Using defaults.");
              fitnessFunctions.add(new CohesionFitness());
