@@ -30,12 +30,12 @@ public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements M
 
     @Override
     public double calculateMetric(T node) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        final ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
-        double cfgComplexity = cfg.getNumEdges() - cfg.getNumNodes() + 2;
+        final ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        final double cfgComplexity = cfg.getNumEdges() - cfg.getNumNodes() + 2;
 
-        LogicalOperatorCounter counter = new LogicalOperatorCounter();
+        final LogicalOperatorCounter counter = new LogicalOperatorCounter();
         node.accept(counter);
         return cfgComplexity + counter.getCount();
     }
