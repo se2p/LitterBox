@@ -84,15 +84,7 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
 
             population = evolve(population);
 
-            log.log(Level.FINE, "NSGA-II iteration {0} created a population with size {1}", new Object[]{iteration, population.size()});
-            for (FitnessFunction<C> fitnessFunction : fastNonDominatedSort.getFitnessFunctions()) {
-                if (fitnessFunction.isMinimizing()) {
-                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).min().getAsDouble());
-                } else {
-                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
-                }
-                log.log(Level.FINE, "Average fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).average().getAsDouble());
-            }
+            logIterationStatistics(population);
             iteration++;
         }
 
@@ -108,6 +100,18 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
 
         this.finalPopulation = population;
         return population.stream().distinct().toList(); // only return unique solutions
+    }
+
+    private void logIterationStatistics(List<C> population) {
+        log.log(Level.FINE, "NSGA-II iteration {0} created a population with size {1}", new Object[]{iteration, population.size()});
+        for (FitnessFunction<C> fitnessFunction : fastNonDominatedSort.getFitnessFunctions()) {
+            if (fitnessFunction.isMinimizing()) {
+                log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).min().getAsDouble());
+            } else {
+                log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
+            }
+            log.log(Level.FINE, "Average fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).average().getAsDouble());
+        }
     }
 
     private List<C> finalPopulation;
