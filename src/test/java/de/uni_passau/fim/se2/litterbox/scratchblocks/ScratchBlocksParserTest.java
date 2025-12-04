@@ -309,10 +309,10 @@ public class ScratchBlocksParserTest implements JsonTest {
         """;
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code);
-        Assertions.assertTrue(script.getStmtList().getStatement(0) instanceof TurnRight);
-        Assertions.assertTrue(script.getStmtList().getStatement(1) instanceof RepeatTimesStmt);
-        Assertions.assertTrue(script.getStmtList().getStatement(2) instanceof TurnRight);
-        Assertions.assertTrue(script.getStmtList().getStatement(3) instanceof TurnRight);
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(RepeatTimesStmt.class, script.getStmtList().getStatement(1));
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(2));
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(3));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ScratchBlocksParserTest implements JsonTest {
         """;
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code);
-        Assertions.assertTrue(script.getStmtList().getStatement(0) instanceof TurnLeft);
+        Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(0));
     }
 
     @Test
@@ -351,7 +351,7 @@ end
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code1);
         Script script2 = parser.parseScript("Stage", code2);
-        
+
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
     }
 
@@ -371,7 +371,7 @@ end
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code1);
         Script script2 = parser.parseScript("Stage", code2);
-        
+
         Assertions.assertTrue(script.getStmtList().getNumberOfStatements() > 0);
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
     }
