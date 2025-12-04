@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,20 +48,18 @@ public class CleanProgramStep implements PostProcessorStep {
         return solutions;
     }
 
-    private String cleanProgram(Program program) {
+    private void cleanProgram(Program program) {
         int removedDeadScripts = 0;
         int removedControlOnlyScripts = 0;
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            int[] removed = cleanScripts(actor.getScripts());
-            removedDeadScripts += removed[0];
-            removedControlOnlyScripts += removed[1];
+            Pair<Integer> removed = cleanScripts(actor.getScripts());
+            removedDeadScripts += removed.getFst();
+            removedControlOnlyScripts += removed.getSnd();
         }
-        String report = "Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts";
-        log.info(report);
-        return report;
+        log.info("Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts");
     }
 
-    private int[] cleanScripts(ScriptList scriptList) {
+    private Pair<Integer> cleanScripts(ScriptList scriptList) {
         List<Script> scriptsToRemove = new ArrayList<>();
         int removedDeadScripts = 0;
         int removedControlOnlyScripts = 0;
@@ -74,7 +73,7 @@ public class CleanProgramStep implements PostProcessorStep {
             }
         }
         scriptList.getScriptList().removeAll(scriptsToRemove);
-        return new int[]{removedDeadScripts, removedControlOnlyScripts};
+        return new Pair<>(removedDeadScripts, removedControlOnlyScripts);
     }
 
     private boolean isOnlyControl(StmtList stmtList) {
@@ -86,7 +85,7 @@ public class CleanProgramStep implements PostProcessorStep {
             if (!(stmt instanceof ControlStmt)) {
                 return false;
             }
-            
+
             // It is a ControlStmt, check its children
             if (!checkControlStmtChildren((ControlStmt) stmt)) {
                 return false;
@@ -109,11 +108,11 @@ public class CleanProgramStep implements PostProcessorStep {
         if (stmt instanceof IfStmt ifStmt) {
             return isOnlyControl(ifStmt.getThenStmts());
         }
-        
+
         if (stmt instanceof LoopStmt loopStmt) {
             return isOnlyControl(loopStmt.getStmtList());
         }
-        
+
         return true;
     }
 }
