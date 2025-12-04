@@ -97,36 +97,6 @@ public class MergeInitializationScriptFinder extends AbstractDependencyRefactori
         return script.getStmtList().getStmts().getFirst() instanceof LoopStmt;
     }
 
-    private boolean isAttributeSetting(Stmt stmt) {
-        // Reuse logic from SplitInitializationScriptFinder
-        // Position, Rotation, Motion
-        if (stmt instanceof SpriteMotionStmt) {
-            return !(stmt instanceof GlideSecsTo) && !(stmt instanceof GlideSecsToXY);
-        }
-        // Visibility, Looks, Costume, Size, Layer
-        if (stmt instanceof SpriteLookStmt) {
-            return !(stmt instanceof SayForSecs) && !(stmt instanceof ThinkForSecs);
-        }
-        // Effects, Backdrop, Variables (Show/Hide)
-        if (stmt instanceof ActorLookStmt) {
-            return !(stmt instanceof AskAndWait) && !(stmt instanceof SwitchBackdropAndWait);
-        }
-        // Sound, Volume
-        if (stmt instanceof ActorSoundStmt) {
-            return !(stmt instanceof PlaySoundUntilDone);
-        }
-        // Variables
-        if (stmt instanceof SetVariableTo || stmt instanceof ChangeVariableBy) {
-            return true;
-        }
-        // Generic Attribute
-        if (stmt instanceof SetAttributeTo) {
-            return true;
-        }
-        
-        return false;
-    }
-
     /*
      * Since the dependency analysis does not take concurrency into account
      * this method simply applies the merge and checks for dependencies in
@@ -136,19 +106,7 @@ public class MergeInitializationScriptFinder extends AbstractDependencyRefactori
 
         MergeInitializationScript refactoring = new MergeInitializationScript(script1, script2);
         Script merged = refactoring.getMergedScript();
-        ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
-
-        List<Stmt> stmtScript1 = new ArrayList<>(merged.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(merged.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), merged.getStmtList().getNumberOfStatements()));
-
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
-                || hasDataDependency(cfg, stmtScript1, stmtScript2)
-                || hasTimeDependency(cfg, stmtScript1, stmtScript2)
-                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
-            return true;
-        }
-
-        return false;
+        return hasDependencies(script1, script2, merged);
     }
 
     @Override

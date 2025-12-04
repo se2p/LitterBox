@@ -79,7 +79,7 @@ public class SplitInitializationScriptFinder extends AbstractDependencyRefactori
         // If we found a split point and it's not the first statement (meaning there is some initialization)
         if (splitIndex > 0) {
             Stmt splitPoint = stmtList.get(splitIndex);
-            
+
             // Check dependencies
             ControlFlowGraph cfg = getControlFlowGraphForScript(script);
             ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
@@ -103,35 +103,6 @@ public class SplitInitializationScriptFinder extends AbstractDependencyRefactori
                 || stmt instanceof WaitUntil
                 || stmt instanceof AskAndWait
                 || stmt instanceof LoopStmt;
-    }
-
-    private boolean isAttributeSetting(Stmt stmt) {
-        // Position, Rotation, Motion
-        if (stmt instanceof SpriteMotionStmt) {
-            return !(stmt instanceof GlideSecsTo) && !(stmt instanceof GlideSecsToXY);
-        }
-        // Visibility, Looks, Costume, Size, Layer
-        if (stmt instanceof SpriteLookStmt) {
-            return !(stmt instanceof SayForSecs) && !(stmt instanceof ThinkForSecs);
-        }
-        // Effects, Backdrop, Variables (Show/Hide)
-        if (stmt instanceof ActorLookStmt) {
-            return !(stmt instanceof AskAndWait) && !(stmt instanceof SwitchBackdropAndWait);
-        }
-        // Sound, Volume
-        if (stmt instanceof ActorSoundStmt) {
-            return !(stmt instanceof PlaySoundUntilDone);
-        }
-        // Variables
-        if (stmt instanceof SetVariableTo || stmt instanceof ChangeVariableBy) {
-            return true;
-        }
-        // Generic Attribute
-        if (stmt instanceof SetAttributeTo) {
-            return true;
-        }
-        
-        return false;
     }
 
     @Override
