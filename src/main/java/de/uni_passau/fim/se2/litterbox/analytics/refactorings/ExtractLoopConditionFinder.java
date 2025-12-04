@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -33,23 +34,22 @@ public class ExtractLoopConditionFinder extends AbstractRefactoringFinder {
 
         for (Stmt stmt : repeatForeverStmt.getStmtList().getStmts()) {
             if (stmt instanceof IfThenStmt ifThenStmt) {
-                if (ifThenStmt.getThenStmts().getNumberOfStatements() >= 1
-                        && ifThenStmt.getThenStmts().getStatement(ifThenStmt.getThenStmts().getNumberOfStatements() - 1) instanceof TerminationStmt) {
+                if (isTerminatedStatementList(ifThenStmt.getThenStmts())) {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifThenStmt));
                 }
             } else if (stmt instanceof IfElseStmt ifElseStmt) {
-                boolean thenTerminates = ifElseStmt.getThenStmts().getNumberOfStatements() >= 1
-                        && ifElseStmt.getThenStmts().getStatement(ifElseStmt.getThenStmts().getNumberOfStatements() - 1) instanceof TerminationStmt;
-                boolean elseTerminates = ifElseStmt.getElseStmts().getNumberOfStatements() >= 1
-                        && ifElseStmt.getElseStmts().getStatement(ifElseStmt.getElseStmts().getNumberOfStatements() - 1) instanceof TerminationStmt;
-
-                if (thenTerminates || elseTerminates) {
+                if (isTerminatedStatementList(ifElseStmt.getThenStmts()) || isTerminatedStatementList(ifElseStmt.getElseStmts())) {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifElseStmt));
                 }
             }
         }
 
         visitChildren(repeatForeverStmt);
+    }
+
+    private static boolean isTerminatedStatementList(StmtList statements) {
+        return statements.getNumberOfStatements() >= 1
+                && statements.getStatement(statements.getNumberOfStatements() - 1) instanceof TerminationStmt;
     }
 
     @Override
