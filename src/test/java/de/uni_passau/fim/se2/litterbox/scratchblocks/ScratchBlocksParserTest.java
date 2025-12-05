@@ -308,7 +308,7 @@ public class ScratchBlocksParserTest implements JsonTest {
         turn cw (15) degrees
         """;
         ScratchBlocksParser parser = new ScratchBlocksParser();
-        Script script = parser.parseScript("Stage", code);
+        Script script = parser.parseScript("Sprite1", code);
         Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(0));
         Assertions.assertInstanceOf(RepeatTimesStmt.class, script.getStmtList().getStatement(1));
         Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(2));
