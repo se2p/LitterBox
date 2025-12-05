@@ -1631,7 +1631,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     @Test
     public void testRecursiveCloningIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
-        PositionEqualsCheck finder = new PositionEqualsCheck();
+        FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
 

@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.perfumes;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +52,7 @@ public class BoolExpressionTest implements JsonTest {
     public void testBooleanExpressionIsSubsumedByPositionEqualsCheck() throws IOException, ParsingException {
         Program boolProg = JsonTest.parseProgram("./src/test/fixtures/perfumes/peqSubsumesBoolean.json");
         BoolExpression bool = new BoolExpression();
-        PositionEqualsCheck pec = new PositionEqualsCheck();
+        FloatingPointComparison pec = new FloatingPointComparison();
         List<Issue> reports = new ArrayList<>(bool.check(boolProg));
         Assertions.assertEquals(2, reports.size());
         List<Issue> reportsPEC = new ArrayList<>(pec.check(boolProg));
