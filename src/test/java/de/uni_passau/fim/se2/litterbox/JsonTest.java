@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -72,8 +73,12 @@ public interface JsonTest {
     default Program parseScratchBlocks(String code) throws IOException, ParsingException {
         Program baseProject = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
-        // "Sprite1" is usually the default actor in emptyProject.json
-        return parser.extendProject(baseProject, "Sprite1", code);
+        String spriteName = baseProject.getActorDefinitionList().getDefinitions().stream()
+                .filter(ActorDefinition::isSprite)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No sprite found in emptyProject.json"))
+                .getIdent().getName();
+        return parser.extendProject(baseProject, spriteName, code);
     }
 
 
