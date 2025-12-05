@@ -51,7 +51,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
             newDistancesPerSolution.put(c, 0d);
         }
 
-        Map<FitnessFunction<C>, Pair<Double>> minMaxPairPerFF = new LinkedHashMap<>();
+        Map<FitnessFunction<C>, Double> rangeFitnessPerFF = new LinkedHashMap<>();
 
         for (FitnessFunction<C> ff : fitnessFunctions) {
             double ffMax = -Double.MAX_VALUE; // Use -MAX_VALUE instead of MIN_VALUE (which is smallest positive)
@@ -68,12 +68,11 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
                     ffMin = currentFitness;
                 }
             }
-            minMaxPairPerFF.put(ff, Pair.of(ffMin, ffMax));
+            rangeFitnessPerFF.put(ff, ffMax - ffMin);
         }
 
-
         for (FitnessFunction<C> ff : fitnessFunctions) {
-            double rangeFitness = minMaxPairPerFF.get(ff).getSnd() - minMaxPairPerFF.get(ff).getFst();
+            double rangeFitness = rangeFitnessPerFF.get(ff);
 
             sorted.sort(Comparator.comparingDouble(c -> c.getFitness(ff)));
 
