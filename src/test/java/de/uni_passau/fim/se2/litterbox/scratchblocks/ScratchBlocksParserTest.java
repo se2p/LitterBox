@@ -304,28 +304,17 @@ public class ScratchBlocksParserTest implements JsonTest {
         repeat (2)
             move (10) steps
         end
-        turn cw (15) degrees
+        turn ccw (15) degrees
         turn cw (15) degrees
         """;
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Script script = parser.parseScript("Stage", code);
         Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(0));
         Assertions.assertInstanceOf(RepeatTimesStmt.class, script.getStmtList().getStatement(1));
-        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(2));
+        Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(2));
         Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(3));
     }
-
-    @Test
-    void testParsingCcw() {
-        String code = """
-        when green flag clicked
-        turn ccw (15) degrees
-        """;
-        ScratchBlocksParser parser = new ScratchBlocksParser();
-        Script script = parser.parseScript("Stage", code);
-        Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(0));
-    }
-
+    
     @Test
     void testIndentation() {
         String code1 = """
