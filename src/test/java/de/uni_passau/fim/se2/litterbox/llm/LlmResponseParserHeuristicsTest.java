@@ -149,7 +149,6 @@ public class LlmResponseParserHeuristicsTest implements JsonTest {
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.getFirst();
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        // The user explicitly requested "play sound" -> "play sound", which parses as a CallStmt
         assertInstanceOf(StartSound.class, newScript.getStmtList().getStmts().getFirst());
         StartSound startSound = (StartSound) newScript.getStmtList().getStmts().getFirst();
         assertInstanceOf(WithExpr.class, startSound.getElementChoice());
