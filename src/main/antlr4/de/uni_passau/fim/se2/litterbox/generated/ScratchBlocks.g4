@@ -158,9 +158,9 @@ looksStmt               : saySeconds
                         | switchBackdropWait
                         ;
 
-saySeconds              : 'say 'text=exprOrLiteral' for 'time=exprOrLiteral' seconds';
+saySeconds              : 'say 'text=exprOrLiteral' for 'time=exprOrLiteral (' seconds' | ' secs');
 say                     : 'say 'exprOrLiteral;
-thinkSeconds            : 'think 'text=exprOrLiteral' for 'time=exprOrLiteral' seconds';
+thinkSeconds            : 'think 'text=exprOrLiteral' for 'time=exprOrLiteral (' seconds' | ' secs');
 think                   : 'think 'exprOrLiteral;
 switchCostume           : 'switch costume to 'costumeSelect;
 nextCostume             : 'next costume';
@@ -198,7 +198,7 @@ soundStmt               : playSoundDone
                         ;
 
 playSoundDone           : 'play sound 'soundChoice' until done';
-playSound               : 'start sound 'soundChoice;
+playSound               : ('start sound ' | 'play sound ') soundChoice;
 stopSound               : 'stop all sounds';
 changeSoundEffect       : 'change' WS '['soundEffect' v] effect by 'exprOrLiteral;
 setSoundEffect          : 'set' WS '['soundEffect' v] effect to 'exprOrLiteral;
@@ -219,7 +219,7 @@ controlStmt             : waitSeconds
 
 ifStmt                  : 'if' WS exprOrLiteral WS 'then' (COMMENT)? NEWLINE thenBlock=stmtList WS* (ELSE (COMMENT)? NEWLINE elseBlock=stmtList WS*)? END;
 
-waitSeconds             : 'wait 'exprOrLiteral' seconds';
+waitSeconds             : 'wait 'exprOrLiteral (' seconds' | ' secs');
 repeat                  : 'repeat 'exprOrLiteral (COMMENT)? NEWLINE stmtList WS* END;
 forever                 : 'forever' (COMMENT)? NEWLINE stmtList WS* END;
 waitUntil               : 'wait until 'exprOrLiteral;
@@ -280,7 +280,7 @@ penStmt                 : eraseAll
                         | setPenSize
                         ;
 
-eraseAll                : 'erase all';
+eraseAll                : 'erase all' | 'clear';
 stamp                   : 'stamp';
 penDown                 : 'pen down';
 penUp                   : 'pen up';

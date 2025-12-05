@@ -27,12 +27,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
@@ -323,6 +328,43 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertNotNull(script);
         Assertions.assertEquals(1, script.getStmtList().getStmts().size());
         Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testSecsAlias() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "wait (1) secs\n" +
+                "say (Hello) for (2) secs\n" +
+                "think (Hmm) for (3) secs\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(3, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(WaitSeconds.class, script.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(SayForSecs.class, script.getStmtList().getStatement(1));
+        Assertions.assertInstanceOf(ThinkForSecs.class, script.getStmtList().getStatement(2));
+    }
+
+    @Test
+    void testClearAlias() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "clear\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(PenClearStmt.class, script.getStmtList().getStatement(0));
+    }
+
+    @Test
+    void testPlaySoundAlias() {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String input = "when green flag clicked\n" +
+                "play sound (Meow)\n";
+        Script script = parser.parseScript("Stage", input);
+        Assertions.assertNotNull(script);
+        Assertions.assertEquals(1, script.getStmtList().getStmts().size());
+        Assertions.assertInstanceOf(StartSound.class, script.getStmtList().getStatement(0));
     }
 
 }
