@@ -28,48 +28,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeScripts extends OnlyCodeCloneVisitor implements Refactoring {
+public class MergeScripts extends AbstractMergeRefactoring {
 
     public static final String NAME = "merge_scripts";
 
-    private final Script script1;
-
-    private final Script script2;
-
-    private final Script replacementScript;
-
     public MergeScripts(Script script1, Script script2) {
-        this.script1 = Preconditions.checkNotNull(script1);
-        this.script2 = Preconditions.checkNotNull(script2);
+        super(script1, script2, createReplacementScript(script1, script2));
         Preconditions.checkArgument(script1.getEvent().equals(script2.getEvent()));
+    }
 
+    private static Script createReplacementScript(Script script1, Script script2) {
         List<Stmt> mergedStatements = new ArrayList<>();
-        mergedStatements.addAll(apply(script1.getStmtList()).getStmts());
-        mergedStatements.addAll(apply(script2.getStmtList()).getStmts());
+        mergedStatements.addAll(OnlyCodeCloneVisitor.copy(script1.getStmtList()).getStmts());
+        mergedStatements.addAll(OnlyCodeCloneVisitor.copy(script2.getStmtList()).getStmts());
 
-        replacementScript = new Script(apply(script1.getEvent()), new StmtList(mergedStatements));
+        return new Script(OnlyCodeCloneVisitor.copy(script1.getEvent()), new StmtList(mergedStatements));
     }
 
     public Script getMergedScript() {
         return replacementScript;
-    }
-
-    @Override
-    public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(ScriptList node) {
-        List<Script> scripts = new ArrayList<>();
-        for (Script currentScript : node.getScriptList()) {
-            if (currentScript == this.script1) {
-                scripts.add(replacementScript);
-            } else if (currentScript != this.script2) {
-                scripts.add(apply(currentScript));
-            }
-        }
-        return new ScriptList(scripts);
     }
 
     @Override

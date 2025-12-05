@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -32,32 +33,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
+public class MergeLoops extends AbstractMergeRefactoring {
 
     public static final String NAME = "merge_loops";
 
-    private final Script script1;
-
-    private final Script script2;
-
-    private final Script replacementScript;
-
     public MergeLoops(Script script1, Script script2) {
-        this.script1 = Preconditions.checkNotNull(script1);
-        this.script2 = Preconditions.checkNotNull(script2);
+        super(script1, script2, createReplacementScript(script1, script2));
         Preconditions.checkArgument(script1.getEvent().equals(script2.getEvent()));
         Preconditions.checkArgument(script1.getStmtList().getNumberOfStatements() == 1);
         Preconditions.checkArgument(script2.getStmtList().getNumberOfStatements() == 1);
+    }
 
+    private static Script createReplacementScript(Script script1, Script script2) {
         LoopStmt loop1 = (LoopStmt) script1.getStmtList().getStatement(0);
         LoopStmt loop2 = (LoopStmt) script2.getStmtList().getStatement(0);
 
         List<Stmt> mergedStatements = new ArrayList<>();
-        mergedStatements.addAll(apply(loop1.getStmtList()).getStmts());
-        mergedStatements.addAll(apply(loop2.getStmtList()).getStmts());
+        mergedStatements.addAll(OnlyCodeCloneVisitor.copy(loop1.getStmtList()).getStmts());
+        mergedStatements.addAll(OnlyCodeCloneVisitor.copy(loop2.getStmtList()).getStmts());
 
-        replacementScript = new Script(
-                apply(script1.getEvent()), new StmtList(getLoop(loop1, new StmtList(mergedStatements)))
+        return new Script(
+                OnlyCodeCloneVisitor.copy(script1.getEvent()), new StmtList(getLoop(script1, loop1, new StmtList(mergedStatements)))
         );
     }
 
@@ -65,34 +61,15 @@ public class MergeLoops extends OnlyCodeCloneVisitor implements Refactoring {
         return replacementScript;
     }
 
-    // TODO: Code clone
-    private LoopStmt getLoop(LoopStmt loopStmt, StmtList body) {
+    private static LoopStmt getLoop(Script script, LoopStmt loopStmt, StmtList body) {
         return switch (loopStmt) {
-            case RepeatForeverStmt origLoop -> new RepeatForeverStmt(body, apply(origLoop.getMetadata()));
+            case RepeatForeverStmt origLoop -> new RepeatForeverStmt(body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
             case RepeatTimesStmt origLoop ->
-                    new RepeatTimesStmt(apply(origLoop.getTimes()), body, apply(origLoop.getMetadata()));
+                    new RepeatTimesStmt(OnlyCodeCloneVisitor.copy(origLoop.getTimes()), body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
             case UntilStmt origLoop ->
-                    new UntilStmt(apply(origLoop.getBoolExpr()), body, apply(origLoop.getMetadata()));
+                    new UntilStmt(OnlyCodeCloneVisitor.copy(origLoop.getBoolExpr()), body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
             default -> throw new RuntimeException("Unknown loop statement: " + loopStmt);
         };
-    }
-
-    @Override
-    public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(ScriptList node) {
-        List<Script> scripts = new ArrayList<>();
-        for (Script currentScript : node.getScriptList()) {
-            if (currentScript == this.script1) {
-                scripts.add(replacementScript);
-            } else if (currentScript != this.script2) {
-                scripts.add(apply(currentScript));
-            }
-        }
-        return new ScriptList(scripts);
     }
 
     @Override
