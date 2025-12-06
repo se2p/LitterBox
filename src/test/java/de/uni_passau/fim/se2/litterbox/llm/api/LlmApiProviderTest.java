@@ -53,6 +53,21 @@ class LlmApiProviderTest {
         }
     }
 
+    @Test
+    void getGemini() {
+        final String prevProp = System.setProperty(LlmApiProvider.LLM_API_PROPERTY, "gemini");
+        System.setProperty("litterbox.llm.gemini.api-key", "dummy");
+        System.setProperty("litterbox.llm.gemini.model", "gemini-1.5-flash");
+
+        assertThat(LlmApiProvider.get()).isInstanceOf(GeminiApi.class);
+
+        if (prevProp != null) {
+            System.setProperty(LlmApiProvider.LLM_API_PROPERTY, prevProp);
+        } else {
+            System.clearProperty(LlmApiProvider.LLM_API_PROPERTY);
+        }
+    }
+
     private static Stream<Arguments> contextLengths() {
         return Stream.of(
                 Arguments.of(new Object[]{null}),
