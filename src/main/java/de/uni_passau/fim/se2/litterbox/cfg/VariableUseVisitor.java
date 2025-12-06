@@ -99,20 +99,17 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
                 Qualified q = new Qualified(localIdentifier, e);
                 uses.add(new Variable(q));
             }
-        } else if (owner instanceof Qualified) {
-             if (attribute instanceof AttributeFromVariable) {
-                owner.accept(this);
-            }
+        } else if (owner instanceof Qualified && attribute instanceof AttributeFromVariable) {
+            owner.accept(this);
         }
-        
-        if (owner instanceof LocalIdentifier localIdentifier) {
-            if (attribute instanceof AttributeFromVariable varAttribute) {
-                DataExpr e = varAttribute.getVariable();
-                Qualified q = new Qualified(localIdentifier, e);
-                uses.add(new Variable(q));
-            }
+
+        if (owner instanceof LocalIdentifier localIdentifier
+                && attribute instanceof AttributeFromVariable varAttribute) {
+            DataExpr e = varAttribute.getVariable();
+            Qualified q = new Qualified(localIdentifier, e);
+            uses.add(new Variable(q));
         }
-        
+
         // Always visit children to pick up uses in the object expression (e.g. variables used to specify the object)
         visitChildren(node);
     }
