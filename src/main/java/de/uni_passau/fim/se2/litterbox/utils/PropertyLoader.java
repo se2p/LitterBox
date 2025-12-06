@@ -125,6 +125,11 @@ public final class PropertyLoader {
     public static void setDefaultSystemProperties(String propertyFileName) {
         InputStream input = Main.class.getClassLoader().getResourceAsStream(propertyFileName);
 
+        if (input == null) {
+            log.log(Level.WARNING, "The file {0} could not be found in the classpath.", propertyFileName);
+            return;
+        }
+
         var propertiesInFile = new Properties();
         try {
             propertiesInFile.load(input);

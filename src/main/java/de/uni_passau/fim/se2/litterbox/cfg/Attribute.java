@@ -31,18 +31,32 @@ public class Attribute implements Defineable {
 
     private LocalIdentifier actorIdentifier;
     private AttributeType attribute;
+    private String parameter; // e.g. for specific graphic/sound effects
 
     public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
-        this.actorIdentifier = actorIdentifier;
-        this.attribute = attribute;
+        this(actorIdentifier, attribute, null);
     }
 
-    public static Attribute positionOf(LocalIdentifier actorIdentifier) {
-        return new Attribute(actorIdentifier, AttributeType.POSITION);
+    public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute, String parameter) {
+        this.actorIdentifier = actorIdentifier;
+        this.attribute = attribute;
+        this.parameter = parameter;
+    }
+
+    public static Attribute positionXOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.POSITION_X);
+    }
+
+    public static Attribute positionYOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.POSITION_Y);
     }
 
     public static Attribute rotationOf(LocalIdentifier actorIdentifier) {
         return new Attribute(actorIdentifier, AttributeType.ROTATION);
+    }
+
+    public static Attribute rotationStyleOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.ROTATION_STYLE);
     }
 
     public static Attribute sizeOf(LocalIdentifier actorIdentifier) {
@@ -57,8 +71,16 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.GRAPHIC_EFFECT);
     }
 
+    public static Attribute graphicEffectOf(LocalIdentifier actorIdentifier, String effect) {
+        return new Attribute(actorIdentifier, AttributeType.GRAPHIC_EFFECT, effect);
+    }
+
     public static Attribute soundEffectOf(LocalIdentifier actorIdentifier) {
         return new Attribute(actorIdentifier, AttributeType.SOUND_EFFECT);
+    }
+
+    public static Attribute soundEffectOf(LocalIdentifier actorIdentifier, String effect) {
+        return new Attribute(actorIdentifier, AttributeType.SOUND_EFFECT, effect);
     }
 
     public static Attribute volumeOf(LocalIdentifier actorIdentifier) {
@@ -81,12 +103,20 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.TIMER);
     }
 
+    public static Attribute soundStateOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.SOUND_STATE);
+    }
+
     public LocalIdentifier getActorIdentifier() {
         return actorIdentifier;
     }
 
     public AttributeType getAttributeType() {
         return attribute;
+    }
+
+    public String getParameter() {
+        return parameter;
     }
 
     @Override
@@ -98,15 +128,16 @@ public class Attribute implements Defineable {
             return false;
         }
         return Objects.equals(actorIdentifier, attribute1.actorIdentifier)
-                && attribute == attribute1.attribute;
+                && attribute == attribute1.attribute
+                && Objects.equals(parameter, attribute1.parameter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(actorIdentifier, attribute);
+        return Objects.hash(actorIdentifier, attribute, parameter);
     }
 
     public enum AttributeType {
-        POSITION, ROTATION, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER //, BUBBLESTATE
+        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE
     }
 }

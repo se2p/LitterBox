@@ -50,7 +50,8 @@ public final class IssueTranslator {
         LED("led"),
         ROCKY_LIGHT("rocky_light"),
         MOTOR_POWER("motor_power"),
-
+        ROTATION_STYLE("rotation_style"),
+        SOUND_STATE("sound_state"),
         TIMER("timer");
 
         private final String key;

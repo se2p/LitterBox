@@ -165,7 +165,7 @@ public class Hint {
 
     private IssueTranslator.GeneralTerm getTermFromAttributeType(final Attribute.AttributeType attributeType) {
         return switch (attributeType) {
-            case POSITION -> IssueTranslator.GeneralTerm.POSITION;
+            case POSITION_X, POSITION_Y -> IssueTranslator.GeneralTerm.POSITION;
             case ROTATION -> IssueTranslator.GeneralTerm.ROTATION;
             case SIZE -> IssueTranslator.GeneralTerm.SIZE;
             case VISIBILITY -> IssueTranslator.GeneralTerm.VISIBILITY;
@@ -176,6 +176,8 @@ public class Hint {
             case COSTUME -> IssueTranslator.GeneralTerm.COSTUME;
             case BACKDROP -> IssueTranslator.GeneralTerm.BACKDROP;
             case TIMER -> IssueTranslator.GeneralTerm.TIMER;
+            case ROTATION_STYLE -> IssueTranslator.GeneralTerm.ROTATION_STYLE;
+            case SOUND_STATE -> IssueTranslator.GeneralTerm.SOUND_STATE;
         };
     }
 

@@ -95,8 +95,8 @@ public class SliceProfileTest implements JsonTest {
 
         assertThat(sliceProfile.getScriptLength()).isEqualTo(9);
         assertThat(sliceProfile.getIntersectionLength()).isEqualTo(1);
-        assertThat(sliceProfile.getCoverage()).isWithin(0.01).of(0.56);
-        assertThat(sliceProfile.getOverlap()).isWithin(0.01).of(0.25);
+        assertThat(sliceProfile.getCoverage()).isWithin(0.01).of(0.49);
+        assertThat(sliceProfile.getOverlap()).isWithin(0.01).of(0.30);
         assertThat(sliceProfile.getTightness()).isWithin(0.01).of(0.11);
     }
 

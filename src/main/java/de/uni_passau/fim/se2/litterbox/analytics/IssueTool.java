@@ -89,6 +89,7 @@ public class IssueTool {
             registerBugFinder(new ParameterOutOfScope(), bugFinders);
             registerBugFinder(new PositionEqualsCheck(), bugFinders);
             registerBugFinder(new RecursiveCloning(), bugFinders);
+            registerBugFinder(new RedundantAssignment(), bugFinders);
             registerBugFinder(new TerminatedLoop(), bugFinders);
             registerBugFinder(new TypeError(), bugFinders);
             registerBugFinder(new VariableAsLiteral(), bugFinders);
@@ -158,6 +159,7 @@ public class IssueTool {
         registerBugFinder(new ParameterOutOfScope(), bugFinders);
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new RedundantAssignment(), bugFinders);
         registerBugFinder(new TerminatedLoop(), bugFinders);
         registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
