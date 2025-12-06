@@ -34,8 +34,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
@@ -60,6 +62,12 @@ public interface JsonTest {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         visitor.visit(getAST(fileName));
         return visitor.getControlFlowGraph();
+    }
+
+    default Program parseScratchBlocks(String scratchBlocksCode) throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        return parser.extendProject(program, "Sprite1", scratchBlocksCode);
     }
 
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
