@@ -107,6 +107,10 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.SOUND_STATE);
     }
 
+    public static Attribute dragModeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.DRAG_MODE);
+    }
+
     public LocalIdentifier getActorIdentifier() {
         return actorIdentifier;
     }
@@ -138,6 +142,6 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE
+        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE, DRAG_MODE
     }
 }

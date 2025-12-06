@@ -239,6 +239,11 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.rotationStyleOf(currentActor.getIdent()));
     }
 
+    @Override
+    public void visit(SetDragMode node) {
+        definitions.add(Attribute.dragModeOf(currentActor.getIdent()));
+    }
+
     //---------------------------------------------------------------
     // Costume
 

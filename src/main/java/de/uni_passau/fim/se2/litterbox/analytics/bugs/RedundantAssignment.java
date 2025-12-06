@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
 
 
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -61,14 +63,31 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.Attribute.AttributeType;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 
 
 public class RedundantAssignment extends AbstractIssueFinder {
@@ -110,7 +129,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
     private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Use> analysis, Program program) {
         Set<Issue> issues = new LinkedHashSet<>();
         
-        // Iterate over all nodes to find Redundant Assignments
         for (CFGNode node : cfg.getNodes()) {
             checkNode(node, analysis, program, issues, cfg);
         }
@@ -124,87 +142,114 @@ public class RedundantAssignment extends AbstractIssueFinder {
             return;
         }
 
-        // Get LiveOut set (which is the input to the Transfer Function in Backward Analysis,
-        // stored as dataflowFacts for the node)
-        Set<Use> liveOut = analysis.getDataflowFacts(node);
-        Set<Object> liveVariables = liveOut.stream()
-                .map(Use::getDefinable)
-                .collect(Collectors.toSet());
+        // Get LiveOut set (which is the input to the Transfer Function in Backward Analysis)
+        Set<Defineable> liveVariables = getLiveVariables(node, analysis);
 
         for (Definition def : definitions) {
             checkDefinition(def, liveVariables, program, issues, cfg);
         }
     }
+
+    private Set<Defineable> getLiveVariables(CFGNode node, DataflowAnalysis<Use> analysis) {
+        return analysis.getDataflowFacts(node).stream()
+                .map(Use::getDefinable)
+                .collect(Collectors.toSet());
+    }
     
-    private void checkDefinition(Definition def, Set<Object> liveVariables, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
-        // Case 1: Overwritten on ALL Paths
-        // If the defined variable is NOT in LiveOut, it means it is dead on all paths.
-        if (!liveVariables.contains(def.getDefinable())) {
-            ASTNode statement = def.getDefinitionSource().getASTNode();
-            if (statement != null && isDynamicAssignment(statement)) {
-                 return;
-            }
-            createAndAddIssue(def, program, issues, HINT_ALWAYS);
+    private void checkDefinition(Definition def, Set<Defineable> liveVariables, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
+        if (isDeadOnAllPaths(def, liveVariables)) {
+            reportAlwaysRedundant(def, program, issues);
         } else {
-            // Case 2: Overwritten on SOME Paths
             checkPathRedundancy(def, program, issues, cfg);
         }
     }
 
+    private boolean isDeadOnAllPaths(Definition def, Set<Defineable> liveVariables) {
+        return !liveVariables.contains(def.getDefinable());
+    }
+
+    private void reportAlwaysRedundant(Definition def, Program program, Set<Issue> issues) {
+        ASTNode statement = def.getDefinitionSource().getASTNode();
+        if (statement != null && isDynamicAssignment(statement)) {
+             return;
+        }
+        createAndAddIssue(def, program, issues, HINT_ALWAYS);
+    }
 
     private void checkPathRedundancy(Definition def, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
-        CFGNode startNode = def.getDefinitionSource();
-        Object variable = def.getDefinable();
+        new PathRedundancyChecker(def, program, issues, cfg).check();
+    }
 
-        // BFS to find overwriting definitions without intervening uses
-        Set<CFGNode> visited = new HashSet<>();
-        java.util.Queue<CFGNode> queue = new java.util.ArrayDeque<>();
-        
-        Collection<CFGNode> successors = new ForwardFlowDirection().getOutNodes(cfg, startNode);
-        queue.addAll(successors);
-        
-        Set<CFGNode> reportedOverwriters = new HashSet<>();
+    private class PathRedundancyChecker {
+        private final Definition startDef;
+        private final Program program;
+        private final Set<Issue> issues;
+        private final ControlFlowGraph cfg;
+        private final Defineable variable;
+        private final Set<CFGNode> visited = new HashSet<>();
+        private final Set<CFGNode> reportedOverwriters = new HashSet<>();
+        private final java.util.Queue<CFGNode> queue = new java.util.ArrayDeque<>();
 
-        while (!queue.isEmpty()) {
-            CFGNode current = queue.poll();
-            if (!visited.add(current)) {
-                continue;
+        public PathRedundancyChecker(Definition startDef, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
+            this.startDef = startDef;
+            this.program = program;
+            this.issues = issues;
+            this.cfg = cfg;
+            this.variable = startDef.getDefinable();
+        }
+
+        public void check() {
+            CFGNode startNode = startDef.getDefinitionSource();
+            queue.addAll(new ForwardFlowDirection().getOutNodes(cfg, startNode));
+
+            while (!queue.isEmpty()) {
+                CFGNode current = queue.poll();
+                if (!visited.add(current)) {
+                    continue;
+                }
+
+                if (isVariableUsedAt(current)) {
+                    continue;
+                }
+
+                if (isVariableRedefinedAt(current)) {
+                    reportPossibleRedundancy(current);
+                    continue; // Stop tracing this path
+                }
+                
+                queue.addAll(new ForwardFlowDirection().getOutNodes(cfg, current));
             }
+        }
 
-            // Check if 'variable' is Used at this node
-            boolean used = false;
-            if (isRenderingStatement(current.getASTNode()) && isVisibleAttribute(variable)) {
-                used = true;
+        private boolean isVariableUsedAt(CFGNode node) {
+            if (isRenderingStatement(node.getASTNode()) && isVisibleAttribute(variable)) {
+                return true;
             }
-            if (!used) {
-                for (Use use : current.getUses()) {
-                    if (use.getDefinable().equals(variable)) {
-                        used = true;
-                        break;
-                    }
+            for (Use use : node.getUses()) {
+                if (use.getDefinable().equals(variable)) {
+                    return true;
                 }
             }
+            return false;
+        }
+
+        private boolean isVariableRedefinedAt(CFGNode node) {
+            return node.defines(variable);
+        }
+
+        private void reportPossibleRedundancy(CFGNode overwritingNode) {
+            if (reportedOverwriters.contains(overwritingNode)) {
+                return;
+            }
             
-            if (used) {
-                continue;
+            ASTNode stmt = overwritingNode.getASTNode();
+            if (stmt != null && isDynamicAssignment(stmt)) {
+                return;
             }
 
-            // Check if 'variable' is Re-defined (Overwritten) at this node
-            if (current.defines((Defineable) variable)) {
-                // Found an overwrite without use!
-                if (!reportedOverwriters.contains(current)) {
-                    ASTNode stmt = current.getASTNode();
-                    if (stmt == null || !isDynamicAssignment(stmt)) {
-                         Definition overwriteDef = new Definition(current, (Defineable) variable);
-                         createAndAddIssue(overwriteDef, program, issues, HINT_POSSIBLE);
-                         reportedOverwriters.add(current);
-                    }
-                }
-                // Stop tracing this path (value killed)
-                continue;
-            }
-            
-            queue.addAll(new ForwardFlowDirection().getOutNodes(cfg, current));
+            Definition overwriteDef = new Definition(overwritingNode, variable);
+            createAndAddIssue(overwriteDef, program, issues, HINT_POSSIBLE);
+            reportedOverwriters.add(overwritingNode);
         }
     }
 
@@ -221,7 +266,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
                node instanceof ThinkForSecs;
     }
 
-    private boolean isVisibleAttribute(Object variable) {
+    private boolean isVisibleAttribute(Defineable variable) {
         if (variable instanceof Attribute attr) {
             AttributeType type = attr.getAttributeType();
             return type == AttributeType.POSITION_X ||
@@ -245,7 +290,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
 
         ScriptEntity context = resolveContext(def, statement);
-        
         if (context == null) {
              return; 
         }
@@ -259,24 +303,16 @@ public class RedundantAssignment extends AbstractIssueFinder {
         issues.add(issue);
     }
 
-
-
-    
     private ScriptEntity resolveContext(Definition def, ASTNode statement) {
         ASTNode contextNode = def.getDefinitionSource().getScriptOrProcedure();
-        
         if (contextNode instanceof ScriptEntity) {
             return (ScriptEntity) contextNode;
         }
-        
-        // fallback: traverse up to find ScriptEntity
         if (statement != null) {
-            ASTNode current = statement.getParentNode();
-            while (current != null) {
+            for (ASTNode current = statement.getParentNode(); current != null; current = current.getParentNode()) {
                 if (current instanceof ScriptEntity) {
                     return (ScriptEntity) current;
                 }
-                current = current.getParentNode();
             }
         }
         return null;
@@ -292,35 +328,86 @@ public class RedundantAssignment extends AbstractIssueFinder {
         if (statement instanceof SetYTo stmt) {
             return !isConstant(stmt.getNum());
         }
+        if (statement instanceof GoToPosXY stmt) {
+            return !isConstant(stmt.getX()) || !isConstant(stmt.getY());
+        }
+        if (statement instanceof PointInDirection stmt) {
+            return !isConstant(stmt.getDirection());
+        }
+        if (statement instanceof SetSizeTo stmt) {
+            return !isConstant(stmt.getPercent());
+        }
+        if (statement instanceof SetGraphicEffectTo stmt) {
+            return !isConstant(stmt.getValue());
+        }
+        if (statement instanceof SetSoundEffectTo stmt) {
+            return !isConstant(stmt.getValue());
+        }
+        if (statement instanceof SetVolumeTo stmt) {
+            return !isConstant(stmt.getVolumeValue());
+        }
+        if (statement instanceof SwitchCostumeTo stmt) {
+            return isDynamic(stmt.getCostumeChoice());
+        }
+        if (statement instanceof SwitchBackdrop stmt) {
+            return isDynamic(stmt.getElementChoice());
+        }
+        if (statement instanceof SwitchBackdropAndWait stmt) {
+            return isDynamic(stmt.getElementChoice());
+        }
+        if (statement instanceof GoToPos stmt) {
+            return isDynamic(stmt.getPosition());
+        }
+        if (statement instanceof PointTowards stmt) {
+            return isDynamic(stmt.getPosition());
+        }
         return false;
     }
 
+    private boolean isDynamic(ElementChoice choice) {
+        if (choice instanceof WithExpr withExpr) {
+            return !isConstant(withExpr.getExpression());
+        }
+        // Random, Next, Prev are all dynamic interactions or values
+        return choice instanceof Random || choice instanceof Next || choice instanceof Prev;
+    }
+
+    private boolean isDynamic(Position pos) {
+        if (pos instanceof FromExpression fromExpression) {
+             return !isConstant(fromExpression.getStringExpr());
+        }
+        // RandomPos, MousePos are dynamic
+        return pos instanceof RandomPos || pos instanceof MousePos;
+    }
+
     private boolean isConstant(Expression expr) {
-        if (expr instanceof BoolLiteral || expr instanceof ColorLiteral || expr instanceof NumberLiteral || expr instanceof StringLiteral) {
+        if (isConstantLiteral(expr)) {
             return true;
         }
-        // If it's not a literal, check if it's composed only of literals (e.g. arithmetic on constants)
-        // This is a simplification; we assume non-literals are dynamic for now (e.g. DataExpr)
-        // But (1) + (1) is constant. We should ideally check recursively.
-        // However, standard Scratch constants are usually parsed as Literals or simple trees.
-        // Safer to assume anything NOT a literal is dynamic, except maybe lists of literals?
-        // Let's iterate children.
-        if (expr.getChildren() != null) {
-             for (ASTNode child : expr.getChildren()) {
-                 if (child instanceof Expression childExpr) {
-                     if (!isConstant(childExpr)) {
-                         return false;
-                     }
-                 } else {
-                     // If child is not an expression (e.g. a block part?), assume dynamic to be safe,
-                     // unless we know it's safe.
-                     // But most expressions children are expressions.
-                     return false;
-                 }
-             }
-             return true; 
+        return areAllChildrenConstant(expr);
+    }
+
+    private boolean isConstantLiteral(Expression expr) {
+        return expr instanceof BoolLiteral || 
+               expr instanceof ColorLiteral || 
+               expr instanceof NumberLiteral || 
+               expr instanceof StringLiteral;
+    }
+
+    private boolean areAllChildrenConstant(Expression expr) {
+        if (expr.getChildren() == null) {
+            return true;
         }
-        return true; 
+        for (ASTNode child : expr.getChildren()) {
+            if (child instanceof Expression childExpr) {
+                if (!isConstant(childExpr)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

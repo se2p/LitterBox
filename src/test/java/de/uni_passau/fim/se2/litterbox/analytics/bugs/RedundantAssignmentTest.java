@@ -164,6 +164,24 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
     }
 
     @Test
+    public void testValidAssignmentInLoopBranch() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set [SpriteLocalVariable v] to (1)
+                forever
+                  if <(1) = (1)> then
+                    set [SpriteLocalVariable v] to (2)
+                  end
+                end""";
+                
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        
+        Assertions.assertEquals(2, issues.size());
+    }
+
+    @Test
     public void testRedundantAttributeAssignment() throws IOException, ParsingException {
         String script = """
                 when green flag clicked
@@ -493,4 +511,220 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
     }
 
+
+    @Test
+    public void testRedundantGoToPosXY() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                go to x: (10) y: (10)
+                go to x: (20) y: (20)""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        // Expect 2 issues: one for x, one for y
+        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x and y");
+    }
+
+    @Test
+    public void testDynamicGoToPosXY() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  go to x: (mouse x) y: (mouse y)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic GoToPosXY");
+    }
+
+    @Test
+    public void testRedundantSetDragMode() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set drag mode [draggable v]
+                set drag mode [not draggable v]""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(1, issues.size(), "Should report redundant drag mode");
+    }
+
+    @Test
+    public void testRedundantSetSizeTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set size to (50) %
+                set size to (100) %""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(1, issues.size(), "Should report redundant set size");
+    }
+
+    @Test
+    public void testInterruptedSetSizeTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set size to (50) %
+                say [Hello] for (2) seconds
+                set size to (100) %""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant set size");
+    }
+
+    @Test
+    public void testDynamicSetSizeTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  set size to (volume) %
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SetSizeTo");
+    }
+
+    @Test
+    public void testRedundantClearGraphicEffects() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                clear graphic effects
+                clear graphic effects""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertTrue(issues.size() > 0, "Should report redundant clear graphic effects");
+    }
+
+    @Test
+    public void testRedundantClearSoundEffects() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                clear sound effects
+                clear sound effects""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertTrue(issues.size() > 0, "Should report redundant clear sound effects");
+    }
+
+    @Test
+    public void testRedundantSetVolumeTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set volume to (50) %
+                set volume to (100) %""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(1, issues.size(), "Should report redundant set volume");
+    }
+
+    @Test
+    public void testDynamicSetVolumeTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  set volume to (loudness) %
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SetVolumeTo");
+    }
+
+    @Test
+    public void testDynamicPointInDirection() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  point in direction (direction)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic PointInDirection");
+    }
+
+    @Test
+    public void testDynamicSetGraphicEffectTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  set [color v] effect to (timer)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SetGraphicEffectTo");
+    }
+
+    @Test
+    public void testDynamicSetSoundEffectTo() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  set [pitch v] effect to (volume)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SetSoundEffectTo");
+    }
+    @Test
+    public void testDynamicSwitchCostumeTo() throws IOException, ParsingException {
+        // "switch costume to (timer)" or similar dynamic
+        String script = """
+                when green flag clicked
+                forever
+                  switch costume to (timer)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SwitchCostumeTo");
+    }
+
+    @Test
+    public void testDynamicSwitchBackdrop() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  switch backdrop to (next backdrop v)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SwitchBackdrop");
+    }
+
+    @Test
+    public void testDynamicGoToPos() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  go to (random position v)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic GoToPos");
+    }
+
+    @Test
+    public void testDynamicPointTowards() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                forever
+                  point towards (mouse-pointer v)
+                end""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic PointTowards");
+    }
 }

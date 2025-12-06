@@ -52,7 +52,8 @@ public final class IssueTranslator {
         MOTOR_POWER("motor_power"),
         ROTATION_STYLE("rotation_style"),
         SOUND_STATE("sound_state"),
-        TIMER("timer");
+        TIMER("timer"),
+        DRAG_MODE("drag_mode");
 
         private final String key;
 

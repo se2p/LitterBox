@@ -178,6 +178,7 @@ public class Hint {
             case TIMER -> IssueTranslator.GeneralTerm.TIMER;
             case ROTATION_STYLE -> IssueTranslator.GeneralTerm.ROTATION_STYLE;
             case SOUND_STATE -> IssueTranslator.GeneralTerm.SOUND_STATE;
+            case DRAG_MODE -> IssueTranslator.GeneralTerm.DRAG_MODE;
         };
     }
 
