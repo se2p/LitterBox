@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
@@ -43,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -276,18 +276,16 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
             targetId = qualified.getSecond().getName();
         }
 
-        if (targetId != null) {
-            if (attribute instanceof AttributeFromFixed fixedAttribute) {
-                FixedAttribute at = fixedAttribute.getAttribute();
-                switch (at.getType()) {
-                    case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(targetId));
-                    case SIZE -> uses.add(Attribute.sizeOf(targetId));
-                    case DIRECTION -> uses.add(Attribute.rotationOf(targetId));
-                    case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
-                    case VOLUME -> uses.add(Attribute.volumeOf(targetId));
-                    case BACKDROP_NAME, BACKDROP_NUMBER ->
-                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
-                }
+        if (targetId != null && attribute instanceof AttributeFromFixed fixedAttribute) {
+            FixedAttribute at = fixedAttribute.getAttribute();
+            switch (at.getType()) {
+                case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(targetId));
+                case SIZE -> uses.add(Attribute.sizeOf(targetId));
+                case DIRECTION -> uses.add(Attribute.rotationOf(targetId));
+                case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
+                case VOLUME -> uses.add(Attribute.volumeOf(targetId));
+                case BACKDROP_NAME, BACKDROP_NUMBER ->
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
             }
         }
     }
