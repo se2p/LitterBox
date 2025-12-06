@@ -25,13 +25,19 @@ import java.util.Objects;
 public class Parameter implements Defineable {
 
     private final LocalIdentifier identifier;
+    private final String scopeId;
 
-    public Parameter(LocalIdentifier identifier) {
+    public Parameter(LocalIdentifier identifier, String scopeId) {
         this.identifier = identifier;
+        this.scopeId = scopeId;
     }
 
     public LocalIdentifier getIdentifier() {
         return identifier;
+    }
+
+    public String getScopeId() {
+        return scopeId;
     }
 
     @Override
@@ -43,18 +49,20 @@ public class Parameter implements Defineable {
             return false;
         }
         Parameter parameter = (Parameter) o;
-        return Objects.equals(identifier, parameter.identifier);
+        return Objects.equals(identifier, parameter.identifier) &&
+                Objects.equals(scopeId, parameter.scopeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identifier);
+        return Objects.hash(identifier, scopeId);
     }
 
     @Override
     public String toString() {
         return "Parameter{"
                 + "identifier=" + identifier
+                + ", scopeId='" + scopeId + '\''
                 + '}';
     }
 }

@@ -41,7 +41,7 @@ public class ControlFlowGraphBuilder {
 
     private ControlFlowGraph cfg = new ControlFlowGraph();
 
-    private java.util.List<CFGNode> currentNodes = new ArrayList<>();
+    private List<CFGNode> currentNodes = new ArrayList<>();
 
     private ActorDefinition currentActor = null;
 
