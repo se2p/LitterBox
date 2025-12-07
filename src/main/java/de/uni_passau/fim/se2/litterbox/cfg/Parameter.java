@@ -49,8 +49,8 @@ public class Parameter implements Defineable {
             return false;
         }
         Parameter parameter = (Parameter) o;
-        return Objects.equals(identifier, parameter.identifier) &&
-                Objects.equals(scopeId, parameter.scopeId);
+        return Objects.equals(identifier, parameter.identifier)
+                && Objects.equals(scopeId, parameter.scopeId);
     }
 
     @Override

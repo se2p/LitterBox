@@ -19,11 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 public class ParameterDefinitionVisitor implements DefinableCollector<Parameter> {
 
