@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.AskAndAnswerPerfume;
+import de.uni_passau.fim.se2.litterbox.analytics.perfumes.AskAndAnswerPerfume;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyScript;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import org.junit.jupiter.api.Test;

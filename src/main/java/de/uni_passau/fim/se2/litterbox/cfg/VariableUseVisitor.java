@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -53,7 +54,7 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
     }
 
     @Override
-    public Set<de.uni_passau.fim.se2.litterbox.cfg.Variable> getDefineables() {
+    public Set<Variable> getDefineables() {
         return uses;
     }
 
@@ -100,29 +101,28 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
 
     @Override
     public void visit(AttributeOf node) {
-        // TODO: Handle this properly
-
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
         // Name of owner
         Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
-        // Can only handle LocalIdentifier hier (i.e. value selected in dropdown)
-        // We lose precision here because it could also be a Parameter or else
-        // but we don't know the value of that statically
-        if (owner instanceof LocalIdentifier localIdentifier) {
-            if (attribute instanceof AttributeFromVariable varAttribute) {
-                DataExpr e = varAttribute.getVariable();
-                Qualified q = new Qualified(localIdentifier, e);
-                uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
-            }
+        if (owner instanceof LocalIdentifier localIdentifier
+                && attribute instanceof AttributeFromVariable varAttribute) {
+            DataExpr e = varAttribute.getVariable();
+            Qualified q = new Qualified(localIdentifier, e);
+            uses.add(new Variable(q));
+        } else if (owner instanceof Qualified && attribute instanceof AttributeFromVariable) {
+            owner.accept(this);
         }
+
+        // Always visit children to pick up uses in the object expression (e.g. variables used to specify the object)
+        visitChildren(node);
     }
 
     @Override
     public void visit(Qualified node) {
         if (!(node.getSecond() instanceof ScratchList)) {
-            uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(node));
+            uses.add(new Variable(node));
         }
     }
 
@@ -149,5 +149,10 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
     @Override
     public void visit(Answer node) {
         uses.add(new Variable(new StrId("answer")));
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // Do not visit children
     }
 }

@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramBugAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingCloneCall;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
@@ -44,7 +44,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void ignorePerfumes() throws Exception {
-        final Program program = getAST("./src/test/fixtures/goodPractice/usedVariable.json");
+        final Program program = getAST("./src/test/fixtures/perfumes/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> IssueType.PERFUME.equals(issue.getIssueType()))
                 .collect(Collectors.toSet());
@@ -61,7 +61,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void ignoreNonScriptIssues() throws Exception {
-        final Program program = getAST("./src/test/fixtures/goodPractice/usedVariable.json");
+        final Program program = getAST("./src/test/fixtures/perfumes/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> !Set.of(IssueType.PERFUME, IssueType.QUESTION).contains(issue.getIssueType()))
                 .collect(Collectors.toSet());
@@ -79,7 +79,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void processScriptIssues() throws Exception {
-        final Program program = getAST("./src/test/fixtures/bugpattern/missingCloneCall.json");
+        final Program program = getAST("./src/test/fixtures/bugs/missingCloneCall.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> issue.getScript() != null)
                 .filter(issue -> MissingCloneCall.NAME.equals(issue.getFinderName()))
@@ -106,7 +106,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
     @Test
     void processScriptIssuesNotFoundInResponse() throws Exception {
-        final Program program = getAST("./src/test/fixtures/bugpattern/missingCloneCall.json");
+        final Program program = getAST("./src/test/fixtures/bugs/missingCloneCall.json");
         final Set<Issue> issues = getIssues(program).stream()
                 .filter(issue -> issue.getScript() != null)
                 .filter(issue -> MissingCloneCall.NAME.equals(issue.getFinderName()))

@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.MetricResult;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVFormat;

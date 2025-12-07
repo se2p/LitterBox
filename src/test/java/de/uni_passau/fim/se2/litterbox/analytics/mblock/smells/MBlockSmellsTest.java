@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.mblock.smells;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
-import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugs.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;

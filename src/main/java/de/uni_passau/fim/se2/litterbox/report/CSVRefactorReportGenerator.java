@@ -19,9 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ScriptCount;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.WeightedMethodCountStrict;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.BlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.ScriptCount;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.WeightedMethodCountStrict;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.LongScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;

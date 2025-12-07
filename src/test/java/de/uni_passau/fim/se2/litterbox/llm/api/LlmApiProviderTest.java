@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.llm.api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 
+@Isolated // modifies global system property
 class LlmApiProviderTest {
 
     @Test
@@ -48,6 +50,21 @@ class LlmApiProviderTest {
 
         if (prevProp != null) {
             System.setProperty(LlmApiProvider.LLM_API_PROPERTY, prevProp);
+        }
+    }
+
+    @Test
+    void getGemini() {
+        final String prevProp = System.setProperty(LlmApiProvider.LLM_API_PROPERTY, "gemini");
+        System.setProperty("litterbox.llm.gemini.api-key", "dummy");
+        System.setProperty("litterbox.llm.gemini.model", "gemini-1.5-flash");
+
+        assertThat(LlmApiProvider.get()).isInstanceOf(GeminiApi.class);
+
+        if (prevProp != null) {
+            System.setProperty(LlmApiProvider.LLM_API_PROPERTY, prevProp);
+        } else {
+            System.clearProperty(LlmApiProvider.LLM_API_PROPERTY);
         }
     }
 

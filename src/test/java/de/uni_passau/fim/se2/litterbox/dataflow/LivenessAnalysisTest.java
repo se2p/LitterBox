@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.dataflow;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.Parameter;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -137,5 +144,41 @@ public class LivenessAnalysisTest implements JsonTest {
         assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(thirdUse, visibilityUse);
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
+    }
+
+    @Test
+    public void testLivenessInCustomBlockWithParameters() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String scratchBlocks = """
+                define myBlock (param1)
+                move (param1) steps
+                
+                when green flag clicked
+                myBlock (10)
+                """;
+        program = parser.extendProject(program, "Sprite1", scratchBlocks);
+
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        visitor.visit(program);
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+
+        DataflowAnalysisBuilder<Use> builder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
+        analysis.applyAnalysis();
+
+        CFGNode procDefNode = cfg.getNodes().stream()
+                .filter(n -> n.getASTNode() instanceof ProcedureDefinition)
+                .findFirst().orElseThrow();
+
+        CFGNode moveNode = cfg.getNodes().stream()
+                .filter(n -> n.getASTNode() instanceof MoveSteps)
+                .findFirst().orElseThrow();
+
+        Use paramUse = moveNode.getUses().stream()
+                .filter(u -> u.getDefinable() instanceof Parameter)
+                .findFirst().orElseThrow(() -> new AssertionError("Parameter use not found"));
+
+        assertThat(analysis.getDataflowFacts(procDefNode)).contains(paramUse);
     }
 }

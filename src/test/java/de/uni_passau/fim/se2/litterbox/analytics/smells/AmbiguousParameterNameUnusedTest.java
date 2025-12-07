@@ -33,16 +33,16 @@ public class AmbiguousParameterNameUnusedTest implements JsonTest {
 
     @Test
     public void testAmbiguousParameters() throws IOException, ParsingException {
-        assertThatFinderReports(2, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugpattern/ambiguousParameters.json");
+        assertThatFinderReports(2, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugs/ambiguousParameters.json");
     }
 
     @Test
     public void testClans() throws IOException, ParsingException {
-        assertThatFinderReports(0, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugpattern/clans.json");
+        assertThatFinderReports(0, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugs/clans.json");
     }
 
     @Test
     public void testReal() throws IOException, ParsingException {
-        assertThatFinderReports(0, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugpattern/realAmbiguousParameter.json");
+        assertThatFinderReports(0, new AmbiguousParameterNameUnused(), "./src/test/fixtures/bugs/realAmbiguousParameter.json");
     }
 }

@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.hint;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 
 import java.util.*;
 
