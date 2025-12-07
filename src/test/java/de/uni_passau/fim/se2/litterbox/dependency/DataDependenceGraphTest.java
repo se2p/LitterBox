@@ -26,11 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -114,5 +116,25 @@ public class DataDependenceGraphTest  implements JsonTest {
         assertThat(ddg.getEdges()).contains(EndpointPair.ordered(setVariable, changeVariable));
         assertThat(ddg.getEdges()).contains(EndpointPair.ordered(setVariable, ifThen));
         assertThat(ddg.getEdges()).contains(EndpointPair.ordered(setVariable, say));
+    }
+
+    @Test
+    public void testCustomBlockParameterScope() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/dependency/parameterScope.json");
+        DataDependenceGraph ddg = new DataDependenceGraph(cfg);
+
+        // Definition of "foo" in Testblock definition
+        CFGNode definitionNode = ddg.getNodes().stream()
+                .filter(n -> n.getASTNode() != null && Objects.equals(AstNodeUtil.getBlockId(n.getASTNode()), "proc_def"))
+                .findFirst().orElseThrow();
+
+        // Usage of "foo" in Say block (the Say block itself is the node that has the Use)
+        CFGNode usageNode = ddg.getNodes().stream()
+                .filter(n -> n.getASTNode() != null && Objects.equals(AstNodeUtil.getBlockId(n.getASTNode()), "say_block"))
+                .findFirst().orElseThrow();
+
+        // There should be NO edge from definitionNode to usageNode
+        boolean hasEdge = ddg.getEdges().contains(EndpointPair.ordered(definitionNode, usageNode));
+        assertThat(hasEdge).isFalse();
     }
 }

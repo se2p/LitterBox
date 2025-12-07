@@ -31,6 +31,7 @@ public final class LlmApiProvider {
         return switch (apiType) {
             case "openai" -> new OpenAiApi();
             case "ollama" -> new OllamaApi();
+            case "gemini" -> new GeminiApi();
             default -> new OpenAiApi();
         };
     }

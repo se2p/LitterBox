@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
@@ -111,5 +112,10 @@ public class ListUseVisitor implements DefinableCollector<ListVariable> {
         if (node.getSecond() instanceof ScratchList) {
             defineables.add(new ListVariable(node));
         }
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // Do not visit children
     }
 }
