@@ -35,6 +35,37 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +90,7 @@ public class TypeError extends AbstractIssueFinder {
     private boolean isInsideQualified = false;
     private IssueSeverity issueSeverity;
 
-    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION }
+    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION, COLOR }
 
     @Override
     public void visit(LessThan node) {
@@ -91,7 +122,12 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
+        boolean oldInside = isInsideComparison;
+        Type oldType = type;
+        
         isInsideComparison = true;
+        type = null;
+        
         if (!node.getChildren().isEmpty()) {
             isRightSide = false;
             ASTNode leftChild = node.getChildren().get(0);
@@ -100,8 +136,9 @@ public class TypeError extends AbstractIssueFinder {
             isRightSide = true;
             rightChild.accept(this);
         }
-        isInsideComparison = false; // TODO: Can comparisons be nested?
-        type = null;
+        
+        isInsideComparison = oldInside;
+        type = oldType;
     }
 
     @Override
@@ -223,6 +260,23 @@ public class TypeError extends AbstractIssueFinder {
                 }
             }
         }
+        if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
+             addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
+        }
+        
+        boolean oldInside = isInsideComparison;
+        boolean oldRight = isRightSide;
+        Type oldType = type;
+
+        isInsideComparison = false;
+        isRightSide = false;
+        type = null;
+
+        node.getOperand1().accept(this);
+
+        isInsideComparison = oldInside;
+        isRightSide = oldRight;
+        type = oldType;
     }
 
     @Override
@@ -243,12 +297,232 @@ public class TypeError extends AbstractIssueFinder {
             if (!isRightSide) {
                 this.type = type;
             } else {
-                if (this.type != null && this.type != type && this.type != Type.NUMBER) {
-                    return false;
+                if (this.type != null && this.type != type) {
+                    if (this.type == Type.NUMBER && type == Type.BOOLEAN) {
+                        return false;
+                    }
+                    if (this.type != Type.NUMBER) {
+                        return false;
+                    }
                 }
             }
         }
         return true;
+    }
+
+    private void checkExpectedType(ASTNode node, Type expectedType) {
+        boolean oldInside = isInsideComparison;
+        boolean oldRight = isRightSide;
+        Type oldType = type;
+
+        isInsideComparison = true;
+        isRightSide = true;
+        type = expectedType;
+
+        node.accept(this);
+
+        isInsideComparison = oldInside;
+        isRightSide = oldRight;
+        type = oldType;
+    }
+
+    @Override
+    public void visit(Color node) {
+        if (!isValid(Type.COLOR)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
+        node.getThenStmts().accept(this);
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
+        node.getThenStmts().accept(this);
+        node.getElseStmts().accept(this);
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
+        node.getStmtList().accept(this);
+    }
+
+    @Override
+    public void visit(WaitUntil node) {
+        checkExpectedType(node.getUntil(), Type.BOOLEAN);
+    }
+
+    @Override
+    public void visit(PenBlock node) {
+        if (node instanceof SetPenColorToColorStmt stmt) {
+            checkExpectedType(stmt.getColorExpr(), Type.COLOR);
+        }
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        checkExpectedType(node.getColor(), Type.COLOR);
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        checkExpectedType(node.getOperand1(), Type.COLOR);
+        checkExpectedType(node.getOperand2(), Type.COLOR);
+    }
+
+    @Override
+    public void visit(And node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
+        checkExpectedType(node.getOperand2(), Type.BOOLEAN);
+    }
+
+    @Override
+    public void visit(Or node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
+        checkExpectedType(node.getOperand2(), Type.BOOLEAN);
+    }
+
+    @Override
+    public void visit(Not node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+
+    @Override
+    public void visit(ListContains node) {
+        if (!isValid(Type.BOOLEAN)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+    }
+    @Override
+    public void visit(ChangeVariableBy node) {
+        checkExpectedType(node.getExpr(), Type.NUMBER);
+        node.getIdentifier().accept(this);
+    }
+
+    @Override
+    public void visit(SetXTo node) {
+        checkExpectedType(node.getNum(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(SetYTo node) {
+        checkExpectedType(node.getNum(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        checkExpectedType(node.getNum(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        checkExpectedType(node.getNum(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        checkExpectedType(node.getSteps(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        checkExpectedType(node.getDegrees(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        checkExpectedType(node.getDegrees(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(PointInDirection node) {
+        checkExpectedType(node.getDirection(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(SetSizeTo node) {
+        checkExpectedType(node.getPercent(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeSizeBy node) {
+        checkExpectedType(node.getNum(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(SetVolumeTo node) {
+        checkExpectedType(node.getVolumeValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        checkExpectedType(node.getVolumeValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo node) {
+        checkExpectedType(node.getValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        checkExpectedType(node.getValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        checkExpectedType(node.getValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        checkExpectedType(node.getValue(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(WaitSeconds node) {
+        checkExpectedType(node.getSeconds(), Type.NUMBER);
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        checkExpectedType(node.getTimes(), Type.NUMBER);
+        node.getStmtList().accept(this);
     }
 
     @Override
