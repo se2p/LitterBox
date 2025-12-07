@@ -32,7 +32,9 @@ public class ReachingDefinitionsTransferFunction implements TransferFunction<Def
 
         // Remove all Definitions of variables that are defined here
         Set<Definition> definitions = node.getDefinitions();
-        result.removeIf(definitions::contains);
+        for (Definition newDef : definitions) {
+            result.removeIf(oldDef -> oldDef.getDefinable().equals(newDef.getDefinable()));
+        }
 
         // Add new Definitions of variables that are defined here
         result.addAll(definitions);
