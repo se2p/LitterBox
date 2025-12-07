@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.*;
 
@@ -72,7 +73,8 @@ public abstract class CFGNode {
         Set<Definition> definitions = new LinkedHashSet<>();
         List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
                 new VariableDefinitionVisitor(),
-                new ListDefinitionVisitor()
+                new ListDefinitionVisitor(),
+                new ParameterDefinitionVisitor()
         ));
 
         if (getActor() != null) {
@@ -94,9 +96,12 @@ public abstract class CFGNode {
         }
 
         Set<Use> uses = new LinkedHashSet<>();
+        String scopeId = getScriptOrProcedure() != null ? AstNodeUtil.getBlockId(getScriptOrProcedure()) : null;
+
         List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
                 new VariableUseVisitor(),
-                new ListUseVisitor()
+                new ListUseVisitor(),
+                new ParameterUseVisitor(scopeId)
         ));
 
         if (getActor() != null) {

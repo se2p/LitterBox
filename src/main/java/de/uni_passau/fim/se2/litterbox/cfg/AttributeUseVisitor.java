@@ -31,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
@@ -40,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -258,38 +261,37 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
 
     @Override
     public void visit(AttributeOf node) {
-        // TODO: Handle this
-
         // Name of var or attribute
         de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute
                 = node.getAttribute();
         // Name of owner
         Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
-        // Can only handle LocalIdentifier hier (i.e. value selected in dropdown)
-        // We lose precision here because it could also be a Parameter or else
-        // but we don't know the value of that statically
+        LocalIdentifier targetId = null;
         if (owner instanceof LocalIdentifier localIdentifier) {
-            if (attribute instanceof AttributeFromFixed fixedAttribute) {
-                FixedAttribute at = fixedAttribute.getAttribute();
-                switch (at.getType()) {
-                    case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(localIdentifier));
-                    case SIZE -> uses.add(Attribute.sizeOf(localIdentifier));
-                    case DIRECTION -> uses.add(Attribute.rotationOf(localIdentifier));
-                    case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(localIdentifier));
-                    case VOLUME -> uses.add(Attribute.volumeOf(localIdentifier));
-                    case BACKDROP_NAME, BACKDROP_NUMBER ->
-                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
-                }
-            }
-            // TODO: Once we handle parameters:
-            //        } else if (owner instanceof Parameter) {
-            //            Parameter parameter = (Parameter) owner;
-            //            if (attribute instanceof AttributeFromFixed) {
-            //                AttributeFromFixed fixedAttribute = (AttributeFromFixed) attribute;
-            //
-            //            }
-            // }
+            targetId = localIdentifier;
+        } else if (owner instanceof DataExpr dataExpr) {
+            targetId = dataExpr.getName();
+        } else if (owner instanceof Qualified qualified) {
+            targetId = qualified.getSecond().getName();
         }
+
+        if (targetId != null && attribute instanceof AttributeFromFixed fixedAttribute) {
+            FixedAttribute at = fixedAttribute.getAttribute();
+            switch (at.getType()) {
+                case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(targetId));
+                case SIZE -> uses.add(Attribute.sizeOf(targetId));
+                case DIRECTION -> uses.add(Attribute.rotationOf(targetId));
+                case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
+                case VOLUME -> uses.add(Attribute.volumeOf(targetId));
+                case BACKDROP_NAME, BACKDROP_NUMBER ->
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+            }
+        }
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // Do not visit children
     }
 }

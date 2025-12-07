@@ -30,6 +30,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -488,5 +501,48 @@ public class AttributeTest implements JsonTest {
         AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
         node.getASTNode().accept(visitor);
         return visitor.getDefineables();
+    }
+    @Test
+    public void testAttributeOfParameter() {
+        LocalIdentifier paramName = new StrId("myParam");
+        Parameter parameter = new Parameter(paramName, null, new NoBlockMetadata());
+        AttributeOf attributeOf = new AttributeOf(
+                new AttributeFromFixed(new FixedAttribute(FixedAttribute.FixedAttributeType.X_POSITION.getType())),
+                new WithExpr(parameter, new NoBlockMetadata()),
+                new NoBlockMetadata()
+        );
+
+        AttributeUseVisitor visitor = new AttributeUseVisitor(null);
+        attributeOf.accept(visitor);
+
+        Set<Attribute> uses = visitor.getDefineables();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.iterator().next();
+        assertThat(use.getAttributeType()).isEqualTo(POSITION);
+        assertThat(use.getActorIdentifier()).isEqualTo(paramName);
+    }
+
+    @Test
+    public void testAttributeOfParameterFromScratchBlocks() {
+        String scratchBlocks = """
+                define my block (param)
+                say ([x position v] of (param))
+                """;
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        ScriptEntity entity = parser.parseScriptEntity("Stage", scratchBlocks);
+
+        ProcedureDefinition procDef = (ProcedureDefinition) entity;
+        StmtList body = procDef.getStmtList();
+        Say sayStmt = (Say) body.getStmts().get(0);
+        AttributeOf attributeOf = (AttributeOf) sayStmt.getString();
+
+        AttributeUseVisitor visitor = new AttributeUseVisitor(null);
+        attributeOf.accept(visitor);
+
+        Set<Attribute> uses = visitor.getDefineables();
+        assertThat(uses).hasSize(1);
+        Attribute use = uses.iterator().next();
+        assertThat(use.getAttributeType()).isEqualTo(POSITION);
+        assertThat(use.getActorIdentifier().getName()).isEqualTo("param");
     }
 }
