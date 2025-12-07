@@ -170,6 +170,8 @@ public class TypeError extends AbstractIssueFinder {
         }
     }
 
+
+
     @Override
     public void visit(Qualified node) {
         isInsideQualified = true;
@@ -401,11 +403,28 @@ public class TypeError extends AbstractIssueFinder {
         checkExpectedType(node.getOperand1(), Type.BOOLEAN);
     }
 
+    private void visitChildrenSafe(ASTNode node) {
+        boolean oldInside = isInsideComparison;
+        Type oldType = type;
+        boolean oldRight = isRightSide;
+
+        isInsideComparison = false;
+        type = null;
+        isRightSide = false;
+
+        visitChildren(node);
+
+        isInsideComparison = oldInside;
+        type = oldType;
+        isRightSide = oldRight;
+    }
+
     @Override
     public void visit(Touching node) {
         if (!isValid(Type.BOOLEAN)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
+        visitChildrenSafe(node);
     }
 
     @Override
@@ -413,6 +432,7 @@ public class TypeError extends AbstractIssueFinder {
         if (!isValid(Type.BOOLEAN)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
+        visitChildrenSafe(node);
     }
 
     @Override
@@ -420,6 +440,7 @@ public class TypeError extends AbstractIssueFinder {
         if (!isValid(Type.BOOLEAN)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
+        visitChildrenSafe(node);
     }
 
     @Override
@@ -427,6 +448,7 @@ public class TypeError extends AbstractIssueFinder {
         if (!isValid(Type.BOOLEAN)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
+        visitChildrenSafe(node);
     }
     @Override
     public void visit(ChangeVariableBy node) {

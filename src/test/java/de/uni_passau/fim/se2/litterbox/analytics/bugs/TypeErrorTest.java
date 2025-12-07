@@ -105,7 +105,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         String script = """
                 when green flag clicked
                 change [myVar v] by [hello]
-                set x to <touching [mouse-pointer v]?>
+                set x to <touching (mouse-pointer v)?>
                 set size to (100) %
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
@@ -113,8 +113,8 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
         
-        // Expecting 1 issue (SetXTo <touching>). ChangeVariableBy "hello" skipped by parser.
-        Assertions.assertEquals(1, issues.size());
+        // Expecting 2 issues: SetXTo <touching> AND ChangeVariableBy "hello" (StringLiteral).
+        Assertions.assertEquals(2, issues.size());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         ScratchBlocksParser parser = new ScratchBlocksParser();
         String script = """
                 when green flag clicked
-                if <touching [mouse-pointer v]?> then
+                if <touching (mouse-pointer v)?> then
                 end
                 if (50) then
                 end
@@ -133,10 +133,56 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
         
-        // Expecting 2 issues: 1 for If(50), 1 for If<touching> (False positive/Strict check artifact)
-        Assertions.assertEquals(2, issues.size());
+        // Expecting 1 issue: 1 for If(50). If<touching> is valid.
+        Assertions.assertEquals(1, issues.size());
     }
 
+    @Test
+    public void testComprehensiveTypeChecks() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String script = """
+                when green flag clicked
+                
+                // 1. Control Structures
+                repeat until (50)
+                end
+                wait until <touching (mouse-pointer v)?>
+                if (10) then
+                else
+                end
+
+                // 2. Logical Operators
+                if <not (10)> then
+                end
+                if <(10) and <mouse down?>> then
+                end
+                if <<key (space v) pressed?> or (10)> then
+                end
+
+                // 3. Sensing and Color
+                if <touching color [#ff0000]?> then
+                end
+                if <color [#00ff00] is touching [#0000ff]?> then
+                end
+                
+                // 4. Invalid Color
+                wait until <touching color (50)?>
+                """;
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Expected Issues:
+        // 1. Repeat Until (50) -> Number as Boolean (1 issue)
+        // 2. If (10) -> Number as Boolean (1 issue)
+        // 3. Not (10) -> Number as Boolean (1 issue)
+        // 4. (10) and ... -> Number as Boolean (1 issue)
+        // 5. ... or (10) -> Number as Boolean (1 issue)
+        // Total: 5 issues. Touching Color (50) is valid (casted to Color).
+        Assertions.assertEquals(5, issues.size());
+    }
     @Test
     public void testColorChecks() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
