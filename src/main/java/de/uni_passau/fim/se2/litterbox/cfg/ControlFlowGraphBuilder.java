@@ -41,7 +41,7 @@ public class ControlFlowGraphBuilder {
 
     private ControlFlowGraph cfg = new ControlFlowGraph();
 
-    private java.util.List<CFGNode> currentNodes = new ArrayList<>();
+    private List<CFGNode> currentNodes = new ArrayList<>();
 
     private ActorDefinition currentActor = null;
 
@@ -106,7 +106,7 @@ public class ControlFlowGraphBuilder {
     }
 
     /**
-     * For all broadcasts that are not using strings, we need to overapproximate
+     * For all broadcasts that are not using strings, we need to overapproximate.
      */
     private void connectBroadcastExpressions() {
         for (CFGNode broadcastNode : expressionBroadcasts) {
@@ -291,7 +291,11 @@ public class ControlFlowGraphBuilder {
         CFGNode node = addStatement(stmt);
 
         // Add edge to procedure entry node
-        ProcedureNode customBlockNode = getCanonicalProcedureNode(stmt.getIdent().getName(), currentActor.getIdent().getName(), null);
+        ProcedureNode customBlockNode = getCanonicalProcedureNode(
+                stmt.getIdent().getName(),
+                currentActor.getIdent().getName(),
+                null
+        );
         cfg.addEdge(node, customBlockNode);
 
         // Add return node as next node

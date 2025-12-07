@@ -26,6 +26,11 @@ import java.util.Set;
 public class ParameterUseVisitor implements DefinableCollector<Parameter> {
 
     private final Set<Parameter> uses = new LinkedHashSet<>();
+    private final String scopeId;
+
+    public ParameterUseVisitor(String scopeId) {
+        this.scopeId = scopeId;
+    }
 
     @Override
     public Set<Parameter> getDefineables() {
@@ -34,7 +39,7 @@ public class ParameterUseVisitor implements DefinableCollector<Parameter> {
 
     @Override
     public void visit(de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter node) {
-        uses.add(new Parameter(node.getName()));
+        uses.add(new Parameter(node.getName(), scopeId));
     }
 
     @Override

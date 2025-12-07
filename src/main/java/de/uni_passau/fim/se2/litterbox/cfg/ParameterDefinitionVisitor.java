@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,8 +35,9 @@ public class ParameterDefinitionVisitor implements DefinableCollector<Parameter>
 
     @Override
     public void visit(ProcedureDefinition node) {
+        String scopeId = AstNodeUtil.getBlockId(node);
         node.getParameterDefinitionList().getParameterDefinitions().forEach(
-                def -> definitions.add(new Parameter(def.getIdent()))
+                def -> definitions.add(new Parameter(def.getIdent(), scopeId))
         );
     }
 }

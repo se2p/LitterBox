@@ -36,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSec
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
@@ -108,17 +109,18 @@ public class RedundantAssignmentTransferFunction extends LivenessTransferFunctio
                 augmented.add(new Use(node, cfgVar));
 
                 // Also add Unqualified version (StrId) to support unresolved ASTs
-                Variable unqualifiedVar = new Variable(new de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId(varInfo.variableName()));
+                Variable unqualifiedVar = new Variable(new StrId(varInfo.variableName()));
                 augmented.add(new Use(node, unqualifiedVar));
             }
             
             // Collect Parameters if inside Procedure
             ASTNode context = node.getScriptOrProcedure();
             if (context instanceof ProcedureDefinition) {
+                String scopeId = AstNodeUtil.getBlockId(context);
                 ProcedureDefinition proc = (ProcedureDefinition) context;
                 proc.getParameterDefinitionList().getParameterDefinitions().forEach(
                     pDef -> {
-                        Parameter param = new Parameter(pDef.getIdent());
+                        Parameter param = new Parameter(pDef.getIdent(), scopeId);
                         augmented.add(new Use(node, param));
                     }
                 );
