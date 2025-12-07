@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
@@ -32,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import org.junit.jupiter.api.Test;
 
@@ -157,12 +159,13 @@ public class UseTest implements JsonTest {
     @Test
     public void testAttributeOfVariable() throws IOException, ParsingException {
         // If the dropdown contains a variable or parameter we don't statically know what sprite
-        // we're referring to, so for now we skip these definitions/uses...
+        // we're referring to, but we still track the attribute use relative to that variable/parameter.
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nouseattributewithvariable.json");
         List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).toList();
         for (CFGNode node : nodes) {
             assertThat(node.getDefinitions()).isEmpty();
-            assertThat(node.getUses()).hasSize(1); // Visibility for say
+            // Visibility for say + Parameter/Variable use + Attribute use
+            assertThat(node.getUses()).hasSize(3);
         }
     }
 
@@ -261,8 +264,23 @@ public class UseTest implements JsonTest {
 
     private void assertIsEqualIgnoringMetadata(
             final de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varA,
-            final de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varB
-    ) {
+            final de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable varB) {
         assertThat(varA.getName()).isEqualTo(varB.getName());
+    }
+
+    @Test
+    public void testParameterUse() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/solutionpattern/initializedParameter.json");
+        // The custom block "jump %s" uses the parameter "height" in glide
+        CFGNode glideNode = cfg.getNodes().stream()
+                .filter(n -> n.getASTNode() instanceof GlideSecsToXY)
+                .findFirst().get();
+
+        Set<Use> uses = glideNode.getUses();
+        // It uses "height" parameter
+        assertThat(uses).hasSize(1);
+        Defineable use = uses.iterator().next().getDefinable();
+        assertThat(use).isInstanceOf(Parameter.class);
+        assertThat(((Parameter) use).getIdentifier().getName()).isEqualTo("height");
     }
 }

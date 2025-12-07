@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.Objects;
 
@@ -28,14 +29,25 @@ public class ProcedureNode extends CFGNode {
 
     private String actorName;
 
+    private ProcedureDefinition procedureDefinition;
+
     public ProcedureNode(String name, String actorName) {
+        this(name, actorName, null);
+    }
+
+    public ProcedureNode(String name, String actorName, ProcedureDefinition procedureDefinition) {
         this.procedureName = name;
         this.actorName = actorName;
+        this.procedureDefinition = procedureDefinition;
+    }
+
+    public void setProcedureDefinition(ProcedureDefinition procedureDefinition) {
+        this.procedureDefinition = procedureDefinition;
     }
 
     @Override
     public ASTNode getASTNode() {
-        return null;
+        return procedureDefinition;
     }
 
     @Override

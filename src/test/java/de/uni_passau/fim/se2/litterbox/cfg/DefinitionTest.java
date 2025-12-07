@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -130,6 +131,20 @@ public class DefinitionTest implements JsonTest {
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof MoveSteps).findFirst().get();
         assertThat(getDefinitions(node)).isEmpty();
+    }
+
+    @Test
+    public void testParameterDefinition() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/solutionpattern/initializedParameter.json");
+        CFGNode node = cfg.getNodes().stream()
+                .filter(n -> n.getASTNode() instanceof ProcedureDefinition)
+                .findFirst().get();
+
+        Set<Definition> definitions = node.getDefinitions();
+        assertThat(definitions).hasSize(1);
+        Defineable def = definitions.iterator().next().getDefinable();
+        assertThat(def).isInstanceOf(Parameter.class);
+        assertThat(((Parameter) def).getIdentifier().getName()).isEqualTo("height");
     }
 
     private Set<Variable> getDefinitions(CFGNode node) {

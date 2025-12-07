@@ -23,8 +23,10 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -147,11 +149,11 @@ public class LlmResponseParserHeuristicsTest implements JsonTest {
         List<Script> scripts = updatedProgram.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScriptList();
         Script newScript = scripts.getFirst();
         assertEquals(1, newScript.getStmtList().getStmts().size());
-        // The user explicitly requested "play sound" -> "play sound", which parses as a CallStmt
-        assertInstanceOf(CallStmt.class, newScript.getStmtList().getStmts().getFirst());
-        CallStmt callStmt = (CallStmt) newScript.getStmtList().getStmts().getFirst();
-        // The parser consumes the entire string as the identifier in this case
-        assertEquals("play sound (meow v)", callStmt.getIdent().getName());
-        assertEquals(0, callStmt.getExpressions().getExpressions().size());
+        assertInstanceOf(StartSound.class, newScript.getStmtList().getStmts().getFirst());
+        StartSound startSound = (StartSound) newScript.getStmtList().getStmts().getFirst();
+        assertInstanceOf(WithExpr.class, startSound.getElementChoice());
+        WithExpr withExpr = (WithExpr) startSound.getElementChoice();
+        assertInstanceOf(StrId.class, withExpr.getExpression());
+        assertEquals("meow", ((StrId) withExpr.getExpression()).getName());
     }
 }
