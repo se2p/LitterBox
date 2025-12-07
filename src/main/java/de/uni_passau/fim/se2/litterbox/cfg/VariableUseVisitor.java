@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -113,10 +114,15 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
             uses.add(new Variable(q));
         } else if (owner instanceof Qualified && attribute instanceof AttributeFromVariable) {
             owner.accept(this);
+        } else {
+            attribute.accept(this);
         }
 
-        // Always visit children to pick up uses in the object expression (e.g. variables used to specify the object)
-        visitChildren(node);
+        node.getElementChoice().accept(this);
+
+        if (node.getMetadata() != null) {
+            ((ASTNode) node.getMetadata()).accept(this);
+        }
     }
 
     @Override
@@ -138,12 +144,7 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
 
     @Override
     public void visit(Parameter node) {
-        if (actor != null) {
-            Qualified q = new Qualified(actor.getIdent(), node);
-            uses.add(new Variable(q));
-        } else {
-            uses.add(new Variable(node.getName()));
-        }
+        // Parameters are not variables
     }
 
     @Override
