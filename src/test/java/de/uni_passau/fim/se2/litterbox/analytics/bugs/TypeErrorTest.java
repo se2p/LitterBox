@@ -40,8 +40,8 @@ public class TypeErrorTest implements FinderTest, JsonTest {
 
     @Test
     public void testStringComparedToNumber() throws IOException, ParsingException {
-        //must not find this, because this is part of ComparingLiterals
-        assertThatFinderReports(0, new TypeError(), "./src/test/fixtures/bugs/stringComparedToNumber.json");
+        // Now consistent with NumberComparedToString
+        assertThatFinderReports(1, new TypeError(), "./src/test/fixtures/bugs/stringComparedToNumber.json");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
 
     @Test
     public void testComplexComparison() throws IOException, ParsingException {
-        assertThatFinderReports(1, new TypeError(), "./src/test/fixtures/bugs/complexComparison.json");
+        assertThatFinderReports(3, new TypeError(), "./src/test/fixtures/bugs/complexComparison.json");
     }
 
     @Test
@@ -193,10 +193,245 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 set pen color to (50)
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+        // TODO check this
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
         
         Assertions.assertEquals(0, issues.size());
     }
+
+
+    @Test
+    public void testVariableTypes() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog;
+        TypeError finder = new TypeError();
+        Set<Issue> issues;
+
+        // 1. Valid Number Assignment
+        prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (10)
+                move (myVar) steps
+                """);
+        issues = finder.check(prog);
+        Assertions.assertEquals(0, issues.size(), "Should verify numeric variable usage");
+
+        // 2. Invalid String Assignment
+        prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to [hello]
+                move (myVar) steps
+                """);
+        issues = finder.check(prog);
+        Assertions.assertEquals(1, issues.size(), "Should report String variable used as Number");
+
+        // 3. Valid Answer (ANY)
+        prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (answer)
+                move (myVar) steps
+                """);
+        issues = finder.check(prog);
+        Assertions.assertEquals(0, issues.size(), "Answer should be compatible with Number");
+
+        // 4. Incompatible Boolean usage
+        prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (10)
+                if (myVar) then
+                end
+                """);
+        issues = finder.check(prog);
+        Assertions.assertEquals(1, issues.size(), "Number variable incompatible with Boolean context");
+    }
+
+
+    @Test
+    public void testLoopControlFlow() throws IOException, ParsingException {
+        // Test that type persists through a loop
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (10)
+                repeat (10)
+                    move (myVar) steps
+                    set [myVar v] to (myVar)
+                end
+                if (myVar) then
+                end
+                """);
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        // Expect 1 issue: myVar (Number) used as Boolean in 'if'
+        // 'move (myVar)' should be valid.
+        Assertions.assertEquals(1, issues.size(), "Loop should propagate number type");
+    }
+
+    @Test
+    public void testTypeConflicts() throws IOException, ParsingException {
+        // Test reassignment to incompatible type
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // Path 1: Set to Number. Path 2: Set to String. Join: ? -> TOP
+        // But we can't easily make divergent paths merge without if/else.
+        // Simple reassignment:
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (10)
+                set [myVar v] to [hello]
+                move (myVar) steps
+                """);
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        // Expect 1 issue: second move uses String
+        Assertions.assertEquals(1, issues.size(), "Reassignment should change type to String");
+    }
+
+    @Test
+    public void testInterScript() throws IOException, ParsingException {
+        // Test variables in different scripts (same sprite -> shared scope)
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        prog = parser.extendProject(prog, "Sprite1", """
+                when green flag clicked
+                set [myVar v] to (10)
+                """);
+        // Second script uses it. Dataflow currently does NOT propagate between scripts (parallel execution undefined).
+        // Each script starts with empty facts (or initial facts).
+        // So myVar in script 2 should be BOTTOM (uninitialized) or ANY?
+        // Our init logic: initializeMay() sets empty set.
+        // getVariableType returns BOTTOM if not found.
+        // BOTTOM matches everything in isCompatible? No, BOTTOM means uninitialized.
+        // isCompatible(NUMBER, BOTTOM) -> true (allow uninitialized to avoid noise?)
+        // Let's check isCompatible:
+        // if (actual == Type.ANY || actual == Type.TOP || actual == Type.BOTTOM) return true;
+        // So it should be valid.
+        
+        prog = parser.extendProject(prog, "Sprite1", """
+                when key [space v] pressed
+                move (myVar) steps
+                """);
+                
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        Assertions.assertEquals(0, issues.size(), "Cross-script usage should be assumed valid (BOTTOM/ANY)");
+    }
+    @Test
+    public void testNonBooleanExpectations() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // Test blocks that expect non-boolean types (Number, String) getting incompatible types
+        String script = """
+                when green flag clicked
+                // 1. Move steps expects Number, gets Boolean (Touching)
+                move <touching (mouse-pointer v)?> steps
+                
+                // 2. Set variable expects Number/String, but usage context might assume Number.
+                // 'set x to' explicitly expects Number. gets Boolean (Key Pressed)
+                set x to <key (space v) pressed?>
+                
+                // 3. Wait seconds expects Number, gets Boolean (Equals)
+                wait <(1) = (1)> secs
+                
+                // 4. Change size by expects Number, gets String literal
+                change size by [some string]
+                
+                // 5. Change volume by expects Number, gets String literal
+                change volume by [loud]
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Expected issues: 5
+        StringBuilder issuesStr = new StringBuilder();
+        for(Issue issue : issues) {
+             issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
+        }
+        Assertions.assertEquals(5, issues.size(), "Should report type errors for non-boolean expectations. Found:\n" + issuesStr);
+    }
+
+
+
+    @Test
+    public void testTypeMisuses() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // We construct a script with type errors for Distance, Loudness, Position, and Direction
+        String script = """
+                when green flag clicked
+                // 1. Distance misuse (Number as Boolean)
+                if (distance to (mouse-pointer v)) then
+                end
+                
+                // 2. Loudness misuse
+                if (loudness) then
+                end
+                // Loudness compared to String
+                if <(loudness) = [string]> then
+                end
+
+                // 3. Position misuse
+                if (x position) then
+                end
+                if (y position) then
+                end
+                if <(x position) = [string]> then
+                end
+                
+                // 4. Direction misuse
+                if (direction) then
+                end
+                if <(direction) = [string]> then
+                end
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Total expected: 8
+        StringBuilder issuesStr = new StringBuilder();
+        for(Issue issue : issues) {
+             issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
+        }
+        Assertions.assertEquals(8, issues.size(), "Should report type errors for all misuses. Found:\n" + issuesStr);
+    }
+    @Test
+    public void testPickRandomMisuse() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        String script = """
+                when green flag clicked
+                // 1. Boolean context misuse
+                if (pick random (1) to (10)) then
+                end
+                
+                // 2. Comparison with String
+                if <(pick random (1) to (10)) = [string]> then
+                end
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        
+        StringBuilder issuesStr = new StringBuilder();
+        for(Issue issue : issues) {
+             issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
+        }
+        Assertions.assertEquals(3, issues.size(), "Should report type errors for PickRandom misuse. Found:\n" + issuesStr);
+    }
 }
+
