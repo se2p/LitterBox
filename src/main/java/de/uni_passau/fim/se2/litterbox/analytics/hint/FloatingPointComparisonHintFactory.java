@@ -37,6 +37,8 @@ public abstract class FloatingPointComparisonHintFactory {
     public static final String DISTANCE_ZERO_SPRITES = "position_equals_check_zero_sprites";
     public static final String DISTANCE_ZERO_MOUSE = "position_equals_check_zero_mouse";
     public static final String DISTANCE = "position_equals_check_dist";
+    public static final String MOUSE = "floating_point_mouse";
+    public static final String POSITION = "position_equals_check";
     public static final String DEFAULT = FloatingPointComparison.NAME;
     public static final String COORDINATE = "COORDINATE";
 
@@ -46,6 +48,12 @@ public abstract class FloatingPointComparisonHintFactory {
             hint = generateHintForDistance(node.getOperand1(), node.getOperand2());
         } else if (node.getOperand2() instanceof DistanceTo) {
             hint = generateHintForDistance(node.getOperand2(), node.getOperand1());
+        } else if (node.getOperand1() instanceof MouseX || node.getOperand1() instanceof MouseY || node.getOperand2() instanceof MouseX || node.getOperand2() instanceof MouseY) {
+            hint = Hint.fromKey(MOUSE);
+            hint.setParameter(COORDINATE, getAttributeType(node));
+        } else if (node.getOperand1() instanceof PositionX || node.getOperand1() instanceof PositionY || node.getOperand2() instanceof PositionX || node.getOperand2() instanceof PositionY) {
+            hint = Hint.fromKey(POSITION);
+            hint.setParameter(COORDINATE, getAttributeType(node));
         } else {
             hint = Hint.fromKey(DEFAULT);
             hint.setParameter(COORDINATE, getAttributeType(node));
@@ -68,17 +76,11 @@ public abstract class FloatingPointComparisonHintFactory {
     }
 
     private static String getAttributeType(Equals node) {
-        if (checkType(node.getOperand1(), PositionX.class) || checkType(node.getOperand2(), PositionX.class)) {
+        if (checkType(node.getOperand1(), PositionX.class) || checkType(node.getOperand2(), PositionX.class) || checkType(node.getOperand1(), MouseX.class) || checkType(node.getOperand2(), MouseX.class)) {
             return "x";
         }
-        if (checkType(node.getOperand1(), PositionY.class) || checkType(node.getOperand2(), PositionY.class)) {
+        if (checkType(node.getOperand1(), PositionY.class) || checkType(node.getOperand2(), PositionY.class) || checkType(node.getOperand1(), MouseY.class) || checkType(node.getOperand2(), MouseY.class)) {
             return "y";
-        }
-        if (checkType(node.getOperand1(), MouseX.class) || checkType(node.getOperand2(), MouseX.class)) {
-            return "mouse x";
-        }
-        if (checkType(node.getOperand1(), MouseY.class) || checkType(node.getOperand2(), MouseY.class)) {
-            return "mouse y";
         }
         if (checkType(node.getOperand1(), Direction.class) || checkType(node.getOperand2(), Direction.class)) {
             return "direction";
