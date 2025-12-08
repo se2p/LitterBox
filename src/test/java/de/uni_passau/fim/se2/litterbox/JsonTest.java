@@ -21,8 +21,8 @@ package de.uni_passau.fim.se2.litterbox;
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
@@ -37,7 +37,6 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
-
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
@@ -146,11 +145,5 @@ public interface JsonTest {
         final ASTNode block = BlockByIdFinder.findBlock(root, blockId).orElseThrow();
         assertInstanceOf(expectedType, block);
         return expectedType.cast(block);
-    }
-
-    default Program parseScratchBlocks(String scratchBlocksCode) throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/emptyProject.json");
-        de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser parser = new de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser();
-        return parser.extendProject(program, "Sprite1", scratchBlocksCode);
     }
 }
