@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect.GraphicEffectType;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect.SoundEffectType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
@@ -92,9 +94,8 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
 
     private void addUnknownEffectDefinitions() {
         // We know the standard scratch effects
-        String[] effects = {"COLOR", "FISHEYE", "WHIRL", "PIXELATE", "MOSAIC", "BRIGHTNESS", "GHOST"};
-        for (String e : effects) {
-            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), e));
+        for (GraphicEffectType type : GraphicEffectType.values()) {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), type.getToken()));
         }
         // Also add the generic one
         definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
@@ -127,8 +128,9 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     @Override
     public void visit(ClearSoundEffects node) {
         // Standard sound effects: PITCH, PAN
-        definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), "PITCH"));
-        definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), "PAN"));
+        for (SoundEffectType type : SoundEffectType.values()) {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), type.getToken()));
+        }
         definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
     }
 

@@ -116,7 +116,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         DataflowAnalysisBuilder<Use> builder = new DataflowAnalysisBuilder<>(cfg);
         DataflowAnalysis<Use> analysis = builder.withBackward()
                 .withMay()
-                .withTransferFunction(new RedundantAssignmentTransferFunction(program, cfg))
+                .withTransferFunction(new RedundantAssignmentTransferFunction(cfg))
                 .build();
 
         analysis.applyAnalysis();
