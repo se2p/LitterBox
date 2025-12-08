@@ -197,11 +197,13 @@ public class IssueTool {
             registerSmellFinder(new EmptyProject(), smellFinders);
             registerSmellFinder(new EmptyScript(), smellFinders);
             registerSmellFinder(new EmptySprite(), smellFinders);
+            registerSmellFinder(new InappropriateIntimacy(), smellFinders);
             registerSmellFinder(new LongScript(), smellFinders);
             registerSmellFinder(new MessageNaming(), smellFinders);
             registerSmellFinder(new MiddleMan(), smellFinders);
             registerSmellFinder(new MultiAttributeModification(), smellFinders);
             registerSmellFinder(new NestedLoops(), smellFinders);
+            registerSmellFinder(new PointlessTimerReset(), smellFinders);
             registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
             registerSmellFinder(new SequentialActions(), smellFinders);
             registerSmellFinder(new SpriteNaming(), smellFinders);
@@ -216,6 +218,7 @@ public class IssueTool {
             registerSmellFinder(new UnnecessarySizeChange(), smellFinders);
             registerSmellFinder(new UnnecessaryStopScript(), smellFinders);
             registerSmellFinder(new UnnecessaryTime(), smellFinders);
+            registerSmellFinder(new UnusedAnswer(), smellFinders);
             registerSmellFinder(new UnusedCustomBlock(), smellFinders);
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
