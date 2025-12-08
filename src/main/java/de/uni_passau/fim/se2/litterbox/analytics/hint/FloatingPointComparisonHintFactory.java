@@ -135,6 +135,8 @@ public abstract class FloatingPointComparisonHintFactory {
         keys.add(DISTANCE_ZERO_MOUSE);
         keys.add(DISTANCE);
         keys.add(DEFAULT);
+        keys.add(POSITION);
+        keys.add(MOUSE);
         return keys;
     }
 }
