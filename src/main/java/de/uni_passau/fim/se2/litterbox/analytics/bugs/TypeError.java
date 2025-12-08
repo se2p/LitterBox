@@ -20,18 +20,26 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
@@ -41,43 +49,25 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolu
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.TypeAnalysis;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.TypeInference;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.VariableTypeFact;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
-import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
+import de.uni_passau.fim.se2.litterbox.dataflow.JoinFunction;
+import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -92,9 +82,21 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public Set<Issue> check(Program program) {
-        this.analysis = TypeAnalysis.analyze(program);
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        program.accept(visitor);
+        ControlFlowGraph cfg = visitor.getControlFlowGraph();
+
+        this.analysis = new DataflowAnalysisBuilder<VariableTypeFact>(cfg)
+                .withForward()
+                .withTransferFunction(new TypeTransferFunction())
+                .build();
+
+        this.analysis.setJoinFunction(new TypeJoinFunction());
+        this.analysis.initializeMay();
+        this.analysis.applyAnalysis();
+
         this.astToCfg.clear();
-        buildCFGMap(analysis.getCFG());
+        buildCFGMap(this.analysis.getCFG());
         return super.check(program);
     }
 
@@ -125,9 +127,9 @@ public class TypeError extends AbstractIssueFinder {
         
         return identifier -> {
             for (VariableTypeFact fact : facts) {
-                if (fact.getVariable() instanceof Variable v) {
+                if (fact.variable() instanceof Variable v) {
                     if (idsEqual(v.getIdentifier(), identifier)) {
-                        return fact.getType();
+                        return fact.type();
                     }
                 }
             }
@@ -135,7 +137,7 @@ public class TypeError extends AbstractIssueFinder {
         };
     }
 
-    private boolean idsEqual(Identifier a, Identifier b) {
+    private static boolean idsEqual(Identifier a, Identifier b) {
         if (a instanceof LocalIdentifier la && b instanceof LocalIdentifier lb) {
             return la.getName().equals(lb.getName());
         }
@@ -146,7 +148,7 @@ public class TypeError extends AbstractIssueFinder {
 
     private void checkType(ASTNode node, Type expected) {
         if (node instanceof Expression expr) {
-             Type actual = TypeInference.inferType(expr, createResolver(node));
+             Type actual = inferType(expr, createResolver(node));
              
              if (!isCompatible(expected, actual)) {
                  addIssue(node, node.getMetadata(), IssueSeverity.LOW);
@@ -159,8 +161,8 @@ public class TypeError extends AbstractIssueFinder {
         // Scratch is loosely typed, but some things are clearly odd.
         if (node.getChildren().size() >= 2) {
             if (node.getChildren().get(0) instanceof Expression left && node.getChildren().get(1) instanceof Expression right) {
-                Type leftType = TypeInference.inferType(left, createResolver(node));
-                Type rightType = TypeInference.inferType(right, createResolver(node));
+                Type leftType = inferType(left, createResolver(node));
+                Type rightType = inferType(right, createResolver(node));
                 
                 checkComparisonCompatibility(node, leftType, rightType);
             }
@@ -430,6 +432,13 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(PickRandom node) {
+        checkType(node.getOperand1(), Type.NUMBER);
+        checkType(node.getOperand2(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }
@@ -445,5 +454,135 @@ public class TypeError extends AbstractIssueFinder {
         keys.add(NAME);
         keys.add(WEIRD_DISTANCE);
         return keys;
+    }
+
+    // --- Inner Classes & Methods for Dataflow & Inference ---
+
+    private record VariableTypeFact(Defineable variable, Type type) implements DataflowFact {
+
+        @Override
+        public String toString() {
+            return variable + " -> " + type;
+        }
+    }
+
+    private static class TypeTransferFunction implements TransferFunction<VariableTypeFact> {
+
+        @Override
+        public Set<VariableTypeFact> apply(CFGNode node, Set<VariableTypeFact> inFacts) {
+            Set<VariableTypeFact> outFacts = new LinkedHashSet<>(inFacts);
+
+            Set<Definition> definitions = node.getDefinitions();
+            ASTNode stmt = node.getASTNode();
+
+            // Kill facts based on definitions
+            if (stmt instanceof SetVariableTo setStmt) {
+                 Type type = inferType(setStmt.getExpr(), createResolver(inFacts));
+                 if (type == null) type = Type.ANY;
+                 updateFact(outFacts, setStmt.getIdentifier(), type);
+            } else if (stmt instanceof ChangeVariableBy changeStmt) {
+                 updateFact(outFacts, changeStmt.getIdentifier(), Type.NUMBER);
+            } else {
+                 // For all other statements, check definitions
+                 for (Definition def : definitions) {
+                     Defineable definable = def.getDefinable();
+                     if (definable instanceof Variable variable) {
+                          updateFact(outFacts, variable.getIdentifier(), Type.ANY);
+                     }
+                 }
+            }
+
+            return outFacts;
+        }
+
+        private void updateFact(Set<VariableTypeFact> facts, Identifier id, Type type) {
+            Variable variable = new Variable(id);
+            facts.removeIf(f -> f.variable() instanceof Variable v && idsEqual(v.getIdentifier(), id));
+            facts.add(new VariableTypeFact(variable, type));
+        }
+
+        private Function<Identifier, Type> createResolver(Set<VariableTypeFact> facts) {
+            return identifier -> {
+                for (VariableTypeFact fact : facts) {
+                    if (fact.variable() instanceof Variable v) {
+                        if (idsEqual(v.getIdentifier(), identifier)) {
+                            return fact.type();
+                        }
+                    }
+                }
+                return null;
+            };
+        }
+    }
+
+    private static class TypeJoinFunction implements JoinFunction<VariableTypeFact> {
+
+        @Override
+        public Set<VariableTypeFact> apply(Set<Set<VariableTypeFact>> inFacts) {
+            if (inFacts.isEmpty()) {
+                return Collections.emptySet();
+            }
+
+            // Map variable to joined Type
+            Map<Defineable, Type> joinedTypes = new LinkedHashMap<>();
+            
+            for (Set<VariableTypeFact> factSet : inFacts) {
+                for (VariableTypeFact fact : factSet) {
+                    Defineable var = fact.variable();
+                    Type type = fact.type();
+                    
+                    joinedTypes.merge(var, type, this::mergeTypes);
+                }
+            }
+            
+            Set<VariableTypeFact> result = new LinkedHashSet<>();
+            for (Map.Entry<Defineable, Type> entry : joinedTypes.entrySet()) {
+                result.add(new VariableTypeFact(entry.getKey(), entry.getValue()));
+            }
+            
+            return result;
+        }
+
+        private Type mergeTypes(Type t1, Type t2) {
+            if (t1 == t2) return t1;
+            if (t1 == Type.TOP || t2 == Type.TOP) return Type.TOP;
+            if (t1 == Type.ANY || t2 == Type.ANY) return Type.ANY; // Wildcard dominates specific types (safe assumption)
+            return Type.TOP; // Conflict (e.g. NUMBER vs STRING)
+        }
+    }
+
+    private static Type inferType(Expression expr, Function<Identifier, Type> resolver) {
+        if (expr instanceof Identifier id) {
+             return resolver.apply(id);
+        } else if (expr instanceof Answer) {
+            return Type.ANY;
+        } else if (expr instanceof NumberLiteral) {
+            return Type.NUMBER;
+        } else if (expr instanceof StringLiteral) {
+            return Type.STRING;
+        } else if (expr instanceof Color) {
+            return Type.COLOR;
+        } else if (expr instanceof BoolExpr) {
+            return Type.BOOLEAN;
+        } else if (expr instanceof NumExpr) {
+            return Type.NUMBER;
+        } else if (expr instanceof AsString asString) {
+             if (asString.getOperand1() instanceof Touching || asString.getOperand1() instanceof Not) {
+                 return Type.BOOLEAN;
+             }
+             return Type.STRING;
+        } else if (expr instanceof StringExpr) {
+            return Type.ANY; // e.g. JoinString can be anything
+        } else if (expr instanceof ComparableExpr) {
+            return null; 
+        } else if (expr instanceof AsNumber) {
+            return Type.NUMBER;
+        }
+        return null; // Implicit cast or unknown
+    }
+
+    // Default inference without context
+    private static Type inferType(Expression expr) {
+        return inferType(expr, id -> Type.ANY);
     }
 }

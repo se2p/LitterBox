@@ -197,7 +197,59 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
         
+        // Expecting 0 issues for correct Hex/RGB usage.
         Assertions.assertEquals(0, issues.size());
+    }
+
+    @Test
+    public void testPenColorTypeErrors() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // 1. set pen color to <touching mouse?> (Boolean instead of Color/Number)
+        // 2. set pen color to (50) (Number) - Should be VALID (hue) or at least not strictly invalid like Boolean.
+        String script = """
+                when green flag clicked
+                set pen color to <touching (mouse-pointer v)?>
+                set pen color to (50)
+                """;
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Expect 1 issue: Boolean usage. Number usage is acceptable for pen color (sets hue).
+        Assertions.assertEquals(1, issues.size(), "Should report error for Boolean used as Pen Color");
+    }
+
+    @Test
+    public void testBinaryOperatorReturnTypes() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // Verify that binary math operators return Number type, and cause errors when compared to String.
+        // If they returned ANY or null, these comparisons might be ignored.
+        String script = """
+                when green flag clicked
+                if <((5) + (5)) = [string]> then
+                end
+                if <((5) - (5)) = [string]> then
+                end
+                if <((5) * (5)) = [string]> then
+                end
+                if <((5) / (5)) = [string]> then
+                end
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Expect 4 issues: One for each comparison of Number (result of math op) vs String.
+        StringBuilder issuesStr = new StringBuilder();
+        for(Issue issue : issues) {
+             issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\\n");
+        }
+        Assertions.assertEquals(4, issues.size(), "Math operators should return Number type. Found:\\n" + issuesStr);
     }
 
 
@@ -432,6 +484,31 @@ public class TypeErrorTest implements FinderTest, JsonTest {
              issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
         }
         Assertions.assertEquals(2, issues.size(), "Should report type errors for PickRandom misuse. Found:\n" + issuesStr);
+    }
+
+    @Test
+    public void testPickRandomArgumentTypes() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        // Script 1: pick random [string] to (10) -> Error on 1st arg
+        // Script 2: pick random (1) to <boolean> -> Error on 2nd arg
+        String script = """
+                when green flag clicked
+                set [myVar v] to (pick random [string] to (10))
+                set [myVar v] to (pick random (1) to <touching (mouse-pointer v)?>)
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+        
+        // Expect 2 issues: String as Number, Boolean as Number.
+        StringBuilder issuesStr = new StringBuilder();
+        for(Issue issue : issues) {
+             issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
+        }
+        Assertions.assertEquals(2, issues.size(), "Should report errors for invalid PickRandom arguments. Found:\n" + issuesStr);
     }
 }
 
