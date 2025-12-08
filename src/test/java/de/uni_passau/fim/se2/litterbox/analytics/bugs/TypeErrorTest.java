@@ -510,5 +510,22 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         }
         Assertions.assertEquals(2, issues.size(), "Should report errors for invalid PickRandom arguments. Found:\n" + issuesStr);
     }
+
+    @Test
+    public void testParameterTypeChecks() throws IOException, ParsingException {
+        // This test uses a manual JSON fixture because constructing custom blocks with parameters via string extension is complex/not supported by parser yet.
+        // Fixture contains:
+        // define "my block %s %b" (number param, boolean param)
+        //   if <number param> then  <- Issue 1: Number used as Boolean
+        //   end
+        //   move <boolean param> steps <- Issue 2: Boolean used as Number
+        
+        assertThatFinderReports(2, new TypeError(), "./src/test/fixtures/bugs/parameterTypeCheck.json");
+    }
+
+    @Test
+    public void testParameterCall() throws IOException, ParsingException {
+        assertThatFinderReports(1, new TypeError(), "./src/test/fixtures/bugs/parameterTypeCheckWithCall.json");
+    }
 }
 

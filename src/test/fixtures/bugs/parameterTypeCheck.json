@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20240423164936",
+    "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+  },
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "backdrop1",
+          "dataFormat": "svg",
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "a": {
+          "opcode": "procedures_definition",
+          "next": "b",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "c"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 67,
+          "y": 142
+        },
+        "c": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "a",
+          "inputs": {
+            "arg1": [
+              1,
+              "d"
+            ],
+            "arg2": [
+              1,
+              "e"
+            ]
+          },
+          "fields": {
+            "PROCCODE": [
+              "my block %s %b",
+              "my block %s %b"
+            ],
+            "WARP": [
+              "false",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "my block %s %b",
+            "argumentids": "[\"arg1\",\"arg2\"]",
+            "argumentnames": "[\"number param\",\"boolean param\"]",
+            "argumentdefaults": "[\"\",\"false\"]",
+            "warp": "false"
+          }
+        },
+        "d": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "c",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "number param",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "e": {
+          "opcode": "argument_reporter_boolean",
+          "next": null,
+          "parent": "c",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "boolean param",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "b": {
+          "opcode": "control_if",
+          "next": "f",
+          "parent": "a",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "g"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "g": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "b",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "number param",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "f": {
+          "opcode": "motion_movesteps",
+          "next": null,
+          "parent": "b",
+          "inputs": {
+            "STEPS": [
+              2,
+              "h"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "h": {
+          "opcode": "argument_reporter_boolean",
+          "next": null,
+          "parent": "f",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "boolean param",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "dataFormat": "svg",
+          "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+          "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ]
+}

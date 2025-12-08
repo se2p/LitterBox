@@ -23,6 +23,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
@@ -32,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -63,6 +69,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToCol
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
+import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
 import de.uni_passau.fim.se2.litterbox.dataflow.JoinFunction;
 import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
 
@@ -86,12 +93,24 @@ public class TypeError extends AbstractIssueFinder {
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
         this.analysis = new DataflowAnalysisBuilder<VariableTypeFact>(cfg)
-                .withForward()
+                .withFlowDirection(new ForwardFlowDirection() {
+                    @Override
+                    public Iterable<CFGNode> getInitialNodes(ControlFlowGraph cfg) {
+                        List<CFGNode> initialNodes = new ArrayList<>();
+                        // Add standard entry nodes
+                        super.getInitialNodes(cfg).forEach(initialNodes::add);
+                        // Add all procedure nodes as they are also entry points
+                        // but they are not connected to entry in the CFG
+                        cfg.getNodes().stream()
+                            .filter(n -> n instanceof ProcedureNode)
+                            .forEach(initialNodes::add);
+                        return initialNodes;
+                    }
+                })
                 .withTransferFunction(new TypeTransferFunction())
+                .withJoinFunction(new TypeJoinFunction())
+                .withMayInitialization()
                 .build();
-
-        this.analysis.setJoinFunction(new TypeJoinFunction());
-        this.analysis.initializeMay();
         this.analysis.applyAnalysis();
 
         this.astToCfg.clear();
@@ -496,6 +515,21 @@ public class TypeError extends AbstractIssueFinder {
                           updateFact(outFacts, variable.getIdentifier(), Type.ANY);
                      }
                  }
+                 
+                 if (stmt instanceof ProcedureDefinition procDef) {
+                     for (ParameterDefinition param : procDef.getParameterDefinitionList().getParameterDefinitions()) {
+                         Type analysisType = Type.ANY;
+                         de.uni_passau.fim.se2.litterbox.ast.model.type.Type astType = param.getType();
+                         if (astType instanceof BooleanType) {
+                             analysisType = Type.BOOLEAN;
+                         } else if (astType instanceof NumberType) {
+                             analysisType = Type.NUMBER;
+                         } else if (astType instanceof StringType) {
+                             analysisType = Type.STRING;
+                         }
+                         updateFact(outFacts, param.getIdent(), analysisType);
+                     }
+                 }
             }
 
             return outFacts;
@@ -551,6 +585,8 @@ public class TypeError extends AbstractIssueFinder {
     private static Type inferType(Expression expr, Function<Identifier, Type> resolver) {
         if (expr instanceof Identifier id) {
              return resolver.apply(id);
+        } else if (expr instanceof DataExpr dataExpr) {
+            return resolver.apply(dataExpr.getName());
         } else if (expr instanceof Answer) {
             return Type.ANY;
         } else if (expr instanceof NumberLiteral) {

@@ -43,6 +43,11 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
         return this;
     }
 
+    public DataflowAnalysisBuilder<T> withMayInitialization() {
+        analysis.initializeMay();
+        return this;
+    }
+
     public DataflowAnalysisBuilder<T> withTransferFunction(TransferFunction<T> t) {
         analysis.setTransferFunction(t);
         return this;
@@ -55,6 +60,16 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
 
     public DataflowAnalysisBuilder<T> withBackward() {
         analysis.setFlowDirection(new BackwardFlowDirection());
+        return this;
+    }
+
+    public DataflowAnalysisBuilder<T> withFlowDirection(FlowDirection direction) {
+        analysis.setFlowDirection(direction);
+        return this;
+    }
+
+    public DataflowAnalysisBuilder<T> withJoinFunction(JoinFunction<T> join) {
+        analysis.setJoinFunction(join);
         return this;
     }
 

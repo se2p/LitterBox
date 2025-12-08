@@ -1,0 +1,177 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531ccff2c27c2d72691d746",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531ccff2c27c2d72691d746.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "call_block": {
+          "opcode": "procedures_call",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "arg0": [
+              1,
+              [
+                10,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "test %s",
+            "argumentids": "[\"arg0\"]",
+            "warp": "false"
+          }
+        },
+        "proc_def": {
+          "opcode": "procedures_definition",
+          "next": "set_pen",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "proc_proto"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 0,
+          "y": 0
+        },
+        "proc_proto": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "proc_def",
+          "inputs": {
+            "arg0": [
+              1,
+              "arg_reporter"
+            ]
+          },
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "test %s",
+            "argumentnames": "[\"val\"]",
+            "argumentids": "[\"arg0\"]",
+            "argumentdefaults": "[\"\"]",
+            "warp": "false"
+          }
+        },
+        "arg_reporter": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "proc_proto",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "val",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "set_pen": {
+          "opcode": "pen_setPenColorToColor",
+          "next": null,
+          "parent": "proc_def",
+          "inputs": {
+            "COLOR": [
+              3,
+              "val_usage",
+              [ 9, "#ff0000" ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "val_usage": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "set_pen",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "val",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+          "name": "costume1",
+          "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [
+    "pen"
+  ],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0",
+    "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
+  }
+}
