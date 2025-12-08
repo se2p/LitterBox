@@ -201,6 +201,7 @@ public class IssueTool {
             registerSmellFinder(new MiddleMan(), smellFinders);
             registerSmellFinder(new MultiAttributeModification(), smellFinders);
             registerSmellFinder(new NestedLoops(), smellFinders);
+            registerSmellFinder(new PointlessTimerReset(), smellFinders);
             registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
             registerSmellFinder(new SequentialActions(), smellFinders);
             registerSmellFinder(new SpriteNaming(), smellFinders);

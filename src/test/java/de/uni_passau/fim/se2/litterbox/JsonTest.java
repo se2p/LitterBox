@@ -147,4 +147,10 @@ public interface JsonTest {
         assertInstanceOf(expectedType, block);
         return expectedType.cast(block);
     }
+
+    default Program parseScratchBlocks(String scratchBlocksCode) throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser parser = new de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser();
+        return parser.extendProject(program, "Sprite1", scratchBlocksCode);
+    }
 }
