@@ -24,15 +24,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
@@ -54,14 +53,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.TypeAnalysis;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.TypeInference;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow.VariableTypeFact;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
@@ -69,8 +71,6 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,25 +78,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.function.Function;
 
 /**
- * Detects type errors of the following form:
- * - Comparisons between Number and Boolean
- * - Comparisons between Direction and Loudness
- * - Comparisons between Direction and Position nodes (MouseX, MouseY, PositionX, PositionY)
- * - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
- * - Comparisons containing Touching or Not nodes
- * - Distance to containing weird blocks
+ * Detects type errors using dataflow analysis and type inference.
  */
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
-    private boolean isInsideComparison = false;
-    private boolean isRightSide = false;
-
-    private Type type = null;
-    private boolean isInsideQualified = false;
-    private IssueSeverity issueSeverity;
 
     private DataflowAnalysis<VariableTypeFact> analysis;
     private final Map<ASTNode, CFGNode> astToCfg = new HashMap<>();
@@ -117,35 +106,126 @@ public class TypeError extends AbstractIssueFinder {
         }
     }
 
+    private Function<Identifier, Type> createResolver(ASTNode node) {
+        CFGNode cfgNode = null;
+        ASTNode current = node;
+        while (cfgNode == null && current != null) {
+            if (astToCfg.containsKey(current)) {
+                cfgNode = astToCfg.get(current);
+            } else {
+                current = current.getParentNode();
+            }
+        }
+
+        if (cfgNode == null) {
+             return id -> Type.ANY;
+        }
+        Set<VariableTypeFact> facts = analysis.getDataflowFacts(cfgNode);
+        if (facts == null) return id -> Type.ANY;
+        
+        return identifier -> {
+            for (VariableTypeFact fact : facts) {
+                if (fact.getVariable() instanceof Variable v) {
+                    if (idsEqual(v.getIdentifier(), identifier)) {
+                        return fact.getType();
+                    }
+                }
+            }
+            return Type.BOTTOM;
+        };
+    }
+
+    private boolean idsEqual(Identifier a, Identifier b) {
+        if (a instanceof LocalIdentifier la && b instanceof LocalIdentifier lb) {
+            return la.getName().equals(lb.getName());
+        }
+        return a.equals(b);
+    }
+    
+    // --- Helper Methods ---
+
+    private void checkType(ASTNode node, Type expected) {
+        if (node instanceof Expression expr) {
+             Type actual = TypeInference.inferType(expr, createResolver(node));
+             
+             if (!isCompatible(expected, actual)) {
+                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             }
+        }
+    }
+    
+    private void checkComparison(BinaryExpression<?, ?> node) {
+        // In comparisons, we expect operands to be compatible with each other.
+        // Scratch is loosely typed, but some things are clearly odd.
+        if (node.getChildren().size() >= 2) {
+            if (node.getChildren().get(0) instanceof Expression left && node.getChildren().get(1) instanceof Expression right) {
+                Type leftType = TypeInference.inferType(left, createResolver(node));
+                Type rightType = TypeInference.inferType(right, createResolver(node));
+                
+                checkComparisonCompatibility(node, leftType, rightType);
+            }
+        }
+    }
+
+    private void checkComparisonCompatibility(ASTNode node, Type left, Type right) {
+        if (left == Type.ANY || right == Type.ANY) return;
+        if (left == Type.TOP || right == Type.TOP) return;
+        if (left == Type.BOTTOM || right == Type.BOTTOM) return;
+
+        if (left == Type.BOOLEAN && right == Type.NUMBER) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.NUMBER && right == Type.BOOLEAN) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.BOOLEAN && right == Type.STRING) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.STRING && right == Type.BOOLEAN) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.NUMBER && right == Type.STRING) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.STRING && right == Type.NUMBER) {
+             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        } else if (left == Type.BOOLEAN && right == Type.BOOLEAN) {
+             if (node instanceof LessThan || node instanceof BiggerThan) {
+                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             }
+        }
+    }
+
+    private boolean isCompatible(Type expected, Type actual) {
+        if (actual == null) return true; // Inference failed
+        if (actual == Type.ANY || actual == Type.TOP || actual == Type.BOTTOM) return true;
+        if (expected == actual) return true;
+
+        if (expected == Type.NUMBER) {
+            return actual == Type.POSITION || actual == Type.DIRECTION || actual == Type.LOUDNESS;
+        }
+        
+        return false;
+    }
+
+    // --- Visitor Methods ---
+
     @Override
     public void visit(LessThan node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        traverseComparison(node);
+        checkComparison(node);
+        visitChildren(node); 
     }
 
     @Override
     public void visit(BiggerThan node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        traverseComparison(node);
+        checkComparison(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Equals node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        traverseComparison(node);
+        checkComparison(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (!isContextCompatible(Type.NUMBER)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
+        // DistanceTo returns Number.
         Position position = node.getPosition();
         if (position instanceof FromExpression fromExpression) {
             Hint hint = Hint.fromKey(WEIRD_DISTANCE);
@@ -155,529 +235,198 @@ public class TypeError extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
-        visitChildrenWithResetContext(node);
-    }
-
-    private void traverseComparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
-        boolean oldInside = isInsideComparison;
-        Type oldType = type;
-        
-        isInsideComparison = true;
-        type = null;
-        
-        if (!node.getChildren().isEmpty()) {
-            isRightSide = false;
-            ASTNode leftChild = node.getChildren().get(0);
-            leftChild.accept(this);
-            ASTNode rightChild = node.getChildren().get(1);
-            isRightSide = true;
-            rightChild.accept(this);
-        }
-        
-        isInsideComparison = oldInside;
-        type = oldType;
-    }
-
-    @Override
-    public void visit(StringExpr node) {
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                // String expressions (like join) can produce values that Scratch interprets 
-                // as numbers or booleans (e.g. join "1" "0" -> 10). 
-                // Therefore, we don't enforce a specific type expectation on the other side.
-                type = null;
-            }
-        }
-    }
-
-    @Override
-    public void visit(Loudness node) {
-        if (!isContextCompatible(Type.LOUDNESS)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(StringLiteral node) {
-        // String literals inside qualified nodes (variables) are just identifiers (the variable name),
-        // not actual string values used in the comparison.
-        if (isInsideComparison && !isInsideQualified) {
-            if (!isRightSide) {
-                this.type = Type.STRING;
-            } else {
-                if (this.type != null && type != Type.STRING) {
-                    addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
-    }
-
-
-
-    @Override
-    public void visit(Qualified node) {
-        isInsideQualified = true;
         visitChildren(node);
-        isInsideQualified = false;
-    }
-
-    @Override
-    public void visit(MouseX node) {
-        if (!isContextCompatible(Type.POSITION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(MouseY node) {
-        if (!isContextCompatible(Type.POSITION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(PositionX node) {
-        if (!isContextCompatible(Type.POSITION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(PositionY node) {
-        if (!isContextCompatible(Type.POSITION)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(PickRandom node) {
-        if (!isContextCompatible(Type.NUMBER)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                type = Type.NUMBER;
-            } else {
-                if (this.type != null && (this.type == Type.BOOLEAN || this.type == Type.STRING)) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void visit(NumExpr node) {
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                type = Type.NUMBER;
-            } else {
-                if (this.type != null && (this.type == Type.BOOLEAN || this.type == Type.STRING)) {
-                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void visit(Direction node) {
-        if (!isContextCompatible(Type.DIRECTION)) {
-            addIssue(node, node.getMetadata(), issueSeverity);
-        }
-    }
-
-    @Override
-    public void visit(AsString node) {
-        if (!isContextCompatible(Type.STRING)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                if (node.getOperand1() instanceof Touching || node.getOperand1() instanceof Not) {
-                    type = Type.BOOLEAN;
-                } else {
-                    type = Type.STRING;
-                }
-            } 
-        }
-
-        boolean oldInside = isInsideComparison;
-        boolean oldRight = isRightSide;
-        Type oldType = type;
-
-        node.getOperand1().accept(this);
-
-        isInsideComparison = oldInside;
-        isRightSide = oldRight;
-        type = oldType;
-    }
-
-
-
-
-    public void visit(AsNumber node) {
-        if (!isContextCompatible(Type.NUMBER)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                type = Type.NUMBER;
-            } else {
-                // POSITION, DIRECTION, LOUDNESS, COLOR are all treated as numbers and are therefore compatible
-                if (this.type == Type.BOOLEAN || this.type == Type.STRING) {
-                    addIssue(node.getOperand1(), node.getOperand1().getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
-        
-        boolean oldInside = isInsideComparison;
-        boolean oldRight = isRightSide;
-        Type oldType = type;
-
-        node.getOperand1().accept(this);
-
-        isInsideComparison = oldInside;
-        isRightSide = oldRight;
-        type = oldType;
-    }
-
-    @Override
-    public void visit(NumberLiteral node) {
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                type = Type.NUMBER;
-            } else {
-                if (this.type != null && (this.type == Type.BOOLEAN || this.type == Type.STRING)) {
-                    addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
-    }
-
-    private boolean isContextCompatible(Type type) {
-        if (isInsideComparison) {
-            if (!isRightSide) {
-                this.type = type;
-            } else {
-                if (this.type != null && this.type != type) {
-                    if (this.type == Type.NUMBER && type == Type.BOOLEAN) {
-                        return false;
-                    }
-                    if (this.type != Type.NUMBER) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private void checkExpectedType(ASTNode node, Type expectedType) {
-        boolean oldInside = isInsideComparison;
-        boolean oldRight = isRightSide;
-        Type oldType = type;
-
-        isInsideComparison = true;
-        isRightSide = true;
-        type = expectedType;
-
-        if (node != null) {
-            node.accept(this);
-        }
-
-        isInsideComparison = oldInside;
-        isRightSide = oldRight;
-        type = oldType;
-    }
-
-    @Override
-    public void visit(Color node) {
-        if (!isContextCompatible(Type.COLOR)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
-        node.getThenStmts().accept(this);
+        checkType(node.getBoolExpr(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(IfElseStmt node) {
-        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
-        node.getThenStmts().accept(this);
-        node.getElseStmts().accept(this);
+        checkType(node.getBoolExpr(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        checkExpectedType(node.getBoolExpr(), Type.BOOLEAN);
-        node.getStmtList().accept(this);
+        checkType(node.getBoolExpr(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(WaitUntil node) {
-        checkExpectedType(node.getUntil(), Type.BOOLEAN);
-    }
-
-    @Override
-    public void visit(PenBlock node) {
-        if (node instanceof SetPenColorToColorStmt stmt) {
-            checkExpectedType(stmt.getColorExpr(), Type.COLOR);
-        }
-    }
-
-    @Override
-    public void visit(SpriteTouchingColor node) {
-        checkExpectedType(node.getColor(), Type.COLOR);
-    }
-
-    @Override
-    public void visit(ColorTouchingColor node) {
-        checkExpectedType(node.getOperand1(), Type.COLOR);
-        checkExpectedType(node.getOperand2(), Type.COLOR);
+        checkType(node.getUntil(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(And node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
-        checkExpectedType(node.getOperand2(), Type.BOOLEAN);
+        checkType(node.getOperand1(), Type.BOOLEAN);
+        checkType(node.getOperand2(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Or node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
-        checkExpectedType(node.getOperand2(), Type.BOOLEAN);
+        checkType(node.getOperand1(), Type.BOOLEAN);
+        checkType(node.getOperand2(), Type.BOOLEAN);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Not node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        checkExpectedType(node.getOperand1(), Type.BOOLEAN);
-    }
-
-    /**
-     * Visits the children of the given node with a reset context.
-     * This ensures that the current comparison state (e.g., expected type, right-side flag)
-     * does not propagate to independent child expressions (such as arguments to a function call),
-     * preventing false positives where child nodes are judged against the parent's context.
-     */
-    private void visitChildrenWithResetContext(ASTNode node) {
-        boolean oldInside = isInsideComparison;
-        Type oldType = type;
-        boolean oldRight = isRightSide;
-
-        isInsideComparison = false;
-        type = null;
-        isRightSide = false;
-
+        checkType(node.getOperand1(), Type.BOOLEAN);
         visitChildren(node);
-
-        isInsideComparison = oldInside;
-        type = oldType;
-        isRightSide = oldRight;
     }
-
-    @Override
-    public void visit(Touching node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        visitChildrenWithResetContext(node);
-    }
-
-    @Override
-    public void visit(IsKeyPressed node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        visitChildrenWithResetContext(node);
-    }
-
-    @Override
-    public void visit(IsMouseDown node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        visitChildrenWithResetContext(node);
-    }
-
-    @Override
-    public void visit(ListContains node) {
-        if (!isContextCompatible(Type.BOOLEAN)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-        visitChildrenWithResetContext(node);
-    }
+    
     @Override
     public void visit(ChangeVariableBy node) {
-        checkExpectedType(node.getExpr(), Type.NUMBER);
-        node.getIdentifier().accept(this);
+        checkType(node.getExpr(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetXTo node) {
-        checkExpectedType(node.getNum(), Type.NUMBER);
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetYTo node) {
-        checkExpectedType(node.getNum(), Type.NUMBER);
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeXBy node) {
-        checkExpectedType(node.getNum(), Type.NUMBER);
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        checkExpectedType(node.getNum(), Type.NUMBER);
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(MoveSteps node) {
-        checkExpectedType(node.getSteps(), Type.NUMBER);
+        checkType(node.getSteps(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(TurnLeft node) {
-        checkExpectedType(node.getDegrees(), Type.NUMBER);
+        checkType(node.getDegrees(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(TurnRight node) {
-        checkExpectedType(node.getDegrees(), Type.NUMBER);
+        checkType(node.getDegrees(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(PointInDirection node) {
-        checkExpectedType(node.getDirection(), Type.NUMBER);
+        checkType(node.getDirection(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetSizeTo node) {
-        checkExpectedType(node.getPercent(), Type.NUMBER);
+        checkType(node.getPercent(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeSizeBy node) {
-        checkExpectedType(node.getNum(), Type.NUMBER);
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetVolumeTo node) {
-        checkExpectedType(node.getVolumeValue(), Type.NUMBER);
+        checkType(node.getVolumeValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeVolumeBy node) {
-        checkExpectedType(node.getVolumeValue(), Type.NUMBER);
+        checkType(node.getVolumeValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
-        checkExpectedType(node.getValue(), Type.NUMBER);
+        checkType(node.getValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-        checkExpectedType(node.getValue(), Type.NUMBER);
+        checkType(node.getValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-        checkExpectedType(node.getValue(), Type.NUMBER);
+        checkType(node.getValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        checkExpectedType(node.getValue(), Type.NUMBER);
+        checkType(node.getValue(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(WaitSeconds node) {
-        checkExpectedType(node.getSeconds(), Type.NUMBER);
+        checkType(node.getSeconds(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        checkExpectedType(node.getTimes(), Type.NUMBER);
-        node.getStmtList().accept(this);
+        checkType(node.getTimes(), Type.NUMBER);
+        visitChildren(node);
+    }
+    
+    @Override
+    public void visit(PenBlock node) {
+        if (node instanceof SetPenColorToColorStmt stmt) {
+            checkType(stmt.getColorExpr(), Type.COLOR);
+        }
+        visitChildren(node);
     }
 
     @Override
-    public void visit(StrId node) {
-        if (isInsideComparison && !isRightSide) {
-             Type varType = getVariableType(node);
-             if (varType != Type.ANY && varType != Type.TOP && varType != Type.BOTTOM) {
-                  this.type = varType;
-             } else {
-                  this.type = null;
-             }
-        } else if (isInsideComparison) {
-            if (this.type != null) {
-                Type varType = getVariableType(node);
-                if (!isCompatible(this.type, varType)) {
-                     addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-                }
-            }
-        }
+    public void visit(SpriteTouchingColor node) {
+        checkType(node.getColor(), Type.COLOR);
+        visitChildren(node);
     }
 
-    private Type getVariableType(LocalIdentifier node) {
-        if (analysis == null) return Type.ANY;
-
-        ASTNode current = node;
-        CFGNode cfgNode = null;
-        while (current != null) {
-            if (astToCfg.containsKey(current)) {
-                cfgNode = astToCfg.get(current);
-                break;
-            }
-            current = current.getParentNode();
-        }
-
-        if (cfgNode == null) return Type.ANY;
-
-        Set<VariableTypeFact> facts = analysis.getDataflowFacts(cfgNode);
-        if (facts == null) return Type.ANY;
-
-        for (VariableTypeFact fact : facts) {
-             if (fact.getVariable() instanceof Variable v) {
-                 Identifier id = v.getIdentifier();
-                 if (id instanceof LocalIdentifier localId) {
-                     if (localId.getName().equals(node.getName())) {
-                         return fact.getType();
-                     }
-                 } else if (id instanceof Qualified qualified) {
-                     if (qualified.getSecond().getName().getName().equals(node.getName())) {
-                         return fact.getType();
-                     }
-                 }
-             }
-        }
-        
-        return Type.BOTTOM;
+    @Override
+    public void visit(ColorTouchingColor node) {
+        checkType(node.getOperand1(), Type.COLOR);
+        checkType(node.getOperand2(), Type.COLOR);
+        visitChildren(node);
     }
 
-    private boolean isCompatible(Type expected, Type actual) {
-        if (actual == Type.ANY || actual == Type.TOP || actual == Type.BOTTOM) return true;
-        if (expected == actual) return true;
+    @Override
+    public void visit(AsBool node) {
+        checkType(node.getOperand1(), Type.BOOLEAN);
+        visitChildren(node);
+    }
 
-        if (expected == Type.NUMBER && actual == Type.POSITION) return true;
-        if (expected == Type.NUMBER && actual == Type.DIRECTION) return true;
-        if (expected == Type.NUMBER && actual == Type.LOUDNESS) return true;
-
-        return false;
+    @Override
+    public void visit(AsNumber node) {
+        checkType(node.getOperand1(), Type.NUMBER);
+        visitChildren(node);
     }
 
     @Override

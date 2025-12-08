@@ -21,13 +21,18 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import java.util.function.Function;
 
 public class TypeInference {
@@ -47,14 +52,23 @@ public class TypeInference {
             return Type.BOOLEAN;
         } else if (expr instanceof NumExpr) {
             return Type.NUMBER;
+        } else if (expr instanceof AsString asString) {
+             if (asString.getOperand1() instanceof Touching || asString.getOperand1() instanceof Not) {
+                 return Type.BOOLEAN;
+             }
+             return Type.STRING;
         } else if (expr instanceof StringExpr) {
-            return Type.STRING;
+            return Type.ANY; // e.g. JoinString can be anything
+        } else if (expr instanceof ComparableExpr) {
+            return null; 
+        } else if (expr instanceof AsNumber) {
+            return Type.NUMBER;
         }
         return null; // Implicit cast or unknown
     }
 
     // Default inference without context
     public static Type inferType(Expression expr) {
-        return inferType(expr, id -> null);
+        return inferType(expr, id -> Type.ANY);
     }
 }

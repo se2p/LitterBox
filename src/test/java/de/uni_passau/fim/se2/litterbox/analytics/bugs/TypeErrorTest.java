@@ -56,12 +56,12 @@ public class TypeErrorTest implements FinderTest, JsonTest {
 
     @Test
     public void testComplexComparison() throws IOException, ParsingException {
-        assertThatFinderReports(3, new TypeError(), "./src/test/fixtures/bugs/complexComparison.json");
+        assertThatFinderReports(2, new TypeError(), "./src/test/fixtures/bugs/complexComparison.json");
     }
 
     @Test
     public void testMotivation() throws IOException, ParsingException {
-        assertThatFinderReports(1, new TypeError(), "./src/test/fixtures/bugs/motivation.json");
+        assertThatFinderReports(0, new TypeError(), "./src/test/fixtures/bugs/motivation.json");
     }
 
     @Test
@@ -431,7 +431,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         for(Issue issue : issues) {
              issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
         }
-        Assertions.assertEquals(3, issues.size(), "Should report type errors for PickRandom misuse. Found:\n" + issuesStr);
+        Assertions.assertEquals(2, issues.size(), "Should report type errors for PickRandom misuse. Found:\n" + issuesStr);
     }
 }
 

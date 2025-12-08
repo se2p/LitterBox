@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs.dataflow;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
@@ -42,30 +43,36 @@ public class TypeTransferFunction implements TransferFunction<VariableTypeFact> 
         Set<Definition> definitions = node.getDefinitions();
         ASTNode stmt = node.getASTNode();
 
-        for (Definition def : definitions) {
-            Defineable definable = def.getDefinable();
-            if (definable instanceof Variable variable) {
-                // Kill old facts for this variable
-                outFacts.removeIf(f -> f.getVariable().equals(variable));
-
-                // Generate new fact
-                Type type = Type.ANY; // Default fallback
-
-                if (stmt instanceof SetVariableTo setStmt) {
-                    if (setStmt.getIdentifier().equals(variable.getIdentifier())) {
-                         type = TypeInference.inferType(setStmt.getExpr(), createResolver(inFacts));
-                         if (type == null) {
-                             type = Type.ANY;
-                         }
-                    }
-                } else if (stmt instanceof ChangeVariableBy changeStmt) {
-                    if (changeStmt.getIdentifier().equals(variable.getIdentifier())) {
-                        type = Type.NUMBER;
-                    }
-                }
-
-                outFacts.add(new VariableTypeFact(variable, type));
-            }
+        // Kill facts based on definitions
+        if (stmt instanceof SetVariableTo setStmt) {
+             Variable variable = new Variable(setStmt.getIdentifier());
+             // Remove any previous facts for this variable (using loose equality) to avoid duplicates
+             outFacts.removeIf(f -> f.getVariable() instanceof Variable v && idsEqual(v.getIdentifier(), setStmt.getIdentifier()));
+             
+             Type type = TypeInference.inferType(setStmt.getExpr(), createResolver(inFacts));
+             if (type == null) type = Type.ANY;
+             
+             outFacts.add(new VariableTypeFact(variable, type));
+        } else if (stmt instanceof ChangeVariableBy changeStmt) {
+             Variable variable = new Variable(changeStmt.getIdentifier());
+             outFacts.removeIf(f -> f.getVariable() instanceof Variable v && idsEqual(v.getIdentifier(), changeStmt.getIdentifier()));
+             
+             outFacts.add(new VariableTypeFact(variable, Type.NUMBER));
+        } else {
+             // For all other statements, check definitions
+             for (Definition def : definitions) {
+                 Defineable definable = def.getDefinable();
+                 if (definable instanceof Variable variable) {
+                      // We only care about Set/Change for specific processing.
+                      // All other variable definitions (if any exist for other nodes) effectively clear knowledge or set to ANY?
+                      // The initial kill loop already removed facts.
+                      // If we are here, we killed the fact but didn't generate a new one.
+                      // Should we generate ANY?
+                      // If it's a variable definition that isn't set/change assignment, it's likely a parameter or loop variable?
+                      // Loop variable assignment is implicit.
+                      outFacts.add(new VariableTypeFact(variable, Type.ANY));
+                 }
+             }
         }
 
         return outFacts;
@@ -75,14 +82,19 @@ public class TypeTransferFunction implements TransferFunction<VariableTypeFact> 
         return identifier -> {
             for (VariableTypeFact fact : facts) {
                 if (fact.getVariable() instanceof Variable v) {
-                    // Check logic equality of definition identifier
-                    // We assume Variable equals checks Identifier equals.
-                    if (v.getIdentifier().equals(identifier)) {
+                    if (idsEqual(v.getIdentifier(), identifier)) {
                         return fact.getType();
                     }
                 }
             }
             return null;
         };
+    }
+
+    private boolean idsEqual(Identifier a, Identifier b) {
+        if (a instanceof LocalIdentifier la && b instanceof LocalIdentifier lb) {
+            return la.getName().equals(lb.getName());
+        }
+        return a.equals(b);
     }
 }
