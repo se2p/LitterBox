@@ -59,7 +59,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
@@ -108,7 +107,7 @@ public class TypeError extends AbstractIssueFinder {
         }
     }
 
-    private Function<Identifier, Type> createResolver(ASTNode node) {
+    private Function<Identifier, Type> createNodeResolver(ASTNode node) {
         CFGNode cfgNode = null;
         ASTNode current = node;
         while (cfgNode == null && current != null) {
@@ -125,6 +124,17 @@ public class TypeError extends AbstractIssueFinder {
         Set<VariableTypeFact> facts = analysis.getDataflowFacts(cfgNode);
         if (facts == null) return id -> Type.ANY;
         
+        return createFactResolver(facts);
+    }
+
+    private static boolean idsEqual(Identifier a, Identifier b) {
+        if (a instanceof LocalIdentifier la && b instanceof LocalIdentifier lb) {
+            return la.getName().equals(lb.getName());
+        }
+        return a.equals(b);
+    }
+
+    private static Function<Identifier, Type> createFactResolver(Set<VariableTypeFact> facts) {
         return identifier -> {
             for (VariableTypeFact fact : facts) {
                 if (fact.variable() instanceof Variable v) {
@@ -136,19 +146,12 @@ public class TypeError extends AbstractIssueFinder {
             return Type.BOTTOM;
         };
     }
-
-    private static boolean idsEqual(Identifier a, Identifier b) {
-        if (a instanceof LocalIdentifier la && b instanceof LocalIdentifier lb) {
-            return la.getName().equals(lb.getName());
-        }
-        return a.equals(b);
-    }
     
     // --- Helper Methods ---
 
     private void checkType(ASTNode node, Type expected) {
         if (node instanceof Expression expr) {
-             Type actual = inferType(expr, createResolver(node));
+             Type actual = inferType(expr, createNodeResolver(node));
              
              if (!isCompatible(expected, actual)) {
                  addIssue(node, node.getMetadata(), IssueSeverity.LOW);
@@ -161,8 +164,8 @@ public class TypeError extends AbstractIssueFinder {
         // Scratch is loosely typed, but some things are clearly odd.
         if (node.getChildren().size() >= 2) {
             if (node.getChildren().get(0) instanceof Expression left && node.getChildren().get(1) instanceof Expression right) {
-                Type leftType = inferType(left, createResolver(node));
-                Type rightType = inferType(right, createResolver(node));
+                Type leftType = inferType(left, createNodeResolver(node));
+                Type rightType = inferType(right, createNodeResolver(node));
                 
                 checkComparisonCompatibility(node, leftType, rightType);
             }
@@ -194,7 +197,6 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private boolean isCompatible(Type expected, Type actual) {
-        if (actual == null) return true; // Inference failed
         if (actual == Type.ANY || actual == Type.TOP || actual == Type.BOTTOM) return true;
         if (expected == actual) return true;
 
@@ -399,10 +401,8 @@ public class TypeError extends AbstractIssueFinder {
     }
     
     @Override
-    public void visit(PenBlock node) {
-        if (node instanceof SetPenColorToColorStmt stmt) {
-            checkType(stmt.getColorExpr(), Type.COLOR);
-        }
+    public void visit(SetPenColorToColorStmt node) {
+        checkType(node.getColorExpr(), Type.COLOR);
         visitChildren(node);
     }
 
@@ -458,6 +458,9 @@ public class TypeError extends AbstractIssueFinder {
 
     // --- Inner Classes & Methods for Dataflow & Inference ---
 
+    /**
+     * Represents a dataflow fact associating a variable with its inferred Type at a specific program point.
+     */
     private record VariableTypeFact(Defineable variable, Type type) implements DataflowFact {
 
         @Override
@@ -466,6 +469,10 @@ public class TypeError extends AbstractIssueFinder {
         }
     }
 
+    /**
+     * Computes the transfer function for the dataflow analysis, updating variable types
+     * based on assignments and modifications (e.g., SetVariableTo, ChangeVariableBy).
+     */
     private static class TypeTransferFunction implements TransferFunction<VariableTypeFact> {
 
         @Override
@@ -477,8 +484,7 @@ public class TypeError extends AbstractIssueFinder {
 
             // Kill facts based on definitions
             if (stmt instanceof SetVariableTo setStmt) {
-                 Type type = inferType(setStmt.getExpr(), createResolver(inFacts));
-                 if (type == null) type = Type.ANY;
+                 Type type = inferType(setStmt.getExpr(), createFactResolver(inFacts));
                  updateFact(outFacts, setStmt.getIdentifier(), type);
             } else if (stmt instanceof ChangeVariableBy changeStmt) {
                  updateFact(outFacts, changeStmt.getIdentifier(), Type.NUMBER);
@@ -500,21 +506,12 @@ public class TypeError extends AbstractIssueFinder {
             facts.removeIf(f -> f.variable() instanceof Variable v && idsEqual(v.getIdentifier(), id));
             facts.add(new VariableTypeFact(variable, type));
         }
-
-        private Function<Identifier, Type> createResolver(Set<VariableTypeFact> facts) {
-            return identifier -> {
-                for (VariableTypeFact fact : facts) {
-                    if (fact.variable() instanceof Variable v) {
-                        if (idsEqual(v.getIdentifier(), identifier)) {
-                            return fact.type();
-                        }
-                    }
-                }
-                return null;
-            };
-        }
     }
 
+    /**
+     * Merges dataflow facts from multiple control flow paths, using a Least Upper Bound (LUB) approach
+     * to resolve type conflicts (e.g., merging NUMBER and STRING results in TOP or ANY).
+     */
     private static class TypeJoinFunction implements JoinFunction<VariableTypeFact> {
 
         @Override
@@ -574,15 +571,10 @@ public class TypeError extends AbstractIssueFinder {
         } else if (expr instanceof StringExpr) {
             return Type.ANY; // e.g. JoinString can be anything
         } else if (expr instanceof ComparableExpr) {
-            return null; 
+            return Type.ANY; 
         } else if (expr instanceof AsNumber) {
             return Type.NUMBER;
         }
-        return null; // Implicit cast or unknown
-    }
-
-    // Default inference without context
-    private static Type inferType(Expression expr) {
-        return inferType(expr, id -> Type.ANY);
+        return Type.ANY; // Implicit cast or unknown
     }
 }

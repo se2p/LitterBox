@@ -50,11 +50,7 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-        if (visitor instanceof PenExtensionVisitor penExtensionVisitor) {
-            penExtensionVisitor.visit(this);
-        } else {
-            visitor.visit((PenBlock) this);
-        }
+        visitor.visit(this);
     }
 
     @Override

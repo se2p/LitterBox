@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -3466,6 +3467,19 @@ public interface ScratchVisitor {
 
     default void visit(MusicBlock node) {
         visit((ExtensionBlock) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetPenColorToColorStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetPenColorToColorStmt Node of which the children will be iterated
+     */
+    default void visit(SetPenColorToColorStmt node) {
+        visit((PenBlock) node);
     }
 
     default void visit(PenBlock node) {
