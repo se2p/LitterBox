@@ -94,14 +94,14 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         // We know the standard scratch effects
         String[] effects = {"COLOR", "FISHEYE", "WHIRL", "PIXELATE", "MOSAIC", "BRIGHTNESS", "GHOST"};
         for (String e : effects) {
-             definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), e));
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), e));
         }
         // Also add the generic one
         definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
     }
 
     private String getEffectName(GraphicEffect effect) {
-         return effect.getTypeName();
+        return effect.getTypeName();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     }
 
     private String getSoundEffectName(SoundEffect effect) {
-         return effect.getTypeName();
+        return effect.getTypeName();
     }
 
     @Override

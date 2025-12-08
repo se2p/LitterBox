@@ -22,12 +22,51 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute.AttributeType;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -48,48 +87,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute.AttributeType;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-
-
 public class RedundantAssignment extends AbstractIssueFinder {
 
     public static final String NAME = "redundant_assignment";
@@ -99,10 +96,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        
+
         ControlFlowGraph cfg = buildCFG(program);
         DataflowAnalysis<Use> analysis = performLivenessAnalysis(cfg, program);
-        
+
         return findRedundantAssignments(cfg, analysis, program);
     }
 
@@ -121,22 +118,23 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 .withMay()
                 .withTransferFunction(new RedundantAssignmentTransferFunction(program, cfg))
                 .build();
-        
+
         analysis.applyAnalysis();
         return analysis;
     }
 
     private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Use> analysis, Program program) {
         Set<Issue> issues = new LinkedHashSet<>();
-        
+
         for (CFGNode node : cfg.getNodes()) {
             checkNode(node, analysis, program, issues, cfg);
         }
-        
+
         return Collections.unmodifiableSet(issues);
     }
-    
-    private void checkNode(CFGNode node, DataflowAnalysis<Use> analysis, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
+
+    private void checkNode(CFGNode node, DataflowAnalysis<Use> analysis, Program program, Set<Issue> issues,
+                           ControlFlowGraph cfg) {
         Set<Definition> definitions = node.getDefinitions();
         if (definitions.isEmpty()) {
             return;
@@ -155,8 +153,9 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 .map(Use::getDefinable)
                 .collect(Collectors.toSet());
     }
-    
-    private void checkDefinition(Definition def, Set<Defineable> liveVariables, Program program, Set<Issue> issues, ControlFlowGraph cfg) {
+
+    private void checkDefinition(Definition def, Set<Defineable> liveVariables, Program program, Set<Issue> issues,
+                                 ControlFlowGraph cfg) {
         if (isDeadOnAllPaths(def, liveVariables)) {
             reportAlwaysRedundant(def, program, issues);
         } else {
@@ -171,7 +170,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
     private void reportAlwaysRedundant(Definition def, Program program, Set<Issue> issues) {
         ASTNode statement = def.getDefinitionSource().getASTNode();
         if (statement != null && isDynamicAssignment(statement)) {
-             return;
+            return;
         }
         createAndAddIssue(def, program, issues, HINT_ALWAYS);
     }
@@ -216,7 +215,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
                     reportPossibleRedundancy(current);
                     continue; // Stop tracing this path
                 }
-                
+
                 queue.addAll(new ForwardFlowDirection().getOutNodes(cfg, current));
             }
         }
@@ -241,7 +240,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (reportedOverwriters.contains(overwritingNode)) {
                 return;
             }
-            
+
             ASTNode stmt = overwritingNode.getASTNode();
             if (stmt != null && isDynamicAssignment(stmt)) {
                 return;
@@ -251,38 +250,40 @@ public class RedundantAssignment extends AbstractIssueFinder {
             createAndAddIssue(overwriteDef, program, issues, HINT_POSSIBLE);
             reportedOverwriters.add(overwritingNode);
         }
-    }
 
-    private boolean isRenderingStatement(ASTNode node) {
-        if (node == null) return false;
-        return node instanceof WaitSeconds ||
-               node instanceof BroadcastAndWait ||
-               node instanceof AskAndWait ||
-               node instanceof SwitchBackdropAndWait ||
-               node instanceof PlaySoundUntilDone ||
-               node instanceof Say ||
-               node instanceof SayForSecs ||
-               node instanceof Think ||
-               node instanceof ThinkForSecs;
-    }
-
-    private boolean isVisibleAttribute(Defineable variable) {
-        if (variable instanceof Attribute attr) {
-            AttributeType type = attr.getAttributeType();
-            return type == AttributeType.POSITION_X ||
-                   type == AttributeType.POSITION_Y ||
-                   type == AttributeType.ROTATION ||
-                   type == AttributeType.ROTATION_STYLE ||
-                   type == AttributeType.SIZE ||
-                   type == AttributeType.VISIBILITY ||
-                   type == AttributeType.GRAPHIC_EFFECT ||
-                   type == AttributeType.LAYER ||
-                   type == AttributeType.COSTUME ||
-                   type == AttributeType.BACKDROP;
+        private boolean isRenderingStatement(ASTNode node) {
+            if (node == null) {
+                return false;
+            }
+            return node instanceof WaitSeconds
+                    || node instanceof BroadcastAndWait
+                    || node instanceof AskAndWait
+                    || node instanceof SwitchBackdropAndWait
+                    || node instanceof PlaySoundUntilDone
+                    || node instanceof Say
+                    || node instanceof SayForSecs
+                    || node instanceof Think
+                    || node instanceof ThinkForSecs;
         }
-        return false;
+
+        private boolean isVisibleAttribute(Defineable variable) {
+            if (variable instanceof Attribute attr) {
+                AttributeType type = attr.getAttributeType();
+                return type == AttributeType.POSITION_X
+                        || type == AttributeType.POSITION_Y
+                        || type == AttributeType.ROTATION
+                        || type == AttributeType.ROTATION_STYLE
+                        || type == AttributeType.SIZE
+                        || type == AttributeType.VISIBILITY
+                        || type == AttributeType.GRAPHIC_EFFECT
+                        || type == AttributeType.LAYER
+                        || type == AttributeType.COSTUME
+                        || type == AttributeType.BACKDROP;
+            }
+            return false;
+        }
     }
-    
+
     private void createAndAddIssue(Definition def, Program program, Set<Issue> issues, String hintKey) {
         ASTNode statement = def.getDefinitionSource().getASTNode();
         if (statement == null) {
@@ -291,27 +292,37 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
         ScriptEntity context = resolveContext(def, statement);
         if (context == null) {
-             return; 
+            return;
         }
 
         Hint hint = Hint.fromKey(hintKey);
         hint.setParameter(Hint.HINT_VARIABLE, new HintPlaceholder.Defineable(def.getDefinable()));
-        
+
         ActorDefinition actor = def.getDefinitionSource().getActor();
-        
-        Issue issue = new Issue(this, IssueSeverity.MEDIUM, program, actor, context, statement, statement.getMetadata(), hint) {};
+
+        Issue issue = new IssueBuilder()
+                .withFinder(this)
+                .withSeverity(IssueSeverity.MEDIUM)
+                .withProgram(program)
+                .withActor(actor)
+                .withScriptOrProcedure(context)
+                .withCurrentNode(statement)
+                .withMetadata(statement.getMetadata())
+                .withHint(hint)
+                .build();
+
         issues.add(issue);
     }
 
     private ScriptEntity resolveContext(Definition def, ASTNode statement) {
         ASTNode contextNode = def.getDefinitionSource().getScriptOrProcedure();
-        if (contextNode instanceof ScriptEntity) {
-            return (ScriptEntity) contextNode;
+        if (contextNode instanceof ScriptEntity scriptEntity) {
+            return scriptEntity;
         }
         if (statement != null) {
             for (ASTNode current = statement.getParentNode(); current != null; current = current.getParentNode()) {
-                if (current instanceof ScriptEntity) {
-                    return (ScriptEntity) current;
+                if (current instanceof ScriptEntity scriptEntity) {
+                    return scriptEntity;
                 }
             }
         }
@@ -374,7 +385,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
     private boolean isDynamic(Position pos) {
         if (pos instanceof FromExpression fromExpression) {
-             return !isConstant(fromExpression.getStringExpr());
+            return !isConstant(fromExpression.getStringExpr());
         }
         // RandomPos, MousePos are dynamic
         return pos instanceof RandomPos || pos instanceof MousePos;
@@ -388,10 +399,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
     }
 
     private boolean isConstantLiteral(Expression expr) {
-        return expr instanceof BoolLiteral || 
-               expr instanceof ColorLiteral || 
-               expr instanceof NumberLiteral || 
-               expr instanceof StringLiteral;
+        return expr instanceof BoolLiteral
+                || expr instanceof ColorLiteral
+                || expr instanceof NumberLiteral
+                || expr instanceof StringLiteral;
     }
 
     private boolean areAllChildrenConstant(Expression expr) {

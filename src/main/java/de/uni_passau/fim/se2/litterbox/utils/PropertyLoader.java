@@ -148,8 +148,9 @@ public final class PropertyLoader {
      * Set the global logging level of the java.util.logging root logger.
      * It is either set to the valid logging level name (e.g. "ALL", "INFO" or its integer values such "1") provided
      * as JVM argument for the key 'logLevel' or the default logging level {@code Level.INFO} is set.
-     * <p>
-     * For example, to set the global log level to "FINEST" call the JAR of the project with the JVM option {@code -DlogLevel=FINEST}.
+     *
+     * <p>For example, to set the global log level to "FINEST" call the JAR of the project with the JVM option
+     * {@code -DlogLevel=FINEST}.
      */
     public static void setGlobalLoggingLevelFromEnvironment() {
         var logLevel = System.getProperty("logLevel", null);

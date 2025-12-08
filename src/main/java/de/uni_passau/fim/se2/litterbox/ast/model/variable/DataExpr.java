@@ -50,8 +50,13 @@ public abstract class DataExpr extends AbstractNode implements Expression {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         DataExpr dataExpr = (DataExpr) o;
         return name.equals(dataExpr.name);
     }

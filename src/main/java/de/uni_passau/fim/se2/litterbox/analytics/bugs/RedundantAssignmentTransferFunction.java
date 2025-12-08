@@ -42,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ListVariable;
 import de.uni_passau.fim.se2.litterbox.cfg.Parameter;
+import de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
 import de.uni_passau.fim.se2.litterbox.cfg.Variable;
 import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
@@ -67,28 +68,38 @@ public class RedundantAssignmentTransferFunction extends LivenessTransferFunctio
 
     @Override
     public Set<Use> apply(CFGNode node, Set<Use> inFacts) {
-        
         // Handle Halting Blocks -> Treat as Use of Visibility (and potentially Costume/Backdrop)
         Set<Use> extraUses = new HashSet<>();
         if (containsHaltingNode(node.getASTNode())) {
-             // For current actor
-             if (node.getActor() != null) {
-                 extraUses.add(new Use(node, Attribute.visibilityOf(node.getActor().getIdent())));
-                 extraUses.add(new Use(node, Attribute.costumeOf(node.getActor().getIdent()))); 
-                 extraUses.add(new Use(node, Attribute.backdropOf(node.getActor().getIdent()))); // Backdrops technically are stage, but attributes handles this.
-                 
-                 // Add Graphic Effects
-                 for (GraphicEffectType effectType : GraphicEffectType.values()) {
-                      extraUses.add(new Use(node, Attribute.graphicEffectOf(node.getActor().getIdent(), effectType.getToken())));
-                 }
-                 extraUses.add(new Use(node, Attribute.graphicEffectOf(node.getActor().getIdent())));
+            // For current actor
+            if (node.getActor() != null) {
+                extraUses.add(new Use(node, Attribute.visibilityOf(node.getActor().getIdent())));
+                extraUses.add(new Use(node, Attribute.costumeOf(node.getActor().getIdent())));
+                // Backdrops technically are stage, but attributes handles this.
+                extraUses.add(new Use(node, Attribute.backdropOf(node.getActor().getIdent())));
 
-                 // Add other visual attributes
-                 extraUses.add(new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_X)));
-                 extraUses.add(new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_Y)));
-                 extraUses.add(new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.ROTATION)));
-                 extraUses.add(new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.SIZE)));
-             }
+                // Add Graphic Effects
+                for (GraphicEffectType effectType : GraphicEffectType.values()) {
+                    extraUses.add(
+                            new Use(node, Attribute.graphicEffectOf(node.getActor().getIdent(), effectType.getToken()))
+                    );
+                }
+                extraUses.add(new Use(node, Attribute.graphicEffectOf(node.getActor().getIdent())));
+
+                // Add other visual attributes
+                extraUses.add(
+                        new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_X))
+                );
+                extraUses.add(
+                        new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_Y))
+                );
+                extraUses.add(
+                        new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.ROTATION))
+                );
+                extraUses.add(
+                        new Use(node, new Attribute(node.getActor().getIdent(), Attribute.AttributeType.SIZE))
+                );
+            }
         }
 
         // Check if node is an Exit Node (no forward successors)
@@ -96,82 +107,90 @@ public class RedundantAssignmentTransferFunction extends LivenessTransferFunctio
             // It is an exit node.
             // Augment inFacts with All Variables as Uses.
             Set<Use> augmented = new HashSet<>(inFacts);
-            
+
             // Collect Globals and Sprite Variables
             Map<String, VariableInfo> vars = program.getSymbolTable().getVariables();
             for (VariableInfo varInfo : vars.values()) {
                 // Create artificial Use
                 // Construct Qualified Identifier
-                Qualified qualified = new Qualified(new StrId(varInfo.actor()), new de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable(new StrId(varInfo.variableName())));
+                Qualified qualified = new Qualified(
+                        new StrId(varInfo.actor()),
+                        new de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable(
+                                new StrId(varInfo.variableName())
+                        )
+                );
                 // Wrap in CFG Variable
                 Variable cfgVar = new Variable(qualified);
-                
+
                 augmented.add(new Use(node, cfgVar));
 
                 // Also add Unqualified version (StrId) to support unresolved ASTs
                 Variable unqualifiedVar = new Variable(new StrId(varInfo.variableName()));
                 augmented.add(new Use(node, unqualifiedVar));
             }
-            
+
             // Collect Parameters if inside Procedure
             ASTNode context = node.getScriptOrProcedure();
-            if (context instanceof ProcedureDefinition) {
+            if (context instanceof ProcedureDefinition proc) {
                 String scopeId = AstNodeUtil.getBlockId(context);
-                ProcedureDefinition proc = (ProcedureDefinition) context;
                 proc.getParameterDefinitionList().getParameterDefinitions().forEach(
-                    pDef -> {
-                        Parameter param = new Parameter(pDef.getIdent(), scopeId);
-                        augmented.add(new Use(node, param));
-                    }
+                        paramDef -> {
+                            Parameter param = new Parameter(paramDef.getIdent(), scopeId);
+                            augmented.add(new Use(node, param));
+                        }
                 );
             }
 
             // Collect Attributes for all Actors
             for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-                 for (Attribute.AttributeType type : Attribute.AttributeType.values()) {
-                      if (type == Attribute.AttributeType.GRAPHIC_EFFECT) {
-                          // Add specific effects
-                          for (GraphicEffectType effectType : GraphicEffectType.values()) {
-                               augmented.add(new Use(node, Attribute.graphicEffectOf(actor.getIdent(), effectType.getToken())));
-                          }
-                          // Also add generic
-                          augmented.add(new Use(node, Attribute.graphicEffectOf(actor.getIdent())));
-                      } else if (type == Attribute.AttributeType.SOUND_EFFECT) {
-                           for (SoundEffectType effectType : SoundEffectType.values()) {
-                               augmented.add(new Use(node, Attribute.soundEffectOf(actor.getIdent(), effectType.getToken())));
-                          }
-                          augmented.add(new Use(node, Attribute.soundEffectOf(actor.getIdent())));
-                      } else {
-                          augmented.add(new Use(node, new Attribute(actor.getIdent(), type)));
-                      }
-                 }
+                for (Attribute.AttributeType type : Attribute.AttributeType.values()) {
+                    if (type == Attribute.AttributeType.GRAPHIC_EFFECT) {
+                        // Add specific effects
+                        for (GraphicEffectType effectType : GraphicEffectType.values()) {
+                            augmented.add(
+                                    new Use(node, Attribute.graphicEffectOf(actor.getIdent(), effectType.getToken()))
+                            );
+                        }
+                        // Also add generic
+                        augmented.add(new Use(node, Attribute.graphicEffectOf(actor.getIdent())));
+                    } else if (type == Attribute.AttributeType.SOUND_EFFECT) {
+                        for (SoundEffectType effectType : SoundEffectType.values()) {
+                            augmented.add(
+                                    new Use(node, Attribute.soundEffectOf(actor.getIdent(), effectType.getToken()))
+                            );
+                        }
+                        augmented.add(new Use(node, Attribute.soundEffectOf(actor.getIdent())));
+                    } else {
+                        augmented.add(new Use(node, new Attribute(actor.getIdent(), type)));
+                    }
+                }
             }
 
             // Collect Lists
             Map<String, ExpressionListInfo> lists = program.getSymbolTable().getLists();
             for (ExpressionListInfo listInfo : lists.values()) {
-                 ListVariable listVar = new ListVariable(new StrId(listInfo.variableName()));
-                 augmented.add(new Use(node, listVar));
+                ListVariable listVar = new ListVariable(new StrId(listInfo.variableName()));
+                augmented.add(new Use(node, listVar));
             }
 
             // Collect Robot Attributes for all Actors (if present)
             // Robot attributes behave like standard attributes (global side effects)
             for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-                for (de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute.AttributeType type : de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute.AttributeType.values()) {
-                    augmented.add(new Use(node, new de.uni_passau.fim.se2.litterbox.cfg.RobotAttribute(actor.getIdent(), type)));
+                for (RobotAttribute.AttributeType type : RobotAttribute.AttributeType.values()) {
+                    augmented.add(new Use(node, new RobotAttribute(actor.getIdent(), type)));
                 }
             }
-            
+
             augmented.addAll(extraUses);
             return super.apply(node, augmented);
         }
-        
+
         // Not exit node, but may have extra uses (halting)
         if (!extraUses.isEmpty()) {
-             Set<Use> augmented = new HashSet<>(inFacts);
-             augmented.addAll(extraUses);
-            // We need to apply standard transfer logic (out - def + use), but since we can't easily modify 'use' inside 'super.apply', 
-            // and we know 'super.apply' returns 'out', and this is backward analysis...
+            Set<Use> augmented = new HashSet<>(inFacts);
+            augmented.addAll(extraUses);
+            // We need to apply standard transfer logic (out - def + use), but since we can't easily modify
+            // 'use' inside 'super.apply', and we know 'super.apply' returns 'out', and this is backward analysis...
             // Wait, apply(node, in) -> out.
             // In Backward analysis: in = out of successors.
             // Liveness: in - def + use.
@@ -181,10 +200,10 @@ public class RedundantAssignmentTransferFunction extends LivenessTransferFunctio
             result.addAll(extraUses);
             return result;
         }
-        
+
         return super.apply(node, inFacts);
     }
-    
+
     private boolean containsHaltingNode(ASTNode node) {
         if (node instanceof Stmt stmt && isHalting(stmt)) {
             return true;
