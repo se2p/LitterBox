@@ -136,7 +136,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(ChangeYBy node) {
         if (prevNode != null && (prevNode instanceof SetYTo || prevNode instanceof ChangeYBy)) {
-            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION));
+            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION_Y));
         }
 
         prevNode = node;
@@ -145,7 +145,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetYTo node) {
         if (prevNode != null && (prevNode instanceof SetYTo || prevNode instanceof ChangeYBy)) {
-            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION));
+            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION_Y));
         }
 
         prevNode = node;
@@ -154,7 +154,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(ChangeXBy node) {
         if (prevNode != null && (prevNode instanceof SetXTo || prevNode instanceof ChangeXBy)) {
-            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION));
+            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION_X));
         }
 
         prevNode = node;
@@ -163,7 +163,7 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
     @Override
     public void visit(SetXTo node) {
         if (prevNode != null && (prevNode instanceof SetXTo || prevNode instanceof ChangeXBy)) {
-            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION));
+            generateMultiBlockIssue(node, new Attribute(currentActor.getIdent(), POSITION_X));
         }
 
         prevNode = node;

@@ -49,6 +49,10 @@ public class DataflowAnalysis<T extends DataflowFact> {
         return Collections.unmodifiableSet(dataflowFacts.get(node));
     }
 
+    public ControlFlowGraph getCFG() {
+        return cfg;
+    }
+
     // May forward: union of facts of predecessor
     // Must forward: intersection of facts of predecessor
     // May backward: union of facts of predecessor
@@ -59,12 +63,12 @@ public class DataflowAnalysis<T extends DataflowFact> {
     }
 
     //For “all paths” problems, first guess is “everything” (set of all possible values)
-    void initializeMust(Set<T> allFacts) {
+    public void initializeMust(Set<T> allFacts) {
         cfg.getNodes().forEach(n -> dataflowFacts.put(n, new LinkedHashSet<>(allFacts)));
     }
 
     //For “any path” problems, first guess is “nothing” (empty set) at each node
-    void initializeMay() {
+    public void initializeMay() {
         cfg.getNodes().forEach(n -> dataflowFacts.put(n, Collections.emptySet()));
     }
 
@@ -76,7 +80,7 @@ public class DataflowAnalysis<T extends DataflowFact> {
         this.flowDirection = flowDirection;
     }
 
-    void setJoinFunction(JoinFunction<T> join) {
+    public void setJoinFunction(JoinFunction<T> join) {
         this.joinFunction = join;
     }
 

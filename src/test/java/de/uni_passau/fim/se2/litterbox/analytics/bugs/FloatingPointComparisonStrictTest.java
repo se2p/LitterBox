@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -28,30 +30,32 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class PositionEqualsCheckStrictTest implements JsonTest {
+public class FloatingPointComparisonStrictTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        parameterName.setIgnoreLooseBlocks(true);
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        assertThatFinderReports(0, new FloatingPointComparison(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEqualCond() throws IOException, ParsingException {
-        Program equalXStrict = JsonTest.parseProgram("./src/test/fixtures/bugs/positionEqualsCheckStrict.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        parameterName.setIgnoreLooseBlocks(true);
-        Set<Issue> reports = parameterName.check(equalXStrict);
-        Assertions.assertEquals(1, reports.size());
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/xPosEqual.json");
+    }
+
+    @Test
+    public void testEqualDir() throws IOException, ParsingException {
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/posEqualDirection.json");
+    }
+
+    @Test
+    public void testXPositionEquals() throws IOException, ParsingException {
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/xPositionEquals.json");
     }
 
     @Test
     public void testEqualDistCond() throws IOException, ParsingException {
         Program equalstrict = JsonTest.parseProgram("./src/test/fixtures/bugs/positionEqualsCheckStrict2.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        FloatingPointComparison parameterName = new FloatingPointComparison();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(equalstrict);
         Assertions.assertEquals(2, reports.size());
@@ -60,7 +64,7 @@ public class PositionEqualsCheckStrictTest implements JsonTest {
     @Test
     public void testDeadEquals() throws IOException, ParsingException {
         Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugs/deadPositionEquals.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        FloatingPointComparison parameterName = new FloatingPointComparison();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(1, reports.size());

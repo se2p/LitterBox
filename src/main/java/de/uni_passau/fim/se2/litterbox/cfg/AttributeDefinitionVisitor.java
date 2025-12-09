@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect.GraphicEffectType;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect.SoundEffectType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
@@ -65,32 +67,75 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        String effect = getEffectName(node.getEffect());
+        if (effect != null) {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), effect));
+        } else {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        }
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        String effect = getEffectName(node.getEffect());
+        if (effect != null) {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), effect));
+        } else {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        }
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
+        // Clears ALL graphic effects
         definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        addUnknownEffectDefinitions();
+    }
+
+    private void addUnknownEffectDefinitions() {
+        // We know the standard scratch effects
+        for (GraphicEffectType type : GraphicEffectType.values()) {
+            definitions.add(Attribute.graphicEffectOf(currentActor.getIdent(), type.getToken()));
+        }
+        // Also add the generic one
+        definitions.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+    }
+
+    private String getEffectName(GraphicEffect effect) {
+        return effect.getTypeName();
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+        String effect = getSoundEffectName(node.getEffect());
+        if (effect != null) {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), effect));
+        } else {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+        }
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
-        definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+        String effect = getSoundEffectName(node.getEffect());
+        if (effect != null) {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), effect));
+        } else {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+        }
     }
 
     @Override
     public void visit(ClearSoundEffects node) {
+        // Standard sound effects: PITCH, PAN
+        for (SoundEffectType type : SoundEffectType.values()) {
+            definitions.add(Attribute.soundEffectOf(currentActor.getIdent(), type.getToken()));
+        }
         definitions.add(Attribute.soundEffectOf(currentActor.getIdent()));
+    }
+
+    private String getSoundEffectName(SoundEffect effect) {
+        return effect.getTypeName();
     }
 
     @Override
@@ -120,47 +165,52 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     // Position
     @Override
     public void visit(ChangeXBy node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetXTo node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetYTo node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GoToPos node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GoToPosXY node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(MoveSteps node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        definitions.add(Attribute.positionOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -184,6 +234,16 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     @Override
     public void visit(PointTowards node) {
         definitions.add(Attribute.rotationOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetRotationStyle node) {
+        definitions.add(Attribute.rotationStyleOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(SetDragMode node) {
+        definitions.add(Attribute.dragModeOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -238,6 +298,14 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     @Override
     public void visit(ResetTimer node) {
         definitions.add(Attribute.timerOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Sound State
+
+    @Override
+    public void visit(StopAllSounds node) {
+        definitions.add(Attribute.soundStateOf(currentActor.getIdent()));
     }
 
 

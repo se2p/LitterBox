@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -105,8 +105,8 @@ public class BoolExpression extends AbstractIssueFinder {
             return super.isSubsumedBy(theIssue, other);
         }
 
-        if (other.getFinder() instanceof PositionEqualsCheck) {
-            //if there is a PEQ than Litterbox shouldn't flag the same sport as a perfume of type BoolExpression
+        if (other.getFinder() instanceof FloatingPointComparison) {
+            //if there is a FPC then Litterbox shouldn't flag the same expression as a perfume of type BoolExpression
             return theIssue.getCodeLocation().equals(other.getCodeLocation());
         }
 
