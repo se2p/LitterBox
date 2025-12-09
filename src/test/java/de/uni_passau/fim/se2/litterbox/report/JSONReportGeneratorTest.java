@@ -102,7 +102,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testSingleIssue() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
-        PositionEqualsCheck finder = new PositionEqualsCheck();
+        FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -115,7 +115,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testCodeField() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
-        PositionEqualsCheck finder = new PositionEqualsCheck();
+        FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -135,7 +135,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testMultipleIssues() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/positionEqualsCheck.json");
-        PositionEqualsCheck finder = new PositionEqualsCheck();
+        FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -148,7 +148,7 @@ public class JSONReportGeneratorTest implements JsonTest {
     @Test
     public void testFileOutput() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
-        PositionEqualsCheck finder = new PositionEqualsCheck();
+        FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
 
         Path tmpFile = Files.createTempFile(null, null);
