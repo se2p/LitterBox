@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 public class TypeErrorTest implements FinderTest, JsonTest {
@@ -526,6 +527,74 @@ public class TypeErrorTest implements FinderTest, JsonTest {
     @Test
     public void testParameterCall() throws IOException, ParsingException {
         assertThatFinderReports(1, new TypeError(), "./src/test/fixtures/bugs/parameterTypeCheckWithCall.json");
+    }
+
+    @Test
+    public void testDetailedHintContent() throws IOException, ParsingException {
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+        try {
+            ScratchBlocksParser parser = new ScratchBlocksParser();
+            Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+            // Script with a type mismatch: if (50) then (Number where Boolean expected)
+            String script = """
+                    when green flag clicked
+                    if (50) then
+                    end
+                    """;
+            prog = parser.extendProject(prog, "Sprite1", script);
+            
+            TypeError finder = new TypeError();
+            Set<Issue> issues = finder.check(prog);
+            
+            Assertions.assertEquals(1, issues.size());
+            Issue issue = issues.iterator().next();
+            String hintText = issue.getHintText(translator);
+            
+            // Check for specific parts of the hint
+            Assertions.assertTrue(hintText.contains("Boolean (True/False)"), "Hint should contain expected type 'Boolean (True/False)'. Got: " + hintText);
+            Assertions.assertTrue(hintText.contains("Number"), "Hint should contain actual type 'Number'. Got: " + hintText);
+                
+            // Test comparison hint
+            prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+            script = """
+                    when green flag clicked
+                    if <(50) = [hello]> then
+                    end
+                    """;
+            prog = parser.extendProject(prog, "Sprite1", script);
+            issues = finder.check(prog);
+            
+            Assertions.assertEquals(1, issues.size());
+            issue = issues.iterator().next();
+            hintText = issue.getHintText(translator);
+            
+            Assertions.assertTrue(hintText.contains("Number"), "Hint should contain left type 'Number'. Got: " + hintText);
+            Assertions.assertTrue(hintText.contains("Text"), "Hint should contain right type 'Text'. Got: " + hintText);
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
+    }
+    @Test
+    public void testEmptyHoles() throws IOException, ParsingException {
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        String script = """
+                when green flag clicked
+                if <> then
+                end
+                wait until <>
+                move () steps
+                if <() = ()> then
+                end
+                """;
+        
+        prog = parser.extendProject(prog, "Sprite1", script);
+        
+        TypeError finder = new TypeError();
+        Set<Issue> issues = finder.check(prog);
+                
+        Assertions.assertEquals(0, issues.size(), "Should suppress type errors for empty holes.");
     }
 }
 

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
@@ -38,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -82,6 +84,10 @@ import java.util.function.Function;
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
+
+
+    public static final String TYPE_ERROR_COMPARISON = "type_error_comparison";
+    public static final String TYPE_ERROR_MISMATCH = "type_error_mismatch";
 
     private DataflowAnalysis<VariableTypeFact> analysis;
     private final Map<ASTNode, CFGNode> astToCfg = new HashMap<>();
@@ -172,10 +178,18 @@ public class TypeError extends AbstractIssueFinder {
         if (node instanceof Expression expr) {
              Type actual = inferType(expr, createNodeResolver(node));
              
-             if (!isCompatible(expected, actual)) {
-                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             if (actual == Type.STRING && expr instanceof StringLiteral lit && lit.getText().isEmpty()) {
+                 return;
              }
-        }
+             
+             if (!isCompatible(expected, actual)) {
+                 Hint hint = Hint.fromKey(TYPE_ERROR_MISMATCH);
+                 hint.setParameter("BLOCK", getFriendlyNodeName(node));
+                 hint.setParameter("EXPECTED", new HintPlaceholder.Translatable(getTypeTranslationKey(expected)));
+                 hint.setParameter("ACTUAL", new HintPlaceholder.Translatable(getTypeTranslationKey(actual)));
+                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+             }
+         }
     }
     
     private void checkComparison(BinaryExpression<?, ?> node) {
@@ -186,32 +200,42 @@ public class TypeError extends AbstractIssueFinder {
                 Type leftType = inferType(left, createNodeResolver(node));
                 Type rightType = inferType(right, createNodeResolver(node));
                 
-                checkComparisonCompatibility(node, leftType, rightType);
+                checkComparisonCompatibility(node, left, right, leftType, rightType);
             }
         }
     }
 
-    private void checkComparisonCompatibility(ASTNode node, Type left, Type right) {
+    private void checkComparisonCompatibility(ASTNode node, Expression leftNode, Expression rightNode, Type left, Type right) {
         if (left == Type.ANY || right == Type.ANY) return;
         if (left == Type.TOP || right == Type.TOP) return;
         if (left == Type.BOTTOM || right == Type.BOTTOM) return;
 
+        boolean mismatch = false;
         if (left == Type.BOOLEAN && right == Type.NUMBER) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.NUMBER && right == Type.BOOLEAN) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.BOOLEAN && right == Type.STRING) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.STRING && right == Type.BOOLEAN) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.NUMBER && right == Type.STRING) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.STRING && right == Type.NUMBER) {
-             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+             mismatch = true;
         } else if (left == Type.BOOLEAN && right == Type.BOOLEAN) {
              if (node instanceof LessThan || node instanceof BiggerThan) {
-                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                 mismatch = true;
              }
+        }
+
+        if (mismatch) {
+            Hint hint = Hint.fromKey(TYPE_ERROR_COMPARISON);
+            hint.setParameter("LEFT", getFriendlyNodeName(leftNode));
+            hint.setParameter("RIGHT", getFriendlyNodeName(rightNode));
+            hint.setParameter("TYPE_LEFT", new HintPlaceholder.Translatable(getTypeTranslationKey(left)));
+            hint.setParameter("TYPE_RIGHT", new HintPlaceholder.Translatable(getTypeTranslationKey(right)));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 
@@ -224,6 +248,27 @@ public class TypeError extends AbstractIssueFinder {
         }
         
         return false;
+    }
+
+    private String getTypeTranslationKey(Type type) {
+        if (type == Type.BOOLEAN) return "type_boolean";
+        if (type == Type.NUMBER) return "type_number";
+        if (type == Type.STRING) return "type_string";
+        if (type == Type.COLOR) return "type_color";
+        if (type == Type.POSITION) return "type_position";
+        if (type == Type.DIRECTION) return "type_direction";
+        if (type == Type.LOUDNESS) return "type_loudness";
+        return "type_void";
+    }
+
+    private String getFriendlyNodeName(ASTNode node) {
+        String sb = ScratchBlocksVisitor.ofIgnoringLooseBlocks(node);
+        // Literals (Number/String) produce output like (4) or [text] which should not be wrapped in [sbi].
+        // Blocks produce output that needs [sbi] to be rendered correctly.
+        if (node instanceof NumberLiteral || node instanceof StringLiteral) {
+            return "\"" + sb + "\"";
+        }
+        return "[sbi]" + sb + "[/sbi]";
     }
 
     // --- Visitor Methods ---
@@ -472,6 +517,8 @@ public class TypeError extends AbstractIssueFinder {
         List<String> keys = new ArrayList<>();
         keys.add(NAME);
         keys.add(WEIRD_DISTANCE);
+        keys.add(TYPE_ERROR_COMPARISON);
+        keys.add(TYPE_ERROR_MISMATCH);
         return keys;
     }
 
@@ -541,6 +588,7 @@ public class TypeError extends AbstractIssueFinder {
             facts.add(new VariableTypeFact(variable, type));
         }
     }
+
 
     /**
      * Merges dataflow facts from multiple control flow paths, using a Least Upper Bound (LUB) approach
