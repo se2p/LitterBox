@@ -89,6 +89,13 @@ public class TypeError extends AbstractIssueFinder {
     public static final String TYPE_ERROR_COMPARISON = "type_error_comparison";
     public static final String TYPE_ERROR_MISMATCH = "type_error_mismatch";
 
+    public enum Type {
+        BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION, COLOR, ANY, TOP, /**
+         * Bottom element of the lattice (unreachable code / uninitialized).
+         */
+        BOTTOM
+    }
+
     private DataflowAnalysis<VariableTypeFact> analysis;
     private final Map<ASTNode, CFGNode> astToCfg = new HashMap<>();
 
