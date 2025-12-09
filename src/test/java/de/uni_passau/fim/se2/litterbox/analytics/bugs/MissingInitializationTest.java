@@ -99,12 +99,12 @@ public class MissingInitializationTest implements FinderTest, JsonTest {
 
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
-        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugs/missingVariableAndAttributeInitialization.json");
+        assertThatFinderReports(3, new MissingInitialization(), "src/test/fixtures/bugs/missingVariableAndAttributeInitialization.json");
     }
 
     @Test
     public void testMissingPositionInitialization() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MissingInitialization(), "src/test/fixtures/bugs/missingAttributeInitializationPosition.json");
+        assertThatFinderReports(2, new MissingInitialization(), "src/test/fixtures/bugs/missingAttributeInitializationPosition.json");
     }
 
     @Test
