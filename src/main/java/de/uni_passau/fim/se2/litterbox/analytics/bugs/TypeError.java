@@ -274,28 +274,16 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private String getTypeTranslationKey(Type type) {
-        if (type == Type.BOOLEAN) {
-            return "type_boolean";
-        }
-        if (type == Type.NUMBER) {
-            return "type_number";
-        }
-        if (type == Type.STRING) {
-            return "type_string";
-        }
-        if (type == Type.COLOR) {
-            return "type_color";
-        }
-        if (type == Type.POSITION) {
-            return "type_position";
-        }
-        if (type == Type.DIRECTION) {
-            return "type_direction";
-        }
-        if (type == Type.LOUDNESS) {
-            return "type_loudness";
-        }
-        return "type_void";
+        return switch (type) {
+            case BOOLEAN -> "type_boolean";
+            case NUMBER -> "type_number";
+            case STRING -> "type_string";
+            case COLOR -> "type_color";
+            case POSITION -> "type_position";
+            case DIRECTION -> "type_direction";
+            case LOUDNESS -> "type_loudness";
+            default -> "type_void";
+        };
     }
 
     private String getFriendlyNodeName(ASTNode node) {
@@ -675,34 +663,24 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     private static Type inferType(Expression expr, Function<Identifier, Type> resolver) {
-        if (expr instanceof Identifier id) {
-            return resolver.apply(id);
-        } else if (expr instanceof DataExpr dataExpr) {
-            return resolver.apply(dataExpr.getName());
-        } else if (expr instanceof Answer) {
-            return Type.ANY;
-        } else if (expr instanceof NumberLiteral) {
-            return Type.NUMBER;
-        } else if (expr instanceof StringLiteral) {
-            return Type.STRING;
-        } else if (expr instanceof Color) {
-            return Type.COLOR;
-        } else if (expr instanceof BoolExpr) {
-            return Type.BOOLEAN;
-        } else if (expr instanceof NumExpr) {
-            return Type.NUMBER;
-        } else if (expr instanceof AsString asString) {
-            if (asString.getOperand1() instanceof Touching || asString.getOperand1() instanceof Not) {
-                return Type.BOOLEAN;
+        return switch (expr) {
+            case Identifier id -> resolver.apply(id);
+            case DataExpr dataExpr -> resolver.apply(dataExpr.getName());
+            case Answer ignored -> Type.ANY;
+            case NumberLiteral ignored -> Type.NUMBER;
+            case StringLiteral ignored -> Type.STRING;
+            case Color ignored -> Type.COLOR;
+            case BoolExpr ignored -> Type.BOOLEAN;
+            case NumExpr ignored -> Type.NUMBER;
+            case AsString asString -> {
+                if (asString.getOperand1() instanceof Touching || asString.getOperand1() instanceof Not) {
+                    yield Type.BOOLEAN;
+                }
+                yield Type.STRING;
             }
-            return Type.STRING;
-        } else if (expr instanceof StringExpr) {
-            return Type.ANY; // e.g. JoinString can be anything
-        } else if (expr instanceof ComparableExpr) {
-            return Type.ANY;
-        } else if (expr instanceof AsNumber) {
-            return Type.NUMBER;
-        }
-        return Type.ANY; // Implicit cast or unknown
+            case StringExpr ignored -> Type.ANY; // e.g. JoinString can be anything
+            case ComparableExpr ignored -> Type.ANY;
+            default -> Type.ANY; // Implicit cast or unknown
+        };
     }
 }
