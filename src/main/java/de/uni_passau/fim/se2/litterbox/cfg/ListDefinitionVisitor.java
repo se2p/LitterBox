@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
@@ -58,6 +59,11 @@ public class ListDefinitionVisitor implements DefinableCollector<ListVariable> {
     @Override
     public void visit(ReplaceItem stmt) {
         definitions.add(new ListVariable(stmt.getIdentifier()));
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        node.getStmtList().accept(this);
     }
 
     @Override

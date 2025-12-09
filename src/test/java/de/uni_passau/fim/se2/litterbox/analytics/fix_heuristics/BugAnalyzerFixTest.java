@@ -39,9 +39,9 @@ public class BugAnalyzerFixTest implements JsonTest {
     public void testLoopSensingFix() throws ParsingException {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingStopResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingStopWait.json").toFile())));
-        Assertions.assertEquals(2, issues.size());
-        Assertions.assertInstanceOf(MissingLoopSensingWaitFix.class, issues.get(1).getFinder());
-        Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(1).getCodeLocation()));
+        Assertions.assertEquals(3, issues.size());
+        Assertions.assertInstanceOf(MissingLoopSensingWaitFix.class, issues.get(2).getFinder());
+        Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(2).getCodeLocation()));
     }
 
 
@@ -49,9 +49,9 @@ public class BugAnalyzerFixTest implements JsonTest {
     public void testLoopSensingMultiFixOne() throws ParsingException {
         ProgramBugAnalyzer programBugAnalyzer = new ProgramBugAnalyzer("bugs", false, Path.of("./src/test/fixtures/jsonReport/missingLoopSensingMultiResult.json"));
         List<Issue> issues = new ArrayList<>(programBugAnalyzer.analyze(parser.parseFile(Path.of("./src/test/fixtures/fix_heuristics/missingLoopSensingMultiFixOne.json").toFile())));
-        Assertions.assertEquals(3, issues.size());
-        Assertions.assertInstanceOf(MissingLoopSensingLoopFix.class, issues.get(2).getFinder());
-        Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(2).getCodeLocation()));
+        Assertions.assertEquals(4, issues.size());
+        Assertions.assertInstanceOf(MissingLoopSensingLoopFix.class, issues.get(3).getFinder());
+        Assertions.assertEquals("NG5_c]Sc%NFgdLaV]%Cq", AstNodeUtil.getBlockId(issues.get(3).getCodeLocation()));
     }
 
     @Test

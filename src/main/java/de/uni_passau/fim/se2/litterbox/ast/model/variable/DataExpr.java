@@ -47,4 +47,22 @@ public abstract class DataExpr extends AbstractNode implements Expression {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DataExpr dataExpr = (DataExpr) o;
+        return name.equals(dataExpr.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

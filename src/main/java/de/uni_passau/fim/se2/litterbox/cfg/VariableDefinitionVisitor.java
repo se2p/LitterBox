@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -49,17 +51,27 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
     @Override
     public void visit(SetVariableTo node) {
         // Only the variable is a def
-        node.getIdentifier().accept(this);
+        definitions.add(new Variable(node.getIdentifier()));
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        node.getStmtList().accept(this);
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
         // Only the variable is a def
-        node.getIdentifier().accept(this);
+        definitions.add(new Variable(node.getIdentifier()));
     }
 
     @Override
     public void visit(Qualified node) {
-        definitions.add(new Variable(node));
+        // Handled in SetVariableTo and ChangeVariableBy
+    }
+
+    @Override
+    public void visit(StrId node) {
+        // Handled in SetVariableTo and ChangeVariableBy
     }
 }

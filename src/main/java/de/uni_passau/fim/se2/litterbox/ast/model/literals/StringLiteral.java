@@ -64,6 +64,6 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), text);
+        return Objects.hash(text);
     }
 }

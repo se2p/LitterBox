@@ -87,8 +87,9 @@ public class IssueTool {
             registerBugFinder(new OverwrittenVisualEffect(), bugFinders);
             registerBugFinder(new ParameterAsLiteral(), bugFinders);
             registerBugFinder(new ParameterOutOfScope(), bugFinders);
-            registerBugFinder(new PositionEqualsCheck(), bugFinders);
+            registerBugFinder(new FloatingPointComparison(), bugFinders);
             registerBugFinder(new RecursiveCloning(), bugFinders);
+            registerBugFinder(new RedundantAssignment(), bugFinders);
             registerBugFinder(new TerminatedLoop(), bugFinders);
             registerBugFinder(new TypeError(), bugFinders);
             registerBugFinder(new VariableAsLiteral(), bugFinders);
@@ -156,8 +157,9 @@ public class IssueTool {
         registerBugFinder(new ParameterAsLiteral(), bugFinders);
         registerBugFinder(new OverwrittenVisualEffect(), bugFinders);
         registerBugFinder(new ParameterOutOfScope(), bugFinders);
-        registerBugFinder(new PositionEqualsCheck(), bugFinders);
+        registerBugFinder(new FloatingPointComparison(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new RedundantAssignment(), bugFinders);
         registerBugFinder(new TerminatedLoop(), bugFinders);
         registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
