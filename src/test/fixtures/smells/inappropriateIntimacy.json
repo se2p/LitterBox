@@ -1,0 +1,176 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "a": {
+          "opcode": "event_whenflagclicked",
+          "next": "b",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 0,
+          "y": 0
+        },
+        "b": {
+          "opcode": "sensing_of",
+          "next": "c",
+          "parent": "a",
+          "inputs": {
+            "OBJECT": [
+              1,
+              "menu1"
+            ]
+          },
+          "fields": {
+            "PROPERTY": [
+              "x position",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "menu1": {
+          "opcode": "sensing_of_object_menu",
+          "next": null,
+          "parent": "b",
+          "inputs": {},
+          "fields": {
+            "OBJECT": [
+              "Sprite2",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "c": {
+          "opcode": "sensing_of",
+          "next": null,
+          "parent": "b",
+          "inputs": {
+            "OBJECT": [
+              1,
+              "menu2"
+            ]
+          },
+          "fields": {
+            "PROPERTY": [
+              "y position",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "menu2": {
+          "opcode": "sensing_of_object_menu",
+          "next": null,
+          "parent": "c",
+          "inputs": {},
+          "fields": {
+            "OBJECT": [
+              "Sprite2",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+          "name": "costume1",
+          "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    },
+    {
+      "isStage": false,
+      "name": "Sprite2",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+          "name": "costume1",
+          "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        }
+      ],
+      "sounds": [],
+      "volume": 100,
+      "layerOrder": 2,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0",
+    "agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
+  }
+}

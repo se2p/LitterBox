@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
@@ -62,6 +63,12 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
     @Override
     public void visit(SetVariableTo node) {
         // Skip variable as that's a def, only visit expression
+        node.getExpr().accept(this);
+    }
+    
+    @Override
+    public void visit(ChangeVariableBy node) {
+        uses.add(new Variable(node.getIdentifier()));
         node.getExpr().accept(this);
     }
 

@@ -55,6 +55,6 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name);
+        return Objects.hash(name);
     }
 }

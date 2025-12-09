@@ -88,16 +88,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     @Override
-    public void visit(Hide node) {
-        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
-    }
-
-    @Override
-    public void visit(Show node) {
-        uses.add(Attribute.visibilityOf(currentActor.getIdent()));
-    }
-
-    @Override
     public void visit(SpriteTouchable sprite) {
         uses.add(Attribute.visibilityOf(currentActor.getIdent()));
         visitChildren(sprite);
@@ -124,32 +114,34 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
 
     @Override
     public void visit(ChangeXBy node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(MoveSteps node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PositionX node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PositionY node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(DistanceTo node) {
-        uses.add(Attribute.positionOf(currentActor.getIdent()));
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
     @Override
@@ -188,12 +180,15 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     // Effect
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        uses.add(Attribute.graphicEffectOf(currentActor.getIdent()));
+        String effect = node.getEffect().getTypeName();
+        uses.add(Attribute.graphicEffectOf(currentActor.getIdent(), effect));
+        // TODO: Also add generic use? Likely not...
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-        uses.add(Attribute.soundEffectOf(currentActor.getIdent()));
+        String effect = node.getEffect().getTypeName();
+        uses.add(Attribute.soundEffectOf(currentActor.getIdent(), effect));
     }
 
     @Override
@@ -279,13 +274,14 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         if (targetId != null && attribute instanceof AttributeFromFixed fixedAttribute) {
             FixedAttribute at = fixedAttribute.getAttribute();
             switch (at.getType()) {
-                case X_POSITION, Y_POSITION -> uses.add(Attribute.positionOf(targetId));
+                case X_POSITION -> uses.add(Attribute.positionXOf(targetId));
+                case Y_POSITION -> uses.add(Attribute.positionYOf(targetId));
                 case SIZE -> uses.add(Attribute.sizeOf(targetId));
                 case DIRECTION -> uses.add(Attribute.rotationOf(targetId));
                 case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
                 case VOLUME -> uses.add(Attribute.volumeOf(targetId));
                 case BACKDROP_NAME, BACKDROP_NUMBER ->
-                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
             }
         }
     }

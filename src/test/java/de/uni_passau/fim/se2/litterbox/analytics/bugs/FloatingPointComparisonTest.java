@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.FloatingPointComparisonHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
@@ -34,50 +34,50 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class PositionEqualsCheckTest implements FinderTest, JsonTest {
+public class FloatingPointComparisonTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatFinderReports(0, new PositionEqualsCheck(), "./src/test/fixtures/emptyProject.json");
+        assertThatFinderReports(0, new FloatingPointComparison(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testEqualCond() throws IOException, ParsingException {
-        assertThatFinderReports(1, new PositionEqualsCheck(), "./src/test/fixtures/bugs/xPosEqual.json");
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/xPosEqual.json");
     }
 
     @Test
     public void testEqualDir() throws IOException, ParsingException {
-        assertThatFinderReports(0, new PositionEqualsCheck(), "./src/test/fixtures/bugs/posEqualDirection.json");
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/posEqualDirection.json");
     }
 
     @Test
     public void testXPositionEquals() throws IOException, ParsingException {
-        assertThatFinderReports(1, new PositionEqualsCheck(), "./src/test/fixtures/bugs/xPositionEquals.json");
+        assertThatFinderReports(1, new FloatingPointComparison(), "./src/test/fixtures/bugs/xPositionEquals.json");
     }
 
     @Test
     public void testAll() throws IOException, ParsingException {
-        assertThatFinderReports(4, new PositionEqualsCheck(), "./src/test/fixtures/bugs/positionEqualsCheck.json");
+        assertThatFinderReports(4, new FloatingPointComparison(), "./src/test/fixtures/bugs/positionEqualsCheck.json");
     }
 
     @Test
     public void testNested() throws IOException, ParsingException {
-        assertThatFinderReports(2, new PositionEqualsCheck(), "./src/test/fixtures/bugs/positionEqualsNested.json");
+        assertThatFinderReports(2, new FloatingPointComparison(), "./src/test/fixtures/bugs/positionEqualsNested.json");
     }
 
     @Test
     public void testDeadEquals() throws IOException, ParsingException {
-        assertThatFinderReports(2, new PositionEqualsCheck(), "./src/test/fixtures/bugs/deadPositionEquals.json");
+        assertThatFinderReports(2, new FloatingPointComparison(), "./src/test/fixtures/bugs/deadPositionEquals.json");
     }
 
     @Test
     public void testDistanceZero() throws IOException, ParsingException {
         Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugs/pecDistanceZero.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        FloatingPointComparison parameterName = new FloatingPointComparison();
         Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(1, reports.size());
-        Hint hint = Hint.fromKey(PositionEqualsCheckHintFactory.DISTANCE_ZERO_SPRITES);
+        Hint hint = Hint.fromKey(FloatingPointComparisonHintFactory.DISTANCE_ZERO_SPRITES);
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHintText(translator)).isEqualTo(hint.getHintText(translator));
         }
@@ -86,7 +86,7 @@ public class PositionEqualsCheckTest implements FinderTest, JsonTest {
     @Test
     public void testSubsumptionDistanceTo() throws IOException, ParsingException {
         Program prog = JsonTest.parseProgram("./src/test/fixtures/bugs/distanceFromColorPEC.json");
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        FloatingPointComparison parameterName = new FloatingPointComparison();
         List<Issue> reportsPEC = new ArrayList<>(parameterName.check(prog));
         Assertions.assertEquals(1, reportsPEC.size());
         TypeError typeError = new TypeError();

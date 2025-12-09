@@ -64,14 +64,16 @@ public class AttributeTest implements JsonTest {
         AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
         node.getASTNode().accept(visitor);
         Set<Attribute> definitions = visitor.getDefineables();
-        assertThat(definitions).hasSize(1);
-        assertThat(definitions.iterator().next().getAttributeType()).isEqualTo(POSITION);
+        assertThat(definitions).hasSize(2);
+        assertThat(definitions.stream().anyMatch(d -> d.getAttributeType() == POSITION_X)).isTrue();
+        assertThat(definitions.stream().anyMatch(d -> d.getAttributeType() == POSITION_Y)).isTrue();
 
         AttributeUseVisitor useVisitor = new AttributeUseVisitor(node.getActor());
         node.getASTNode().accept(useVisitor);
         Set<Attribute> uses = visitor.getDefineables();
-        assertThat(uses).hasSize(1);
-        assertThat(uses.iterator().next().getAttributeType()).isEqualTo(POSITION);
+        assertThat(uses).hasSize(2);
+        assertThat(uses.stream().anyMatch(u -> u.getAttributeType() == POSITION_X)).isTrue();
+        assertThat(uses.stream().anyMatch(u -> u.getAttributeType() == POSITION_Y)).isTrue();
     }
 
     @Test
@@ -84,8 +86,8 @@ public class AttributeTest implements JsonTest {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
-            assertThat(definitions).hasSize(1);
-            assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(POSITION);
+            assertThat(definitions.size()).isAnyOf(1, 2);
+            assertThat(definitions.stream().allMatch(d -> d.getAttributeType() == POSITION_X || d.getAttributeType() == POSITION_Y)).isTrue();
         }
     }
 
@@ -115,7 +117,8 @@ public class AttributeTest implements JsonTest {
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses.size()).isAtLeast(1);
-            assertThat(uses.stream().filter(a -> a.getAttributeType().equals(POSITION)).count()).isEqualTo(1);
+            long posCount = uses.stream().filter(a -> a.getAttributeType().equals(POSITION_X) || a.getAttributeType().equals(POSITION_Y)).count();
+            assertThat(posCount).isAnyOf(1L, 2L);
         }
     }
 
@@ -260,7 +263,7 @@ public class AttributeTest implements JsonTest {
         defVisitor = new AttributeDefinitionVisitor(show.getActor());
         show.getASTNode().accept(useVisitor);
         show.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(useVisitor.getDefineables()).isEmpty();
         assertThat(defVisitor.getDefineables()).hasSize(1);
 
         useVisitor = new AttributeUseVisitor(ifthen.getActor());
@@ -274,7 +277,7 @@ public class AttributeTest implements JsonTest {
         defVisitor = new AttributeDefinitionVisitor(hide.getActor());
         hide.getASTNode().accept(useVisitor);
         hide.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(useVisitor.getDefineables()).isEmpty();
         assertThat(defVisitor.getDefineables()).hasSize(1);
 
         useVisitor = new AttributeUseVisitor(ask.getActor());
@@ -518,7 +521,7 @@ public class AttributeTest implements JsonTest {
         Set<Attribute> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
         Attribute use = uses.iterator().next();
-        assertThat(use.getAttributeType()).isEqualTo(POSITION);
+        assertThat(use.getAttributeType()).isEqualTo(POSITION_X);
         assertThat(use.getActorIdentifier()).isEqualTo(paramName);
     }
 
@@ -542,7 +545,7 @@ public class AttributeTest implements JsonTest {
         Set<Attribute> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
         Attribute use = uses.iterator().next();
-        assertThat(use.getAttributeType()).isEqualTo(POSITION);
+        assertThat(use.getAttributeType()).isEqualTo(POSITION_X);
         assertThat(use.getActorIdentifier().getName()).isEqualTo("param");
     }
 }

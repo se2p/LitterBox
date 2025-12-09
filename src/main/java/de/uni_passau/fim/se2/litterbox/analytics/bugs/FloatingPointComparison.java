@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.FloatingPointComparisonHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -40,26 +40,29 @@ import java.util.Collection;
  * considered a bug since the blocks following the until / wait until will never be reached and
  * executed.
  */
-public class PositionEqualsCheck extends AbstractIssueFinder {
-    public static final String NAME = "position_equals_check";
+public class FloatingPointComparison extends AbstractIssueFinder {
+    public static final String NAME = "floating_point_comparison";
     private boolean inCondition;
 
     boolean checkEquals(Equals equals) {
-        if (!checkOptions(equals.getOperand1())) {
+        if (!isSafeOperand(equals.getOperand1())) {
             return false;
         }
 
-        return checkOptions(equals.getOperand2());
+        return isSafeOperand(equals.getOperand2());
     }
 
-    private boolean checkOptions(ComparableExpr operand) {
+    private boolean isSafeOperand(ComparableExpr operand) {
         if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
-                || operand instanceof PositionX || operand instanceof PositionY) {
+                || operand instanceof PositionX || operand instanceof PositionY || operand instanceof Direction
+                || operand instanceof Volume || operand instanceof Timer) {
             return false;
         } else if (operand instanceof AttributeOf attributeOf) {
             if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed) {
                 return attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.X_POSITION
-                        && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.Y_POSITION;
+                        && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.Y_POSITION
+                        && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.DIRECTION
+                        && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.VOLUME;
             }
         }
         return true;
@@ -75,7 +78,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public void visit(Equals node) {
         if (inCondition && !checkEquals(node)) {
-            Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
+            Hint hint = FloatingPointComparisonHintFactory.generateHint(node);
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
     }
@@ -133,6 +136,6 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
 
     @Override
     public Collection<String> getHintKeys() {
-        return PositionEqualsCheckHintFactory.getHintKeys();
+        return FloatingPointComparisonHintFactory.getHintKeys();
     }
 }
