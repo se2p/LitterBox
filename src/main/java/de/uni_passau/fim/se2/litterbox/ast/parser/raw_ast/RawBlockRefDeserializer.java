@@ -18,31 +18,28 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ValueNode;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.TreeNode;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.node.ValueNode;
 
-import java.io.IOException;
-
-class RawBlockRefDeserializer extends JsonDeserializer<BlockRef> {
+class RawBlockRefDeserializer extends ValueDeserializer<BlockRef> {
     @Override
-    public BlockRef deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        final ObjectMapper mapper = (ObjectMapper) p.getCodec();
-        final TreeNode root = p.getCodec().readTree(p);
+    public BlockRef deserialize(JsonParser p, DeserializationContext ctxt) {
+        final TreeNode root = p.readValueAsTree();
 
         if (root.isValueNode()) {
             final ValueNode n = (ValueNode) root;
-            return new BlockRef.IdRef(new RawBlockId(n.asText()));
+            return new BlockRef.IdRef(new RawBlockId(n.asString()));
         } else {
-            final RawBlock input = mapper.convertValue(root, RawBlock.class);
-            if (input instanceof RawBlock.ArrayBlock arrayBlock) {
-                return new BlockRef.Block(arrayBlock);
-            } else {
-                throw new JsonMappingException(p, "Encountered an invalid block input!");
+            try (final var parser = root.traverse(ctxt)) {
+                final RawBlock input = parser.readValueAs(RawBlock.class);
+                if (input instanceof RawBlock.ArrayBlock arrayBlock) {
+                    return new BlockRef.Block(arrayBlock);
+                } else {
+                    throw new RawJsonException(p, "Encountered an invalid block input!");
+                }
             }
         }
     }

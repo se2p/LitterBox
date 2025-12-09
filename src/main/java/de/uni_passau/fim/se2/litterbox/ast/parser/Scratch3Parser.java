@@ -18,14 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawProject;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
 import org.apache.commons.io.FilenameUtils;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +35,11 @@ import java.nio.file.Path;
 
 public class Scratch3Parser {
 
-    private static final ObjectMapper mapper = new ObjectMapper()
-            .findAndRegisterModules()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final JsonMapper mapper = JsonMapper.builder()
+            .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+            .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+            .build();
 
     public Program parseFile(final File projectFile) throws ParsingException {
         final String fileName = projectFile.getName();
@@ -68,8 +72,8 @@ public class Scratch3Parser {
             program.accept(v);
 
             return program;
-        } catch (IOException e) {
-            throw new ParsingException("Could not read project JSON!", e);
+        } catch (JacksonException e) {
+            throw new ParsingException("Could not parse project JSON!", e);
         }
     }
 
@@ -82,8 +86,8 @@ public class Scratch3Parser {
             program.accept(v);
 
             return program;
-        } catch (IOException e) {
-            throw new ParsingException("Could not read project JSON!", e);
+        } catch (JacksonException e) {
+            throw new ParsingException("Could not parse project JSON!", e);
         }
     }
 

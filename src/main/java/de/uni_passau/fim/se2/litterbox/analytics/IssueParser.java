@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.report.ReportDTO;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class IssueParser {
             throw new ParsingException("This file type is not supported for issue reports.");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.shared();
 
         ReportDTO report = mapper.readValue(issueReport, ReportDTO.class);
         if (report == null) {

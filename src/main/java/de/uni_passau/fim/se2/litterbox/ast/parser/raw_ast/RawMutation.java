@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
