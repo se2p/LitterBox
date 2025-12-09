@@ -39,7 +39,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
