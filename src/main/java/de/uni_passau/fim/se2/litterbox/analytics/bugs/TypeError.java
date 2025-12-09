@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
@@ -501,9 +502,11 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(SetPenColorToColorStmt node) {
-        checkType(node.getColorExpr(), Type.COLOR);
-        visitChildren(node);
+    public void visit(PenBlock node) {
+        if (node instanceof SetPenColorToColorStmt stmt) {
+            checkType(stmt.getColorExpr(), Type.COLOR);
+            visitChildren(node);
+        }
     }
 
     @Override

@@ -3469,19 +3469,6 @@ public interface ScratchVisitor {
         visit((ExtensionBlock) node);
     }
 
-    /**
-     * Default implementation of visit method for {@link SetPenColorToColorStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SetPenColorToColorStmt Node of which the children will be iterated
-     */
-    default void visit(SetPenColorToColorStmt node) {
-        visit((PenBlock) node);
-    }
-
     default void visit(PenBlock node) {
         visit((ExtensionBlock) node);
     }
