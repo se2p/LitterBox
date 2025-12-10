@@ -194,6 +194,7 @@ public class IssueTool {
             registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new EmptyControlBody(), smellFinders);
             registerSmellFinder(new EmptyCustomBlock(), smellFinders);
+            registerSmellFinder(new EmptyParameter(), smellFinders);
             registerSmellFinder(new EmptyProject(), smellFinders);
             registerSmellFinder(new EmptyScript(), smellFinders);
             registerSmellFinder(new EmptySprite(), smellFinders);
