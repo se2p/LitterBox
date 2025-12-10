@@ -29,11 +29,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptDeletionVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class CleanProgramStep implements PostProcessorStep {
@@ -41,26 +49,47 @@ public class CleanProgramStep implements PostProcessorStep {
 
     @Override
     public List<RefactorSequence> apply(List<RefactorSequence> solutions, PostProcessorContext context) {
+        List<RefactorSequence> cleanedSolutions = new ArrayList<>();
         for (RefactorSequence sequence : solutions) {
             Program program = sequence.getRefactoredProgram();
-            cleanProgram(program);
+            Program cleanedProgram = cleanProgram(program);
+            if (program != cleanedProgram) {
+                RefactorSequence newSeq = new RefactorSequence(
+                        cleanedProgram,
+                        Mutation.identity(),
+                        Crossover.identity(),
+                        Collections.emptyList()
+                );
+                for (Map.Entry<FitnessFunction<RefactorSequence>, Double> entry : sequence.getFitnessMap().entrySet()) {
+                    newSeq.getFitnessMap().put(entry.getKey(), entry.getValue());
+                }
+                cleanedSolutions.add(newSeq);
+            } else {
+                cleanedSolutions.add(sequence);
+            }
         }
-        return solutions;
+        return cleanedSolutions;
     }
 
-    private void cleanProgram(Program program) {
+    private Program cleanProgram(Program program) {
+        Set<Script> scriptsToRemove = new HashSet<>();
         int removedDeadScripts = 0;
         int removedControlOnlyScripts = 0;
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            Pair<Integer> removed = cleanScripts(actor.getScripts());
+            Pair<Integer> removed = cleanScripts(actor.getScripts(), scriptsToRemove);
             removedDeadScripts += removed.getFst();
             removedControlOnlyScripts += removed.getSnd();
         }
-        log.info("Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts");
+
+        if (!scriptsToRemove.isEmpty()) {
+            log.info("Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts");
+            ScriptDeletionVisitor visitor = new ScriptDeletionVisitor(scriptsToRemove);
+            return (Program) program.accept(visitor);
+        }
+        return program;
     }
 
-    private Pair<Integer> cleanScripts(ScriptList scriptList) {
-        List<Script> scriptsToRemove = new ArrayList<>();
+    private Pair<Integer> cleanScripts(ScriptList scriptList, Set<Script> scriptsToRemove) {
         int removedDeadScripts = 0;
         int removedControlOnlyScripts = 0;
         for (Script script : scriptList.getScriptList()) {
@@ -72,7 +101,6 @@ public class CleanProgramStep implements PostProcessorStep {
                 removedControlOnlyScripts++;
             }
         }
-        scriptList.getScriptList().removeAll(scriptsToRemove);
         return new Pair<>(removedDeadScripts, removedControlOnlyScripts);
     }
 
