@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.report.AnalysisResultHandler;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
@@ -255,23 +256,27 @@ public class Main implements Callable<Integer> {
 
             final String detector = String.join(",", detectors);
             final BugAnalyzer analyzer;
+            AnalysisResultHandler handler = AnalysisResultHandler.create(
+                    translator, commonOptions.outputPath, detector, outputPerScript, priorResultPath
+            );
+            
             if (priorResultPath == null) {
                 analyzer = new BugAnalyzer(
+                        handler,
                         translator,
                         commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
-                        commonOptions.deleteProject,
-                        outputPerScript
+                        commonOptions.deleteProject
                 );
             } else {
                 analyzer = new BugAnalyzer(
+                        handler,
                         translator,
                         commonOptions.outputPath,
                         detector,
                         ignoreLooseBlocks,
                         commonOptions.deleteProject,
-                        outputPerScript,
                         priorResultPath
                 );
             }

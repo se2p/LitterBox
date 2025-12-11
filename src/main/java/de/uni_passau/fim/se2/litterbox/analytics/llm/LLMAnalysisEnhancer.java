@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
+import de.uni_passau.fim.se2.litterbox.report.AnalysisResultHandler;
 import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -56,7 +57,10 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
             String detectors,
             boolean ignoreLooseBlocks
     ) {
-        super(translator, output, detectors, ignoreLooseBlocks, false, false);
+        super(
+             AnalysisResultHandler.create(translator, output, detectors, false, null),
+             translator, output, detectors, ignoreLooseBlocks, false
+        );
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.target = target;
@@ -65,7 +69,10 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
     public LLMAnalysisEnhancer(
             IssueTranslator translator, QueryTarget target, Path output, String detectors, boolean ignoreLooseBlocks
     ) {
-        super(translator, output, detectors, ignoreLooseBlocks, false, false);
+        super(
+             AnalysisResultHandler.create(translator, output, detectors, false, null),
+             translator, output, detectors, ignoreLooseBlocks, false
+        );
         this.llmApi = LlmApiProvider.get();
         this.promptBuilder = LlmPromptProvider.get(translator);
         this.target = target;

@@ -63,16 +63,83 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
+        // Delegate single project report to multi-project generation
+        generateReport(Map.of("Project", new AbstractMap.SimpleEntry<>(program, issues)));
+    }
+
+    public void generateReport(Map<String, Map.Entry<Program, Collection<Issue>>> projects) throws IOException {
         String template = loadTemplate();
+        String logoBase64 = loadLogoBase64();
         
         String lang = translator.getLocale().getLanguage();
-        String stats = generateStats(program, issues);
-        String content = generateContent(issues);
         
+        StringBuilder projectsNav = new StringBuilder();
+        StringBuilder projectsContent = new StringBuilder();
+        
+        boolean singleProject = projects.size() == 1;
+        
+        // Sort projects by name for consistent order
+        List<String> sortedNames = new ArrayList<>(projects.keySet());
+        Collections.sort(sortedNames);
+
+        boolean first = true;
+        for (String projectName : sortedNames) {
+            Map.Entry<Program, Collection<Issue>> entry = projects.get(projectName);
+            Program program = entry.getKey();
+            Collection<Issue> issues = entry.getValue();
+            
+            String projectId = "project-" + projectName.replaceAll("[^a-zA-Z0-9]", "-");
+            String activeClass = first ? " active" : "";
+            
+            if (!singleProject) {
+                // Sidebar Navigation Item
+                projectsNav.append("<li id=\"nav-item-").append(projectId).append("\" class=\"project-nav-item").append(activeClass).append("\" onclick=\"showProject('").append(projectId).append("')\">")
+                           .append(StringEscapeUtils.escapeHtml4(projectName))
+                           .append("</li>\n");
+            }
+            
+            // Project Content
+            projectsContent.append("<div id=\"").append(projectId).append("\" class=\"project-content").append(activeClass).append("\">\n");
+            if (!singleProject) {
+                 projectsContent.append("<h2 class=\"project-title\">").append(StringEscapeUtils.escapeHtml4(projectName)).append("</h2>\n");
+            }
+            projectsContent.append(generateStats(program, issues));
+            projectsContent.append(generateContent(issues, projectId));
+            projectsContent.append("</div>\n");
+            
+            first = false;
+        }
+        
+        String bodyClass = singleProject ? "single-project" : "";
+        String headerContent = "";
+        
+        if (singleProject) {
+             String projectName = sortedNames.get(0);
+             headerContent = "<header class=\"report-header\"><img src=\"{{LOGO}}\" class=\"header-logo\"> <h1>Code Report for " + StringEscapeUtils.escapeHtml4(projectName) + "</h1></header>";
+        }
+
         String report = template
                 .replace("{{LANG}}", lang)
-                .replace("{{STATS}}", stats)
-                .replace("{{CONTENT}}", content)
+                .replace("{{LOGO}}", logoBase64)
+                .replace("{{BODY_CLASS}}", bodyClass)
+                .replace("{{HEADER_CONTENT}}", headerContent)
+                .replace("{{PROJECTS_NAV}}", projectsNav.toString())
+                .replace("{{PROJECTS_CONTENT}}", projectsContent.toString())
+                .replace("{{SCRATCH_LANG}}", lang); // Replacements cascade, so {{LOGO}} in headerContent works if we replace LOGO after? 
+                // Wait, string replacement is sequential on the result.
+                // If I replace {{HEADER_CONTENT}} first, then {{LOGO}} replacement will catch the one inside headerContent.
+                // But my code replaces LOGIN then HEADER_CONTENT.
+                // So the {{LOGO}} inside headerContent won't be replaced if I put it in after.
+                // I should replace HEADER_CONTENT first.
+                
+        // Re-ordering replacements:
+        report = template
+                .replace("{{LANG}}", lang)
+                .replace("{{BODY_CLASS}}", bodyClass)
+                .replace("{{HEADER_CONTENT}}", headerContent) // Now contains {{LOGO}}
+                .replace("{{LOGO}}", logoBase64) // Replaces all {{LOGO}} instances
+                .replace("{{PROJECTS_NAV}}", projectsNav.toString())
+                .replace("{{PROJECTS_CONTENT}}", projectsContent.toString())
                 .replace("{{SCRATCH_LANG}}", lang);
 
         outputStream.write(report.getBytes(StandardCharsets.UTF_8));
@@ -90,6 +157,18 @@ public class HTMLReportGenerator implements ReportGenerator {
         }
     }
 
+    private String loadLogoBase64() {
+        try (var is = getClass().getResourceAsStream("/litterbox.png")) {
+            if (is != null) {
+                byte[] bytes = is.readAllBytes();
+                return "data:image/png;base64," + Base64.getEncoder().encodeToString(bytes);
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return "";
+    }
+
     private String generateStats(Program program, Collection<Issue> issues) {
         int spriteCount = (int) new SpriteCount<>().calculateMetric(program);
         int scriptCount = (int) new ScriptCount<>().calculateMetric(program);
@@ -102,18 +181,18 @@ public class HTMLReportGenerator implements ReportGenerator {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<div class=\"stats-container\">\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(spriteCount).append("</span><span class=\"stat-label\">Sprites</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(scriptCount).append("</span><span class=\"stat-label\">Scripts</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(blockCount).append("</span><span class=\"stat-label\">Blocks</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(bugCount).append("</span><span class=\"stat-label\">Bugs</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(smellCount).append("</span><span class=\"stat-label\">Smells</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(perfumeCount).append("</span><span class=\"stat-label\">Perfumes</span></div>\n");
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(String.format("%.1f", ctScore)).append("</span><span class=\"stat-label\">CT Score</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(spriteCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("stats_sprites")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(scriptCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("stats_scripts")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(blockCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("stats_blocks")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(bugCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("label_bugs")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(smellCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("label_smells")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(perfumeCount).append("</span><span class=\"stat-label\">").append(translator.getInfo("label_perfumes")).append("</span></div>\n");
+        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(String.format("%.1f", ctScore)).append("</span><span class=\"stat-label\">").append(translator.getInfo("stats_ct_score")).append("</span></div>\n");
         sb.append("</div>\n");
         return sb.toString();
     }
 
-    private String generateContent(Collection<Issue> issues) {
+    private String generateContent(Collection<Issue> issues, String projectId) {
         if (issues.isEmpty()) {
             return "<p style=\"text-align: center; color: #28a745;\">No issues found!</p>\n";
         }
@@ -121,31 +200,31 @@ public class HTMLReportGenerator implements ReportGenerator {
         StringBuilder sb = new StringBuilder();
         
         // Filter UI
-        sb.append("<div id=\"filter-ui\" class=\"filter-container\">\n");
+        sb.append("<div class=\"filter-container\" id=\"filter-ui-").append(projectId).append("\">\n");
         sb.append("<div class=\"filter-row\">\n");
         
         // Type checkboxes
         sb.append("<div class=\"filter-group\">\n");
         sb.append("<label>").append(translator.getInfo("filter_by_type")).append("</label>\n");
         sb.append("<div class=\"checkbox-group\">\n");
-        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-bug\" checked onchange=\"applyFilters()\"> <label for=\"filter-bug\">").append(translator.getInfo("filter_bugs")).append("</label></div>\n");
-        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-smell\" checked onchange=\"applyFilters()\"> <label for=\"filter-smell\">").append(translator.getInfo("filter_smells")).append("</label></div>\n");
-        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-perfume\" checked onchange=\"applyFilters()\"> <label for=\"filter-perfume\">").append(translator.getInfo("filter_perfumes")).append("</label></div>\n");
+        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-bug-").append(projectId).append("\" checked onchange=\"applyFilters('").append(projectId).append("')\"> <label for=\"filter-bug-").append(projectId).append("\">").append(translator.getInfo("label_bugs")).append("</label></div>\n");
+        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-smell-").append(projectId).append("\" checked onchange=\"applyFilters('").append(projectId).append("')\"> <label for=\"filter-smell-").append(projectId).append("\">").append(translator.getInfo("label_smells")).append("</label></div>\n");
+        sb.append("<div class=\"checkbox-item\"><input type=\"checkbox\" id=\"filter-perfume-").append(projectId).append("\" checked onchange=\"applyFilters('").append(projectId).append("')\"> <label for=\"filter-perfume-").append(projectId).append("\">").append(translator.getInfo("label_perfumes")).append("</label></div>\n");
         sb.append("</div>\n"); // checkbox-group
         sb.append("</div>\n"); // filter-group
 
         // Finder dropdown
         sb.append("<div class=\"filter-group\">\n");
-        sb.append("<label for=\"finder-select\">").append(translator.getInfo("filter_by_finder")).append("</label>\n");
-        sb.append("<select id=\"finder-select\" onchange=\"applyFilters()\">\n");
+        sb.append("<label for=\"finder-select-").append(projectId).append("\">").append(translator.getInfo("filter_by_finder")).append("</label>\n");
+        sb.append("<select id=\"finder-select-").append(projectId).append("\" onchange=\"applyFilters('").append(projectId).append("')\" class=\"finder-select\">\n");
         sb.append("<option value=\"all\">").append(translator.getInfo("filter_all_finders")).append("</option>\n");
         sb.append("</select>\n");
         sb.append("</div>\n");
 
         // Sprite dropdown
         sb.append("<div class=\"filter-group\">\n");
-        sb.append("<label for=\"sprite-select\">").append(translator.getInfo("filter_by_sprite")).append("</label>\n");
-        sb.append("<select id=\"sprite-select\" onchange=\"applyFilters()\">\n");
+        sb.append("<label for=\"sprite-select-").append(projectId).append("\">").append(translator.getInfo("filter_by_sprite")).append("</label>\n");
+        sb.append("<select id=\"sprite-select-").append(projectId).append("\" onchange=\"applyFilters('").append(projectId).append("')\" class=\"sprite-select\">\n");
         sb.append("<option value=\"all\">").append(translator.getInfo("filter_all_sprites")).append("</option>\n");
         sb.append("</select>\n");
         sb.append("</div>\n");
@@ -164,15 +243,15 @@ public class HTMLReportGenerator implements ReportGenerator {
         sb.append("<nav class=\"report-nav\"><ul>\n");
         for (String category : categories) {
             if (issuesByCategory.containsKey(category)) {
-                sb.append("<li id=\"nav-").append(category).append("\"><a href=\"#").append(category).append("\">").append(translator.getInfo(category)).append("</a></li>\n");
+                sb.append("<li id=\"nav-").append(category).append("-").append(projectId).append("\"><a href=\"#").append(category).append("-").append(projectId).append("\">").append(translator.getInfo(category)).append("</a></li>\n");
             }
         }
         sb.append("</ul></nav>\n");
 
         for (String category : categories) {
             if (issuesByCategory.containsKey(category)) {
-                sb.append("<div id=\"section-").append(category).append("\" class=\"issue-section\">\n");
-                sb.append("<h2 id=\"").append(category).append("\">").append(translator.getInfo(category)).append("</h2>\n");
+                sb.append("<div id=\"section-").append(category).append("-").append(projectId).append("\" class=\"issue-section\">\n");
+                sb.append("<h2 id=\"").append(category).append("-").append(projectId).append("\">").append(translator.getInfo(category)).append("</h2>\n");
                 
                 // Render description
                 String descriptionKey = "description_" + category;

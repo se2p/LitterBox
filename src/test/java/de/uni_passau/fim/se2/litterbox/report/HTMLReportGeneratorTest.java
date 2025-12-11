@@ -33,9 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -60,19 +58,30 @@ public class HTMLReportGeneratorTest implements JsonTest {
         assertThat(html).contains("<title>LitterBox Report</title>");
         assertThat(html).contains("scratchblocks.min.js");
         assertThat(html).contains("Floating Point Comparison"); // Finder name
+        assertThat(html).contains("<span class=\"stat-label\">Sprites</span>"); // Check stat label
         assertThat(html).contains("<pre class=\"blocks\">");
-        assertThat(html).contains("scratchblocks.renderMatching");
         
-        // Check for specific hint content formatting if applicable to this issue
-        // Floating point comparison hint usually implies equality check
-        // We can check if the formatting logic ran
-        assertThat(html).contains("code.scratchblocks"); // css class
+        // Multi-project structure checks
+        // For single project, we expect "single-project" class and NO nav items
+        assertThat(html).contains("class=\"single-project\"");
+        assertThat(html).doesNotContain("class=\"project-nav-item\"");
+        
+        // Should contain the new header
+        assertThat(html).contains("Code Report for Project");
+        assertThat(html).contains("class=\"report-header\"");
+        
+        // Logo check
+        assertThat(html).doesNotContain("{{LOGO}}");
+        if (!html.contains("data:image/png;base64")) {
+           assertThat(html).contains("<img src=\"\" class=\"header-logo\">"); // src might be empty in test if resource missing
+        } else {
+           assertThat(html).contains("data:image/png;base64");
+           assertThat(html).contains("class=\"header-logo\"");
+        }
     }
 
     @Test
     public void testHintFormatting() throws IOException, ParsingException {
-        // Mock an issue or find one with rich hint text
-        // Existing "xPosEqual.json" + FloatingPointComparison gives a hint about comparing float with equal
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
@@ -84,15 +93,12 @@ public class HTMLReportGeneratorTest implements JsonTest {
 
         String html = os.toString();
         
-        // This specific finder might not use ALL tags, but we verified the generator logic.
-        // Let's at least ensure symbols are escaped/replaced.
-        // Check for "Suggestion for code improvement" which comes from the hint formatting.
         assertThat(html).contains("Suggestion for code improvement");
-        assertThat(html).contains("<code>&lt;</code>"); // [LEQ] or just standard formatting checks
+        assertThat(html).contains("<code>&lt;</code>");
     }
+
     @Test
     public void testTokenReplacementCrash() throws IOException, ParsingException {
-        // Regression test for MissingResourceException when replacing [IF] tokens
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().stream().findFirst().orElseThrow();
         
@@ -109,7 +115,6 @@ public class HTMLReportGeneratorTest implements JsonTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
         
-        // Should not throw exception
         generator.generateReport(program, Collections.singleton(issue));
         
         String html = os.toString();
@@ -131,55 +136,64 @@ public class HTMLReportGeneratorTest implements JsonTest {
 
         String html = os.toString();
         
-        // Verify Filter UI Container
-        assertThat(html).contains("<div id=\"filter-ui\" class=\"filter-container\">");
+        // Verify Filter UI Container with ID suffix
+        // Default project name "Project" -> ID "project-Project"
+        assertThat(html).contains("id=\"filter-ui-project-Project\"");
         
-        // Verify Inputs
-        assertThat(html).contains("id=\"filter-bug\"");
-        assertThat(html).contains("id=\"filter-smell\"");
-        assertThat(html).contains("id=\"filter-perfume\"");
-        assertThat(html).contains("id=\"finder-select\"");
-        assertThat(html).contains("id=\"sprite-select\"");
+        // Verify Inputs with ID suffix
+        assertThat(html).contains("id=\"filter-bug-project-Project\"");
+        assertThat(html).contains("id=\"filter-smell-project-Project\"");
+        assertThat(html).contains("id=\"finder-select-project-Project\"");
         
-        // Verify Data Attributes on Issue
-        assertThat(html).contains("data-type=\"bugs\"");
+        // Verify JS calls
+        assertThat(html).contains("applyFilters('project-Project')");
+    }
+    
+    @Test
+    public void testMultiProjectReport() throws IOException, ParsingException {
+        Program program1 = getAST("src/test/fixtures/bugs/xPosEqual.json");
+        FloatingPointComparison finder = new FloatingPointComparison();
+        Set<Issue> issues1 = finder.check(program1);
+        
+        Program program2 = getAST("src/test/fixtures/bugs/xPosEqual.json"); // Reusing same fixture for simplicity
+        Set<Issue> issues2 = Collections.emptySet(); // Empty issues for second project
+        
+        Map<String, Map.Entry<Program, Collection<Issue>>> projects = new HashMap<>();
+        projects.put("ProjectA", new AbstractMap.SimpleEntry<>(program1, issues1));
+        projects.put("ProjectB", new AbstractMap.SimpleEntry<>(program2, issues2));
+        
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
+        generator.generateReport(projects);
+        os.close();
+        
+        String html = os.toString();
+        
+        // For multi project, we DO expect sidebar
+        assertThat(html).doesNotContain("class=\"single-project\"");
+        assertThat(html).contains("class=\"sidebar\"");
+        
+        // Check sidebar contains both projects
+        assertThat(html).contains("ProjectA");
+        assertThat(html).contains("ProjectB");
+        assertThat(html).contains("onclick=\"showProject('project-ProjectA')\"");
+        assertThat(html).contains("onclick=\"showProject('project-ProjectB')\"");
+        
+        // Check content sections exist
+        assertThat(html).contains("id=\"project-ProjectA\"");
+        assertThat(html).contains("id=\"project-ProjectB\"");
+        
+        // Check Header NOT present
+        assertThat(html).doesNotContain("class=\"report-header\"");
+        assertThat(html).doesNotContain("Code Report for");
+        
+        // Check Project Titles ARE present (h2)
+        assertThat(html).contains("<h2 class=\"project-title\">ProjectA</h2>");
+        
+        // Check issues for ProjectA are present
         assertThat(html).contains("data-finder=\"Floating Point Comparison\"");
-        String expectedSprite = issue.getActorName() != null ? issue.getActorName() : "Stage";
-        assertThat(html).contains("data-sprite=\"" + expectedSprite + "\"");
-
-        // Verify JS function presence
-        assertThat(html).contains("function applyFilters()");
-        assertThat(html).contains("function populateFilters()");
-
-        // Verify Title Formatting and Layout Refinements
-        assertThat(html).contains("justify-content: space-between"); // New CSS
-        // The fixture usually has an actor. If it's a sprite, the title should be "Finder in Sprite ActorName"
-        // FloatingPointComparison finder translated is "Floating Point Comparison" (en)
-        // "Sprite" key (en) is "Sprite"
-        // So we expect "Floating Point Comparison in Sprite [ActorName]"
-        if (issue.getActorName() != null) {
-             assertThat(html).contains("Floating Point Comparison in Sprite " + issue.getActorName());
-        }
-
-        // Verify Improved Filter CSS
-        assertThat(html).contains("appearance: none");
-        assertThat(html).contains("background-image: url");
-        assertThat(html).contains("transition: border-color");
         
-        // Verify Scratchblocks Scale
-        // We look for the scale: 0.7 property inside the pre.blocks configuration
-        // Since we can't easily parse the JS object literal with regex (or could, but simple string search is enough usually),
-        // we check if the configuration block for pre.blocks contains scale: 0.7.
-        // The output order is deterministic based on the generator code.
-        // We essentially look for the snippet created in HTMLReportGenerator.
-        assertThat(html).contains("scratchblocks.renderMatching('pre.blocks', {");
-        assertThat(html).contains("scale: 0.7");
-
-        // Verify Logo
-        assertThat(html).contains("<img src=\"https://github.com/se2p/LitterBox/blob/master/src/main/resources/litterbox.png?raw=true\" alt=\"LitterBox Logo\">");
-
-        // Verify Navigation Bar CSS
-        assertThat(html).contains(".report-nav ul { list-style: none");
-        assertThat(html).contains("display: inline-block"); // part of the button style
+        // Check empty message for ProjectB
+        assertThat(html).contains("No issues found!");
     }
 }

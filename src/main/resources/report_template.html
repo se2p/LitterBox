@@ -24,85 +24,145 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 <script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/scratchblocks.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/translations-all.js"></script>
 <style>
-body { font-family: sans-serif; margin: 2rem; background-color: #f4f4f4; }
-.container { max-width: 900px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-h1 { color: #333; text-align: center; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f4f4; color: #333; display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; height: 100%; box-shadow: 2px 0 5px rgba(0,0,0,0.05); flex-shrink: 0; }
+.sidebar-header { padding: 1.5rem; border-bottom: 1px solid #eee; text-align: center; }
+.sidebar-header h1 { margin: 0; display: flex; align-items: center; justify-content: center; }
+.sidebar-header img { height: 2.5em; width: auto; object-fit: contain; }
+.project-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; }
+.project-nav-item { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s, color 0.2s; font-size: 0.95rem; }
+.project-nav-item:hover { background: #f9f9f9; color: #007bff; }
+.project-nav-item.active { background: #e8f0fe; color: #007bff; border-left: 4px solid #007bff; font-weight: bold; }
+
+/* Main Content */
+.main-content { flex-grow: 1; padding: 2rem; overflow-y: auto; position: relative; }
+.project-content { display: none; max-width: 900px; margin: 0 auto; }
+.project-content.active { display: block; }
+.project-title { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-bottom: 2rem; color: #444; }
+
+/* Single Project Mode */
+body.single-project .sidebar { display: none; }
+body.single-project .main-content { padding: 2rem 15%; }
+body.single-project .project-content { display: block; max-width: 1000px; }
+
+.report-header { text-align: center; margin-bottom: 2rem; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.08); }
+.report-header img { height: 3em; vertical-align: middle; margin-right: 15px; }
+.report-header h1 { display: inline-block; vertical-align: middle; margin: 0; color: #333; font-size: 1.8em; }
+
+
 h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-top: 2rem; }
-.issue { border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; background: #fff; }
-.issue-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.5rem; }
-.issue-title { font-size: 1.25em; font-weight: bold; color: #333; }
-.issue-meta { font-size: 0.9em; color: #777; margin-bottom: 0.5rem; }
-.hint { background: #e9ecef; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
-pre.blocks { background: #fff; border: none; padding: 0; overflow-x: auto; }
+.issue { border: 1px solid #ddd; border-radius: 6px; padding: 1.2rem; margin-bottom: 1.2rem; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.issue-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.8rem; }
+.issue-title { font-size: 1.15em; font-weight: 600; color: #333; }
+.hint { background: #f1f3f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border-left: 4px solid #17a2b8; }
+pre.blocks { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 4px; overflow-x: auto; margin: 0; }
 code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; padding: 2px 4px; border-radius: 4px; }
-.severity { font-size: 0.8em; padding: 2px 6px; border-radius: 4px; color: #fff; }
+.severity { font-size: 0.75em; padding: 3px 8px; border-radius: 12px; color: #fff; font-weight: bold; text-transform: uppercase; }
 .severity-ERROR { background-color: #dc3545; }
 .severity-WARNING { background-color: #ffc107; color: #000; }
 .severity-INFO { background-color: #17a2b8; }
-.stats-container { display: flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
-.stat-box { text-align: center; margin: 10px; min-width: 100px; }
+
+.stats-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.08); }
+.stat-box { text-align: center; min-width: 80px; }
 .stat-value { font-size: 1.5em; font-weight: bold; color: #007bff; display: block; }
-.stat-label { font-size: 0.9em; color: #666; }
-.report-nav { margin-bottom: 2rem; }
-.report-nav ul { list-style: none; padding: 1rem; margin: 0; display: flex; justify-content: center; gap: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; }
+.stat-label { font-size: 0.8em; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.report-nav { margin-bottom: 1.5rem; }
+.report-nav ul { list-style: none; padding: 0.8rem; margin: 0; display: flex; justify-content: center; gap: 10px; background: #fff; border-radius: 8px; border: 1px solid #e9ecef; }
 .report-nav li { display: inline; }
-.report-nav a { text-decoration: none; color: #495057; font-weight: bold; font-size: 1em; padding: 8px 16px; background-color: #fff; border: 1px solid #ced4da; border-radius: 5px; transition: all 0.2s ease; display: inline-block; }
-.report-nav a:hover { text-decoration: none; background-color: #e2e6ea; border-color: #adb5bd; color: #212529; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.category-description { font-style: italic; color: #666; margin-bottom: 1.5rem; }
-.back-to-top { text-align: right; margin-top: 10px; }
-.back-to-top a { text-decoration: none; color: #999; font-size: 0.9em; }
+.report-nav a { text-decoration: none; color: #555; font-weight: 500; font-size: 0.95em; padding: 8px 16px; border-radius: 20px; transition: all 0.2s ease; display: inline-block; background: #f8f9fa; }
+.report-nav a:hover { background-color: #e9ecef; color: #000; }
+
+.category-description { font-style: italic; color: #666; margin-bottom: 1.5rem; line-height: 1.5; }
+.back-to-top { text-align: right; margin-top: 15px; }
+.back-to-top a { text-decoration: none; color: #aaa; font-size: 0.85em; }
 .back-to-top a:hover { color: #007bff; }
 
 /* Filter CSS */
-.filter-container { background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #e9ecef; }
-.filter-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
-.filter-group { display: flex; flex-direction: column; gap: 5px; }
-.filter-group label { font-weight: bold; font-size: 0.9em; color: #555; }
-.filter-group select { appearance: none; background-color: #fff; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; padding: 8px 12px; padding-right: 30px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.95em; color: #495057; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; cursor: pointer; }
+.filter-container { background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.filter-row { display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
+.filter-group { display: flex; flex-direction: column; gap: 8px; }
+.filter-group label { font-weight: 600; font-size: 0.9em; color: #444; }
+.filter-group select { appearance: none; background-color: #fff; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; padding: 8px 12px; padding-right: 32px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.95em; color: #495057; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; cursor: pointer; min-width: 150px; }
 .filter-group select:focus { border-color: #80bdff; outline: 0; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); }
-.filter-group select:hover { border-color: #adb5bd; }
-.checkbox-group { display: flex; gap: 15px; align-items: center; }
-.checkbox-item { display: flex; align-items: center; gap: 5px; }
+.checkbox-group { display: flex; gap: 15px; align-items: center; padding-top: 5px; }
+.checkbox-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.checkbox-item label { font-weight: normal; cursor: pointer; margin-bottom: 0; }
 .hidden { display: none !important; }
 
-/* Logo CSS */
-h1 img { vertical-align: middle; height: 1.5em; margin-right: 10px; }
+@media (max-width: 768px) {
+  body { flex-direction: column; height: auto; overflow: auto; }
+  .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #ddd; }
+  .project-list { max-height: 150px; }
+}
 
 </style>
 </head>
-<body>
-<a id="top"></a>
-<div class="container">
-<h1><img src="https://github.com/se2p/LitterBox/blob/master/src/main/resources/litterbox.png?raw=true" alt="LitterBox Logo">Code Report</h1>
+<body class="{{BODY_CLASS}}">
 
-{{STATS}}
-
-{{CONTENT}}
-
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1><img src="{{LOGO}}" alt="Logo"></h1>
+  </div>
+  <ul class="project-list">
+    {{PROJECTS_NAV}}
+  </ul>
 </div>
+
+<div class="main-content">
+  <a id="top"></a>
+  {{HEADER_CONTENT}}
+  {{PROJECTS_CONTENT}}
+</div>
+
 <script>
+// Project Switching
+function showProject(projectId) {
+  // Hide all contents
+  document.querySelectorAll('.project-content').forEach(el => el.classList.remove('active'));
+  // Show selected content
+  document.getElementById(projectId).classList.add('active');
+  
+  // Update Nav
+  document.querySelectorAll('.project-nav-item').forEach(el => el.classList.remove('active'));
+  
+  // Highlight the clicked nav item using strict ID matching
+  const navItem = document.getElementById('nav-item-' + projectId);
+  if (navItem) {
+    navItem.classList.add('active');
+  }
+}
+
 // Scratchblocks rendering
-scratchblocks.renderMatching('pre.blocks', {
-  style: 'scratch3',
-  scale: 0.7,
-  languages: ['{{SCRATCH_LANG}}', 'en']
-});
-scratchblocks.renderMatching('code.scratchblocks', {
-  style: 'scratch3',
-  inline: true,
-  scale: 0.7,
-  languages: ['{{SCRATCH_LANG}}', 'en']
+document.addEventListener('DOMContentLoaded', () => {
+  scratchblocks.renderMatching('pre.blocks', {
+    style: 'scratch3',
+    scale: 0.7,
+    languages: ['{{SCRATCH_LANG}}', 'en']
+  });
+  scratchblocks.renderMatching('code.scratchblocks', {
+    style: 'scratch3',
+    inline: true,
+    scale: 0.7,
+    languages: ['{{SCRATCH_LANG}}', 'en']
+  });
+  
+  populateFilters();
 });
 
 // Filtering Logic
-function applyFilters() {
-  const showBug = document.getElementById('filter-bug').checked;
-  const showSmell = document.getElementById('filter-smell').checked;
-  const showPerfume = document.getElementById('filter-perfume').checked;
-  const selectedFinder = document.getElementById('finder-select').value;
-  const selectedSprite = document.getElementById('sprite-select').value;
+function applyFilters(projectId) {
+  const showBug = document.getElementById('filter-bug-' + projectId).checked;
+  const showSmell = document.getElementById('filter-smell-' + projectId).checked;
+  const showPerfume = document.getElementById('filter-perfume-' + projectId).checked;
+  const selectedFinder = document.getElementById('finder-select-' + projectId).value;
+  const selectedSprite = document.getElementById('sprite-select-' + projectId).value;
 
-  const issues = document.querySelectorAll('.issue');
+  const projectContainer = document.getElementById(projectId);
+  const issues = projectContainer.querySelectorAll('.issue');
+  
   issues.forEach(issue => {
     const type = issue.getAttribute('data-type');
     const finder = issue.getAttribute('data-finder');
@@ -128,14 +188,19 @@ function applyFilters() {
     }
   });
 
-  updateSectionVisibility();
+  updateSectionVisibility(projectId);
 }
 
-function updateSectionVisibility() {
-  const sections = document.querySelectorAll('.issue-section');
+function updateSectionVisibility(projectId) {
+  const projectContainer = document.getElementById(projectId);
+  const sections = projectContainer.querySelectorAll('.issue-section');
+  
   sections.forEach(section => {
     const visibleIssues = section.querySelectorAll('.issue:not(.hidden)');
-    const sectionId = section.id.replace('section-', '');
+    const sectionId = section.id.replace('section-', ''); 
+    // This sectionId is "category-projectId" e.g. "bugs-project-1"
+    
+    // The Nav Item ID is "nav-category-projectId" e.g. "nav-bugs-project-1"
     const navItem = document.getElementById('nav-' + sectionId);
 
     if (visibleIssues.length > 0) {
@@ -146,38 +211,48 @@ function updateSectionVisibility() {
       if (navItem) navItem.classList.add('hidden');
     }
   });
+  
+  // Also hide empty "No issues found" message if there are custom filters?
+  // Current logic doesn't have "No issues found" block that is toggled, it's generated java-side if empty.
 }
 
 function populateFilters() {
-  const issues = document.querySelectorAll('.issue');
-  const finders = new Set();
-  const sprites = new Set();
+  const projects = document.querySelectorAll('.project-content');
+  projects.forEach(project => {
+      const projectId = project.id;
+      const issues = project.querySelectorAll('.issue');
+      
+      const finders = new Set();
+      const sprites = new Set();
 
-  issues.forEach(issue => {
-    const finder = issue.getAttribute('data-finder');
-    const sprite = issue.getAttribute('data-sprite');
-    if (finder) finders.add(finder);
-    if (sprite) sprites.add(sprite);
-  });
+      issues.forEach(issue => {
+        const finder = issue.getAttribute('data-finder');
+        const sprite = issue.getAttribute('data-sprite');
+        if (finder) finders.add(finder);
+        if (sprite) sprites.add(sprite);
+      });
 
-  const finderSelect = document.getElementById('finder-select');
-  Array.from(finders).sort().forEach(finder => {
-    const option = document.createElement('option');
-    option.value = finder;
-    option.textContent = finder;
-    finderSelect.appendChild(option);
-  });
+      const finderSelect = document.getElementById('finder-select-' + projectId);
+      if (finderSelect) {
+          Array.from(finders).sort().forEach(finder => {
+            const option = document.createElement('option');
+            option.value = finder;
+            option.textContent = finder;
+            finderSelect.appendChild(option);
+          });
+      }
 
-  const spriteSelect = document.getElementById('sprite-select');
-  Array.from(sprites).sort().forEach(sprite => {
-    const option = document.createElement('option');
-    option.value = sprite;
-    option.textContent = sprite;
-    spriteSelect.appendChild(option);
+      const spriteSelect = document.getElementById('sprite-select-' + projectId);
+      if (spriteSelect) {
+          Array.from(sprites).sort().forEach(sprite => {
+            const option = document.createElement('option');
+            option.value = sprite;
+            option.textContent = sprite;
+            spriteSelect.appendChild(option);
+          });
+      }
   });
 }
-
-document.addEventListener('DOMContentLoaded', populateFilters);
 
 </script>
 </body>
