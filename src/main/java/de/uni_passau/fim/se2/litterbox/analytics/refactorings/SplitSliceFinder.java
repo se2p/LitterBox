@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
@@ -67,7 +68,7 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
             }
 
             Set<Stmt> newSlice = pdg.backwardSlice(stmt);
-            
+
             // Check for overlaps and merge
             Iterator<Set<Stmt>> it = slices.iterator();
             while (it.hasNext()) {
@@ -77,7 +78,7 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
                     it.remove();
                 }
             }
-            
+
             slices.add(newSlice);
             visited.addAll(newSlice);
         }
@@ -117,13 +118,13 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
                 } else if (stmt instanceof IfElseStmt ifElseStmt) {
                     StmtList thenBody = new StmtList(reconstruct(ifElseStmt.getThenStmts().getStmts(), slice));
                     StmtList elseBody = new StmtList(reconstruct(ifElseStmt.getElseStmts().getStmts(), slice));
-                    
+
                     if (!thenBody.getStmts().isEmpty() && !elseBody.getStmts().isEmpty()) {
                         result.add(new IfElseStmt(ifElseStmt.getBoolExpr(), thenBody, elseBody, ifElseStmt.getMetadata()));
                     } else if (!thenBody.getStmts().isEmpty()) {
                         result.add(new IfThenStmt(ifElseStmt.getBoolExpr(), thenBody, ifElseStmt.getMetadata()));
                     } else if (!elseBody.getStmts().isEmpty()) {
-                        BoolExpr negated = new Not(ifElseStmt.getBoolExpr(), new NoBlockMetadata());
+                        BoolExpr negated = new Not(ifElseStmt.getBoolExpr(), NonDataBlockMetadata.emptyNonBlockMetadata());
                         result.add(new IfThenStmt(negated, elseBody, ifElseStmt.getMetadata()));
                     }
                 } else {
