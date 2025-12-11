@@ -36,4 +36,22 @@ public class Definition implements DataflowFact {
     public Defineable getDefinable() {
         return defineable;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Definition that = (Definition) o;
+
+        if (source != null ? !source.equals(that.source) : that.source != null) return false;
+        return defineable != null ? defineable.equals(that.defineable) : that.defineable == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = source != null ? source.hashCode() : 0;
+        result = 31 * result + (defineable != null ? defineable.hashCode() : 0);
+        return result;
+    }
 }
