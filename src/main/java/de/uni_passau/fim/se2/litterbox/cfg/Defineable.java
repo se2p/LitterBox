@@ -21,6 +21,6 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 /**
  * Anything that can be defined in a Scratch program, i.e. variables and attributes
  */
-public interface Defineable {
+public interface Defineable extends DataflowFact {
 
 }
