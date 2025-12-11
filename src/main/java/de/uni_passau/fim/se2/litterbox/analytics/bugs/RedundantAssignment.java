@@ -98,11 +98,11 @@ public class RedundantAssignment extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
 
-        ControlFlowGraph cfg = buildCFG(program);        
-        DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg, program);        
-        DataflowAnalysis<Definition> reachingCandidatesAnalysis = performReachingAnalysis(cfg, program);
+        ControlFlowGraph cfg = buildCFG(program);
+        DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg);
+        DataflowAnalysis<Definition> reachingCandidatesAnalysis = performReachingAnalysis(cfg);
         Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingCandidatesAnalysis, program);
-        
+
         return issues;
     }
 
@@ -112,7 +112,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return visitor.getControlFlowGraph();
     }
 
-    private DataflowAnalysis<Defineable> performLivenessAnalysis(ControlFlowGraph cfg, Program program) {
+    private DataflowAnalysis<Defineable> performLivenessAnalysis(ControlFlowGraph cfg) {
         // We use a custom Transfer Function that treats Exit nodes as "Using All Variables"
         // to distinguish "Overwritten" from "Unused"
         DataflowAnalysisBuilder<Defineable> builder = new DataflowAnalysisBuilder<>(cfg);
@@ -125,7 +125,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return analysis;
     }
 
-    private DataflowAnalysis<Definition> performReachingAnalysis(ControlFlowGraph cfg, Program program) {
+    private DataflowAnalysis<Definition> performReachingAnalysis(ControlFlowGraph cfg) {
         // Build Forward Analysis to track reaching unused definitions
         DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
         DataflowAnalysis<Definition> analysis = builder.withForward()
@@ -177,7 +177,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         Defineable variable = currentDef.getDefinable();
         CFGNode currentNode = currentDef.getDefinitionSource();
         ASTNode stmt = currentNode.getASTNode();
-        
+
         if (stmt != null && isDynamicAssignment(stmt)) {
              return;
         }
@@ -197,9 +197,9 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (reached.getDefinable().equals(variable)) {
                 ASTNode reachedStmt = reached.getDefinitionSource().getASTNode();
                 if (reachedStmt != null && isDynamicAssignment(reachedStmt)) {
-                    continue; 
+                    continue;
                 }
-                
+
                 createAndAddIssue(reached, program, issues, HINT_POSSIBLE);
             }
         }
@@ -370,7 +370,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (isExitNode(node)) {
                 outFacts.addAll(allDefinedVariables);
             }
-            
+
             // Remove variables defined at this node (Kill)
             for (Definition def : node.getDefinitions()) {
                  outFacts.remove(def.getDefinable());
@@ -407,15 +407,13 @@ public class RedundantAssignment extends AbstractIssueFinder {
             // Kill: Eliminate definitions if their variable is Used or Redefined here
             // Note: If redefined, the OLD definition is killed (and potentially reported as redundant in the main checker),
             // and the NEW definition is generated.
-            
+
             Set<Defineable> usedVariables = new HashSet<>();
             for (Use use : node.getUses()) {
                 usedVariables.add(use.getDefinable());
             }
             // Implicit uses (halting)
-            for (Defineable def : getHaltingUses(node)) {
-                usedVariables.add(def);
-            }
+            usedVariables.addAll(getHaltingUses(node));
 
             Set<Defineable> definedVariables = new HashSet<>();
             for (Definition def : node.getDefinitions()) {
@@ -423,7 +421,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             }
 
             // Kill step
-            outFacts.removeIf(def -> 
+            outFacts.removeIf(def ->
                 usedVariables.contains(def.getDefinable()) || definedVariables.contains(def.getDefinable())
             );
 
