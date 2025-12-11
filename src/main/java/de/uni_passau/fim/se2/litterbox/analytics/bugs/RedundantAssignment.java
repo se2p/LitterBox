@@ -344,6 +344,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
      * Custom Transfer Function for Liveness Analysis.
      * Treats all variables/attributes defined in this script as "Live" at exit nodes,
      * ensuring that an assignment is only redundant if it is overwritten before any use *and* before the end of the script.
+     * <p>
+     * Note: We track {@code Defineable} (variables) instead of {@code Use} objects.
+     * Since we only care *if* a variable is used, not *where*, tracking the variable itself reduces
+     * the size of the dataflow sets (O(|Variables|) vs O(|Uses|)), improving performance and convergence time.
      */
     private static class RedundantAssignmentTransferFunction implements TransferFunction<Defineable> {
         private final ControlFlowGraph cfg;
