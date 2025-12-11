@@ -99,6 +99,14 @@ code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif
 }
 
 </style>
+<style>
+/* Metrics */
+.metrics-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 1.5rem; }
+.metric-item { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s; }
+.metric-item:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.metric-name { font-size: 0.9em; color: #666; margin-bottom: 5px; word-break: break-word; }
+.metric-value { font-size: 1.4em; font-weight: bold; color: #28a745; }
+</style>
 </head>
 <body class="{{BODY_CLASS}}">
 

@@ -37,6 +37,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.metrics.ComputationalThinkingSc
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.BlockCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.SpriteCount;
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricResult;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,7 +99,8 @@ public class HTMLReportGenerator implements ReportGenerator {
                  projectsContent.append("<h2 class=\"project-title\">").append(StringEscapeUtils.escapeHtml4(projectName)).append("</h2>\n");
             }
             projectsContent.append(generateStats(program, issues));
-            projectsContent.append(generateContent(issues, projectId));
+            projectsContent.append(generateContent(program, issues, projectId));
+            projectsContent.append(generateMetricsContent(program, projectId));
             projectsContent.append("</div>\n");
             
             first = false;
@@ -183,7 +186,7 @@ public class HTMLReportGenerator implements ReportGenerator {
         return sb.toString();
     }
 
-    private String generateContent(Collection<Issue> issues, String projectId) {
+    private String generateContent(Program program, Collection<Issue> issues, String projectId) {
         if (issues.isEmpty()) {
             return "<p style=\"text-align: center; color: #28a745;\">No issues found!</p>\n";
         }
@@ -237,6 +240,9 @@ public class HTMLReportGenerator implements ReportGenerator {
                 sb.append("<li id=\"nav-").append(category).append("-").append(projectId).append("\"><a href=\"#").append(category).append("-").append(projectId).append("\">").append(translator.getInfo(category)).append("</a></li>\n");
             }
         }
+        String metricsLabel = translator.getInfo("label_metrics");
+        if ("label_metrics".equals(metricsLabel)) metricsLabel = "Metrics";
+        sb.append("<li id=\"nav-metrics-").append(projectId).append("\"><a href=\"#metrics-").append(projectId).append("\">").append(StringEscapeUtils.escapeHtml4(metricsLabel)).append("</a></li>\n");
         sb.append("</ul></nav>\n");
 
         for (String category : categories) {
@@ -391,5 +397,50 @@ public class HTMLReportGenerator implements ReportGenerator {
             }
         }
         return builder.toString();
+    }
+    private String generateMetricsContent(Program program, String projectId) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div id=\"section-metrics-").append(projectId).append("\" class=\"issue-section\">\n");
+        String metricsLabel = translator.getInfo("label_metrics");
+        if ("label_metrics".equals(metricsLabel)) metricsLabel = "Metrics";
+        sb.append("<h2 id=\"metrics-").append(projectId).append("\">").append(StringEscapeUtils.escapeHtml4(metricsLabel)).append("</h2>\n");
+        
+        // Use a generic description if specific key not present or empty
+        String desc = translator.getInfo("description_metrics");
+        if (desc == null || desc.isEmpty() || desc.startsWith("Missing key")) {
+             desc = "Various metrics calculated for the project.";
+        }
+        sb.append("<p class=\"category-description\">").append(StringEscapeUtils.escapeHtml4(desc)).append("</p>\n");
+
+        sb.append("<div class=\"metrics-container\">\n");
+        
+        ProgramMetricAnalyzer analyzer = new ProgramMetricAnalyzer();
+        List<MetricResult> results = analyzer.analyze(program);
+        
+        // Sort results by name
+        results.sort(Comparator.comparing(MetricResult::name));
+
+        for (MetricResult result : results) {
+            String name = result.name();
+            double value = result.value();
+            
+            // Try to translate the metric name
+            String transKey = "metric_" + name;
+            String displayName = translator.getInfo(transKey);
+            if (displayName == null || displayName.startsWith("Missing key")) {
+                displayName = name;
+            }
+
+            sb.append("<div class=\"metric-item\">\n");
+            sb.append("<span class=\"metric-name\">").append(StringEscapeUtils.escapeHtml4(displayName)).append("</span>");
+            sb.append("<span class=\"metric-value\">").append(String.format("%.2f", value)).append("</span>");
+            sb.append("</div>\n");
+        }
+        
+        sb.append("</div>\n"); // metrics-container
+        sb.append("<div class=\"back-to-top\"><a href=\"#top\">\u2191 ").append(translator.getInfo("back_to_top")).append("</a></div>\n");
+        sb.append("</div>\n");
+
+        return sb.toString();
     }
 }

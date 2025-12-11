@@ -196,4 +196,25 @@ public class HTMLReportGeneratorTest implements JsonTest {
         // Check empty message for ProjectB
         assertThat(html).contains("No issues found!");
     }
+    @Test
+    public void testMetricsSectionPresent() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
+        Set<Issue> issues = Collections.emptySet();
+        
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
+        generator.generateReport(program, issues);
+        os.close();
+
+        String html = os.toString();
+        
+        assertThat(html).contains("id=\"section-metrics-project-Project\"");
+        assertThat(html).contains("class=\"metrics-container\"");
+        assertThat(html).contains("class=\"metric-item\"");
+        assertThat(html).contains("class=\"metric-name\"");
+        assertThat(html).contains("class=\"metric-value\"");
+        // Check for a specific metric likely to be present
+        // We only check for the container as metrics might be empty in test environment depending on configuration
+        assertThat(html).contains("class=\"metrics-container\"");
+    }
 }
