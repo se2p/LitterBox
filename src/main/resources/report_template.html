@@ -1,0 +1,184 @@
+<!--
+Copyright (C) 2019-2024 LitterBox contributors
+
+This file is part of LitterBox.
+
+LitterBox is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+LitterBox is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<title>LitterBox Report</title>
+<script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/scratchblocks.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/translations-all.js"></script>
+<style>
+body { font-family: sans-serif; margin: 2rem; background-color: #f4f4f4; }
+.container { max-width: 900px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+h1 { color: #333; text-align: center; }
+h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-top: 2rem; }
+.issue { border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; background: #fff; }
+.issue-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.5rem; }
+.issue-title { font-size: 1.25em; font-weight: bold; color: #333; }
+.issue-meta { font-size: 0.9em; color: #777; margin-bottom: 0.5rem; }
+.hint { background: #e9ecef; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+pre.blocks { background: #fff; border: none; padding: 0; overflow-x: auto; }
+code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; padding: 2px 4px; border-radius: 4px; }
+.severity { font-size: 0.8em; padding: 2px 6px; border-radius: 4px; color: #fff; }
+.severity-ERROR { background-color: #dc3545; }
+.severity-WARNING { background-color: #ffc107; color: #000; }
+.severity-INFO { background-color: #17a2b8; }
+.stats-container { display: flex; flex-wrap: wrap; justify-content: space-around; margin-bottom: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
+.stat-box { text-align: center; margin: 10px; min-width: 100px; }
+.stat-value { font-size: 1.5em; font-weight: bold; color: #007bff; display: block; }
+.stat-label { font-size: 0.9em; color: #666; }
+.report-nav { margin-bottom: 2rem; }
+.report-nav ul { list-style: none; padding: 1rem; margin: 0; display: flex; justify-content: center; gap: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; }
+.report-nav li { display: inline; }
+.report-nav a { text-decoration: none; color: #495057; font-weight: bold; font-size: 1em; padding: 8px 16px; background-color: #fff; border: 1px solid #ced4da; border-radius: 5px; transition: all 0.2s ease; display: inline-block; }
+.report-nav a:hover { text-decoration: none; background-color: #e2e6ea; border-color: #adb5bd; color: #212529; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.category-description { font-style: italic; color: #666; margin-bottom: 1.5rem; }
+.back-to-top { text-align: right; margin-top: 10px; }
+.back-to-top a { text-decoration: none; color: #999; font-size: 0.9em; }
+.back-to-top a:hover { color: #007bff; }
+
+/* Filter CSS */
+.filter-container { background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #e9ecef; }
+.filter-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-group label { font-weight: bold; font-size: 0.9em; color: #555; }
+.filter-group select { appearance: none; background-color: #fff; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; padding: 8px 12px; padding-right: 30px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.95em; color: #495057; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; cursor: pointer; }
+.filter-group select:focus { border-color: #80bdff; outline: 0; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); }
+.filter-group select:hover { border-color: #adb5bd; }
+.checkbox-group { display: flex; gap: 15px; align-items: center; }
+.checkbox-item { display: flex; align-items: center; gap: 5px; }
+.hidden { display: none !important; }
+
+/* Logo CSS */
+h1 img { vertical-align: middle; height: 1.5em; margin-right: 10px; }
+
+</style>
+</head>
+<body>
+<a id="top"></a>
+<div class="container">
+<h1><img src="https://github.com/se2p/LitterBox/blob/master/src/main/resources/litterbox.png?raw=true" alt="LitterBox Logo">Code Report</h1>
+
+{{STATS}}
+
+{{CONTENT}}
+
+</div>
+<script>
+// Scratchblocks rendering
+scratchblocks.renderMatching('pre.blocks', {
+  style: 'scratch3',
+  scale: 0.7,
+  languages: ['{{SCRATCH_LANG}}', 'en']
+});
+scratchblocks.renderMatching('code.scratchblocks', {
+  style: 'scratch3',
+  inline: true,
+  scale: 0.7,
+  languages: ['{{SCRATCH_LANG}}', 'en']
+});
+
+// Filtering Logic
+function applyFilters() {
+  const showBug = document.getElementById('filter-bug').checked;
+  const showSmell = document.getElementById('filter-smell').checked;
+  const showPerfume = document.getElementById('filter-perfume').checked;
+  const selectedFinder = document.getElementById('finder-select').value;
+  const selectedSprite = document.getElementById('sprite-select').value;
+
+  const issues = document.querySelectorAll('.issue');
+  issues.forEach(issue => {
+    const type = issue.getAttribute('data-type');
+    const finder = issue.getAttribute('data-finder');
+    const sprite = issue.getAttribute('data-sprite');
+
+    let visible = true;
+
+    // Type filter
+    if (type === 'bugs' && !showBug) visible = false;
+    if (type === 'smells' && !showSmell) visible = false;
+    if (type === 'perfumes' && !showPerfume) visible = false;
+
+    // Finder filter
+    if (selectedFinder !== 'all' && finder !== selectedFinder) visible = false;
+
+    // Sprite filter
+    if (selectedSprite !== 'all' && sprite !== selectedSprite) visible = false;
+
+    if (visible) {
+      issue.classList.remove('hidden');
+    } else {
+      issue.classList.add('hidden');
+    }
+  });
+
+  updateSectionVisibility();
+}
+
+function updateSectionVisibility() {
+  const sections = document.querySelectorAll('.issue-section');
+  sections.forEach(section => {
+    const visibleIssues = section.querySelectorAll('.issue:not(.hidden)');
+    const sectionId = section.id.replace('section-', '');
+    const navItem = document.getElementById('nav-' + sectionId);
+
+    if (visibleIssues.length > 0) {
+      section.classList.remove('hidden');
+      if (navItem) navItem.classList.remove('hidden');
+    } else {
+      section.classList.add('hidden');
+      if (navItem) navItem.classList.add('hidden');
+    }
+  });
+}
+
+function populateFilters() {
+  const issues = document.querySelectorAll('.issue');
+  const finders = new Set();
+  const sprites = new Set();
+
+  issues.forEach(issue => {
+    const finder = issue.getAttribute('data-finder');
+    const sprite = issue.getAttribute('data-sprite');
+    if (finder) finders.add(finder);
+    if (sprite) sprites.add(sprite);
+  });
+
+  const finderSelect = document.getElementById('finder-select');
+  Array.from(finders).sort().forEach(finder => {
+    const option = document.createElement('option');
+    option.value = finder;
+    option.textContent = finder;
+    finderSelect.appendChild(option);
+  });
+
+  const spriteSelect = document.getElementById('sprite-select');
+  Array.from(sprites).sort().forEach(sprite => {
+    const option = document.createElement('option');
+    option.value = sprite;
+    option.textContent = sprite;
+    spriteSelect.appendChild(option);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', populateFilters);
+
+</script>
+</body>
+</html>
