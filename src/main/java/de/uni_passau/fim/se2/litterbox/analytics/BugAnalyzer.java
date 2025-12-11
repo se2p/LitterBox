@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.HTMLReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.io.FilenameUtils;
@@ -101,6 +102,9 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
                 ) {
                     reportGenerator.generateReport(program, issues);
                 }
+            } else if (reportFileName.getFileName().toString().endsWith(".html") || reportFileName.getFileName().toString().endsWith(".htm")) {
+                HTMLReportGenerator reportGenerator = new HTMLReportGenerator(translator, reportFileName);
+                reportGenerator.generateReport(program, issues);
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);
             }
