@@ -82,14 +82,10 @@ public class JSONStringCreator {
 
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
         if (fieldValue == null) {
-            return createFieldValueNull(jsonString, fieldName);
+            return createField(jsonString, fieldName).append(NULL_VALUE);
         }
         fieldValue = BlockJsonCreatorHelper.escape(fieldValue);
         return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
-    }
-
-    public static StringBuilder createFieldValueNull(StringBuilder jsonString, String fieldName) {
-        return createField(jsonString, fieldName).append(NULL_VALUE);
     }
 
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, double fieldValue) {
