@@ -158,9 +158,9 @@ public class HTMLReportGeneratorTest implements JsonTest {
         Program program2 = getAST("src/test/fixtures/bugs/xPosEqual.json"); // Reusing same fixture for simplicity
         Set<Issue> issues2 = Collections.emptySet(); // Empty issues for second project
         
-        Map<String, Map.Entry<Program, Collection<Issue>>> projects = new HashMap<>();
-        projects.put("ProjectA", new AbstractMap.SimpleEntry<>(program1, issues1));
-        projects.put("ProjectB", new AbstractMap.SimpleEntry<>(program2, issues2));
+        List<ProjectAnalysisResult> projects = new ArrayList<>();
+        projects.add(new ProjectAnalysisResult("ProjectA", program1, issues1));
+        projects.add(new ProjectAnalysisResult("ProjectB", program2, issues2));
         
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);

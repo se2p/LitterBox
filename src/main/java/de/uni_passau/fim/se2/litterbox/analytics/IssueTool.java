@@ -471,7 +471,7 @@ public class IssueTool {
         perfumeFinders.put(finder.getName(), finder);
     }
 
-    static List<String> generateFixHeuristicsNames() {
+    public static List<String> generateFixHeuristicsNames() {
         List<String> fixHeuristicsNames = new ArrayList<>();
         fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
         fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);

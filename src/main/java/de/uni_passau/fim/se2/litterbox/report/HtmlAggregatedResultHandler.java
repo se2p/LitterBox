@@ -21,11 +21,8 @@ package de.uni_passau.fim.se2.litterbox.report;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
-
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.AbstractMap;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +34,7 @@ public class HtmlAggregatedResultHandler implements AnalysisResultHandler {
 
     private final IssueTranslator translator;
     private final Path output;
-    private final Map<String, Map.Entry<Program, Collection<Issue>>> htmlReportAccumulator = new HashMap<>();
+    private final Map<String, ProjectAnalysisResult> htmlReportAccumulator = new HashMap<>();
 
     public HtmlAggregatedResultHandler(IssueTranslator translator, Path output) {
         this.translator = translator;
@@ -52,7 +49,7 @@ public class HtmlAggregatedResultHandler implements AnalysisResultHandler {
     @Override
     public void handleResult(Path projectFile, Program program, Set<Issue> result) {
         String projectName = extractProjectName(projectFile);
-        htmlReportAccumulator.put(projectName, new AbstractMap.SimpleEntry<>(program, result));
+        htmlReportAccumulator.put(projectName, new ProjectAnalysisResult(projectName, program, result));
     }
 
     @Override
@@ -60,7 +57,7 @@ public class HtmlAggregatedResultHandler implements AnalysisResultHandler {
         if (!htmlReportAccumulator.isEmpty()) {
             try {
                 HTMLReportGenerator reportGenerator = new HTMLReportGenerator(translator, output);
-                reportGenerator.generateReport(htmlReportAccumulator);
+                reportGenerator.generateReport(htmlReportAccumulator.values());
             } catch (IOException e) {
                 log.warning("Failed to generate HTML report: " + e.getMessage());
             }

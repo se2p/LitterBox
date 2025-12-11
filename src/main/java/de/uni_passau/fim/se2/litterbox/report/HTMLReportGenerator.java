@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -45,29 +44,23 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     private final IssueTranslator translator;
     private final OutputStream outputStream;
-    private final boolean closeStream;
 
     public HTMLReportGenerator(IssueTranslator translator, Path reportFile) throws IOException {
-        this(translator, Files.newOutputStream(reportFile), true);
+        this(translator, Files.newOutputStream(reportFile));
     }
 
     public HTMLReportGenerator(IssueTranslator translator, OutputStream outputStream) {
-        this(translator, outputStream, false);
-    }
-
-    private HTMLReportGenerator(IssueTranslator translator, OutputStream outputStream, boolean closeStream) {
         this.translator = translator;
         this.outputStream = outputStream;
-        this.closeStream = closeStream;
     }
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         // Delegate single project report to multi-project generation
-        generateReport(Map.of("Project", new AbstractMap.SimpleEntry<>(program, issues)));
+        generateReport(List.of(new ProjectAnalysisResult("Project", program, issues)));
     }
 
-    public void generateReport(Map<String, Map.Entry<Program, Collection<Issue>>> projects) throws IOException {
+    public void generateReport(Collection<ProjectAnalysisResult> projects) throws IOException {
         String template = loadTemplate();
         String logoBase64 = loadLogoBase64();
         
@@ -79,14 +72,14 @@ public class HTMLReportGenerator implements ReportGenerator {
         boolean singleProject = projects.size() == 1;
         
         // Sort projects by name for consistent order
-        List<String> sortedNames = new ArrayList<>(projects.keySet());
-        Collections.sort(sortedNames);
+        List<ProjectAnalysisResult> sortedProjects = new ArrayList<>(projects);
+        sortedProjects.sort(Comparator.comparing(ProjectAnalysisResult::projectName));
 
         boolean first = true;
-        for (String projectName : sortedNames) {
-            Map.Entry<Program, Collection<Issue>> entry = projects.get(projectName);
-            Program program = entry.getKey();
-            Collection<Issue> issues = entry.getValue();
+        for (ProjectAnalysisResult projectResult : sortedProjects) {
+            String projectName = projectResult.projectName();
+            Program program = projectResult.program();
+            Collection<Issue> issues = projectResult.issues();
             
             String projectId = "project-" + projectName.replaceAll("[^a-zA-Z0-9]", "-");
             String activeClass = first ? " active" : "";
@@ -114,7 +107,7 @@ public class HTMLReportGenerator implements ReportGenerator {
         String headerContent = "";
         
         if (singleProject) {
-             String projectName = sortedNames.get(0);
+             String projectName = sortedProjects.get(0).projectName();
              headerContent = "<header class=\"report-header\"><img src=\"{{LOGO}}\" class=\"header-logo\"> <h1>Code Report for " + StringEscapeUtils.escapeHtml4(projectName) + "</h1></header>";
         }
 
@@ -143,9 +136,7 @@ public class HTMLReportGenerator implements ReportGenerator {
                 .replace("{{SCRATCH_LANG}}", lang);
 
         outputStream.write(report.getBytes(StandardCharsets.UTF_8));
-        if (closeStream) {
-            outputStream.close();
-        }
+        outputStream.close();
     }
 
     private String loadTemplate() throws IOException {
