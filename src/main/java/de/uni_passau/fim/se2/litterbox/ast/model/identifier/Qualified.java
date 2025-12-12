@@ -74,4 +74,9 @@ public class Qualified extends AbstractNode implements Identifier, ComparableExp
     public int hashCode() {
         return Objects.hash(super.hashCode(), first, second);
     }
+
+    @Override
+    public String toString() {
+        return first.getName() + "." + second.getName().getName();
+    }
 }

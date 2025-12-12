@@ -25,7 +25,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
@@ -102,4 +116,58 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
         return ddg.hasDependencyEdge(subScript1, subScript2);
     }
+
+    protected boolean isAttributeSetting(Stmt stmt) {
+        // Reuse logic from SplitInitializationScriptFinder
+        // Position, Rotation, Motion
+        if (stmt instanceof SpriteMotionStmt) {
+            return !(stmt instanceof GlideSecsTo) && !(stmt instanceof GlideSecsToXY);
+        }
+        // Visibility, Looks, Costume, Size, Layer
+        if (stmt instanceof SpriteLookStmt) {
+            return !(stmt instanceof SayForSecs) && !(stmt instanceof ThinkForSecs);
+        }
+        // Effects, Backdrop, Variables (Show/Hide)
+        if (stmt instanceof ActorLookStmt) {
+            return !(stmt instanceof AskAndWait) && !(stmt instanceof SwitchBackdropAndWait);
+        }
+        // Sound, Volume
+        if (stmt instanceof ActorSoundStmt) {
+            return !(stmt instanceof PlaySoundUntilDone);
+        }
+        // Variables
+        if (stmt instanceof SetVariableTo || stmt instanceof ChangeVariableBy) {
+            return true;
+        }
+        // Generic Attribute
+        if (stmt instanceof SetAttributeTo) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /*
+     * Since the dependency analysis does not take concurrency into account
+     * this method simply applies the merge and checks for dependencies in
+     * the resulting script that span across the two parent scripts.
+     */
+    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+
+        ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
+
+        List<Stmt> stmtScript1 = new ArrayList<>(mergedScript.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
+        List<Stmt> stmtScript2 = new ArrayList<>(mergedScript.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), mergedScript.getStmtList().getNumberOfStatements()));
+
+        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+                || hasDataDependency(cfg, stmtScript1, stmtScript2)
+                || hasTimeDependency(cfg, stmtScript1, stmtScript2)
+                || wouldCreateDataDependency(mergedScript, stmtScript2, stmtScript1)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

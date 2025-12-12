@@ -99,7 +99,7 @@ public abstract class CFGNode {
         String scopeId = getScriptOrProcedure() != null ? AstNodeUtil.getBlockId(getScriptOrProcedure()) : null;
 
         List<DefinableCollector<? extends Defineable>> collectors = new ArrayList<>(Arrays.asList(
-                new VariableUseVisitor(),
+                new VariableUseVisitor(getActor()),
                 new ListUseVisitor(),
                 new ParameterUseVisitor(scopeId)
         ));

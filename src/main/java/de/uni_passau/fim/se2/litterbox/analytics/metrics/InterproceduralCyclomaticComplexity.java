@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
@@ -27,14 +30,38 @@ public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements M
 
     @Override
     public double calculateMetric(T node) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        final ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
-        return cfg.getNumEdges() - cfg.getNumNodes() + 2;
+        final ControlFlowGraph cfg = visitor.getControlFlowGraph();
+        final double cfgComplexity = cfg.getNumEdges() - cfg.getNumNodes() + 2;
+
+        final LogicalOperatorCounter counter = new LogicalOperatorCounter();
+        node.accept(counter);
+        return cfgComplexity + counter.getCount();
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    private static class LogicalOperatorCounter implements ScratchVisitor {
+        private int count = 0;
+
+        public int getCount() {
+            return count;
+        }
+
+        @Override
+        public void visit(And node) {
+            count++;
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(Or node) {
+            count++;
+            visitChildren(node);
+        }
     }
 }

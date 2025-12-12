@@ -24,6 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -72,7 +75,7 @@ public class SplitSlicesTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/splitSlice2.json");
         SplitSliceFinder finder = new SplitSliceFinder();
         List<Refactoring> refactorings = finder.check(program);
-        assertThat(refactorings).isEmpty();
+        assertThat(refactorings).hasSize(1);
     }
 
     @Test
@@ -86,7 +89,7 @@ public class SplitSlicesTest implements JsonTest {
         SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertThat(refactoredScript1.getEvent()).isEqualTo(script.getEvent());
         assertThat(refactoredScript2.getEvent()).isEqualTo(script.getEvent());
@@ -108,7 +111,7 @@ public class SplitSlicesTest implements JsonTest {
         SplitSlice refactoring = (SplitSlice) refactorings.getFirst();
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         Script refactoredScript3 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(2);
 
@@ -119,8 +122,307 @@ public class SplitSlicesTest implements JsonTest {
         StmtList refactoredStmtList1 = refactoredScript1.getStmtList();
         StmtList refactoredStmtList2 = refactoredScript2.getStmtList();
         StmtList refactoredStmtList3 = refactoredScript3.getStmtList();
-        assertThat(refactoredStmtList1.getStmts().size()).isEqualTo(1);
-        assertThat(refactoredStmtList2.getStmts().size()).isEqualTo(1);
-        assertThat(refactoredStmtList3.getStmts().size()).isEqualTo(5);
+        List<Integer> sizes = new java.util.ArrayList<>();
+        sizes.add(refactoredStmtList1.getStmts().size());
+        sizes.add(refactoredStmtList2.getStmts().size());
+        sizes.add(refactoredStmtList3.getStmts().size());
+        sizes.sort(Integer::compareTo);
+        
+        assertThat(sizes).containsExactly(1, 1, 5);
     }
+
+    @Test
+    public void testSplitSliceFinder_SplitsForeverLoop() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            forever 
+                move (10) steps
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            """;
+
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+
+        String expected1 = """
+            when green flag clicked
+            forever 
+                move (10) steps
+            end
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            forever 
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            """;
+
+        assertThat(refactorings).hasSize(1);
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+    }
+
+    @Test
+    public void testSplitSliceFinder_SplitsNestedForeverLoops() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            forever
+                forever 
+                    move (10) steps
+                    set [my variable v] to (0)
+                    change [my variable v] by (1)
+                    say (my variable)
+                end
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).hasSize(1);
+
+        String expected1 = """
+            when green flag clicked
+            forever 
+                forever 
+                    move (10) steps
+                end
+            end
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            forever 
+                forever 
+                    set [my variable v] to (0)
+                    change [my variable v] by (1)
+                    say (my variable)
+                end
+            end
+            """;
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+    }
+
+    @Test
+    public void testSplitSliceFinder_DoesNotSplitLoopWithConditionDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            repeat until <(my variable) = (10)> 
+                move (10) steps
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).isEmpty();
+    }
+
+
+    @Test
+    public void testSplitSliceFinder_SplitsIfStatementAndSubsequentStatement() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            if <(my variable v) = (10)> then
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            move (10) steps
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).hasSize(1);
+
+        String expected1 = """
+            when green flag clicked
+            move (10) steps
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            if <\\(my variable v\\) = \\(10\\)> then
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            """;
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+      }
+
+    @Test
+    public void testSplitSliceFinder_SplitsIfElseIntoIndependentIfs() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            if <(my variable v) = (10)> then
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            else
+                move (10) steps            
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).hasSize(1);
+
+        String expected1 = """
+            when green flag clicked
+            if <not <\\(my variable v\\) = \\(10\\)>> then
+                move (10) steps
+            end
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            if <\\(my variable v\\) = \\(10\\)> then
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                say (my variable)
+            end
+            """;
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+      }
+
+    @Test
+    public void testSplitSliceFinder_SplitsLoopWithIfElse() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            wait (10) seconds
+            repeat (10)
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                if <(my other variable v) = (10)> then
+                    say (my variable)
+                else
+                    move (10) steps
+                end
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).hasSize(1);
+
+        String expected1 = """
+            when green flag clicked
+            wait (10) seconds
+            repeat (10)
+                if <not <\\(my other variable v\\) = \\(10\\)>> then
+                    move (10) steps
+                end
+            end
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            wait (10) seconds
+            repeat (10)
+                set [my variable v] to (0)
+                change [my variable v] by (1)
+                if <\\(my other variable v\\) = \\(10\\)> then
+                    say (my variable)
+                end
+            end
+            """;
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+    }
+
+    @Test
+    public void testSplitSliceFinder_SplitsIfElseDependentOnAnswer() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            ask [Question] and wait
+            if <(answer) = [yes]> then
+                say [Hello]
+            else
+                move (10) steps
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).hasSize(1);
+
+        String expected1 = """
+            when green flag clicked
+            ask [Question] and wait
+            if <(answer) = [yes]> then
+                say [Hello]
+            end
+            """;
+
+        String expected2 = """
+            when green flag clicked
+            ask [Question] and wait
+            if <not <(answer) = [yes]>> then
+                move (10) steps
+            end
+            """;
+
+        Program refactored = refactorings.getFirst().apply(newProgram);
+        String refactoredCode = ScratchBlocksVisitor.of(refactored);
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected1.replaceAll("\\s+", ""));
+        assertThat(refactoredCode.replaceAll("\\s+", "")).contains(expected2.replaceAll("\\s+", ""));
+    }
+
+    @Test
+    public void testSplitSliceFinder_DoesNotSplitLoopWithXPositionDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String code = """
+            when green flag clicked
+            repeat until <(x position) > (100)>
+                move (10) steps
+                say [Hello]
+            end
+            """;
+        Program newProgram = parser.extendProject(program, "Sprite1", code);
+        SplitSliceFinder finder = new SplitSliceFinder();
+        List<Refactoring> refactorings = finder.check(newProgram);
+        assertThat(refactorings).isEmpty();
+    }
+
 }

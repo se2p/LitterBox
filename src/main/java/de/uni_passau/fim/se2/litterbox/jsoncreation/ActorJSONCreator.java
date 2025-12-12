@@ -277,11 +277,7 @@ public class ActorJSONCreator {
 
     private static StringBuilder addComment(StringBuilder jsonString, CommentMetadata meta) {
         JSONStringCreator.createField(jsonString, meta.getCommentId()).append("{");
-        if (meta.getBlockId() == null) {
-            JSONStringCreator.createFieldValueNull(jsonString, BLOCK_ID_KEY).append(",");
-        } else {
-            JSONStringCreator.createFieldValue(jsonString, BLOCK_ID_KEY, meta.getBlockId()).append(",");
-        }
+        JSONStringCreator.createFieldValue(jsonString, BLOCK_ID_KEY, meta.getBlockId()).append(",");
         JSONStringCreator.createFieldValue(jsonString, X_KEY, meta.getX()).append(",");
         JSONStringCreator.createFieldValue(jsonString, Y_KEY, meta.getY()).append(",");
         JSONStringCreator.createFieldValue(jsonString, WIDTH_KEY, meta.getWidth()).append(",");

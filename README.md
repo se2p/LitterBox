@@ -223,7 +223,7 @@ Since version 1.7 Litterbox can automatically refactor a given Scratch project t
 java -jar Litterbox-1.10.full.jar \
     refactoring \
     --path <path/to/project.json> \
-    --refactored-projects <path/to/output-dir>
+    --output <path/to/output-dir>
 ```
 
 To this end, Litterbox uses a multi-objective search-based approach to explore possible

@@ -44,6 +44,12 @@ public class Variable implements Defineable {
             return false;
         }
         Variable variable = (Variable) o;
+        if (identifier instanceof Qualified q1 && variable.identifier instanceof Qualified q2) {
+            // Special handling for Qualified identifiers to allow matching Variable and Parameter
+            // if they refer to the same variable (same owner and same name)
+            return Objects.equals(q1.getFirst(), q2.getFirst())
+                    && Objects.equals(q1.getSecond().getName(), q2.getSecond().getName());
+        }
         return Objects.equals(identifier, variable.identifier);
     }
 
