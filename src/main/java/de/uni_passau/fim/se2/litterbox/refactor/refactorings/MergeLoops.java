@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-
 import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -53,7 +52,8 @@ public class MergeLoops extends AbstractMergeRefactoring {
         mergedStatements.addAll(OnlyCodeCloneVisitor.copy(loop2.getStmtList()).getStmts());
 
         return new Script(
-                OnlyCodeCloneVisitor.copy(script1.getEvent()), new StmtList(getLoop(script1, loop1, new StmtList(mergedStatements)))
+                OnlyCodeCloneVisitor.copy(script1.getEvent()),
+                new StmtList(getLoop(script1, loop1, new StmtList(mergedStatements)))
         );
     }
 
@@ -63,11 +63,18 @@ public class MergeLoops extends AbstractMergeRefactoring {
 
     private static LoopStmt getLoop(Script script, LoopStmt loopStmt, StmtList body) {
         return switch (loopStmt) {
-            case RepeatForeverStmt origLoop -> new RepeatForeverStmt(body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
-            case RepeatTimesStmt origLoop ->
-                    new RepeatTimesStmt(OnlyCodeCloneVisitor.copy(origLoop.getTimes()), body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
-            case UntilStmt origLoop ->
-                    new UntilStmt(OnlyCodeCloneVisitor.copy(origLoop.getBoolExpr()), body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
+            case RepeatForeverStmt origLoop ->
+                    new RepeatForeverStmt(body, OnlyCodeCloneVisitor.copy(origLoop.getMetadata()));
+            case RepeatTimesStmt origLoop -> new RepeatTimesStmt(
+                    OnlyCodeCloneVisitor.copy(origLoop.getTimes()),
+                    body,
+                    OnlyCodeCloneVisitor.copy(origLoop.getMetadata())
+            );
+            case UntilStmt origLoop -> new UntilStmt(OnlyCodeCloneVisitor.copy(
+                    origLoop.getBoolExpr()),
+                    body,
+                    OnlyCodeCloneVisitor.copy(origLoop.getMetadata())
+            );
             default -> throw new RuntimeException("Unknown loop statement: " + loopStmt);
         };
     }

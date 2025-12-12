@@ -62,11 +62,15 @@ public class DominationStep implements PostProcessorStep {
         return dominatingSolutions;
     }
 
-    private boolean isBetterInAtLeastOne(RefactorSequence solution, RefactorSequence original, List<de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction<RefactorSequence>> fitnessFunctions) {
-        for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {            
+    private boolean isBetterInAtLeastOne(
+            RefactorSequence solution,
+            RefactorSequence original,
+            List<FitnessFunction<RefactorSequence>> fitnessFunctions
+    ) {
+        for (FitnessFunction<RefactorSequence> ff : fitnessFunctions) {
             double solFit = solution.getFitness(ff);
             double orgFit = original.getFitness(ff);
-            
+
             if (ff.isMinimizing()) {
                 if (solFit < orgFit) {
                     return true;

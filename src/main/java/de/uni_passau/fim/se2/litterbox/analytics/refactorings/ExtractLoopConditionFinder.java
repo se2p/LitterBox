@@ -38,7 +38,8 @@ public class ExtractLoopConditionFinder extends AbstractRefactoringFinder {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifThenStmt));
                 }
             } else if (stmt instanceof IfElseStmt ifElseStmt) {
-                if (isTerminatedStatementList(ifElseStmt.getThenStmts()) || isTerminatedStatementList(ifElseStmt.getElseStmts())) {
+                if (isTerminatedStatementList(ifElseStmt.getThenStmts())
+                        || isTerminatedStatementList(ifElseStmt.getElseStmts())) {
                     refactorings.add(new ExtractLoopCondition(repeatForeverStmt, ifElseStmt));
                 }
             }

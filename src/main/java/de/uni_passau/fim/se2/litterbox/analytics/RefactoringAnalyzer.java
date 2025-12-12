@@ -20,12 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
-
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
@@ -35,10 +32,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfScriptsFitness;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -65,7 +64,8 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
 
         // Export population to CSV
         List<List<RefactorSequence>> fronts = nsgaii.getFinalFronts();
-        if (fronts != null && !fronts.isEmpty() && PropertyLoader.getSystemBooleanProperty("nsga-ii.write_last_population")) {
+        if (fronts != null && !fronts.isEmpty()
+                && PropertyLoader.getSystemBooleanProperty("nsga-ii.write_last_population")) {
             exportPopulationToCSV(fronts, nsgaii.getFitnessFunctions());
         }
 
@@ -77,7 +77,9 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         }
     }
 
-    private void exportPopulationToCSV(List<List<RefactorSequence>> fronts, List<FitnessFunction<RefactorSequence>> fitnessFunctions) {
+    private void exportPopulationToCSV(
+            List<List<RefactorSequence>> fronts, List<FitnessFunction<RefactorSequence>> fitnessFunctions
+    ) {
         Path csvFile = output.resolve("nsgaii_population.csv");
         try (PrintWriter writer = new PrintWriter(csvFile.toFile())) {
             // Write header
@@ -162,7 +164,9 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
             try {
                 Class<?> clazz = Class.forName(className);
                 if (FitnessFunction.class.isAssignableFrom(clazz)) {
-                    fitnessFunctions.add((FitnessFunction<RefactorSequence>) clazz.getDeclaredConstructor().newInstance());
+                    fitnessFunctions.add(
+                            (FitnessFunction<RefactorSequence>) clazz.getDeclaredConstructor().newInstance()
+                    );
                 } else {
                     log.warning("Class " + className + " does not implement FitnessFunction. Skipping.");
                 }
@@ -172,10 +176,10 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
         }
 
         if (fitnessFunctions.isEmpty()) {
-             log.warning("No valid fitness functions loaded from property. Using defaults.");
-             fitnessFunctions.add(new CohesionFitness());
-             fitnessFunctions.add(new CyclomaticComplexityFitness());
-             fitnessFunctions.add(new NumberOfScriptsFitness());
+            log.warning("No valid fitness functions loaded from property. Using defaults.");
+            fitnessFunctions.add(new CohesionFitness());
+            fitnessFunctions.add(new CyclomaticComplexityFitness());
+            fitnessFunctions.add(new NumberOfScriptsFitness());
         }
 
         return fitnessFunctions;
