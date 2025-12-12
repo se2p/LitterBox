@@ -37,8 +37,8 @@ public class SequenceToLoopFinder extends AbstractRefactoringFinder {
     public void visit(StmtList statementList) {
         new RepeatedSubsequenceFinder(MIN_LENGTH, MIN_OCCURRENCE) {
             @Override
-            protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences) {
-                refactorings.add(new SequenceToLoop(statementList, subsequence, occurrences));
+            protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex) {
+                refactorings.add(new SequenceToLoop(statementList, subsequence, occurrences, startIndex));
             }
         }.findRepetitions(statementList);
 

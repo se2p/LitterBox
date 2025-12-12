@@ -104,7 +104,7 @@ public final class HyperVolume2D<C extends Chromosome<C>> {
     private double boundedRectangleArea(final Stream<C> p) {
         // TODO: kind of clumsy if you only have two elements...
         final List<C> chromosomes = p.toList();
-        final var previous = chromosomes.get(0);
+        final var previous = chromosomes.getFirst();
         final var current = chromosomes.get(1);
 
         final double v12 = previous.getFitness(objective2);

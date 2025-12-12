@@ -92,8 +92,12 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
             }
             case 1 -> mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
             default -> {
-                mutatedProductions.remove(index);
-                index--;
+                if (mutatedProductions.size() > 1) {
+                    mutatedProductions.remove(index);
+                    index--;
+                } else {
+                    mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
+                }
             }
         }
         return index;

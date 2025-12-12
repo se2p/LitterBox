@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
 import java.util.List;
@@ -37,5 +38,8 @@ public class ConsoleRefactorReportGenerator {
         for (int i = 0; i < refactorings.size(); i++) {
             System.out.println(i + ": " + refactorings.get(i).getDescription());
         }
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        program.accept(visitor);
+        System.out.println("Resulting program: " + visitor.getScratchBlocks());
     }
 }
