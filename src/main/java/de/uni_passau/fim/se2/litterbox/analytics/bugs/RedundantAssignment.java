@@ -86,8 +86,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
-
 public class RedundantAssignment extends AbstractIssueFinder {
 
     public static final String NAME = "redundant_assignment";
@@ -100,8 +98,8 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
         ControlFlowGraph cfg = buildCFG(program);
         DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg);
-        DataflowAnalysis<Definition> reachingCandidatesAnalysis = performReachingAnalysis(cfg);
-        Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingCandidatesAnalysis, program);
+        DataflowAnalysis<ReachingDefinitionState> reachingAnalysis = performReachingAnalysis(cfg);
+        Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingAnalysis, program);
 
         return issues;
     }
@@ -125,19 +123,19 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return analysis;
     }
 
-    private DataflowAnalysis<Definition> performReachingAnalysis(ControlFlowGraph cfg) {
-        // Build Forward Analysis to track reaching unused definitions
-        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> analysis = builder.withForward()
+    private DataflowAnalysis<ReachingDefinitionState> performReachingAnalysis(ControlFlowGraph cfg) {
+        // Build Forward Analysis to track reaching definitions and their usage status
+        DataflowAnalysisBuilder<ReachingDefinitionState> builder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<ReachingDefinitionState> analysis = builder.withForward()
                 .withMay()
-                .withTransferFunction(new ReachingUnusedDefinitionsTransferFunction())
+                .withTransferFunction(new ReachingDefinitionsTransferFunction())
                 .build();
 
         analysis.applyAnalysis();
         return analysis;
     }
 
-    private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Defineable> livenessAnalysis, DataflowAnalysis<Definition> reachingAnalysis, Program program) {
+    private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Defineable> livenessAnalysis, DataflowAnalysis<ReachingDefinitionState> reachingAnalysis, Program program) {
         Set<Issue> issues = new LinkedHashSet<>();
         Set<Definition> alwaysRedundantDefs = new HashSet<>();
 
@@ -163,38 +161,56 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (definitions.isEmpty()) {
                 continue;
             }
-            Set<Definition> reachingDefs = reachingAnalysis.getDataflowFacts(node);
+            Set<ReachingDefinitionState> reachingStates = reachingAnalysis.getDataflowFacts(node);
             for (Definition def : definitions) {
-                checkPossibleRedundancy(def, reachingDefs, program, issues, alwaysRedundantDefs);
+                checkPossibleRedundancy(def, reachingStates, program, issues, alwaysRedundantDefs);
             }
         }
 
         return Collections.unmodifiableSet(issues);
     }
 
-
-    private void checkPossibleRedundancy(Definition currentDef, Set<Definition> reachingDefs, Program program, Set<Issue> issues, Set<Definition> alwaysRedundantDefs) {
+    private void checkPossibleRedundancy(Definition currentDef,
+                                         Set<ReachingDefinitionState> reachingStates,
+                                         Program program,
+                                         Set<Issue> issues,
+                                         Set<Definition> alwaysRedundantDefs) {
         Defineable variable = currentDef.getDefinable();
         CFGNode currentNode = currentDef.getDefinitionSource();
         ASTNode stmt = currentNode.getASTNode();
 
+        // If the assignment uses a variable, this variable may be changed concurrently,
+        // so we can't know if it is redundant
         if (stmt != null && isDynamicAssignment(stmt)) {
-             return;
+            return;
         }
 
         // If the variable is USED in the same node (e.g. "change x by 1"), then the reaching definition was used!
-        // So checking "overwrite without use" must incorrectly flag it.
         for (Use use : currentNode.getUses()) {
             if (use.getDefinable().equals(variable)) {
                 return;
             }
         }
 
-        for (Definition reached : reachingDefs) {
+        for (ReachingDefinitionState state : reachingStates) {
+            if (state.isUsed()) {
+                continue; // We only care about unused definitions
+            }
+            Definition reached = state.getDefinition();
+
             if (alwaysRedundantDefs.contains(reached)) {
                 continue;
             }
             if (reached.getDefinable().equals(variable)) {
+
+                // Refinement: If this overwrite point is reached by a definition that is unused on THIS path,
+                // check if it was used on ANY incoming path.
+                // Since the analysis merges facts (May Analysis), if it was used on any path,
+                // reachingStates will contain ReachingDefinitionState(reached, true).
+                if (reachingStates.contains(new ReachingDefinitionState(reached, true))) {
+                    continue; // Suppress (Partially Dead)
+                }
+
                 ASTNode reachedStmt = reached.getDefinitionSource().getASTNode();
                 if (reachedStmt != null && isDynamicAssignment(reachedStmt)) {
                     continue;
@@ -259,6 +275,19 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return null;
     }
 
+    /**
+     * Checks if the assignment involves a dynamic value (non-constant).
+     * <p>
+     * This method enumerates all AST nodes that result in a variable or attribute definition
+     * but do not inherently "read" the value (unlike "Change Variable By").
+     * We check these blocks to see if the assigned value is dynamic (e.g., depends on a sensor
+     * or user input). If it is dynamic, we conservatively assume the assignment is necessary
+     * (e.g., updating state in a loop) and suppress redundancy warnings.
+     * </p>
+     *
+     * @param statement The AST node performing definitions.
+     * @return true if the assignment is dynamic/interactive and should be ignored; false otherwise.
+     */
     private boolean isDynamicAssignment(ASTNode statement) {
         return switch (statement) {
             case SetVariableTo stmt -> !isConstant(stmt.getExpr());
@@ -276,6 +305,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             case GoToPos stmt -> isDynamic(stmt.getPosition());
             case PointTowards stmt -> isDynamic(stmt.getPosition());
             case null, default -> false;
+            // AskAndWait would qualify, but dataflow analysis does not consider answer
         };
     }
 
@@ -373,7 +403,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
             // Remove variables defined at this node (Kill)
             for (Definition def : node.getDefinitions()) {
-                 outFacts.remove(def.getDefinable());
+                outFacts.remove(def.getDefinable());
             }
 
             // Add variables used at this node (Gen)
@@ -393,26 +423,18 @@ public class RedundantAssignment extends AbstractIssueFinder {
     }
 
     /**
-     * Forward Transfer Function for Reaching Unused Definitions analysis.
-     * <p>
-     * Tracks a set of Definitions that have been assigned but NOT yet used.
-     * If such a definition reaches another assignment to the same variable, the previous assignment is redundant.
+     * Reaching Definitions Transfer Function that also tracks usage status.
      */
-    private static class ReachingUnusedDefinitionsTransferFunction implements TransferFunction<Definition> {
+    private static class ReachingDefinitionsTransferFunction implements TransferFunction<ReachingDefinitionState> {
 
         @Override
-        public Set<Definition> apply(CFGNode node, Set<Definition> inFacts) {
-            Set<Definition> outFacts = new HashSet<>(inFacts);
-
-            // Kill: Eliminate definitions if their variable is Used or Redefined here
-            // Note: If redefined, the OLD definition is killed (and potentially reported as redundant in the main checker),
-            // and the NEW definition is generated.
+        public Set<ReachingDefinitionState> apply(CFGNode node, Set<ReachingDefinitionState> inFacts) {
+            Set<ReachingDefinitionState> outFacts = new HashSet<>();
 
             Set<Defineable> usedVariables = new HashSet<>();
             for (Use use : node.getUses()) {
                 usedVariables.add(use.getDefinable());
             }
-            // Implicit uses (halting)
             usedVariables.addAll(getHaltingUses(node));
 
             Set<Defineable> definedVariables = new HashSet<>();
@@ -420,15 +442,67 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 definedVariables.add(def.getDefinable());
             }
 
-            // Kill step
-            outFacts.removeIf(def ->
-                usedVariables.contains(def.getDefinable()) || definedVariables.contains(def.getDefinable())
-            );
+            // Process IN facts
+            for (ReachingDefinitionState state : inFacts) {
+                // Kill if redefined
+                if (definedVariables.contains(state.getDefinition().getDefinable())) {
+                    continue;
+                }
 
-            // Gen step: Add new definitions from this node
-            outFacts.addAll(node.getDefinitions());
+                // Gen Use: If variable used, mark as used
+                if (usedVariables.contains(state.getDefinition().getDefinable())) {
+                    outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
+                } else {
+                    outFacts.add(state);
+                }
+            }
+
+            // Gen Definitions: Add new definitions as Unused
+            for (Definition def : node.getDefinitions()) {
+                outFacts.add(new ReachingDefinitionState(def, false));
+            }
 
             return outFacts;
+        }
+    }
+
+    private static class ReachingDefinitionState implements de.uni_passau.fim.se2.litterbox.cfg.DataflowFact {
+        private final Definition definition;
+        private final boolean isUsed;
+
+        public ReachingDefinitionState(Definition definition, boolean isUsed) {
+            this.definition = definition;
+            this.isUsed = isUsed;
+        }
+
+        public Definition getDefinition() {
+            return definition;
+        }
+
+        public boolean isUsed() {
+            return isUsed;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ReachingDefinitionState that = (ReachingDefinitionState) o;
+            return isUsed == that.isUsed && definition.equals(that.definition);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * definition.hashCode() + (isUsed ? 1 : 0);
+        }
+
+        @Override
+        public String toString() {
+            return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
         }
     }
 

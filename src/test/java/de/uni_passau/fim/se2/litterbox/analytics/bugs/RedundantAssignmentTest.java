@@ -38,14 +38,13 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                 when green flag clicked
                 set [SpriteLocalVariable v] to (1)
                 set [SpriteLocalVariable v] to (2)""";
-                
+
         Program program = parseScratchBlocks(script);
-        
+
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(1, issues.size(), "Should report one redundant assignment");
-        
     }
 
     @Test
@@ -111,7 +110,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
 
         Assertions.assertEquals(0, issues.size());
     }
-    
+
     @Test
     public void testRedundantAssignmentInBranch() throws IOException, ParsingException {
         // If else where both branches overwrite without reading.
@@ -123,11 +122,11 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                 else
                   set [SpriteLocalVariable v] to (3)
                 end""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(1, issues.size());
     }
 
@@ -139,14 +138,14 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                 if <(SpriteLocalVariable) = (1)> then
                   set [SpriteLocalVariable v] to (2)
                 end""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(0, issues.size());
     }
-    
+
     @Test
     public void testValidAssignmentInBranch() throws IOException, ParsingException {
         String script = """
@@ -155,11 +154,11 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                 if <(1) = (1)> then
                   set [SpriteLocalVariable v] to (2)
                 end""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(1, issues.size());
     }
 
@@ -173,11 +172,11 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                     set [SpriteLocalVariable v] to (2)
                   end
                 end""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(2, issues.size());
     }
 
@@ -187,11 +186,11 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
                 when green flag clicked
                 set x to (10)
                 set x to (20)""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(1, issues.size(), "Should report redundant attribute assignment");
     }
 
@@ -201,11 +200,11 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         String script = """
                 when green flag clicked
                 set x to (10)""";
-                
+
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        
+
         Assertions.assertEquals(0, issues.size());
     }
 
@@ -319,6 +318,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Set<Issue> issues = finder.check(program);
         Assertions.assertEquals(0, issues.size(), "Should NOT report redundant show if interrupted by wait");
     }
+
     @Test
     public void testRedundantSoundEffect() throws IOException, ParsingException {
         String script = """
@@ -357,7 +357,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
 
     @Test
     public void testRedundantAssignmentInterruptedByHalt() throws IOException, ParsingException {
-            String script = """
+        String script = """
                 when green flag clicked
                 set x to (10)
                 wait (1) seconds
@@ -462,7 +462,6 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
     }
 
-
     @Test
     public void testLoopAssignment3() throws IOException, ParsingException {
         String script = """
@@ -510,7 +509,6 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Set<Issue> issues = finder.check(program);
         Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
     }
-
 
     @Test
     public void testRedundantGoToPosXY() throws IOException, ParsingException {
@@ -675,6 +673,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Set<Issue> issues = finder.check(program);
         Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic SetSoundEffectTo");
     }
+
     @Test
     public void testDynamicSwitchCostumeTo() throws IOException, ParsingException {
         // "switch costume to (timer)" or similar dynamic
@@ -726,5 +725,55 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
         Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment for dynamic PointTowards");
+    }
+
+    @Test
+    public void testRefinedMergeOverwritten() throws IOException, ParsingException {
+        // Def 1 is Live (used on nested path), but on the overwrite path it is unused.
+        // Def 2 is Live (used on its path).
+        // Def 3 Overwrites both.
+        // Def 1 should NOT be reported because Def 3 is reached by Def 2 as well.
+        String script = """
+                when green flag clicked
+                if <(1) = (1)> then
+                    set [x v] to (1)
+                    if <(1) = (1)> then
+                       wait (0.1) seconds
+                    else
+                       say (x)
+                    end
+                else
+                    set [x v] to (2)
+                    say (x)
+                end
+                set [x v] to (3)""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should verify false positive is fixed");
+    }
+
+    @Test
+    public void testLoopWithConditionalUse() throws IOException, ParsingException {
+        // This test case demonstrates the difference between old and new behavior.
+        // Old Behavior: Reported redundant assignments because the variable is unused on the "else" (implicit) branch.
+        // New Behavior: Suppresses the report because the variable IS used on the "if" branch, making it partially live.
+        String script = """
+                when green flag clicked
+                set [x v] to (1)
+                repeat (10)
+                    if <key [space v] pressed?> then
+                        say (x)
+                    end
+                    set [x v] to (2)
+                end""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should suppress redundancy for partially dead store in loop");
     }
 }
