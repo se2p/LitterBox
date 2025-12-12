@@ -36,16 +36,8 @@ public abstract class BlockJsonCreatorHelper {
 
         createField(jsonString, meta.getBlockId()).append("{");
         createFieldValue(jsonString, OPCODE_KEY, opcode.getName()).append(",");
-        if (nextId == null) {
-            createFieldValueNull(jsonString, NEXT_KEY).append(",");
-        } else {
-            createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
-        }
-        if (parentId == null) {
-            createFieldValueNull(jsonString, PARENT_KEY);
-        } else {
-            createFieldValue(jsonString, PARENT_KEY, parentId);
-        }
+        createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
+        createFieldValue(jsonString, PARENT_KEY, parentId);
         return jsonString;
     }
 

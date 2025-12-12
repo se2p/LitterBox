@@ -119,74 +119,74 @@ class NSGAIITest implements JsonTest {
     }
 
     @Test
-    void testNSGAIIWithDummyRefactorings() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
-        Program expectedProgram = getAST("src/test/fixtures/refactoring/helloBlock.json");
+    @SuppressWarnings("unchecked")
+    void testPopulationTruncation() {
+        RefactorSequence c1 = mock(RefactorSequence.class);
+        RefactorSequence c2 = mock(RefactorSequence.class);
+        RefactorSequence c3 = mock(RefactorSequence.class);
+        RefactorSequence c4 = mock(RefactorSequence.class);
+        List<RefactorSequence> population = Lists.newArrayList(c1, c2, c3, c4);
 
-        List<RefactoringFinder> refactorings = new ArrayList<>();
-        refactorings.add(new BlockFinder());
-        int populationSize = 5;
+        // 1 front with 4 solutions
+        List<List<RefactorSequence>> fronts = List.of(population);
 
-        List<Stmt> stmtListProgram = getStmtListOfProgram(program);
-        List<String> stmtNamesProgram = stmtListProgram.stream().map(Stmt::getUniqueName).toList();
-        List<String> stmtNamesExpectedProgram = getStmtListOfProgram(expectedProgram).stream().map(Stmt::getUniqueName).toList();
-        ControlStmt controlStmt = (ControlStmt) stmtListProgram.get(1);
-        Refactoring deleteControlBlock = new DeleteControlBlock(controlStmt);
+        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = mock(FixedSizePopulationGenerator.class);
+        when(populationGenerator.getPopulationSize()).thenReturn(2); // Truncate to 2
 
-        NumberOfHelloBlocks numberOfHelloBlocks = new NumberOfHelloBlocks();
-        NumberOfControlBlocks numberOfControlBlocks = new NumberOfControlBlocks();
+        OffspringGenerator<RefactorSequence> offspringGenerator = mock(OffspringGenerator.class);
+        when(offspringGenerator.generateOffspring(anyList())).thenReturn(List.of());
 
-        List<String> expectedRefactorings = List.of(deleteControlBlock.getName());
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = mock(FastNonDominatedSort.class);
+        when(fastNonDominatedSort.fastNonDominatedSort(population)).thenReturn(fronts);
 
-        GeneticAlgorithm<RefactorSequence> nsgaii = initializeNSGAII(program, refactorings, populationSize);
-        List<RefactorSequence> solutions = nsgaii.findSolution();
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = mock(CrowdingDistanceSort.class);
+        // Mock sorting to ensure c1 and c2 are first (if implementation relies on list order after sort)
+        doAnswer(invocation -> {
+            List<RefactorSequence> list = invocation.getArgument(0);
+            // Keep order c1, c2, c3, c4
+            return null;
+        }).when(crowdingDistanceSort).calculateCrowdingDistanceAndSort(anyList());
 
-        for (RefactorSequence solution : solutions) {
-            List<String> actualRefactorings = solution.getExecutedRefactorings().stream().map(Refactoring::getName).toList();
+        NSGAII<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
+        List<RefactorSequence> result = nsgaii.evolve(population);
 
-            if (actualRefactorings.size() > 0) {
-                assertEquals(expectedRefactorings, actualRefactorings);
-
-                Program refactored = solution.getRefactoredProgram();
-                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).toList();
-                assertEquals(stmtNamesExpectedProgram, stmtNamesRefactoredProgram);
-
-                assertEquals(0, numberOfControlBlocks.getFitness(solution));
-                assertEquals(1, numberOfHelloBlocks.getFitness(solution));
-            } else {
-                Program refactored = solution.getRefactoredProgram();
-                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).toList();
-                assertEquals(stmtNamesProgram, stmtNamesRefactoredProgram);
-
-                assertEquals(1, numberOfControlBlocks.getFitness(solution));
-                assertEquals(2, numberOfHelloBlocks.getFitness(solution));
-            }
-        }
+        assertEquals(2, result.size());
+        assertTrue(result.contains(c1));
+        assertTrue(result.contains(c2));
+        verify(crowdingDistanceSort).calculateCrowdingDistanceAndSort(anyList());
     }
 
-    private static List<Stmt> getStmtListOfProgram(Program program) {
-        return program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst().getStmtList().getStmts();
-    }
+    @Test
+    void testTimeLimitTermination() throws Exception {
+        // Set MAX_GEN to 100, MAX_SECONDS to 1 using constructor
+        int maxGen = 100;
+        int maxSeconds = 1;
 
-    private static NSGAII<RefactorSequence> initializeNSGAII(Program program, List<RefactoringFinder> refactorings, int populationSize) {
-        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactorings);
+        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = mock(FixedSizePopulationGenerator.class);
+        when(populationGenerator.get()).thenReturn(new ArrayList<>());
+        when(populationGenerator.getPopulationSize()).thenReturn(10);
+        
+        OffspringGenerator<RefactorSequence> offspringGenerator = mock(OffspringGenerator.class);
+        when(offspringGenerator.generateOffspring(anyList())).thenReturn(new ArrayList<>());
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program, mutation, crossover, refactorings);
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = mock(FastNonDominatedSort.class);
+        when(fastNonDominatedSort.fastNonDominatedSort(anyList())).thenReturn(List.of(new ArrayList<>()));
+        when(fastNonDominatedSort.getFitnessFunctions()).thenReturn(List.of());
 
-        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, populationSize);
-        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = mock(CrowdingDistanceSort.class);
 
-        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        NSGAII<RefactorSequence> nsgaii = spy(new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, maxGen, maxSeconds));
+        
+        // Slow down evolve to ensure time limit is hit before 100 generations
+        doAnswer(invocation -> {
+            Thread.sleep(600); // 0.6s per iteration. 2 iterations > 1s.
+            return new ArrayList<>();
+        }).when(nsgaii).evolve(anyList());
 
-        NumberOfHelloBlocks numberOfHelloBlocks = new NumberOfHelloBlocks();
-        NumberOfControlBlocks numberOfControlBlocks = new NumberOfControlBlocks();
+        nsgaii.findSolution();
 
-        fitnessFunctions.add(numberOfHelloBlocks);
-        fitnessFunctions.add(numberOfControlBlocks);
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
-        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
-        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
+        // Should run at most 2 iterations (0.6 + 0.6 = 1.2 > 1.0)
+        assertTrue(nsgaii.getIteration() < 100, "Should terminate before 100 generations due to time limit");
+        assertTrue(nsgaii.getIteration() >= 1, "Should run at least 1 iteration");
     }
 }

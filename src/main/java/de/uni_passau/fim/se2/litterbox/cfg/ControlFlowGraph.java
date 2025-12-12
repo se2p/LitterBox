@@ -22,15 +22,21 @@ import com.google.common.graph.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -224,6 +230,32 @@ public class ControlFlowGraph {
         newCFG.entryNode = this.exitNode;
         newCFG.exitNode = this.entryNode;
         return newCFG;
+    }
+
+    public static List<Stmt> getStatementsInOrder(StmtList stmtList) {
+        List<Stmt> result = new ArrayList<>();
+        collectStmts(stmtList, result);
+        return result;
+    }
+
+    public static List<Stmt> getStatementsInReverseOrder(StmtList stmtList) {
+        List<Stmt> result = getStatementsInOrder(stmtList);
+        Collections.reverse(result);
+        return result;
+    }
+
+    private static void collectStmts(StmtList stmtList, List<Stmt> result) {
+        for (Stmt stmt : stmtList.getStmts()) {
+            result.add(stmt);
+            if (stmt instanceof LoopStmt loop) {
+                collectStmts(loop.getStmtList(), result);
+            } else if (stmt instanceof IfThenStmt ifThen) {
+                collectStmts(ifThen.getThenStmts(), result);
+            } else if (stmt instanceof IfElseStmt ifElse) {
+                collectStmts(ifElse.getThenStmts(), result);
+                collectStmts(ifElse.getElseStmts(), result);
+            }
+        }
     }
 
 }

@@ -38,20 +38,34 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     private final OffspringGenerator<C> offspringGenerator;
     private final FastNonDominatedSort<C> fastNonDominatedSort;
     private final CrowdingDistanceSort<C> crowdingDistanceSort;
+    private List<List<C>> finalFronts;
 
     private int iteration = 0;
 
-    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
-    private static final int MAX_SECONDS = PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime");
+    private final int maxGen;
+    private final int maxSeconds;
 
     public NSGAII(FixedSizePopulationGenerator<C> populationGenerator,
                   OffspringGenerator<C> offspringGenerator,
                   FastNonDominatedSort<C> fastNonDominatedSort,
                   CrowdingDistanceSort<C> crowdingDistanceSort) {
+        this(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort,
+                PropertyLoader.getSystemIntProperty("nsga-ii.generations"),
+                PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime"));
+    }
+
+    public NSGAII(FixedSizePopulationGenerator<C> populationGenerator,
+                  OffspringGenerator<C> offspringGenerator,
+                  FastNonDominatedSort<C> fastNonDominatedSort,
+                  CrowdingDistanceSort<C> crowdingDistanceSort,
+                  int maxGen,
+                  int maxSeconds) {
         this.populationGenerator = populationGenerator;
         this.offspringGenerator = offspringGenerator;
         this.fastNonDominatedSort = fastNonDominatedSort;
         this.crowdingDistanceSort = crowdingDistanceSort;
+        this.maxGen = maxGen;
+        this.maxSeconds = maxSeconds;
     }
 
     private List<C> generateInitialPopulation() {
@@ -64,36 +78,59 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     public List<C> findSolution() {
         List<C> population = generateInitialPopulation();
         iteration = 0;
-        long end = System.currentTimeMillis() + MAX_SECONDS * 1000L; // MAX_SECONDS seconds * 1000 ms/sec
-        while (iteration < MAX_GEN && System.currentTimeMillis() < end) {
+        long end = System.currentTimeMillis() + maxSeconds * 1000L; // maxSeconds seconds * 1000 ms/sec
+        while (iteration < maxGen && System.currentTimeMillis() < end) {
             log.log(Level.FINE, "### NSGA-II ITERATION {0} ###", iteration);
 
             population = evolve(population);
 
-            log.log(Level.FINE, "NSGA-II iteration {0} created a population with size {1}", new Object[]{iteration, population.size()});
-            for (FitnessFunction<C> fitnessFunction : fastNonDominatedSort.getFitnessFunctions()) {
-                if (fitnessFunction.isMinimizing()) {
-                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).min().getAsDouble());
-                } else {
-                    log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
-                }
-            }
+            logIterationStatistics(population);
             iteration++;
         }
 
-        if (iteration == MAX_GEN) {
-            log.log(Level.FINE, "NSGA-II stopped after reaching the maximum iteration {0}", MAX_GEN);
+        if (iteration == maxGen) {
+            log.log(Level.FINE, "NSGA-II stopped after reaching the maximum iteration {0}", maxGen);
         } else {
-            log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", MAX_SECONDS);
+            log.log(Level.FINE, "NSGA-II stopped after running for the maximum time of {0} seconds", maxSeconds);
         }
 
-        population = fastNonDominatedSort.fastNonDominatedSort(population).getFirst();
+        finalFronts = fastNonDominatedSort.fastNonDominatedSort(population);
+        population = finalFronts.getFirst();
+        log.log(Level.FINE, "Final first front has size {0}, of which are distict: {1}", new Object[]{population.size(), population.stream().distinct().count()});
+
+        this.finalPopulation = population;
         return population.stream().distinct().toList(); // only return unique solutions
+    }
+
+    private void logIterationStatistics(List<C> population) {
+        log.log(Level.FINE, "NSGA-II iteration {0} created a population with size {1}", new Object[]{iteration, population.size()});
+        for (FitnessFunction<C> fitnessFunction : fastNonDominatedSort.getFitnessFunctions()) {
+            if (fitnessFunction.isMinimizing()) {
+                log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).min().getAsDouble());
+            } else {
+                log.log(Level.FINE, "Best fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).max().getAsDouble());
+            }
+            log.log(Level.FINE, "Average fitness " + fitnessFunction.getName() + ": " + population.stream().mapToDouble(i -> i.getFitness(fitnessFunction)).average().getAsDouble());
+        }
+    }
+
+    private List<C> finalPopulation;
+
+    public List<C> getFinalPopulation() {
+        return finalPopulation;
+    }
+
+    public List<List<C>> getFinalFronts() {
+        return finalFronts;
     }
 
     @VisibleForTesting
     List<C> evolve(List<C> population) {
         List<List<C>> nonDominatedSortedSolution = fastNonDominatedSort.fastNonDominatedSort(population);
+        log.log(Level.FINE, "Fronts: "+nonDominatedSortedSolution.size());
+        if (!nonDominatedSortedSolution.isEmpty()) {
+            log.log(Level.FINE, "First Front Size: " + nonDominatedSortedSolution.getFirst().size());
+        }
         population = Lists.newLinkedList();
 
 

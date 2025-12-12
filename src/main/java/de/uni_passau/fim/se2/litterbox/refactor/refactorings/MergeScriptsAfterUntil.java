@@ -26,50 +26,29 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.OnlyCodeCloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MergeScriptsAfterUntil extends OnlyCodeCloneVisitor implements Refactoring {
+public class MergeScriptsAfterUntil extends AbstractMergeRefactoring {
 
     public static final String NAME = "merge_scripts_after_until";
 
-    private final Script script1;
-    private final Script script2;
     private final UntilStmt untilStmt;
-    private final Script replacementScript;
 
     public MergeScriptsAfterUntil(Script script1, Script script2, UntilStmt untilStmt) {
-        this.script1 = Preconditions.checkNotNull(script1);
-        this.script2 = Preconditions.checkNotNull(script2);
+        super(script1, script2, createReplacementScript(script1, script2));
         Preconditions.checkArgument(script1.getEvent().equals(script2.getEvent()));
         Preconditions.checkArgument(script2.getStmtList().getStatement(0) instanceof WaitUntil);
         this.untilStmt = Preconditions.checkNotNull(untilStmt);
+    }
 
-        List<Stmt> mergedStatements = apply(script1.getStmtList()).getStmts();
-        List<Stmt> script2Statements = apply(script2.getStmtList()).getStmts();
+    private static Script createReplacementScript(Script script1, Script script2) {
+        List<Stmt> mergedStatements = OnlyCodeCloneVisitor.copy(script1.getStmtList()).getStmts();
+        List<Stmt> script2Statements = OnlyCodeCloneVisitor.copy(script2.getStmtList()).getStmts();
         script2Statements.removeFirst();
         mergedStatements.addAll(script2Statements);
 
-        replacementScript = new Script(apply(script1.getEvent()), new StmtList(mergedStatements));
-    }
-
-    @Override
-    public <T extends ASTNode> T apply(T node) {
-        return (T) node.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(ScriptList node) {
-        List<Script> scripts = new ArrayList<>();
-        for (Script currentScript : node.getScriptList()) {
-            if (currentScript == this.script1) {
-                scripts.add(replacementScript);
-            } else if (currentScript != this.script2) {
-                scripts.add(apply(currentScript));
-            }
-        }
-        return new ScriptList(scripts);
+        return new Script(OnlyCodeCloneVisitor.copy(script1.getEvent()), new StmtList(mergedStatements));
     }
 
     @Override

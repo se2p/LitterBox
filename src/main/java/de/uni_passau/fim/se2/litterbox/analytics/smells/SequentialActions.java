@@ -33,12 +33,12 @@ public class SequentialActions extends AbstractIssueFinder {
     public void visit(StmtList statementList) {
         new RepeatedSubsequenceFinder() {
             @Override
-            protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences) {
+            protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex) {
                 IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.getFirst())
                                 .withMetadata(subsequence.getFirst().getMetadata())
                                 .withSeverity(IssueSeverity.LOW)
                                 .withHint(Hint.fromKey(getName()));
-                SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences);
+                SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences, startIndex);
                 ScriptEntity refactoring = sequenceToLoop.apply(getCurrentScriptEntity());
                 addIssue(builder.withRefactoring(refactoring));
             }
