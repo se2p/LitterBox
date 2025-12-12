@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -142,10 +143,23 @@ public class ControlFlowGraph {
     }
 
     public String toDotString() {
+        return toDotString(node -> node.toString());
+    }
+
+    public String toDotString(Function<CFGNode, String> labelProvider) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {");
         builder.append(System.lineSeparator());
+
+        for (CFGNode node : graph.nodes()) {
+            builder.append("  \"");
+            builder.append(node);
+            builder.append("\" [label=\"");
+            builder.append(escapeDotLabel(labelProvider.apply(node)));
+            builder.append("\"];");
+            builder.append(System.lineSeparator());
+        }
 
         for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
@@ -158,6 +172,13 @@ public class ControlFlowGraph {
 
         builder.append('}');
         return builder.toString();
+    }
+
+    private String escapeDotLabel(String label) {
+        if (label == null) {
+            return "";
+        }
+        return label.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     public Set<Definition> getDefinitions() {

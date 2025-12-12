@@ -23,6 +23,8 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 <title>LitterBox Report</title>
 <script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/scratchblocks.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/scratchblocks@latest/build/translations-all.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/1.8.2/viz.js"></script>
+<script src="https://unpkg.com/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 <style>
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f4f4; color: #333; display: flex; height: 100vh; overflow: hidden; }
 
@@ -106,6 +108,23 @@ code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif
 .metric-item:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 .metric-name { font-size: 0.9em; color: #666; margin-bottom: 5px; word-break: break-word; }
 .metric-value { font-size: 1.4em; font-weight: bold; color: #28a745; }
+
+/* Graphs */
+.graphs-container { background: #fff; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid #e9ecef; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.graph-tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 1rem; }
+.graph-tab { padding: 10px 20px; cursor: pointer; border: 1px solid transparent; border-bottom: none; margin-bottom: -1px; border-radius: 4px 4px 0 0; color: #555; background: #f9f9f9; }
+.graph-tab:hover { background: #eee; }
+.graph-tab.active { background: #fff; border-color: #ddd; border-bottom-color: #fff; color: #007bff; font-weight: bold; }
+.graph-view { display: none; height: 600px; border: 1px solid #eee; border-radius: 0 0 4px 4px; overflow: hidden; position: relative; }
+.graph-view.active { display: block; }
+.graphviz-container { width: 100%; height: 100%; }
+
+/* Collapsible Sections */
+.collapsible-header { cursor: pointer; display: flex; align-items: center; user-select: none; transition: background-color 0.2s; }
+.collapsible-header:hover { background-color: #f8f9fa; }
+.toggle-icon { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; color: #777; }
+.issue-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+.issue-section.collapsed .collapsible-content { display: none; }
 </style>
 </head>
 <body class="{{BODY_CLASS}}">
@@ -155,33 +174,29 @@ document.addEventListener('DOMContentLoaded', () => {
     inline: true,
     scale: 0.7,
     languages: ['{{SCRATCH_LANG}}', 'en']
+
   });
-  
-  populateFilters();
 });
 
 // Filtering Logic
-function applyFilters(projectId) {
-  const showBug = document.getElementById('filter-bug-' + projectId).checked;
-  const showSmell = document.getElementById('filter-smell-' + projectId).checked;
-  const showPerfume = document.getElementById('filter-perfume-' + projectId).checked;
-  const selectedFinder = document.getElementById('finder-select-' + projectId).value;
-  const selectedSprite = document.getElementById('sprite-select-' + projectId).value;
+function filterSection(category, projectId) {
+  const sectionId = 'section-' + category + '-' + projectId;
+  const section = document.getElementById(sectionId);
+  if (!section) return;
 
-  const projectContainer = document.getElementById(projectId);
-  const issues = projectContainer.querySelectorAll('.issue');
+  const finderSelect = document.getElementById('finder-select-' + category + '-' + projectId);
+  const spriteSelect = document.getElementById('sprite-select-' + category + '-' + projectId);
+  
+  const selectedFinder = finderSelect ? finderSelect.value : 'all';
+  const selectedSprite = spriteSelect ? spriteSelect.value : 'all';
+
+  const issues = section.querySelectorAll('.issue');
   
   issues.forEach(issue => {
-    const type = issue.getAttribute('data-type');
     const finder = issue.getAttribute('data-finder');
     const sprite = issue.getAttribute('data-sprite');
 
     let visible = true;
-
-    // Type filter
-    if (type === 'bugs' && !showBug) visible = false;
-    if (type === 'smells' && !showSmell) visible = false;
-    if (type === 'perfumes' && !showPerfume) visible = false;
 
     // Finder filter
     if (selectedFinder !== 'all' && finder !== selectedFinder) visible = false;
@@ -189,77 +204,109 @@ function applyFilters(projectId) {
     // Sprite filter
     if (selectedSprite !== 'all' && sprite !== selectedSprite) visible = false;
 
+
     if (visible) {
       issue.classList.remove('hidden');
     } else {
       issue.classList.add('hidden');
     }
   });
-
-  updateSectionVisibility(projectId);
 }
 
-function updateSectionVisibility(projectId) {
-  const projectContainer = document.getElementById(projectId);
-  const sections = projectContainer.querySelectorAll('.issue-section');
-  
-  sections.forEach(section => {
-    const visibleIssues = section.querySelectorAll('.issue:not(.hidden)');
-    const sectionId = section.id.replace('section-', ''); 
-    // This sectionId is "category-projectId" e.g. "bugs-project-1"
-    
-    // The Nav Item ID is "nav-category-projectId" e.g. "nav-bugs-project-1"
-    const navItem = document.getElementById('nav-' + sectionId);
-
-    if (visibleIssues.length > 0) {
-      section.classList.remove('hidden');
-      if (navItem) navItem.classList.remove('hidden');
-    } else {
-      section.classList.add('hidden');
-      if (navItem) navItem.classList.add('hidden');
-    }
-  });
-  
-  // Also hide empty "No issues found" message if there are custom filters?
-  // Current logic doesn't have "No issues found" block that is toggled, it's generated java-side if empty.
+// Collapsible Logic
+function toggleSection(idSuffix) {
+  const section = document.getElementById('section-' + idSuffix);
+  if (section) {
+    section.classList.toggle('collapsed');
+  }
 }
 
-function populateFilters() {
-  const projects = document.querySelectorAll('.project-content');
-  projects.forEach(project => {
-      const projectId = project.id;
-      const issues = project.querySelectorAll('.issue');
-      
-      const finders = new Set();
-      const sprites = new Set();
 
-      issues.forEach(issue => {
-        const finder = issue.getAttribute('data-finder');
-        const sprite = issue.getAttribute('data-sprite');
-        if (finder) finders.add(finder);
-        if (sprite) sprites.add(sprite);
-      });
+// Graph Data Logic
+window.graphData = window.graphData || {};
 
-      const finderSelect = document.getElementById('finder-select-' + projectId);
-      if (finderSelect) {
-          Array.from(finders).sort().forEach(finder => {
-            const option = document.createElement('option');
-            option.value = finder;
-            option.textContent = finder;
-            finderSelect.appendChild(option);
-          });
-      }
+function showGraph(type, projectId) {
+  // Update Tabs
+  var tabs = document.querySelectorAll(`#section-graphs-${projectId} .graph-tab`);
+  tabs.forEach(el => el.classList.remove('active'));
+  var activeTab = document.getElementById(`graph-tab-${type}-${projectId}`);
+  if(activeTab) activeTab.classList.add('active');
+  
+  // Update Views
+  var views = document.querySelectorAll(`#section-graphs-${projectId} .graph-view`);
+  views.forEach(el => el.classList.remove('active'));
+  var activeView = document.getElementById(`graph-view-${type}-${projectId}`);
+  if(activeView) activeView.classList.add('active');
+  
+  // Render Graph
+  renderGraph(type, projectId);
+}
 
-      const spriteSelect = document.getElementById('sprite-select-' + projectId);
-      if (spriteSelect) {
-          Array.from(sprites).sort().forEach(sprite => {
-            const option = document.createElement('option');
-            option.value = sprite;
-            option.textContent = sprite;
-            spriteSelect.appendChild(option);
-          });
-      }
-  });
+function renderGraph(type, projectId) {
+  // Access data safely
+  if (!window.graphData[projectId] || !window.graphData[projectId][type]) return;
+  var data = window.graphData[projectId][type];
+  
+  var containerId = `graphviz-${type}-${projectId}`;
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  
+  try {
+     var svg = Viz(data, 'svg');
+     container.innerHTML = svg;
+     var svgElement = container.getElementsByTagName('svg')[0];
+     
+     // Scratchblocks rendering in graph
+     if (svgElement && typeof scratchblocks !== 'undefined') {
+        var textNodes = svgElement.querySelectorAll('.node text');
+        textNodes.forEach(function(textNode) {
+            var content = textNode.textContent.trim();
+            if (content === 'Entry' || content === 'Exit') return;
+            try {
+                var doc = scratchblocks.parse(content, {
+                    languages: ['{{SCRATCH_LANG}}', 'en']
+                });
+                var view = scratchblocks.newView(doc, {
+                    style: 'scratch3',
+                    scale: 0.6
+                });
+                var renderedBlock = view.render();
+                var x = parseFloat(textNode.getAttribute('x'));
+                var y = parseFloat(textNode.getAttribute('y'));
+                var width = parseFloat(renderedBlock.getAttribute('width'));
+                var height = parseFloat(renderedBlock.getAttribute('height'));
+                if (!isNaN(width) && !isNaN(height)) {
+                    x = x - (width / 2);
+                    y = y - (height / 2);
+                }
+                renderedBlock.setAttribute('x', x);
+                renderedBlock.setAttribute('y', y);
+                textNode.parentNode.appendChild(renderedBlock);
+                textNode.style.display = 'none';
+            } catch (err) {
+                console.warn('Scratchblocks parsing failed', err);
+            }
+        });
+     }
+     
+     if (svgElement && typeof svgPanZoom !== 'undefined') {
+       svgElement.style.width = '100%';
+       svgElement.style.height = '100%';
+       svgPanZoom(svgElement, {
+         zoomEnabled: true,
+         controlIconsEnabled: true,
+         fit: true,
+         center: true
+       });
+     } else if (svgElement) {
+         // Fallback if svgPanZoom not loaded
+         svgElement.style.width = '100%';
+         svgElement.style.height = 'auto';
+     }
+  } catch (e) {
+     console.error(e);
+     container.innerHTML = '<div style="color:red; padding:20px;">Error rendering graph: ' + e + '</div>';
+  }
 }
 
 </script>

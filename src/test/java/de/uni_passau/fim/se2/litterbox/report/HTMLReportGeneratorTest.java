@@ -53,30 +53,30 @@ public class HTMLReportGeneratorTest implements JsonTest {
         os.close();
 
         String html = os.toString();
-        
+
         assertThat(html).contains("<!DOCTYPE html>");
         assertThat(html).contains("<title>LitterBox Report</title>");
         assertThat(html).contains("scratchblocks.min.js");
         assertThat(html).contains("Floating Point Comparison"); // Finder name
         assertThat(html).contains("<span class=\"stat-label\">Sprites</span>"); // Check stat label
         assertThat(html).contains("<pre class=\"blocks\">");
-        
+
         // Multi-project structure checks
         // For single project, we expect "single-project" class and NO nav items
         assertThat(html).contains("class=\"single-project\"");
         assertThat(html).doesNotContain("class=\"project-nav-item\"");
-        
+
         // Should contain the new header
         assertThat(html).contains("Code Report for Project");
         assertThat(html).contains("class=\"report-header\"");
-        
+
         // Logo check
         assertThat(html).doesNotContain("{{LOGO}}");
         if (!html.contains("data:image/png;base64")) {
-           assertThat(html).contains("<img src=\"\" class=\"header-logo\">"); // src might be empty in test if resource missing
+            assertThat(html).contains("<img src=\"\" class=\"header-logo\">"); // src might be empty in test if resource missing
         } else {
-           assertThat(html).contains("data:image/png;base64");
-           assertThat(html).contains("class=\"header-logo\"");
+            assertThat(html).contains("data:image/png;base64");
+            assertThat(html).contains("class=\"header-logo\"");
         }
     }
 
@@ -85,14 +85,14 @@ public class HTMLReportGeneratorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
 
         String html = os.toString();
-        
+
         assertThat(html).contains("Suggestion for code improvement");
         assertThat(html).contains("<code>&lt;</code>");
     }
@@ -101,22 +101,22 @@ public class HTMLReportGeneratorTest implements JsonTest {
     public void testTokenReplacementCrash() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().stream().findFirst().orElseThrow();
-        
+
         FloatingPointComparison finder = new FloatingPointComparison();
 
         Issue issue = new IssueBuilder()
-            .withFinder(finder)
-            .withSeverity(IssueSeverity.MEDIUM)
-            .withProgram(program)
-            .withActor(actor)
-            .withHint(Hint.fromText("Check the [IF] condition and [TRUE] value.")) 
-            .build();
-            
+                .withFinder(finder)
+                .withSeverity(IssueSeverity.MEDIUM)
+                .withProgram(program)
+                .withActor(actor)
+                .withHint(Hint.fromText("Check the [IF] condition and [TRUE] value."))
+                .build();
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
-        
+
         generator.generateReport(program, Collections.singleton(issue));
-        
+
         String html = os.toString();
         assertThat(html).contains("<code>if</code>");
         assertThat(html).contains("<code>TRUE</code>");
@@ -128,86 +128,94 @@ public class HTMLReportGeneratorTest implements JsonTest {
         FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
 
         String html = os.toString();
-        
+
         // Verify Filter UI Container with ID suffix
         // Default project name "Project" -> ID "project-Project"
-        assertThat(html).contains("id=\"filter-ui-project-Project\"");
-        
+        // We now have filters per section, e.g. bugs
+        assertThat(html).contains("id=\"filter-ui-bugs-project-Project\"");
+
         // Verify Inputs with ID suffix
-        assertThat(html).contains("id=\"filter-bug-project-Project\"");
-        assertThat(html).contains("id=\"filter-smell-project-Project\"");
-        assertThat(html).contains("id=\"finder-select-project-Project\"");
-        
+        assertThat(html).contains("id=\"finder-select-bugs-project-Project\"");
+        assertThat(html).contains("id=\"sprite-select-bugs-project-Project\"");
+
         // Verify JS calls
-        assertThat(html).contains("applyFilters('project-Project')");
+        assertThat(html).contains("filterSection('bugs', 'project-Project')");
     }
-    
+
     @Test
     public void testMultiProjectReport() throws IOException, ParsingException {
         Program program1 = getAST("src/test/fixtures/bugs/xPosEqual.json");
         FloatingPointComparison finder = new FloatingPointComparison();
         Set<Issue> issues1 = finder.check(program1);
-        
+
         Program program2 = getAST("src/test/fixtures/bugs/xPosEqual.json"); // Reusing same fixture for simplicity
         Set<Issue> issues2 = Collections.emptySet(); // Empty issues for second project
-        
+
         List<ProjectAnalysisResult> projects = new ArrayList<>();
         projects.add(new ProjectAnalysisResult("ProjectA", program1, issues1));
         projects.add(new ProjectAnalysisResult("ProjectB", program2, issues2));
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
         generator.generateReport(projects);
         os.close();
-        
+
         String html = os.toString();
-        
+
         // For multi project, we DO expect sidebar
         assertThat(html).doesNotContain("class=\"single-project\"");
         assertThat(html).contains("class=\"sidebar\"");
-        
+
         // Check sidebar contains both projects
         assertThat(html).contains("ProjectA");
         assertThat(html).contains("ProjectB");
         assertThat(html).contains("onclick=\"showProject('project-ProjectA')\"");
         assertThat(html).contains("onclick=\"showProject('project-ProjectB')\"");
-        
+
         // Check content sections exist
         assertThat(html).contains("id=\"project-ProjectA\"");
         assertThat(html).contains("id=\"project-ProjectB\"");
-        
+
         // Check Header NOT present
         assertThat(html).doesNotContain("class=\"report-header\"");
         assertThat(html).doesNotContain("Code Report for");
-        
+
         // Check Project Titles ARE present (h2)
         assertThat(html).contains("<h2 class=\"project-title\">ProjectA</h2>");
-        
+
         // Check issues for ProjectA are present
-        assertThat(html).contains("data-finder=\"Floating Point Comparison\"");
-        
+        // We now use internal name for data-finder, e.g. "FloatingPointComparison" (class simple name or name field)
+
+        // Check finding name for FloatingPointComparison
+        assertThat(html).contains("data-finder=\"floating_point_comparison\"");
+
+        // Check that the dropdown option has internal name as value and translated name as text
+        // "Floating Point Comparison" is the translated name for English
+        assertThat(html).contains("<option value=\"floating_point_comparison\">Floating Point Comparison</option>");
+
         // Check empty message for ProjectB
         assertThat(html).contains("No issues found!");
     }
+
     @Test
     public void testMetricsSectionPresent() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
         Set<Issue> issues = Collections.emptySet();
-        
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
         generator.generateReport(program, issues);
         os.close();
 
         String html = os.toString();
-        
+
         assertThat(html).contains("id=\"section-metrics-project-Project\"");
         assertThat(html).contains("class=\"metrics-container\"");
         assertThat(html).contains("class=\"metric-item\"");
@@ -216,5 +224,36 @@ public class HTMLReportGeneratorTest implements JsonTest {
         // Check for a specific metric likely to be present
         // We only check for the container as metrics might be empty in test environment depending on configuration
         assertThat(html).contains("class=\"metrics-container\"");
+    }
+
+    @Test
+    public void testGraphsSectionPresent() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
+        Set<Issue> issues = Collections.emptySet();
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        HTMLReportGenerator generator = new HTMLReportGenerator(translator, os);
+        generator.generateReport(program, issues);
+        os.close();
+
+        String html = os.toString();
+
+        assertThat(html).contains("id=\"section-graphs-project-Project\"");
+        assertThat(html).contains("class=\"graphs-container\"");
+        // Check for scripts being included
+        assertThat(html).contains("viz.js");
+        assertThat(html).contains("svg-pan-zoom.min.js");
+
+        // Check for tabs
+        assertThat(html).contains("class=\"graph-tab\"");
+        assertThat(html).contains("onclick=\"showGraph('CFG', 'project-Project')\"");
+        // Check for graphviz container
+        assertThat(html).contains("id=\"graphviz-CFG-project-Project\"");
+        // Check for JS data injection
+        assertThat(html).contains("window.graphData['project-Project'] = {};");
+        assertThat(html).contains("window.graphData['project-Project']['CFG'] = \"");
+        // Check for render call
+        assertThat(html).contains("Viz(data, 'svg')");
+        assertThat(html).contains("typeof svgPanZoom !== 'undefined'");
     }
 }
