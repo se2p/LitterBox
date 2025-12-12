@@ -48,12 +48,16 @@ public class RefactoringPostProcessor {
         this.pipeline.add(new WriteResultStep());
     }
 
-    public RefactoringPostProcessor(List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<PostProcessorStep> pipeline) {
+    public RefactoringPostProcessor(
+            List<FitnessFunction<RefactorSequence>> fitnessFunctions, List<PostProcessorStep> pipeline
+    ) {
         this.fitnessFunctions = fitnessFunctions;
         this.pipeline = pipeline;
     }
 
-    public void process(List<RefactorSequence> solutions, Program originalProgram, Path outputDir, Path originalFile) throws IOException {
+    public void process(
+            List<RefactorSequence> solutions, Program originalProgram, Path outputDir, Path originalFile
+    ) throws IOException {
         if (solutions.isEmpty()) {
             log.info("No solutions found");
             return;
@@ -61,7 +65,9 @@ public class RefactoringPostProcessor {
 
         log.info("Found " + solutions.size() + " solutions");
 
-        PostProcessorContext context = new PostProcessorContext(originalProgram, outputDir, originalFile, fitnessFunctions);
+        PostProcessorContext context = new PostProcessorContext(
+                originalProgram, outputDir, originalFile, fitnessFunctions
+        );
         for (PostProcessorStep step : pipeline) {
             solutions = step.apply(solutions, context);
         }

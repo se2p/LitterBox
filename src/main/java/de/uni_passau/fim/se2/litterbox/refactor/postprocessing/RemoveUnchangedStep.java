@@ -30,7 +30,9 @@ public class RemoveUnchangedStep implements PostProcessorStep {
     @Override
     public List<RefactorSequence> apply(List<RefactorSequence> solutions, PostProcessorContext context) {
         List<RefactorSequence> uniqueSolutions = solutions.stream()
-                .filter(s -> !StructuralEquality.areStructurallyEqual(s.getRefactoredProgram(), context.getOriginalProgram()))
+                .filter(s -> !StructuralEquality.areStructurallyEqual(
+                        s.getRefactoredProgram(), context.getOriginalProgram()
+                ))
                 .toList();
         log.info("After filtering unchanged programs: " + uniqueSolutions.size());
         return uniqueSolutions;

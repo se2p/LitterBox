@@ -82,7 +82,10 @@ public class CleanProgramStep implements PostProcessorStep {
         }
 
         if (!scriptsToRemove.isEmpty()) {
-            log.info("Removed " + removedDeadScripts + " dead scripts, Removed " + removedControlOnlyScripts + " control-only scripts");
+            log.info(
+                    "Removed " + removedDeadScripts + " dead scripts, Removed "
+                    + removedControlOnlyScripts + " control-only scripts"
+            );
             ScriptDeletionVisitor visitor = new ScriptDeletionVisitor(scriptsToRemove);
             return (Program) program.accept(visitor);
         }
