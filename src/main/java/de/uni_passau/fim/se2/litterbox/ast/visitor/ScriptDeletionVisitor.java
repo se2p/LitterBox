@@ -35,7 +35,9 @@ public class ScriptDeletionVisitor extends CloneVisitor {
     @Override
     public ASTNode visit(Program node) {
         ActorDefinitionList newActors = (ActorDefinitionList) node.getActorDefinitionList().accept(this);
-        return new Program(node.getIdent(), newActors, node.getSymbolTable(), node.getProcedureMapping(), node.getProgramMetadata());
+        return new Program(
+                node.getIdent(), newActors, node.getSymbolTable(), node.getProcedureMapping(), node.getProgramMetadata()
+        );
     }
 
     @Override

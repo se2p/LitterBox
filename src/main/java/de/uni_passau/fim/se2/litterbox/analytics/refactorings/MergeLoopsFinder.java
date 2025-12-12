@@ -85,8 +85,15 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
 
-        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(loop1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
+        List<Stmt> stmtScript1 = new ArrayList<>(
+                mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements())
+        );
+        List<Stmt> stmtScript2 = new ArrayList<>(
+                mergedStatements.getStmts().subList(
+                        loop1.getStmtList().getNumberOfStatements(),
+                        mergedStatements.getNumberOfStatements()
+                )
+        );
 
         if (hasControlDependency(cfg, stmtScript1, stmtScript2)
                 || hasDataDependency(cfg, stmtScript1, stmtScript2)

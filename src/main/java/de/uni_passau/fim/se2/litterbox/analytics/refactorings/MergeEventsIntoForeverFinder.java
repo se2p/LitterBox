@@ -39,7 +39,7 @@ public class MergeEventsIntoForeverFinder extends AbstractRefactoringFinder {
             }
         }
 
-        if(!eventList.isEmpty()) {
+        if (!eventList.isEmpty()) {
             refactorings.add(new MergeEventsIntoForever(eventList));
         }
     }
