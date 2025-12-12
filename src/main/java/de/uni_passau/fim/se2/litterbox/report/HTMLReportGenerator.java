@@ -455,7 +455,7 @@ public class HTMLReportGenerator implements ReportGenerator {
         }
 
         // Initial render trigger
-        jsData.append("document.addEventListener('DOMContentLoaded', function() {\n");
+        jsData.append("window.addEventListener('load', function() {\n");
         jsData.append("   showGraph('CFG', '").append(projectId).append("');\n");
         jsData.append("});\n");
 
