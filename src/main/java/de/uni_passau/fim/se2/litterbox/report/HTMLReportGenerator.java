@@ -67,6 +67,15 @@ public class HTMLReportGenerator implements ReportGenerator {
     private static final String PLACEHOLDER_NAV = "{{PROJECTS_NAV}}";
     private static final String PLACEHOLDER_CONTENT = "{{PROJECTS_CONTENT}}";
     private static final String PLACEHOLDER_SCRATCH_LANG = "{{SCRATCH_LANG}}";
+    private static final String PLACEHOLDER_SCRATCHBLOCKS_JS = "{{SCRATCHBLOCKS_JS}}";
+    private static final String PLACEHOLDER_TRANSLATIONS_JS = "{{TRANSLATIONS_JS}}";
+    private static final String PLACEHOLDER_VIZ_JS = "{{VIZ_JS}}";
+    private static final String PLACEHOLDER_SVG_PAN_ZOOM_JS = "{{SVG_PAN_ZOOM_JS}}";
+
+    private static final String PATH_SCRATCHBLOCKS_JS = "/js/scratchblocks.min.js";
+    private static final String PATH_TRANSLATIONS_JS = "/js/translations-all.js";
+    private static final String PATH_VIZ_JS = "/js/viz.js";
+    private static final String PATH_SVG_PAN_ZOOM_JS = "/js/svg-pan-zoom.min.js";
 
     public HTMLReportGenerator(IssueTranslator translator, Path reportFile) throws IOException {
         this(translator, Files.newOutputStream(reportFile));
@@ -83,8 +92,12 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     public void generateReport(Collection<ProjectAnalysisResult> projects) throws IOException {
-        String template = loadTemplate();
+        String template = loadResource(TEMPLATE_PATH);
         String logoBase64 = loadLogoBase64();
+        String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
+        String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
+        String vizJs = loadResource(PATH_VIZ_JS);
+        String svgPanZoomJs = loadResource(PATH_SVG_PAN_ZOOM_JS);
         String lang = translator.getLocale().getLanguage();
         boolean singleProject = projects.size() == 1;
         List<ProjectAnalysisResult> sortedProjects = sortProjects(projects);
@@ -115,7 +128,11 @@ public class HTMLReportGenerator implements ReportGenerator {
                 .replace(PLACEHOLDER_LOGO, logoBase64)
                 .replace(PLACEHOLDER_NAV, projectsNav.toString())
                 .replace(PLACEHOLDER_CONTENT, projectsContent.toString())
-                .replace(PLACEHOLDER_SCRATCH_LANG, lang);
+                .replace(PLACEHOLDER_SCRATCH_LANG, lang)
+                .replace(PLACEHOLDER_SCRATCHBLOCKS_JS, scratchblocksJs)
+                .replace(PLACEHOLDER_TRANSLATIONS_JS, translationsJs)
+                .replace(PLACEHOLDER_VIZ_JS, vizJs)
+                .replace(PLACEHOLDER_SVG_PAN_ZOOM_JS, svgPanZoomJs);
 
         outputStream.write(report.getBytes(StandardCharsets.UTF_8));
         outputStream.close();
@@ -498,10 +515,12 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     // Helpers
-    private String loadTemplate() throws IOException {
-        try (var is = getClass().getResourceAsStream(TEMPLATE_PATH)) {
+    private String loadResource(String path) throws IOException {
+        try (var is = getClass().getResourceAsStream(path)) {
             if (is == null) {
-                throw new IOException("Template file not found: " + TEMPLATE_PATH);
+                // For optional resources like logo, we handled them differently but for critical JS/Template this is fatal for now
+                if (path.equals(LOGO_PATH)) return ""; 
+                throw new IOException("Resource not found: " + path);
             }
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }

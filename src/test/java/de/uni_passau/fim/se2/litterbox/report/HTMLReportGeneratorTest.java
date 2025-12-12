@@ -56,7 +56,8 @@ public class HTMLReportGeneratorTest implements JsonTest {
 
         assertThat(html).contains("<!DOCTYPE html>");
         assertThat(html).contains("<title>LitterBox Report</title>");
-        assertThat(html).contains("scratchblocks.min.js");
+        assertThat(html).contains("scratchblocks"); // Library name
+        assertThat(html).contains("scratchblocks v"); // Version header in embedded file
         assertThat(html).contains("Floating Point Comparison"); // Finder name
         assertThat(html).contains("<span class=\"stat-label\">Sprites</span>"); // Check stat label
         assertThat(html).contains("<pre class=\"blocks\">");
@@ -240,9 +241,9 @@ public class HTMLReportGeneratorTest implements JsonTest {
 
         assertThat(html).contains("id=\"section-graphs-project-Project\"");
         assertThat(html).contains("class=\"graphs-container\"");
-        // Check for scripts being included
-        assertThat(html).contains("viz.js");
-        assertThat(html).contains("svg-pan-zoom.min.js");
+        // Check for scripts being included (embedded)
+        assertThat(html).contains("Viz.js");
+        assertThat(html).contains("svg-pan-zoom");
 
         // Check for tabs
         assertThat(html).contains("class=\"graph-tab\"");
