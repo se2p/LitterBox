@@ -31,7 +31,12 @@ public class PostProcessorContext {
     private final Path originalFile;
     private final List<FitnessFunction<RefactorSequence>> fitnessFunctions;
 
-    public PostProcessorContext(Program originalProgram, Path outputDir, Path originalFile, List<FitnessFunction<RefactorSequence>> fitnessFunctions) {
+    public PostProcessorContext(
+            Program originalProgram,
+            Path outputDir,
+            Path originalFile,
+            List<FitnessFunction<RefactorSequence>> fitnessFunctions
+    ) {
         this.originalProgram = originalProgram;
         this.outputDir = outputDir;
         this.originalFile = originalFile;

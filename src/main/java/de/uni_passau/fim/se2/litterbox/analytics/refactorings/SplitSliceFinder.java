@@ -23,11 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitSlice;
@@ -120,11 +118,15 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
                     StmtList elseBody = new StmtList(reconstruct(ifElseStmt.getElseStmts().getStmts(), slice));
 
                     if (!thenBody.getStmts().isEmpty() && !elseBody.getStmts().isEmpty()) {
-                        result.add(new IfElseStmt(ifElseStmt.getBoolExpr(), thenBody, elseBody, ifElseStmt.getMetadata()));
+                        result.add(
+                                new IfElseStmt(ifElseStmt.getBoolExpr(), thenBody, elseBody, ifElseStmt.getMetadata())
+                        );
                     } else if (!thenBody.getStmts().isEmpty()) {
                         result.add(new IfThenStmt(ifElseStmt.getBoolExpr(), thenBody, ifElseStmt.getMetadata()));
                     } else if (!elseBody.getStmts().isEmpty()) {
-                        BoolExpr negated = new Not(ifElseStmt.getBoolExpr(), NonDataBlockMetadata.emptyNonBlockMetadata());
+                        BoolExpr negated = new Not(
+                                ifElseStmt.getBoolExpr(), NonDataBlockMetadata.emptyNonBlockMetadata()
+                        );
                         result.add(new IfThenStmt(negated, elseBody, ifElseStmt.getMetadata()));
                     }
                 } else {
@@ -137,7 +139,10 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
 
     private boolean overlaps(Set<Stmt> slice1, Set<Stmt> slice2) {
         for (Stmt s : slice1) {
-            if (slice2.contains(s) && !(s instanceof ControlStmt) && !(s instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt)) {
+            if (slice2.contains(s)
+                    && !(s instanceof ControlStmt)
+                    && !(s instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt)
+            ) {
                 return true;
             }
         }

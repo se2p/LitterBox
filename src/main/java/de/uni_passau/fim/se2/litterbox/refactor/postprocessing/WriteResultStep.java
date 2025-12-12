@@ -47,7 +47,9 @@ public class WriteResultStep implements PostProcessorStep {
         return solutions;
     }
 
-    private void writeRefactoredPrograms(List<RefactorSequence> solutions, PostProcessorContext context) throws IOException {
+    private void writeRefactoredPrograms(
+            List<RefactorSequence> solutions, PostProcessorContext context
+    ) throws IOException {
         String originalFilePath = context.getOriginalFile().toString();
         for (int i = 0; i < solutions.size(); i++) {
             RefactorSequence solution = solutions.get(i);
@@ -56,9 +58,15 @@ public class WriteResultStep implements PostProcessorStep {
             if (FilenameUtils.getExtension(originalFilePath).equalsIgnoreCase("json")) {
                 JSONFileCreator.writeJsonFromProgram(program, context.getOutputDir(), suffix);
             } else {
-                JSONFileCreator.writeSb3FromProgram(program, context.getOutputDir(), context.getOriginalFile().toFile(), suffix);
+                JSONFileCreator.writeSb3FromProgram(
+                        program, context.getOutputDir(), context.getOriginalFile().toFile(), suffix
+                );
             }
-            log.info("Written solution to " + context.getOutputDir().resolve(FilenameUtils.getBaseName(originalFilePath) + suffix + "." + FilenameUtils.getExtension(originalFilePath)));
+            log.info(
+                    "Written solution to "
+                    + context.getOutputDir().resolve(FilenameUtils.getBaseName(originalFilePath)
+                    + suffix + "." + FilenameUtils.getExtension(originalFilePath))
+            );
 
             printRefactoringLog(solution);
             printFitnessLog(solution, context);
@@ -67,7 +75,9 @@ public class WriteResultStep implements PostProcessorStep {
 
     private void printRefactoringLog(RefactorSequence solution) {
         StringBuilder refactoringLog = new StringBuilder("Applied refactorings: ");
-        solution.getExecutedRefactorings().forEach(r -> refactoringLog.append(r.getName()).append(": ").append(r.getDescription()).append(", "));
+        solution.getExecutedRefactorings().forEach(
+                r -> refactoringLog.append(r.getName()).append(": ").append(r.getDescription()).append(", ")
+        );
         if (!solution.getExecutedRefactorings().isEmpty()) {
             refactoringLog.setLength(refactoringLog.length() - 2); // Remove trailing comma and space
         }

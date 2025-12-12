@@ -84,8 +84,10 @@ public class SplitLoopingScriptFinder extends AbstractDependencyRefactoringFinde
 
         for (int i = 0; i < bodyStmts.size(); i++) {
             for (int j = 0; j < bodyStmts.size(); j++) {
-                if (i == j) continue;
-                
+                if (i == j) {
+                    continue;
+                }
+
                 List<Stmt> stmt1 = Collections.singletonList(bodyStmts.get(i));
                 List<Stmt> stmt2 = Collections.singletonList(bodyStmts.get(j));
 
@@ -96,7 +98,7 @@ public class SplitLoopingScriptFinder extends AbstractDependencyRefactoringFinde
                 }
             }
         }
-        
+
         refactorings.add(new SplitLoopingScript(script));
     }
 

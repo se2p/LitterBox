@@ -22,26 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeInitializationScript;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MergeInitializationScriptFinder extends AbstractDependencyRefactoringFinder {
 

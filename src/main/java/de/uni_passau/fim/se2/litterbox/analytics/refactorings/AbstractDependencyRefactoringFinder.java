@@ -157,8 +157,15 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
 
-        List<Stmt> stmtScript1 = new ArrayList<>(mergedScript.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(mergedScript.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), mergedScript.getStmtList().getNumberOfStatements()));
+        List<Stmt> stmtScript1 = new ArrayList<>(
+                mergedScript.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements())
+        );
+        List<Stmt> stmtScript2 = new ArrayList<>(
+                mergedScript.getStmtList().getStmts().subList(
+                        script1.getStmtList().getNumberOfStatements(),
+                        mergedScript.getStmtList().getNumberOfStatements()
+                )
+        );
 
         if (hasControlDependency(cfg, stmtScript1, stmtScript2)
                 || hasDataDependency(cfg, stmtScript1, stmtScript2)
