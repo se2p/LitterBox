@@ -60,8 +60,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -406,6 +409,32 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(GlideSecsTo node) {
+        checkType(node.getPosition(), Type.POSITION);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(GlideSecsToXY node) {
+        checkType(node.getX(), Type.NUMBER);
+        checkType(node.getY(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(GoToPos node) {
+        checkType(node.getPosition(), Type.POSITION);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(GoToPosXY node) {
+        checkType(node.getX(), Type.NUMBER);
+        checkType(node.getY(), Type.NUMBER);
+        visitChildren(node);
+    }
+   
+    @Override
     public void visit(MoveSteps node) {
         checkType(node.getSteps(), Type.NUMBER);
         visitChildren(node);
@@ -430,6 +459,12 @@ public class TypeError extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(PointTowards node) {
+        checkType(node.getPosition(), Type.POSITION);
+        visitChildren(node);
+    }
+
+    @Override
     public void visit(SetSizeTo node) {
         checkType(node.getPercent(), Type.NUMBER);
         visitChildren(node);
@@ -437,6 +472,12 @@ public class TypeError extends AbstractIssueFinder {
 
     @Override
     public void visit(ChangeSizeBy node) {
+        checkType(node.getNum(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ChangeLayerBy node) {
         checkType(node.getNum(), Type.NUMBER);
         visitChildren(node);
     }
@@ -519,6 +560,20 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(AsNumber node) {
         checkType(node.getOperand1(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SayForSecs node) {
+        // Don't need to check "thought" as anything can be interpreted as text
+        checkType(node.getSecs(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ThinkForSecs node) {
+        // Don't need to check "thought" as anything can be interpreted as text
+        checkType(node.getSecs(), Type.NUMBER);
         visitChildren(node);
     }
 
@@ -683,4 +738,12 @@ public class TypeError extends AbstractIssueFinder {
             default -> Type.ANY; // Implicit cast or unknown
         };
     }
+
+    /*
+     * Blocks not handled yet because they might require further types
+     * - GoToLayer
+     * - SwitchCostumeTo
+     * - SwitchBackdrop
+     * - SwitchBackdropAndWait
+     */
 }
