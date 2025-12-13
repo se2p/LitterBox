@@ -30,6 +30,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -2014,5 +2017,14 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
         String result = visitor.getScratchBlocks();
         Assertions.assertEquals("set [abc:\\:de v] to (abc:\\:de)", result.trim());
+    }
+
+    @Test
+    void testSpriteClickedEvent() {
+        StageClicked stageClicked = new StageClicked(new NoBlockMetadata());
+        Script script = new Script(stageClicked, new StmtList());
+        String result = ScratchBlocksVisitor.of(script);
+
+        assertEquals("when stage clicked", result.trim());
     }
 }
