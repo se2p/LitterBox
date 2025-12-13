@@ -172,7 +172,7 @@ public class ControlFlowGraph {
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
             builder.append(edge.nodeV());
-            builder.append("\";");
+            builder.append("\" [penwidth=2];");
             builder.append(System.lineSeparator());
         }
 

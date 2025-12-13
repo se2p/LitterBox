@@ -51,6 +51,10 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
                 emitNoSpace("if ");
                 ifElseStmt.getBoolExpr().accept(this);
                 emitNoSpace(" then");
+                newLine();
+                emitNoSpace("else");
+                newLine();
+                emitNoSpace("end");
             }
 
             @Override

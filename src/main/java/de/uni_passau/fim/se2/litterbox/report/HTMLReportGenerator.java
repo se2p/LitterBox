@@ -60,7 +60,9 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     private static final String TEMPLATE_PATH = "/report_template.html";
     private static final String LOGO_PATH = "/litterbox.png";
+    private static final String FAVICON_PATH = "/favicon.ico";
     private static final String PLACEHOLDER_LANG = "{{LANG}}";
+    private static final String PLACEHOLDER_FAVICON = "{{FAVICON}}";
     private static final String PLACEHOLDER_LOGO = "{{LOGO}}";
     private static final String PLACEHOLDER_BODY_CLASS = "{{BODY_CLASS}}";
     private static final String PLACEHOLDER_HEADER = "{{HEADER_CONTENT}}";
@@ -94,6 +96,7 @@ public class HTMLReportGenerator implements ReportGenerator {
     public void generateReport(Collection<ProjectAnalysisResult> projects) throws IOException {
         String template = loadResource(TEMPLATE_PATH);
         String logoBase64 = loadLogoBase64();
+        String faviconBase64 = loadFaviconBase64();
         String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
         String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
         String vizJs = loadResource(PATH_VIZ_JS);
@@ -126,6 +129,7 @@ public class HTMLReportGenerator implements ReportGenerator {
                 .replace(PLACEHOLDER_BODY_CLASS, bodyClass)
                 .replace(PLACEHOLDER_HEADER, headerContent)
                 .replace(PLACEHOLDER_LOGO, logoBase64)
+                .replace(PLACEHOLDER_FAVICON, faviconBase64)
                 .replace(PLACEHOLDER_NAV, projectsNav.toString())
                 .replace(PLACEHOLDER_CONTENT, projectsContent.toString())
                 .replace(PLACEHOLDER_SCRATCH_LANG, lang)
@@ -322,12 +326,14 @@ public class HTMLReportGenerator implements ReportGenerator {
         // Header
         sb.append("<div class=\"issue-header\">\n");
         String title = StringEscapeUtils.escapeHtml4(issue.getTranslatedFinderName(translator));
-        if (issue.getActorName() != null && !issue.getActorName().isEmpty()) {
-            title += " in " + translator.getInfo("sprite") + " " + spriteName;
+        String severityClass = "severity-" + issue.getSeverity().name();
+        if (issue.getIssueType() == IssueType.PERFUME) {
+            severityClass = "severity-perfume-" + issue.getSeverity().name();
         }
+
         sb.append("<span class=\"issue-title\">").append(title).append("</span>");
-        sb.append("<span class=\"severity severity-").append(issue.getSeverity().name()).append("\">")
-                .append(issue.getSeverity().name()).append("</span> ");
+        sb.append("<span class=\"severity ").append(severityClass).append("\">")
+                .append("<span class=\"severity-icon\">").append(getSeverityIcon(issue)).append("</span> ").append(translator.getInfo("severity_" + issue.getSeverity().name())).append("</span> ");
         sb.append("</div>\n");
 
         // Hint
@@ -343,6 +349,22 @@ public class HTMLReportGenerator implements ReportGenerator {
                     .append(StringEscapeUtils.escapeHtml4(scratchCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim()))
                     .append("</pre>\n");
         }
+
+        // Refactoring
+        if (issue.getRefactoredScriptOrProcedureDefinition() != null) {
+            String refactoringCode = getScratchBlocksCode(issue, issue.getRefactoredScriptOrProcedureDefinition());
+            if (refactoringCode != null && !refactoringCode.isEmpty()) {
+                String refId = "refactoring-" + issue.getId();
+                sb.append("<button class=\"refactoring-toggle\" onclick=\"toggleRefactoring('").append(issue.getId()).append("')\">")
+                        .append(translator.getInfo("show_fix")).append("</button>\n");
+                sb.append("<div id=\"").append(refId).append("\" class=\"refactoring-content\">\n");
+                sb.append("<pre class=\"blocks\">")
+                        .append(StringEscapeUtils.escapeHtml4(refactoringCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim()))
+                        .append("</pre>\n");
+                sb.append("</div>\n");
+            }
+        }
+
         sb.append("</div>\n");
     }
 
@@ -535,6 +557,15 @@ public class HTMLReportGenerator implements ReportGenerator {
         return "";
     }
 
+    private String loadFaviconBase64() {
+        try (var is = getClass().getResourceAsStream(FAVICON_PATH)) {
+            if (is != null) {
+                return "data:image/x-icon;base64," + Base64.getEncoder().encodeToString(is.readAllBytes());
+            }
+        } catch (IOException e) { /* ignore */ }
+        return "";
+    }
+
     private String getTranslatedLabel(String key, String fallback) {
         String val = translator.getInfo(key);
         return (val != null && !val.startsWith("Missing key")) ? val : fallback;
@@ -543,5 +574,20 @@ public class HTMLReportGenerator implements ReportGenerator {
     private String getTranslatedInfo(String key) {
         String val = translator.getInfo(key);
         return (val != null && !val.startsWith("Missing key")) ? val : null;
+    }
+
+    private String getSeverityIcon(Issue issue) {
+        if (issue.getIssueType() == IssueType.PERFUME) {
+             return switch (issue.getSeverity()) {
+                case HIGH -> "&#127942;"; // Trophy
+                case MEDIUM -> "&#11088;"; // Star
+                case LOW -> "&#10024;"; // Sparkles
+            };
+        }
+        return switch (issue.getSeverity()) {
+            case HIGH -> "&#128308;"; // Red Circle
+            case MEDIUM -> "&#9888;"; // Warning Sign
+            case LOW -> "&#8505;"; // Information Source
+        };
     }
 }

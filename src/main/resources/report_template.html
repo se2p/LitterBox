@@ -20,6 +20,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 <html lang="{{LANG}}">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="{{FAVICON}}">
 <title>LitterBox Report</title>
 <script>
 {{SCRATCHBLOCKS_JS}}
@@ -69,10 +70,14 @@ h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-
 .hint { background: #f1f3f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border-left: 4px solid #17a2b8; }
 pre.blocks { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 4px; overflow-x: auto; margin: 0; }
 code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; padding: 2px 4px; border-radius: 4px; }
-.severity { font-size: 0.75em; padding: 3px 8px; border-radius: 12px; color: #fff; font-weight: bold; text-transform: uppercase; }
-.severity-ERROR { background-color: #dc3545; }
-.severity-WARNING { background-color: #ffc107; color: #000; }
-.severity-INFO { background-color: #17a2b8; }
+.severity { font-size: 0.65em; padding: 2px 6px; border-radius: 12px; color: #fff; font-weight: bold; text-transform: uppercase; }
+.severity-HIGH { background-color: #dc3545; }
+.severity-MEDIUM { background-color: #ffc107; color: #000; }
+.severity-LOW { background-color: #17a2b8; }
+.severity-perfume-HIGH { background-color: #198754; }
+.severity-perfume-MEDIUM { background-color: #28a745; }
+.severity-perfume-LOW { background-color: #A3CFBB; color: #000; }
+.severity-icon { font-size: 0.5em; vertical-align: middle; }
 
 .stats-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 2rem; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.08); }
 .stat-box { text-align: center; min-width: 80px; }
@@ -133,6 +138,31 @@ code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif
 .toggle-icon { margin-right: 10px; transition: transform 0.3s ease; font-size: 0.8em; color: #777; }
 .issue-section.collapsed .toggle-icon { transform: rotate(-90deg); }
 .issue-section.collapsed .collapsible-content { display: none; }
+
+.refactoring-toggle {
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #495057;
+    cursor: pointer;
+    font-size: 0.85em;
+    text-decoration: none;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: background-color 0.2s;
+}
+.refactoring-toggle:hover {
+    background-color: #dee2e6;
+}
+.refactoring-content {
+    display: none;
+    margin-top: 10px;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 4px solid #28a745;
+}
 </style>
 </head>
 <body class="{{BODY_CLASS}}">
@@ -177,6 +207,21 @@ function showProject(projectId) {
   const navItem = document.getElementById('nav-item-' + projectId);
   if (navItem) {
     navItem.classList.add('active');
+  }
+
+  // Ensure the graph for the active tab is rendered
+  const graphsSection = document.getElementById('section-graphs-' + projectId);
+  if (graphsSection) {
+      const activeTab = graphsSection.querySelector('.graph-tab.active');
+      if (activeTab) {
+          activeTab.click();
+      }
+  }
+  
+  // Reset scroll position to top
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) {
+    mainContent.scrollTop = 0;
   }
 }
 
@@ -239,6 +284,17 @@ function toggleSection(idSuffix) {
   }
 }
 
+function toggleRefactoring(issueId) {
+    const content = document.getElementById('refactoring-' + issueId);
+    if (content) {
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+    }
+}
+
 
 // Graph Data Logic
 window.graphData = window.graphData || {};
@@ -276,10 +332,33 @@ function renderGraph(type, projectId) {
      
      // Scratchblocks rendering in graph
      if (svgElement && typeof scratchblocks !== 'undefined') {
-        var textNodes = svgElement.querySelectorAll('.node text');
-        textNodes.forEach(function(textNode) {
-            var content = textNode.textContent.trim();
-            if (content === 'Entry' || content === 'Exit') return;
+        var graphNodes = svgElement.querySelectorAll('.node');
+        graphNodes.forEach(function(gNode) {
+            var textNodes = gNode.querySelectorAll('text');
+            if (textNodes.length === 0) return;
+            
+            var contentLines = [];
+            var totalX = 0;
+            var totalY = 0;
+            var count = 0;
+
+            textNodes.forEach(function(t) {
+                var text = t.textContent;
+                if (text && text.trim().length > 0) {
+                     contentLines.push(text);
+                }
+                var tx = parseFloat(t.getAttribute('x'));
+                var ty = parseFloat(t.getAttribute('y'));
+                if (!isNaN(tx) && !isNaN(ty)) {
+                    totalX += tx;
+                    totalY += ty;
+                    count++;
+                }
+            });
+            
+            var content = contentLines.join('\n').trim();
+            if (!content || content === 'Entry' || content === 'Exit') return;
+
             try {
                 var doc = scratchblocks.parse(content, {
                     languages: ['{{SCRATCH_LANG}}', 'en']
@@ -289,18 +368,22 @@ function renderGraph(type, projectId) {
                     scale: 0.6
                 });
                 var renderedBlock = view.render();
-                var x = parseFloat(textNode.getAttribute('x'));
-                var y = parseFloat(textNode.getAttribute('y'));
+                
+                var centerX = count > 0 ? totalX / count : 0;
+                var centerY = count > 0 ? totalY / count : 0;
+                
                 var width = parseFloat(renderedBlock.getAttribute('width'));
                 var height = parseFloat(renderedBlock.getAttribute('height'));
+                
                 if (!isNaN(width) && !isNaN(height)) {
-                    x = x - (width / 2);
-                    y = y - (height / 2);
+                    var x = centerX - (width / 2);
+                    var y = centerY - (height / 2);
+                    renderedBlock.setAttribute('x', x);
+                    renderedBlock.setAttribute('y', y);
                 }
-                renderedBlock.setAttribute('x', x);
-                renderedBlock.setAttribute('y', y);
-                textNode.parentNode.appendChild(renderedBlock);
-                textNode.style.display = 'none';
+                
+                gNode.appendChild(renderedBlock);
+                textNodes.forEach(function(t) { t.style.display = 'none'; });
             } catch (err) {
                 console.warn('Scratchblocks parsing failed', err);
             }
