@@ -19,15 +19,24 @@
 package de.uni_passau.fim.se2.litterbox.utils;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.SpecialNode;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-
+import java.util.Optional;
 import java.util.function.Function;
 
 public class ScratchBlocksLabeler implements Function<CFGNode, String> {
+
+    private final Program program;
+
+    public ScratchBlocksLabeler(final Program program) {
+        this.program = program;
+    }
 
     @Override
     public String apply(CFGNode node) {
@@ -75,6 +84,10 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
                 repeatTimesStmt.getTimes().accept(this);
             }
         };
+
+        visitor.setProgram(program);
+        Optional<ActorDefinition> currentActor = AstNodeUtil.findActor(astNode);
+        currentActor.ifPresent(visitor::setCurrentActor);
 
         astNode.accept(visitor);
         String code = visitor.getScratchBlocks();

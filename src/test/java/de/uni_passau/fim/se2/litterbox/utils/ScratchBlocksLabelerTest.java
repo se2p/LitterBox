@@ -41,7 +41,7 @@ class ScratchBlocksLabelerTest {
         CFGNode node = mock(CFGNode.class);
         when(node.getASTNode()).thenReturn(moveSteps);
 
-        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler();
+        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler(null);
         String result = labeler.apply(node);
 
         // ScratchBlocksVisitor usually adds formatting.
@@ -67,7 +67,7 @@ class ScratchBlocksLabelerTest {
         CFGNode node = mock(CFGNode.class);
         when(node.getASTNode()).thenReturn(ifThen);
 
-        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler();
+        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler(null);
         String result = labeler.apply(node);
 
         // Expect: "if <> then\nend"

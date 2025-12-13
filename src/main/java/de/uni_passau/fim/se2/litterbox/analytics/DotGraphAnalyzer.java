@@ -47,7 +47,7 @@ public class DotGraphAnalyzer implements ProgramAnalyzer<String> {
         cfgVisitor.visit(program);
         ControlFlowGraph cfg = cfgVisitor.getControlFlowGraph();
 
-        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler();
+        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler(program);
 
         return switch (graphType) {
             case CFG -> cfg.toDotString(labeler);
