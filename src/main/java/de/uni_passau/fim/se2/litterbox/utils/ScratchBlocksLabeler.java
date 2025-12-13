@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.SpecialNode;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+
 import java.util.function.Function;
 
 public class ScratchBlocksLabeler implements Function<CFGNode, String> {
@@ -37,7 +38,7 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
         if (astNode == null) {
             return node.toString();
         }
-        
+
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false) {
             @Override
             public void visit(IfThenStmt ifThenStmt) {
@@ -74,17 +75,15 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
                 repeatTimesStmt.getTimes().accept(this);
             }
         };
-        
-        ASTNode nodeToVisit = astNode;
 
-        nodeToVisit.accept(visitor);
+        astNode.accept(visitor);
         String code = visitor.getScratchBlocks();
-        
+
         // The scratchblocks visitor might return empty string for some nodes.
         if (code == null || code.trim().isEmpty()) {
             return node.toString();
         }
-        
+
         return code.trim();
     }
 }

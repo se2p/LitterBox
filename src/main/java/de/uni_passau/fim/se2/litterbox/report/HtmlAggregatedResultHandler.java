@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
