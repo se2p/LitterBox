@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
+@Isolated
 public class CommandlineTest extends CliTest {
 
     @Test

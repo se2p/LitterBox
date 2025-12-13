@@ -52,8 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-public class RefactoringIntegrationTest implements JsonTest {
+class RefactoringIntegrationTest implements JsonTest {
 
     private static final int POPULATION_SIZE = 50;
 
@@ -68,11 +67,11 @@ public class RefactoringIntegrationTest implements JsonTest {
                 move (10) steps
                 turn cw (15) degrees
                 """;
-        
+
         Program program = parseProgram(code);
-        List<RefactoringFinder> finders = List.of(new SequenceToLoopFinder());        
+        List<RefactoringFinder> finders = List.of(new SequenceToLoopFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
-        
+
         assertEquals(1, solutions.size());
         String expectedCode = """
                 when green flag clicked
@@ -81,7 +80,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn right (15) degrees
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, solutions.getFirst().buildRefactoredProgram()));
     }
@@ -97,7 +96,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     say [Bye!]
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new ConjunctionToIfElseFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -113,7 +112,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     end
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -130,11 +129,11 @@ public class RefactoringIntegrationTest implements JsonTest {
                     move (10) steps
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new ExtractLoopConditionFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
-        
+
         assertEquals(1, solutions.size());
         String expectedCode = """
                 when green flag clicked
@@ -142,7 +141,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     move (10) steps
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -158,7 +157,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     end
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new ExtractEventsFromForeverFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -168,7 +167,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 when [space v] key pressed
                 change [var1 v] by (1)
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -186,7 +185,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     end
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new IfElseToDisjunctionFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -198,7 +197,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     say [Hello!]
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -215,7 +214,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn cw (15) degrees
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new MergeDoubleIfFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -228,7 +227,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn cw (15) degrees
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -241,13 +240,13 @@ public class RefactoringIntegrationTest implements JsonTest {
                 repeat (10)
                     change [var1 v] by (1)
                 end
-                
+
                 when green flag clicked
                 repeat (10)
                     change [var2 v] by (1)
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new MergeLoopsFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -266,7 +265,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     change [var1 v] by (1)
                 end
                 """;
-        
+
         Program expectedProgram1 = parseProgram(expectedCode1);
         Program expectedProgram2 = parseProgram(expectedCode2);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
@@ -279,15 +278,15 @@ public class RefactoringIntegrationTest implements JsonTest {
         String code = """
                 when green flag clicked
                 move (10) steps
-                
+
                 when green flag clicked
                 turn cw (15) degrees
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new MergeScriptsFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
-        
+
         String expectedCode1 = """
                 when green flag clicked
                 move (10) steps
@@ -318,11 +317,11 @@ public class RefactoringIntegrationTest implements JsonTest {
                     say [Bye!]
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new IfIfNotToIfElseFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
-        
+
 
         assertEquals(1, solutions.size());
         String expectedCode = """
@@ -333,7 +332,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     say [Bye!]
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -346,16 +345,16 @@ public class RefactoringIntegrationTest implements JsonTest {
                 repeat until <key [space v] pressed?>
                     move (10) steps
                 end
-                
+
                 when green flag clicked
                 wait until <key [space v] pressed?>
                 say [Done!]
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new MergeScriptsAfterUntilFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
-        
+
         assertEquals(1, solutions.size());
         String expectedCode = """
                 when green flag clicked
@@ -364,7 +363,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 end
                 say [Done!]
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
@@ -385,7 +384,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn cw (15) degrees
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new SequenceToLoopFinder(), new MergeDoubleIfFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -401,7 +400,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn right (15) degrees
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
     }
@@ -414,7 +413,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                 turn cw (15) degrees
                 move (10) steps
                 turn cw (15) degrees
-                
+
                 when green flag clicked
                 if <key [space v] pressed?> then
                     move (10) steps
@@ -423,10 +422,10 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn cw (15) degrees
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(new SequenceToLoopFinder(), new MergeDoubleIfFinder());
-        
+
         List<RefactorSequence> solutions = runRefactoring(program, finders);
 
         String expectedCode = """
@@ -442,7 +441,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn right (15) degrees
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
 
@@ -468,14 +467,14 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn cw (15) degrees
                 end
                 """;
-        
+
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(
-            new SequenceToLoopFinder(), 
+            new SequenceToLoopFinder(),
             new IfsToConjunctionFinder(),
             new MergeDoubleIfFinder()
         );
-        
+
         List<RefactorSequence> solutions = runRefactoring(program, finders);
 
         String expectedCode = """
@@ -494,7 +493,7 @@ public class RefactoringIntegrationTest implements JsonTest {
                     turn right (15) degrees
                 end
                 """;
-        
+
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
 
