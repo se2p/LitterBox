@@ -365,7 +365,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(StageClicked stageClicked) {
-        emitNoSpace("when this stage clicked");
+        emitNoSpace("when stage clicked");
         storeNotesForIssue(stageClicked);
         newLine();
     }
