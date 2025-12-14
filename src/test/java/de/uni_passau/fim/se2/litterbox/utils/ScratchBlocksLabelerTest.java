@@ -18,14 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -58,7 +73,7 @@ class ScratchBlocksLabelerTest {
         BlockMetadata metadata = mock(BlockMetadata.class);
 
         MoveSteps moveSteps = new MoveSteps(new NumberLiteral(10), metadata);
-        StmtList stmtList = new de.uni_passau.fim.se2.litterbox.ast.model.StmtList(moveSteps);
+        StmtList stmtList = new StmtList(moveSteps);
 
         // We need a proper BoolExpr that visits successfully.
         UnspecifiedBoolExpr unspec = new UnspecifiedBoolExpr();
@@ -74,6 +89,55 @@ class ScratchBlocksLabelerTest {
         // Should NOT contain: "move (10) steps"
         assertTrue(result.contains("if <> then"), "Should contain if header. Got: " + result);
         assertFalse(result.contains("end"), "Should NOT contain end. Got: " + result);
+        assertFalse(result.contains("move"), "Should NOT contain body statements. Got: " + result);
+    }
+
+    @Test
+    void testTrimProcedureDefinition() {
+        // Create a ProcedureDefinition setup
+        BlockMetadata metadata = mock(BlockMetadata.class);
+        ProcedureMetadata procMetadata = mock(ProcedureMetadata.class);
+        LocalIdentifier ident = new StrId("my block %s");
+
+        // Mock ParameterDefinitionList
+        ParameterDefinitionList paramList = mock(ParameterDefinitionList.class);
+        ParameterDefinition paramDef = mock(ParameterDefinition.class);
+        when(paramDef.getType()).thenReturn(new StringType());
+        when(paramDef.getIdent()).thenReturn(new StrId("param1"));
+
+        // Create body
+        MoveSteps moveSteps = new MoveSteps(new NumberLiteral(10), metadata);
+        StmtList stmtList = new StmtList(moveSteps);
+
+        ProcedureDefinition procDef = new ProcedureDefinition(ident, paramList, stmtList, procMetadata);
+
+        ActorDefinition actor = mock(ActorDefinition.class);
+        when(actor.getIdent()).thenReturn(new StrId("Sprite1"));
+        procDef.setParentNode(actor);
+
+        // Mock Program
+        Program program = mock(Program.class);
+        ProcedureDefinitionNameMapping mapping = mock(ProcedureDefinitionNameMapping.class);
+        Map<String, Map<LocalIdentifier, ProcedureInfo>> procMap = new HashMap<>();
+        Map<LocalIdentifier, ProcedureInfo> spriteMap = new HashMap<>();
+        ProcedureInfo procModel = mock(ProcedureInfo.class);
+        when(procModel.getName()).thenReturn("my block %s");
+        spriteMap.put(ident, procModel);
+        procMap.put("Sprite1", spriteMap);
+
+        when(mapping.getProcedures()).thenReturn(procMap);
+        when(program.getProcedureMapping()).thenReturn(mapping);
+
+        when(paramList.getParameterDefinitions()).thenReturn(Collections.emptyList());
+
+        CFGNode node = mock(CFGNode.class);
+        when(node.getASTNode()).thenReturn(procDef);
+
+        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler(program);
+        String result = labeler.apply(node);
+
+        // Expect "define my block %s" (or substituted if we had params)
+        assertTrue(result.contains("define"), "Should contain define. Got: " + result);
         assertFalse(result.contains("move"), "Should NOT contain body statements. Got: " + result);
     }
 }

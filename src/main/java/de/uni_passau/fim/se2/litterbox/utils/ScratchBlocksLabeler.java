@@ -21,12 +21,20 @@ package de.uni_passau.fim.se2.litterbox.utils;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.SpecialNode;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -47,6 +55,8 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
         if (astNode == null) {
             return node.toString();
         }
+
+        Optional<ActorDefinition> currentActor = AstNodeUtil.findActor(astNode);
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false) {
             @Override
@@ -83,10 +93,39 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
                 emitNoSpace("repeat ");
                 repeatTimesStmt.getTimes().accept(this);
             }
+
+            @Override
+            public void visit(ProcedureDefinition node) {
+                emitNoSpace("define ");
+                String procedureName = node.getIdent().getName();
+                if (currentActor.isPresent()) {
+                    String actorName = currentActor.get().getIdent().getName();
+                    try {
+                        procedureName = program.getProcedureMapping().getProcedures()
+                                .get(actorName).get(node.getIdent()).getName();
+                    } catch (Exception e) {
+                        // If mapping fails, fallback to identifier name
+                    }
+                }
+
+                procedureName = escapeBrackets(procedureName);
+                List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
+                for (ParameterDefinition param : parameters) {
+                    int nextIndex = procedureName.indexOf('%');
+                    if (nextIndex == -1) {
+                        break;
+                    }
+                    procedureName = procedureName.substring(0, nextIndex)
+                            + getParameterName(param)
+                            + procedureName.substring(nextIndex + 2);
+                }
+                emitNoSpace(procedureName);
+                newLine();
+                // Do NOT visit statement list
+            }
         };
 
         visitor.setProgram(program);
-        Optional<ActorDefinition> currentActor = AstNodeUtil.findActor(astNode);
         currentActor.ifPresent(visitor::setCurrentActor);
 
         astNode.accept(visitor);
