@@ -23,7 +23,16 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 public class PostDominatorTree extends DominatorTree {
 
     public PostDominatorTree(ControlFlowGraph cfg) {
-        super(cfg.reverseAndFilterInterproceduralDependencies());
+        super(prepareGraph(cfg));
+    }
+
+    private static ControlFlowGraph prepareGraph(ControlFlowGraph cfg) {
+        ControlFlowGraph reversed = cfg.reverseAndFilterInterproceduralDependencies();
+        // Unused custom blocks, forever loops and infinite custom block recursions
+        // are disconnected in the reversed CFG such no least common ancestor
+        // may exist. To avoid this, we make everything depend on entry
+        reversed.ensureAllNodesReachableFromEntry();
+        return reversed;
     }
 
 }

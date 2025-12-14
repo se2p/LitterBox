@@ -279,4 +279,38 @@ public class ControlFlowGraph {
         }
     }
 
+    public void ensureAllNodesReachableFromEntry() {
+        Set<CFGNode> reachable = new HashSet<>();
+        List<CFGNode> queue = new ArrayList<>();
+        queue.add(entryNode);
+        reachable.add(entryNode);
+
+        int head = 0;
+        while (head < queue.size()) {
+            CFGNode current = queue.get(head++);
+            for (CFGNode successor : graph.successors(current)) {
+                if (reachable.add(successor)) {
+                    queue.add(successor);
+                }
+            }
+        }
+
+        for (CFGNode node : graph.nodes()) {
+            if (!reachable.contains(node)) {
+                graph.putEdge(entryNode, node);
+                // Continue BFS from the newly connected node to find its reachable subgraph
+                // This avoids adding edges to every single node in a disconnected component, just the root we found
+                reachable.add(node);
+                queue.add(node);
+                while (head < queue.size()) {
+                    CFGNode current = queue.get(head++);
+                    for (CFGNode successor : graph.successors(current)) {
+                        if (reachable.add(successor)) {
+                            queue.add(successor);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
