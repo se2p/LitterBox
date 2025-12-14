@@ -259,17 +259,17 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     private String createCollapsibleSection(String idSuffix, String title, String content) {
-        return "<div id=\"section-" + idSuffix + "\" class=\"issue-section collapsible\">\n" +
-                "<h2 id=\"" + idSuffix + "\" class=\"collapsible-header\" onclick=\"toggleSection('" + idSuffix + "')\">" +
-                "<span class=\"toggle-icon\">▼</span> " + StringEscapeUtils.escapeHtml4(title) + "</h2>\n" +
-                "<div id=\"content-" + idSuffix + "\" class=\"collapsible-content\">\n" +
-                content +
-                "</div>\n" +
-                "</div>\n";
+        return "<div id=\"section-" + idSuffix + "\" class=\"issue-section collapsible\">\n"
+                + "<h2 id=\"" + idSuffix + "\" class=\"collapsible-header\" onclick=\"toggleSection('" + idSuffix + "')\">"
+                + "<span class=\"toggle-icon\">▼</span> " + StringEscapeUtils.escapeHtml4(title) + "</h2>\n"
+                + "<div id=\"content-" + idSuffix + "\" class=\"collapsible-content\">\n"
+                + content
+                + "</div>\n"
+                + "</div>\n";
     }
 
     private String createBackToTop() {
-        return "<div class=\"back-to-top\"><a href=\"#top\">\u2191 " + translator.getInfo("back_to_top") + "</a></div>\n";
+        return "<div class=\"back-to-top\"><a href=\"#top\">↑ " + translator.getInfo("back_to_top") + "</a></div>\n";
     }
 
     private String generateSectionFilter(String projectId, String category, List<Issue> issues) {
@@ -541,7 +541,9 @@ public class HTMLReportGenerator implements ReportGenerator {
         try (var is = getClass().getResourceAsStream(path)) {
             if (is == null) {
                 // For optional resources like logo, we handled them differently but for critical JS/Template this is fatal for now
-                if (path.equals(LOGO_PATH)) return ""; 
+                if (path.equals(LOGO_PATH)) {
+                    return "";
+                }
                 throw new IOException("Resource not found: " + path);
             }
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
@@ -578,7 +580,7 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     private String getSeverityIcon(Issue issue) {
         if (issue.getIssueType() == IssueType.PERFUME) {
-             return switch (issue.getSeverity()) {
+            return switch (issue.getSeverity()) {
                 case HIGH -> "&#127942;"; // Trophy
                 case MEDIUM -> "&#11088;"; // Star
                 case LOW -> "&#10024;"; // Sparkles
