@@ -43,12 +43,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
@@ -57,6 +57,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInD
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -69,7 +72,6 @@ import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
 import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
@@ -77,6 +79,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSec
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
@@ -543,13 +546,23 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return false;
     }
 
+
+
     private static boolean isHalting(Stmt stmt) {
-        return stmt instanceof WaitSeconds
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof SayForSecs
+        return stmt instanceof AskAndWait
+                || stmt instanceof BroadcastAndWait
+                || stmt instanceof DeleteClone
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof GlideSecsTo
+                || stmt instanceof LoopStmt
                 || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof Speak;
+                || stmt instanceof SayForSecs
+                || stmt instanceof Speak
+                || stmt instanceof StopThisScript
+                || stmt instanceof StopAll
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof WaitSeconds
+                || stmt instanceof WaitUntil;
     }
 }

@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -378,7 +377,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(1, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -404,7 +403,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(1, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -417,7 +416,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(1, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -431,7 +430,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -445,7 +444,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -459,7 +458,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -475,7 +474,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -491,7 +490,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -507,7 +506,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertEquals(2, issues.size(), "Should report redundant assignment for x");
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes thread switch (visualization)");
     }
 
     @Test
@@ -775,5 +774,24 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Set<Issue> issues = finder.check(program);
 
         Assertions.assertEquals(0, issues.size(), "Should suppress redundancy for partially dead store in loop");
+    }
+
+    @Test
+    public void testLoopThreadSwitch() throws IOException, ParsingException {
+        // "set x to 10" is followed by a loop (repeat 10).
+        // Since the loop causes thread switches (halts), and "x" is a visual attribute (position),
+        // it is implicitly "used" during the halt. Thus, the assignment should NOT be redundant.
+        String script = """
+                when green flag clicked
+                set x to (10)
+                repeat (10)
+                end
+                set x to (20)""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes implicit thread switch");
     }
 }
