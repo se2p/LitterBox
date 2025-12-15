@@ -59,7 +59,7 @@ public class HTMLReportGenerator implements ReportGenerator {
     private final OutputStream outputStream;
 
     private static final String TEMPLATE_PATH = "/report_template.html";
-    private static final String LOGO_PATH = "/litterbox.png";
+    private static final String LOGO_PATH = "/litterbox.svg";
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final String PLACEHOLDER_LANG = "{{LANG}}";
     private static final String PLACEHOLDER_FAVICON = "{{FAVICON}}";
@@ -95,7 +95,7 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     public void generateReport(Collection<ProjectAnalysisResult> projects) throws IOException {
         String template = loadResource(TEMPLATE_PATH);
-        String logoBase64 = loadLogoBase64();
+        String logo = loadResource(LOGO_PATH);
         String faviconBase64 = loadFaviconBase64();
         String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
         String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
@@ -128,7 +128,7 @@ public class HTMLReportGenerator implements ReportGenerator {
                 .replace(PLACEHOLDER_LANG, lang)
                 .replace(PLACEHOLDER_BODY_CLASS, bodyClass)
                 .replace(PLACEHOLDER_HEADER, headerContent)
-                .replace(PLACEHOLDER_LOGO, logoBase64)
+                .replace(PLACEHOLDER_LOGO, logo)
                 .replace(PLACEHOLDER_FAVICON, faviconBase64)
                 .replace(PLACEHOLDER_NAV, projectsNav.toString())
                 .replace(PLACEHOLDER_CONTENT, projectsContent.toString())
@@ -176,7 +176,9 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     private String generateSingleProjectHeader(String projectName) {
-        return "<header class=\"report-header\"><img src=\"" + PLACEHOLDER_LOGO + "\" class=\"header-logo\"> <h1>Code Report for "
+        return "<header class=\"report-header\">"
+                + PLACEHOLDER_LOGO
+                + "<h1>Code Report for "
                 + StringEscapeUtils.escapeHtml4(projectName) + "</h1></header>";
     }
 
@@ -548,15 +550,6 @@ public class HTMLReportGenerator implements ReportGenerator {
             }
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
-    }
-
-    private String loadLogoBase64() {
-        try (var is = getClass().getResourceAsStream(LOGO_PATH)) {
-            if (is != null) {
-                return "data:image/png;base64," + Base64.getEncoder().encodeToString(is.readAllBytes());
-            }
-        } catch (IOException e) { /* ignore */ }
-        return "";
     }
 
     private String loadFaviconBase64() {
